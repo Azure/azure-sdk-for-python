@@ -362,7 +362,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         """
         return self._dict.__contains__(__x)
 
-    def keys(self) -> Iterable[str]:
+    async def keys(self) -> Iterable[str]:
         """
         Returns a list of keys loaded from Azure App Configuration.
 
@@ -372,7 +372,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         async with self._update_lock:
             return self._dict.keys()
 
-    def items(self) -> Iterable[Tuple[str, str]]:
+    async def items(self) -> Iterable[Tuple[str, str]]:
         """
         Returns a list of key-value pairs loaded from Azure App Configuration. Any values that are Key Vault references
         will be resolved.
@@ -383,7 +383,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         async with self._update_lock:
             return self._dict.items()
 
-    def values(self) -> Iterable[str]:
+    async def values(self) -> Iterable[str]:
         """
         Returns a list of values loaded from Azure App Configuration. Any values that are Key Vault references will be
         resolved.
@@ -394,7 +394,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         async with self._update_lock:
             return self._dict.values()
 
-    def get(self, key: str, default: Optional[str] = None) -> str:
+    async def get(self, key: str, default: Optional[str] = None) -> str:
         """
         Returns the value of the specified key. If the key does not exist, returns the default value.
 
