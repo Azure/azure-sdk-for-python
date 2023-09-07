@@ -68,11 +68,12 @@ _SERVICE_PARAMS = {
 
 
 class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
+    _client: Any
     def __init__(
         self,
         parsed_url: Any,
         service: str,
-        credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]] = None, # pylint: disable=line-too-long 
+        credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]] = None, # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
         self._location_mode = kwargs.get("_location_mode", LocationMode.PRIMARY)
@@ -203,15 +204,15 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
 
     def _format_query_string(
         self, sas_token: Optional[str],
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]],  # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential", "AsyncTokenCredential"]],  # pylint: disable=line-too-long
         snapshot: Optional[str] = None,
         share_snapshot: Optional[str] = None
-    ) -> Tuple[str, Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]]:  # pylint: disable=line-too-long
+    ) -> Tuple[str, Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential", "AsyncTokenCredential"]]]:  # pylint: disable=line-too-long
         query_str = "?"
         if snapshot:
-            query_str += f"snapshot={self.snapshot}&"
+            query_str += f"snapshot={snapshot}&"
         if share_snapshot:
-            query_str += f"sharesnapshot={self.snapshot}&"
+            query_str += f"sharesnapshot={share_snapshot}&"
         if sas_token and isinstance(credential, AzureSasCredential):
             raise ValueError(
                 "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")

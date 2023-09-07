@@ -34,6 +34,7 @@ from ._shared.response_handlers import (
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from ._models import QueueProperties
 
 
@@ -82,7 +83,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def __init__(
         self, account_url: str,
         queue_name: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
         parsed_url, sas_token = _parse_url(account_url=account_url, queue_name=queue_name, credential=credential)
@@ -127,13 +128,14 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
         """
-        return _from_queue_url_helper(cls=cls, queue_url=queue_url, credential=credential, **kwargs)
+        account_url, queue_name = _from_queue_url_helper(cls=cls, queue_url=queue_url, credential=credential)
+        return cls(account_url, queue_name=queue_name, credential=credential, **kwargs)
 
     @classmethod
     def from_connection_string(
         cls, conn_str: str,
         queue_name: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> Self:
         """Create QueueClient from a Connection String.
@@ -151,7 +153,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]] # pylint: disable=line-too-long
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
 
@@ -168,7 +170,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             conn_str, credential, 'queue')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
-        return cls(account_url, queue_name=queue_name, credential=credential, **kwargs)
+        return cls(account_url, queue_name=queue_name, credential=credential, **kwargs)  #type: ignore [arg-type]
 
     @distributed_trace
     def create_queue(
@@ -741,14 +743,14 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 self.encryption_version,
                 kwargs)
 
-        try:
+        if isinstance(message, QueueMessage):
             message_id = message.id
             message_text = content or message.content
             receipt = pop_receipt or message.pop_receipt
             inserted_on = message.inserted_on
             expires_on = message.expires_on
             dequeue_count = message.dequeue_count
-        except AttributeError:
+        else:
             message_id = message
             message_text = content
             receipt = pop_receipt

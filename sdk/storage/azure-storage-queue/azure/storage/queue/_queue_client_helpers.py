@@ -9,8 +9,8 @@ from urllib.parse import quote, unquote, urlparse
 from ._shared.base_client import parse_query
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AsyncTokenCredential, AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from azure.storage.queue import QueueClient
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from urllib.parse import ParseResult
 
 
@@ -74,8 +74,7 @@ def _format_url_helper(queue_name: Union[bytes, str], hostname: str, scheme: str
 def _from_queue_url_helper(
     cls, queue_url: str,
     credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-    **kwargs: Any
-) -> "QueueClient":
+) -> Tuple[str, str]:
     """A client to interact with a specific Queue.
 
     :param str queue_url: The full URI to the queue, including SAS token if used.
@@ -89,8 +88,8 @@ def _from_queue_url_helper(
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
     :paramtype Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential", "TokenCredential"]] # pylint: disable=line-too-long
-    :returns: A queue client.
-    :rtype: QueueClient
+    :returns: The parsed out account_url and queue name.
+    :rtype: Tuple[str, str]
     """
     try:
         if not queue_url.lower().startswith('http'):
@@ -112,4 +111,4 @@ def _from_queue_url_helper(
     queue_name = unquote(queue_path[-1])
     if not queue_name:
         raise ValueError("Invalid URL. Please provide a URL with a valid queue name")
-    return cls(account_url, queue_name=queue_name, credential=credential, **kwargs)
+    return(account_url, queue_name)

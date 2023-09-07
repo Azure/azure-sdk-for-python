@@ -34,6 +34,7 @@ from ._shared.response_handlers import process_storage_error
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from ._generated.models import CorsRule
     from ._models import Metrics, QueueAnalyticsLogging
 
@@ -88,7 +89,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     def __init__(
         self, account_url: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
         parsed_url, sas_token = _parse_url(account_url=account_url, credential=credential)
@@ -111,7 +112,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     @classmethod
     def from_connection_string(
         cls, conn_str: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> Self:
         """Create QueueServiceClient from a Connection String.
@@ -127,7 +128,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential", "AsyncTokenCredential"]] # pylint: disable=line-too-long
         :returns: A Queue service client.
         :rtype: ~azure.storage.queue.QueueClient
 
@@ -144,7 +145,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             conn_str, credential, 'queue')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
-        return cls(account_url, credential=credential, **kwargs)
+        return cls(account_url, credential=credential, **kwargs)  #type: ignore [arg-type]
 
     @distributed_trace
     def get_service_stats(self, **kwargs: Any) -> Dict[str, Any]:

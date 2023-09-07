@@ -647,7 +647,7 @@ class LinearRetry(StorageRetryPolicy):
         random_range_start = self.backoff - self.random_jitter_range \
             if self.backoff > self.random_jitter_range else 0
         random_range_end = self.backoff + self.random_jitter_range
-        return random_generator.uniform(random_range_start, random_range_end)
+        return int(random_generator.uniform(random_range_start, random_range_end))
 
 
 class StorageBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):

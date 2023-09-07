@@ -10,12 +10,13 @@ from ._shared.base_client import parse_query
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from urllib.parse import ParseResult
 
 
 def _parse_url(
     account_url: str,
-    credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
+    credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential", "TokenCredential"]] # pylint: disable=line-too-long
 ) -> Tuple["ParseResult", Any]:
     """Performs initial input validation and returns the parsed URL and SAS token.
 
@@ -29,7 +30,7 @@ def _parse_url(
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
-    :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+    :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential", "TokenCredential"]] # pylint: disable=line-too-long
     :returns: The parsed URL and SAS token.
     :rtype: Tuple[ParseResult, Any]
     """

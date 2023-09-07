@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# mypy: disable-error-code="attr-defined"
 
 from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
@@ -74,7 +75,7 @@ class AsyncStorageAccountHostsMixin(object):
     ) -> Tuple[StorageConfiguration, AsyncPipeline]:
         self._credential_policy: Optional[Union[AsyncBearerTokenCredentialPolicy, SharedKeyCredentialPolicy, AzureSasCredentialPolicy]] = None # pylint: disable=line-too-long
         if hasattr(credential, 'get_token'):
-            self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
+            self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)  #type: ignore [arg-type]
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):

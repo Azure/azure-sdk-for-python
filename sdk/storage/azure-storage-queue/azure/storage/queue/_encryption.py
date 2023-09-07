@@ -15,7 +15,7 @@ from json import (
     dumps,
     loads,
 )
-from typing import Any, BinaryIO, Callable, Dict, Optional, Tuple, TYPE_CHECKING
+from typing import Any, BinaryIO, Callable, Dict, Optional, Tuple, TYPE_CHECKING, Union
 from typing_extensions import Protocol
 
 from cryptography.hazmat.backends import default_backend
@@ -700,11 +700,11 @@ def _decrypt_message(
         # decrypt data
         decrypted_data = message
         decryptor = cipher.decryptor()
-        decrypted_data = (decryptor.update(decrypted_data) + decryptor.finalize())
+        decrypted_data = (decryptor.update(decrypted_data) + decryptor.finalize())  #type: ignore
 
         # unpad data
         unpadder = PKCS7(128).unpadder()
-        decrypted_data = (unpadder.update(decrypted_data) + unpadder.finalize())
+        decrypted_data = (unpadder.update(decrypted_data) + unpadder.finalize())  #type: ignore
 
     elif encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2:
         block_info = encryption_data.encrypted_region_info
@@ -972,7 +972,7 @@ def get_blob_encryptor_and_padder(
         encryptor = cipher.encryptor()
         padder = PKCS7(128).padder() if should_pad else None
 
-    return encryptor, padder
+    return encryptor, padder  #type: ignore [return-value]
 
 
 def encrypt_queue_message(message: str, key_encryption_key: KeyEncryptionKey, version: str) -> str:

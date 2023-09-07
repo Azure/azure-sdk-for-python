@@ -42,8 +42,8 @@ class MessageEncodePolicy(object):
 
     def configure(
         self, require_encryption: bool,
-        key_encryption_key: KeyEncryptionKey,
-        resolver: Callable[[str], bytes],
+        key_encryption_key: Optional[KeyEncryptionKey],
+        resolver: Optional[Callable[[str], bytes]],
         encryption_version: str = _ENCRYPTION_PROTOCOL_V1
     ) -> None:
         self.require_encryption = require_encryption
@@ -78,7 +78,11 @@ class MessageDecodePolicy(object):
             message.message_text = self.decode(content, response)
         return obj
 
-    def configure(self, require_encryption: bool, key_encryption_key: KeyEncryptionKey, resolver: Callable[[str], bytes]) -> None:
+    def configure(
+        self, require_encryption: bool,
+        key_encryption_key: Optional[KeyEncryptionKey],
+        resolver: Optional[Callable[[str], bytes]]
+    ) -> None:
         self.require_encryption = require_encryption
         self.key_encryption_key = key_encryption_key
         self.resolver = resolver
