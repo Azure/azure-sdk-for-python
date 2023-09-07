@@ -118,8 +118,7 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
             )
             image_instance_segmentation_job_individual = copy.deepcopy(image_instance_segmentation_job)
             image_instance_segmentation_job_individual.set_training_parameters(
-                model_name="mask_rcnn_swin-s-p4-w7_fpn_fp16_ms-crop-3x_coco",
-                number_of_epochs=1
+                model_name="mask_rcnn_swin-s-p4-w7_fpn_fp16_ms-crop-3x_coco", number_of_epochs=1
             )
             image_instance_segmentation_job_reuse = copy.deepcopy(image_instance_segmentation_job_individual)
         else:
@@ -147,7 +146,9 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
         # Trigger sweep job and then AutoMode job
         submitted_job_sweep = client.jobs.create_or_update(image_instance_segmentation_job_sweep)
         if components:
-            submitted_job_individual_components = client.jobs.create_or_update(image_instance_segmentation_job_individual)
+            submitted_job_individual_components = client.jobs.create_or_update(
+                image_instance_segmentation_job_individual
+            )
             submitted_job_components_reuse = client.jobs.create_or_update(image_instance_segmentation_job_reuse)
         else:
             submitted_job_automode = client.jobs.create_or_update(image_instance_segmentation_job_automode)
@@ -159,7 +160,11 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
 
         if components:
             assert_final_job_status(
-                submitted_job_individual_components, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=3600
+                submitted_job_individual_components,
+                client,
+                ImageInstanceSegmentationJob,
+                JobStatus.COMPLETED,
+                deadline=3600,
             )
             assert_final_job_status(
                 submitted_job_components_reuse, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=3600

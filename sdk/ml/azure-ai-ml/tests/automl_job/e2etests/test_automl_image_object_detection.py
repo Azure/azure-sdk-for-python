@@ -158,8 +158,7 @@ class TestAutoMLImageObjectDetection(AzureRecordedTestCase):
 
             image_object_detection_job_individual = copy.deepcopy(image_object_detection_job)
             image_object_detection_job_individual.set_training_parameters(
-                model_name="atss_r50_fpn_1x_coco",
-                number_of_epochs=1
+                model_name="atss_r50_fpn_1x_coco", number_of_epochs=1
             )
             image_object_detection_job_reuse = copy.deepcopy(image_object_detection_job_individual)
         else:

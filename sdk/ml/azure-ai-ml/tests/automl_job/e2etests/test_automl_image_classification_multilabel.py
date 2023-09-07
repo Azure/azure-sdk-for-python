@@ -137,8 +137,7 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
 
             image_classification_multilabel_job_individual = copy.deepcopy(image_classification_multilabel_job)
             image_classification_multilabel_job_individual.set_training_parameters(
-                model_name="microsoft/beit-base-patch16-224",
-                number_of_epochs=1
+                model_name="microsoft/beit-base-patch16-224", number_of_epochs=1
             )
             image_classification_multilabel_job_reuse = copy.deepcopy(image_classification_multilabel_job_individual)
         else:
@@ -174,7 +173,9 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
         # Trigger sweep job and then AutoMode job
         submitted_job_sweep = client.jobs.create_or_update(image_classification_multilabel_job_sweep)
         if components:
-            submitted_job_individual_components = client.jobs.create_or_update(image_classification_multilabel_job_individual)
+            submitted_job_individual_components = client.jobs.create_or_update(
+                image_classification_multilabel_job_individual
+            )
             submitted_job_components_reuse = client.jobs.create_or_update(image_classification_multilabel_job_reuse)
         else:
             submitted_job_automode = client.jobs.create_or_update(image_classification_multilabel_job_automode)
@@ -186,10 +187,18 @@ class TestAutoMLImageClassificationMultilabel(AzureRecordedTestCase):
 
         if components:
             assert_final_job_status(
-                submitted_job_individual_components, client, ImageClassificationMultilabelJob, JobStatus.COMPLETED, deadline=3600
+                submitted_job_individual_components,
+                client,
+                ImageClassificationMultilabelJob,
+                JobStatus.COMPLETED,
+                deadline=3600,
             )
             assert_final_job_status(
-                submitted_job_components_reuse, client, ImageClassificationMultilabelJob, JobStatus.COMPLETED, deadline=3600
+                submitted_job_components_reuse,
+                client,
+                ImageClassificationMultilabelJob,
+                JobStatus.COMPLETED,
+                deadline=3600,
             )
         else:
             # Assert completion of Automode job

@@ -128,8 +128,7 @@ class TestAutoMLImageClassification(AzureRecordedTestCase):
 
             image_classification_job_individual = copy.deepcopy(image_classification_job)
             image_classification_job_individual.set_training_parameters(
-                model_name="microsoft/beit-base-patch16-224",
-                number_of_epochs=1
+                model_name="microsoft/beit-base-patch16-224", number_of_epochs=1
             )
             image_classification_job_reuse = copy.deepcopy(image_classification_job_individual)
         else:
