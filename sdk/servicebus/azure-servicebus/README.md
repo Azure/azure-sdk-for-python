@@ -97,7 +97,7 @@ To interact with these resources, one should be familiar with the following SDK 
 
 We do not guarantee that the clients are thread-safe. We do not recommend reusing client instances across threads. It is up to the running application to use the clients in a thread-safe manner.
 
-The data model types, such as `EventData` and `EventDataBatch` are not thread-safe. They should not be shared across threads nor used concurrently with client methods.
+The data model types, such as `EventDataBatch` are not thread-safe. They should not be shared across threads nor used concurrently with client methods.
 
 ## Examples
 
