@@ -8,6 +8,7 @@
 - Fixed issue where IndexError was raised if multipart responses did not match the number of requests. #31471
 - Fixed issue unbound variable exception if dict is invalid in CloudEvent.from_dict. #31835
 - Fixed issue asyncBearerTokenCredentialPolicy is not backward compatible with SansIOHTTPPolicy. #31836
+- Fixed issue mypy complains with new version of azure-core. #31564
 
 ## 1.29.3 (2023-08-22)
 
