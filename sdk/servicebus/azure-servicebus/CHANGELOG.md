@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fix the error `NoneType object has no attribute 'settle_messages'` which was raised when a connection was dropped due to a blocked process ([#30514](https://github.com/Azure/azure-sdk-for-python/issues/30514))
+
 ### Other Changes
 
 ## 7.11.1 (2023-07-12)
