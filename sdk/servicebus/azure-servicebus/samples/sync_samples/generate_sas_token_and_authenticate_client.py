@@ -13,10 +13,7 @@ import time
 import hmac
 import hashlib
 import base64
-try:
-    from urllib.parse import quote as url_parse_quote
-except ImportError:
-    from urllib.request import pathname2url as url_parse_quote # type: ignore[no-redef]
+from urllib.parse import quote as url_parse_quote
 from azure.core.credentials import AccessToken
 
 from azure.servicebus import ServiceBusClient
