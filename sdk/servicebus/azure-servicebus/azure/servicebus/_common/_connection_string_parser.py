@@ -24,23 +24,30 @@ class ServiceBusConnectionStringProperties(DictMixin):
     def fully_qualified_namespace(self):
         """The fully qualified host name for the Service Bus namespace.
         The namespace format is: `<yournamespace>.servicebus.windows.net`.
+        :rtype: str
         """
         return self._fully_qualified_namespace
 
     @property
     def endpoint(self):
-        """The endpoint for the Service Bus resource. In the format sb://<FQDN>/"""
+        """The endpoint for the Service Bus resource. In the format sb://<FQDN>/
+        :rtype: str
+        """
         return self._endpoint
 
     @property
     def entity_path(self):
-        """Optional. Represents the name of the queue/topic."""
+        """Optional. Represents the name of the queue/topic.
+        :rtype: str
+        """
+
         return self._entity_path
 
     @property
     def shared_access_signature(self):
         """
         This can be provided instead of the shared_access_key_name and the shared_access_key.
+        :rtype: str
         """
         return self._shared_access_signature
 
@@ -48,6 +55,7 @@ class ServiceBusConnectionStringProperties(DictMixin):
     def shared_access_key_name(self):
         """
         The name of the shared_access_key. This must be used along with the shared_access_key.
+        :rtype: str
         """
         return self._shared_access_key_name
 
@@ -55,6 +63,7 @@ class ServiceBusConnectionStringProperties(DictMixin):
     def shared_access_key(self):
         """
         The shared_access_key can be used along with the shared_access_key_name as a credential.
+        :rtype: str
         """
         return self._shared_access_key
 
@@ -65,6 +74,7 @@ def parse_connection_string(conn_str):
 
     :param conn_str: The connection string that has to be parsed.
     :type conn_str: str
+    :return: A properties model containing the parsed connection string.
     :rtype: ~azure.servicebus.ServiceBusConnectionStringProperties
     """
     fully_qualified_namespace, policy, key, entity, signature = _parse_conn_str(conn_str, True)[:-1]

@@ -27,7 +27,7 @@ def main():
     CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
     config_setting1 = ConfigurationSetting(key="my_key1", label="my_label1")
     config_setting2 = ConfigurationSetting(key="my_key2", label="my_label2")
-    snapshot_name = uuid4()
+    snapshot_name = str(uuid4())
     with AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING) as client:
         client.add_configuration_setting(config_setting1)
         client.add_configuration_setting(config_setting2)

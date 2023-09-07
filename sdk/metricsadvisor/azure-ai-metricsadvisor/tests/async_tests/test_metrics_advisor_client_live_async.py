@@ -246,6 +246,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
         async with client:
             await client.add_feedback(period_feedback)
 
+    @pytest.mark.skip("InternalServerError")
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("credential", API_KEY, ids=ids)
     @MetricsAdvisorPreparer()
@@ -263,6 +264,7 @@ class TestMetricsAdvisorClient(TestMetricsAdvisorClientBase):
                 tolist.append(result)
             assert len(tolist) > 0
 
+    @pytest.mark.skip("InternalServerError")
     @AzureRecordedTestCase.await_prepared_test
     @pytest.mark.parametrize("credential", API_KEY, ids=ids)
     @MetricsAdvisorPreparer()

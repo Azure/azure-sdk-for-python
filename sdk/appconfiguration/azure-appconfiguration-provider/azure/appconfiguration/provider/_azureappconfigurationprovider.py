@@ -195,7 +195,8 @@ def _buildprovider(
 ) -> "AzureAppConfigurationProvider":
     # pylint:disable=protected-access
     provider = AzureAppConfigurationProvider(**kwargs)
-    headers = _get_headers(**kwargs)
+    key_vault_options = kwargs.pop("key_vault_options", provider._key_vault_options)
+    headers = _get_headers(key_vault_options, **kwargs)
     retry_total = kwargs.pop("retry_total", 2)
     retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
 

@@ -37,7 +37,7 @@ adjust_attribute_map()
 # These helpers are to ensure that the Properties objects can't be constructed without all args present,
 # as a compromise between our use of kwargs to flatten arg-lists and trying to de-incentivise manual instantiation
 # while still trying to provide some guardrails.
-def extract_kwarg_template(kwargs, extraction_missing_args, name):
+def extract_kwarg_template(kwargs, extraction_missing_args, name): # pylint: disable=inconsistent-return-statements
     try:
         return kwargs[name]
     except KeyError:
@@ -77,19 +77,30 @@ class DictMixin(object):
 
     def __eq__(self, other):
         # type: (Any) -> bool
-        """Compare objects by comparing all attributes."""
+        """Compare objects by comparing all attributes.
+        :param any other: The object to compare with
+        :return: `True` if `self` and `other` are equal, `False` otherwise.
+        :rtype: bool
+        """
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__
         return False
 
     def __ne__(self, other):
         # type: (Any) -> bool
-        """Compare objects by comparing all attributes."""
+        """Compare objects by comparing all attributes.
+        :param any other: The object to compare with
+        :return: `True` if `self` and `other` are not equal, `False` otherwise.
+        :rtype: bool
+        """
         return not self.__eq__(other)
 
     def __str__(self):
         # type: () -> str
         return str({k: v for k, v in self.__dict__.items() if not k.startswith("_")})
+
+    def __contains__(self, key):
+        return key in self.__dict__
 
     def has_key(self, k):
         # type: (Any) -> bool
@@ -844,7 +855,7 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
         self.dead_lettering_on_message_expiration = extract_kwarg(
             "dead_lettering_on_message_expiration"
         )
-        self.dead_lettering_on_filter_evaluation_exceptions = extract_kwarg(
+        self.dead_lettering_on_filter_evaluation_exceptions = extract_kwarg( # pylint:disable=name-too-long
             "dead_lettering_on_filter_evaluation_exceptions"
         )
         self.max_delivery_count = extract_kwarg("max_delivery_count")

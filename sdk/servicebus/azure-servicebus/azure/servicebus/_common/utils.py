@@ -96,6 +96,7 @@ def create_properties(
     :param str user_agent: If specified,
     this will be added in front of the built-in user agent string.
 
+    :return: The properties to add to the connection.
     :rtype: dict
     """
     properties: Dict[Any, str] = {}
@@ -128,7 +129,7 @@ def get_renewable_start_time(renewable):
         raise TypeError(
             "Registered object is not renewable, renewable must be"
             + "a ServiceBusReceivedMessage or a ServiceBusSession from a sessionful ServiceBusReceiver."
-        )
+        ) from None
 
 
 def get_renewable_lock_duration(
@@ -143,7 +144,7 @@ def get_renewable_lock_duration(
         raise TypeError(
             "Registered object is not renewable, renewable must be"
             + "a ServiceBusReceivedMessage or a ServiceBusSession from a sessionful ServiceBusReceiver."
-        )
+        ) from None
 
 
 def create_authentication(client) -> Union["uamqp_JWTTokenAuth", "pyamqp_JWTTokenAuth"]:
@@ -216,7 +217,7 @@ def _convert_to_single_service_bus_message(
         raise TypeError(
             f"Only AmqpAnnotatedMessage, ServiceBusMessage instances or Mappings representing messages are supported. "
             f"Received instead: {message.__class__.__name__}"
-        )
+        ) from None
 
 
 def transform_outbound_messages(
@@ -234,7 +235,9 @@ def transform_outbound_messages(
     :param Messages messages: A list or single instance of messages of type ServiceBusMessage or
         dict representations of type ServiceBusMessage.
     :param Type[ServiceBusMessage] message_type: The class type to return the messages as.
-    :rtype: Union[ServiceBusMessage, List[ServiceBusMessage]]
+    :param callable to_outgoing_amqp_message: A function that converts the input message to an AMQP message.
+    :return: A list of ServiceBusMessage or a single ServiceBusMessage transformed.
+    :rtype: ~azure.servicebus.ServiceBusMessage or list[~azure.servicebus.ServiceBusMessage]
     """
     if isinstance(messages, list):
         return [
@@ -244,7 +247,11 @@ def transform_outbound_messages(
 
 
 def strip_protocol_from_uri(uri: str) -> str:
-    """Removes the protocol (e.g. http:// or sb://) from a URI, such as the FQDN."""
+    """Removes the protocol (e.g. http:// or sb://) from a URI, such as the FQDN.
+    :param str uri: The URI to modify.
+    :return: The URI without the protocol.
+    :rtype: str
+    """
     left_slash_pos = uri.find("//")
     if left_slash_pos != -1:
         return uri[left_slash_pos + 2 :]
