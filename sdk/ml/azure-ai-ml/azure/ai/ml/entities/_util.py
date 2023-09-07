@@ -317,7 +317,7 @@ def _dump_data_binding_expression_in_fields(obj):
 T = TypeVar("T")
 
 
-def get_rest_dict_for_node_attrs(target_obj: T, clear_empty_value: bool = False) -> Union[T, Dict]:
+def get_rest_dict_for_node_attrs(target_obj: Union[T, RestTranslatableMixin], clear_empty_value: bool = False):
     """Convert object to dict and convert OrderedDict to dict.
     Allow data binding expression as value, disregarding of the type defined in rest object.
 
@@ -326,13 +326,11 @@ def get_rest_dict_for_node_attrs(target_obj: T, clear_empty_value: bool = False)
     :param clear_empty_value: Whether to clear empty values. Defaults to False.
     :type clear_empty_value: bool
     :return: The translated dict, or the the original object
-    :rtype: Union[T, Dict]
+    :rtype: Optional[Union[T, Dict, List]]
     """
     # pylint: disable=too-many-return-statements
     from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 
-    if target_obj is None:
-        return None
     if isinstance(target_obj, dict):
         result = {}
         for key, value in target_obj.items():
@@ -343,10 +341,7 @@ def get_rest_dict_for_node_attrs(target_obj: T, clear_empty_value: bool = False)
             result[key] = get_rest_dict_for_node_attrs(value, clear_empty_value)
         return result
     if isinstance(target_obj, list):
-        result = []
-        for item in target_obj:
-            result.append(get_rest_dict_for_node_attrs(item, clear_empty_value))
-        return result
+        result = [get_rest_dict_for_node_attrs(item, clear_empty_value) for item in target_obj]
     if isinstance(target_obj, RestTranslatableMixin):
         # note that the rest object may be invalid as data binding expression may not fit
         # rest object structure
