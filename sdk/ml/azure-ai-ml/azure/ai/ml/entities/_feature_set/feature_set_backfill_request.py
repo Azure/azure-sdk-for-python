@@ -53,7 +53,7 @@ class FeaturesetBackfillRequest(RestTranslatableMixin):
         :rtype: tuple[class, typing.Optional[str]]
         """
         return cls, None
-    
+
     @classmethod
     def _load(
         cls,
@@ -71,7 +71,3 @@ class FeaturesetBackfillRequest(RestTranslatableMixin):
         }
         loaded_schema = load_from_dict(FeatureSetBackfillSchema, data, context, **kwargs)
         return FeaturesetBackfillRequest(**loaded_schema)
-    
-    @classmethod
-    def to_json(cls):
-        print(cls.name)

@@ -914,8 +914,8 @@ def load_feature_set_backfill_request(
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeaturesetBackfillRequest cannot be successfully validated.
-        Details will be provided in the error message.
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeaturesetBackfillRequest
+        cannot be successfully validated. Details will be provided in the error message.
     :return: Constructed FeaturesetBackfillRequest object.
     :rtype: FeaturesetBackfillRequest
     """
