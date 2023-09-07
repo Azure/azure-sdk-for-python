@@ -9,7 +9,7 @@ import uuid
 from abc import abstractmethod
 from enum import Enum
 from functools import wraps
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
 from azure.ai.ml.constants import JobType
@@ -492,7 +492,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         :return: A dictionary containing the inputs for the object.
         :rtype: Dict[str, Union[Input, str, bool, int, float]]
         """
-        return self._inputs
+        return cast(Dict[str, Union[Input, str, bool, int, float]], self._inputs)
 
     @property
     def outputs(self) -> Dict[str, Union[str, Output]]:
@@ -501,7 +501,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         :return: A dictionary containing the outputs for the object.
         :rtype: Dict[str, Union[str, Output]]
         """
-        return self._outputs
+        return cast(Dict[str, Union[str, Output]], self._outputs)
 
     def __str__(self) -> str:
         try:
