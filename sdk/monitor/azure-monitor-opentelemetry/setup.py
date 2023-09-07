@@ -57,6 +57,7 @@ setup(
     author="Microsoft Corporation",
     author_email="ascl@microsoft.com",
     url="https://github.com/microsoft/ApplicationInsights-Python/tree/main/azure-monitor-opentelemetry",
+    keywords="azure, azure sdk",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",

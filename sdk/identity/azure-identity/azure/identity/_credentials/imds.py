@@ -11,8 +11,10 @@ from azure.core.credentials import AccessToken
 
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
+from .._internal import within_credential_chain
 from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.managed_identity_client import ManagedIdentityClient
+
 
 IMDS_AUTHORITY = "http://169.254.169.254"
 IMDS_TOKEN_PATH = "/metadata/identity/oauth2/token"
@@ -63,26 +65,21 @@ class ImdsCredential(GetTokenMixin):
         return self._client.get_cached_token(*scopes)
 
     def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
-        if self._endpoint_available is None:
-            # Lacking another way to determine whether the IMDS endpoint is listening,
-            # we send a request it would immediately reject (because it lacks the Metadata header),
-            # setting a short timeout.
+
+        if within_credential_chain.get() and not self._endpoint_available:
+            # If within a chain (e.g. DefaultAzureCredential), we do a quick check to see if the IMDS endpoint
+            # is available to avoid hanging for a long time if the endpoint isn't available.
             try:
-                self._client.request_token(*scopes, connection_timeout=0.3, retry_total=0)
+                self._client.request_token(*scopes, connection_timeout=1, retry_total=0)
                 self._endpoint_available = True
             except HttpResponseError:
                 # IMDS responded
                 self._endpoint_available = True
             except Exception as ex:  # pylint:disable=broad-except
-                # if anything else was raised, assume the endpoint is unavailable
-                self._endpoint_available = False
                 self._error_message = (
                     "ManagedIdentityCredential authentication unavailable, no response from the IMDS endpoint."
                 )
                 raise CredentialUnavailableError(self._error_message) from ex
-
-        if not self._endpoint_available:
-            raise CredentialUnavailableError(self._error_message)
 
         try:
             token = self._client.request_token(*scopes, headers={"Metadata": "true"})
@@ -90,7 +87,6 @@ class ImdsCredential(GetTokenMixin):
             # 400 in response to a token request indicates managed identity is disabled,
             # or the identity with the specified client_id is not available
             if ex.status_code == 400:
-                self._endpoint_available = False
                 self._error_message = "ManagedIdentityCredential authentication unavailable. "
                 if self._user_assigned_identity:
                     self._error_message += "The requested identity has not been assigned to this resource."
@@ -100,4 +96,10 @@ class ImdsCredential(GetTokenMixin):
 
             # any other error is unexpected
             raise ClientAuthenticationError(message=ex.message, response=ex.response) from ex
+        except Exception as ex:  # pylint:disable=broad-except
+            # if anything else was raised, assume the endpoint is unavailable
+            self._error_message = (
+                "ManagedIdentityCredential authentication unavailable, no response from the IMDS endpoint."
+            )
+            raise CredentialUnavailableError(self._error_message) from ex
         return token
