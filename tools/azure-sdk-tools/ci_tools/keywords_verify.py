@@ -7,7 +7,7 @@ from ci_tools.environment_exclusions import is_check_enabled
 
 def entrypoint() -> None:
     parser = argparse.ArgumentParser(
-        description="""This is the primary entrypoint for the "build" action. This command is used to build any package within the azure-sdk-for-python repository.""",
+        description="""This utility checks the keywords of a targeted python package. If the keyword 'azure sdk' is not present, error.""",
     )
 
     parser.add_argument(
