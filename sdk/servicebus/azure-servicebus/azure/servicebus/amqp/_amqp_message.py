@@ -148,11 +148,9 @@ class AmqpAnnotatedMessage(object):
             self._value_body = kwargs.get("value_body")
             self._body_type = AmqpMessageBodyType.VALUE
 
-        header_dict = cast(Mapping, header)
-        self._header = AmqpMessageHeader(**header_dict) if header else None
+        self._header = AmqpMessageHeader(**header) if header else None
         self._footer = footer
-        properties_dict = cast(Mapping, properties)
-        self._properties = AmqpMessageProperties(**properties_dict) if properties else None
+        self._properties = AmqpMessageProperties(**properties) if properties else None
         self._application_properties = cast(Optional[Dict[Union[str, bytes], Any]], application_properties)
         self._annotations = cast(Optional[Dict[Union[str, bytes], Any]], annotations)
         self._delivery_annotations = cast(Optional[Dict[Union[str, bytes], Any]], delivery_annotations)
