@@ -369,8 +369,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         :return: A list of keys loaded from Azure App Configuration.
         :rtype: Iterable[str]
         """
-        async with self._update_lock:
-            return self._dict.keys()
+        return self._dict.keys()
 
     def items(self) -> Iterable[Tuple[str, str]]:
         """
@@ -380,8 +379,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         :return: A list of key-value pairs loaded from Azure App Configuration.
         :rtype: Iterable[Tuple[str, str]]
         """
-        async with self._update_lock:
-            return self._dict.items()
+        return self._dict.items()
 
     def values(self) -> Iterable[str]:
         """
@@ -391,8 +389,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         :return: A list of values loaded from Azure App Configuration.
         :rtype: Iterable[str]
         """
-        async with self._update_lock:
-            return self._dict.values()
+        return self._dict.values()
 
     def get(self, key: str, default: Optional[str] = None) -> str:
         """
@@ -404,8 +401,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         :return: The value of the specified key.
         :rtype: str
         """
-        async with self._update_lock:
-            return self._dict.get(key, default)
+        return self._dict.get(key, default)
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, AzureAppConfigurationProvider):
