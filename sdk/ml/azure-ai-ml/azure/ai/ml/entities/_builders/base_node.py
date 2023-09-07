@@ -492,7 +492,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         :return: A dictionary containing the inputs for the object.
         :rtype: Dict[str, Union[Input, str, bool, int, float]]
         """
-        return dict(self._inputs)
+        return self._inputs
 
     @property
     def outputs(self) -> Dict[str, Union[str, Output]]:
@@ -501,7 +501,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         :return: A dictionary containing the outputs for the object.
         :rtype: Dict[str, Union[str, Output]]
         """
-        return dict(self._outputs)
+        return self._outputs
 
     def __str__(self) -> str:
         try:
