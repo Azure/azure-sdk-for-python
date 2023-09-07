@@ -4,7 +4,7 @@
 
 ### Bugs Fixed
 
-- Mypy complains with new version of azure-core. #31564
+- Fixed `OpenTelemetrySpan` typing to correctly implement the `AbstractSpan` protocol. ([#31943](https://github.com/Azure/azure-sdk-for-python/pull/31943))
 
 ## 1.0.0b10 (2023-07-11)
 
