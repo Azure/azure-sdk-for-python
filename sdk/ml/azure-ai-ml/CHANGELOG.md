@@ -1,4 +1,6 @@
 # Release History
+<<<<<<< HEAD
+=======
 
 ## 1.11.0 (unreleased)
 
@@ -10,6 +12,7 @@
 
 ### Other Changes
 
+>>>>>>> release/azure-ai-ml/1.10.0
 ## 1.10.0 (2023-09-07)
 ### Features Added
 - Added support of features that are known into the future/at forecast time for dnn in AutoML Forecasting jobs.
@@ -21,8 +24,6 @@
 - Local job runs will no longer fail if Docker registry has no username/password
 - Fixed an issue that code asset doesn't work with relative symbol links.
 - Fixed [Issue 31319](https://github.com/Azure/azure-sdk-for-python/issues/31319): can't accept `PathLike` for `CommandComponent.code`.
-
-### Breaking Changes
 
 ### Other Changes
 
