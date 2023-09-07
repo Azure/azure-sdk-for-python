@@ -2607,10 +2607,10 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
     @ArgPasserAsync()
     async def test_queue_async_receive_iterator_resume_after_link_detach(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
 
-        async def hack_iter_next_mock_error(self, wait_time=None):
+        async def hack_iter_next_mock_error(self, wait_time=None, *, link_credit=None):
             try:
                 self._receive_context.set()
-                await self._open()
+                await self._open(link_credit=link_credit)
                 # when trying to receive the second message (execution_times is 1), raising LinkDetach error to mock 10 mins idle timeout
                 if self.execution_times == 1:
                     if uamqp_transport:

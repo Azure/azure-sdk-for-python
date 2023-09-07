@@ -3033,10 +3033,10 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @ArgPasser()
     def test_queue_receive_iterator_resume_after_link_detach(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
 
-        def hack_iter_next_mock_error(self, wait_time=None):
+        def hack_iter_next_mock_error(self, wait_time=None, *, link_credit=None):
             try:
                 self._receive_context.set()
-                self._open()
+                self._open(link_credit=link_credit)
                 # when trying to receive the second message (execution_times is 1), raising LinkDetach error to mock 10 mins idle timeout
                 if self.execution_times == 1:
                     # TODO: update uamqp errors to pyamqp
