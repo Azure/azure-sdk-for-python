@@ -511,7 +511,7 @@ class UserDelegationKey(object):
     """The version identifier of the REST service that created this token."""
     value: Optional[str] = None
     """The user delegation key."""
-    
+
     def __init__(self):
         self.signed_oid = None
         self.signed_tid = None

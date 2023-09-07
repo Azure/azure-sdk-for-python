@@ -71,23 +71,10 @@ def _format_url_helper(queue_name: Union[bytes, str], hostname: str, scheme: str
         f"{scheme}://{hostname}"
         f"/{quote(queue_name)}{query_str}")
 
-def _from_queue_url_helper(
-    cls, queue_url: str,
-    credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-) -> Tuple[str, str]:
+def _from_queue_url_helper(queue_url: str) -> Tuple[str, str]:
     """A client to interact with a specific Queue.
 
     :param str queue_url: The full URI to the queue, including SAS token if used.
-    :param credential:
-        The credentials with which to authenticate. This is optional if the
-        account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
-        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
-        If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
-        - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
-        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
-        should be the storage account key.
-    :paramtype Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential", "TokenCredential"]] # pylint: disable=line-too-long
     :returns: The parsed out account_url and queue name.
     :rtype: Tuple[str, str]
     """

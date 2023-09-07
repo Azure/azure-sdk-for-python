@@ -15,7 +15,7 @@ from json import (
     dumps,
     loads,
 )
-from typing import Any, BinaryIO, Callable, Dict, Optional, Tuple, TYPE_CHECKING, Union
+from typing import Any, BinaryIO, Callable, Dict, Optional, Tuple, TYPE_CHECKING
 from typing_extensions import Protocol
 
 from cryptography.hazmat.backends import default_backend

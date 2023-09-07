@@ -70,12 +70,12 @@ class AsyncStorageAccountHostsMixin(object):
         await self._client.close()
 
     def _create_pipeline(
-        self, credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]] = None, # pylint: disable=line-too-long 
+        self, credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]] = None, # pylint: disable=line-too-long
         **kwargs: Any
     ) -> Tuple[StorageConfiguration, AsyncPipeline]:
         self._credential_policy: Optional[Union[AsyncBearerTokenCredentialPolicy, SharedKeyCredentialPolicy, AzureSasCredentialPolicy]] = None # pylint: disable=line-too-long
         if hasattr(credential, 'get_token'):
-            self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)  #type: ignore [arg-type]
+            self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)  #type: ignore [arg-type] # pylint: disable=line-too-long
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):

@@ -11,7 +11,6 @@ from typing import (
     Any, cast, Dict, List,
     Optional, Tuple, TYPE_CHECKING, Union
 )
-from urllib.parse import quote, unquote, urlparse
 
 from typing_extensions import Self
 
@@ -44,7 +43,7 @@ if TYPE_CHECKING:
     from .._models import QueueProperties
 
 
-class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # type: ignore [misc]
+class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # type: ignore [misc]  # pylint: disable=line-too-long
     """A client to interact with a specific Queue.
 
     :param str account_url:
@@ -142,7 +141,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
         """
-        account_url, queue_name = _from_queue_url_helper(cls=cls, queue_url=queue_url, credential=credential)
+        account_url, queue_name = _from_queue_url_helper(queue_url=queue_url)
         return cls(account_url, queue_name=queue_name, credential=credential, **kwargs)
 
     @classmethod

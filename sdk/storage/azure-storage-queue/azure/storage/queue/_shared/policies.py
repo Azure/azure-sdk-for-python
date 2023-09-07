@@ -425,7 +425,7 @@ class StorageRetryPolicy(HTTPPolicy):
         """
         A function which sets the next host location on the request, if applicable.
 
-        Dict[str, Any]] settings: The configurable values pertaining to the next host location.
+        :param Dict[str, Any]] settings: The configurable values pertaining to the next host location.
         :param PipelineRequest request: A pipeline request object.
         """
         if settings['hosts'] and all(settings['hosts'].values()):
@@ -465,7 +465,7 @@ class StorageRetryPolicy(HTTPPolicy):
         """ Formula for computing the current backoff.
         Should be calculated by child class.
 
-        Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
+        :param Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
         :returns: The backoff time.
         :rtype: float
         """
@@ -610,7 +610,7 @@ class ExponentialRetry(StorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        Dict[str, Any]] settings: The configurable values pertaining to get backoff time.
+        :param Dict[str, Any]] settings: The configurable values pertaining to get backoff time.
         :returns:
             A float indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
@@ -657,7 +657,7 @@ class LinearRetry(StorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
+        :param Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
         :returns:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.

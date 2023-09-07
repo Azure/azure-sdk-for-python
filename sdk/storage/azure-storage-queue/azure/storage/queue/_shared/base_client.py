@@ -8,6 +8,7 @@ import uuid
 from typing import (  # pylint: disable=unused-import
     Any,
     Dict,
+    Iterator,
     Optional,
     Tuple,
     TYPE_CHECKING,
@@ -56,7 +57,7 @@ from .response_handlers import process_storage_error, PartialBatchErrorException
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.rest import HttpRequest
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 _LOGGER = logging.getLogger(__name__)
 _SERVICE_PARAMS = {
@@ -224,12 +225,12 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         return query_str.rstrip("?&"), credential
 
     def _create_pipeline(
-        self, credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]] = None, # pylint: disable=line-too-long 
+        self, credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]] = None, # pylint: disable=line-too-long
         **kwargs: Any
     ) -> Tuple[StorageConfiguration, Pipeline]:
         self._credential_policy: Any = None
         if hasattr(credential, "get_token"):
-            self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)  # type: ignore [arg-type]
+            self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)  # type: ignore [arg-type]  # pylint: disable=line-too-long
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
@@ -272,10 +273,12 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self,
         *reqs: "HttpRequest",
         **kwargs: Any
-    ) -> None:
+    ) -> Iterator["HttpResponse"]:
         """Given a series of request, do a Storage batch call.
 
         :param HttpRequest reqs: A collection of HttpRequest objects.
+        :returns: An iterator of HttpResponse objects.
+        :rtype: Iterator[HttpResponse]
         """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
@@ -378,7 +381,7 @@ def _format_shared_key_credential(
 
 def parse_connection_str(
     conn_str: str,
-    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]], # pylint: disable=line-too-long 
+    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]], # pylint: disable=line-too-long
     service: str
 ) -> Tuple[Optional[str], Optional[str], Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]]]: # pylint: disable=line-too-long
     conn_str = conn_str.rstrip(";")

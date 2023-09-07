@@ -10,7 +10,6 @@ from typing import (
     Any, cast, Dict, List, Optional,
     TYPE_CHECKING, Tuple, Union
 )
-from urllib.parse import quote, unquote, urlparse
 
 from typing_extensions import Self
 
@@ -128,7 +127,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
         """
-        account_url, queue_name = _from_queue_url_helper(cls=cls, queue_url=queue_url, credential=credential)
+        account_url, queue_name = _from_queue_url_helper(queue_url=queue_url)
         return cls(account_url, queue_name=queue_name, credential=credential, **kwargs)
 
     @classmethod
