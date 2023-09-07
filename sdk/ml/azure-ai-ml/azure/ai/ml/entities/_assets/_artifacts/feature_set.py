@@ -17,6 +17,7 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
 from azure.ai.ml._schema._feature_set.feature_set_schema import FeatureSetSchema
 from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId, get_arm_id_object_from_id
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, LONG_URI_FORMAT, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._feature_set.feature_set_specification import FeatureSetSpecification
@@ -174,3 +175,18 @@ class FeatureSet(Artifact):
                 asset_artifact.relative_path,
             )
             self.specification.path = self.path
+
+    def dump(self, dest: Union[str, PathLike], **kwargs) -> None:
+        import os
+        import shutil
+        from pathlib import Path
+
+        origin_spec_path = self.specification.path
+        relative_path = os.path.basename(self.specification.path)
+        src_spec_path = str(Path(self._base_path, self.specification.path))
+        dest_spec_path = str(Path(dest, relative_path))
+
+        shutil.copytree(src=src_spec_path, dst=dest_spec_path, dirs_exist_ok=True)
+        self.specification.path = str(Path(".", relative_path))
+        super().dump(dest=dest, **kwargs)
+        self.specification.path = origin_spec_path

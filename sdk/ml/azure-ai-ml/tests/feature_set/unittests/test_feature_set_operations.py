@@ -6,18 +6,18 @@ import pytest
 from test_utilities.constants import Test_Resource_Group, Test_Workspace_Name
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+    FeatureResourceArmPaginatedResult,
     FeaturesetContainer,
     FeaturesetContainerProperties,
+    FeaturesetJobArmPaginatedResult,
     FeaturesetVersion,
     FeaturesetVersionProperties,
-    FeaturesetJobArmPaginatedResult,
-    FeatureResourceArmPaginatedResult,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
-from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
-from azure.ai.ml.entities._feature_set.feature_set_materialization_metadata import FeatureSetMaterializationMetadata
-from azure.ai.ml.entities._feature_set.feature import Feature
 from azure.ai.ml.entities import FeatureSet, FeatureSetSpecification
+from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
+from azure.ai.ml.entities._feature_set.feature import Feature
+from azure.ai.ml.entities._feature_set.feature_set_materialization_metadata import FeatureSetMaterializationMetadata
 from azure.ai.ml.operations import DatastoreOperations
 from azure.ai.ml.operations._feature_set_operations import FeatureSetOperations
 from azure.core.paging import ItemPaged
@@ -154,3 +154,40 @@ class TestFeatureSetOperations:
             body=featureset_version,
             resource_group_name=mock_feature_set_operations._resource_group_name,
         )
+
+    @patch("azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore", new=mock_artifact_storage)
+    def test_create(self, mock_feature_set_operations: FeatureSetOperations, mock_upload_to_datastore):
+        import os
+        import uuid
+        from pathlib import Path
+        from tempfile import gettempdir
+
+        # test create through a feature set constructor
+        fs = FeatureSet(
+            name="transactions",
+            version="1",
+            description="7-day and 3-day rolling aggregation of transactions featureset",
+            entities=["azureml:account:1"],
+            stage="Development",
+            specification=FeatureSetSpecification(path="./tests/test_configs/feature_set/sample_feature_set/spec"),
+            tags={"data_type": "nonPII"},
+        )
+
+        mock_feature_set_operations.begin_create_or_update(featureset=fs)
+        call_kwargs = mock_upload_to_datastore.call_args.kwargs
+        assert call_kwargs["path"] == str(Path("./tests/test_configs/feature_set/sample_feature_set/spec").absolute())
+        mock_feature_set_operations._operation.begin_create_or_update.assert_called_once()
+
+        # test create from yaml file
+        temp_folder = uuid.uuid4().hex
+        dump_path = os.path.join(gettempdir(), temp_folder, "feature_set_asset.yaml")
+        os.makedirs(dump_path)
+        fs.dump(dest=dump_path)
+        from azure.ai.ml.entities._load_functions import load_feature_set
+
+        dumped_fs = load_feature_set(source=dump_path)
+
+        mock_feature_set_operations.begin_create_or_update(featureset=dumped_fs)
+        call_kwargs = mock_upload_to_datastore.call_args.kwargs
+        assert call_kwargs["path"] == str(Path(os.path.dirname(dump_path), "spec").absolute())
+        mock_feature_set_operations._operation.begin_create_or_update.assert_called_once()
