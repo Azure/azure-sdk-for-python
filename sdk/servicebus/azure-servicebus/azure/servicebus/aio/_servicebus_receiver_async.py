@@ -343,7 +343,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             timeout=self._max_wait_time * self._amqp_transport.TIMEOUT_FACTOR
             if self._max_wait_time
             else 0,
-            link_credit=self._prefetch_count,
+            link_credit=link_credit if link_credit else self._prefetch_count,
             # If prefetch is 0, then keep_alive coroutine frequently listens on the connection for messages and
             # releases right away, since no "prefetched" messages should be in the internal buffer.
             keep_alive_interval=self._config.keep_alive
