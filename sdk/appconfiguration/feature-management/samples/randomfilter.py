@@ -10,7 +10,7 @@ import random
 
 class RandomFilter(FeatureFilter):
     def evaluate(self, context, **kwargs):
-        """Determain if the feature flag is enabled for the given context"""
+        """Determine if the feature flag is enabled for the given context"""
         value = context.get("parameters", {}).get("Value", 0)
         if value < random.randint(0, 100):
             return True

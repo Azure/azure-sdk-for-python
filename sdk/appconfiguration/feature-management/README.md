@@ -29,6 +29,8 @@ import os
 
 endpoint = os.environ.get("APPCONFIGURATION_ENDPOINT_STRING")
 
+selects = {SettingSelector(key_filter=".appconfig.featureflag*")}
+
 config = load(endpoint=endpoint, credential=DefaultAzureCredential(), selects=selects)
 
 feature_manager = FeatureManager(config)
@@ -36,6 +38,8 @@ feature_manager = FeatureManager(config)
 # Is always true
 print("Alpha is ", feature_manager.is_enabled("Alpha"))
 ```
+
+NOTE: If no setting selector is set then feature flags with no label are loaded.
 
 ### Use feature flags from a json file
 
@@ -105,7 +109,7 @@ This object is passed into the `FeatureManager` when it is initialized.
 
 ### Feature Filters
 
-A `FeatureFilter` is a class that can be used to enable/disable feature flags. By default two feature filters are provided:
+A `FeatureFilter` is a class that can be used to enable/disable feature flags. Two built-in feature filters are provided:
 
 - `Microsoft.TimeWindowFilter` - Enables a feature flag based on a time window.
 - `Microsoft.TargetingFilter` - Enables a feature flag based on a list of users, groups, or rollout percentages.
@@ -130,6 +134,20 @@ The Time Window Filter enables a feature flag based on a time window. It has two
 Both fields are options, but at least one is required. The time window is enabled after the start time and before the end time. If the start time is not specified it is enabled until the end time. If the end time is not it is alway enabled after the start time.
 
 #### Targeting Filter
+
+Targeting is a feature management strategy that enables developers to progressively roll out new features to their user base. The strategy is built on the concept of targeting a set of users known as the target audience. An audience is made up of specific users, groups, excluded users/groups, and a designated percentage of the entire user base. The groups that are included in the audience can be broken down further into percentages of their total members.
+
+The following steps demonstrate an example of a progressive rollout for a new 'Beta' feature:
+
+1. Individual users Jeff and Alicia are granted access to the Beta
+1. Another user, Mark, asks to opt-in and is included.
+1. Twenty percent of a group known as "Ring1" users are included in the Beta.
+1. The number of "Ring1" users included in the beta is bumped up to 100 percent.
+1. Five percent of the user base is included in the beta.
+1. The rollout percentage is bumped up to 100 percent and the feature is completely rolled out.
+1. This strategy for rolling out a feature is built in to the library through the included Microsoft.Targeting feature filter.
+
+##### Defining a Targeting Feature Flilter
 
 The Targeting Filter enables a feature flag based on a list of users, groups, or rollout percentages. It has a parameter:
 
