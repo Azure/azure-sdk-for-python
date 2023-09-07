@@ -135,8 +135,8 @@ credential = DefaultAzureCredential()
 
 client = PurviewSharingClient(endpoint=endpoint, credential=credential)
 
-sent_share_id = uuid.uuid4()
-sent_share_invitation_id = uuid.uuid4()
+sent_share_id = "<sent_share_id>"
+sent_share_invitation_id="<sent_share_invitation_id>"
 
 consumerEmail = "consumer@contoso.com"
 today = date.today()
@@ -204,7 +204,7 @@ from azure.identity import DefaultAzureCredential
 
 endpoint = os.environ["ENDPOINT"]
 credential = DefaultAzureCredential()
-sent_share_id = uuid.uuid4()
+sent_share_id = "<sent_share_id>"
 
 client = PurviewSharingClient(endpoint=endpoint, credential=credential)
 
@@ -252,7 +252,7 @@ credential = DefaultAzureCredential()
 
 client = PurviewSharingClient(endpoint=endpoint,credential=credential)
 
-sent_share_id = uuid.uuid4()
+sent_share_id = "<sent_share_id>"
 
 delete_request = client.sent_shares.begin_delete(sent_share_id=str(sent_share_id))
 delete_response = delete_request.result()
@@ -274,8 +274,8 @@ credential = DefaultAzureCredential()
 
 client = PurviewSharingClient(endpoint=endpoint,credential=credential)
 
-sent_share_id = uuid.uuid4()
-sent_share_invitation_id = uuid.uuid4()
+sent_share_id = "<sent_share_id>"
+sent_share_invitation_id="<sent_share_invitation_id>"
 
 get_invitation_response = client.sent_shares.get_invitation(
     sent_share_id=str(sent_share_id), 
@@ -300,7 +300,7 @@ credential = DefaultAzureCredential()
 
 client = PurviewSharingClient(endpoint=endpoint, credential=credential)
 
-sent_share_id = uuid.uuid4()
+sent_share_id = "<sent_share_id>"
 
 list_request = client.sent_shares.list_invitations(sent_share_id=str(sent_share_id))
 
@@ -323,8 +323,8 @@ credential = DefaultAzureCredential()
 
 client = PurviewSharingClient(endpoint=endpoint,credential=credential)
 
-sent_share_id = uuid.uuid4()
-sent_share_invitation_id = uuid.uuid4()
+sent_share_id = "<sent_share_id>"
+sent_share_invitation_id="<sent_share_invitation_id>"
 
 delete_invitation_request = client.sent_shares.begin_delete_invitation(
     sent_share_id=str(sent_share_id),
@@ -569,7 +569,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 <!-- LINKS -->
 
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/purview/azure-purview-sharing/azure/purview/sharing
-[client_pypi_package]: https://aka.ms/azsdk/python/purviewsharing/pypi
+[client_pypi_package]: https://pypi.org/project/azure-purview-sharing/
 [sharing_ref_docs]: https://aka.ms/azsdk/python/purviewcatalog/ref-docs
 [sharing_product_documentation]: https://azure.microsoft.com/services/purview/
 [azure_subscription]: https://azure.microsoft.com/free/

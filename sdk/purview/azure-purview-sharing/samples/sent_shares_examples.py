@@ -95,7 +95,7 @@ sent_share_invitation = {
         "targetObjectId": targetObjectId
     }
 }
-
+sent_share_invitation_id = uuid.uuid4()
 invitation_response = client.sent_shares.create_invitation(
     sent_share_id=str(sent_share_id),
     sent_share_invitation_id=str(sent_share_invitation_id),
