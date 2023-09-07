@@ -78,7 +78,7 @@ class QueueAnalyticsLogging(GeneratedLogging):
     delete: bool = False
     """Indicates whether all delete requests should be logged."""
     read: bool = False
-    """Indicates whether all read requests should be logged"""
+    """Indicates whether all read requests should be logged."""
     write: bool = False
     """Indicates whether all write requests should be logged."""
     retention_policy: RetentionPolicy = RetentionPolicy()

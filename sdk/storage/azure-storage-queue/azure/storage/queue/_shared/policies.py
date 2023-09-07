@@ -12,7 +12,7 @@ from time import time
 from io import SEEK_SET, UnsupportedOperation
 import logging
 import uuid
-from typing import Any, Dict, Optional, TYPE_CHECKING
+from typing import Any, Dict, Optional, Union, TYPE_CHECKING
 from wsgiref.handlers import format_date_time
 try:
     from urllib.parse import (
@@ -195,7 +195,11 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
 
     This accepts both global configuration, and per-request level with "enable_http_logger"
     """
-    def __init__(self, logging_enable=False, **kwargs):
+
+    logging_enable: bool = False
+    """Whether logging should be enabled or not."""
+
+    def __init__(self, logging_enable: bool = False, **kwargs) -> None:
         self.logging_body = kwargs.pop("logging_body", False)
         super(StorageLoggingPolicy, self).__init__(logging_enable=logging_enable, **kwargs)
 
@@ -398,7 +402,18 @@ class StorageRetryPolicy(HTTPPolicy):
     The base class for Exponential and Linear retries containing shared code.
     """
 
-    def __init__(self, **kwargs):
+    total_retries: int = 10
+    """The max number of retries."""
+    connect_retries: int = 3
+    """The max number of connect retries."""
+    retry_read: int = 3
+    """The max number of read retries."""
+    retry_status:int = 3
+    """The max number of status retries."""
+    retry_to_secondary: bool = False
+    """Whether the secondary endpoint should be retried."""
+
+    def __init__(self, **kwargs: Any) -> None:
         self.total_retries = kwargs.pop('retry_total', 10)
         self.connect_retries = kwargs.pop('retry_connect', 3)
         self.read_retries = kwargs.pop('retry_read', 3)
@@ -406,12 +421,12 @@ class StorageRetryPolicy(HTTPPolicy):
         self.retry_to_secondary = kwargs.pop('retry_to_secondary', False)
         super(StorageRetryPolicy, self).__init__()
 
-    def _set_next_host_location(self, settings, request):
+    def _set_next_host_location(self, settings: Dict[str, Any], request: "PipelineRequest") -> None:
         """
         A function which sets the next host location on the request, if applicable.
 
-        :param Optional[Dict[str, Any]] settings: The configurable values pertaining to the next host location.
-        :param "PipelineRequest" request: A pipeline request object.
+        Dict[str, Any]] settings: The configurable values pertaining to the next host location.
+        :param PipelineRequest request: A pipeline request object.
         """
         if settings['hosts'] and all(settings['hosts'].values()):
             url = urlparse(request.url)
@@ -446,11 +461,11 @@ class StorageRetryPolicy(HTTPPolicy):
             'history': []
         }
 
-    def get_backoff_time(self, settings):  # pylint: disable=unused-argument
+    def get_backoff_time(self, settings: Dict[str, Any]) -> float:  # pylint: disable=unused-argument
         """ Formula for computing the current backoff.
         Should be calculated by child class.
 
-        :param Optional[Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
+        Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
         :returns: The backoff time.
         :rtype: float
         """
@@ -462,15 +477,19 @@ class StorageRetryPolicy(HTTPPolicy):
             return
         transport.sleep(backoff)
 
-    def increment(self, settings, request, response=None, error=None):
+    def increment(
+        self, settings: Dict[str, Any],
+        request: "PipelineRequest", response: Optional["PipelineResponse"] = None,
+        error: Optional[Union[ServiceRequestError, ServiceResponseError]] = None
+    ) -> bool:
         """Increment the retry counters.
 
-        :param Optional[Dict[str, Any]] settings: The configurable values pertaining to the increment operation.
-        :param "PipelineRequest" request: A pipeline request object.
-        :param "PipelineResponse": A pipeline response object.
+        Dict[str, Any]] settings: The configurable values pertaining to the increment operation.
+        :param PipelineRequest request: A pipeline request object.
+        :param Optional[PipelineResponse] response: A pipeline response object.
         :param error: An error encountered during the request, or
             None if the response was received successfully.
-        :paramtype error: Union[ServiceRequestError, ServiceResponseError]
+        :paramtype error: Optional[Union[ServiceRequestError, ServiceResponseError]]
         :returns: Whether the retry attempts are exhausted.
         :rtype: bool
         """
@@ -491,7 +510,7 @@ class StorageRetryPolicy(HTTPPolicy):
         else:
             # Incrementing because of a server error like a 500 in
             # status_forcelist and a the given method is in the allowlist
-            if response:
+            if response is not None:
                 settings['status'] -= 1
                 settings['history'].append(RequestHistory(request, http_response=response))
 
@@ -556,9 +575,12 @@ class StorageRetryPolicy(HTTPPolicy):
 class ExponentialRetry(StorageRetryPolicy):
     """Exponential retry."""
 
-    def __init__(self, initial_backoff=15, increment_base=3, retry_total=3,
-                 retry_to_secondary=False, random_jitter_range=3, **kwargs):
-        '''
+    def __init__(
+        self, initial_backoff: int = 15,
+        increment_base: int = 3, retry_total: int = 3,
+        retry_to_secondary: bool = False, random_jitter_range: int = 3, **kwargs
+    ) -> None:
+        """
         Constructs an Exponential retry object. The initial_backoff is used for
         the first retry. Subsequent retries are retried after initial_backoff +
         increment_power^retry_count seconds.
@@ -568,7 +590,7 @@ class ExponentialRetry(StorageRetryPolicy):
         :param int increment_base:
             The base, in seconds, to increment the initial_backoff by after the
             first retry.
-        :param int max_attempts:
+        :param int retry_total:
             The maximum number of retry attempts.
         :param bool retry_to_secondary:
             Whether the request should be retried to secondary, if able. This should
@@ -577,22 +599,22 @@ class ExponentialRetry(StorageRetryPolicy):
         :param int random_jitter_range:
             A number in seconds which indicates a range to jitter/randomize for the back-off interval.
             For example, a random_jitter_range of 3 results in the back-off interval x to vary between x+3 and x-3.
-        '''
+        """
         self.initial_backoff = initial_backoff
         self.increment_base = increment_base
         self.random_jitter_range = random_jitter_range
         super(ExponentialRetry, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings):
+    def get_backoff_time(self, settings: Dict[str, Any]) -> float:
         """
         Calculates how long to sleep before retrying.
 
-        :param Optional[Dict[str, Any]] settings: The configurable values pertaining to get backoff time.
+        Dict[str, Any]] settings: The configurable values pertaining to get backoff time.
         :returns:
-            An integer indicating how long to wait before retrying the request,
+            A float indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
-        :rtype: int or None
+        :rtype: float
         """
         random_generator = random.Random()
         backoff = self.initial_backoff + (0 if settings['count'] == 0 else pow(self.increment_base, settings['count']))
@@ -631,11 +653,11 @@ class LinearRetry(StorageRetryPolicy):
         super(LinearRetry, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings: Optional[Dict[str, Any]]) -> Optional[int]:
+    def get_backoff_time(self, settings: Dict[str, Any]) -> Optional[int]:
         """
         Calculates how long to sleep before retrying.
 
-        :param Optional[Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
+        Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
         :returns:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
@@ -647,7 +669,7 @@ class LinearRetry(StorageRetryPolicy):
         random_range_start = self.backoff - self.random_jitter_range \
             if self.backoff > self.random_jitter_range else 0
         random_range_end = self.backoff + self.random_jitter_range
-        return int(random_generator.uniform(random_range_start, random_range_end))
+        return random_generator.uniform(random_range_start, random_range_end)
 
 
 class StorageBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
