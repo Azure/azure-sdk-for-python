@@ -28,28 +28,19 @@ class MLClientSamples(object):
     def ml_auth_azure_default_credential(self):
         subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
         resource_group = os.environ["RESOURCE_GROUP_NAME"]
+        workspace_name = "test-ws1"
 
         # [START create_ml_client_default_credential]
+        from azure.ai.ml import MLClient
         from azure.identity import AzureAuthorityHosts, DefaultAzureCredential
 
-        from azure.ai.ml import MLClient
-
-        ml_client = MLClient(subscription_id, resource_group, credential=DefaultAzureCredential())
-        # [END create_ml_client_default_credential]
-
-        # [START create_ml_client_sovereign_cloud]
-        from azure.identity import AzureAuthorityHosts, DefaultAzureCredential
-
-        from azure.ai.ml import MLClient
-
-        kwargs = {"cloud": "AzureChinaCloud"}
         ml_client = MLClient(
-            subscription_id,
-            resource_group,
-            credential=DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_CHINA),
-            **kwargs
+            subscription_id=subscription_id,
+            resource_group_name=resource_group,
+            workspace_name=workspace_name,
+            credential=DefaultAzureCredential(),
         )
-        # [END create_ml_client_sovereign_cloud]
+        # [END create_ml_client_default_credential]
 
         # [START create_ml_client_from_config_default]
         from azure.ai.ml import MLClient
@@ -66,27 +57,40 @@ class MLClientSamples(object):
         # [END create_ml_client_from_config_custom_filename]
 
         # [START ml_client_create_or_update]
-        from azure.ai.ml.entities import AmlTokenConfiguration, command
+        from azure.ai.ml import Input, command
+        from azure.ai.ml.constants import AssetTypes
+        from azure.ai.ml.entities import ManagedOnlineEndpoint, UserIdentityConfiguration
 
-        command_job = command(
-            description="description",
-            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
-            inputs=inputs,
-            code="./tests/test_configs/training/",
-            command="echo ${{inputs.uri}} ${{inputs.data_asset}} ${{inputs.local_data}}",
-            display_name="builder_command_job",
-            compute="testCompute",
-            experiment_name="mfe-test1-dataset",
-            identity=AmlTokenConfiguration(),
+        client = MLClient(
+            subscription_id=subscription_id,
+            resource_group_name=resource_group,
+            workspace_name=workspace_name,
+            credential=DefaultAzureCredential(),
         )
-        created_job = client.create_or_update(command_job)
+        job = command(
+            code="./src",
+            command="echo hello world",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:1",
+            compute="cpu-cluster",
+            identity=UserIdentityConfiguration(),
+        )
+
+        client.create_or_update(job)
         # [END ml_client_create_or_update]
 
         # [START ml_client_begin_create_or_update]
+        from random import randint
+
         from azure.ai.ml.entities import ManagedOnlineEndpoint
 
+        client = MLClient(
+            subscription_id=subscription_id,
+            resource_group_name=resource_group,
+            workspace_name=workspace_name,
+            credential=DefaultAzureCredential(),
+        )
         endpoint = ManagedOnlineEndpoint(
-            name="online_endpoint_name",
+            name=f"online-endpoint-name-{randint(1, 1000)}",
             description="this is a sample online endpoint",
             auth_mode="key",
         )
@@ -126,9 +130,18 @@ class MLClientSamples(object):
         )
         # [END aml_token_configuration]
 
-        # Get a list of workspaces in a resource group
-        for ws in ml_client.workspaces.list():
-            print(ws.name, ":", ws.location, ":", ws.description)
+        # [START create_ml_client_sovereign_cloud]
+        from azure.ai.ml import MLClient
+        from azure.identity import AzureAuthorityHosts, DefaultAzureCredential
+
+        kwargs = {"cloud": "AzureChinaCloud"}
+        ml_client = MLClient(
+            subscription_id=subscription_id,
+            resource_group_name=resource_group,
+            credential=DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_CHINA),
+            **kwargs,
+        )
+        # [END create_ml_client_sovereign_cloud]
 
 
 if __name__ == "__main__":
