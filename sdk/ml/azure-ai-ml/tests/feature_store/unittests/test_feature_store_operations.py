@@ -8,7 +8,9 @@ from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import FeatureStore, Workspace
 from azure.ai.ml.entities._feature_store._constants import (
     OFFLINE_MATERIALIZATION_STORE_TYPE,
+    OFFLINE_STORE_CONNECTION_NAME,
     ONLINE_MATERIALIZATION_STORE_TYPE,
+    ONLINE_STORE_CONNECTION_NAME,
 )
 from azure.ai.ml.entities._feature_store.materialization_store import MaterializationStore
 from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
@@ -58,6 +60,10 @@ class TestFeatureStoreOperation:
         mock_feature_store_operation: FeatureStoreOperations,
         mocker: MockFixture,
     ):
+        from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration
+
+        IDENTITY_RESOURCE_ID = "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/test_rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/new_identity"
+
         def outgoing_get_call(rg, name):
             return Workspace(name=name, kind="featurestore")._to_rest_object()
 
@@ -88,6 +94,17 @@ class TestFeatureStoreOperation:
             )
         )
         super(type(mock_feature_store_operation), mock_feature_store_operation).begin_create.assert_called_once()
+        call_kwargs = super(
+            type(mock_feature_store_operation), mock_feature_store_operation
+        ).begin_create.call_args.kwargs
+        # remove this condition check when test env python version >= 3.8
+        if isinstance(call_kwargs, dict):
+            feature_store = call_kwargs["workspace"]
+            feature_store_settings = feature_store._feature_store_settings
+            offline_store_connection_name = feature_store_settings.offline_store_connection_name
+            online_store_connection_name = feature_store_settings.online_store_connection_name
+            assert offline_store_connection_name == None
+            assert online_store_connection_name == None
 
         super(type(mock_feature_store_operation), mock_feature_store_operation).begin_create.reset_mock()
         mock_feature_store_operation.begin_create(
@@ -99,6 +116,44 @@ class TestFeatureStoreOperation:
             )
         )
         super(type(mock_feature_store_operation), mock_feature_store_operation).begin_create.assert_called_once()
+        call_kwargs = super(
+            type(mock_feature_store_operation), mock_feature_store_operation
+        ).begin_create.call_args.kwargs
+        # remove this condition check when test env python version >= 3.8
+        if isinstance(call_kwargs, dict):
+            feature_store = call_kwargs["workspace"]
+            feature_store_settings = feature_store._feature_store_settings
+            offline_store_connection_name = feature_store_settings.offline_store_connection_name
+            online_store_connection_name = feature_store_settings.online_store_connection_name
+            assert offline_store_connection_name == None
+            assert online_store_connection_name == None
+
+        # create, with materialization identity
+        super(type(mock_feature_store_operation), mock_feature_store_operation).begin_create.reset_mock()
+        mock_feature_store_operation.begin_create(
+            feature_store=FeatureStore(
+                name="name",
+                online_store=MaterializationStore(
+                    type=ONLINE_MATERIALIZATION_STORE_TYPE, target=MOCK_MATERIALIZATION_STORE_TARGET
+                ),
+                offline_store=MaterializationStore(
+                    type=OFFLINE_MATERIALIZATION_STORE_TYPE, target=MOCK_MATERIALIZATION_STORE_TARGET
+                ),
+                materialization_identity=ManagedIdentityConfiguration(resource_id=IDENTITY_RESOURCE_ID),
+            )
+        )
+        super(type(mock_feature_store_operation), mock_feature_store_operation).begin_create.assert_called_once()
+        call_kwargs = super(
+            type(mock_feature_store_operation), mock_feature_store_operation
+        ).begin_create.call_args.kwargs
+        # remove this condition check when test env python version >= 3.8
+        if isinstance(call_kwargs, dict):
+            feature_store = call_kwargs["workspace"]
+            feature_store_settings = feature_store._feature_store_settings
+            offline_store_connection_name = feature_store_settings.offline_store_connection_name
+            online_store_connection_name = feature_store_settings.online_store_connection_name
+            assert offline_store_connection_name.startswith(OFFLINE_STORE_CONNECTION_NAME)
+            assert online_store_connection_name.startswith(ONLINE_STORE_CONNECTION_NAME)
 
         # double create call
         mock_feature_store_operation._operation.get.side_effect = outgoing_get_call
