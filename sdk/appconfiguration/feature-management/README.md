@@ -127,7 +127,7 @@ The Time Window Filter enables a feature flag based on a time window. It has two
 }
 ```
 
-Both fields are options, but at least one is required. The time window is enabled after the start time and before the end time. If the start time is not specified it is enabled until the end time. If the end time is not it is alway enabled after the start time.
+Both parameters are optional, but at least one is required. The time window filter is enabled after the start time and before the end time. If the start time is not specified, it is enabled immediately. If the end time is not specified, it will remain enabled after the start time.
 
 #### Targeting Filter
 
