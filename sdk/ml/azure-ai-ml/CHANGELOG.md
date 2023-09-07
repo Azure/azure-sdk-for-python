@@ -1,5 +1,15 @@
 # Release History
 
+## 1.10.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.10.0 (2023-09-07)
 ### Features Added
 - Added support of features that are known into the future/at forecast time for dnn in AutoML Forecasting jobs.
