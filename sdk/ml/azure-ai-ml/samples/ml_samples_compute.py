@@ -25,11 +25,12 @@ class ComputeConfigurationOptions(object):
 
         subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
         resource_group = os.environ["RESOURCE_GROUP_NAME"]
+        workspace_name = "test-ws1"
         credential = DefaultAzureCredential()
-        ml_client = MLClient(credential, subscription_id, resource_group, workspace_name="test-ws1")
+        ml_client = MLClient(credential, subscription_id, resource_group, workspace_name=workspace_name)
 
         # [START compute_operations_get]
-        cpu_cluster = ml_client.compute.get("cpucluster")
+        cpu_cluster = ml_client.compute.get("cpu-cluster")
         # [END compute_operations_get]
 
         # [START load_compute]
@@ -46,7 +47,7 @@ class ComputeConfigurationOptions(object):
         # [END compute_operations_list]
 
         # [START compute_operations_list_nodes]
-        node_list = ml_client.compute.list_nodes(name="cpucluster")
+        node_list = ml_client.compute.list_nodes(name="cpu-cluster")
         # [END compute_operations_list_nodes]
 
         # [START compute_operations_create_update]
@@ -74,7 +75,7 @@ class ComputeConfigurationOptions(object):
         # [END compute_operations_attach]
 
         # [START compute_operations_update]
-        compute_obj = ml_client.compute.get("cpucluster")
+        compute_obj = ml_client.compute.get("cpu-cluster")
         compute_obj.idle_time_before_scale_down = 200
         updated_compute = ml_client.compute.begin_update(compute_obj)
         # [END compute_operations_update]
