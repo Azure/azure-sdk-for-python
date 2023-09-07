@@ -29,7 +29,7 @@ from azure.ai.ml.entities._deployment.online_deployment import OnlineDeployment
 from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from azure.ai.ml.entities._endpoint.batch_endpoint import BatchEndpoint
 from azure.ai.ml.entities._endpoint.online_endpoint import OnlineEndpoint
-from azure.ai.ml.entities._feature_set.feature_set_backfill_request import FeaturesetBackfillRequest
+from azure.ai.ml.entities._feature_set.feature_set_backfill_request import FeatureSetBackfillRequest
 from azure.ai.ml.entities._feature_store.feature_store import FeatureStore
 from azure.ai.ml.entities._feature_store_entity.feature_store_entity import FeatureStoreEntity
 from azure.ai.ml.entities._job.job import Job
@@ -896,10 +896,10 @@ def load_feature_set_backfill_request(
     *,
     relative_origin: Optional[str] = None,
     **kwargs,
-) -> FeaturesetBackfillRequest:
-    """Construct a FeaturesetBackfillRequest object from yaml file.
+) -> FeatureSetBackfillRequest:
+    """Construct a FeatureSetBackfillRequest object from yaml file.
 
-    :param source: The local yaml source of a FeaturesetBackfillRequest object. Must be either a
+    :param source: The local yaml source of a FeatureSetBackfillRequest object. Must be either a
         path to a local file, or an already-open file.
         If the source is a path, it will be open and read.
         An exception is raised if the file does not exist.
@@ -914,9 +914,9 @@ def load_feature_set_backfill_request(
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeaturesetBackfillRequest
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeatureSetBackfillRequest
         cannot be successfully validated. Details will be provided in the error message.
-    :return: Constructed FeaturesetBackfillRequest object.
-    :rtype: FeaturesetBackfillRequest
+    :return: Constructed FeatureSetBackfillRequest object.
+    :rtype: FeatureSetBackfillRequest
     """
-    return load_common(FeaturesetBackfillRequest, source, relative_origin, **kwargs)
+    return load_common(FeatureSetBackfillRequest, source, relative_origin, **kwargs)

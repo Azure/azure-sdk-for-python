@@ -23,7 +23,7 @@ from azure.ai.ml._schema._feature_set.feature_set_backfill_schema import (
 
 
 @experimental
-class FeaturesetBackfillRequest(RestTranslatableMixin):
+class FeatureSetBackfillRequest(RestTranslatableMixin):
     def __init__(
         self,
         *,
@@ -65,7 +65,7 @@ class FeaturesetBackfillRequest(RestTranslatableMixin):
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
         **kwargs,
-    ) -> "FeaturesetBackfillRequest":
+    ) -> "FeatureSetBackfillRequest":
         data = data or {}
         print(data)
         params_override = params_override or []
@@ -76,4 +76,4 @@ class FeaturesetBackfillRequest(RestTranslatableMixin):
         loaded_schema = load_from_dict(
             FeatureSetBackfillSchema, data, context, **kwargs
         )
-        return FeaturesetBackfillRequest(**loaded_schema)
+        return FeatureSetBackfillRequest(**loaded_schema)

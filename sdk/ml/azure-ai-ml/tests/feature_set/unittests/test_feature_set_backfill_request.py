@@ -6,7 +6,7 @@ import yaml
 import pytest
 
 from azure.ai.ml.entities._feature_set.feature_set_backfill_request import (
-    FeaturesetBackfillRequest,
+    FeatureSetBackfillRequest,
 )
 from azure.ai.ml.entities._load_functions import load_feature_set_backfill_request
 
@@ -19,7 +19,7 @@ class TestFeatureSetBackfillRequestSchema:
         with open(test_path, "r") as f:
             target = yaml.safe_load(f)
         with open(test_path, "r") as f:
-            backfill_request: FeaturesetBackfillRequest = (
+            backfill_request: FeatureSetBackfillRequest = (
                 load_feature_set_backfill_request(source=test_path)
             )
         assert backfill_request.name == target["name"]
