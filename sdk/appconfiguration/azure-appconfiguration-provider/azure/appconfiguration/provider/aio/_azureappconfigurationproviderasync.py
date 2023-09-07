@@ -187,7 +187,9 @@ def _buildprovider(
     return provider
 
 
-async def _resolve_keyvault_reference(config, provider: "AzureAppConfigurationProvider", **kwargs) -> str:
+async def _resolve_keyvault_reference(
+    config: "SecretReferenceConfigurationSetting", provider: "AzureAppConfigurationProvider", **kwargs
+) -> str:
     if not ("key_vault_credential" in kwargs or "key_vault_client_configs" in kwargs or "secret_resolver" in kwargs):
         raise ValueError("Key Vault options must be set to resolve Key Vault references.")
 
