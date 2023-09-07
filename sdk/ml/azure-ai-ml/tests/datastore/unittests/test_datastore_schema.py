@@ -293,6 +293,8 @@ class TestDatastore:
         assert cfg_credentials["tenant_id"] == internal_credentials.tenant_id
         assert cfg_credentials["client_id"] == internal_credentials.client_id
         assert cfg_credentials["client_secret"] == internal_credentials.client_secret
+        assert cfg_credentials["resource_url"] == internal_credentials.resource_url
+        assert cfg_credentials["authority_url"] == internal_credentials.authority_url
 
         assert cfg["one_lake_workspace_name"] == internal_ds.one_lake_workspace_name
         assert cfg["endpoint"] == internal_ds.endpoint
@@ -324,6 +326,11 @@ class TestDatastore:
         assert rest_service_principal.client_id == internal_credential.client_id
         assert rest_service_principal.secrets
         assert rest_service_principal.secrets.client_secret == internal_credential.client_secret
+        # authority_url gets set to https://login.microsoftonline.com by default
+        assert rest_service_principal.authority_url
+        assert rest_service_principal.authority_url == internal_credential.authority_url
+        # resource_url doesn't get set to a default value so can be None
+        assert rest_service_principal.resource_url == internal_credential.resource_url
 
     def test_all_datastore_schemas_included(self):
         """Test that all DatastoreSchemas are included in the DATASTORE_SCHEMA_TYPES constant"""

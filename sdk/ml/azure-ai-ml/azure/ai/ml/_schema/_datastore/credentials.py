@@ -53,7 +53,7 @@ class SasTokenSchema(metaclass=PatchedSchemaMeta):
 
 
 class BaseTenantCredentialSchema(metaclass=PatchedSchemaMeta):
-    authority_url = fields.Str(data_key="authority_uri")
+    authority_url = fields.Str()
     resource_url = fields.Str()
     tenant_id = fields.Str(required=True)
     client_id = fields.Str(required=True)
