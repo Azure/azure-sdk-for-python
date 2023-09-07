@@ -3,7 +3,7 @@ name: customer_transactions
 version: "1"
 description: retail customer feature-set
 specification:
-  path: ./spec # path to feature set specification folder. Can be local or cloud. Contains FeatureSetSpec.yml + transformation code
+  path: spec # local relative path to feature set specification folder. Contains FeatureSetSpec.yml + transformation code
 entities: # entities associated with this feature-set
   - azureml:customer:1
   - azureml:driver:1

@@ -10,9 +10,8 @@ import uuid
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, Optional, Tuple, TypeVar, Union
+
 from typing_extensions import Literal
-from azure.storage.blob import BlobSasPermissions, generate_blob_sas
-from azure.storage.filedatalake import FileSasPermissions, generate_file_sas
 
 from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
 from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
@@ -47,6 +46,8 @@ from azure.ai.ml.entities._credentials import AccountKeyConfiguration
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.exceptions import ErrorTarget, ValidationException
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
+from azure.storage.blob import BlobSasPermissions, generate_blob_sas
+from azure.storage.filedatalake import FileSasPermissions, generate_file_sas
 
 module_logger = logging.getLogger(__name__)
 
@@ -495,9 +496,9 @@ def _check_and_upload_path(
         if not path.is_absolute():
             path = Path(artifact.base_path, path).resolve()
         uploaded_artifact = _upload_to_datastore(
-            asset_operations._operation_scope,
-            asset_operations._datastore_operation,
-            path,
+            operation_scope=asset_operations._operation_scope,
+            datastore_operation=asset_operations._datastore_operation,
+            path=path,
             datastore_name=datastore_name,
             asset_name=artifact.name,
             asset_version=str(artifact.version),

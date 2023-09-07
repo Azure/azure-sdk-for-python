@@ -3,6 +3,7 @@ from typing import Iterable
 from unittest.mock import Mock, patch
 
 import pytest
+from pytest_mock import MockFixture
 from test_utilities.constants import Test_Resource_Group, Test_Workspace_Name
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
@@ -53,7 +54,7 @@ def mock_feature_set_operations(
 
 
 # @pytest.fixture
-def mock_artifact_storage(_one, _two, _three, **kwargs) -> Mock:
+def mock_artifact_storage(**kwargs) -> Mock:
     return ArtifactStorageInfo(
         name="testFileData",
         version="3",
@@ -155,13 +156,15 @@ class TestFeatureSetOperations:
             resource_group_name=mock_feature_set_operations._resource_group_name,
         )
 
-    @patch("azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore", new=mock_artifact_storage)
-    def test_create(self, mock_feature_set_operations: FeatureSetOperations, mock_upload_to_datastore):
+    def test_create(self, mock_feature_set_operations: FeatureSetOperations, mocker: MockFixture):
         import os
         import uuid
         from pathlib import Path
         from tempfile import gettempdir
 
+        mock_upload_to_datastore = mocker.patch(
+            "azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore", side_effect=mock_artifact_storage
+        )
         # test create through a feature set constructor
         fs = FeatureSet(
             name="transactions",
@@ -175,13 +178,25 @@ class TestFeatureSetOperations:
 
         mock_feature_set_operations.begin_create_or_update(featureset=fs)
         call_kwargs = mock_upload_to_datastore.call_args.kwargs
-        assert call_kwargs["path"] == str(Path("./tests/test_configs/feature_set/sample_feature_set/spec").absolute())
+        assert call_kwargs["path"] == Path("./tests/test_configs/feature_set/sample_feature_set/spec").resolve()
+        mock_upload_to_datastore.assert_called_once()
         mock_feature_set_operations._operation.begin_create_or_update.assert_called_once()
 
+        mock_feature_set_operations._operation.begin_create_or_update.reset_mock()
         # test create from yaml file
+        fs = FeatureSet(
+            name="transactions",
+            version="1",
+            description="7-day and 3-day rolling aggregation of transactions featureset",
+            entities=["azureml:account:1"],
+            stage="Development",
+            specification=FeatureSetSpecification(path="./tests/test_configs/feature_set/sample_feature_set/spec"),
+            tags={"data_type": "nonPII"},
+        )
         temp_folder = uuid.uuid4().hex
-        dump_path = os.path.join(gettempdir(), temp_folder, "feature_set_asset.yaml")
-        os.makedirs(dump_path)
+        temp_folder = os.path.join(gettempdir(), temp_folder)
+        dump_path = os.path.join(temp_folder, "feature_set_asset.yaml")
+        os.makedirs(temp_folder)
         fs.dump(dest=dump_path)
         from azure.ai.ml.entities._load_functions import load_feature_set
 
@@ -189,5 +204,5 @@ class TestFeatureSetOperations:
 
         mock_feature_set_operations.begin_create_or_update(featureset=dumped_fs)
         call_kwargs = mock_upload_to_datastore.call_args.kwargs
-        assert call_kwargs["path"] == str(Path(os.path.dirname(dump_path), "spec").absolute())
+        assert call_kwargs["path"] == Path(os.path.dirname(dump_path), "spec").resolve()
         mock_feature_set_operations._operation.begin_create_or_update.assert_called_once()

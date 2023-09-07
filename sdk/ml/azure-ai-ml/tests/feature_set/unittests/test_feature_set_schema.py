@@ -47,17 +47,19 @@ class TestFeatureSetSchema:
     def test_feature_set_load_and_dump(self) -> None:
         import os
         import uuid
+        from pathlib import Path
         from tempfile import gettempdir
 
         # test from yaml
         feature_set_path = "./tests/test_configs/feature_set/sample_feature_set/feature_set_asset.yaml"
         loaded_fs = load_feature_set(source=feature_set_path)
         temp_folder = uuid.uuid4().hex
-        dump_path = os.path.join(gettempdir(), temp_folder, "feature_set_asset.yaml")
-        os.makedirs(dump_path)
+        temp_folder = os.path.join(gettempdir(), temp_folder)
+        os.makedirs(temp_folder)
+        dump_path = os.path.join(temp_folder, "feature_set_asset.yaml")
         loaded_fs.dump(dest=dump_path)
         dumped_fs = load_feature_set(source=dump_path)
-        assert loaded_fs.__repr__() == dumped_fs.__repr__()
+        assert loaded_fs._to_dict() == dumped_fs._to_dict()
 
         # test from constructor
         from azure.ai.ml.entities._feature_set.feature_set_specification import FeatureSetSpecification
@@ -72,8 +74,9 @@ class TestFeatureSetSchema:
             tags={"data_type": "nonPII"},
         )
         temp_folder = uuid.uuid4().hex
-        dump_path = os.path.join(gettempdir(), temp_folder, "feature_set_asset.yaml")
-        os.makedirs(dump_path)
+        temp_folder = os.path.join(gettempdir(), temp_folder)
+        os.makedirs(temp_folder)
+        dump_path = os.path.join(temp_folder, "feature_set_asset.yaml")
         fs.dump(dest=dump_path)
         fs.dump(dest=dump_path)
         dumped_fs = load_feature_set(source=dump_path)
@@ -84,4 +87,4 @@ class TestFeatureSetSchema:
         assert fs.specification.path == "./tests/test_configs/feature_set/sample_feature_set/spec"
         assert dumped_fs.entities is not None
         assert dumped_fs.specification is not None
-        assert dumped_fs.specification.path == os.path.join(".", "spec")
+        assert dumped_fs.specification.path == str(Path(".", "spec"))
