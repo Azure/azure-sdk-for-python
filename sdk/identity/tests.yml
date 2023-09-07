@@ -4,14 +4,17 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: identity
+      CloudConfig:
+        Public:
+          SubscriptionConfigurations:
+            - $(sub-config-azure-cloud-test-resources)
+            # Contains alternate tenant, AAD app and cert info for testing
+            - $(sub-config-identity-test-resources)
+            - $(sub-config-identity-test-resources-python)
       EnvVars:
-        AZURE_CLIENT_ID: $(python-identity-client-id)
-        AZURE_CLIENT_SECRET: $(python-identity-client-secret)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        CERTIFICATE_PASSWORD: $(python-identity-certificate-password)
-        PEM_CONTENT: $(python-identity-certificate)
-        PEM_CONTENT_PASSWORD_PROTECTED: $(python-identity-certificate-with-password)
-        PFX_CONTENT: $(python-identity-certificate-pfx)
-        PFX_CONTENT_PASSWORD_PROTECTED: $(python-identity-certificate-with-password-pfx)
+        AZURE_CLIENT_ID: $(IDENTITY_CLIENT_ID)
+        AZURE_CLIENT_SECRET: $(IDENTITY_CLIENT_SECRET)
+        AZURE_TENANT_ID: $(IDENTITY_TENANT_ID)
+        AZURE_SUBSCRIPTION_ID: $(IDENTITY_SUBSCRIPTION_ID)
         AZURE_TEST_RUN_LIVE: true
         AZURE_SKIP_LIVE_RECORDING: 'True'
