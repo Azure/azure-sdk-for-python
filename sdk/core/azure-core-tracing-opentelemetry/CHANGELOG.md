@@ -1,14 +1,10 @@
 # Release History
 
-## 1.0.0b11 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.0.0b11 (2023-09-07)
 
 ### Bugs Fixed
 
-### Other Changes
+- Mypy complains with new version of azure-core. #31564
 
 ## 1.0.0b10 (2023-07-11)
 
