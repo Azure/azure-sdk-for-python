@@ -392,7 +392,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     def query_databases(
         self,
         query=None,  # type: Optional[str]
-        parameters=None,  # type: Optional[List[str]]
+        parameters=None,  # type: Optional[List[Dict[str, any]]]
         enable_cross_partition_query=None,  # type: Optional[bool]
         max_item_count=None,  # type:  Optional[int]
         populate_query_metrics=None,  # type: Optional[bool]

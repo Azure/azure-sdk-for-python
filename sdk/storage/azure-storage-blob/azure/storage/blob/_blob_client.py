@@ -239,6 +239,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`create_snapshot`. If specified, this will override
             the snapshot in the url.
+        :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
+            specifies the version of the blob to operate on.
         :returns: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
         """
@@ -319,6 +321,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
+        :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
+            specifies the version of the blob to operate on.
         :returns: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
 
@@ -1813,7 +1817,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
     @distributed_trace
     def create_append_blob(self, content_settings=None, metadata=None, **kwargs):
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Union[str, datetime]]
-        """Creates a new Append Blob.
+        """Creates a new Append Blob. This operation creates a new 0-length append blob. The content
+        of any existing blob is overwritten with the newly initialized append blob. To add content to
+        the append blob, call the :func:`append_block` or :func:`append_block_from_url` method.
 
         :param ~azure.storage.blob.ContentSettings content_settings:
             ContentSettings object used to set blob properties. Used to set content type, encoding,

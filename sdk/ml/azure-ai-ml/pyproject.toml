@@ -29,7 +29,6 @@ extend_skip_glob = [
 
 [tool.mypy] 
 exclude = ["azure/ai/ml/_vendor", "azure/ai/ml/_restclient"] 
-disallow_any_explicit = true 
 disallow_untyped_defs = true 
 warn_unused_ignores = true 
 warn_return_any = true 

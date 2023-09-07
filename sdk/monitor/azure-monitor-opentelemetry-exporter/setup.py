@@ -55,6 +55,7 @@ setup(
     author='Microsoft Corporation',
     author_email='ascl@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter',
+    keywords="azure, azure sdk",
     classifiers=[
         "Development Status :: 4 - Beta",
         'Programming Language :: Python',
@@ -86,7 +87,7 @@ setup(
         "msrest>=0.6.10",
         "opentelemetry-api~=1.19.0",
         "opentelemetry-sdk~=1.19.0",
-        "importlib-metadata~=6.0.0; python_version < '3.8'"
+        "importlib-metadata~=6.0; python_version < '3.8'"
     ],
     entry_points={
         "opentelemetry_traces_exporter": [

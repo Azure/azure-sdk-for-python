@@ -1,7 +1,6 @@
 from unittest.mock import DEFAULT, Mock
 
 import pytest
-from azure.core.polling import LROPoller
 from marshmallow import ValidationError
 from pytest_mock import MockFixture
 
@@ -12,7 +11,11 @@ from azure.ai.ml.entities._feature_store._constants import (
     ONLINE_MATERIALIZATION_STORE_TYPE,
 )
 from azure.ai.ml.entities._feature_store.materialization_store import MaterializationStore
+from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
 from azure.ai.ml.operations._feature_store_operations import FeatureStoreOperations
+from azure.core.polling import LROPoller
+
+MOCK_MATERIALIZATION_STORE_TARGET = "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/test_storage/blobServices/default/containers/offlinestore"
 
 
 @pytest.fixture
@@ -79,7 +82,9 @@ class TestFeatureStoreOperation:
         mock_feature_store_operation.begin_create(
             feature_store=FeatureStore(
                 name="name",
-                offline_store=MaterializationStore(type=OFFLINE_MATERIALIZATION_STORE_TYPE, target="test_path"),
+                offline_store=MaterializationStore(
+                    type=OFFLINE_MATERIALIZATION_STORE_TYPE, target=MOCK_MATERIALIZATION_STORE_TARGET
+                ),
             )
         )
         super(type(mock_feature_store_operation), mock_feature_store_operation).begin_create.assert_called_once()
@@ -88,7 +93,9 @@ class TestFeatureStoreOperation:
         mock_feature_store_operation.begin_create(
             feature_store=FeatureStore(
                 name="name",
-                online_store=MaterializationStore(type=ONLINE_MATERIALIZATION_STORE_TYPE, target="test_path"),
+                online_store=MaterializationStore(
+                    type=ONLINE_MATERIALIZATION_STORE_TYPE, target=MOCK_MATERIALIZATION_STORE_TARGET
+                ),
             )
         )
         super(type(mock_feature_store_operation), mock_feature_store_operation).begin_create.assert_called_once()
@@ -129,14 +136,18 @@ class TestFeatureStoreOperation:
             mock_feature_store_operation.begin_update(
                 feature_store=FeatureStore(
                     name="name",
-                    offline_store=MaterializationStore(type=OFFLINE_MATERIALIZATION_STORE_TYPE, target="test_path"),
+                    offline_store=MaterializationStore(
+                        type=OFFLINE_MATERIALIZATION_STORE_TYPE, target=MOCK_MATERIALIZATION_STORE_TARGET
+                    ),
                 )
             )
         with pytest.raises(ValidationError):
             mock_feature_store_operation.begin_update(
                 feature_store=FeatureStore(
                     name="name",
-                    online_store=MaterializationStore(type=ONLINE_MATERIALIZATION_STORE_TYPE, target="test_path"),
+                    online_store=MaterializationStore(
+                        type=ONLINE_MATERIALIZATION_STORE_TYPE, target=MOCK_MATERIALIZATION_STORE_TARGET
+                    ),
                 )
             )
 
@@ -146,14 +157,14 @@ class TestFeatureStoreOperation:
         from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration
         from azure.ai.ml.entities._feature_store.materialization_store import MaterializationStore
 
-        EXISTING_IDENTITY_RESOURCE_ID = "existing_identity_resource_id"
-        EXISTING_OFFLINE_STORE_RESOURCE_ID = "existing_offline_store_resource_id"
-        EXISTING_ONLINE_STORE_RESOURCE_ID = "existing_online_store_resource_id"
+        EXISTING_IDENTITY_RESOURCE_ID = "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/test_rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/exist_identity"
+        EXISTING_OFFLINE_STORE_RESOURCE_ID = "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/test_rg/providers/Microsoft.Storage/storageAccounts/test_storage/blobServices/default/containers/exist"
+        EXISTING_ONLINE_STORE_RESOURCE_ID = "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/mdctest/providers/Microsoft.Cache/Redis/exist"
         OFFLINE_STORE_CONNECTION_NAME = "offlineStoreConnectionName"
         ONLINE_STORE_CONNECTION_NAME = "onlineStoreConnectionName"
-        NEW_IDENTITY_RESOURCE_ID = "new_identity_resource_id"
-        NEW_OFFLINE_STORE_RESOURCE_ID = "new_offline_store_resource_id"
-        NEW_ONLINE_STORE_RESOURCE_ID = "new_online_store_resource_id"
+        NEW_IDENTITY_RESOURCE_ID = "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/test_rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/new_identity"
+        NEW_OFFLINE_STORE_RESOURCE_ID = "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/test_rg/providers/Microsoft.Storage/storageAccounts/test_storage/blobServices/default/containers/new"
+        NEW_ONLINE_STORE_RESOURCE_ID = "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/mdctest/providers/Microsoft.Cache/Redis/new"
 
         mocker.patch(
             "azure.ai.ml.operations._workspace_operations_base.WorkspaceOperationsBase.begin_update",
@@ -226,7 +237,7 @@ class TestFeatureStoreOperation:
 
                 # remove this condition check when test env python version >= 3.8
                 if isinstance(call_kwargs, dict):
-                    assert call_kwargs["grant_materialization_identity_permissions"] == True
+                    assert call_kwargs["grant_materialization_permissions"] == True
                     assert call_kwargs["update_workspace_role_assignment"] == testcase[1][0]
                     assert call_kwargs["update_offline_store_role_assignment"] == testcase[1][1]
                     assert call_kwargs["update_online_store_role_assignment"] == testcase[1][2]
@@ -362,8 +373,29 @@ class TestFeatureStoreOperation:
         perform_tests(testcases1, mock_feature_store_operation)
 
         # non existing stores
-        mock_feature_store_operation._workspace_connection_operation.get.reset_mock(side_effect=True)
-        mock_feature_store_operation._workspace_connection_operation.get.return_value = None
+        def outgoing_get_call_empty_no_workspace_connection(rg, name):
+            from azure.ai.ml._utils.utils import camel_to_snake
+            from azure.ai.ml.constants import ManagedServiceIdentityType
+            from azure.ai.ml.entities import IdentityConfiguration, ManagedIdentityConfiguration
+            from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
+
+            ws = Workspace(
+                name=name,
+                kind="featurestore",
+                identity=IdentityConfiguration(
+                    type=camel_to_snake(ManagedServiceIdentityType.USER_ASSIGNED),
+                    user_assigned_identities=[
+                        ManagedIdentityConfiguration(resource_id=EXISTING_IDENTITY_RESOURCE_ID),
+                    ],
+                ),
+            )
+            ws._feature_store_settings = FeatureStoreSettings(
+                offline_store_connection_name=None,
+                online_store_connection_name=None,
+            )
+            return ws._to_rest_object()
+
+        mock_feature_store_operation._operation.get.side_effect = outgoing_get_call_empty_no_workspace_connection
 
         testcases2 = [
             (FeatureStore(name="name", description="description"), [False, False, False, None, None, None]),

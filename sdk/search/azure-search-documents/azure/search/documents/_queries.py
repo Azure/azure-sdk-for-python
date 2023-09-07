@@ -59,8 +59,15 @@ class SearchQuery(_QueryBase):
         """
         if not fields:
             raise ValueError("At least one field must be provided")
-
-        self._request.order_by = ",".join(fields)
+        if not fields:
+            raise ValueError("At least one field must be provided")
+        selects = []
+        for field in fields:
+            if isinstance(field, list):
+                selects.append(",".join(field))
+            else:
+                selects.append(field)
+        self._request.order_by = ",".join(selects)
 
     def select(self, *fields: str) -> None:
         """Update the `select` property for the search results.
@@ -86,6 +93,25 @@ class SuggestQuery(_QueryBase):
     _request_type = SuggestRequest
 
     __doc__ = SuggestRequest.__doc__
+
+    def order_by(self, *fields: str) -> None:
+        """Update the `orderby` property for the search results.
+
+        :param fields: A list of fields for the query result to be ordered by.
+        :type fields: str
+        :raises: ValueError
+        """
+        if not fields:
+            raise ValueError("At least one field must be provided")
+        if not fields:
+            raise ValueError("At least one field must be provided")
+        selects = []
+        for field in fields:
+            if isinstance(field, list):
+                selects.append(",".join(field))
+            else:
+                selects.append(field)
+        self._request.order_by = ",".join(selects)
 
     def select(self, *fields: str) -> None:
         """Update the `select` property for the search results.
