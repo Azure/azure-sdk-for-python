@@ -147,7 +147,7 @@ The following steps demonstrate an example of a progressive rollout for a new 'B
 1. The rollout percentage is bumped up to 100 percent and the feature is completely rolled out.
 1. This strategy for rolling out a feature is built in to the library through the included Microsoft.Targeting feature filter.
 
-##### Defining a Targeting Feature Flilter
+##### Defining a Targeting Feature Filter
 
 The Targeting Filter enables a feature flag based on a list of users, groups, or rollout percentages. It has a parameter:
 
