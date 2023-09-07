@@ -301,7 +301,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 )
         except AttributeError as ae:
             raise RuntimeError("handler is not initialized and cannot complete the message") from ae
-        
+
         except AMQPConnectionError as e:
             raise RuntimeError("Connection lost during settle operation.") from e
 

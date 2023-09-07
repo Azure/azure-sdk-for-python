@@ -734,7 +734,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
         except AMQPConnectionError as e:
             raise RuntimeError("Connection lost during settle operation.") from e
-        
+
         raise ValueError(
             f"Unsupported settle operation type: {settle_operation}"
         )
