@@ -47,14 +47,17 @@ http = urllib3.PoolManager()
 #       checkout_path: sdk/storage
 #       version: 12.7.0
 
+
 def get_pypi_page(package: str, version: str) -> bs4.BeautifulSoup:
     url = f"https://pypi.org/project/{package}/{version}/"
 
     try:
         r = http.request("GET", url)
     except Exception as e:
-        raise RuntimeError(f"This package \"{package}\" has been configured to retrieve package source distribution from PyPI at URL \"{url}\"." +
-                           "Unable to retrieve these bits from PyPI. Check conda package configuration in conda-sdk-client.yml and retry.")
+        raise RuntimeError(
+            f'This package "{package}" has been configured to retrieve package source distribution from PyPI at URL "{url}".'
+            + "Unable to retrieve these bits from PyPI. Check conda package configuration in conda-sdk-client.yml and retry."
+        )
 
     return bs4.BeautifulSoup(r.data.decode("utf-8"), "html.parser")
 
@@ -124,7 +127,7 @@ class CondaConfiguration:
         created_sdist_path: str = None,
         service: str = "",
         conda_py_versions: List[str] = [],
-        channels: List[str] = []
+        channels: List[str] = [],
     ):
         self.name: str = name
         self.common_root: str = common_root
