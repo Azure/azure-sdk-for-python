@@ -29,6 +29,7 @@ class AsyncTokenCredential(Protocol, AsyncContextManager["AsyncTokenCredential"]
         :rtype: AccessToken
         :return: An AccessToken instance containing the token string and its expiration time in Unix time.
         """
+        ...
 
     async def close(self) -> None:
         pass

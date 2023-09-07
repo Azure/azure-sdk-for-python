@@ -172,7 +172,8 @@ class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseTy
                 policies = policies_1
 
         if transport is None:
-            from .pipeline.transport import RequestsTransport  # pylint: disable=no-name-in-module
+            # Use private import for better typing, mypy and pyright don't like PEP562
+            from .pipeline.transport._requests_basic import RequestsTransport
 
             transport = RequestsTransport(**kwargs)
 
