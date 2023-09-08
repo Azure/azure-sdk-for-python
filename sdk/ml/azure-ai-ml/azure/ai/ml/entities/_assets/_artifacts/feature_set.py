@@ -6,7 +6,7 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import IO, AnyStr, Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     FeaturesetContainer,
@@ -175,15 +175,17 @@ class FeatureSet(Artifact):
             )
             self.specification.path = self.path
 
-    def dump(self, dest: Union[str, PathLike], **kwargs) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         import os
         import shutil
+        from os import PathLike
 
         origin_spec_path = self.specification.path
-        relative_path = os.path.basename(self.specification.path)
-        src_spec_path = str(Path(self._base_path, self.specification.path))
-        dest_spec_path = str(Path(os.path.dirname(dest), relative_path))
-        shutil.copytree(src=src_spec_path, dst=dest_spec_path)
-        self.specification.path = str(Path("./", relative_path))
+        if isinstance(dest, str) or isinstance(dest, PathLike):
+            relative_path = os.path.basename(self.specification.path)
+            src_spec_path = str(Path(self._base_path, self.specification.path))
+            dest_spec_path = str(Path(os.path.dirname(dest), relative_path))
+            shutil.copytree(src=src_spec_path, dst=dest_spec_path)
+            self.specification.path = str(Path("./", relative_path))
         super().dump(dest=dest, **kwargs)
         self.specification.path = origin_spec_path
