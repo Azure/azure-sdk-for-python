@@ -825,7 +825,8 @@
     {
       "filename": "sdk/keyvault/**",
       "words": [
-        "eddsa"
+        "eddsa",
+        "asym"
       ]
     },
     {
