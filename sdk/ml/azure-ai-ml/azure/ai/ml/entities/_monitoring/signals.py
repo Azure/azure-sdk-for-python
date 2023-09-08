@@ -343,6 +343,8 @@ class MonitoringSignal(RestTranslatableMixin):
             return FeatureAttributionDriftSignal._from_rest_object(obj)
         if obj.signal_type == MonitoringSignalType.CUSTOM:
             return CustomMonitoringSignal._from_rest_object(obj)
+        if obj.signal_type == MonitoringSignalType.GENERATION_SAFETY_QUALITY:
+            return GenerationSafetyQualitySignal._from_rest_object(obj)
 
         return None
 
@@ -969,7 +971,7 @@ class LlmRequestResponseData(RestTranslatableMixin):
                 type=obj.job_input_type,
             ),
             data_column_names=obj.columns,
-            data_window_size=obj.window_size,
+            data_window_size=isodate.duration_isoformat(obj.window_size),
         )
 
 @experimental
@@ -1000,6 +1002,19 @@ class GenerationSafetyQualitySignal(RestTranslatableMixin):
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
             properties=self.properties,
             sampling_rate=self.sampling_rate,
+        )
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestGenerationSafetyQualityMonitoringSignal) -> "GenerationSafetyQualitySignal":
+        return cls(
+            production_data=[LlmRequestResponseData._from_rest_object(data) for data in obj.production_data],
+            workspace_connection_id=obj.workspace_connection_id,
+            metric_thresholds=GenerationSafetyQualityMonitoringMetricThreshold._from_rest_object(obj.metric_thresholds),
+            alert_enabled=False
+            if not obj.mode or (obj.mode and obj.mode == MonitoringNotificationMode.DISABLED)
+            else MonitoringNotificationMode.ENABLED,
+            properties=obj.properties,
+            sampling_rate=obj.sampling_rate,
         )
 
 def _from_rest_features(

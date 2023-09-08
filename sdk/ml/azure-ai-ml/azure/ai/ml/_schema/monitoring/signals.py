@@ -24,6 +24,7 @@ from azure.ai.ml._schema.monitoring.thresholds import (
     FeatureAttributionDriftMetricThresholdSchema,
     ModelPerformanceMetricThresholdSchema,
     CustomMonitoringMetricThresholdSchema,
+    GenerationSafetyQualityMetricThresholdSchema,
 )
 
 
@@ -291,9 +292,9 @@ class LlmRequestResponseDataSchema(metaclass=PatchedSchemaMeta):
 
 class GenerationSafetyQualitySchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(allowed_values=MonitorSignalType.GENERATION_SAFETY_QUALITY, required=True)
-    production_data = NestedField(LlmRequestResponseDataSchema)
+    production_data = fields.List(NestedField(LlmRequestResponseDataSchema))
     workspace_connection_id = fields.Str()
-    #metric_thresholds = NestedField(DataQualityMetricThresholdSchema)
+    metric_thresholds = NestedField(GenerationSafetyQualityMetricThresholdSchema)
     alert_enabled = fields.Bool()
     properties = fields.Dict()
     sampling_rate = fields.Float()

@@ -147,13 +147,25 @@ class GenerationSafetyQualityMetricThresholdSchema(metaclass=PatchedSchemaMeta):
         keys=StringTransformedEnum(allowed_values=["acceptable_groundedness_score_per_instance","aggregated_groundedness_pass_rate"]), 
         values=fields.Number()
     )
-    # relevance = NestedField()
-    # coherence = NestedField()
-    # fluency = NestedField()
-    # similary = NestedField()
+    relevance = fields.Dict(
+        keys=StringTransformedEnum(allowed_values=["acceptable_relevance_score_per_instance","aggregated_relevance_pass_rate"]),
+        values=fields.Number()
+    )
+    coherence = fields.Dict(
+        keys=StringTransformedEnum(allowed_values=["acceptable_coherence_score_per_instance","aggregated_coherence_pass_rate"]),
+        values=fields.Number()
+    )
+    fluency = fields.Dict(
+        keys=StringTransformedEnum(allowed_values=["acceptable_fluency_score_per_instance","aggregated_fluency_pass_rate"]),
+        values=fields.Number()
+    )
+    similary = fields.Dict(
+        keys=StringTransformedEnum(allowed_values=["acceptable_similarity_score_per_instance","aggregated_similarity_pass_rate"]),
+        values=fields.Number()
+    )
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.thresholds import GenerationSafetyQualityMetricThreshold
+        from azure.ai.ml.entities._monitoring.thresholds import GenerationSafetyQualityMonitoringMetricThreshold
 
-        return GenerationSafetyQualityMetricThreshold(**data)
+        return GenerationSafetyQualityMonitoringMetricThreshold(**data)

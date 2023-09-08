@@ -1,4 +1,4 @@
-name: data-drift-test
+name: generation-safety-quality-test
 trigger:
   type: recurrence
   frequency: week
@@ -32,13 +32,13 @@ create_monitor:
         - input_data:
             path: azureml:my_model_inputs_data:1
             type: mltable
-          data_context: model_inputs
+          data_window_size: P7D
           data_column_names:
             correlation_id: inference_correlation_id
         - input_data:
             path: azureml:my_model_outputs_data:1
             type: mltable
-          data_context: model_outputs
+          data_window_size: P7D
           data_column_names:
             prediction: is_fraud
             prediction_probability: is_fraud_probability
@@ -47,4 +47,9 @@ create_monitor:
       sampling_rate: 0.2
       metric_thresholds:
         groundedness:
-          acceptable_groundedness_score_per_instance: 0.0
+          acceptable_groundedness_score_per_instance: 0.1
+          aggregated_groundedness_pass_rate: 0.2
+properties:
+  prop1: value
+tags:
+  tag1: tag
