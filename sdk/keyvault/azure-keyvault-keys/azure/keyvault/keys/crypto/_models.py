@@ -4,7 +4,7 @@
 # ------------------------------------
 from typing import cast, Optional, Union, TYPE_CHECKING
 
-from cryptography.hazmat.primitives import _serialization, hashes
+from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.asymmetric import utils as asym_utils
 from cryptography.hazmat.primitives.asymmetric.padding import AsymmetricPadding, OAEP, PKCS1v15, PSS
 from cryptography.hazmat.primitives.asymmetric.rsa import (
@@ -134,9 +134,9 @@ class KeyVaultPrivateKey(RSAPrivateKey):
 
     def private_bytes(  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         self,
-        encoding: _serialization.Encoding,
-        format: _serialization.PrivateFormat,
-        encryption_algorithm: _serialization.KeySerializationEncryption,
+        encoding: serialization.Encoding,
+        format: serialization.PrivateFormat,
+        encryption_algorithm: serialization.KeySerializationEncryption,
     ) -> bytes:
         """Returns the key serialized as bytes. Not implemented, as the private key is managed by Key Vault."""
         raise NotImplementedError()
