@@ -391,7 +391,10 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         # the same as code
         if not isinstance(self.component, CommandComponent):
             return None
-        return self.component.command
+
+        if self.component.command is None:
+            return None
+        return str(self.component.command)
 
     @command.setter
     def command(self, value: str) -> None:
@@ -427,7 +430,11 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         # which is invalid in schema validation.
         if not isinstance(self.component, CommandComponent):
             return None
-        return self.component.code
+
+        if self.component.code is None:
+            return None
+
+        return str(self.component.code)
 
     @code.setter
     def code(self, value: str) -> None:
