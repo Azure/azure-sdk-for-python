@@ -127,7 +127,7 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         if not token:
             sanitized_output = sanitize_output(output)
             message = (
-                f"Unexpected output from Azure CLI: '{sanitized_output}'. \n"
+                f"Unexpected output from Azure Developer CLI: '{sanitized_output}'. \n"
                 f"To mitigate this issue, please refer to the troubleshooting guidelines here at "
                 f"https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot."
             )
