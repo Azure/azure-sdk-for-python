@@ -21,6 +21,11 @@ from ._serialization import Serializer
 from ._signature_credential_policy import EventGridSasCredentialPolicy
 from . import _constants as constants
 
+from azure.core.rest import HttpRequest
+
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
+
 if TYPE_CHECKING:
     from datetime import datetime
 
@@ -186,12 +191,16 @@ def _build_request(endpoint, content_type, events, *, channel_name=None):
     query_parameters: Dict[str, Any] = {}
     query_parameters['api-version'] = serialize.query("api_version", "2018-01-01", 'str')
 
-    body = serialize.body(events, '[object]')
-    if body is None:
-        data = None
-    else:
-        data = json.dumps(body)
+    if isinstance(events[0], CloudEvent):
+        data = _to_json_http_request(endpoint, content_type, events, query_parameters=query_parameters, channel_name=None)
         header_parameters['Content-Length'] = str(len(data))
+    else:
+        body = serialize.body(events, '[object]')
+        if body is None:
+            data = None
+        else:
+            data = json.dumps(body)
+            header_parameters['Content-Length'] = str(len(data))
 
     request = HttpRequest(
         method="POST",
@@ -201,3 +210,25 @@ def _build_request(endpoint, content_type, events, *, channel_name=None):
     )
     request.format_parameters(query_parameters)
     return request
+
+def _to_json_http_request(endpoint, content_type, events, **kwargs):
+    # serialize the events
+    data = {}
+    list_data = []
+    for event in events:
+        data["type"] =  _SERIALIZER.body(event.type, "str")
+        data["specversion"] = _SERIALIZER.body(event.specversion, "str")
+        data["source"] = _SERIALIZER.body(event.source, "str")
+        data["subject"] = _SERIALIZER.body(event.subject, "str")
+        data["id"] = _SERIALIZER.body(event.id, "str")
+        data["data"] = _SERIALIZER.body(event.data, "object")
+        data["time"] = _SERIALIZER.body(event.time, "str")
+        data["datacontenttype"] = _SERIALIZER.body(event.datacontenttype, "str")
+        if event.extensions:
+            data.update(_SERIALIZER.body(event.extensions, "object"))
+        list_data.append(data)
+    
+    return json.dumps(list_data)
+
+    
+
