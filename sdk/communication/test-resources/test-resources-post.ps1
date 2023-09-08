@@ -49,9 +49,9 @@ $hostAndPort = $endpointParsedUri.Host
 $apiVersion = "2023-04-01-preview"
 $urlPathAndQuery = $communicationServiceEndpoint + "sip?api-version=$apiVersion"
 $stringToSign = "PATCH`n/sip?api-version=$apiVersion`n$utcNow;$hostAndPort;$contentHashBase64String"
-$hmacsha = New-Object System.Security.Cryptography.HMACSHA256
-$hmacsha.key = [System.Convert]::FromBase64String($communicationServiceApiKey)
-$signatureBytes = $hmacsha.ComputeHash([Text.Encoding]::ASCII.GetBytes($stringToSign))
+$hasher = New-Object System.Security.Cryptography.HMACSHA256
+$hasher.key = [System.Convert]::FromBase64String($communicationServiceApiKey)
+$signatureBytes = $hasher.ComputeHash([Text.Encoding]::ASCII.GetBytes($stringToSign))
 $requestSignatureBase64String = [Convert]::ToBase64String($signatureBytes)
 $authorizationValue = "HMAC-SHA256 SignedHeaders=date;host;x-ms-content-sha256&Signature=$requestSignatureBase64String"
 
