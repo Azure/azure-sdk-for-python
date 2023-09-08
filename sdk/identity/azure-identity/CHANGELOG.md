@@ -1,13 +1,11 @@
 # Release History
 
-## 1.15.0b1 (Unreleased)
+## 1.15.0b1 (2023-09-12)
 
 ### Features Added
 
 - Added Windows Web Account Manager (WAM) Brokered Authentication support.
 - Added `enable_msa_passthrough` suppport for `InteractiveBrowserCredential`. By default `InteractiveBrowserCredential` only lists AAD accounts. If you set `enable_msa_passthrough` to `True`, it lists both AAD accounts and MSA outlook.com accounts that are logged in to Windows.
-
-### Breaking Changes
 
 ### Bugs Fixed
 
