@@ -19,7 +19,8 @@ from typing import (
     Union,
     Tuple,
     cast,
-    Callable
+    Callable,
+    Iterable,
 )
 from datetime import timezone
 
@@ -58,9 +59,9 @@ if TYPE_CHECKING:
         Mapping[str, Any],
         ServiceBusMessage,
         AmqpAnnotatedMessage,
-        List[Mapping[str, Any]],
-        List[ServiceBusMessage],
-        List[AmqpAnnotatedMessage],
+        Iterable[Mapping[str, Any]],
+        Iterable[ServiceBusMessage],
+        Iterable[AmqpAnnotatedMessage],
     ]
 
     SingleMessageType = Union[
@@ -241,12 +242,12 @@ def transform_outbound_messages(
     :return: A list of ServiceBusMessage or a single ServiceBusMessage transformed.
     :rtype: ~azure.servicebus.ServiceBusMessage or list[~azure.servicebus.ServiceBusMessage]
     """
-    if isinstance(messages, list):
+    if isinstance(messages, Mapping) or not isinstance(messages, Iterable):
+        return _convert_to_single_service_bus_message(messages, message_type, to_outgoing_amqp_message)
+    else:
         return [
             _convert_to_single_service_bus_message(m, message_type, to_outgoing_amqp_message) for m in messages
         ]
-    return _convert_to_single_service_bus_message(messages, message_type, to_outgoing_amqp_message)
-
 
 def strip_protocol_from_uri(uri: str) -> str:
     """Removes the protocol (e.g. http:// or sb://) from a URI, such as the FQDN.
