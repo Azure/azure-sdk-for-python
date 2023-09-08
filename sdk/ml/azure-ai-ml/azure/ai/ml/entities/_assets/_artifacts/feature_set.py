@@ -178,10 +178,10 @@ class FeatureSet(Artifact):
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         import os
         import shutil
-        from os import PathLike
+        from azure.ai.ml._utils.utils import is_url
 
         origin_spec_path = self.specification.path
-        if isinstance(dest, str) or isinstance(dest, PathLike):
+        if isinstance(dest, (PathLike, str)) and not is_url(self.specification.path):
             relative_path = os.path.basename(self.specification.path)
             src_spec_path = str(Path(self._base_path, self.specification.path))
             dest_spec_path = str(Path(os.path.dirname(dest), relative_path))
