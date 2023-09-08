@@ -28,8 +28,8 @@ from .._azure_appconfiguration_error import ResourceReadOnlyError
 from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from .._azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from .._generated.aio import AzureAppConfiguration
-from .._generated.models import SnapshotStatus, SnapshotUpdateParameters
-from .._models import ConfigurationSetting, ConfigurationSettingFilter, Snapshot
+from .._generated.models import SnapshotUpdateParameters
+from .._models import ConfigurationSetting, ConfigurationSettingFilter, Snapshot, SnapshotStatus
 from .._user_agent import USER_AGENT
 from .._utils import (
     get_endpoint_from_connection_string,
@@ -728,8 +728,7 @@ class AzureAppConfigurationClient:
         """List the configuration settings stored under a snapshot in the configuration service, optionally filtered by
         accept_datetime and fields to present in return.
 
-        :param str name: The snapshot name.
-        :keyword str accept_datetime: Filter out ConfigurationSetting created after this datetime.
+        :param str snapshot_name: The snapshot name.
         :keyword fields: Specify which fields to include in the results. Leave None to include all fields.
         :type fields: list[str] or None
         :return: An async iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
