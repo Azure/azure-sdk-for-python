@@ -1,13 +1,14 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://batch4ca21fc0.eastus.batch.azure.com/applications?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch4ca21fc0.eastasia.batch.azure.com/applications?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "a7420e07-4c86-11ee-9b7c-20c19bdc434a",
         "Connection": "keep-alive",
-        "ocp-date": "Fri, 07 Jul 2023 22:26:30 GMT",
+        "ocp-date": "Wed, 06 Sep 2023 07:26:11 GMT",
         "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -15,15 +16,15 @@
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
         "DataServiceVersion": "3.0",
-        "Date": "Fri, 07 Jul 2023 22:26:30 GMT",
-        "request-id": "52ce77ef-c2d8-497d-8371-2b8e567e9b3c",
+        "Date": "Wed, 06 Sep 2023 07:26:12 GMT",
+        "request-id": "bf4f8c70-cf2f-4f40-ba1b-bf9d28816dc3",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch4ca21fc0.eastus.batch.azure.com/$metadata#listapplicationsummariesresponses",
+        "odata.metadata": "https://batch4ca21fc0.eastasia.batch.azure.com/$metadata#listapplicationsummariesresponses",
         "value": [
           {
             "id": "application_id",
@@ -35,13 +36,14 @@
       }
     },
     {
-      "RequestUri": "https://batch4ca21fc0.eastus.batch.azure.com/applications/application_id?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch4ca21fc0.eastasia.batch.azure.com/applications/application_id?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "a814f1df-4c86-11ee-8c7e-20c19bdc434a",
         "Connection": "keep-alive",
-        "ocp-date": "Fri, 07 Jul 2023 22:26:31 GMT",
+        "ocp-date": "Wed, 06 Sep 2023 07:26:12 GMT",
         "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -49,15 +51,15 @@
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
         "DataServiceVersion": "3.0",
-        "Date": "Fri, 07 Jul 2023 22:26:31 GMT",
-        "request-id": "bfa9d629-2f39-4c90-b04c-00ed92a62660",
+        "Date": "Wed, 06 Sep 2023 07:26:12 GMT",
+        "request-id": "da034b1d-9d3f-4e96-8ab7-15e25193b0ef",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch4ca21fc0.eastus.batch.azure.com/$metadata#getapplicationsummaryresponse/@Element",
+        "odata.metadata": "https://batch4ca21fc0.eastasia.batch.azure.com/$metadata#getapplicationsummaryresponse/@Element",
         "id": "application_id",
         "versions": [
           "v1.0"
@@ -65,15 +67,16 @@
       }
     },
     {
-      "RequestUri": "https://batch4ca21fc0.eastus.batch.azure.com/jobs/batch4ca21fc0/tasks?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch4ca21fc0.eastasia.batch.azure.com/jobs/batch4ca21fc0/tasks?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json",
+        "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "a8296407-4c86-11ee-8853-20c19bdc434a",
         "Connection": "keep-alive",
         "Content-Length": "174",
         "Content-Type": "application/json; odata=minimalmetadata",
-        "ocp-date": "Fri, 07 Jul 2023 22:26:31 GMT",
+        "ocp-date": "Wed, 06 Sep 2023 07:26:12 GMT",
         "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
@@ -88,13 +91,13 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "DataServiceId": "https://batch4ca21fc0.eastus.batch.azure.com/jobs/batch4ca21fc0/tasks/python_task_with_app_package",
+        "DataServiceId": "https://batch4ca21fc0.eastasia.batch.azure.com/jobs/batch4ca21fc0/tasks/python_task_with_app_package",
         "DataServiceVersion": "3.0",
-        "Date": "Fri, 07 Jul 2023 22:26:31 GMT",
-        "ETag": "0x8DB7F3936E6B35C",
-        "Last-Modified": "Fri, 07 Jul 2023 22:26:31 GMT",
-        "Location": "https://batch4ca21fc0.eastus.batch.azure.com/jobs/batch4ca21fc0/tasks/python_task_with_app_package",
-        "request-id": "285a30eb-7a79-4355-ae3a-e80a6ed08c87",
+        "Date": "Wed, 06 Sep 2023 07:26:13 GMT",
+        "ETag": "0x8DBAEAA8D0E3318",
+        "Last-Modified": "Wed, 06 Sep 2023 07:26:13 GMT",
+        "Location": "https://batch4ca21fc0.eastasia.batch.azure.com/jobs/batch4ca21fc0/tasks/python_task_with_app_package",
+        "request-id": "b359f2b6-c85b-4aa4-8310-dcc6b319a7b0",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
@@ -103,13 +106,14 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch4ca21fc0.eastus.batch.azure.com/jobs/batch4ca21fc0/tasks/python_task_with_app_package?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch4ca21fc0.eastasia.batch.azure.com/jobs/batch4ca21fc0/tasks/python_task_with_app_package?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "a841173d-4c86-11ee-84b8-20c19bdc434a",
         "Connection": "keep-alive",
-        "ocp-date": "Fri, 07 Jul 2023 22:26:31 GMT",
+        "ocp-date": "Wed, 06 Sep 2023 07:26:12 GMT",
         "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -117,24 +121,24 @@
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
         "DataServiceVersion": "3.0",
-        "Date": "Fri, 07 Jul 2023 22:26:31 GMT",
-        "ETag": "0x8DB7F3936E6B35C",
-        "Last-Modified": "Fri, 07 Jul 2023 22:26:31 GMT",
-        "request-id": "820f1595-995e-4bbb-a348-d5f38a265443",
+        "Date": "Wed, 06 Sep 2023 07:26:13 GMT",
+        "ETag": "0x8DBAEAA8D0E3318",
+        "Last-Modified": "Wed, 06 Sep 2023 07:26:13 GMT",
+        "request-id": "e6789462-6ae4-4654-9636-603005d3f5c3",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch4ca21fc0.eastus.batch.azure.com/$metadata#tasks/@Element",
+        "odata.metadata": "https://batch4ca21fc0.eastasia.batch.azure.com/$metadata#tasks/@Element",
         "id": "python_task_with_app_package",
-        "url": "https://batch4ca21fc0.eastus.batch.azure.com/jobs/batch4ca21fc0/tasks/python_task_with_app_package",
-        "eTag": "0x8DB7F3936E6B35C",
-        "creationTime": "2023-07-07T22:26:31.4009436Z",
-        "lastModified": "2023-07-07T22:26:31.4009436Z",
+        "url": "https://batch4ca21fc0.eastasia.batch.azure.com/jobs/batch4ca21fc0/tasks/python_task_with_app_package",
+        "eTag": "0x8DBAEAA8D0E3318",
+        "creationTime": "2023-09-06T07:26:13.7248536Z",
+        "lastModified": "2023-09-06T07:26:13.7248536Z",
         "state": "active",
-        "stateTransitionTime": "2023-07-07T22:26:31.4009436Z",
+        "stateTransitionTime": "2023-09-06T07:26:13.7248536Z",
         "commandLine": "cmd /c \u0022echo hello world\u0022",
         "applicationPackageReferences": [
           {

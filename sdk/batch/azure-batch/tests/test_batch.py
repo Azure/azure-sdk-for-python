@@ -43,7 +43,7 @@ from devtools_testutils.fake_credentials import BATCH_TEST_PASSWORD
 from azure_devtools.scenario_tests.recording_processors import GeneralNameReplacer, RecordingProcessor
 
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = 'eastasia'
 BATCH_ENVIRONMENT = None  # Set this to None if testing against prod
 BATCH_RESOURCE = 'https://batch.core.windows.net/'
 DEFAULT_VM_SIZE = 'standard_d2_v2'
@@ -426,21 +426,21 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response is None
 
         # Test Update Pool Options
-        params = models.BatchPoolUpdateOptions(
+        params = models.BatchPoolReplaceOptions(
             certificate_references=[], 
             application_package_references=[], 
             metadata=[models.MetadataItem(name='foo', value='bar')],
             target_node_communication_mode=models.NodeCommunicationMode.classic)
-        response = client.update_pool(test_paas_pool.id, params)
+        response = client.replace_pool_properties(test_paas_pool.id, params)
         assert response is None
 
         # Test Patch Pool Options
-        params = models.BatchPoolPatchOptions(metadata=[models.MetadataItem(name='foo2', value='bar2')])
+        params = models.BatchPoolUpdateOptions(metadata=[models.MetadataItem(name='foo2', value='bar2')])
         response = client.update_pool(test_paas_pool.id, params)
         assert response is None
 
         # Test Pool Exists
-        response = client.update_pool(test_paas_pool.id)
+        response = client.pool_exists(test_paas_pool.id)
         assert response
 
         # Test Get Pool
@@ -577,7 +577,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             recurrence_interval=datetime.timedelta(hours=10)
         )
         params = models.BatchJobSchedule(schedule=schedule, job_specification=job_spec)
-        response = client.update_job_schedule(schedule_id, params)
+        response = client.replace_job_schedule(schedule_id, params)
         assert response is None
 
         # Test Patch Job Schedule
@@ -585,7 +585,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             recurrence_interval=datetime.timedelta(hours=5)
         )
         params = models.BatchJobScheduleUpdateOptions(schedule=schedule)
-        response = client.patch_job_schedule(schedule_id, params)
+        response = client.update_job_schedule(schedule_id, params)
         assert response is None
 
         # Test Terminate Job Schedule
@@ -681,8 +681,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             start_time = datetime.datetime.utcnow() - datetime.timedelta(minutes=6))
         set_custom_default_matcher(
             compare_bodies=False,
-            ignored_headers="Accept, ocp-date",
-            # excluded_headers=" client-request-id"
+            ignored_headers="Accept, ocp-date, client-request-id"
         )
         result = client.upload_node_logs(batch_pool.name, nodes[0].id, config)
         assert result is not None
@@ -711,7 +710,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Remove Nodes
         options = models.NodeRemoveOptions(node_list=[n.id for n in nodes])
-        response = client.remove_nodes_pool(batch_pool.name, options)
+        response = client.remove_nodes(batch_pool.name, options)
         assert response is None
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
@@ -1167,12 +1166,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 auto_pool_specification=auto_pool
             )
         )
-        response = client.update_job(job_param.id, options)
+        response = client.replace_job(job_param.id, options)
         assert response is None
 
         # Test Patch Job
         options = models.BatchJobUpdateOptions(priority=900)
-        response = client.patch_job(job_param.id, options)
+        response = client.update_job(job_param.id, options)
         assert response is None
 
         job = client.get_job(job_param.id)
@@ -1185,8 +1184,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
         # Test Create Job with Auto Complete
         job_auto_param = models.BatchJobCreateOptions(
             id=self.get_resource_name('batch_job2_'),
-            on_all_tasks_complete=models.OnAllTasksComplete.terminate_job,
-            on_task_failure=models.OnTaskFailure.perform_exit_options_job_action,
+            on_all_tasks_complete=models.OnAllTasksComplete.TERMINATE_JOB,
+            on_task_failure=models.OnTaskFailure.PERFORM_EXIT_OPTIONS_JOB_ACTION,
             pool_info=models.PoolInformation(
                 auto_pool_specification=auto_pool
             )
@@ -1195,11 +1194,11 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response is None
         job = client.get_job(job_auto_param.id)
         assert isinstance(job,  models.BatchJob)
-        assert job.on_all_tasks_complete ==  models.OnAllTasksComplete.terminate_job
-        assert job.on_task_failure ==  models.OnTaskFailure.perform_exit_options_job_action
+        assert job.on_all_tasks_complete ==  models.OnAllTasksComplete.TERMINATE_JOB
+        assert job.on_task_failure ==  models.OnTaskFailure.PERFORM_EXIT_OPTIONS_JOB_ACTION
 
         # Test List Jobs
-        jobs = client.list_job()
+        jobs = client.list_jobs()
         assert isinstance(jobs, Iterable)
         assert len(list(jobs)) ==  2
 
@@ -1212,7 +1211,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response is None
 
         # Prep and release task status
-        task_status = client.list_preparation_and_release_task_status_job(job_param.id)
+        task_status = client.list_job_preparation_and_release_task_status(job_param.id)
         assert isinstance(task_status,  Iterable)
         assert list(task_status) ==  []
 

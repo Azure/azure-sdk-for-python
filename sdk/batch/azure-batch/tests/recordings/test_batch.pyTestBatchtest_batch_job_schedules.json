@@ -1,15 +1,16 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://batch6c682013.eastus.batch.azure.com/jobschedules?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch6c682013.eastasia.batch.azure.com/jobschedules?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json",
+        "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "128ae8f9-4cb3-11ee-b6b5-20c19bdc434a",
         "Connection": "keep-alive",
         "Content-Length": "242",
         "Content-Type": "application/json; odata=minimalmetadata",
-        "ocp-date": "Mon, 10 Jul 2023 21:05:58 GMT",
+        "ocp-date": "Wed, 06 Sep 2023 12:44:08 GMT",
         "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
@@ -30,13 +31,13 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "DataServiceId": "https://batch6c682013.eastus.batch.azure.com/jobschedules/batch_schedule_6c682013",
+        "DataServiceId": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 10 Jul 2023 21:05:58 GMT",
-        "ETag": "0x8DB818975F5DF8F",
-        "Last-Modified": "Mon, 10 Jul 2023 21:05:59 GMT",
-        "Location": "https://batch6c682013.eastus.batch.azure.com/jobschedules/batch_schedule_6c682013",
-        "request-id": "f2e3ae0b-abc3-459d-9e90-9e9b391850a1",
+        "Date": "Wed, 06 Sep 2023 12:44:09 GMT",
+        "ETag": "0x8DBAED6F7336C7A",
+        "Last-Modified": "Wed, 06 Sep 2023 12:44:09 GMT",
+        "Location": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013",
+        "request-id": "d13f3f45-ab57-4958-bbf2-d4ec6d6ca37f",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
@@ -45,13 +46,14 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch6c682013.eastus.batch.azure.com/jobschedules?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch6c682013.eastasia.batch.azure.com/jobschedules?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "1306e8e3-4cb3-11ee-8881-20c19bdc434a",
         "Connection": "keep-alive",
-        "ocp-date": "Mon, 10 Jul 2023 21:05:59 GMT",
+        "ocp-date": "Wed, 06 Sep 2023 12:44:09 GMT",
         "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -59,24 +61,24 @@
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 10 Jul 2023 21:05:58 GMT",
-        "request-id": "6d908503-e070-4252-8b19-6f4e75cf265b",
+        "Date": "Wed, 06 Sep 2023 12:44:09 GMT",
+        "request-id": "dba520cf-41a4-4468-ad88-bd84fc401558",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch6c682013.eastus.batch.azure.com/$metadata#jobschedules",
+        "odata.metadata": "https://batch6c682013.eastasia.batch.azure.com/$metadata#jobschedules",
         "value": [
           {
             "id": "batch_schedule_6c682013",
-            "url": "https://batch6c682013.eastus.batch.azure.com/jobschedules/batch_schedule_6c682013",
-            "eTag": "0x8DB818975F5DF8F",
-            "lastModified": "2023-07-10T21:05:59.2607631Z",
-            "creationTime": "2023-07-10T21:05:59.2607631Z",
+            "url": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013",
+            "eTag": "0x8DBAED6F7336C7A",
+            "lastModified": "2023-09-06T12:44:09.6633978Z",
+            "creationTime": "2023-09-06T12:44:09.6633978Z",
             "state": "active",
-            "stateTransitionTime": "2023-07-10T21:05:59.2607631Z",
+            "stateTransitionTime": "2023-09-06T12:44:09.6633978Z",
             "schedule": {
               "startWindow": "PT1H",
               "recurrenceInterval": "P1D"
@@ -97,9 +99,9 @@
               }
             },
             "executionInfo": {
-              "nextRunTime": "2023-07-11T21:05:59.2607631Z",
+              "nextRunTime": "2023-09-07T12:44:09.6633978Z",
               "recentJob": {
-                "url": "https://batch6c682013.eastus.batch.azure.com/jobs/batch_schedule_6c682013:job-1",
+                "url": "https://batch6c682013.eastasia.batch.azure.com/jobs/batch_schedule_6c682013:job-1",
                 "id": "batch_schedule_6c682013:job-1"
               }
             }
@@ -108,13 +110,14 @@
       }
     },
     {
-      "RequestUri": "https://batch6c682013.eastus.batch.azure.com/jobschedules/batch_schedule_6c682013?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "131d25e7-4cb3-11ee-b152-20c19bdc434a",
         "Connection": "keep-alive",
-        "ocp-date": "Mon, 10 Jul 2023 21:05:59 GMT",
+        "ocp-date": "Wed, 06 Sep 2023 12:44:09 GMT",
         "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -122,24 +125,24 @@
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 10 Jul 2023 21:05:59 GMT",
-        "ETag": "0x8DB818975F5DF8F",
-        "Last-Modified": "Mon, 10 Jul 2023 21:05:59 GMT",
-        "request-id": "c7384596-ccce-4c78-981e-682c73e77b92",
+        "Date": "Wed, 06 Sep 2023 12:44:09 GMT",
+        "ETag": "0x8DBAED6F7336C7A",
+        "Last-Modified": "Wed, 06 Sep 2023 12:44:09 GMT",
+        "request-id": "7ee01e0f-6c18-4334-99e7-cd708b55a63c",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch6c682013.eastus.batch.azure.com/$metadata#jobschedules/@Element",
+        "odata.metadata": "https://batch6c682013.eastasia.batch.azure.com/$metadata#jobschedules/@Element",
         "id": "batch_schedule_6c682013",
-        "url": "https://batch6c682013.eastus.batch.azure.com/jobschedules/batch_schedule_6c682013",
-        "eTag": "0x8DB818975F5DF8F",
-        "lastModified": "2023-07-10T21:05:59.2607631Z",
-        "creationTime": "2023-07-10T21:05:59.2607631Z",
+        "url": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013",
+        "eTag": "0x8DBAED6F7336C7A",
+        "lastModified": "2023-09-06T12:44:09.6633978Z",
+        "creationTime": "2023-09-06T12:44:09.6633978Z",
         "state": "active",
-        "stateTransitionTime": "2023-07-10T21:05:59.2607631Z",
+        "stateTransitionTime": "2023-09-06T12:44:09.6633978Z",
         "schedule": {
           "startWindow": "PT1H",
           "recurrenceInterval": "P1D"
@@ -160,32 +163,33 @@
           }
         },
         "executionInfo": {
-          "nextRunTime": "2023-07-11T21:05:59.2607631Z",
+          "nextRunTime": "2023-09-07T12:44:09.6633978Z",
           "recentJob": {
-            "url": "https://batch6c682013.eastus.batch.azure.com/jobs/batch_schedule_6c682013:job-1",
+            "url": "https://batch6c682013.eastasia.batch.azure.com/jobs/batch_schedule_6c682013:job-1",
             "id": "batch_schedule_6c682013:job-1"
           }
         }
       }
     },
     {
-      "RequestUri": "https://batch6c682013.eastus.batch.azure.com/jobschedules/batch_schedule_6c682013?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013?api-version=2023-05-01.17.0",
       "RequestMethod": "HEAD",
       "RequestHeaders": {
-        "Accept": "application/json",
+        "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "132f0bea-4cb3-11ee-8e50-20c19bdc434a",
         "Connection": "keep-alive",
-        "ocp-date": "Mon, 10 Jul 2023 21:05:59 GMT",
+        "ocp-date": "Wed, 06 Sep 2023 12:44:09 GMT",
         "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 10 Jul 2023 21:05:59 GMT",
-        "ETag": "0x8DB818975F5DF8F",
-        "Last-Modified": "Mon, 10 Jul 2023 21:05:59 GMT",
-        "request-id": "c135275c-239d-4516-9731-8ea52bfa30a6",
+        "Date": "Wed, 06 Sep 2023 12:44:09 GMT",
+        "ETag": "0x8DBAED6F7336C7A",
+        "Last-Modified": "Wed, 06 Sep 2023 12:44:09 GMT",
+        "request-id": "bb8b497c-c6db-444e-a66b-4539be5f5782",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
@@ -194,13 +198,14 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch6c682013.eastus.batch.azure.com/jobschedules/batch_schedule_6c682013/jobs?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013/jobs?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "13408619-4cb3-11ee-9c6d-20c19bdc434a",
         "Connection": "keep-alive",
-        "ocp-date": "Mon, 10 Jul 2023 21:05:59 GMT",
+        "ocp-date": "Wed, 06 Sep 2023 12:44:10 GMT",
         "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -208,24 +213,24 @@
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 10 Jul 2023 21:05:59 GMT",
-        "request-id": "03cf90d5-edcb-4a26-94fd-e7c182443f75",
+        "Date": "Wed, 06 Sep 2023 12:44:09 GMT",
+        "request-id": "f915658b-3ce9-47f1-9d10-2ee66942be68",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch6c682013.eastus.batch.azure.com/$metadata#jobs",
+        "odata.metadata": "https://batch6c682013.eastasia.batch.azure.com/$metadata#jobs",
         "value": [
           {
             "id": "batch_schedule_6c682013:job-1",
-            "url": "https://batch6c682013.eastus.batch.azure.com/jobs/batch_schedule_6c682013:job-1",
-            "eTag": "0x8DB818975FDF5E1",
-            "lastModified": "2023-07-10T21:05:59.3137633Z",
-            "creationTime": "2023-07-10T21:05:59.2887633Z",
+            "url": "https://batch6c682013.eastasia.batch.azure.com/jobs/batch_schedule_6c682013:job-1",
+            "eTag": "0x8DBAED6F7395FF9",
+            "lastModified": "2023-09-06T12:44:09.7023993Z",
+            "creationTime": "2023-09-06T12:44:09.6863974Z",
             "state": "active",
-            "stateTransitionTime": "2023-07-10T21:05:59.3137633Z",
+            "stateTransitionTime": "2023-09-06T12:44:09.7023993Z",
             "priority": 0,
             "maxParallelTasks": -1,
             "usesTaskDependencies": false,
@@ -238,7 +243,7 @@
               "poolId": "pool_id"
             },
             "executionInfo": {
-              "startTime": "2023-07-10T21:05:59.3137633Z",
+              "startTime": "2023-09-06T12:44:09.7023993Z",
               "poolId": "pool_id"
             },
             "onAllTasksComplete": "terminatejob",
@@ -248,26 +253,27 @@
       }
     },
     {
-      "RequestUri": "https://batch6c682013.eastus.batch.azure.com/jobschedules/batch_schedule_6c682013/disable?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013/disable?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json",
+        "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "13557b17-4cb3-11ee-ba48-20c19bdc434a",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "ocp-date": "Mon, 10 Jul 2023 21:05:59 GMT",
+        "ocp-date": "Wed, 06 Sep 2023 12:44:10 GMT",
         "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "DataServiceId": "https://batch6c682013.eastus.batch.azure.com/jobschedules/batch_schedule_6c682013/disable",
+        "DataServiceId": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013/disable",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 10 Jul 2023 21:05:59 GMT",
-        "ETag": "0x8DB818976478EB7",
-        "Last-Modified": "Mon, 10 Jul 2023 21:05:59 GMT",
-        "request-id": "46d5d050-0c76-44ac-aee1-f0e378a7aa71",
+        "Date": "Wed, 06 Sep 2023 12:44:09 GMT",
+        "ETag": "0x8DBAED6F7996A91",
+        "Last-Modified": "Wed, 06 Sep 2023 12:44:10 GMT",
+        "request-id": "4ef2ed7a-ba8a-4950-84f6-c61578f65e2a",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff"
@@ -275,26 +281,27 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch6c682013.eastus.batch.azure.com/jobschedules/batch_schedule_6c682013/enable?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013/enable?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json",
+        "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "1376c2cc-4cb3-11ee-a418-20c19bdc434a",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "ocp-date": "Mon, 10 Jul 2023 21:05:59 GMT",
+        "ocp-date": "Wed, 06 Sep 2023 12:44:10 GMT",
         "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "DataServiceId": "https://batch6c682013.eastus.batch.azure.com/jobschedules/batch_schedule_6c682013/enable",
+        "DataServiceId": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013/enable",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 10 Jul 2023 21:05:59 GMT",
-        "ETag": "0x8DB8189765C2860",
-        "Last-Modified": "Mon, 10 Jul 2023 21:05:59 GMT",
-        "request-id": "2985f91a-692a-4d8d-8f85-753af34ce045",
+        "Date": "Wed, 06 Sep 2023 12:44:10 GMT",
+        "ETag": "0x8DBAED6F7BA2D2A",
+        "Last-Modified": "Wed, 06 Sep 2023 12:44:10 GMT",
+        "request-id": "ac0225d1-ca10-42d6-9880-bb9c28f74a3b",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff"
@@ -302,58 +309,16 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch6c682013.eastus.batch.azure.com/jobschedules/batch_schedule_6c682013?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013?api-version=2023-05-01.17.0",
       "RequestMethod": "PUT",
       "RequestHeaders": {
-        "Accept": "application/json",
+        "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "13895a62-4cb3-11ee-9a51-20c19bdc434a",
         "Connection": "keep-alive",
         "Content-Length": "108",
         "Content-Type": "application/json; odata=minimalmetadata",
-        "ocp-date": "Mon, 10 Jul 2023 21:06:00 GMT",
-        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)"
-      },
-      "RequestBody": {
-        "schedule": {
-          "recurrenceInterval": "PT10H00M00S"
-        },
-        "jobSpecification": {
-          "poolInfo": {
-            "poolId": "pool_id"
-          }
-        }
-      },
-      "StatusCode": 429,
-      "ResponseHeaders": {
-        "Content-Length": "376",
-        "Content-Type": "application/json; odata=minimalmetadata",
-        "DataServiceVersion": "3.0",
-        "Date": "Mon, 10 Jul 2023 21:05:59 GMT",
-        "request-id": "3c7bafdd-4820-41eb-ae2b-42c5b8406858",
-        "Retry-After": "30",
-        "Server": "Microsoft-HTTPAPI/2.0",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "X-Content-Type-Options": "nosniff"
-      },
-      "ResponseBody": {
-        "odata.metadata": "https://batch6c682013.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element",
-        "code": "TooManyRequests",
-        "message": {
-          "lang": "en-US",
-          "value": "Request failed as server encountered too many requests. Please try again.\nRequestId:3c7bafdd-4820-41eb-ae2b-42c5b8406858\nTime:2023-07-10T21:06:00.0359245Z"
-        }
-      }
-    },
-    {
-      "RequestUri": "https://batch6c682013.eastus.batch.azure.com/jobschedules/batch_schedule_6c682013?api-version=2023-05-01.17.0",
-      "RequestMethod": "PUT",
-      "RequestHeaders": {
-        "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Content-Length": "108",
-        "Content-Type": "application/json; odata=minimalmetadata",
-        "ocp-date": "Mon, 10 Jul 2023 21:06:00 GMT",
+        "ocp-date": "Wed, 06 Sep 2023 12:44:10 GMT",
         "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
@@ -368,12 +333,12 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "DataServiceId": "https://batch6c682013.eastus.batch.azure.com/jobschedules/batch_schedule_6c682013",
+        "DataServiceId": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 10 Jul 2023 21:06:29 GMT",
-        "ETag": "0x8DB8189885C831A",
-        "Last-Modified": "Mon, 10 Jul 2023 21:06:30 GMT",
-        "request-id": "1876b663-631e-47c9-b457-7f609a786912",
+        "Date": "Wed, 06 Sep 2023 12:44:10 GMT",
+        "ETag": "0x8DBAED6F7CDDE36",
+        "Last-Modified": "Wed, 06 Sep 2023 12:44:10 GMT",
+        "request-id": "d1eb3bee-b5e2-4725-bf63-8734ec150663",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
@@ -382,15 +347,16 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch6c682013.eastus.batch.azure.com/jobschedules/batch_schedule_6c682013?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013?api-version=2023-05-01.17.0",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
-        "Accept": "application/json",
+        "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "139cd40a-4cb3-11ee-ae4c-20c19bdc434a",
         "Connection": "keep-alive",
         "Content-Length": "51",
         "Content-Type": "application/json; odata=minimalmetadata",
-        "ocp-date": "Mon, 10 Jul 2023 21:06:30 GMT",
+        "ocp-date": "Wed, 06 Sep 2023 12:44:10 GMT",
         "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
@@ -400,12 +366,12 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "DataServiceId": "https://batch6c682013.eastus.batch.azure.com/jobschedules/batch_schedule_6c682013",
+        "DataServiceId": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 10 Jul 2023 21:06:29 GMT",
-        "ETag": "0x8DB8189886C61D4",
-        "Last-Modified": "Mon, 10 Jul 2023 21:06:30 GMT",
-        "request-id": "3428bba6-f8d1-454c-9d0c-8da0b82078a0",
+        "Date": "Wed, 06 Sep 2023 12:44:10 GMT",
+        "ETag": "0x8DBAED6F7E05D60",
+        "Last-Modified": "Wed, 06 Sep 2023 12:44:10 GMT",
+        "request-id": "1e36380a-26b2-4e3a-98c0-a8a223166b64",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
@@ -414,25 +380,26 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch6c682013.eastus.batch.azure.com/jobschedules/batch_schedule_6c682013/terminate?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013/terminate?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "application/json",
+        "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "13af3926-4cb3-11ee-bc8e-20c19bdc434a",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "ocp-date": "Mon, 10 Jul 2023 21:06:30 GMT",
+        "ocp-date": "Wed, 06 Sep 2023 12:44:10 GMT",
         "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
-        "DataServiceId": "https://batch6c682013.eastus.batch.azure.com/jobschedules/batch_schedule_6c682013/terminate",
+        "DataServiceId": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013/terminate",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 10 Jul 2023 21:06:30 GMT",
-        "ETag": "0x8DB8189887BA4BA",
-        "Last-Modified": "Mon, 10 Jul 2023 21:06:30 GMT",
-        "request-id": "82eff847-e722-425e-8153-dd8781004cbd",
+        "Date": "Wed, 06 Sep 2023 12:44:10 GMT",
+        "ETag": "0x8DBAED6F7F3CFC0",
+        "Last-Modified": "Wed, 06 Sep 2023 12:44:10 GMT",
+        "request-id": "7a00bdd4-d31d-4fb0-8b00-5ace062571b7",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
@@ -441,22 +408,23 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch6c682013.eastus.batch.azure.com/jobschedules/batch_schedule_6c682013?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013?api-version=2023-05-01.17.0",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
-        "Accept": "application/json",
+        "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "13c331df-4cb3-11ee-8fb7-20c19bdc434a",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "ocp-date": "Mon, 10 Jul 2023 21:06:30 GMT",
+        "ocp-date": "Wed, 06 Sep 2023 12:44:10 GMT",
         "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 10 Jul 2023 21:06:30 GMT",
-        "request-id": "a4f5f453-074d-4a93-8c19-4a0bbaaa1736",
+        "Date": "Wed, 06 Sep 2023 12:44:10 GMT",
+        "request-id": "73b312ab-8fb5-40a1-a3ff-b20c47837cad",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",

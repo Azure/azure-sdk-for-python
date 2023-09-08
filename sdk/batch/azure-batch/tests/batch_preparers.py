@@ -8,6 +8,7 @@ import azure.core.exceptions
 import azure.mgmt.batch
 from azure.mgmt.batch import models
 import azure.batch
+import azure.batch.models
 from azure.identity import ClientSecretCredential
 from azure.core.credentials import AzureNamedKeyCredential
 
@@ -300,7 +301,7 @@ class JobPreparer(AzureMgmtPreparer):
         if self.is_live:
             self.client = self._get_batch_client(**kwargs)
             pool = self._get_batch_pool_id(**kwargs)
-            self.resource = azure.batch.models.BatchJobCreateParameters(
+            self.resource = azure.batch.models.BatchJobCreateOptions(
                 id=name,
                 pool_info=pool,
                 **self.extra_args
