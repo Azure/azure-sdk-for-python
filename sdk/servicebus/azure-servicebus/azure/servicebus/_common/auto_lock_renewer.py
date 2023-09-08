@@ -69,10 +69,10 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
 
     def __init__(
         self,
-        max_lock_renewal_duration: float=300,
-        on_lock_renew_failure: Optional["LockRenewFailureCallback"]=None,
-        executor: Optional[ThreadPoolExecutor]=None,
-        max_workers: Optional[int]=None,
+        max_lock_renewal_duration: float = 300,
+        on_lock_renew_failure: Optional["LockRenewFailureCallback"] = None,
+        executor: Optional[ThreadPoolExecutor] = None,
+        max_workers: Optional[int] = None,
     ) -> None:
         """Auto renew locks for messages and sessions using a background thread pool. It is recommended
         setting max_worker to a large number or passing ThreadPoolExecutor of large max_workers number when

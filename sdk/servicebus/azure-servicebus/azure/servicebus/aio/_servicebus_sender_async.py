@@ -6,7 +6,7 @@ import logging
 import asyncio
 import datetime
 import warnings
-from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast
+from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast, Iterable
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
@@ -53,9 +53,9 @@ MessageTypes = Union[
     Mapping[str, Any],
     ServiceBusMessage,
     AmqpAnnotatedMessage,
-    List[Mapping[str, Any]],
-    List[ServiceBusMessage],
-    List[AmqpAnnotatedMessage],
+    Iterable[Mapping[str, Any]],
+    Iterable[ServiceBusMessage],
+    Iterable[AmqpAnnotatedMessage],
 ]
 MessageObjTypes = Union[
     ServiceBusMessage,

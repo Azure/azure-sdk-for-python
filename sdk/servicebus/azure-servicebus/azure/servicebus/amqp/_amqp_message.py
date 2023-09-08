@@ -87,18 +87,18 @@ class AmqpAnnotatedMessage(object):
     for more information on the message format.
 
     :keyword data_body: The body consists of one or more data sections and each section contains opaque binary data.
-    :paramtype data_body: str, bytes, or list[str or bytes]
+    :paramtype data_body: str or bytes or list[str or bytes]
     :keyword sequence_body: The body consists of one or more sequence sections and
      each section contains an arbitrary number of structured data elements.
     :paramtype sequence_body: list[any]
     :keyword value_body: The body consists of one amqp-value section and the section contains a single AMQP value.
-    :paramtype value_body: ay
+    :paramtype value_body: any
     :keyword header: The amqp message header.
-    :paramtype header: dict[str, any] or None
+    :paramtype header: ~azure.servicebus.amqp.AmqpMessageHeader or mapping[str, any] or None
     :keyword footer: The amqp message footer.
     :paramtype footer: dict or None
     :keyword properties: Properties to add to the amqp message.
-    :paramtype properties: dict[str, any] or None
+    :paramtype properties: ~azure.servicebus.amqp.AmqpMessageProperties or mapping[str, any] or None
     :keyword application_properties: Service specific application properties.
     :paramtype application_properties: dict or None
     :keyword annotations: Service specific message annotations.

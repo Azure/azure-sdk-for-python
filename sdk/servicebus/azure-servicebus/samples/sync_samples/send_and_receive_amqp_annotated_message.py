@@ -48,7 +48,7 @@ def send_sequence_message(sender):
 
 def send_value_message(sender):
     value_body = {b"key": [-123, b'data', False]}
-    header = {"priority" : 10}
+    header = {"priority": 10}
     annotations = {"annotation_key": "value"}
     application_properties = {"body_type": "value"}
     value_message = AmqpAnnotatedMessage(
