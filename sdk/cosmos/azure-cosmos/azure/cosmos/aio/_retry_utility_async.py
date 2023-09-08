@@ -24,13 +24,14 @@
 
 import time
 import asyncio
+import json
 
 from azure.core.exceptions import AzureError, ClientAuthenticationError
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
 from .. import exceptions
 from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
-from .._retry_utility import _configure_timeout
+from .._retry_utility import _configure_timeout, _refresh_bulk_throttle_request, _update_bulk_throttle_headers
 from .. import _endpoint_discovery_retry_policy
 from .. import _resource_throttle_retry_policy
 from .. import _default_retry_policy
@@ -75,6 +76,8 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
         client.connection_policy, global_endpoint_manager, *args
     )
 
+    partial_batch_result = []
+    partial_batch_headers = {}
     while True:
         try:
             client_timeout = kwargs.get('timeout')
@@ -94,9 +97,18 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 HttpHeaders.ThrottleRetryWaitTimeInMs
             ] = resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds
 
+            # Additional logic needed to re-compile the request after being throttled
+            if len(partial_batch_result) != 0:
+                partial_batch_result.extend(result[0])
+                result_headers = result[1]
+                _update_bulk_throttle_headers(result_headers, partial_batch_headers)
+                result_headers[HttpHeaders.ThrottleRetryCount] = \
+                    resourceThrottle_retry_policy.current_retry_attempt_count
+                result = (partial_batch_result, result_headers)
+
             return result
         except exceptions.CosmosHttpResponseError as e:
-            retry_policy = None
+            retry_policy = defaultRetry_policy
             if e.status_code == StatusCodes.FORBIDDEN and e.sub_status == SubStatusCodes.WRITE_FORBIDDEN:
                 retry_policy = endpointDiscovery_retry_policy
             elif e.status_code == StatusCodes.TOO_MANY_REQUESTS:
@@ -111,8 +123,26 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 retry_policy = partition_key_range_gone_retry_policy
             elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code == StatusCodes.SERVICE_UNAVAILABLE:
                 retry_policy = timeout_failover_retry_policy
-            else:
-                retry_policy = defaultRetry_policy
+            elif e.status_code == StatusCodes.MULTI_STATUS:
+                # we go through results and see what policy to use
+                # 429 we apply throttle, 410 we refresh cache and retry failed requests
+                http_request = args[3]
+                operations = json.loads(http_request.body)
+                responses = json.loads(e.response.text())
+                for i in range(len(responses)):
+                    if responses[i].get("statusCode") == StatusCodes.TOO_MANY_REQUESTS:
+                        retry_policy = resourceThrottle_retry_policy
+                        # set retry header and save current headers
+                        e.headers[HttpHeaders.RetryAfterInMilliseconds] = responses[i].get("retryAfterMilliseconds")
+                        if len(partial_batch_headers) == 0:
+                            partial_batch_headers = e.headers
+                        else:
+                            _update_bulk_throttle_headers(partial_batch_headers, e.headers)
+                        # save results from non-throttled operations
+                        partial_batch_result.extend(responses[0:i])
+                        # re-create request to be retried through request args
+                        args = _refresh_bulk_throttle_request(i, operations, http_request, args)
+                        break
 
             # If none of the retry policies applies or there is no retry needed, set the
             # throttle related response headers and re-throw the exception back arg[0]

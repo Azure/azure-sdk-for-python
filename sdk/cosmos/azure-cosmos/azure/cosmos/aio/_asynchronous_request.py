@@ -113,6 +113,9 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     if data:
         data = data.decode("utf-8")
 
+    # 207 gets bubbled up since it means the Batch request had mixed results
+    if response.status_code == 207:
+        raise exceptions.CosmosBulkMultiStatus(message=data, response=response)
     if response.status_code == 404:
         raise exceptions.CosmosResourceNotFoundError(message=data, response=response)
     if response.status_code == 409:
@@ -153,7 +156,7 @@ async def AsynchronousRequest(
     """Performs one asynchronous http request according to the parameters.
 
     :param object client: Document client instance
-    :param dict request_params:
+    :param _request_object.RequestObject request_params:
     :param _GlobalEndpointManager global_endpoint_manager:
     :param documents.ConnectionPolicy connection_policy:
     :param azure.core.PipelineClient pipeline_client: PipelineClient to process the request.
@@ -171,7 +174,7 @@ async def AsynchronousRequest(
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0
 
-    # Pass _Request function with it's parameters to retry_utility's Execute method that wraps the call with retries
+    # Pass _Request function with its parameters to retry_utility's Execute method that wraps the call with retries
     return await _retry_utility_async.ExecuteAsync(
         client,
         global_endpoint_manager,

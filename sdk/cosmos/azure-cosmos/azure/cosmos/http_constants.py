@@ -362,6 +362,7 @@ class StatusCodes(object):
     CREATED = 201
     ACCEPTED = 202
     NO_CONTENT = 204
+    MULTI_STATUS = 207
 
     NOT_MODIFIED = 304
 

@@ -65,6 +65,10 @@ class CosmosAccessConditionFailedError(CosmosHttpResponseError):
     """An HTTP error response with status code 412."""
 
 
+class CosmosBulkMultiStatus(CosmosHttpResponseError):
+    """An HTTP success response with status code 207."""
+
+
 class CosmosClientTimeoutError(AzureError):
     """An operation failed to complete within the specified timeout."""
 

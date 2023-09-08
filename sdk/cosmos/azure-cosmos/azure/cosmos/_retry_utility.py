@@ -23,6 +23,7 @@
 """
 
 import time
+import json
 
 from azure.core.exceptions import AzureError, ClientAuthenticationError
 from azure.core.pipeline.policies import RetryPolicy
@@ -75,6 +76,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
         client.connection_policy, global_endpoint_manager, *args
     )
 
+    partial_batch_result = []
+    partial_batch_headers = {}
     while True:
         try:
             client_timeout = kwargs.get('timeout')
@@ -94,6 +97,15 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 HttpHeaders.ThrottleRetryWaitTimeInMs
             ] = resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds
 
+            # Additional logic needed to re-compile the request after being throttled
+            if len(partial_batch_result) != 0:
+                partial_batch_result.extend(result[0])
+                result_headers = result[1]
+                _update_bulk_throttle_headers(result_headers, partial_batch_headers)
+                result_headers[HttpHeaders.ThrottleRetryCount] = \
+                    resourceThrottle_retry_policy.current_retry_attempt_count
+                result = (partial_batch_result, result_headers)
+
             return result
         except exceptions.CosmosHttpResponseError as e:
             retry_policy = defaultRetry_policy
@@ -112,6 +124,26 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 retry_policy = partition_key_range_gone_retry_policy
             elif e.status_code == StatusCodes.REQUEST_TIMEOUT or e.status_code == StatusCodes.SERVICE_UNAVAILABLE:
                 retry_policy = timeout_failover_retry_policy
+            elif e.status_code == StatusCodes.MULTI_STATUS:
+                # we go through results and see what policy to use
+                # 429 we apply throttle, 410 we refresh cache and retry failed requests
+                http_request = args[3]
+                operations = json.loads(http_request.body)
+                responses = json.loads(e.response.text())
+                for i in range(len(responses)):
+                    if responses[i].get("statusCode") == StatusCodes.TOO_MANY_REQUESTS:
+                        retry_policy = resourceThrottle_retry_policy
+                        # set retry header and save current headers
+                        e.headers[HttpHeaders.RetryAfterInMilliseconds] = responses[i].get("retryAfterMilliseconds")
+                        if len(partial_batch_headers) == 0:
+                            partial_batch_headers = e.headers
+                        else:
+                            _update_bulk_throttle_headers(partial_batch_headers, e.headers)
+                        # save results from non-throttled operations
+                        partial_batch_result.extend(responses[0:i])
+                        # re-create request to be retried through request args
+                        args = _refresh_bulk_throttle_request(i, operations, http_request, args)
+                        break
 
             # If none of the retry policies applies or there is no retry needed, set the
             # throttle related response headers and re-throw the exception back arg[0]
@@ -156,6 +188,29 @@ def _configure_timeout(request, absolute, per_request):
     elif per_request:
         # Only socket timeout provided.
         request.context.options['connection_timeout'] = per_request
+
+
+def _update_bulk_throttle_headers(return_headers, current_headers):
+    return_headers.update({HttpHeaders.RequestCharge: str(
+        float(return_headers.get(HttpHeaders.RequestCharge)) + float(
+            current_headers.get(HttpHeaders.RequestCharge)))})
+    return_headers.update({HttpHeaders.RequestDurationMs: str(
+        float(return_headers.get(HttpHeaders.RequestDurationMs)) + float(
+            current_headers.get(HttpHeaders.RequestDurationMs)))})
+    return_headers.update({HttpHeaders.ItemCount: max(return_headers.get(HttpHeaders.ItemCount, '0'),
+                                                      current_headers.get(HttpHeaders.ItemCount, '0'))})
+    return_headers.update({HttpHeaders.ContentLength: max(return_headers.get(HttpHeaders.ContentLength, '0'),
+                                                          current_headers.get(HttpHeaders.ContentLength, '0'))})
+
+
+def _refresh_bulk_throttle_request(index, operations, http_request, args):
+    # For throttled requests, we retry only the failed operations
+    new_request = json.dumps(operations[index::])
+    http_request.body = new_request
+    http_request.data = new_request
+    http_request.headers[HttpHeaders.ContentLength] = len(new_request)
+    new_args = (args[0], args[1], args[2], http_request)
+    return new_args
 
 
 class ConnectionRetryPolicy(RetryPolicy):
