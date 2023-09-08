@@ -16,13 +16,10 @@ except ImportError:
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
-from ._generated._serialization import Serializer
+from azure.core.messaging import CloudEvent
+from ._serialization import Serializer
 from ._signature_credential_policy import EventGridSasCredentialPolicy
 from . import _constants as constants
-
-from ._generated.models import (
-    CloudEvent as InternalCloudEvent,
-)
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -120,27 +117,42 @@ def _eventgrid_data_typecheck(event):
             "https://docs.microsoft.com/en-us/azure/event-grid/event-schema"
         )
 
-def _cloud_event_to_generated(cloud_event, **kwargs):
+def _check_cloud_event(cloud_event, **kwargs):
     if isinstance(cloud_event.data, bytes):
-        data_base64 = cloud_event.data
+        data_base64 = base64.b64encode(cloud_event.data)
         data = None
     else:
         data = cloud_event.data
         data_base64 = None
-    return InternalCloudEvent(
-        id=cloud_event.id,
-        source=cloud_event.source,
-        type=cloud_event.type,
-        specversion=cloud_event.specversion,
-        data=data,
-        data_base64=data_base64,
-        time=cloud_event.time,
-        dataschema=cloud_event.dataschema,
-        datacontenttype=cloud_event.datacontenttype,
-        subject=cloud_event.subject,
-        additional_properties=cloud_event.extensions,
-        **kwargs
-    )
+    try:
+        return CloudEvent.from_dict(
+            id=cloud_event.id,
+            source=cloud_event.source,
+            type=cloud_event.type,
+            specversion=cloud_event.specversion,
+            data=data,
+            time=cloud_event.time,
+            dataschema=cloud_event.dataschema,
+            datacontenttype=cloud_event.datacontenttype,
+            subject=cloud_event.subject,
+            extensions=cloud_event.extensions,
+            data_base64=data_base64,
+            **kwargs
+        )
+    except TypeError as err:
+        return CloudEvent(
+            id=cloud_event.id,
+            source=cloud_event.source,
+            type=cloud_event.type,
+            specversion=cloud_event.specversion,
+            data=data,
+            time=cloud_event.time,
+            dataschema=cloud_event.dataschema,
+            datacontenttype=cloud_event.datacontenttype,
+            subject=cloud_event.subject,
+            extensions=cloud_event.extensions,
+            **kwargs
+        )
 
 def _from_cncf_events(event): # pylint: disable=inconsistent-return-statements
     """This takes in a CNCF cloudevent and returns a dictionary.

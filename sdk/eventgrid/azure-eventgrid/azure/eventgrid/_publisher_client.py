@@ -21,6 +21,7 @@ from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
     UserAgentPolicy,
 )
+from azure.core import PipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -37,12 +38,11 @@ from ._helpers import (
     _is_eventgrid_event,
     _eventgrid_data_typecheck,
     _build_request,
-    _cloud_event_to_generated,
+    _check_cloud_event,
     _from_cncf_events,
 )
-from ._generated import (
-    EventGridPublisherClient as EventGridPublisherClientImpl,
-)
+from ._configuration import EventGridPublisherClientConfiguration
+from ._serialization import Deserializer, Serializer
 from ._policies import CloudEventDistributedTracingPolicy
 from ._version import VERSION
 
@@ -101,9 +101,9 @@ class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-ver
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, AzureSasCredential, TokenCredential], Any) -> None
         self._endpoint = endpoint
-        self._client = EventGridPublisherClientImpl(
-            policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
-        )
+        _endpoint = "https://{topicHostname}"
+        self._config = EventGridPublisherClientConfiguration(policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs)
+        self._client: PipelineClient = PipelineClient(base_url=_endpoint, config=self._config, policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs)
 
     @staticmethod
     def _policies(credential, **kwargs):
@@ -208,7 +208,7 @@ class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-ver
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
                 events = [
-                    _cloud_event_to_generated(e, **kwargs)
+                    _check_cloud_event(e, **kwargs)
                     for e in events  # pylint: disable=protected-access
                 ]
             except AttributeError:
