@@ -71,6 +71,8 @@
     "sdk/keyvault/azure-keyvault-certificates/tests/certs.py",
     "sdk/keyvault/azure-keyvault-keys/tests/keys.py",
     "sdk/modelsrepository/azure-iot-modelsrepository/**",
+    "sdk/remoterendering/test-resources.json",
+    "sdk/remoterendering/azure-mixedreality-remoterendering/swagger/azure/mixedreality/remoterendering/mr-arr.json",
     "sdk/servicefabric/azure-servicefabric/**",
     "sdk/search/azure-search-documents/**",
     "sdk/storage/azure-storage-blob-changefeed/**",
