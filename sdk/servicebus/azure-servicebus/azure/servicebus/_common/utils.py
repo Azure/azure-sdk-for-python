@@ -242,12 +242,13 @@ def transform_outbound_messages(
     :return: A list of ServiceBusMessage or a single ServiceBusMessage transformed.
     :rtype: ~azure.servicebus.ServiceBusMessage or list[~azure.servicebus.ServiceBusMessage]
     """
-    if isinstance(messages, Mapping) or not isinstance(messages, Iterable):
-        return _convert_to_single_service_bus_message(messages, message_type, to_outgoing_amqp_message)
-    else:
+    if isinstance(messages, Iterable) and not isinstance(messages, Mapping):
         return [
             _convert_to_single_service_bus_message(m, message_type, to_outgoing_amqp_message) for m in messages
         ]
+    else:
+        return _convert_to_single_service_bus_message(messages, message_type, to_outgoing_amqp_message)
+
 
 def strip_protocol_from_uri(uri: str) -> str:
     """Removes the protocol (e.g. http:// or sb://) from a URI, such as the FQDN.
