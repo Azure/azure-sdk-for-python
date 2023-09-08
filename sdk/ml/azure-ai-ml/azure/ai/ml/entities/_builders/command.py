@@ -692,33 +692,6 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         }
 
     def _to_job(self) -> CommandJob:
-        if isinstance(self.component, CommandComponent):
-            return CommandJob(
-                id=self.id,
-                name=self.name,
-                display_name=self.display_name,
-                description=self.description,
-                tags=self.tags,
-                properties=self.properties,
-                command=self.component.command,
-                experiment_name=self.experiment_name,
-                code=self.component.code,
-                compute=self.compute,
-                status=self.status,
-                environment=self.environment,
-                distribution=self.distribution,
-                identity=self.identity,
-                environment_variables=self.environment_variables,
-                resources=self.resources,
-                limits=self.limits,
-                inputs=self._job_inputs,
-                outputs=self._job_outputs,
-                services=self.services,
-                creation_context=self.creation_context,
-                parameters=self.parameters,
-                queue_settings=self.queue_settings,
-            )
-
         return CommandJob(
             id=self.id,
             name=self.name,
@@ -726,9 +699,9 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             description=self.description,
             tags=self.tags,
             properties=self.properties,
-            command=None,
+            command=self.component.command,
             experiment_name=self.experiment_name,
-            code=None,
+            code=self.component.code,
             compute=self.compute,
             status=self.status,
             environment=self.environment,
