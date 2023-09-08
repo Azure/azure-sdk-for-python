@@ -35,8 +35,8 @@ from ._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from ._azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from ._generated import AzureAppConfiguration
 from ._generated._configuration import AzureAppConfigurationConfiguration
-from ._generated.models import SnapshotUpdateParameters
-from ._models import ConfigurationSetting, ConfigurationSettingFilter, Snapshot, SnapshotStatus
+from ._generated.models import SnapshotUpdateParameters, SnapshotStatus
+from ._models import ConfigurationSetting, ConfigurationSettingFilter, Snapshot
 from ._utils import (
     get_endpoint_from_connection_string,
     prep_if_match,

@@ -8,12 +8,12 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Union, cast
 
 from azure.core.rest import HttpResponse
-from azure.appconfiguration import SnapshotStatus
 from ._generated._serialization import Model
 from ._generated.models import (
     KeyValue,
-    Snapshot as GeneratedSnapshot,
     KeyValueFilter,
+    Snapshot as GeneratedSnapshot,
+    SnapshotStatus,
 )
 
 if sys.version_info >= (3, 8):

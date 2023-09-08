@@ -28,8 +28,8 @@ from .._azure_appconfiguration_error import ResourceReadOnlyError
 from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from .._azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from .._generated.aio import AzureAppConfiguration
-from .._generated.models import SnapshotUpdateParameters
-from .._models import ConfigurationSetting, ConfigurationSettingFilter, Snapshot, SnapshotStatus
+from .._generated.models import SnapshotUpdateParameters, SnapshotStatus
+from .._models import ConfigurationSetting, ConfigurationSettingFilter, Snapshot
 from .._user_agent import USER_AGENT
 from .._utils import (
     get_endpoint_from_connection_string,
