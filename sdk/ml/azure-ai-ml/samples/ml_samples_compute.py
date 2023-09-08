@@ -22,6 +22,17 @@ from azure.ai.ml import MLClient
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 
+
+def handle_resource_exists_error(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except (ResourceExistsError, ResourceNotFoundError) as e:
+            pass
+
+    return wrapper
+
+
 subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
 resource_group = os.environ["RESOURCE_GROUP_NAME"]
 workspace_name = "test-ws1"
@@ -34,15 +45,6 @@ ci_name = f"ci-{randint(1, 1000)}"
 
 
 class ComputeConfigurationOptions(object):
-    def handle_resource_exists_error(func):
-        def wrapper(*args, **kwargs):
-            try:
-                return func(*args, **kwargs)
-            except (ResourceExistsError, ResourceNotFoundError) as e:
-                pass
-
-        return wrapper
-
     @handle_resource_exists_error
     def ml_compute_config_setup_0(self):
         # [START compute_instance]
