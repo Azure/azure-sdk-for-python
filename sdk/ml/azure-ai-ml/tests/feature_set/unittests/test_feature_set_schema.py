@@ -78,7 +78,9 @@ class TestFeatureSetSchema:
         os.makedirs(temp_folder)
         dump_path = os.path.join(temp_folder, "feature_set_asset.yaml")
         fs.dump(dest=dump_path)
-        fs.dump(dest=dump_path)
+        with pytest.raises(FileExistsError):
+            fs.dump(dest=dump_path)
+
         dumped_fs = load_feature_set(source=dump_path)
 
         assert fs.name == dumped_fs.name
