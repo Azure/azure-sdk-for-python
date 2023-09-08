@@ -45,14 +45,15 @@ class MLClientSamples(object):
         # [START create_ml_client_from_config_default]
         from azure.ai.ml import MLClient
 
-        client = MLClient.from_config(credential=DefaultAzureCredential(), path="src")
+        client = MLClient.from_config(credential=DefaultAzureCredential(), path="./sdk/ml/azure-ai-ml/samples/src")
         # [END create_ml_client_from_config_default]
 
         # [START create_ml_client_from_config_custom_filename]
         from azure.ai.ml import MLClient
 
         client = MLClient.from_config(
-            credential=DefaultAzureCredential(), file_name="team_workspace_configuration.json"
+            credential=DefaultAzureCredential(),
+            file_name="./sdk/ml/azure-ai-ml/samples/team_workspace_configuration.json",
         )
         # [END create_ml_client_from_config_custom_filename]
 
@@ -68,7 +69,7 @@ class MLClientSamples(object):
             credential=DefaultAzureCredential(),
         )
         job = command(
-            code="./src",
+            code="./sdk/ml/azure-ai-ml/samples/src",
             command="echo hello world",
             environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:1",
             compute="cpu-cluster",
@@ -103,7 +104,7 @@ class MLClientSamples(object):
         from azure.ai.ml.entities import UserIdentityConfiguration
 
         job = command(
-            code="./src",
+            code="./sdk/ml/azure-ai-ml/samples/src",
             command="python read_data.py --input_data ${{inputs.input_data}}",
             inputs={"input_data": Input(type=AssetTypes.MLTABLE, path="./sample_data")},
             environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:1",
