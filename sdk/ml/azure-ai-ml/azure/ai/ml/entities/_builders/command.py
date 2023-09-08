@@ -9,7 +9,7 @@ import logging
 import os
 from enum import Enum
 from os import PathLike
-from typing import Any, Dict, List, Optional, Tuple, Union, cast, overload
+from typing import Any, Dict, List, Optional, Tuple, Union, overload
 
 from marshmallow import INCLUDE, Schema
 
@@ -225,7 +225,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         :return: The MLFlow parameters to be logged during the job.
         :rtype: dict[str, str]
         """
-        return dict(self._parameters)
+        return self._parameters
 
     @property
     def distribution(
@@ -340,7 +340,9 @@ class Command(BaseNode, NodeWithGroupInputMixin):
     @property
     def services(
         self,
-    ) -> Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]:
+    ) -> Optional[
+        Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+    ]:
         """The interactive services for the node.
 
         This is an experimental parameter, and may change at any time.
@@ -389,7 +391,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         # the same as code
         if not isinstance(self.component, CommandComponent):
             return None
-        return str(self.component.command)
+        return self.component.command
 
     @command.setter
     def command(self, value: str) -> None:
@@ -425,7 +427,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         # which is invalid in schema validation.
         if not isinstance(self.component, CommandComponent):
             return None
-        return cast(Optional[Union[str, PathLike]], self.component.code)
+        return self.component.code
 
     @code.setter
     def code(self, value: str) -> None:
@@ -760,7 +762,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         }.items():
             if value is not None:
                 rest_obj[key] = value
-        return dict(convert_ordered_dict_to_dict(rest_obj))
+        return convert_ordered_dict_to_dict(rest_obj)
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Command":
