@@ -53,6 +53,7 @@ class KeyVaultPrivateKey(RSAPrivateKey):
         :param padding: The padding to use. Supported paddings are `OAEP` and `PKCS1v15`. For `OAEP` padding, `SHA256`
             will be used as the encryption algorithm and MGF1 will be used as the mask generation function.
             See https://learn.microsoft.com/azure/key-vault/keys/about-keys-details for details.
+        :type padding: AsymmetricPadding
 
         :returns: The decrypted plaintext, as bytes.
         :rtype: bytes
@@ -127,11 +128,11 @@ class KeyVaultPrivateKey(RSAPrivateKey):
         result = self._crypto_client.sign(cast(SignatureAlgorithm, mapped_algorithm), digest.finalize())
         return result.signature
 
-    def private_numbers(self) -> RSAPrivateNumbers:
+    def private_numbers(self) -> RSAPrivateNumbers:  # pylint:disable=docstring-missing-return,docstring-missing-rtype
         """Returns an RSAPrivateNumbers. Not implemented, as the private key is managed by Key Vault."""
         raise NotImplementedError()
 
-    def private_bytes(
+    def private_bytes(  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         self,
         encoding: _serialization.Encoding,
         format: _serialization.PrivateFormat,
