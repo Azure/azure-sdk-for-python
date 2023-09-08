@@ -8,6 +8,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Union, cast
 
 from azure.core.rest import HttpResponse
+from azure.appconfiguration import SnapshotStatus
 from ._generated._serialization import Model
 from ._generated.models import (
     KeyValue,
@@ -409,7 +410,7 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
 
     name: Optional[str]
     """The name of the snapshot."""
-    status: Optional[str]
+    status: Optional[Union[str, SnapshotStatus]]
     """The current status of the snapshot. Known values are: "provisioning", "ready",
         "archived", and "failed"."""
     filters: List[ConfigurationSettingFilter]
@@ -429,7 +430,7 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
         snapshot. If not specified, the default lifetime of key-value revisions will be used."""
     size: Optional[int]
     """The size in bytes of the snapshot."""
-    items_count: Optional[int]
+    item_count: Optional[int]
     """The amount of key-values in the snapshot."""
     tags: Optional[Dict[str, str]]
     """The tags of the snapshot."""
@@ -468,7 +469,7 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
         self.expires = None
         self.retention_period = retention_period
         self.size = None
-        self.items_count = None
+        self.item_count = None
         self.tags = tags
         self.etag = None
 
@@ -494,7 +495,7 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
         snapshot.created = generated.created
         snapshot.expires = generated.expires
         snapshot.size = generated.size
-        snapshot.items_count = generated.items_count
+        snapshot.item_count = generated.items_count
         snapshot.etag = generated.etag
 
         return snapshot
@@ -525,7 +526,7 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
         snapshot.created = deserialized.created
         snapshot.expires = deserialized.expires
         snapshot.size = deserialized.size
-        snapshot.items_count = deserialized.items_count
+        snapshot.item_count = deserialized.items_count
         snapshot.etag = deserialized.etag
 
         return snapshot

@@ -30,12 +30,13 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
 )
 from azure.core.utils import CaseInsensitiveDict
+from azure.appconfiguration import SnapshotStatus
 from ._azure_appconfiguration_error import ResourceReadOnlyError
 from ._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from ._azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from ._generated import AzureAppConfiguration
 from ._generated._configuration import AzureAppConfigurationConfiguration
-from ._generated.models import SnapshotStatus, SnapshotUpdateParameters
+from ._generated.models import SnapshotUpdateParameters
 from ._models import ConfigurationSetting, ConfigurationSettingFilter, Snapshot
 from ._utils import (
     get_endpoint_from_connection_string,
@@ -562,15 +563,18 @@ class AzureAppConfigurationClient:
         :param filters: A list of filters used to filter the configuration settings by key field and label field
             included in the snapshot.
         :type filters: list[~azure.appconfiguration.ConfigurationSettingFilter]
-        :keyword str composition_type: The composition type describes how the key-values
+        :keyword composition_type: The composition type describes how the key-values
             within the snapshot are composed. Known values are: "key" and "key_label". The "key" composition type
             ensures there are no two key-values containing the same key. The 'key_label' composition type ensures
             there are no two key-values containing the same key and label.
-        :keyword int retention_period: The amount of time, in seconds, that a snapshot will remain in the
+        :type composition_type: str or None
+        :keyword retention_period: The amount of time, in seconds, that a snapshot will remain in the
             archived state before expiring. This property is only writable during the creation of a
             snapshot. If not specified, will set to 2592000(30 days). If specified, should be
             in range 3600(1 hour) to 7776000(90 days).
-        :keyword dict[str, str] tags: The tags of the snapshot.
+        :type retention_period: int or None
+        :keyword tags: The tags of the snapshot.
+        :type tags: dict[str, str] or None
         :return: A poller for create snapshot operation. Call `result()` on this object to wait for the
             operation to complete and get the created snapshot.
         :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.Snapshot]
@@ -605,7 +609,8 @@ class AzureAppConfigurationClient:
         :type name: str
         :keyword match_condition: The match condition to use upon the etag.
         :type match_condition: ~azure.core.MatchConditions
-        :keyword str etag: Check if the Snapshot is changed. Set None to skip checking etag.
+        :keyword etag: Check if the Snapshot is changed. Set None to skip checking etag.
+        :type etag: str or None
         :return: The Snapshot returned from the service.
         :rtype: ~azure.appconfiguration.Snapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -647,7 +652,8 @@ class AzureAppConfigurationClient:
         :type name: str
         :keyword match_condition: The match condition to use upon the etag.
         :type match_condition: ~azure.core.MatchConditions
-        :keyword str etag: Check if the Snapshot is changed. Set None to skip checking etag.
+        :keyword etag: Check if the Snapshot is changed. Set None to skip checking etag.
+        :type etag: str or None
         :return: The Snapshot returned from the service.
         :rtype: ~azure.appconfiguration.Snapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -680,7 +686,8 @@ class AzureAppConfigurationClient:
 
         :param name: The name of the configuration setting snapshot to retrieve.
         :type name: str
-        :keyword list[str] fields: Specify which fields to include in the results. Leave None to include all fields.
+        :keyword fields: Specify which fields to include in the results. Leave None to include all fields.
+        :type fields: list[str] or None
         :return: The Snapshot returned from the service.
         :rtype: ~azure.appconfiguration.Snapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -699,15 +706,18 @@ class AzureAppConfigurationClient:
         *,
         name: Optional[str] = None,
         fields: Optional[List[str]] = None,
-        status: Optional[List[str]] = None,
+        status: Optional[List[Union[str, SnapshotStatus]]] = None,
         **kwargs
     ) -> ItemPaged[Snapshot]:
         """List the configuration setting snapshots stored in the configuration service, optionally filtered by
         snapshot name, snapshot status and fields to present in return.
 
-        :keyword str name: Filter results based on snapshot name.
-        :keyword list[str] fields: Specify which fields to include in the results. Leave None to include all fields.
-        :keyword list[str] status: Filter results based on snapshot keys.
+        :keyword name: Filter results based on snapshot name.
+        :type name: str or None
+        :keyword fields: Specify which fields to include in the results. Leave None to include all fields.
+        :type fields: list[str] or None
+        :keyword status: Filter results based on snapshot keys.
+        :type status: list[str] or list[~azure.appconfiguration.SnapshotStatus] or None
         :return: An iterator of :class:`~azure.appconfiguration.Snapshot`
         :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.Snapshot]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -725,14 +735,14 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def list_snapshot_configuration_settings(
-        self, name: str, *, accept_datetime: Optional[str] = None, fields: Optional[List[str]] = None, **kwargs
+        self, snapshot_name: str, *, fields: Optional[List[str]] = None, **kwargs
     ) -> ItemPaged[ConfigurationSetting]:
         """List the configuration settings stored under a snapshot in the configuration service, optionally filtered by
         accept_datetime and fields to present in return.
 
         :param str name: The snapshot name.
-        :keyword str accept_datetime: Filter out ConfigurationSetting created after this datetime
-        :keyword list[str] fields: Specify which fields to include in the results. Leave None to include all fields
+        :keyword fields: Specify which fields to include in the results. Leave None to include all fields.
+        :type fields: list[str] or None
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.ConfigurationSetting]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -743,8 +753,7 @@ class AzureAppConfigurationClient:
         try:
             return self._impl.get_key_values(  # type: ignore
                 select=fields,
-                snapshot=name,
-                accept_datetime=accept_datetime,
+                snapshot=snapshot_name,
                 cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                 **kwargs
             )
