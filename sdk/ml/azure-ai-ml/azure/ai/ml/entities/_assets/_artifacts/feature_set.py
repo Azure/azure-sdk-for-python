@@ -183,8 +183,9 @@ class FeatureSet(Artifact):
         relative_path = os.path.basename(self.specification.path)
         src_spec_path = str(Path(self._base_path, self.specification.path))
         dest_spec_path = str(Path(os.path.dirname(dest), relative_path))
-
-        shutil.copytree(src=src_spec_path, dst=dest_spec_path, dirs_exist_ok=True)
+        shutil.copytree(
+            src=src_spec_path, dst=dest_spec_path, dirs_exist_ok=True
+        )  # pylint: disable=unexpected-keyword-arg
         self.specification.path = str(Path("./", relative_path))
         super().dump(dest=dest, **kwargs)
         self.specification.path = origin_spec_path

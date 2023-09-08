@@ -496,9 +496,9 @@ def _check_and_upload_path(
         if not path.is_absolute():
             path = Path(artifact.base_path, path).resolve()
         uploaded_artifact = _upload_to_datastore(
-            operation_scope=asset_operations._operation_scope,
-            datastore_operation=asset_operations._datastore_operation,
-            path=path,
+            asset_operations._operation_scope,
+            asset_operations._datastore_operation,
+            path,
             datastore_name=datastore_name,
             asset_name=artifact.name,
             asset_version=str(artifact.version),

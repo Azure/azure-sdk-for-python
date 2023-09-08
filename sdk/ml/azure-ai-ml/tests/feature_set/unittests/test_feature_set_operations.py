@@ -54,7 +54,7 @@ def mock_feature_set_operations(
 
 
 # @pytest.fixture
-def mock_artifact_storage(**kwargs) -> Mock:
+def mock_artifact_storage(_one, _two, _three, **kwargs) -> Mock:
     return ArtifactStorageInfo(
         name="testFileData",
         version="3",
@@ -177,8 +177,10 @@ class TestFeatureSetOperations:
         )
 
         mock_feature_set_operations.begin_create_or_update(featureset=fs)
-        call_kwargs = mock_upload_to_datastore.call_args.kwargs
-        assert call_kwargs["path"] == Path("./tests/test_configs/feature_set/sample_feature_set/spec").resolve()
+        call_args = mock_upload_to_datastore.call_args.args
+        print(f"call_args: {call_args}")
+        assert call_args[2] == Path("./tests/test_configs/feature_set/sample_feature_set/spec").resolve()
+        # assert call_kwargs["path"] == Path("./tests/test_configs/feature_set/sample_feature_set/spec").resolve()
         mock_upload_to_datastore.assert_called_once()
         mock_feature_set_operations._operation.begin_create_or_update.assert_called_once()
 
@@ -203,6 +205,7 @@ class TestFeatureSetOperations:
         dumped_fs = load_feature_set(source=dump_path)
 
         mock_feature_set_operations.begin_create_or_update(featureset=dumped_fs)
-        call_kwargs = mock_upload_to_datastore.call_args.kwargs
-        assert call_kwargs["path"] == Path(os.path.dirname(dump_path), "spec").resolve()
+        call_args = mock_upload_to_datastore.call_args.args
+        # assert call_kwargs["path"] == Path(os.path.dirname(dump_path), "spec").resolve()
+        assert call_args[2] == Path(os.path.dirname(dump_path), "spec").resolve()
         mock_feature_set_operations._operation.begin_create_or_update.assert_called_once()
