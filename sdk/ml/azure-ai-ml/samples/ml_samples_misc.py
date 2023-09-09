@@ -24,7 +24,7 @@ from azure.identity import DefaultAzureCredential
 
 subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
 resource_group = os.environ["RESOURCE_GROUP_NAME"]
-workspace_name = "r-bug-bash"
+workspace_name = "test-ws1"
 credential = DefaultAzureCredential()
 ml_client = MLClient(credential, subscription_id, resource_group, workspace_name=workspace_name)
 
