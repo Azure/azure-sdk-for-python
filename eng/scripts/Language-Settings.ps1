@@ -623,3 +623,26 @@ function Get-python-EmitterName() {
 function Get-python-EmitterAdditionalOptions([string]$projectDirectory) {
   return "--option @azure-tools/typespec-python.emitter-output-dir=$projectDirectory/"
 }
+
+
+function Update-python-GeneratedSdks([string]$PackageFoldersFile) {
+  $packageFolders = Get-Content $PackageFoldersFile | ConvertFrom-Json
+
+  foreach ($folder in $packageFolders) {
+    Push-Location $RepoRoot
+    try {
+      Write-Host 'Generating projects under folder ' -ForegroundColor Green -NoNewline
+      Write-Host "$folder" -ForegroundColor Yellow
+      
+      Invoke-LoggedCommand "python 'scripts/typespec_refresh_sdk/main.py' $folder" -GroupOutput
+
+      if ($LastExitCode -ne 0) {
+        Write-Error "Generation error in $folder"
+        exit 1
+      }
+    }
+    finally {
+      Pop-Location
+    }
+  }
+}
