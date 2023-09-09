@@ -652,8 +652,8 @@ function Update-python-GeneratedSdks([string]$PackageFoldersFile) {
     try {
       Write-Host 'Generating projects under folder ' -ForegroundColor Green -NoNewline
       Write-Host "$folder" -ForegroundColor Yellow
-      
-      Invoke-LoggedCommand "python scripts/typespec_refresh_sdk/main.py $folder" -GroupOutput
+
+      Invoke-LoggedCommand "python scripts/typespec_refresh_sdk/main.py sdk/$folder" -GroupOutput
 
       if ($LastExitCode -ne 0) {
         Write-Error "Generation error in $folder"
