@@ -38,15 +38,21 @@ function Split-Items([array]$Items) {
 # ensure the output directory exists
 New-Item -ItemType Directory -Path $OutputDirectory -Force | Out-Null
 
-[array]$packageFolders = Get-ChildItem "$RepoRoot/sdk" -Directory
-| Get-ChildItem -Directory
-| Sort-Object -Property FullName
-| ForEach-Object {
-  [ordered]@{
-    "PackageFolder"   = "$($_.Parent.Name)/$($_.Name)"
-    "ServiceArea" = $_.Parent.Name
-  }
+if (Test-Path "Function:$GetFoldersForGenerationFn") {
+  $foldersForGeneration = &$GetFoldersForGenerationFn
+} else {
+  $foldersForGeneration = Get-ChildItem "$RepoRoot/sdk" -Directory | Get-ChildItem -Directory
 }
+
+[array]$packageFolders = $foldersForGeneration
+  | Sort-Object -Property FullName
+  | ForEach-Object {
+    [ordered]@{
+      "PackageFolder"   = "$($_.Parent.Name)/$($_.Name)"
+      "ServiceArea" = $_.Parent.Name
+    }
+  }
+
 
 $batches = Split-Items -Items $packageFolders
 
