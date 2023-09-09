@@ -1,0 +1,52 @@
+{
+	"name": "default-browser",
+	"version": "4.0.0",
+	"description": "Get the default browser",
+	"license": "MIT",
+	"repository": "sindresorhus/default-browser",
+	"funding": "https://github.com/sponsors/sindresorhus",
+	"author": {
+		"name": "Sindre Sorhus",
+		"email": "sindresorhus@gmail.com",
+		"url": "https://sindresorhus.com"
+	},
+	"type": "module",
+	"exports": "./index.js",
+	"engines": {
+		"node": ">=14.16"
+	},
+	"scripts": {
+		"test": "xo && ava && tsd"
+	},
+	"files": [
+		"index.js",
+		"windows.js",
+		"index.d.ts"
+	],
+	"keywords": [
+		"macos",
+		"linux",
+		"browser",
+		"default",
+		"plist",
+		"web",
+		"bundle",
+		"bundleid",
+		"id",
+		"identifier",
+		"uti",
+		"cfbundlename",
+		"applescript"
+	],
+	"dependencies": {
+		"bundle-name": "^3.0.0",
+		"default-browser-id": "^3.0.0",
+		"execa": "^7.1.1",
+		"titleize": "^3.0.0"
+	},
+	"devDependencies": {
+		"ava": "^5.2.0",
+		"tsd": "^0.28.0",
+		"xo": "^0.53.1"
+	}
+}

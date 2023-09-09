@@ -1,0 +1,22 @@
+export declare const tryPkg: (pkg: string) => string | undefined;
+export declare const tryRequirePkg: <T>(pkg: string) => T | undefined;
+export declare const isPkgAvailable: (pkg: string) => boolean;
+export declare const isTsAvailable: boolean;
+export declare const isAngularAvailable: boolean;
+export declare const isMdxAvailable: boolean;
+export declare const isReactAvailable: boolean;
+export declare const isSvelteAvailable: boolean;
+export declare const isVueAvailable: boolean;
+export declare const tryFile: (filePath?: string[] | string, includeDir?: boolean) => string;
+export declare const tryExtensions: (filepath: string, extensions?: string[]) => string;
+export declare const tryGlob: (paths: string[], options?: string | {
+    absolute?: boolean;
+    baseDir?: string;
+    ignore?: [string];
+}) => string[];
+export declare const identify: <T>(_: T) => _ is Exclude<T, "" | (T extends boolean ? false : boolean) | null | undefined>;
+export declare const findUp: (searchEntry: string, searchFile?: string) => string;
+export declare const arrayify: <T, R = T extends (infer S)[] ? NonNullable<S> : NonNullable<T>>(...args: (R | R[])[]) => R[];
+export declare const getPackageManager: () => "pnpm" | "yarn" | "npm" | undefined;
+export declare const getScriptRunner: () => "npx" | "pnpm" | "yarn" | undefined;
+export declare const getScriptExecutor: () => "npx" | "pnpx" | "yarn dlx" | undefined;

@@ -1,0 +1,183 @@
+{
+	"name": "eslint-plugin-unicorn",
+	"version": "47.0.0",
+	"description": "More than 100 powerful ESLint rules",
+	"license": "MIT",
+	"repository": "sindresorhus/eslint-plugin-unicorn",
+	"funding": "https://github.com/sindresorhus/eslint-plugin-unicorn?sponsor=1",
+	"author": {
+		"name": "Sindre Sorhus",
+		"email": "sindresorhus@gmail.com",
+		"url": "https://sindresorhus.com"
+	},
+	"engines": {
+		"node": ">=16"
+	},
+	"scripts": {
+		"create-rule": "node ./scripts/create-rule.mjs && npm run fix:eslint-docs",
+		"fix": "run-p --continue-on-error fix:*",
+		"fix:eslint-docs": "eslint-doc-generator",
+		"fix:js": "npm run lint:js -- --fix",
+		"fix:md": "npm run lint:md -- --fix",
+		"integration": "node ./test/integration/test.mjs",
+		"lint": "run-p --continue-on-error lint:*",
+		"lint:eslint-docs": "npm run fix:eslint-docs -- --check",
+		"lint:js": "xo",
+		"lint:md": "markdownlint \"**/*.md\"",
+		"lint:package-json": "npmPkgJsonLint .",
+		"run-rules-on-codebase": "node ./test/run-rules-on-codebase/lint.mjs",
+		"smoke": "eslint-remote-tester --config ./test/smoke/eslint-remote-tester.config.js",
+		"test": "npm-run-all --continue-on-error lint test:*",
+		"test:js": "c8 ava"
+	},
+	"files": [
+		"index.js",
+		"rules",
+		"configs"
+	],
+	"keywords": [
+		"eslint",
+		"eslintplugin",
+		"eslint-plugin",
+		"unicorn",
+		"linter",
+		"lint",
+		"style",
+		"xo"
+	],
+	"dependencies": {
+		"@babel/helper-validator-identifier": "^7.19.1",
+		"@eslint-community/eslint-utils": "^4.4.0",
+		"ci-info": "^3.8.0",
+		"clean-regexp": "^1.0.0",
+		"esquery": "^1.5.0",
+		"indent-string": "^4.0.0",
+		"is-builtin-module": "^3.2.1",
+		"jsesc": "^3.0.2",
+		"lodash": "^4.17.21",
+		"pluralize": "^8.0.0",
+		"read-pkg-up": "^7.0.1",
+		"regexp-tree": "^0.1.24",
+		"regjsparser": "^0.10.0",
+		"safe-regex": "^2.1.1",
+		"semver": "^7.3.8",
+		"strip-indent": "^3.0.0"
+	},
+	"devDependencies": {
+		"@babel/code-frame": "^7.21.4",
+		"@babel/core": "^7.21.4",
+		"@babel/eslint-parser": "^7.21.3",
+		"@lubien/fixture-beta-package": "^1.0.0-beta.1",
+		"@typescript-eslint/parser": "^5.57.1",
+		"ava": "^3.15.0",
+		"c8": "^7.13.0",
+		"chalk": "^5.2.0",
+		"enquirer": "^2.3.6",
+		"eslint": "^8.40.0",
+		"eslint-ava-rule-tester": "^4.0.0",
+		"eslint-doc-generator": "^1.4.3",
+		"eslint-plugin-eslint-plugin": "^5.0.8",
+		"eslint-plugin-internal-rules": "file:./scripts/internal-rules/",
+		"eslint-remote-tester": "^3.0.0",
+		"eslint-remote-tester-repositories": "^1.0.1",
+		"execa": "^7.1.1",
+		"listr": "^0.14.3",
+		"lodash-es": "^4.17.21",
+		"markdownlint-cli": "^0.33.0",
+		"mem": "^9.0.2",
+		"npm-package-json-lint": "^6.4.0",
+		"npm-run-all": "^4.1.5",
+		"outdent": "^0.8.0",
+		"typescript": "^5.0.3",
+		"vue-eslint-parser": "^9.1.1",
+		"xo": "^0.54.0",
+		"yaml": "^2.2.1"
+	},
+	"peerDependencies": {
+		"eslint": ">=8.38.0"
+	},
+	"ava": {
+		"files": [
+			"test/*.mjs",
+			"test/unit/*.mjs"
+		]
+	},
+	"c8": {
+		"reporter": [
+			"text",
+			"lcov"
+		]
+	},
+	"xo": {
+		"extends": [
+			"plugin:internal-rules/all"
+		],
+		"ignores": [
+			".cache-eslint-remote-tester",
+			"eslint-remote-tester-results",
+			"test/integration/{fixtures,fixtures-local}/**"
+		],
+		"rules": {
+			"unicorn/expiring-todo-comments": "off",
+			"unicorn/no-null": "error",
+			"unicorn/prefer-array-flat": [
+				"error",
+				{
+					"functions": [
+						"flat",
+						"flatten"
+					]
+				}
+			],
+			"import/order": "off"
+		},
+		"overrides": [
+			{
+				"files": [
+					"**/*.js"
+				],
+				"parserOptions": {
+					"sourceType": "script"
+				},
+				"rules": {
+					"strict": "error",
+					"unicorn/prefer-module": "off"
+				}
+			},
+			{
+				"files": [
+					"rules/*.js"
+				],
+				"plugins": [
+					"eslint-plugin"
+				],
+				"extends": [
+					"plugin:eslint-plugin/all"
+				],
+				"rules": {
+					"eslint-plugin/require-meta-docs-description": [
+						"error",
+						{
+							"pattern": ".+"
+						}
+					],
+					"eslint-plugin/require-meta-docs-url": "off",
+					"eslint-plugin/require-meta-has-suggestions": "off",
+					"eslint-plugin/require-meta-schema": "off"
+				}
+			}
+		]
+	},
+	"npmpackagejsonlint": {
+		"rules": {
+			"prefer-caret-version-devDependencies": [
+				"error",
+				{
+					"exceptions": [
+						"eslint-plugin-internal-rules"
+					]
+				}
+			]
+		}
+	}
+}
