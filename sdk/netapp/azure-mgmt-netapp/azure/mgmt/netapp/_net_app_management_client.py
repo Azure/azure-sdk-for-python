@@ -9,35 +9,20 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
+from msrest import Deserializer, Serializer
+
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
-from . import models as _models
+from . import models
 from ._configuration import NetAppManagementClientConfiguration
-from ._serialization import Deserializer, Serializer
-from .operations import (
-    AccountBackupsOperations,
-    AccountsOperations,
-    BackupPoliciesOperations,
-    BackupsOperations,
-    NetAppResourceOperations,
-    NetAppResourceQuotaLimitsOperations,
-    Operations,
-    PoolsOperations,
-    SnapshotPoliciesOperations,
-    SnapshotsOperations,
-    SubvolumesOperations,
-    VolumeGroupsOperations,
-    VolumeQuotaRulesOperations,
-    VolumesOperations,
-)
+from .operations import AccountsOperations, BackupPoliciesOperations, BackupsOperations, NetAppResourceOperations, NetAppResourceQuotaLimitsOperations, Operations, PoolsOperations, SnapshotPoliciesOperations, SnapshotsOperations, SubvolumesOperations, VolumeGroupsOperations, VolumeQuotaRulesOperations, VolumesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-
-class NetAppManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class NetAppManagementClient:    # pylint: disable=too-many-instance-attributes
     """Microsoft NetApp Files Azure Resource Provider specification.
 
     :ivar operations: Operations operations
@@ -59,8 +44,6 @@ class NetAppManagementClient:  # pylint: disable=client-accepts-api-version-keyw
     :vartype snapshot_policies: azure.mgmt.netapp.operations.SnapshotPoliciesOperations
     :ivar backups: BackupsOperations operations
     :vartype backups: azure.mgmt.netapp.operations.BackupsOperations
-    :ivar account_backups: AccountBackupsOperations operations
-    :vartype account_backups: azure.mgmt.netapp.operations.AccountBackupsOperations
     :ivar backup_policies: BackupPoliciesOperations operations
     :vartype backup_policies: azure.mgmt.netapp.operations.BackupPoliciesOperations
     :ivar volume_quota_rules: VolumeQuotaRulesOperations operations
@@ -69,13 +52,13 @@ class NetAppManagementClient:  # pylint: disable=client-accepts-api-version-keyw
     :vartype volume_groups: azure.mgmt.netapp.operations.VolumeGroupsOperations
     :ivar subvolumes: SubvolumesOperations operations
     :vartype subvolumes: azure.mgmt.netapp.operations.SubvolumesOperations
-    :param credential: Credential needed for the client to connect to Azure. Required.
+    :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is 'https://management.azure.com'.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-11-01". Note that overriding this
+    :keyword api_version: Api Version. The default value is "2023-05-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -89,37 +72,33 @@ class NetAppManagementClient:  # pylint: disable=client-accepts-api-version-keyw
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = NetAppManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
-        )
-        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = NetAppManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.net_app_resource = NetAppResourceOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.net_app_resource_quota_limits = NetAppResourceQuotaLimitsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.net_app_resource_quota_limits = NetAppResourceQuotaLimitsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.accounts = AccountsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.pools = PoolsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.volumes = VolumesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.snapshots = SnapshotsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.snapshot_policies = SnapshotPoliciesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.snapshot_policies = SnapshotPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.backups = BackupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.account_backups = AccountBackupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.backup_policies = BackupPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.volume_quota_rules = VolumeQuotaRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.volume_quota_rules = VolumeQuotaRulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.volume_groups = VolumeGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.subvolumes = SubvolumesOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+
+    def _send_request(
+        self,
+        request: HttpRequest,
+        **kwargs: Any
+    ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -128,7 +107,7 @@ class NetAppManagementClient:  # pylint: disable=client-accepts-api-version-keyw
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -141,12 +120,15 @@ class NetAppManagementClient:  # pylint: disable=client-accepts-api-version-keyw
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self) -> None:
+    def close(self):
+        # type: () -> None
         self._client.close()
 
-    def __enter__(self) -> "NetAppManagementClient":
+    def __enter__(self):
+        # type: () -> NetAppManagementClient
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details: Any) -> None:
+    def __exit__(self, *exc_details):
+        # type: (Any) -> None
         self._client.__exit__(*exc_details)
