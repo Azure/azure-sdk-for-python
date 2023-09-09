@@ -640,6 +640,9 @@ function Get-python-EmitterAdditionalOptions([string]$projectDirectory) {
   return "--option @azure-tools/typespec-python.emitter-output-dir=$projectDirectory/"
 }
 
+function Get-python-FoldersForGeneration() {
+  Get-ChildItem $RepoRoot -Include "tsp-location.yaml" -Recurse | Select-Object -ExpandProperty Directory
+}
 
 function Update-python-GeneratedSdks([string]$PackageFoldersFile) {
   $packageFolders = Get-Content $PackageFoldersFile | ConvertFrom-Json
