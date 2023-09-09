@@ -16,7 +16,6 @@ from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import NetAppManagementClientConfiguration
 from .operations import (
-    AccountBackupsOperations,
     AccountsOperations,
     BackupPoliciesOperations,
     BackupsOperations,
@@ -59,8 +58,6 @@ class NetAppManagementClient:  # pylint: disable=client-accepts-api-version-keyw
     :vartype snapshot_policies: azure.mgmt.netapp.aio.operations.SnapshotPoliciesOperations
     :ivar backups: BackupsOperations operations
     :vartype backups: azure.mgmt.netapp.aio.operations.BackupsOperations
-    :ivar account_backups: AccountBackupsOperations operations
-    :vartype account_backups: azure.mgmt.netapp.aio.operations.AccountBackupsOperations
     :ivar backup_policies: BackupPoliciesOperations operations
     :vartype backup_policies: azure.mgmt.netapp.aio.operations.BackupPoliciesOperations
     :ivar volume_quota_rules: VolumeQuotaRulesOperations operations
@@ -75,7 +72,7 @@ class NetAppManagementClient:  # pylint: disable=client-accepts-api-version-keyw
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-11-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-05-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -111,7 +108,6 @@ class NetAppManagementClient:  # pylint: disable=client-accepts-api-version-keyw
             self._client, self._config, self._serialize, self._deserialize
         )
         self.backups = BackupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.account_backups = AccountBackupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.backup_policies = BackupPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.volume_quota_rules = VolumeQuotaRulesOperations(
             self._client, self._config, self._serialize, self._deserialize

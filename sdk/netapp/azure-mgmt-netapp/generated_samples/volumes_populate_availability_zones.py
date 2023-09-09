@@ -14,7 +14,7 @@ from azure.mgmt.netapp import NetAppManagementClient
     pip install azure-identity
     pip install azure-mgmt-netapp
 # USAGE
-    python backups_delete.py
+    python volumes_populate_availability_zones.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,15 +29,15 @@ def main():
         subscription_id="D633CC2E-722B-4AE1-B636-BBD9E4C60ED9",
     )
 
-    client.backups.begin_delete(
-        resource_group_name="resourceGroup",
-        account_name="accountName",
-        pool_name="poolName",
-        volume_name="volumeName",
-        backup_name="backupName",
+    response = client.volumes.begin_populate_availability_zone(
+        resource_group_name="myRG",
+        account_name="account1",
+        pool_name="pool1",
+        volume_name="volume1",
     ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2022-11-01/examples/Backups_Delete.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2023-05-01/examples/Volumes_PopulateAvailabilityZones.json
 if __name__ == "__main__":
     main()
