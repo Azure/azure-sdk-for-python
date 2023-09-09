@@ -50,7 +50,7 @@ except NameError:
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline import PipelineRequest, PipelineResponse
+    from azure.core.pipeline.transport import PipelineRequest, PipelineResponse
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -653,15 +653,15 @@ class LinearRetry(StorageRetryPolicy):
         super(LinearRetry, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings: Dict[str, Any]) -> Optional[int]:
+    def get_backoff_time(self, settings: Dict[str, Any]) -> float:
         """
         Calculates how long to sleep before retrying.
 
         :param Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
         :returns:
-            An integer indicating how long to wait before retrying the request,
+            A float indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
-        :rtype: int or None
+        :rtype: float
         """
         random_generator = random.Random()
         # the backoff interval normally does not change, however there is the possibility

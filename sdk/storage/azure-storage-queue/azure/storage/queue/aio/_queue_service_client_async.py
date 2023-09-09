@@ -235,7 +235,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
             You can include up to five CorsRule elements in the
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
-        :type cors: list(~azure.storage.queue.CorsRule)
+        :type cors: Optional[list(~azure.storage.queue.CorsRule)]
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
 

@@ -6,7 +6,7 @@
 
 import logging
 import re
-from typing import Dict, List, Optional, Tuple
+from typing import List, Tuple
 from urllib.parse import unquote, urlparse
 
 try:

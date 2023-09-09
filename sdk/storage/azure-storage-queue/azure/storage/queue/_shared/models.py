@@ -10,7 +10,7 @@ from typing import Optional
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.configuration import Configuration
 from azure.core.pipeline.policies import UserAgentPolicy
-from .._message_encoding import MessageDecodePolicy
+from .._message_encoding import MessageDecodePolicy, NoDecodePolicy
 
 
 def get_enum_value(value):
@@ -570,3 +570,4 @@ class StorageConfiguration(Configuration):
         self.max_single_get_size = 32 * 1024 * 1024
         self.max_chunk_get_size = 4 * 1024 * 1024
         self.max_range_size = 4 * 1024 * 1024
+        self.message_decode_policy = NoDecodePolicy()

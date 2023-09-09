@@ -205,6 +205,72 @@ class CorsRule(GeneratedCorsRule):
         )
 
 
+class QueueSasPermissions(object):
+    """QueueSasPermissions class to be used with the
+    :func:`~azure.storage.queue.generate_queue_sas` function and for the AccessPolicies used with
+    :func:`~azure.storage.queue.QueueClient.set_queue_access_policy`.
+
+    :param bool read:
+        Read metadata and properties, including message count. Peek at messages.
+    :param bool add:
+        Add messages to the queue.
+    :param bool update:
+        Update messages in the queue. Note: Use the Process permission with
+        Update so you can first get the message you want to update.
+    :param bool process:
+        Get and delete messages from the queue.
+    """
+
+    read: bool = False
+    """Read metadata and properties, including message count."""
+    add: bool = False
+    """Add messages to the queue."""
+    update: bool = False
+    """Update messages in the queue."""
+    process: bool = False
+    """Get and delete messages from the queue."""
+
+    def __init__(
+        self, read: bool = False,
+        add: bool = False,
+        update: bool = False,
+        process: bool = False
+    ) -> None:
+        self.read = read
+        self.add = add
+        self.update = update
+        self.process = process
+        self._str = (('r' if self.read else '') +
+                     ('a' if self.add else '') +
+                     ('u' if self.update else '') +
+                     ('p' if self.process else ''))
+
+    def __str__(self):
+        return self._str
+
+    @classmethod
+    def from_string(cls, permission: str) -> Self:
+        """Create a QueueSasPermissions from a string.
+
+        To specify read, add, update, or process permissions you need only to
+        include the first letter of the word in the string. E.g. For read and
+        update permissions, you would provide a string "ru".
+
+        :param str permission: The string which dictates the
+            read, add, update, or process permissions.
+        :return: A QueueSasPermissions object
+        :rtype: ~azure.storage.queue.QueueSasPermissions
+        """
+        p_read = 'r' in permission
+        p_add = 'a' in permission
+        p_update = 'u' in permission
+        p_process = 'p' in permission
+
+        parsed = cls(p_read, p_add, p_update, p_process)
+
+        return parsed
+
+
 class AccessPolicy(GenAccessPolicy):
     """Access Policy class used by the set and get access policy methods.
 
@@ -225,39 +291,37 @@ class AccessPolicy(GenAccessPolicy):
     both in the Shared Access Signature URL and in the stored access policy, the
     request will fail with status code 400 (Bad Request).
 
-    :param str permission:
+    :param Optional[QueueSasPermissions] permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :param expiry:
+    :param Optional[Union["datetime", str]] expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has
         been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it
         is assumed to be UTC.
-    :type expiry: ~datetime.datetime or str
-    :param start:
+    :param Optional[Union["datetime", str]] start:
         The time at which the shared access signature becomes valid. If
         omitted, start time for this call is assumed to be the time when the
         storage service receives the request. Azure will always convert values
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
-    :type start: ~datetime.datetime or str
     """
 
-    permission: Optional[str] = None
+    permission: Optional[QueueSasPermissions] = None
     """The permissions associated with the shared access signature. The user is restricted to
         operations allowed by the permissions."""
-    expiry: Optional[Union["datetime", str]] = None  # type: ignore
+    expiry: Optional[Union["datetime", str]] = None
     """The time at which the shared access signature becomes invalid."""
-    start: Optional[Union["datetime", str]] = None  # type: ignore
+    start: Optional[Union["datetime", str]] = None
     """The time at which the shared access signature becomes valid."""
 
     def __init__(
-        self, permission: Optional[str] = None,
+        self, permission: Optional[QueueSasPermissions] = None,
         expiry: Optional[Union["datetime", str]] = None,
         start: Optional[Union["datetime", str]] = None
     ) -> None:
@@ -269,19 +333,19 @@ class AccessPolicy(GenAccessPolicy):
 class QueueMessage(DictMixin):
     """Represents a queue message."""
 
-    id: Optional[str]
+    id: str
     """A GUID value assigned to the message by the Queue service that
         identifies the message in the queue. This value may be used together
         with the value of pop_receipt to delete a message from the queue after
         it has been retrieved with the receive messages operation."""
-    inserted_on: Optional["datetime"]
+    inserted_on: "datetime"
     """A UTC date value representing the time the messages was inserted."""
-    expires_on: Optional["datetime"]
+    expires_on: "datetime"
     """A UTC date value representing the time the message expires."""
-    dequeue_count: Optional[int]
+    dequeue_count: int
     """Begins with a value of 1 the first time the message is received. This
         value is incremented each time the message is subsequently received."""
-    content: Any = None
+    content: Any
     """The message content. Type is determined by the decode_function set on
         the service. Default is str."""
     pop_receipt: Optional[str]
@@ -294,10 +358,6 @@ class QueueMessage(DictMixin):
         Only returned by receive messages operations. Set to None for peek messages."""
 
     def __init__(self, content: Any = None) -> None:
-        self.id = None
-        self.inserted_on = None
-        self.expires_on = None
-        self.dequeue_count = None
         self.content = content
         self.pop_receipt = None
         self.next_visible_on = None
@@ -373,7 +433,7 @@ class MessagesPaged(PageIterator):
 class QueueProperties(DictMixin):
     """Queue Properties.
 
-    :keyword Optional[str] name:
+    :keyword str name:
         The name of the queue.
     :keyword Optional[Dict[str, str]] metadata:
         A dict containing name-value pairs associated with the queue as metadata.
@@ -381,13 +441,12 @@ class QueueProperties(DictMixin):
         for the list queues operation.
     """
 
-    name: Optional[str]
+    name: str
     """The name of the queue."""
     metadata: Optional[Dict[str, str]]
     """A dict containing name-value pairs associated with the queue as metadata."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self.name = None
         self.metadata = kwargs.get('metadata')
         self.approximate_message_count = kwargs.get('x-ms-approximate-messages-count')
 
@@ -464,72 +523,6 @@ class QueuePropertiesPaged(PageIterator):
         props_list = [QueueProperties._from_generated(q) for q in self._response.queue_items] # pylint: disable=protected-access
         next_marker = self._response.next_marker
         return next_marker or None, props_list
-
-
-class QueueSasPermissions(object):
-    """QueueSasPermissions class to be used with the
-    :func:`~azure.storage.queue.generate_queue_sas` function and for the AccessPolicies used with
-    :func:`~azure.storage.queue.QueueClient.set_queue_access_policy`.
-
-    :param bool read:
-        Read metadata and properties, including message count. Peek at messages.
-    :param bool add:
-        Add messages to the queue.
-    :param bool update:
-        Update messages in the queue. Note: Use the Process permission with
-        Update so you can first get the message you want to update.
-    :param bool process:
-        Get and delete messages from the queue.
-    """
-
-    read: bool = False
-    """Read metadata and properties, including message count."""
-    add: bool = False
-    """Add messages to the queue."""
-    update: bool = False
-    """Update messages in the queue."""
-    process: bool = False
-    """Get and delete messages from the queue."""
-
-    def __init__(
-        self, read: bool = False,
-        add: bool = False,
-        update: bool = False,
-        process: bool = False
-    ) -> None:
-        self.read = read
-        self.add = add
-        self.update = update
-        self.process = process
-        self._str = (('r' if self.read else '') +
-                     ('a' if self.add else '') +
-                     ('u' if self.update else '') +
-                     ('p' if self.process else ''))
-
-    def __str__(self):
-        return self._str
-
-    @classmethod
-    def from_string(cls, permission: str) -> Self:
-        """Create a QueueSasPermissions from a string.
-
-        To specify read, add, update, or process permissions you need only to
-        include the first letter of the word in the string. E.g. For read and
-        update permissions, you would provide a string "ru".
-
-        :param str permission: The string which dictates the
-            read, add, update, or process permissions.
-        :return: A QueueSasPermissions object
-        :rtype: ~azure.storage.queue.QueueSasPermissions
-        """
-        p_read = 'r' in permission
-        p_add = 'a' in permission
-        p_update = 'u' in permission
-        p_process = 'p' in permission
-
-        parsed = cls(p_read, p_add, p_update, p_process)
-
-        return parsed
 
 
 def service_stats_deserialize(generated: Any) -> Dict[str, Any]:

@@ -59,11 +59,10 @@ print('Request with logging enabled and log level set to DEBUG.')
 queues = service_client.list_queues(logging_enable=True)
 for queue in queues:
     print('Queue: {}'.format(queue.name))
-    if isinstance(queue.name, str):
-        queue_client = service_client.get_queue_client(queue.name)
-    messages = queue_client.peek_messages(max_messages=20, logging_enable=True)
-    for message in messages:
-        try:
-            print('  Message: {!r}'.format(base64.b64decode(message.content)))
-        except binascii.Error:
-            print('  Message: {}'.format(message.content))
+    queue_client = service_client.get_queue_client(queue.name)
+messages = queue_client.peek_messages(max_messages=20, logging_enable=True)
+for message in messages:
+    try:
+        print('  Message: {!r}'.format(base64.b64decode(message.content)))
+    except binascii.Error:
+        print('  Message: {}'.format(message.content))

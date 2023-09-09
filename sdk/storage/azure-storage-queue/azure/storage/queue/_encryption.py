@@ -51,15 +51,33 @@ class KeyEncryptionKey(Protocol):
     """Protocol that defines what calling functions should be defined for a user-provided key-encryption-key (kek)."""
 
     def wrap_key(self, key):
+        """
+        Wraps the specified key using an algorithm of the user's choice.
+        :param str key:
+            The user-provided key to be encrypted.
+        """
         ...
 
-    def unwrap_key(self, key, algorithm):
+    def unwrap_key(self, key, algorithm): 
+        """
+        Unwraps the specified key using an algorithm of the user's choice.
+        :param str key:
+            The user-provided key to be unencrypted.
+        :param str algorithm:
+            The algorithm used to encrypt the key. This specifies what algorithm to use for the unwrap operation.
+        """
         ...
 
     def get_kid(self):
+        """
+        Returns the key ID as specified by the user.
+        """
         ...
 
     def get_key_wrap_algorithm(self):
+        """
+        Returns the key wrap algorithm as specified by the user.
+        """
         ...
 
 

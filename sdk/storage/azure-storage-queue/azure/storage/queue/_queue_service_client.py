@@ -35,8 +35,7 @@ from ._shared.response_handlers import process_storage_error
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from ._generated.models import CorsRule
-    from ._models import Metrics, QueueAnalyticsLogging
+    from ._models import CorsRule, Metrics, QueueAnalyticsLogging
 
 
 class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
@@ -236,7 +235,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             You can include up to five CorsRule elements in the
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
-        :type cors: List[~azure.storage.queue.CorsRule]
+        :type cors: Optional[List[~azure.storage.queue.CorsRule]]
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :returns: None
