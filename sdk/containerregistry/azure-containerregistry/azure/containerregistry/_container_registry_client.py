@@ -71,7 +71,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         api_version: Optional[str] = None,
         audience: str = DEFAULT_AUDIENCE,
         **kwargs: Any,
-    ):
+    ) -> None:
         """Create a ContainerRegistryClient from an ACR endpoint and a credential.
 
         :param str endpoint: An ACR endpoint.

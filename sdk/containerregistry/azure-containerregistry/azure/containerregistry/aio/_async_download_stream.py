@@ -9,9 +9,6 @@ from typing_extensions import Protocol, Self
 from azure.core.pipeline import PipelineResponse
 from .._models import DigestValidationError
 
-AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
-HTTPRequestType = TypeVar("HTTPRequestType")
-
 
 class AsyncGetNext(Protocol):
     def __call__(self, *args: Any, range_header: str) -> Awaitable[AsyncIterator[bytes]]:
@@ -27,7 +24,7 @@ class AsyncDownloadBlobStream(
     def __init__(
         self,
         *,
-        response: PipelineResponse[HTTPRequestType, AsyncHTTPResponseType],
+        response: PipelineResponse[Any, Any],
         get_next: AsyncGetNext,
         blob_size: int,
         downloaded: int,

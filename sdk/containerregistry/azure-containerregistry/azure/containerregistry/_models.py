@@ -6,7 +6,7 @@
 import warnings
 from datetime import datetime
 from enum import Enum
-from typing import Any, List, Mapping
+from typing import Any, List, Mapping, Optional
 
 from azure.core import CaseInsensitiveEnumMeta
 from ._generated.models import (
@@ -94,10 +94,10 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
         self._registry = kwargs.get("registry", None)
         self._size_in_bytes = kwargs.get("size_in_bytes", None)
         self._tags = kwargs.get("tags", None)
-        self.can_delete: bool = kwargs.get("can_delete")
-        self.can_read: bool = kwargs.get("can_read")
-        self.can_list: bool = kwargs.get("can_list")
-        self.can_write: bool = kwargs.get("can_write")
+        self.can_delete: Optional[bool] = kwargs.get("can_delete")
+        self.can_read: Optional[bool] = kwargs.get("can_read")
+        self.can_list: Optional[bool] = kwargs.get("can_list")
+        self.can_write: Optional[bool] = kwargs.get("can_write")
 
     @classmethod
     def _from_generated(cls, generated: ManifestAttributesBase, **kwargs) -> "ArtifactManifestProperties":
@@ -184,10 +184,10 @@ class RepositoryProperties:
         self._manifest_count = kwargs.get("manifest_count", None)
         self._name = kwargs.get("name", None)
         self._tag_count = kwargs.get("tag_count", None)
-        self.can_delete: bool = kwargs.get("can_delete")
-        self.can_read: bool = kwargs.get("can_read")
-        self.can_list: bool = kwargs.get("can_list")
-        self.can_write: bool = kwargs.get("can_write")
+        self.can_delete: Optional[bool] = kwargs.get("can_delete")
+        self.can_read: Optional[bool] = kwargs.get("can_read")
+        self.can_list: Optional[bool] = kwargs.get("can_list")
+        self.can_write: Optional[bool] = kwargs.get("can_write")
 
     @classmethod
     def _from_generated(cls, generated: GeneratedRepositoryProperties) -> "RepositoryProperties":
@@ -214,11 +214,11 @@ class RepositoryProperties:
     def __getattr__(self, name: str) -> datetime:
         if name == "last_udpated_on":
             warnings.warn(
-                "The property name with a typo called 'last_udpated_on' has been deprecated and will be retired in future versions",  # pylint: disable=line-too-long
+                "The property name with a typo called 'last_udpated_on' has been deprecated and will be retired \
+                in future versions",
                 DeprecationWarning,
             )
-            return self.last_updated_on
-        return super().__getattr__(self, name)  # pylint: disable=no-member
+        return self.last_updated_on
 
     @property
     def created_on(self) -> datetime:
@@ -263,10 +263,10 @@ class ArtifactTagProperties:
         self._last_updated_on = kwargs.get("last_updated_on", None)
         self._name = kwargs.get("name", None)
         self._repository_name = kwargs.get("repository_name", None)
-        self.can_delete: bool = kwargs.get("can_delete")
-        self.can_read: bool = kwargs.get("can_read")
-        self.can_list: bool = kwargs.get("can_list")
-        self.can_write: bool = kwargs.get("can_write")
+        self.can_delete: Optional[bool] = kwargs.get("can_delete")
+        self.can_read: Optional[bool] = kwargs.get("can_read")
+        self.can_list: Optional[bool] = kwargs.get("can_list")
+        self.can_write: Optional[bool] = kwargs.get("can_write")
 
     @classmethod
     def _from_generated(cls, generated: TagAttributesBase, **kwargs) -> "ArtifactTagProperties":
@@ -320,10 +320,10 @@ class GetManifestResult:
     :ivar str digest: The manifest's digest, calculated by the registry.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.manifest: Mapping[str, Any] = kwargs.get("manifest")
-        self.media_type: str = kwargs.get("media_type")
-        self.digest: str = kwargs.get("digest")
+    def __init__(self, *, manifest: Mapping[str, Any], media_type: str, digest: str) -> None:
+        self.manifest: Mapping[str, Any] = manifest
+        self.media_type: str = media_type
+        self.digest: str = digest
 
 
 class DigestValidationError(ValueError):

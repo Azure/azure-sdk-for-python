@@ -9,9 +9,6 @@ from typing_extensions import Protocol, Self
 from azure.core.pipeline import PipelineResponse
 from ._models import DigestValidationError
 
-HTTPResponseType = TypeVar("HTTPResponseType")
-HTTPRequestType = TypeVar("HTTPRequestType")
-
 
 class GetNext(Protocol):
     def __call__(self, *args: Any, range_header: str) -> Iterator[bytes]:
@@ -27,7 +24,7 @@ class DownloadBlobStream(
     def __init__(
         self,
         *,
-        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
+        response: PipelineResponse[Any, Any],
         get_next: GetNext,
         blob_size: int,
         downloaded: int,
