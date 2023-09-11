@@ -8,6 +8,7 @@
 ### Bugs Fixed
 * Fixed a bug when submitting transactions with an empty operation list. ([#31471](https://github.com/Azure/azure-sdk-for-python/issues/31471))
 * Fixed a bug when decoding response body in string type. Thanks @kldtz for the contribution! ([#31265](https://github.com/Azure/azure-sdk-for-python/pull/31265))
+* Fixed a bug when retrieving an entity with partition key and/or row key in empty string, the empty string values were disappeared in result. ([#31920]https://github.com/Azure/azure-sdk-for-python/issues/31920)
 
 ### Other Changes
 * Bumped minimum dependency on `azure-core` to `>=1.27.1`. ([#28918](https://github.com/Azure/azure-sdk-for-python/issues/28918))
