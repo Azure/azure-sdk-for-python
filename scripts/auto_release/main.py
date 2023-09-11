@@ -448,7 +448,6 @@ class CodegenTestPR:
                 log('some test collected failed, please fix it locally')
                 self.test_result = failed_result
             return
-            
         try:
             print_check(f'pytest -s')
         except:
