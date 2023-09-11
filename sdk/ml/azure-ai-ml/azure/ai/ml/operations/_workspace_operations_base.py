@@ -160,12 +160,18 @@ class WorkspaceOperationsBase:
 
         def callback():
             return get_callback() if get_callback else self.get(workspace.name, resource_group=resource_group)
+        
+        real_callback = callback
+        injected_callback = kwargs.get("cls", None)
+        if injected_callback:
+            real_callback = lambda: injected_callback(callback())
+        
 
         return LROPoller(
             self._operation._client,
             None,
             lambda *x, **y: None,
-            CustomArmTemplateDeploymentPollingMethod(poller, arm_submit, callback),
+            CustomArmTemplateDeploymentPollingMethod(poller, arm_submit, real_callback),
         )
 
     def begin_update(
@@ -319,8 +325,13 @@ class WorkspaceOperationsBase:
                 if deserialize_callback
                 else Workspace._from_rest_object(deserialized)
             )
+        real_callback = callback
+        injected_callback = kwargs.get("cls", None)
+        if injected_callback:
+            real_callback = lambda _, deserialized, args: injected_callback(callback(_, deserialized, args))
+        
 
-        poller = self._operation.begin_update(resource_group, workspace_name, update_param, polling=True, cls=callback)
+        poller = self._operation.begin_update(resource_group, workspace_name, update_param, polling=True, cls=real_callback)
         return poller
 
     def begin_delete(

@@ -192,8 +192,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         ):
             raise ValidationError("{0} is not a WorkspaceHub".format(name))
         if hasattr(rest_workspace_obj, "workspace_hub_config") and hasattr(
-            rest_workspace_obj.workspace_hub_config, "additional_workspace_storage_accounts"
-        ):
+            rest_workspace_obj.workspace_hub_config, "additional_workspace_storage_accounts") and rest_workspace_obj.workspace_hub_config.additional_workspace_storage_accounts:
             for storageaccount in rest_workspace_obj.workspace_hub_config.additional_workspace_storage_accounts:
                 delete_resource_by_arm_id(
                     self._credentials,
