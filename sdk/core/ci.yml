@@ -47,13 +47,6 @@ extends:
       safeName: azurecorecoretracingtelemetry
     - name: azure-common
       safeName: azurecommon
+      skipPublishDocMs: true
     - name: azure-core-experimental
       safeName: azurecoreexperimental
-    CondaArtifacts:
-    - name: azure-core
-      meta_source: conda-recipe/meta.yaml
-      common_root: azure
-      checkout:
-        - package: azure-core
-          checkout_path: sdk/core
-          version: 1.24.1

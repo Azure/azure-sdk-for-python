@@ -2,10 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
-
 from typing import Any, Iterable
 
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -18,8 +17,7 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Job, JobSchedule, Schedule
 from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
-from azure.ai.ml.entities._monitoring.signals import TargetDataset
-from azure.ai.ml.entities._monitoring.input_data import MonitorInputData
+from azure.ai.ml.entities._monitoring.signals import ProductionData, ReferenceData, BaselineDataRange
 from azure.ai.ml.entities._inputs_outputs.input import Input
 from azure.ai.ml.exceptions import ScheduleException, ErrorCategory, ErrorTarget
 from azure.core.credentials import TokenCredential
@@ -27,7 +25,11 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
 from .._restclient.v2022_10_01.models import ScheduleListViewType
-from .._utils._arm_id_utils import is_ARM_id_for_parented_resource, AMLNamedArmId
+from .._utils._arm_id_utils import (
+    is_ARM_id_for_parented_resource,
+    AMLNamedArmId,
+    AMLVersionedArmId,
+)
 from .._utils.utils import snake_to_camel
 from .._utils._azureml_polling import AzureMLPolling
 from ..constants._common import (
@@ -68,14 +70,14 @@ class ScheduleOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client_04_2023_preview: ServiceClient042023Preview,
+        service_client_06_2023_preview: ServiceClient062023Preview,
         all_operations: OperationsContainer,
         credential: TokenCredential,
         **kwargs: Any,
     ):
         super(ScheduleOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
-        self.service_client = service_client_04_2023_preview.schedules
+        self.service_client = service_client_06_2023_preview.schedules
         self._all_operations = all_operations
         self._stream_logs_until_completion = stream_logs_until_completion
         # Dataplane service clients are lazily created as they are needed
@@ -115,7 +117,7 @@ class ScheduleOperations(_ScopeDependentOperations):
     ) -> Iterable[Schedule]:
         """List schedules in specified workspace.
 
-        :param list_view_type: View type for including/excluding (for example)
+        :keyword list_view_type: View type for including/excluding (for example)
             archived schedules. Default: ENABLED_ONLY.
         :type list_view_type: Optional[ScheduleListViewType]
         :return: An iterator to list Schedule.
@@ -140,8 +142,14 @@ class ScheduleOperations(_ScopeDependentOperations):
             **kwargs,
         )
 
-    def _get_polling(self, name):
-        """Return the polling with custom poll interval."""
+    def _get_polling(self, name: str) -> AzureMLPolling:
+        """Return the polling with custom poll interval.
+
+        :param name: The schedule name
+        :type name: str
+        :return: The AzureMLPolling object
+        :rtype: AzureMLPolling
+        """
         path_format_arguments = {
             "scheduleName": name,
             "resourceGroupName": self._resource_group_name,
@@ -163,6 +171,8 @@ class ScheduleOperations(_ScopeDependentOperations):
 
         :param name: Schedule name.
         :type name: str
+        :return: A poller for deletion status
+        :rtype: LROPoller[None]
         """
         poller = self.service_client.begin_delete(
             resource_group_name=self._operation_scope.resource_group_name,
@@ -283,12 +293,23 @@ class ScheduleOperations(_ScopeDependentOperations):
         if target and target.endpoint_deployment_id:
             endpoint_name, deployment_name = self._process_and_get_endpoint_deployment_names_from_id(target)
             online_deployment = self._online_deployment_operations.get(deployment_name, endpoint_name)
-            model_inputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_NAME_KEY)
-            model_inputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_VERSION_KEY)
-            model_outputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY)
-            model_outputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY)
-            mdc_input_enabled_str = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_COLLECTION_KEY)
-            mdc_output_enabled_str = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_COLLECTION_KEY)
+            deployment_data_collector = online_deployment.data_collector
+            if deployment_data_collector:
+                in_reg = AMLVersionedArmId(deployment_data_collector.collections.get("model_inputs").data)
+                out_reg = AMLVersionedArmId(deployment_data_collector.collections.get("model_outputs").data)
+                model_inputs_name = in_reg.asset_name
+                model_inputs_version = in_reg.asset_version
+                model_outputs_name = out_reg.asset_name
+                model_outputs_version = out_reg.asset_version
+                mdc_input_enabled_str = deployment_data_collector.collections.get("model_inputs").enabled
+                mdc_output_enabled_str = deployment_data_collector.collections.get("model_outputs").enabled
+            else:
+                model_inputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_NAME_KEY)
+                model_inputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_VERSION_KEY)
+                model_outputs_name = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_NAME_KEY)
+                model_outputs_version = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_VERSION_KEY)
+                mdc_input_enabled_str = online_deployment.tags.get(DEPLOYMENT_MODEL_INPUTS_COLLECTION_KEY)
+                mdc_output_enabled_str = online_deployment.tags.get(DEPLOYMENT_MODEL_OUTPUTS_COLLECTION_KEY)
             if mdc_input_enabled_str and mdc_input_enabled_str.lower() == "true":
                 mdc_input_enabled = True
             if mdc_output_enabled_str and mdc_output_enabled_str.lower() == "true":
@@ -314,37 +335,53 @@ class ScheduleOperations(_ScopeDependentOperations):
                     target=ErrorTarget.SCHEDULE,
                     error_category=ErrorCategory.USER_ERROR,
                 )
-
         # resolve ARM id for each signal and populate any defaults if needed
         for signal_name, signal in schedule.create_monitor.monitoring_signals.items():
             if signal.type == MonitorSignalType.CUSTOM:
-                for input_value in signal.input_datasets.values():
-                    self._job_operations._resolve_job_input(input_value.input_dataset, schedule._base_path)
-                    input_value.pre_processing_component = self._orchestrators.get_asset_arm_id(
-                        asset=input_value.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
+                for input_value in signal.input_literals.values():
+                    self._job_operations._resolve_job_input(input_value, schedule._base_path)
+                for prod_data in signal.input_datasets.values():
+                    prod_data.pre_processing_component = self._orchestrators.get_asset_arm_id(
+                        asset=prod_data.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
                     )
                 continue
+            if signal.type == MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT:
+                for prod_data in signal.production_data:
+                    self._job_operations._resolve_job_input(prod_data.input_data, schedule._base_path)
+                    prod_data.pre_processing_component = self._orchestrators.get_asset_arm_id(
+                        asset=prod_data.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
+                    )
+                self._job_operations._resolve_job_input(signal.reference_data.input_data, schedule._base_path)
+                signal.reference_data.pre_processing_component = self._orchestrators.get_asset_arm_id(
+                    asset=signal.reference_data.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
+                )
+                continue
             error_messages = []
-            if not signal.target_dataset or not signal.baseline_dataset:
+            if not signal.production_data or not signal.reference_data:
                 # if there is no target dataset, we check the type of signal
-                if signal.type == MonitorSignalType.DATA_DRIFT or signal.type == MonitorSignalType.DATA_QUALITY:
+                if signal.type in {MonitorSignalType.DATA_DRIFT, MonitorSignalType.DATA_QUALITY}:
                     if mdc_input_enabled:
-                        default_dataset = MonitorInputData(
-                            input_dataset=Input(
-                                path=f"{model_inputs_name}:{model_inputs_version}",
-                                type=self._data_operations.get(model_inputs_name, model_inputs_version).type,
-                            ),
-                            dataset_context=MonitorDatasetContext.MODEL_INPUTS,
-                        )
-                        if not signal.target_dataset:
+                        if not signal.production_data:
                             # if target dataset is absent and data collector for input is enabled,
                             # create a default target dataset with production model inputs as target
-                            signal.target_dataset = TargetDataset(dataset=default_dataset)
-                        if not signal.baseline_dataset:
-                            signal.baseline_dataset = default_dataset
-                            # set tags for trailing dataset
-                            schedule._set_baseline_data_trailing_tags_for_signal(signal_name)
-                    elif not mdc_input_enabled and not (signal.target_dataset and signal.baseline_dataset):
+                            signal.production_data = ProductionData(
+                                input_data=Input(
+                                    path=f"{model_inputs_name}:{model_inputs_version}",
+                                    type=self._data_operations.get(model_inputs_name, model_inputs_version).type,
+                                ),
+                                data_context=MonitorDatasetContext.MODEL_INPUTS,
+                                data_window_size="P7D",
+                            )
+                        if not signal.reference_data:
+                            signal.reference_data = ReferenceData(
+                                input_data=Input(
+                                    path=f"{model_inputs_name}:{model_inputs_version}",
+                                    type=self._data_operations.get(model_inputs_name, model_inputs_version).type,
+                                ),
+                                data_context=MonitorDatasetContext.MODEL_INPUTS,
+                                data_window=BaselineDataRange(trailing_window_size="P7D", trailing_window_offset="P7D"),
+                            )
+                    elif not mdc_input_enabled and not (signal.production_data and signal.reference_data):
                         # if target or baseline dataset is absent and data collector for input is not enabled,
                         # collect exception message
                         msg = (
@@ -355,22 +392,27 @@ class ScheduleOperations(_ScopeDependentOperations):
                         error_messages.append(msg)
                 elif signal.type == MonitorSignalType.PREDICTION_DRIFT:
                     if mdc_output_enabled:
-                        default_dataset = MonitorInputData(
-                            input_dataset=Input(
-                                path=f"{model_outputs_name}:{model_outputs_version}",
-                                type=self._data_operations.get(model_outputs_name, model_outputs_version).type,
-                            ),
-                            dataset_context=MonitorDatasetContext.MODEL_OUTPUTS,
-                        )
-                        if not signal.target_dataset:
+                        if not signal.production_data:
                             # if target dataset is absent and data collector for output is enabled,
                             # create a default target dataset with production model outputs as target
-                            signal.target_dataset = TargetDataset(dataset=default_dataset, data_window_size=7)
-                        if not signal.baseline_dataset:
-                            signal.baseline_dataset = default_dataset
-                            # set tags for trailing window
-                            schedule._set_baseline_data_trailing_tags_for_signal(signal_name)
-                    elif not mdc_output_enabled and not (signal.target_dataset and signal.baseline_dataset):
+                            signal.production_data = ProductionData(
+                                input_data=Input(
+                                    path=f"{model_outputs_name}:{model_outputs_version}",
+                                    type=self._data_operations.get(model_outputs_name, model_outputs_version).type,
+                                ),
+                                data_context=MonitorDatasetContext.MODEL_OUTPUTS,
+                                data_window_size="P7D",
+                            )
+                        if not signal.reference_data:
+                            signal.reference_data = ReferenceData(
+                                input_data=Input(
+                                    path=f"{model_outputs_name}:{model_outputs_version}",
+                                    type=self._data_operations.get(model_outputs_name, model_outputs_version).type,
+                                ),
+                                data_context=MonitorDatasetContext.MODEL_OUTPUTS,
+                                data_window=BaselineDataRange(trailing_window_size="P7D", trailing_window_offset="P7D"),
+                            )
+                    elif not mdc_output_enabled and not (signal.production_data and signal.reference_data):
                         # if target dataset is absent and data collector for output is not enabled,
                         # collect exception message
                         msg = (
@@ -390,15 +432,15 @@ class ScheduleOperations(_ScopeDependentOperations):
                     ErrorCategory=ErrorCategory.USER_ERROR,
                 )
             self._job_operations._resolve_job_inputs(
-                [signal.target_dataset.dataset.input_dataset, signal.baseline_dataset.input_dataset],
+                [signal.production_data.input_data, signal.reference_data.input_data],
                 schedule._base_path,
             )
-            signal.target_dataset.dataset.pre_processing_component = self._orchestrators.get_asset_arm_id(
-                asset=signal.target_dataset.dataset.pre_processing_component,
+            signal.production_data.pre_processing_component = self._orchestrators.get_asset_arm_id(
+                asset=signal.production_data.pre_processing_component,
                 azureml_type=AzureMLResourceType.COMPONENT,
             )
-            signal.baseline_dataset.pre_processing_component = self._orchestrators.get_asset_arm_id(
-                asset=signal.baseline_dataset.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
+            signal.reference_data.pre_processing_component = self._orchestrators.get_asset_arm_id(
+                asset=signal.reference_data.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
             )
 
     def _process_and_get_endpoint_deployment_names_from_id(self, target: MonitoringTarget):

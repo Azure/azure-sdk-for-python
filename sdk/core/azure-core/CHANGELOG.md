@@ -1,6 +1,6 @@
 # Release History
 
-## 1.28.1 (Unreleased)
+## 1.29.5 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,45 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.29.4 (2023-09-07)
+
+### Bugs Fixed
+
+- Fixed the issue that some urls trigger an infinite loop. #31346
+- Fixed issue where IndexError was raised if multipart responses did not match the number of requests. #31471
+- Fixed issue unbound variable exception if dict is invalid in CloudEvent.from_dict. #31835
+- Fixed issue asyncBearerTokenCredentialPolicy is not backward compatible with SansIOHTTPPolicy. #31836
+- Fixed issue mypy complains with new version of azure-core. #31564
+
+## 1.29.3 (2023-08-22)
+
+### Bugs Fixed
+
+- Typing fix: `message` cannot be `None` in `AzureError`. #31564
+
+## 1.29.2 (2023-08-14)
+
+### Bugs Fixed
+
+- Added a default implementation for `AsyncTokenCredential.__aexit__()` #31573
+
+### Other Changes
+
+- Bumped `typing-extensions` version to 4.6.0.
+
+## 1.29.1 (2023-08-09)
+
+### Bugs Fixed
+
+- Not pass `enabled_cae` unless it is explicitly enabled.
+
+## 1.29.0 (2023-08-03)
+
+### Features Added
+
+- A keyword argument `enable_cae` was added to the `get_token` method of the `TokenCredential` protocol.  #31012
+- `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` now accept `enable_cae` keyword arguments in their constructors. This is used in determining if [Continuous Access Evaluation (CAE)](https://learn.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation) should be enabled for each `get_token` request.  #31012
 
 ## 1.28.0 (2023-07-06)
 

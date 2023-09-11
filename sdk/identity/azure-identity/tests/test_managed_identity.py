@@ -103,19 +103,11 @@ def test_custom_hooks(environ):
         )
     credential.get_token(scope)
 
-    if environ:
-        # some environment variables are set, so we're not mocking IMDS and should expect 1 request
-        assert request_hook.call_count == 1
-        assert response_hook.call_count == 1
-        args, kwargs = response_hook.call_args
-        pipeline_response = args[0]
-        assert pipeline_response.http_response == expected_response
-    else:
-        # we're mocking IMDS and should expect 2 requests
-        assert request_hook.call_count == 2
-        assert response_hook.call_count == 2
-        responses = [args[0].http_response for args, _ in response_hook.call_args_list]
-        assert responses == [expected_response] * 2
+    assert request_hook.call_count == 1
+    assert response_hook.call_count == 1
+    args, kwargs = response_hook.call_args
+    pipeline_response = args[0]
+    assert pipeline_response.http_response == expected_response
 
 
 @pytest.mark.parametrize("environ", ALL_ENVIRONMENTS)
@@ -144,19 +136,11 @@ def test_tenant_id(environ):
         )
     credential.get_token(scope)
 
-    if environ:
-        # some environment variables are set, so we're not mocking IMDS and should expect 1 request
-        assert request_hook.call_count == 1
-        assert response_hook.call_count == 1
-        args, kwargs = response_hook.call_args
-        pipeline_response = args[0]
-        assert pipeline_response.http_response == expected_response
-    else:
-        # we're mocking IMDS and should expect 2 requests
-        assert request_hook.call_count == 2
-        assert response_hook.call_count == 2
-        responses = [args[0].http_response for args, _ in response_hook.call_args_list]
-        assert responses == [expected_response] * 2
+    assert request_hook.call_count == 1
+    assert response_hook.call_count == 1
+    args, kwargs = response_hook.call_args
+    pipeline_response = args[0]
+    assert pipeline_response.http_response == expected_response
 
 
 def test_cloud_shell():
@@ -487,7 +471,10 @@ def test_app_service_2019_08_01():
     new_secret = "new-expected-secret"
     scope = "scope"
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert request.url.startswith(new_endpoint)
         assert request.method == "GET"
         assert request.headers["X-IDENTITY-HEADER"] == new_secret
@@ -506,14 +493,14 @@ def test_app_service_2019_08_01():
 
     # when configuration for both API versions is present, the credential should prefer the most recent
     with mock.patch.dict(
-            MANAGED_IDENTITY_ENVIRON,
-            {
-                EnvironmentVariables.IDENTITY_ENDPOINT: new_endpoint,
-                EnvironmentVariables.IDENTITY_HEADER: new_secret,
-                EnvironmentVariables.MSI_ENDPOINT: endpoint,
-                EnvironmentVariables.MSI_SECRET: secret,
-            },
-            clear=True,
+        MANAGED_IDENTITY_ENVIRON,
+        {
+            EnvironmentVariables.IDENTITY_ENDPOINT: new_endpoint,
+            EnvironmentVariables.IDENTITY_HEADER: new_secret,
+            EnvironmentVariables.MSI_ENDPOINT: endpoint,
+            EnvironmentVariables.MSI_SECRET: secret,
+        },
+        clear=True,
     ):
         token = ManagedIdentityCredential(transport=mock.Mock(send=send)).get_token(scope)
         assert token.token == access_token
@@ -531,7 +518,10 @@ def test_app_service_2019_08_01_tenant_id():
     new_secret = "new-expected-secret"
     scope = "scope"
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert request.url.startswith(new_endpoint)
         assert request.method == "GET"
         assert request.headers["X-IDENTITY-HEADER"] == new_secret
@@ -550,14 +540,14 @@ def test_app_service_2019_08_01_tenant_id():
 
     # when configuration for both API versions is present, the credential should prefer the most recent
     with mock.patch.dict(
-            MANAGED_IDENTITY_ENVIRON,
-            {
-                EnvironmentVariables.IDENTITY_ENDPOINT: new_endpoint,
-                EnvironmentVariables.IDENTITY_HEADER: new_secret,
-                EnvironmentVariables.MSI_ENDPOINT: endpoint,
-                EnvironmentVariables.MSI_SECRET: secret,
-            },
-            clear=True,
+        MANAGED_IDENTITY_ENVIRON,
+        {
+            EnvironmentVariables.IDENTITY_ENDPOINT: new_endpoint,
+            EnvironmentVariables.IDENTITY_HEADER: new_secret,
+            EnvironmentVariables.MSI_ENDPOINT: endpoint,
+            EnvironmentVariables.MSI_SECRET: secret,
+        },
+        clear=True,
     ):
         token = ManagedIdentityCredential(transport=mock.Mock(send=send)).get_token(scope, tenant_id="tenant_id")
         assert token.token == access_token
@@ -632,7 +622,6 @@ def test_imds():
     scope = "scope"
     transport = validating_transport(
         requests=[
-            Request(base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH),
             Request(
                 base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH,
                 method="GET",
@@ -641,8 +630,6 @@ def test_imds():
             ),
         ],
         responses=[
-            # probe receives error response
-            mock_response(status_code=400, json_payload={"error": "this is an error message"}),
             mock_response(
                 json_payload={
                     "access_token": access_token,
@@ -670,7 +657,6 @@ def test_imds_tenant_id():
     scope = "scope"
     transport = validating_transport(
         requests=[
-            Request(base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH),
             Request(
                 base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH,
                 method="GET",
@@ -679,8 +665,6 @@ def test_imds_tenant_id():
             ),
         ],
         responses=[
-            # probe receives error response
-            mock_response(status_code=400, json_payload={"error": "this is an error message"}),
             mock_response(
                 json_payload={
                     "access_token": access_token,
@@ -707,7 +691,10 @@ def test_client_id_none():
     expected_access_token = "****"
     scope = "scope"
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert "client_id" not in request.query
         if request.data:
             assert "client_id" not in request.body  # Cloud Shell
@@ -738,7 +725,6 @@ def test_imds_user_assigned_identity():
     client_id = "some-guid"
     transport = validating_transport(
         requests=[
-            Request(base_url=endpoint),  # first request should be availability probe => match only the URL
             Request(
                 base_url=endpoint,
                 method="GET",
@@ -747,8 +733,6 @@ def test_imds_user_assigned_identity():
             ),
         ],
         responses=[
-            # probe receives error response
-            mock_response(status_code=400, json_payload={"error": "this is an error message"}),
             mock_response(
                 json_payload={
                     "access_token": access_token,
@@ -779,7 +763,10 @@ def test_service_fabric():
     thumbprint = "SHA1HEX"
     scope = "scope"
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert request.url.startswith(endpoint)
         assert request.method == "GET"
         assert request.headers["Secret"] == secret
@@ -816,7 +803,10 @@ def test_service_fabric_tenant_id():
     thumbprint = "SHA1HEX"
     scope = "scope"
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert request.url.startswith(endpoint)
         assert request.method == "GET"
         assert request.headers["Secret"] == secret

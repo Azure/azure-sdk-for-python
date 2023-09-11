@@ -1,25 +1,36 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+from os import environ
 import json
 import logging
+from time import time_ns
 from typing import Optional, Sequence, Any
 from urllib.parse import urlparse
 
 from opentelemetry.util.types import Attributes
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
+from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult
-from opentelemetry.trace import SpanKind
+from opentelemetry.trace import SpanKind, get_tracer_provider
 
 from azure.monitor.opentelemetry.exporter._constants import (
+    _APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED,
     _AZURE_SDK_NAMESPACE_NAME,
     _AZURE_SDK_OPENTELEMETRY_NAME,
     _INSTRUMENTATION_SUPPORTING_METRICS_LIST,
     _SAMPLE_RATE_KEY,
+    _METRIC_ENVELOPE_NAME,
+    _MESSAGE_ENVELOPE_NAME,
+    _REQUEST_ENVELOPE_NAME,
+    _EXCEPTION_ENVELOPE_NAME,
+    _REMOTE_DEPENDENCY_ENVELOPE_NAME,
 )
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.models import (
     MessageData,
+    MetricDataPoint,
+    MetricsData,
     MonitorBase,
     RemoteDependencyData,
     RequestData,
@@ -60,12 +71,22 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
     """Azure Monitor Trace exporter for OpenTelemetry."""
 
     def export(self, spans: Sequence[ReadableSpan], **kwargs: Any) -> SpanExportResult: # pylint: disable=unused-argument
-        """Export span data
+        """Export span data.
+
         :param spans: Open Telemetry Spans to export.
-        :type spans: Sequence[~opentelemetry.trace.Span]
+        :type spans: ~typing.Sequence[~opentelemetry.trace.Span]
+        :return: The result of the export.
         :rtype: ~opentelemetry.sdk.trace.export.SpanExportResult
         """
         envelopes = []
+        if spans and self._should_collect_otel_resource_metric():
+            resource = None
+            try:
+                tracer_provider = get_tracer_provider()
+                resource = tracer_provider.resource
+                envelopes.append(self._get_otel_resource_envelope(resource))
+            except AttributeError as e:
+                _logger.exception("Failed to derive Resource from Tracer Provider: %s", e)
         for span in spans:
             envelopes.append(self._span_to_envelope(span))
             envelopes.extend(self._span_events_to_envelopes(span))
@@ -84,6 +105,29 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         """
         self.storage.close()
 
+    # pylint: disable=protected-access
+    def _get_otel_resource_envelope(self, resource: Resource) -> TelemetryItem:
+        attributes = {}
+        if resource:
+            attributes = resource.attributes
+        envelope = _utils._create_telemetry_item(time_ns())
+        envelope.name = _METRIC_ENVELOPE_NAME
+        envelope.tags.update(_utils._populate_part_a_fields(resource))
+        envelope.instrumentation_key = self._instrumentation_key
+        data_point = MetricDataPoint(
+            name=str("_OTELRESOURCE_")[:1024],
+            value=0,
+        )
+
+        data = MetricsData(
+            properties=attributes,
+            metrics=[data_point],
+        )
+
+        envelope.data = MonitorBase(base_data=data, base_type="MetricData")
+
+        return envelope
+
     def _span_to_envelope(self, span: ReadableSpan) -> TelemetryItem:
         if not span:
             return None
@@ -99,10 +143,13 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
             envelope.instrumentation_key = self._instrumentation_key
         return envelopes
 
+    def _should_collect_otel_resource_metric(self):
+        disabled = environ.get(_APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED)
+        return disabled is None or disabled.lower() != "true"
+
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "AzureMonitorTraceExporter":
-        """
-        Create an AzureMonitorTraceExporter from a connection string.
+        """Create an AzureMonitorTraceExporter from a connection string.
 
         This is the recommended way of instantation if a connection string is passed in explicitly.
         If a user wants to use a connection string provided by environment variable, the constructor
@@ -111,6 +158,7 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
         :param str conn_str: The connection string to be used for authentication.
         :keyword str api_version: The service API version used. Defaults to latest.
         :returns an instance of ~AzureMonitorTraceExporter
+        :rtype: ~azure.monitor.opentelemetry.exporter.AzureMonitorTraceExporter
         """
         return cls(connection_string=conn_str, **kwargs)
 
@@ -132,7 +180,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         )
     # pylint: disable=too-many-nested-blocks
     if span.kind in (SpanKind.CONSUMER, SpanKind.SERVER):
-        envelope.name = "Microsoft.ApplicationInsights.Request"
+        envelope.name = _REQUEST_ENVELOPE_NAME
         data = RequestData(
             name=span.name,
             id="{:016x}".format(span.context.span_id),
@@ -247,7 +295,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         if data.url:
             data.url = data.url[:2048]
     else:  # INTERNAL, CLIENT, PRODUCER
-        envelope.name = "Microsoft.ApplicationInsights.RemoteDependency"
+        envelope.name = _REMOTE_DEPENDENCY_ENVELOPE_NAME
         # TODO: ai.operation.name for non-server spans
         data = RemoteDependencyData(
             name=span.name,
@@ -480,7 +528,7 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
             lambda key, val: not _is_standard_attribute(key)
         )
         if event.name == "exception":
-            envelope.name = 'Microsoft.ApplicationInsights.Exception'
+            envelope.name = _EXCEPTION_ENVELOPE_NAME
             exc_type = event.attributes.get(SpanAttributes.EXCEPTION_TYPE)
             exc_message = event.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)
             if exc_message is None or not exc_message:
@@ -500,7 +548,7 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
             # pylint: disable=line-too-long
             envelope.data = MonitorBase(base_data=data, base_type='ExceptionData')
         else:
-            envelope.name = 'Microsoft.ApplicationInsights.Message'
+            envelope.name = _MESSAGE_ENVELOPE_NAME
             data = MessageData(
                 message=str(event.name)[:32768],
                 properties=properties,
@@ -590,6 +638,7 @@ def _get_azure_sdk_target_source(attributes: Attributes) -> Optional[str]:
     destination = attributes.get("message_bus.destination")
     if peer_address and destination:
         return peer_address + "/" + destination
+    return None
 
 
 def _get_trace_export_result(result: ExportResult) -> SpanExportResult:

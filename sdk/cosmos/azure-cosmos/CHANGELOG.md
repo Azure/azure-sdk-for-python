@@ -1,18 +1,37 @@
 ## Release History
 
-### 4.4.1 (Unreleased)
+### 4.5.1 (Unreleased)
 
 #### Features Added
-* Added **provisional** ability to limit Continuation Token size when querying for items. See [PR 30731](https://github.com/Azure/azure-sdk-for-python/pull/30731)
 
 #### Breaking Changes
 
 #### Bugs Fixed
-* Fixed bug with async patch_item method. See [PR 30804](https://github.com/Azure/azure-sdk-for-python/pull/30804).
+* Fixed bug when query with DISTINCT + OFFSET/LIMIT operators returns unexpected result. See [PR 31925](https://github.com/Azure/azure-sdk-for-python/pull/31925).
 
 #### Other Changes
+* Added additional checks for resource creation using specific characters that cause issues. See [PR 31861](https://github.com/Azure/azure-sdk-for-python/pull/31861).
 * Marked the outdated `diagnostics.py` file for deprecation since we now recommend the use of our `CosmosHttpLoggingPolicy` for diagnostics.
 For more on the `CosmosHttpLoggingPolicy` see our [README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos#logging-diagnostics).
+
+### 4.5.0 (2023-08-09)
+
+#### Features Added
+* Added support for continuation tokens for streamable cross partition queries. See [PR 31189](https://github.com/Azure/azure-sdk-for-python/pull/31189).
+
+#### Bugs Fixed
+* Fixed bug with async `create_database_if_not_exists` method not working when passing `offer_throughput` as an option. See [PR 31478](https://github.com/Azure/azure-sdk-for-python/pull/31478).
+
+#### Other Changes
+* Renamed `response_continuation_token_limit_in_kb` to `continuation_token_limit` for GA. See [PR 31532](https://github.com/Azure/azure-sdk-for-python/pull/31532).
+
+### 4.4.1b1 (2023-07-25)
+
+#### Features Added
+* Added ability to limit continuation token size when querying for items. See [PR 30731](https://github.com/Azure/azure-sdk-for-python/pull/30731)
+
+#### Bugs Fixed
+* Fixed bug with async patch_item method. See [PR 30804](https://github.com/Azure/azure-sdk-for-python/pull/30804).
 
 ### 4.4.0 (2023-06-09)
 

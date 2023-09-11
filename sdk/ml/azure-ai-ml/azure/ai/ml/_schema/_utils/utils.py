@@ -27,8 +27,8 @@ def get_subnet_str(vnet_name: str, subnet: str, sub_id: Optional[str] = None, rg
     if vnet_name and not subnet:
         raise ValidationError("Subnet is required when vnet name is specified.")
     try:
-        if validate_arm_str(subnet):
-            return subnet
+        validate_arm_str(subnet)
+        return subnet
     except ValidationError:
         return (
             f"/subscriptions/{sub_id}/resourceGroups/{rg}/"

@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
-from typing import cast, Optional
+from typing import Any, cast, Optional
 
 from azure.core.credentials import AccessToken
 from . import AsyncContextManager
@@ -39,14 +39,14 @@ class AsyncManagedIdentityBase(AsyncContextManager, GetTokenMixin):
     async def close(self) -> None:
         await self.__aexit__()
 
-    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    async def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         if not self._client:
             raise CredentialUnavailableError(message=self.get_unavailable_message())
-        return await super().get_token(*scopes, **kwargs)
+        return await super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
 
-    async def _acquire_token_silently(
-        self, *scopes: str, **kwargs
-    ) -> Optional[AccessToken]:
+    async def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
         # casting because mypy can't determine that these methods are called
         # only by get_token, which raises when self._client is None
         return cast(AsyncManagedIdentityClient, self._client).get_cached_token(*scopes)

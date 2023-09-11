@@ -30,12 +30,7 @@ class AadClient(AadClientBase):
         await self._pipeline.__aexit__()
 
     async def obtain_token_by_authorization_code(
-        self,
-        scopes: Iterable[str],
-        code: str,
-        redirect_uri: str,
-        client_secret: Optional[str] = None,
-        **kwargs
+        self, scopes: Iterable[str], code: str, redirect_uri: str, client_secret: Optional[str] = None, **kwargs
     ) -> AccessToken:
         request = self._get_auth_code_request(
             scopes=scopes, code=code, redirect_uri=redirect_uri, client_secret=client_secret, **kwargs
@@ -48,44 +43,28 @@ class AadClient(AadClientBase):
         request = self._get_client_certificate_request(scopes, certificate, **kwargs)
         return await self._run_pipeline(request, stream=False, **kwargs)
 
-    async def obtain_token_by_client_secret(
-        self, scopes: Iterable[str], secret: str, **kwargs
-    ) -> AccessToken:
+    async def obtain_token_by_client_secret(self, scopes: Iterable[str], secret: str, **kwargs) -> AccessToken:
         request = self._get_client_secret_request(scopes, secret, **kwargs)
         return await self._run_pipeline(request, **kwargs)
 
-    async def obtain_token_by_jwt_assertion(
-        self, scopes: Iterable[str], assertion: str, **kwargs
-    ) -> AccessToken:
-        request = self._get_jwt_assertion_request(scopes, assertion)
+    async def obtain_token_by_jwt_assertion(self, scopes: Iterable[str], assertion: str, **kwargs) -> AccessToken:
+        request = self._get_jwt_assertion_request(scopes, assertion, **kwargs)
         return await self._run_pipeline(request, stream=False, **kwargs)
 
-    async def obtain_token_by_refresh_token(
-        self, scopes: Iterable[str], refresh_token: str, **kwargs
-    ) -> AccessToken:
+    async def obtain_token_by_refresh_token(self, scopes: Iterable[str], refresh_token: str, **kwargs) -> AccessToken:
         request = self._get_refresh_token_request(scopes, refresh_token, **kwargs)
         return await self._run_pipeline(request, **kwargs)
 
     async def obtain_token_by_refresh_token_on_behalf_of(  # pylint: disable=name-too-long
-        self,
-        scopes: Iterable[str],
-        client_credential: Union[str, AadClientCertificate],
-        refresh_token: str,
-        **kwargs
+        self, scopes: Iterable[str], client_credential: Union[str, AadClientCertificate], refresh_token: str, **kwargs
     ) -> AccessToken:
         request = self._get_refresh_token_on_behalf_of_request(
-            scopes,
-            client_credential=client_credential,
-            refresh_token=refresh_token,
-            **kwargs)
+            scopes, client_credential=client_credential, refresh_token=refresh_token, **kwargs
+        )
         return await self._run_pipeline(request, **kwargs)
 
     async def obtain_token_on_behalf_of(
-        self,
-        scopes: Iterable[str],
-        client_credential: Union[str, AadClientCertificate],
-        user_assertion: str,
-        **kwargs
+        self, scopes: Iterable[str], client_credential: Union[str, AadClientCertificate], user_assertion: str, **kwargs
     ) -> AccessToken:
         request = self._get_on_behalf_of_request(
             scopes=scopes, client_credential=client_credential, user_assertion=user_assertion, **kwargs
@@ -100,6 +79,7 @@ class AadClient(AadClientBase):
         # tenant_id is already part of `request` at this point
         kwargs.pop("tenant_id", None)
         kwargs.pop("claims", None)
+        enable_cae = kwargs.pop("enable_cae", False)
         now = int(time.time())
         response = await self._pipeline.run(request, retry_on_methods=self._POST, **kwargs)
-        return self._process_response(response, now)
+        return self._process_response(response, now, enable_cae=enable_cae, **kwargs)

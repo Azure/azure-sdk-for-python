@@ -26,34 +26,31 @@
 """Traces network calls using the implementation library from the settings."""
 import logging
 import sys
-import urllib
-from typing import TYPE_CHECKING, Optional, Union, Tuple
+import urllib.parse
+from typing import TYPE_CHECKING, Optional, Tuple, TypeVar, Union, Any, Type
+from types import TracebackType
 
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.pipeline.transport import HttpResponse as LegacyHttpResponse, HttpRequest as LegacyHttpRequest
+from azure.core.rest import HttpResponse, HttpRequest
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind
 
 if TYPE_CHECKING:
-    # the HttpRequest and HttpResponse related type ignores stem from this issue: #5796
-    from azure.core.pipeline.transport import (
-        HttpRequest,
-        HttpResponse,
-        AsyncHttpResponse,
-    )
     from azure.core.tracing._abstract_span import (
         AbstractSpan,
     )
-    from azure.core.pipeline import (
-        PipelineRequest,
-        PipelineResponse,
-    )
 
-    HttpResponseType = Union[HttpResponse, AsyncHttpResponse]
+HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
+HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
+ExcInfo = Tuple[Type[BaseException], BaseException, TracebackType]
+OptExcInfo = Union[ExcInfo, Tuple[None, None, None]]
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def _default_network_span_namer(http_request: "HttpRequest") -> str:
+def _default_network_span_namer(http_request: HTTPRequestType) -> str:
     """Extract the path to be used as network span name.
 
     :param http_request: The HTTP request
@@ -67,7 +64,7 @@ def _default_network_span_namer(http_request: "HttpRequest") -> str:
     return path
 
 
-class DistributedTracingPolicy(SansIOHTTPPolicy):
+class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     """The policy to create spans for Azure calls.
 
     :keyword network_span_namer: A callable to customize the span name
@@ -80,11 +77,11 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
     _REQUEST_ID = "x-ms-client-request-id"
     _RESPONSE_ID = "x-ms-request-id"
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any):
         self._network_span_namer = kwargs.get("network_span_namer", _default_network_span_namer)
         self._tracing_attributes = kwargs.get("tracing_attributes", {})
 
-    def on_request(self, request: "PipelineRequest") -> None:
+    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         ctxt = request.context.options
         try:
             span_impl_type = settings.tracing_implementation()
@@ -108,16 +105,16 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
 
     def end_span(
         self,
-        request: "PipelineRequest",
-        response: Optional["HttpResponseType"] = None,
-        exc_info: Optional[Tuple] = None,
+        request: PipelineRequest[HTTPRequestType],
+        response: Optional[HTTPResponseType] = None,
+        exc_info: Optional[OptExcInfo] = None,
     ) -> None:
         """Ends the span that is tracing the network and updates its status.
 
         :param request: The PipelineRequest object
         :type request: ~azure.core.pipeline.PipelineRequest
-        :param response: The PipelineResponse object
-        :type response: ~azure.core.pipeline.PipelineResponse
+        :param response: The HttpResponse object
+        :type response: ~azure.core.rest.HTTPResponse or ~azure.core.pipeline.transport.HttpResponse
         :param exc_info: The exception information
         :type exc_info: tuple
         """
@@ -125,7 +122,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
             return
 
         span: "AbstractSpan" = request.context[self.TRACING_CONTEXT]
-        http_request: "HttpRequest" = request.http_request
+        http_request: Union[HttpRequest, LegacyHttpRequest] = request.http_request
         if span is not None:
             span.set_http_attributes(http_request, response=response)
             request_id = http_request.headers.get(self._REQUEST_ID)
@@ -138,8 +135,10 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
             else:
                 span.finish()
 
-    def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> None:
+    def on_response(
+        self, request: PipelineRequest[HTTPRequestType], response: PipelineResponse[HTTPRequestType, HTTPResponseType]
+    ) -> None:
         self.end_span(request, response=response.http_response)
 
-    def on_exception(self, request: "PipelineRequest") -> None:
+    def on_exception(self, request: PipelineRequest[HTTPRequestType]) -> None:
         self.end_span(request, exc_info=sys.exc_info())

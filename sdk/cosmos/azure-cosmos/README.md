@@ -147,7 +147,7 @@ client = CosmosClient(URL, credential=KEY, consistency_level='Session')
 
 ## Limitations
 
-Currently the features below are **not supported**. For alternatives options, check the **Workarounds** section below.
+Currently, the features below are **not supported**. For alternatives options, check the **Workarounds** section below.
 
 ### Data Plane Limitations:
 
@@ -155,7 +155,8 @@ Currently the features below are **not supported**. For alternatives options, ch
 * Queries with COUNT from a DISTINCT subquery: SELECT COUNT (1) FROM (SELECT DISTINCT C.ID FROM C)
 * Bulk/Transactional batch processing
 * Direct TCP Mode access
-* Continuation token for cross partitions queries
+* Continuation token support for aggregate cross-partition queries like sorting, counting, and distinct.
+Streamable queries like `SELECT * FROM WHERE` *do* support continuation tokens.
 * Change Feed: Processor
 * Change Feed: Read multiple partitions key values
 * Change Feed: Read specific time

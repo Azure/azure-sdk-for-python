@@ -2,7 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use,protected-access
+# pylint: disable=unused-argument,protected-access
+from typing import List
 
 from marshmallow import fields, post_dump, post_load, pre_dump
 
@@ -53,6 +54,7 @@ class AutoMLNodeMixin(PathAwareSchema):
         return result
 
     @post_dump(pass_original=True)
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def resolve_nested_data(self, job_dict: dict, job: "AutoMLJob", **kwargs):
         """Resolve nested data into flatten format."""
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
@@ -122,8 +124,12 @@ class ImageInstanceSegmentationNodeSchema(AutoMLNodeMixin, ImageInstanceSegmenta
     validation_data = UnionField([fields.Str(), NestedField(MLTableInputSchema)])
 
 
-def AutoMLNodeSchema(**kwargs):
-    """Get the list of all nested schema for all AutoML nodes."""
+def AutoMLNodeSchema(**kwargs) -> List[fields.Field]:
+    """Get the list of all nested schema for all AutoML nodes.
+
+    :return: The list of fields
+    :rtype: List[fields.Field]
+    """
     return [
         # region: automl node schemas
         NestedField(AutoMLClassificationNodeSchema, **kwargs),

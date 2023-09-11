@@ -128,31 +128,58 @@
     "managedNetwork": {
         "value": {}
     },
-    "setup_materialization_store" : {
-        "value": "false"
-    },
     "spark_runtime_version" : {
         "value": ""
     },
     "offline_store_connection_name" : {
         "value": ""
     },
-    "offline_store_connection_target" : {
+    "offline_store_target" : {
         "value": ""
     },
-    "materialization_identity_client_id" : {
+    "offline_store_resource_group_name" : {
         "value": ""
+    },
+    "offline_store_subscription_id" : {
+        "value": ""
+    },
+    "materialization_identity_name": {
+        "value": "empty"
     },
     "materialization_identity_resource_id" : {
         "value": ""
     },
+    "grant_materialization_permissions" : {
+        "value": "true"
+    },
     "online_store_connection_name" : {
         "value": ""
     },
-    "online_store_connection_target" : {
+    "online_store_target" : {
+        "value": ""
+    },
+    "online_store_resource_group_name" : {
+        "value": ""
+    },
+    "online_store_subscription_id" : {
+        "value": ""
+    },
+    "workspace_hub_config" : {
+        "value": {}
+    },
+    "existing_workspaces" : {
+        "value": []
+    },
+    "workspace_hub" : {
         "value": ""
     },
     "enable_data_isolation": {
         "value": "false"
+    },
+    "set_up_feature_store": {
+        "value": "false"
+    },
+    "byo_open_ai_resource_id": {
+        "value": ""
     }
 }

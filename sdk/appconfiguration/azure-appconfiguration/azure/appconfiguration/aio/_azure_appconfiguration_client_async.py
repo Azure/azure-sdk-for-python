@@ -17,8 +17,6 @@ from azure.core.polling import AsyncLROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import (
-    HttpResponseError,
-    ClientAuthenticationError,
     ResourceExistsError,
     ResourceModifiedError,
     ResourceNotFoundError,
@@ -30,7 +28,7 @@ from .._azure_appconfiguration_error import ResourceReadOnlyError
 from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from .._azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from .._generated.aio import AzureAppConfiguration
-from .._generated.models import SnapshotStatus, SnapshotUpdateParameters
+from .._generated.models import SnapshotUpdateParameters, SnapshotStatus
 from .._models import ConfigurationSetting, ConfigurationSettingFilter, Snapshot
 from .._user_agent import USER_AGENT
 from .._utils import (
@@ -62,7 +60,7 @@ class AzureAppConfigurationClient:
 
     # pylint:disable=protected-access
 
-    def __init__(self, base_url: str, credential: AsyncTokenCredential, **kwargs) -> None:
+    def __init__(self, base_url: str, credential: AsyncTokenCredential, **kwargs: Any) -> None:
         try:
             if not base_url.lower().startswith("http"):
                 base_url = "https://" + base_url
@@ -102,7 +100,7 @@ class AzureAppConfigurationClient:
         )
 
     @classmethod
-    def from_connection_string(cls, connection_string: str, **kwargs) -> "AzureAppConfigurationClient":
+    def from_connection_string(cls, connection_string: str, **kwargs: Any) -> "AzureAppConfigurationClient":
         """Create AzureAppConfigurationClient from a Connection String.
         This is the async version of :class:`~azure.appconfiguration.AzureAppConfigurationClient`
 
@@ -143,7 +141,7 @@ class AzureAppConfigurationClient:
         :type label_filter: str
         :keyword str accept_datetime: retrieve ConfigurationSetting existed at this datetime
         :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
-        :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
+        :return: An async iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.ConfigurationSetting]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
             :class:`~azure.core.exceptions.ClientAuthenticationError`
@@ -169,7 +167,6 @@ class AzureAppConfigurationClient:
         select = kwargs.pop("fields", None)
         if select:
             select = ["locked" if x == "read_only" else x for x in select]
-        error_map = {401: ClientAuthenticationError}
 
         try:
             return self._impl.get_key_values(  # type: ignore
@@ -177,12 +174,8 @@ class AzureAppConfigurationClient:
                 key=key_filter,
                 select=select,
                 cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
-                error_map=error_map,
                 **kwargs
             )
-        except HttpResponseError as error:
-            e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response) from error
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
 
@@ -208,7 +201,7 @@ class AzureAppConfigurationClient:
         :type match_condition: ~azure.core.MatchConditions
         :keyword str accept_datetime: retrieve ConfigurationSetting existed at this datetime
         :return: The matched ConfigurationSetting object
-        :rtype: ~azure.appconfiguration.ConfigurationSetting
+        :rtype: ~azure.appconfiguration.ConfigurationSetting or None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
             :class:`~azure.core.exceptions.ClientAuthenticationError`, \
             :class:`~azure.core.exceptions.ResourceNotFoundError`, \
@@ -224,15 +217,13 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
+        error_map = {}  # type: Dict[int, Any]
         if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        if match_condition == MatchConditions.IfModified:
-            error_map[304] = ResourceNotModifiedError
+            error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
+            error_map.update({412: ResourceNotFoundError})
         if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
+            error_map.update({412: ResourceExistsError})
 
         try:
             key_value = await self._impl.get_key_value(
@@ -246,9 +237,6 @@ class AzureAppConfigurationClient:
             return ConfigurationSetting._from_generated(key_value)
         except ResourceNotModifiedError:
             return None
-        except HttpResponseError as error:
-            e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response) from error
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
 
@@ -283,7 +271,7 @@ class AzureAppConfigurationClient:
         """
         key_value = configuration_setting._to_generated()
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
-        error_map = {401: ClientAuthenticationError, 412: ResourceExistsError}
+        error_map = {412: ResourceExistsError}
 
         try:
             key_value_added = await self._impl.put_key_value(
@@ -295,9 +283,6 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
             )
             return ConfigurationSetting._from_generated(key_value_added)
-        except HttpResponseError as error:
-            e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response) from error
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
 
@@ -313,7 +298,7 @@ class AzureAppConfigurationClient:
         If the configuration setting identified by key and label does not exist, this is a create.
         Otherwise this is an update.
 
-        :param configuration_setting: the ConfigurationSetting to be added (if not exists) \
+        :param configuration_setting: the ConfigurationSetting to be added (if not exists)
             or updated (if exists) to the service
         :type configuration_setting: ~azure.appconfiguration.ConfigurationSetting
         :param match_condition: The match condition to use upon the etag
@@ -347,15 +332,15 @@ class AzureAppConfigurationClient:
 
         key_value = configuration_setting._to_generated()
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
-        error_map = {401: ClientAuthenticationError, 409: ResourceReadOnlyError}
+        error_map = {409: ResourceReadOnlyError}  # type: Dict[int, Any]
         if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
+            error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
-            error_map[412] = ResourceNotModifiedError
+            error_map.update({412: ResourceNotModifiedError})
         if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
+            error_map.update({412: ResourceNotFoundError})
         if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
+            error_map.update({412: ResourceExistsError})
 
         try:
             key_value_set = await self._impl.put_key_value(
@@ -368,9 +353,6 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
             )
             return ConfigurationSetting._from_generated(key_value_set)
-        except HttpResponseError as error:
-            e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response) from error
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
 
@@ -409,15 +391,15 @@ class AzureAppConfigurationClient:
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
-        error_map = {401: ClientAuthenticationError, 409: ResourceReadOnlyError}
+        error_map = {409: ResourceReadOnlyError}  # type: Dict[int, Any]
         if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
+            error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
-            error_map[412] = ResourceNotModifiedError
+            error_map.update({412: ResourceNotModifiedError})
         if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
+            error_map.update({412: ResourceNotFoundError})
         if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
+            error_map.update({412: ResourceExistsError})
 
         try:
             key_value_deleted = await self._impl.delete_key_value(
@@ -428,9 +410,6 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
             )
             return ConfigurationSetting._from_generated(key_value_deleted)  # type: ignore
-        except HttpResponseError as error:
-            e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response) from error
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
 
@@ -450,7 +429,7 @@ class AzureAppConfigurationClient:
         :type label_filter: str
         :keyword str accept_datetime: retrieve ConfigurationSetting existed at this datetime
         :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
-        :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
+        :return: An async iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.ConfigurationSetting]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
             :class:`~azure.core.exceptions.ClientAuthenticationError`
@@ -477,7 +456,6 @@ class AzureAppConfigurationClient:
         select = kwargs.pop("fields", None)
         if select:
             select = ["locked" if x == "read_only" else x for x in select]
-        error_map = {401: ClientAuthenticationError}
 
         try:
             return self._impl.get_revisions(  # type: ignore
@@ -485,12 +463,8 @@ class AzureAppConfigurationClient:
                 key=key_filter,
                 select=select,
                 cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
-                error_map=error_map,
                 **kwargs
             )
-        except HttpResponseError as error:
-            e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response) from error
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
 
@@ -525,17 +499,16 @@ class AzureAppConfigurationClient:
             read_only_config_setting = await async_client.set_read_only(config_setting)
             read_only_config_setting = await client.set_read_only(config_setting, read_only=False)
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
-
+        error_map = {}  # type: Dict[int, Any]
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
+            error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
-            error_map[412] = ResourceNotModifiedError
+            error_map.update({412: ResourceNotModifiedError})
         if match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
+            error_map.update({412: ResourceNotFoundError})
         if match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
+            error_map.update({412: ResourceExistsError})
 
         try:
             if read_only:
@@ -557,9 +530,6 @@ class AzureAppConfigurationClient:
                     **kwargs
                 )
             return ConfigurationSetting._from_generated(key_value)
-        except HttpResponseError as error:
-            e = error_map[error.status_code]
-            raise e(message=error.message, response=error.response) from error
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
 
@@ -581,18 +551,22 @@ class AzureAppConfigurationClient:
         :param filters: A list of filters used to filter the configuration settings by key field and label field
             included in the snapshot.
         :type filters: list[~azure.appconfiguration.ConfigurationSettingFilter]
-        :keyword str composition_type: The composition type describes how the key-values
+        :keyword composition_type: The composition type describes how the key-values
             within the snapshot are composed. Known values are: "key" and "key_label". The "key" composition type
             ensures there are no two key-values containing the same key. The 'key_label' composition type ensures
             there are no two key-values containing the same key and label.
-        :keyword int retention_period: The amount of time, in seconds, that a snapshot will remain in the
+        :type composition_type: str or None
+        :keyword retention_period: The amount of time, in seconds, that a snapshot will remain in the
             archived state before expiring. This property is only writable during the creation of a
             snapshot. If not specified, will set to 2592000(30 days). If specified, should be
             in range 3600(1 hour) to 7776000(90 days).
-        :keyword dict[str, str] tags: The tags of the snapshot.
-        :return: A poller for create snapshot operation. Call `result()` on this object to wait for the
+        :type retention_period: int or None
+        :keyword tags: The tags of the snapshot.
+        :type tags: dict[str, str] or None
+        :return: An async poller for create snapshot operation. Call `result()` on this object to wait for the
             operation to complete and get the created snapshot.
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.appconfiguration.Snapshot]
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         snapshot = Snapshot(
             filters=filters, composition_type=composition_type, retention_period=retention_period, tags=tags
@@ -623,16 +597,28 @@ class AzureAppConfigurationClient:
         :type name: str
         :keyword match_condition: The match condition to use upon the etag.
         :type match_condition: ~azure.core.MatchConditions
-        :keyword str etag: Check if the Snapshot is changed. Set None to skip checking etag.
+        :keyword etag: Check if the Snapshot is changed. Set None to skip checking etag.
+        :type etag: str or None
         :return: The Snapshot returned from the service.
         :rtype: ~azure.appconfiguration.Snapshot
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
+        error_map = {}  # type: Dict[int, Any]
+        if match_condition == MatchConditions.IfNotModified:
+            error_map.update({412: ResourceModifiedError})
+        if match_condition == MatchConditions.IfModified:
+            error_map.update({412: ResourceNotModifiedError})
+        if match_condition == MatchConditions.IfPresent:
+            error_map.update({412: ResourceNotFoundError})
+        if match_condition == MatchConditions.IfMissing:
+            error_map.update({412: ResourceExistsError})
         try:
             generated_snapshot = await self._impl.update_snapshot(
                 name=name,
                 entity=SnapshotUpdateParameters(status=SnapshotStatus.ARCHIVED),
                 if_match=prep_if_match(etag, match_condition),
                 if_none_match=prep_if_none_match(etag, match_condition),
+                error_map=error_map,
                 **kwargs
             )
             return Snapshot._from_generated(generated_snapshot)
@@ -654,16 +640,28 @@ class AzureAppConfigurationClient:
         :type name: str
         :keyword match_condition: The match condition to use upon the etag.
         :type match_condition: ~azure.core.MatchConditions
-        :keyword str etag: Check if the Snapshot is changed. Set None to skip checking etag.
+        :keyword etag: Check if the Snapshot is changed. Set None to skip checking etag.
+        :type etag: str or None
         :return: The Snapshot returned from the service.
         :rtype: ~azure.appconfiguration.Snapshot
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
+        error_map = {}  # type: Dict[int, Any]
+        if match_condition == MatchConditions.IfNotModified:
+            error_map.update({412: ResourceModifiedError})
+        if match_condition == MatchConditions.IfModified:
+            error_map.update({412: ResourceNotModifiedError})
+        if match_condition == MatchConditions.IfPresent:
+            error_map.update({412: ResourceNotFoundError})
+        if match_condition == MatchConditions.IfMissing:
+            error_map.update({412: ResourceExistsError})
         try:
             generated_snapshot = await self._impl.update_snapshot(
                 name=name,
                 entity=SnapshotUpdateParameters(status=SnapshotStatus.READY),
                 if_match=prep_if_match(etag, match_condition),
                 if_none_match=prep_if_none_match(etag, match_condition),
+                error_map=error_map,
                 **kwargs
             )
             return Snapshot._from_generated(generated_snapshot)
@@ -676,9 +674,11 @@ class AzureAppConfigurationClient:
 
         :param name: The name of the configuration setting snapshot to retrieve.
         :type name: str
-        :keyword list[str] fields: Specify which fields to include in the results. Leave None to include all fields.
+        :keyword fields: Specify which fields to include in the results. Leave None to include all fields.
+        :type fields: list[str] or None
         :return: The Snapshot returned from the service.
         :rtype: ~azure.appconfiguration.Snapshot
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         try:
             generated_snapshot = await self._impl.get_snapshot(
@@ -694,17 +694,21 @@ class AzureAppConfigurationClient:
         *,
         name: Optional[str] = None,
         fields: Optional[List[str]] = None,
-        status: Optional[List[str]] = None,
+        status: Optional[List[Union[str, SnapshotStatus]]] = None,
         **kwargs
     ) -> AsyncItemPaged[Snapshot]:
         """List the configuration setting snapshots stored in the configuration service, optionally filtered by
         snapshot name, snapshot status and fields to present in return.
 
-        :keyword str name: Filter results based on snapshot name.
-        :keyword list[str] fields: Specify which fields to include in the results. Leave None to include all fields.
-        :keyword list[str] status: Filter results based on snapshot keys.
-        :return: An iterator of :class:`~azure.appconfiguration.Snapshot`
+        :keyword name: Filter results based on snapshot name.
+        :type name: str or None
+        :keyword fields: Specify which fields to include in the results. Leave None to include all fields.
+        :type fields: list[str] or None
+        :keyword status: Filter results based on snapshot keys.
+        :type status: list[str] or list[~azure.appconfiguration.SnapshotStatus] or None
+        :return: An async iterator of :class:`~azure.appconfiguration.Snapshot`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.Snapshot]
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         try:
             return self._impl.get_snapshots(  # type: ignore
@@ -719,16 +723,17 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def list_snapshot_configuration_settings(
-        self, name: str, *, accept_datetime: Optional[str] = None, fields: Optional[List[str]] = None, **kwargs
+        self, snapshot_name: str, *, fields: Optional[List[str]] = None, **kwargs
     ) -> AsyncItemPaged[ConfigurationSetting]:
         """List the configuration settings stored under a snapshot in the configuration service, optionally filtered by
         accept_datetime and fields to present in return.
 
-        :param str name: The snapshot name.
-        :keyword str accept_datetime: Filter out ConfigurationSetting created after this datetime.
-        :keyword list[str] fields: Specify which fields to include in the results. Leave None to include all fields.
-        :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
+        :param str snapshot_name: The snapshot name.
+        :keyword fields: Specify which fields to include in the results. Leave None to include all fields.
+        :type fields: list[str] or None
+        :return: An async iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.appconfiguration.ConfigurationSetting]
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         if fields:
             fields = ["locked" if x == "read_only" else x for x in fields]
@@ -736,8 +741,7 @@ class AzureAppConfigurationClient:
         try:
             return self._impl.get_key_values(  # type: ignore
                 select=fields,
-                snapshot=name,
-                accept_datetime=accept_datetime,
+                snapshot=snapshot_name,
                 cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                 **kwargs
             )
@@ -758,9 +762,9 @@ class AzureAppConfigurationClient:
         """Close all connections made by the client"""
         await self._impl._client.close()
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "AzureAppConfigurationClient":
         await self._impl.__aenter__()
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args: Any) -> None:
         await self._impl.__aexit__(*args)

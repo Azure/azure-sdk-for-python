@@ -34,13 +34,14 @@ logging.getLogger().setLevel(logging.INFO)
 MINIMUM_VERSION_GENERIC_OVERRIDES = {
     "azure-common": "1.1.10",
     "msrest": "0.6.10",
-    "typing-extensions": "3.6.5",
+    "typing-extensions": "4.6.0",
     "opentelemetry-api": "1.3.0",
     "opentelemetry-sdk": "1.3.0",
     "azure-core": "1.11.0",
     "requests": "2.19.0",
     "six": "1.12.0",
     "cryptography": "3.3.2",
+    "msal": "1.23.0",
 }
 
 # this array contains overrides ONLY IF the package being processed the key of each item
@@ -48,14 +49,18 @@ MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
     "azure-eventhub": {"azure-core": "1.25.0"},
     "azure-eventhub-checkpointstoreblob-aio": {"azure-core": "1.25.0"},
     "azure-eventhub-checkpointstoreblob": {"azure-core": "1.25.0"},
+    "azure-identity": {"msal": "1.23.0"},
 }
 
 MAXIMUM_VERSION_GENERIC_OVERRIDES = {
-    "cryptography": "4.0.0",
-    "typing-extensions": "4.6.3"
+    "typing-extensions": "4.6.3",
 }
 
-MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {}
+MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {
+    "azure-core-tracing-opentelemetry": {
+        "opentelemetry-api": "1.19.0"
+    }
+}
 
 SPECIAL_CASE_OVERRIDES = {
     # this package has an override
@@ -154,30 +159,30 @@ def process_requirement(req, dependency_type, orig_pkg_name):
             v for v in versions if parse_version(v) >= parse_version(MINIMUM_VERSION_GENERIC_OVERRIDES[pkg_name])
         ]
 
-        if (
-            orig_pkg_name in MINIMUM_VERSION_SPECIFIC_OVERRIDES
-            and pkg_name in MINIMUM_VERSION_SPECIFIC_OVERRIDES[orig_pkg_name]
-        ):
-            versions = [
-                v
-                for v in versions
-                if parse_version(v) >= parse_version(MINIMUM_VERSION_SPECIFIC_OVERRIDES[orig_pkg_name][pkg_name])
-            ]
+    if (
+        orig_pkg_name in MINIMUM_VERSION_SPECIFIC_OVERRIDES
+        and pkg_name in MINIMUM_VERSION_SPECIFIC_OVERRIDES[orig_pkg_name]
+    ):
+        versions = [
+            v
+            for v in versions
+            if parse_version(v) >= parse_version(MINIMUM_VERSION_SPECIFIC_OVERRIDES[orig_pkg_name][pkg_name])
+        ]
 
     if pkg_name in MAXIMUM_VERSION_GENERIC_OVERRIDES:
         versions = [
             v for v in versions if parse_version(v) <= parse_version(MAXIMUM_VERSION_GENERIC_OVERRIDES[pkg_name])
         ]
 
-        if (
-            orig_pkg_name in MAXIMUM_VERSION_SPECIFIC_OVERRIDES
-            and pkg_name in MAXIMUM_VERSION_SPECIFIC_OVERRIDES[orig_pkg_name]
-        ):
-            versions = [
-                v
-                for v in versions
-                if parse_version(v) <= parse_version(MAXIMUM_VERSION_SPECIFIC_OVERRIDES[orig_pkg_name][pkg_name])
-            ]
+    if (
+        orig_pkg_name in MAXIMUM_VERSION_SPECIFIC_OVERRIDES
+        and pkg_name in MAXIMUM_VERSION_SPECIFIC_OVERRIDES[orig_pkg_name]
+    ):
+        versions = [
+            v
+            for v in versions
+            if parse_version(v) <= parse_version(MAXIMUM_VERSION_SPECIFIC_OVERRIDES[orig_pkg_name][pkg_name])
+        ]
 
     # Search from lowest to latest in case of finding minimum dependency
     # Search from latest to lowest in case of finding latest required version

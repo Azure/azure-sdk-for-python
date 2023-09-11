@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines
+# pylint: disable=docstring-missing-return, docstring-missing-rtype, too-many-lines
 
 """Representation of Avro schemas.
 
@@ -29,16 +29,6 @@ import abc
 import json
 import logging
 import re
-import sys
-from six import with_metaclass
-
-PY2 = sys.version_info[0] == 2
-
-if PY2:
-    _str = unicode # pylint: disable=undefined-variable
-else:
-    _str = str
-
 logger = logging.getLogger(__name__)
 
 # ------------------------------------------------------------------------------
@@ -140,7 +130,7 @@ class SchemaParseException(AvroException):
     """Error while parsing a JSON schema descriptor."""
 
 
-class Schema(with_metaclass(abc.ABCMeta, object)):
+class Schema(metaclass=abc.ABCMeta):
     """Abstract base class for all Schema classes."""
 
     def __init__(self, data_type, other_props=None):
@@ -198,14 +188,12 @@ class Schema(with_metaclass(abc.ABCMeta, object)):
         """Returns: the JSON representation of this schema."""
         return json.dumps(self.to_json(names=None))
 
+    # Converts the schema object into its AVRO specification representation.
+
+    # Schema types that have names (records, enums, and fixed) must be aware of not
+    # re-defining schemas that are already listed in the parameter names.
     @abc.abstractmethod
     def to_json(self, names):
-        """Converts the schema object into its AVRO specification representation.
-
-        Schema types that have names (records, enums, and fixed) must
-        be aware of not re-defining schemas that are already listed
-        in the parameter names.
-        """
         raise Exception('Cannot run abstract method.')
 
 
@@ -313,21 +301,19 @@ class Names(object):
     def new_with_default_namespace(self, namespace):
         """Creates a new name tracker from this tracker, but with a new default ns.
 
-        Args:
-          namespace: New default namespace to use.
-        Returns:
-          New name tracker with the specified default namespace.
+        :param Any namespace: New default namespace to use.
+        :returns: New name tracker with the specified default namespace.
+        :rtype: Names
         """
         return Names(names=self._names, default_namespace=namespace)
 
     def get_name(self, name, namespace=None):
         """Resolves the Avro name according to this name tracker's state.
 
-        Args:
-          name: Name to resolve (absolute or relative).
-          namespace: Optional explicit namespace.
-        Returns:
-          The specified name, resolved according to this tracker.
+        :param Any name: Name to resolve (absolute or relative).
+        :param Optional[Any] namespace: Optional explicit namespace.
+        :returns: The specified name, resolved according to this tracker.
+        :rtype: Name
         """
         if namespace is None:
             namespace = self._default_namespace
@@ -336,19 +322,16 @@ class Names(object):
     def get_schema(self, name, namespace=None):
         """Resolves an Avro schema by name.
 
-        Args:
-          name: Name (relative or absolute) of the Avro schema to look up.
-          namespace: Optional explicit namespace.
-        Returns:
-          The schema with the specified name, if any, or None.
+        :param Any name: Name (absolute or relative) of the Avro schema to look up.
+        :param Optional[Any] namespace: Optional explicit namespace.
+        :returns: The schema with the specified name, if any, or None
+        :rtype: Union[Any, None]
         """
         avro_name = self.get_name(name=name, namespace=namespace)
         return self._names.get(avro_name.fullname, None)
 
+    # Given a properties, return properties with namespace removed if it matches the own default namespace
     def prune_namespace(self, properties):
-        """given a properties, return properties with namespace removed if
-        it matches the own default namespace
-        """
         if self.default_namespace is None:
             # I have no default -- no change
             return properties
@@ -366,8 +349,7 @@ class Names(object):
     def register(self, schema):
         """Registers a new named schema in this tracker.
 
-        Args:
-          schema: Named Avro schema to register in this tracker.
+        :param Any schema: Named Avro schema to register in this tracker.
         """
         if schema.fullname in VALID_TYPES:
             raise SchemaParseException(
@@ -437,23 +419,20 @@ class NamedSchema(Schema):
     def name_ref(self, names):
         """Reports this schema name relative to the specified name tracker.
 
-        Args:
-          names: Avro name tracker to relativize this schema name against.
-        Returns:
-          This schema name, relativized against the specified name tracker.
+        :param Any names: Avro name tracker to relativize this schema name against.
+        :returns: This schema name, relativized against the specified name tracker.
+        :rtype: Any
         """
         if self.namespace == names.default_namespace:
             return self.name
         return self.fullname
 
+    # Converts the schema object into its AVRO specification representation.
+
+    # Schema types that have names (records, enums, and fixed) must be aware
+    # of not re-defining schemas that are already listed in the parameter names.
     @abc.abstractmethod
     def to_json(self, names):
-        """Converts the schema object into its AVRO specification representation.
-
-        Schema types that have names (records, enums, and fixed) must
-        be aware of not re-defining schemas that are already listed
-        in the parameter names.
-        """
         raise Exception('Cannot run abstract method.')
 
 # ------------------------------------------------------------------------------
@@ -488,7 +467,7 @@ class Field(object):
           doc:
           other_props:
         """
-        if (not isinstance(name, _str)) or (not name):
+        if (not isinstance(name, str)) or (not name):
             raise SchemaParseException(f'Invalid record field name: {name!r}.')
         if (order is not None) and (order not in VALID_FIELD_SORT_ORDERS):
             raise SchemaParseException(f'Invalid record field order: {order!r}.')
@@ -563,8 +542,8 @@ class Field(object):
         return to_dump
 
     def __eq__(self, that):
-        to_cmp = json.loads(_str(self))
-        return to_cmp == json.loads(_str(that))
+        to_cmp = json.loads(str(self))
+        return to_cmp == json.loads(str(that))
 
 
 # ------------------------------------------------------------------------------
@@ -678,7 +657,7 @@ class EnumSchema(NamedSchema):
         symbols = tuple(symbols)
         symbol_set = frozenset(symbols)
         if (len(symbol_set) != len(symbols)
-                or not all(map(lambda symbol: isinstance(symbol, _str), symbols))):
+                or not all(map(lambda symbol: isinstance(symbol, str), symbols))):
             raise AvroException(
                 f'Invalid symbols for enum schema: {symbols!r}.')
 
@@ -746,8 +725,8 @@ class ArraySchema(Schema):
         return to_dump
 
     def __eq__(self, that):
-        to_cmp = json.loads(_str(self))
-        return to_cmp == json.loads(_str(that))
+        to_cmp = json.loads(str(self))
+        return to_cmp == json.loads(str(that))
 
 
 # ------------------------------------------------------------------------------
@@ -783,8 +762,8 @@ class MapSchema(Schema):
         return to_dump
 
     def __eq__(self, that):
-        to_cmp = json.loads(_str(self))
-        return to_cmp == json.loads(_str(that))
+        to_cmp = json.loads(str(self))
+        return to_cmp == json.loads(str(that))
 
 
 # ------------------------------------------------------------------------------
@@ -837,8 +816,8 @@ class UnionSchema(Schema):
         return to_dump
 
     def __eq__(self, that):
-        to_cmp = json.loads(_str(self))
-        return to_cmp == json.loads(_str(that))
+        to_cmp = json.loads(str(self))
+        return to_cmp == json.loads(str(that))
 
 
 # ------------------------------------------------------------------------------
@@ -879,11 +858,11 @@ class RecordSchema(NamedSchema):
     def _make_field(index, field_desc, names):
         """Builds field schemas from a list of field JSON descriptors.
 
-        Args:
-          index: 0-based index of the field in the record.
-          field_desc: JSON descriptors of a record field.
-        Return:
-          The field schema.
+        :param int index: 0-based index of the field in the record.
+        :param Any field_desc: JSON descriptors of a record field.
+        :param Any names: The names for this schema.
+        :returns: The field schema.
+        :rtype: Field
         """
         field_schema = schema_from_json_data(
             json_data=field_desc['type'],
@@ -905,14 +884,12 @@ class RecordSchema(NamedSchema):
     @staticmethod
     def make_field_list(field_desc_list, names):
         """Builds field schemas from a list of field JSON descriptors.
-
         Guarantees field name unicity.
 
-        Args:
-          field_desc_list: collection of field JSON descriptors.
-          names: Avro schema tracker.
-        Yields
-          Field schemas.
+        :param Any field_desc_list: Collection of field JSON descriptors.
+        :param Any names: The names for this schema.
+        :returns: Field schemas.
+        :rtype: Field
         """
         for index, field_desc in enumerate(field_desc_list):
             yield RecordSchema._make_field(index, field_desc, names)
@@ -920,13 +897,11 @@ class RecordSchema(NamedSchema):
     @staticmethod
     def _make_field_map(fields):
         """Builds the field map.
-
         Guarantees field name unicity.
 
-        Args:
-          fields: iterable of field schema.
-        Returns:
-          A map of field schemas, indexed by name.
+        :param Any fields: Iterable of field schema.
+        :returns: A map of field schemas, indexed by name.
+        :rtype: Dict[Any, Any]
         """
         field_map = {}
         for field in fields:
@@ -1027,8 +1002,8 @@ class RecordSchema(NamedSchema):
         return to_dump
 
     def __eq__(self, that):
-        to_cmp = json.loads(_str(self))
-        return to_cmp == json.loads(_str(that))
+        to_cmp = json.loads(str(self))
+        return to_cmp == json.loads(str(that))
 
 
 # ------------------------------------------------------------------------------
@@ -1037,14 +1012,12 @@ class RecordSchema(NamedSchema):
 
 def filter_keys_out(items, keys):
     """Filters a collection of (key, value) items.
-
     Exclude any item whose key belongs to keys.
 
-    Args:
-      items: Dictionary of items to filter the keys out of.
-      keys: Keys to filter out.
-    Yields:
-      Filtered items.
+    :param Dict[Any, Any] items: Dictionary of items to filter the keys out of.
+    :param Dict[Any, Any] keys: Dictionary of keys to filter the extracted keys against.
+    :returns: Filtered items.
+    :rtype: Tuple(Any, Any)
     """
     for key, value in items.items():
         if key in keys:
@@ -1153,7 +1126,7 @@ def _schema_from_json_object(json_object, names):
 
 # Parsers for the JSON data types:
 _JSONDataParserTypeMap = {
-    _str: _schema_from_json_string,
+    str: _schema_from_json_string,
     list: _schema_from_json_array,
     dict: _schema_from_json_object,
 }
@@ -1161,14 +1134,12 @@ _JSONDataParserTypeMap = {
 
 def schema_from_json_data(json_data, names=None):
     """Builds an Avro Schema from its JSON descriptor.
+    Raises SchemaParseException if the descriptor is invalid.
 
-    Args:
-      json_data: JSON data representing the descriptor of the Avro schema.
-      names: Optional tracker for Avro named schemas.
-    Returns:
-      The Avro schema parsed from the JSON descriptor.
-    Raises:
-      SchemaParseException: if the descriptor is invalid.
+    :param Any json_data: JSON data representing the descriptor of the Avro schema.
+    :param Any names: Optional tracker for Avro named schemas.
+    :returns: The Avro schema parsed from the JSON descriptor.
+    :rtype: Any
     """
     if names is None:
         names = Names()
@@ -1186,21 +1157,18 @@ def schema_from_json_data(json_data, names=None):
 
 def parse(json_string):
     """Constructs a Schema from its JSON descriptor in text form.
+    Raises SchemaParseException if a JSON parsing error is met, or if the JSON descriptor is invalid.
 
-    Args:
-      json_string: String representation of the JSON descriptor of the schema.
-    Returns:
-      The parsed schema.
-    Raises:
-      SchemaParseException: on JSON parsing error,
-          or if the JSON descriptor is invalid.
+    :param str json_string: String representation of the JSON descriptor of the schema.
+    :returns: The parsed schema.
+    :rtype: Any
     """
     try:
         json_data = json.loads(json_string)
     except Exception as exn:
         raise SchemaParseException(
             f'Error parsing schema from JSON: {json_string!r}. '
-            f'Error message: {exn!r}.')
+            f'Error message: {exn!r}.') from exn
 
     # Initialize the names object
     names = Names()

@@ -4,7 +4,7 @@
 import logging
 import types
 from inspect import Parameter, Signature
-from typing import Callable, Sequence
+from typing import Callable, Dict, Sequence
 
 from azure.ai.ml.entities import Component
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, UnexpectedKeywordError, ValidationException
@@ -13,16 +13,35 @@ module_logger = logging.getLogger(__name__)
 
 
 class KwParameter(Parameter):
-    """A keyword only parameter with a default value."""
+    """A keyword-only parameter with a default value.
 
-    def __init__(self, name, default, annotation=Parameter.empty, _type="str", _optional=False):
+    :param name: The name of the parameter.
+    :type name: str
+    :param default: The default value of the parameter.
+    :param annotation: The annotation type of the parameter, defaults to `Parameter.empty`.
+    :type annotation: Any
+    :param _type: The type of the parameter, defaults to "str".
+    :type _type: str
+    :param _optional: Indicates if the parameter is optional, defaults to False.
+    :type _optional: bool
+    """
+
+    def __init__(self, name, default, annotation=Parameter.empty, _type="str", _optional=False) -> None:
         super().__init__(name, Parameter.KEYWORD_ONLY, default=default, annotation=annotation)
         self._type = _type
         self._optional = _optional
 
 
-def _replace_function_name(func: types.FunctionType, new_name):
-    """Return a function with the same body but a new name."""
+def _replace_function_name(func: types.FunctionType, new_name: str) -> types.FunctionType:
+    """Replaces the name of a function with a new name
+
+    :param func: The function to update
+    :type func: types.FunctionType
+    :param new_name: The new function name
+    :type new_name: str
+    :return: The function with a replaced name, but otherwise unchanged body
+    :rtype: types.FunctionType
+    """
     try:
         # Use the original code of the function to initialize a new code object for the new function.
         code_template = func.__code__
@@ -69,11 +88,12 @@ def _replace_function_name(func: types.FunctionType, new_name):
         return func
 
 
+# pylint: disable-next=docstring-missing-param
 def _assert_arg_valid(kwargs: dict, keys: list, func_name: str):
     """Assert the arg keys are all in keys."""
     # pylint: disable=protected-access
     # validate component input names
-    Component._validate_io_names(io_dict=kwargs, raise_error=True)
+    Component._validate_io_names(kwargs, raise_error=True)
     lower2original_parameter_names = {x.lower(): x for x in keys}
     kwargs_need_to_update = []
     for key in kwargs:
@@ -94,8 +114,16 @@ def _assert_arg_valid(kwargs: dict, keys: list, func_name: str):
         kwargs[lower2original_parameter_names[key.lower()]] = kwargs.pop(key)
 
 
-def _update_dct_if_not_exist(dst, src):
-    """Update the dst dict with the source dict if the key is not in the dst dict."""
+def _update_dct_if_not_exist(dst: Dict, src: Dict):
+    """Computes the union of `src` and `dst`, in-place within `dst`
+
+    If a key exists in `dst` and `src` the value in `dst` is preserved
+
+    :param dst: The destination to compute the union within
+    :type dst: Dict
+    :param src: A dictionary to include in the union
+    :type src: Dict
+    """
     for k, v in src.items():
         if k not in dst:
             dst[k] = v
@@ -108,7 +136,22 @@ def create_kw_function_from_parameters(
     func_name: str,
     documentation: str,
 ) -> Callable:
-    """Create a new keyword only function with provided parameters."""
+    """Create a new keyword-only function with provided parameters.
+
+    :param func: The original function to be wrapped.
+    :type func: Callable
+    :param parameters: The sequence of parameters for the new function.
+    :type parameters: Sequence[Parameter]
+    :param flattened_group_keys: The list of valid group keys.
+    :type flattened_group_keys: list
+    :param func_name: The name of the new function.
+    :type func_name: str
+    :param documentation: The documentation string for the new function.
+    :type documentation: str
+    :return: The new keyword-only function.
+    :rtype: Callable
+    :raises ValidationException: If the provided function parameters are not keyword-only.
+    """
     if any(p.default == p.empty or p.kind != Parameter.KEYWORD_ONLY for p in parameters):
         msg = "This function only accept keyword only parameters."
         raise ValidationException(

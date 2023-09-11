@@ -2421,35 +2421,6 @@ class CRUDTests(unittest.TestCase):
         await created_db.delete_container(created_collection1)
         await created_db.delete_container(created_collection2)
 
-    async def test_id_unicode_validation(self):
-        # create database
-        created_db = self.databaseForTest
-
-        # unicode chars in Hindi for Id which translates to: "Hindi is the national language of India"
-        collection_id1 = u'हिन्दी भारत की राष्ट्रीय भाषा है' # cspell:disable-line
-
-        # Special chars for Id
-        collection_id2 = "!@$%^&*()-~`'_[]{}|;:,.<>"
-
-        # verify that collections are created with specified IDs
-        created_collection1 = await created_db.create_container(
-            id=collection_id1,
-            partition_key=PartitionKey(path='/id', kind='Hash')
-        )
-        created_collection2 = await created_db.create_container(
-            id=collection_id2,
-            partition_key=PartitionKey(path='/id', kind='Hash')
-        )
-
-        self.assertEqual(collection_id1, created_collection1.id)
-        self.assertEqual(collection_id2, created_collection2.id)
-
-        created_collection1_properties = await created_collection1.read()
-        created_collection2_properties = await created_collection2.read()
-
-        await created_db.delete_container(created_collection1_properties)
-        await created_db.delete_container(created_collection2_properties)
-
     async def test_get_resource_with_dictionary_and_object(self):
         created_db = self.databaseForTest
 

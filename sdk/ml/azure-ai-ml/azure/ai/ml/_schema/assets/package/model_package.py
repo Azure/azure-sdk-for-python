@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 
 import logging
 
@@ -19,7 +19,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class ModelPackageSchema(PathAwareSchema):
-    target_environment_name = fields.Str(required=True, default="packaged-env")
+    target_environment_name = fields.Str(required=True, dump_default="packaged-env")
     target_environment_version = VersionField()
     base_environment_source = NestedField(BaseEnvironmentSourceSchema)
     inferencing_server = NestedField(InferenceServerSchema)

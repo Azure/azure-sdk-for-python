@@ -8,12 +8,15 @@ import re
 import tempfile
 from collections import namedtuple
 from pathlib import Path
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, TYPE_CHECKING, Tuple, Union
 
 from azure.ai.ml._utils.utils import dump_yaml_to_file, get_all_data_binding_expressions, load_yaml
-from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, DefaultOpenEncoding
 from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
 from azure.ai.ml.exceptions import UserErrorException
+
+if TYPE_CHECKING:
+    from azure.ai.ml.entities._builders import BaseNode
 
 ExpressionInput = namedtuple("ExpressionInput", ["name", "type", "value"])
 NONE_PARAMETER_TYPE = "None"
@@ -48,7 +51,15 @@ _SUPPORTED_OPERATORS = {
 
 
 def _enumerate_operation_combination() -> Dict[str, Union[str, Exception]]:
-    """Enumerate, leverage `eval` to validate operation and get its result type."""
+    """Enumerate the result type of binary operations on types
+
+    Leverages `eval` to validate operation and get its result type.
+
+    :return: A dictionary that maps an operation to either:
+      * A result type
+      * An Exception
+    :rtype: Dict[str, Union[str, Exception]]
+    """
     res = {}
     primitive_types_values = {
         NONE_PARAMETER_TYPE: repr(None),
@@ -201,6 +212,9 @@ class PipelineExpressionMixin:
         while this method can only return False or True, leading to history breaks here.
         As overloadable boolean operators PEP (refer to: https://www.python.org/dev/peps/pep-0335/)
         was rejected, logical operations are also not supported.
+
+        :return: True if not inside dsl pipeline func, raises otherwise
+        :rtype: bool
         """
         from azure.ai.ml.dsl._pipeline_component_builder import _is_inside_dsl_pipeline_func
 
@@ -238,7 +252,7 @@ class PipelineExpression(PipelineExpressionMixin):
     _DECORATOR_LINE = "@command_component(@@decorator_parameters@@)"
     _COMPONENT_FUNC_NAME = "expression_func"
     _COMPONENT_FUNC_DECLARATION_LINE = (
-        f"def {_COMPONENT_FUNC_NAME}(@@component_parameters@@)" " -> Output(type=@@return_type@@, is_control=True):"
+        f"def {_COMPONENT_FUNC_NAME}(@@component_parameters@@)" " -> Output(type=@@return_type@@):"
     )
     _PYTHON_CACHE_FOLDER_NAME = "__pycache__"
 
@@ -250,7 +264,11 @@ class PipelineExpression(PipelineExpressionMixin):
 
     @property
     def expression(self) -> str:
-        """Infix expression string, wrapped with parentheses."""
+        """Infix expression string, wrapped with parentheses.
+
+        :return: The infix expression
+        :rtype: str
+        """
         return self._to_infix()
 
     def __str__(self) -> str:
@@ -272,12 +290,24 @@ class PipelineExpression(PipelineExpressionMixin):
     # pylint: disable=too-many-statements
     @staticmethod
     def _handle_operand(
-        operand,
+        operand: "PipelineExpression",
         postfix: List[str],
         expression_inputs: Dict[str, ExpressionInput],
         pipeline_inputs: dict,
     ) -> Tuple[List[str], Dict[str, ExpressionInput]]:
-        """Handle operand in expression, update postfix expression and expression inputs."""
+        """Handle operand in expression, update postfix expression and expression inputs.
+
+        :param operand: The operand
+        :type operand: "PipelineExpression"
+        :param postfix:
+        :type postfix: List[str]
+        :param expression_inputs: The expression inputs
+        :type expression_inputs: Dict[str, ExpressionInput]
+        :param pipeline_inputs: The pipeline inputs
+        :type pipeline_inputs: dict
+        :return: A 2-tuple of the updated postfix expression and expression inputs
+        :rtype: Tuple[List[str], Dict[str, ExpressionInput]]
+        """
         from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 
         def _update_postfix(_postfix: List[str], _old_name: str, _new_name: str) -> List[str]:
@@ -288,7 +318,17 @@ class PipelineExpression(PipelineExpressionMixin):
             _operand: Union[PipelineInput, NodeOutput],
             _expression_inputs: Dict[str, ExpressionInput],
         ) -> str:
-            """Get or create expression input name as current operand may have appeared in expression."""
+            """Get or create expression input name as current operand may have appeared in expression.
+
+            :param _original_name: The original name
+            :type _original_name: str
+            :param _operand: The expression operand
+            :type _operand: Union[PipelineInput, NodeOutput]
+            :param _expression_inputs: The expression inputs
+            :type _expression_inputs: Dict[str, ExpressionInput]
+            :return: The input name
+            :rtype: str
+            """
             _existing_id_to_name = {id(_v.value): _k for _k, _v in _expression_inputs.items()}
             if id(_operand) in _existing_id_to_name:
                 return _existing_id_to_name[id(_operand)]
@@ -330,11 +370,11 @@ class PipelineExpression(PipelineExpressionMixin):
             _postfix: List[str],
             _expression_inputs: Dict[str, ExpressionInput],
         ) -> Tuple[List[str], dict]:
-            if not _component_output._meta._is_control_or_primitive_type:
+            if not _component_output._meta._is_primitive_type:
                 error_message = (
-                    f"Component output {_component_output._port_name} in expression must have "
-                    f'"is_control" field or is a primitive type with value {True!r}, '
-                    f"got {_component_output._meta._is_control_or_primitive_type!r}"
+                    f"Component output {_component_output._port_name} in expression must "
+                    f"be a primitive type with value {True!r}, "
+                    f"got {_component_output._meta._is_primitive_type!r}"
                 )
                 raise UserErrorException(message=error_message, no_personal_data_message=error_message)
             _name = _component_output._port_name
@@ -379,7 +419,9 @@ class PipelineExpression(PipelineExpressionMixin):
         return postfix, expression_inputs
 
     @staticmethod
-    def _from_operation(operand1, operand2, operator: str) -> "PipelineExpression":
+    def _from_operation(
+        operand1: "PipelineExpression", operand2: "PipelineExpression", operator: str
+    ) -> "PipelineExpression":
         if operator not in _SUPPORTED_OPERATORS:
             error_message = (
                 f"Operator '{operator}' is not supported operator, "
@@ -392,7 +434,8 @@ class PipelineExpression(PipelineExpressionMixin):
         from azure.ai.ml.dsl._pipeline_component_builder import _definition_builder_stack
 
         pipeline_inputs = _definition_builder_stack.top().inputs
-        postfix, inputs = [], {}
+        postfix: List[str] = []
+        inputs: Dict[str, ExpressionInput] = {}
         postfix, inputs = PipelineExpression._handle_operand(operand1, postfix, inputs, pipeline_inputs)
         postfix, inputs = PipelineExpression._handle_operand(operand2, postfix, inputs, pipeline_inputs)
         postfix.append(operator)
@@ -400,7 +443,11 @@ class PipelineExpression(PipelineExpressionMixin):
 
     @property
     def _string_concatenation(self) -> bool:
-        """If all operands are string and operations are addition, it is a string concatenation expression."""
+        """If all operands are string and operations are addition, it is a string concatenation expression.
+
+        :return: Whether this represents string concatenation
+        :rtype: bool
+        """
         for token in self._postfix:
             # operator can only be "+" for string concatenation
             if token in _SUPPORTED_OPERATORS:
@@ -417,7 +464,11 @@ class PipelineExpression(PipelineExpressionMixin):
         return True
 
     def _to_data_binding(self) -> str:
-        """Convert operands to data binding and concatenate them in the order of postfix expression."""
+        """Convert operands to data binding and concatenate them in the order of postfix expression.
+
+        :return: The data binding
+        :rtype: str
+        """
         if not self._string_concatenation:
             error_message = (
                 "Only string concatenation expression is supported to convert to data binding, "
@@ -437,19 +488,24 @@ class PipelineExpression(PipelineExpressionMixin):
             stack.append(operand1 + operand2)
         return stack.pop()
 
-    def resolve(self):
-        """Resolve expression to data binding or component, depend on the operations."""
+    def resolve(self) -> Union[str, "BaseNode"]:
+        """Resolve expression to data binding or component, depend on the operations.
+
+        :return: The data binding string or the component
+        :rtype: Union[str, BaseNode]
+        """
         if self._string_concatenation:
             return self._to_data_binding()
         return self._create_component()
 
     @staticmethod
-    def parse_pipeline_input_names_from_data_binding(data_binding: str) -> List[str]:
+    def parse_pipeline_inputs_from_data_binding(data_binding: str) -> List[str]:
         """Parse all PipelineInputs name from data binding expression.
 
         :param data_binding: Data binding expression
         :type data_binding: str
-        :returns List of PipelineInput's name from given data binding expression
+        :return: List of PipelineInput's name from given data binding expression
+        :rtype: List[str]
         """
         pipeline_input_names = []
         for single_data_binding in get_all_data_binding_expressions(
@@ -491,7 +547,11 @@ class PipelineExpression(PipelineExpressionMixin):
     @property
     def _component_code(self) -> str:
         def _generate_function_code_lines() -> Tuple[List[str], str]:
-            """Return lines of code and return type."""
+            """Return lines of code and return type.
+
+            :return: A 2-tuple of (function body, return type name)
+            :rtype: Tuple[List[str], str]
+            """
             _inter_id, _code, _stack, _line_recorder = 0, [], [], {}
             for _token in self._postfix:
                 if _token not in _SUPPORTED_OPERATORS:
@@ -546,13 +606,13 @@ class PipelineExpression(PipelineExpressionMixin):
     def _create_component(self):
         def _generate_python_file(_folder: Path) -> None:
             _folder.mkdir()
-            with open(_folder / "expression_component.py", "w") as _f:
+            with open(_folder / "expression_component.py", "w", encoding=DefaultOpenEncoding.WRITE) as _f:
                 _f.write(self._component_code)
 
         def _generate_yaml_file(_path: Path) -> None:
             _data_folder = Path(__file__).parent / "data"
             # update YAML content from template and dump
-            with open(_data_folder / "expression_component_template.yml", "r") as _f:
+            with open(_data_folder / "expression_component_template.yml", "r", encoding=DefaultOpenEncoding.READ) as _f:
                 _data = load_yaml(_f)
             _data["display_name"] = f"Expression: {self.expression}"
             _data["inputs"] = {}

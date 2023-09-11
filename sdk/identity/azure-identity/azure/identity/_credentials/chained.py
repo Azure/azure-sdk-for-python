@@ -69,7 +69,9 @@ class ChainedTokenCredential:
         """Close the transport session of each credential in the chain."""
         self.__exit__()
 
-    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
+    def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         """Request a token from each chained credential, in order, returning the first token received.
 
         This method is called automatically by Azure SDK clients.
@@ -77,6 +79,9 @@ class ChainedTokenCredential:
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+            claims challenge following an authorization failure.
+        :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
@@ -86,9 +91,10 @@ class ChainedTokenCredential:
         history = []
         for credential in self.credentials:
             try:
-                token = credential.get_token(*scopes, **kwargs)
+                token = credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
                 _LOGGER.info("%s acquired a token from %s", self.__class__.__name__, credential.__class__.__name__)
                 self._successful_credential = credential
+                within_credential_chain.set(False)
                 return token
             except CredentialUnavailableError as ex:
                 # credential didn't attempt authentication because it lacks required data or state -> continue
@@ -107,8 +113,12 @@ class ChainedTokenCredential:
 
         within_credential_chain.set(False)
         attempts = _get_error_message(history)
-        message = self.__class__.__name__ + " failed to retrieve a token from the included credentials." + attempts \
-                  + "\nTo mitigate this issue, please refer to the troubleshooting guidelines here at " \
-                    "https://aka.ms/azsdk/python/identity/defaultazurecredential/troubleshoot."
+        message = (
+            self.__class__.__name__
+            + " failed to retrieve a token from the included credentials."
+            + attempts
+            + "\nTo mitigate this issue, please refer to the troubleshooting guidelines here at "
+            "https://aka.ms/azsdk/python/identity/defaultazurecredential/troubleshoot."
+        )
         _LOGGER.warning(message)
         raise ClientAuthenticationError(message=message)

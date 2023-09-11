@@ -47,7 +47,7 @@ async def process_content(data, start_offset, end_offset, encryption):
             raise HttpResponseError(
                 message="Decryption failed.",
                 response=data.response,
-                error=error)
+                error=error) from error
     return content
 
 
@@ -146,8 +146,8 @@ class _AsyncChunkIterator(object):
     def __aiter__(self):
         return self
 
+    # Iterate through responses.
     async def __anext__(self):
-        """Iterate through responses."""
         if self._complete:
             raise StopAsyncIteration("Download complete")
         if not self._iter_downloader:
@@ -167,12 +167,12 @@ class _AsyncChunkIterator(object):
         try:
             chunk = next(self._iter_chunks)
             self._current_content += await self._iter_downloader.yield_chunk(chunk)
-        except StopIteration:
+        except StopIteration as exc:
             self._complete = True
             # it's likely that there some data left in self._current_content
             if self._current_content:
                 return self._current_content
-            raise StopAsyncIteration("Download complete")
+            raise StopAsyncIteration("Download complete") from exc
 
         return self._get_chunk_data()
 
@@ -193,7 +193,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         The properties of the blob being downloaded. If only a range of the data is being
         downloaded, this will be reflected in the properties.
     :ivar int size:
-        The size of the total data in the stream. This will be the byte range if speficied,
+        The size of the total data in the stream. This will be the byte range if specified,
         otherwise the total size of the blob.
     """
 
@@ -407,6 +407,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         # type: () -> AsyncIterator[bytes]
         """Iterate over chunks in the download stream.
 
+        :returns: An async iterator of the chunks in the download stream.
         :rtype: AsyncIterator[bytes]
 
         .. admonition:: Example:
@@ -456,7 +457,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         Read up to size bytes from the stream and return them. If size
         is unspecified or is -1, all bytes will be read.
 
-        :param size:
+        :param Optional[int] size:
             The number of bytes to download from the stream. Leave unspecified
             or set to -1 to download all bytes.
         :returns:
@@ -570,8 +571,9 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         This method is deprecated, use func:`readall` instead.
 
-        :keyword int max_concurrency:
+        :param int max_concurrency:
             The number of parallel connections with which to download.
+        :returns: The contents of the file as bytes.
         :rtype: bytes
         """
         warnings.warn(
@@ -592,6 +594,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             The number of parallel connections with which to download.
         :param str encoding:
             Test encoding to decode the downloaded bytes. Default is UTF-8.
+        :returns: The content of the file as a str.
         :rtype: str
         """
         warnings.warn(
@@ -605,7 +608,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
     async def readinto(self, stream: IO[T]) -> int:
         """Download the contents of this blob to a stream.
 
-        :param stream:
+        :param IO[T] stream:
             The stream to download to. This can be an open file-handle,
             or any writable stream. The stream must be seekable if the download
             uses more than one parallel connection.
@@ -621,8 +624,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
             try:
                 stream.seek(stream.tell())
-            except (NotImplementedError, AttributeError):
-                raise ValueError(error_message)
+            except (NotImplementedError, AttributeError) as exc:
+                raise ValueError(error_message) from exc
 
         # If some data has been streamed using `read`, only stream the remaining data
         remaining_size = self.size - self._offset
@@ -702,7 +705,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         This method is deprecated, use func:`readinto` instead.
 
-        :param stream:
+        :param IO[T] stream:
             The stream to download to. This can be an open file-handle,
             or any writable stream. The stream must be seekable if the download
             uses more than one parallel connection.

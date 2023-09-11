@@ -6,7 +6,7 @@
 from contextlib import contextmanager
 from os import PathLike
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, Iterable, List, Optional, Union
 from uuid import UUID
 
 import yaml
@@ -17,9 +17,10 @@ from ..._restclient.v2022_10_01.models import ComponentVersion, ComponentVersion
 from ..._schema import PathAwareSchema
 from ..._utils._arm_id_utils import parse_name_label
 from ..._utils._asset_utils import IgnoreFile
+from ...constants._common import DefaultOpenEncoding
 from ...entities import Component
 from ...entities._assets import Code
-from ...entities._component._additional_includes import AdditionalIncludesMixin
+from ...entities._component._additional_includes import AdditionalIncludesMixin, AdditionalIncludes
 from ...entities._component.code import ComponentIgnoreFile
 from ...entities._job.distribution import DistributionConfiguration
 from ...entities._system_data import SystemData
@@ -153,7 +154,7 @@ class InternalComponent(Component, AdditionalIncludesMixin):
     # region AdditionalIncludesMixin
 
     @classmethod
-    def _read_additional_include_configs(cls, yaml_path) -> List:
+    def _read_additional_include_configs(cls, yaml_path: Path) -> List[str]:
         """Read additional include configs from the additional includes file.
         The name of the file is the same as the component spec file, with a suffix of ".additional_includes".
         It can be either a yaml file or a text file:
@@ -171,10 +172,15 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         ```
         2. If it is a text file, each line is a path to include. Note that artifact config is not supported
         in this format.
+
+        :param yaml_path: The yaml path
+        :type yaml_path: Path
+        :return: The list of additional includes
+        :rtype: List[str]
         """
         additional_includes_config_path = yaml_path.with_suffix(_ADDITIONAL_INCLUDES_SUFFIX)
         if additional_includes_config_path.is_file():
-            with open(additional_includes_config_path) as f:
+            with open(additional_includes_config_path, encoding=DefaultOpenEncoding.READ) as f:
                 file_content = f.read()
                 try:
                     configs = yaml.safe_load(file_content)
@@ -201,13 +207,33 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         return Path(self._source_path).parent
 
     def _get_origin_code_value(self) -> Union[str, PathLike, None]:
-        return self.code or Path(".").as_posix()
+        return super()._get_origin_code_value() or "."
 
     # endregion
 
+    def _to_ordered_dict_for_yaml_dump(self) -> Dict:
+        """Dump the component content into a sorted yaml string.
+
+        :return: The ordered dict
+        :rtype: Dict
+        """
+
+        obj = super()._to_ordered_dict_for_yaml_dump()
+        # dict dumped base on schema will transfer code to an absolute path, while we want to keep its original value
+        if "code" in obj:
+            if not self.code:
+                del obj["code"]
+            else:
+                obj["code"] = self.code
+        return obj
+
     @property
-    def _additional_includes(self):
-        """This property is kept for compatibility with old mldesigner sdk."""
+    def _additional_includes(self) -> AdditionalIncludes:
+        """This property is kept for compatibility with old mldesigner sdk.
+
+        :return: The additional includes
+        :rtype: AdditionalIncludes
+        """
         obj = self._generate_additional_includes_obj()
         from azure.ai.ml._internal.entities._additional_includes import InternalAdditionalIncludes
 
@@ -278,16 +304,20 @@ class InternalComponent(Component, AdditionalIncludesMixin):
         :param ignore_file: The ignore file of the snapshot.
         :type ignore_file: IgnoreFile
         :return: The snapshot id of a component in ml-components with code_path as its working directory.
+        :rtype: str
         """
         curr_root = create_merkletree(code_path, ignore_file.is_file_excluded)
         snapshot_id = str(UUID(curr_root.hexdigest_hash[::4]))
         return snapshot_id
 
     @contextmanager
-    def _try_build_local_code(self) -> Optional[Code]:
+    def _try_build_local_code(self) -> Iterable[Code]:
         """Build final code when origin code is a local code.
         Will merge code path with additional includes into a temp folder if additional includes is specified.
         For internal components, file dependencies in environment will be resolved based on the final code.
+
+        :return: The code instance
+        :rtype: Iterable[Code]
         """
         # origin code value of internal component will never be None. check _get_origin_code_value for details
         with self._generate_additional_includes_obj().merge_local_code_and_additional_includes() as tmp_code_dir:

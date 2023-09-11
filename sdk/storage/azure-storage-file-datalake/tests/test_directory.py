@@ -317,6 +317,49 @@ class TestDirectory(StorageRecordedTestCase):
             directory_client.delete_directory(if_modified_since=prop['last_modified'])
 
     @DataLakePreparer()
+    @pytest.mark.live_test_only
+    @pytest.mark.skip(reason="Requires manual OAuth setup and creates 5000+ files")
+    def test_delete_directory_paginated(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Set this to object id (not client id) of an AAD app that does not have permission
+        # to storage account through RBAC.
+        # Also make sure oauth settings (TENANT_ID, CLIENT_ID, CLIENT_SECRET) are pointing to this AAD app
+        object_id = '68bff720-253b-428c-b124-603700654ea9'
+
+        # Arrange
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        for i in range (0, 5020):
+            file_client = directory_client.get_file_client(f"file{i}")
+            file_client.create_file()
+
+        root_directory = self.dsc.get_directory_client(self.file_system_name, "/")
+        acl = root_directory.get_access_control()['acl']
+
+        # Add permission for AAD app on root directory
+        new_acl = acl + "," + f"user:{object_id}:rwx"
+        root_directory.set_access_control_recursive(new_acl)
+
+        token_credential = self.generate_oauth_token()
+        directory_client_oauth = DataLakeDirectoryClient(
+            self.dsc.url,
+            self.file_system_name,
+            directory_name,
+            credential=token_credential
+        )
+
+        # Act
+        directory_client_oauth.delete_directory()
+
+        self.dsc.delete_file_system(self.file_system_name)
+
+    @DataLakePreparer()
     @recorded_by_proxy
     def test_create_sub_directory_and_delete_sub_directory(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")

@@ -32,7 +32,7 @@ class CallMediaClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTestBase)
         super(CallMediaClientAsyncAutomatedLiveTest, self).tearDown()
         self.persist_events(self.test_name)
 
-    @pytest.mark.live_test_only
+    @pytest.mark.live_test_only("Can't use recordings until tests use the test proxy")
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_play_media_in_a_call(self):
         self.test_name = inspect.currentframe().f_code.co_name
@@ -98,7 +98,7 @@ class CallMediaClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTestBase)
             caller_call_connection = CallConnectionClient.from_connection_string(self.connection_str, create_call_result.call_connection_id)
             file_source = FileSource(url=play_source_uri)
 
-            caller_call_connection.play_media_to_all(
+            caller_call_connection.play_media(
                 play_source=file_source,
             )
 
@@ -127,7 +127,7 @@ class CallMediaClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTestBase)
             for cc in call_connection_list:
                 cc.hang_up(is_for_everyone=True)
 
-    @pytest.mark.live_test_only
+    @pytest.mark.live_test_only("Can't use recordings until tests use the test proxy")
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_dtmf_actions_in_a_call(self):
         self.test_name = inspect.currentframe().f_code.co_name

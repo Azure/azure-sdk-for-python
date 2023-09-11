@@ -23,22 +23,33 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
+from __future__ import annotations
 import asyncio
 import abc
 from collections.abc import AsyncIterator
-from typing import AsyncIterator as AsyncIteratorType, TypeVar, Generic
-from contextlib import AbstractAsyncContextManager
-
-from ._base import (
-    _HttpResponseBase,
-    _HttpClientTransportResponse,
+from typing import (
+    AsyncIterator as AsyncIteratorType,
+    TypeVar,
+    Generic,
+    Any,
+    AsyncContextManager,
+    Optional,
+    Type,
+    TYPE_CHECKING,
 )
+from types import TracebackType
+
+from ._base import _HttpResponseBase, _HttpClientTransportResponse, HttpRequest
 from ...utils._pipeline_transport_rest_shared_async import _PartGenerator
+
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
+
+if TYPE_CHECKING:
+    # We need a transport to define a pipeline, this "if" avoid a circular import
+    from .._base_async import AsyncPipeline
 
 
 class _ResponseStopIteration(Exception):
@@ -60,13 +71,15 @@ def _iterate_response_content(iterator):
         raise _ResponseStopIteration()  # pylint: disable=raise-missing-from
 
 
-class AsyncHttpResponse(_HttpResponseBase, AbstractAsyncContextManager):  # pylint: disable=abstract-method
+class AsyncHttpResponse(_HttpResponseBase, AsyncContextManager["AsyncHttpResponse"]):  # pylint: disable=abstract-method
     """An AsyncHttpResponse ABC.
 
     Allows for the asynchronous streaming of data from the response.
     """
 
-    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
+    def stream_download(
+        self, pipeline: AsyncPipeline[HttpRequest, "AsyncHttpResponse"], **kwargs: Any
+    ) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
 
         Should be implemented by sub-classes if streaming download
@@ -81,7 +94,7 @@ class AsyncHttpResponse(_HttpResponseBase, AbstractAsyncContextManager):  # pyli
         """
         raise NotImplementedError("stream_download is not implemented.")
 
-    def parts(self) -> AsyncIterator:
+    def parts(self) -> AsyncIterator["AsyncHttpResponse"]:
         """Assuming the content-type is multipart/mixed, will return the parts as an async iterator.
 
         :return: An async iterator of the parts
@@ -93,7 +106,12 @@ class AsyncHttpResponse(_HttpResponseBase, AbstractAsyncContextManager):  # pyli
 
         return _PartGenerator(self, default_http_response_type=AsyncHttpClientTransportResponse)
 
-    async def __aexit__(self, exc_type, exc_value, traceback):
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
         return None
 
 
@@ -110,14 +128,14 @@ class AsyncHttpClientTransportResponse(  # pylint: disable=abstract-method
 
 
 class AsyncHttpTransport(
-    AbstractAsyncContextManager,
+    AsyncContextManager["AsyncHttpTransport"],
     abc.ABC,
     Generic[HTTPRequestType, AsyncHTTPResponseType],
 ):
     """An http sender ABC."""
 
     @abc.abstractmethod
-    async def send(self, request: HTTPRequestType, **kwargs) -> AsyncHTTPResponseType:
+    async def send(self, request: HTTPRequestType, **kwargs: Any) -> AsyncHTTPResponseType:
         """Send the request using this HTTP sender.
 
         :param request: The request object. Exact type can be inferred from the pipeline.
@@ -127,11 +145,11 @@ class AsyncHttpTransport(
         """
 
     @abc.abstractmethod
-    async def open(self):
+    async def open(self) -> None:
         """Assign new session if one does not already exist."""
 
     @abc.abstractmethod
-    async def close(self):
+    async def close(self) -> None:
         """Close the session if it is not externally owned."""
 
     async def sleep(self, duration: float) -> None:

@@ -33,10 +33,13 @@ class TokenCredential(Protocol):
         :keyword str claims: Additional claims required in the token, such as those returned in a resource
             provider's claims challenge following an authorization failure.
         :keyword str tenant_id: Optional tenant to include in the token request.
+        :keyword bool enable_cae: Indicates whether to enable Continuous Access Evaluation (CAE) for the requested
+            token. Defaults to False.
 
         :rtype: AccessToken
         :return: An AccessToken instance containing the token string and its expiration time in Unix time.
         """
+        ...
 
 
 AzureNamedKey = namedtuple("AzureNamedKey", ["name", "key"])

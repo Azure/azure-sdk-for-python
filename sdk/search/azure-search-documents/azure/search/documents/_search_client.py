@@ -162,9 +162,7 @@ class SearchClient(HeadersMixin):
         top: Optional[int] = None,
         scoring_statistics: Optional[Union[str, ScoringStatistics]] = None,
         session_id: Optional[str] = None,
-        vector: Optional[List[float]] = None,
-        top_k: Optional[int] = None,
-        vector_fields: Optional[str] = None,
+        vectors: Optional[List[Vector]] = None,
         semantic_error_handling: Optional[Union[str, SemanticErrorHandling]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
         debug: Optional[Union[str, QueryDebugMode]] = None,
@@ -275,13 +273,8 @@ class SearchClient(HeadersMixin):
         :keyword debug: Enables a debugging tool that can be used to further explore your Semantic search
          results. Known values are: "disabled", "speller", "semantic", and "all".
         :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
-        :keyword vector: The vector representation of a search query.
-        :paramtype vector: List[float]
-        :keyword top_k: Number of nearest neighbors to return as top hits.
-        :paramtype top_k: int
-        :keyword vector_fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
-          searched.
-        :paramtype vector_fields: str
+        :keyword vectors: The query parameters for multi-vector search queries.
+        :paramtype vectors: list[Vector]
         :rtype:  SearchItemPaged[Dict]
 
         .. admonition:: Example:
@@ -325,9 +318,6 @@ class SearchClient(HeadersMixin):
         )
 
         semantic_configuration = semantic_configuration_name
-        vector_option = None
-        if vector or top_k or vector_fields:
-            vector_option = Vector(value=vector, k=top_k, fields=vector_fields)
 
         query = SearchQuery(
             search_text=search_text,
@@ -338,7 +328,7 @@ class SearchClient(HeadersMixin):
             highlight_post_tag=highlight_post_tag,
             highlight_pre_tag=highlight_pre_tag,
             minimum_coverage=minimum_coverage,
-            order_by=order_by,
+            order_by=order_by if isinstance(order_by, str) else None,
             query_type=query_type,
             scoring_parameters=scoring_parameters,
             scoring_profile=scoring_profile,
@@ -355,13 +345,16 @@ class SearchClient(HeadersMixin):
             top=top,
             session_id=session_id,
             scoring_statistics=scoring_statistics,
-            vector=vector_option,
+            vectors=vectors,
             semantic_error_handling=semantic_error_handling,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
             debug=debug,
         )
         if isinstance(select, list):
             query.select(select)
+
+        if isinstance(order_by, list):
+            query.order_by(order_by)
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         kwargs["api_version"] = self._api_version
@@ -437,13 +430,15 @@ class SearchClient(HeadersMixin):
             highlight_post_tag=highlight_post_tag,
             highlight_pre_tag=highlight_pre_tag,
             minimum_coverage=minimum_coverage,
-            order_by=order_by,
+            order_by=order_by if isinstance(order_by, str) else None,
             search_fields=search_fields_str,
             select=select if isinstance(select, str) else None,
             top=top,
         )
         if isinstance(select, list):
             query.select(select)
+        if isinstance(order_by, list):
+            query.order_by(order_by)
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         response = self._client.documents.suggest_post(suggest_request=query.request, **kwargs)
         results = [r.as_dict() for r in response.results]

@@ -13,7 +13,15 @@ from .utils import is_group
 
 
 class GroupInput(Input):
-    def __init__(self, values: dict, _group_class):
+    """Define a group input object.
+
+    :param values: The values of the group input.
+    :type values: dict
+    :param _group_class: The class representing the group.
+    :type _group_class: Any
+    """
+
+    def __init__(self, values: dict, _group_class) -> None:
         super().__init__(type=IOConstants.GROUP_TYPE_NAME)
         self.assert_group_value_valid(values)
         self.values = values
@@ -36,7 +44,6 @@ class GroupInput(Input):
         return isinstance(obj, _GroupAttrDict)
 
     def __getattr__(self, item):
-        """Allow get value from values by __get_attr__."""
         try:
             return super().__getattr__(item)
         except AttributeError:
@@ -66,7 +73,13 @@ class GroupInput(Input):
 
     @classmethod
     def assert_group_value_valid(cls, values):
-        """Check if all value in group is _Param type with unique name."""
+        """Check if all values in the group are supported types.
+
+        :param values: The values of the group.
+        :type values: dict
+        :raises ValueError: If a value in the group is not a supported type or if a parameter name is duplicated.
+        :raises UserErrorException: If a value in the group has an unsupported type.
+        """
         names = set()
         msg = (
             f"Parameter {{!r}} with type {{!r}} is not supported in group. "
@@ -85,7 +98,13 @@ class GroupInput(Input):
             names.add(key)
 
     def flatten(self, group_parameter_name):
-        """Flatten and return all parameters."""
+        """Flatten the group and return all parameters.
+
+        :param group_parameter_name: The name of the group parameter.
+        :type group_parameter_name: str
+        :return: A dictionary of flattened parameters.
+        :rtype: dict
+        """
         all_parameters = {}
         group_parameter_name = group_parameter_name if group_parameter_name else ""
         for key, value in self.values.items():
@@ -103,7 +122,15 @@ class GroupInput(Input):
 
     @staticmethod
     def custom_class_value_to_attr_dict(value, group_names=None):
-        """Convert custom parameter group class object to GroupAttrDict."""
+        """Convert a custom parameter group class object to GroupAttrDict.
+
+        :param value: The value to convert.
+        :type value: any
+        :param group_names: The names of the parent groups.
+        :type group_names: list
+        :return: The converted value as a GroupAttrDict.
+        :rtype: GroupAttrDict or any
+        """
         if not is_group(value):
             return value
         group_definition = getattr(value, IOConstants.GROUP_ATTR_NAME)
@@ -124,7 +151,12 @@ class GroupInput(Input):
 
     @staticmethod
     def validate_conflict_keys(keys):
-        """Validate conflict keys like {'a.b.c': 1, 'a.b': 1}."""
+        """Validate conflicting keys in a flattened input dictionary, like {'a.b.c': 1, 'a.b': 1}.
+
+        :param keys: The keys to validate.
+        :type keys: list
+        :raises ValidationException: If conflicting keys are found.
+        """
         conflict_msg = "Conflict parameter key '%s' and '%s'."
 
         def _group_count(s):
@@ -150,7 +182,13 @@ class GroupInput(Input):
 
     @staticmethod
     def restore_flattened_inputs(inputs):
-        """Restore flattened inputs to structured groups."""
+        """Restore flattened inputs to structured groups.
+
+        :param inputs: The flattened input dictionary.
+        :type inputs: dict
+        :return: The restored structured inputs.
+        :rtype: dict
+        """
         GroupInput.validate_conflict_keys(inputs.keys())
         restored_inputs = {}
         group_inputs = {}
