@@ -817,10 +817,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         if include and not isinstance(include, list):
             include = [include]
 
-        results_per_page = kwargs.pop('results_per_page', None)
         if kwargs.pop('prefix', None):
             warnings.warn("Passing 'prefix' has no effect on filtering, " +
                           "please use the 'name_starts_with' parameter instead.")
+        results_per_page = kwargs.pop('results_per_page', None)
         timeout = kwargs.pop('timeout', None)
         command = functools.partial(
             self._client.container.list_blob_flat_segment,
