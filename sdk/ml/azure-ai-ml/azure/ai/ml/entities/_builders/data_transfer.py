@@ -5,58 +5,45 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 from marshmallow import Schema
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
 from azure.ai.ml._schema.job.data_transfer_job import (
     DataTransferCopyJobSchema,
-    DataTransferImportJobSchema,
     DataTransferExportJobSchema,
+    DataTransferImportJobSchema,
 )
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.constants._component import (
-    NodeType,
-    ExternalDataType,
-    DataTransferTaskType,
-)
-from azure.ai.ml.entities._component.datatransfer_component import (
-    DataTransferCopyComponent,
-    DataTransferImportComponent,
-    DataTransferExportComponent,
-    DataTransferComponent,
-)
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AssetTypes
+from azure.ai.ml.constants._component import DataTransferTaskType, ExternalDataType, NodeType
 from azure.ai.ml.entities._component.component import Component
+from azure.ai.ml.entities._component.datatransfer_component import (
+    DataTransferComponent,
+    DataTransferCopyComponent,
+    DataTransferExportComponent,
+    DataTransferImportComponent,
+)
 from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
 from azure.ai.ml.entities._job.data_transfer.data_transfer_job import (
     DataTransferCopyJob,
-    DataTransferImportJob,
     DataTransferExportJob,
+    DataTransferImportJob,
 )
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AssetTypes
-from azure.ai.ml.exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-)
-from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
-
+from azure.ai.ml.entities._validation.core import MutableValidationResult
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from ..._schema import PathAwareSchema
-from .._util import (
-    convert_ordered_dict_to_dict,
-    load_from_dict,
-    validate_attribute_type,
-)
-from .base_node import BaseNode
 from .._job.pipeline._io import NodeOutput
+from .._util import convert_ordered_dict_to_dict, load_from_dict, validate_attribute_type
+from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
 
 
-def _build_source_sink(io_dict: Union[Dict, Database, FileSystem]):
+def _build_source_sink(io_dict: Union[Dict, Database, FileSystem]) -> Union[Database, FileSystem]:
     if io_dict is None:
         return io_dict
     if isinstance(io_dict, (Database, FileSystem)):
@@ -111,7 +98,7 @@ class DataTransfer(BaseNode):
         compute: Optional[str] = None,
         inputs: Optional[Dict[str, Union[NodeOutput, Input, str]]] = None,
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         # resolve normal dict to dict[str, JobService]
         kwargs.pop("type", None)
@@ -134,10 +121,10 @@ class DataTransfer(BaseNode):
         raise NotImplementedError("Not support submit standalone job for now")
 
     @classmethod
-    def _get_supported_outputs_types(cls):
+    def _get_supported_outputs_types(cls) -> Tuple:
         return str, Output
 
-    def _build_inputs(self):
+    def _build_inputs(self) -> Dict:
         inputs = super(DataTransfer, self)._build_inputs()
         built_inputs = {}
         # Validate and remove non-specified inputs
@@ -189,7 +176,7 @@ class DataTransferCopy(DataTransfer):
         inputs: Optional[Dict[str, Union[NodeOutput, Input, str]]] = None,
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
         data_copy_mode: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
@@ -206,8 +193,9 @@ class DataTransferCopy(DataTransfer):
         self.data_copy_mode = data_copy_mode
         is_component = isinstance(component, DataTransferCopyComponent)
         if is_component:
-            self.task = component.task or self.task
-            self.data_copy_mode = component.data_copy_mode or self.data_copy_mode
+            _component: DataTransferCopyComponent = component
+            self.task = _component.task or self.task
+            self.data_copy_mode = _component.data_copy_mode or self.data_copy_mode
         self._init = False
 
     @classmethod
@@ -217,7 +205,7 @@ class DataTransferCopy(DataTransfer):
         }
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
         from azure.ai.ml._schema.pipeline import DataTransferCopySchema
 
         return DataTransferCopySchema(context=context)
@@ -226,7 +214,7 @@ class DataTransferCopy(DataTransfer):
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
         return ["type", "task", "data_copy_mode"]
 
-    def _to_rest_object(self, **kwargs) -> dict:
+    def _to_rest_object(self, **kwargs: Any) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
         for key, value in {
             "componentId": self._get_component_id(),
@@ -237,7 +225,7 @@ class DataTransferCopy(DataTransfer):
         return convert_ordered_dict_to_dict(rest_obj)
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Spark":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> Any:
         from .data_transfer_func import copy_data
 
         loaded_data = load_from_dict(DataTransferCopyJobSchema, data, context, additional_message, **kwargs)
@@ -261,7 +249,7 @@ class DataTransferCopy(DataTransfer):
         )
 
     # pylint: disable-next=docstring-missing-param
-    def __call__(self, *args, **kwargs) -> "DataTransferCopy":
+    def __call__(self, *args: Any, **kwargs: Any) -> "DataTransferCopy":
         """Call DataTransferCopy as a function will return a new instance each time.
 
         :return: A DataTransferCopy node
@@ -287,7 +275,7 @@ class DataTransferCopy(DataTransfer):
             node.tags = self.tags
             # Pass through the display name only if the display name is not system generated.
             node.display_name = self.display_name if self.display_name != self.name else None
-            return node
+            return cast(DataTransferCopy, node)
         msg = "copy_data can be called as a function only when referenced component is {}, currently got {}."
         raise ValidationException(
             message=msg.format(type(Component), self._component),
@@ -335,7 +323,7 @@ class DataTransferImport(DataTransfer):
         compute: Optional[str] = None,
         source: Optional[Union[Dict, Database, FileSystem]] = None,
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
@@ -350,7 +338,8 @@ class DataTransferImport(DataTransfer):
         self.task = DataTransferTaskType.IMPORT_DATA
         is_component = isinstance(component, DataTransferImportComponent)
         if is_component:
-            self.task = component.task or self.task
+            _component: DataTransferImportComponent = component
+            self.task = _component.task or self.task
         self.source = _build_source_sink(source)
         self._init = False
 
@@ -361,7 +350,7 @@ class DataTransferImport(DataTransfer):
         }
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
         from azure.ai.ml._schema.pipeline import DataTransferImportSchema
 
         return DataTransferImportSchema(context=context)
@@ -370,7 +359,7 @@ class DataTransferImport(DataTransfer):
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
         return ["type", "task", "source"]
 
-    def _customized_validate(self):
+    def _customized_validate(self) -> MutableValidationResult:
         result = super()._customized_validate()
         if self.source is None:
             result.append_error(
@@ -384,21 +373,23 @@ class DataTransferImport(DataTransfer):
             )
         if "sink" in self.outputs and isinstance(self.outputs["sink"]._data, Output):
             sink_output = self.outputs["sink"]._data
-            if (self.source.type == ExternalDataType.DATABASE and sink_output.type != AssetTypes.MLTABLE) or (
-                self.source.type == ExternalDataType.FILE_SYSTEM and sink_output.type != AssetTypes.URI_FOLDER
-            ):
-                result.append_error(
-                    yaml_path="outputs.sink.type",
-                    message="Outputs field only support type {} for {} and {} for {}".format(
-                        AssetTypes.MLTABLE,
-                        ExternalDataType.DATABASE,
-                        AssetTypes.URI_FOLDER,
-                        ExternalDataType.FILE_SYSTEM,
-                    ),
-                )
+            if self.source is not None:
+
+                if (self.source.type == ExternalDataType.DATABASE and sink_output.type != AssetTypes.MLTABLE) or (
+                    self.source.type == ExternalDataType.FILE_SYSTEM and sink_output.type != AssetTypes.URI_FOLDER
+                ):
+                    result.append_error(
+                        yaml_path="outputs.sink.type",
+                        message="Outputs field only support type {} for {} and {} for {}".format(
+                            AssetTypes.MLTABLE,
+                            ExternalDataType.DATABASE,
+                            AssetTypes.URI_FOLDER,
+                            ExternalDataType.FILE_SYSTEM,
+                        ),
+                    )
         return result
 
-    def _to_rest_object(self, **kwargs) -> dict:
+    def _to_rest_object(self, **kwargs: Any) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
         for key, value in {
             "componentId": self._get_component_id(),
@@ -408,13 +399,13 @@ class DataTransferImport(DataTransfer):
         return convert_ordered_dict_to_dict(rest_obj)
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "DataTransferImport":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "DataTransferImport":
         from .data_transfer_func import import_data
 
         loaded_data = load_from_dict(DataTransferImportJobSchema, data, context, additional_message, **kwargs)
         data_transfer_job = import_data(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
-        return data_transfer_job
+        return cast(DataTransferImport, data_transfer_job)
 
     def _to_job(self) -> DataTransferImportJob:
         return DataTransferImportJob(
@@ -469,7 +460,7 @@ class DataTransferExport(DataTransfer):
         compute: Optional[str] = None,
         sink: Optional[Union[Dict, Database, FileSystem]] = None,
         inputs: Optional[Dict[str, Union[NodeOutput, Input, str]]] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
@@ -484,7 +475,8 @@ class DataTransferExport(DataTransfer):
         self.task = DataTransferTaskType.EXPORT_DATA
         is_component = isinstance(component, DataTransferExportComponent)
         if is_component:
-            self.task = component.task or self.task
+            _component: DataTransferExportComponent = component
+            self.task = _component.task or self.task
         self.sink = sink
         self._init = False
 
@@ -498,7 +490,7 @@ class DataTransferExport(DataTransfer):
         return self._sink
 
     @sink.setter
-    def sink(self, value):
+    def sink(self, value: Union[Dict, Database, FileSystem]) -> None:
         self._sink = _build_source_sink(value)
 
     @classmethod
@@ -508,7 +500,7 @@ class DataTransferExport(DataTransfer):
         }
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
         from azure.ai.ml._schema.pipeline import DataTransferExportSchema
 
         return DataTransferExportSchema(context=context)
@@ -517,7 +509,7 @@ class DataTransferExport(DataTransfer):
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
         return ["type", "task", "sink"]
 
-    def _customized_validate(self):
+    def _customized_validate(self) -> MutableValidationResult:
         result = super()._customized_validate()
         if self.sink is None:
             result.append_error(
@@ -531,22 +523,23 @@ class DataTransferExport(DataTransfer):
             )
         if "source" in self.inputs and isinstance(self.inputs["source"]._data, Input):
             source_input = self.inputs["source"]._data
-            if (self.sink.type == ExternalDataType.DATABASE and source_input.type != AssetTypes.URI_FILE) or (
-                self.sink.type == ExternalDataType.FILE_SYSTEM and source_input.type != AssetTypes.URI_FOLDER
-            ):
-                result.append_error(
-                    yaml_path="inputs.source.type",
-                    message="Inputs field only support type {} for {} and {} for {}".format(
-                        AssetTypes.URI_FILE,
-                        ExternalDataType.DATABASE,
-                        AssetTypes.URI_FOLDER,
-                        ExternalDataType.FILE_SYSTEM,
-                    ),
-                )
+            if self.sink is not None:
+                if (self.sink.type == ExternalDataType.DATABASE and source_input.type != AssetTypes.URI_FILE) or (
+                    self.sink.type == ExternalDataType.FILE_SYSTEM and source_input.type != AssetTypes.URI_FOLDER
+                ):
+                    result.append_error(
+                        yaml_path="inputs.source.type",
+                        message="Inputs field only support type {} for {} and {} for {}".format(
+                            AssetTypes.URI_FILE,
+                            ExternalDataType.DATABASE,
+                            AssetTypes.URI_FOLDER,
+                            ExternalDataType.FILE_SYSTEM,
+                        ),
+                    )
 
         return result
 
-    def _to_rest_object(self, **kwargs) -> dict:
+    def _to_rest_object(self, **kwargs: Any) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
         for key, value in {
             "componentId": self._get_component_id(),
@@ -556,13 +549,13 @@ class DataTransferExport(DataTransfer):
         return convert_ordered_dict_to_dict(rest_obj)
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "DataTransferExport":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "DataTransferExport":
         from .data_transfer_func import export_data
 
         loaded_data = load_from_dict(DataTransferExportJobSchema, data, context, additional_message, **kwargs)
         data_transfer_job = export_data(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
-        return data_transfer_job
+        return cast(DataTransferExport, data_transfer_job)
 
     def _to_job(self) -> DataTransferExportJob:
         return DataTransferExportJob(
