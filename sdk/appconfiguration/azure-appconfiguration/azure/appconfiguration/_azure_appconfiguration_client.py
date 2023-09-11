@@ -36,7 +36,7 @@ from ._azure_appconfiguration_credential import AppConfigConnectionStringCredent
 from ._generated import AzureAppConfiguration
 from ._generated._configuration import AzureAppConfigurationConfiguration
 from ._generated.models import SnapshotUpdateParameters, SnapshotStatus
-from ._models import ConfigurationSetting, ConfigurationSettingFilter, Snapshot
+from ._models import ConfigurationSetting, ConfigurationSettingsFilter, Snapshot
 from ._utils import (
     get_endpoint_from_connection_string,
     prep_if_match,
@@ -548,9 +548,9 @@ class AzureAppConfigurationClient:
     def begin_create_snapshot(
         self,
         name: str,
-        filters: List[ConfigurationSettingFilter],
+        filters: List[ConfigurationSettingsFilter],
         *,
-        composition_type: Optional[Literal["key", "key_label"]] = None,
+        snapshot_composition: Optional[Literal["key", "key_label"]] = None,
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
@@ -561,7 +561,7 @@ class AzureAppConfigurationClient:
         :type name: str
         :param filters: A list of filters used to filter the configuration settings by key field and label field
             included in the snapshot.
-        :type filters: list[~azure.appconfiguration.ConfigurationSettingFilter]
+        :type filters: list[~azure.appconfiguration.ConfigurationSettingsFilter]
         :keyword composition_type: The composition type describes how the key-values
             within the snapshot are composed. Known values are: "key" and "key_label". The "key" composition type
             ensures there are no two key-values containing the same key. The 'key_label' composition type ensures
@@ -580,7 +580,7 @@ class AzureAppConfigurationClient:
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         snapshot = Snapshot(
-            filters=filters, composition_type=composition_type, retention_period=retention_period, tags=tags
+            filters=filters, composition_type=snapshot_composition, retention_period=retention_period, tags=tags
         )
         try:
             return cast(
@@ -733,7 +733,7 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
 
     @distributed_trace
-    def list_snapshot_configuration_settings(
+    def list_configuration_settings_for_snapshot(
         self, snapshot_name: str, *, fields: Optional[List[str]] = None, **kwargs
     ) -> ItemPaged[ConfigurationSetting]:
         """List the configuration settings stored under a snapshot in the configuration service, optionally filtered by

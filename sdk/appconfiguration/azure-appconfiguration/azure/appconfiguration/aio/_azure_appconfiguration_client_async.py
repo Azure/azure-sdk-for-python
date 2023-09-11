@@ -29,7 +29,7 @@ from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolic
 from .._azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from .._generated.aio import AzureAppConfiguration
 from .._generated.models import SnapshotUpdateParameters, SnapshotStatus
-from .._models import ConfigurationSetting, ConfigurationSettingFilter, Snapshot
+from .._models import ConfigurationSetting, ConfigurationSettingsFilter, Snapshot
 from .._user_agent import USER_AGENT
 from .._utils import (
     get_endpoint_from_connection_string,
@@ -537,7 +537,7 @@ class AzureAppConfigurationClient:
     async def begin_create_snapshot(
         self,
         name: str,
-        filters: List[ConfigurationSettingFilter],
+        filters: List[ConfigurationSettingsFilter],
         *,
         composition_type: Optional[Literal["key", "key_label"]] = None,
         retention_period: Optional[int] = None,
@@ -550,7 +550,7 @@ class AzureAppConfigurationClient:
         :type name: str
         :param filters: A list of filters used to filter the configuration settings by key field and label field
             included in the snapshot.
-        :type filters: list[~azure.appconfiguration.ConfigurationSettingFilter]
+        :type filters: list[~azure.appconfiguration.ConfigurationSettingsFilter]
         :keyword composition_type: The composition type describes how the key-values
             within the snapshot are composed. Known values are: "key" and "key_label". The "key" composition type
             ensures there are no two key-values containing the same key. The 'key_label' composition type ensures
@@ -722,7 +722,7 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
 
     @distributed_trace
-    def list_snapshot_configuration_settings(
+    def list_configuration_settings_for_snapshot(
         self, snapshot_name: str, *, fields: Optional[List[str]] = None, **kwargs
     ) -> AsyncItemPaged[ConfigurationSetting]:
         """List the configuration settings stored under a snapshot in the configuration service, optionally filtered by

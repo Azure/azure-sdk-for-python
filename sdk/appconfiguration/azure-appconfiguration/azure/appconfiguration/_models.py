@@ -386,7 +386,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
         )
 
 
-class ConfigurationSettingFilter:
+class ConfigurationSettingsFilter:
     """Enables filtering of configuration settings."""
 
     key: str
@@ -413,7 +413,7 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
     status: Optional[Union[str, SnapshotStatus]]
     """The current status of the snapshot. Known values are: "provisioning", "ready",
         "archived", and "failed"."""
-    filters: List[ConfigurationSettingFilter]
+    filters: List[ConfigurationSettingsFilter]
     """A list of filters used to filter the key-values included in the snapshot. Required."""
     composition_type: Optional[str]
     """The composition type describes how the key-values within the snapshot
@@ -439,7 +439,7 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
 
     def __init__(
         self,
-        filters: List[ConfigurationSettingFilter],
+        filters: List[ConfigurationSettingsFilter],
         *,
         composition_type: Optional[Literal["key", "key_label"]] = None,
         retention_period: Optional[int] = None,
@@ -448,7 +448,7 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
         """
         :param filters: A list of filters used to filter the key-values included in the snapshot.
             Required.
-        :type filters: list[~azure.appconfiguration.ConfigurationSettingFilter]
+        :type filters: list[~azure.appconfiguration.ConfigurationSettingsFilter]
         :keyword composition_type: The composition type describes how the key-values within the
             snapshot are composed. The 'key' composition type ensures there are no two key-values
             containing the same key. The 'key_label' composition type ensures there are no two key-values
@@ -482,7 +482,7 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
         if generated.filters:
             for config_setting_filter in generated.filters:
                 filters.append(
-                    ConfigurationSettingFilter(key=config_setting_filter.key, label=config_setting_filter.label)
+                    ConfigurationSettingsFilter(key=config_setting_filter.key, label=config_setting_filter.label)
                 )
         snapshot = cls(
             filters=filters,
@@ -513,7 +513,7 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
         if deserialized.filters:
             for config_setting_filter in deserialized.filters:
                 filters.append(
-                    ConfigurationSettingFilter(key=config_setting_filter.key, label=config_setting_filter.label)
+                    ConfigurationSettingsFilter(key=config_setting_filter.key, label=config_setting_filter.label)
                 )
         snapshot = cls(
             filters=filters,

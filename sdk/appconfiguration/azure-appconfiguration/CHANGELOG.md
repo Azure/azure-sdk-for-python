@@ -7,8 +7,11 @@
 ### Breaking Changes
 - Rename parameter `name` in `list_snapshot_configuration_settings()` to `snapshot_name`.
 - Remove keyword argument `accept_datetime` in `list_snapshot_configuration_settings()`.
-- Rename `Snapshot` property `items_count` to `item_count`.
+- Rename model `Snapshot` property `items_count` to `item_count`.
 - Publish enum `SnapshotStatus`, and accept the type for `status` parameter in `list_snapshots()` and `status` property in `Snapshot` model.
+- Rename model `ConfigurationSettingFilter` to `ConfigurationSettingsFilter`.
+- Rename parameter `composition_type` in `begin_create_snapshot()` to `snapshot_composition`.
+- Rename operation `list_snapshot_configuration_settings()` to `list_configuration_settings_for_snapshot()`.
 
 ### Bugs Fixed
 
