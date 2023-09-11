@@ -19,7 +19,7 @@ from ._generated.models import (
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
 else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing_extensions import Literal  # pylint: disable=ungrouped-imports
 
 
 PolymorphicConfigurationSetting = Union[
@@ -59,7 +59,6 @@ class ConfigurationSetting(Model):
     }
 
     kind = "Generic"
-    content_type = None
 
     def __init__(self, **kwargs: Any) -> None:
         super(ConfigurationSetting, self).__init__(**kwargs)
@@ -67,7 +66,7 @@ class ConfigurationSetting(Model):
         self.label = kwargs.get("label", None)
         self.value = kwargs.get("value", None)
         self.etag = kwargs.get("etag", None)
-        self.content_type = kwargs.get("content_type", self.content_type)
+        self.content_type = kwargs.get("content_type", None)
         self.last_modified = kwargs.get("last_modified", None)
         self.read_only = kwargs.get("read_only", None)
         self.tags = kwargs.get("tags", {})

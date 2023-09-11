@@ -40,7 +40,7 @@ from .._utils import (
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
 else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing_extensions import Literal  # pylint: disable=ungrouped-imports
 
 
 class AzureAppConfigurationClient:
@@ -80,7 +80,7 @@ class AzureAppConfigurationClient:
         if aad_mode:
             if hasattr(credential, "get_token"):
                 credential_policy = AsyncBearerTokenCredentialPolicy(
-                    credential,  # type: ignore
+                    credential,
                     credential_scopes,
                 )
             else:
@@ -88,7 +88,7 @@ class AzureAppConfigurationClient:
                     "Please provide an instance from azure-identity or a class that implements the 'get_token' protocol"
                 )
         else:
-            credential_policy = AppConfigRequestsCredentialsPolicy(credential)  # type: ignore
+            credential_policy = AppConfigRequestsCredentialsPolicy(credential)
 
         self._impl = AzureAppConfiguration(
             base_url,
@@ -217,7 +217,7 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
-        error_map = {}  # type: Dict[int, Any]
+        error_map: Dict[int, Any] = {}
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfPresent:
@@ -270,12 +270,12 @@ class AzureAppConfigurationClient:
             added_config_setting = await async_client.add_configuration_setting(config_setting)
         """
         key_value = configuration_setting._to_generated()
-        custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
+        custom_headers: Mapping[str, Any] = CaseInsensitiveDict(kwargs.get("headers"))
         error_map = {412: ResourceExistsError}
 
         try:
             key_value_added = await self._impl.put_key_value(
-                entity=key_value,
+                entity=key_value,  # pyright: ignore
                 key=key_value.key,  # type: ignore
                 label=key_value.label,
                 if_none_match="*",
@@ -331,8 +331,8 @@ class AzureAppConfigurationClient:
         etag = kwargs.get("etag", configuration_setting.etag)
 
         key_value = configuration_setting._to_generated()
-        custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
-        error_map = {409: ResourceReadOnlyError}  # type: Dict[int, Any]
+        custom_headers: Mapping[str, Any] = CaseInsensitiveDict(kwargs.get("headers"))
+        error_map: Dict[int, Any] = {409: ResourceReadOnlyError}
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
@@ -344,7 +344,7 @@ class AzureAppConfigurationClient:
 
         try:
             key_value_set = await self._impl.put_key_value(
-                entity=key_value,
+                entity=key_value,  # pyright: ignore
                 key=key_value.key,  # type: ignore
                 label=key_value.label,
                 if_match=prep_if_match(configuration_setting.etag, match_condition),
@@ -390,8 +390,8 @@ class AzureAppConfigurationClient:
         """
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
-        custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
-        error_map = {409: ResourceReadOnlyError}  # type: Dict[int, Any]
+        custom_headers: Mapping[str, Any] = CaseInsensitiveDict(kwargs.get("headers"))
+        error_map: Dict[int, Any] = {409: ResourceReadOnlyError}
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
@@ -499,7 +499,7 @@ class AzureAppConfigurationClient:
             read_only_config_setting = await async_client.set_read_only(config_setting)
             read_only_config_setting = await client.set_read_only(config_setting, read_only=False)
         """
-        error_map = {}  # type: Dict[int, Any]
+        error_map: Dict[int, Any] = {}
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})
@@ -603,7 +603,7 @@ class AzureAppConfigurationClient:
         :rtype: ~azure.appconfiguration.Snapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        error_map = {}  # type: Dict[int, Any]
+        error_map: Dict[int, Any] = {}
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
@@ -646,7 +646,7 @@ class AzureAppConfigurationClient:
         :rtype: ~azure.appconfiguration.Snapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        error_map = {}  # type: Dict[int, Any]
+        error_map: Dict[int, Any] = {}
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
