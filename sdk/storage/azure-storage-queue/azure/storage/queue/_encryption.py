@@ -58,7 +58,7 @@ class KeyEncryptionKey(Protocol):
         """
         ...
 
-    def unwrap_key(self, key, algorithm): 
+    def unwrap_key(self, key, algorithm):
         """
         Unwraps the specified key using an algorithm of the user's choice.
         :param str key:

@@ -19,7 +19,7 @@ from .policies import is_retry, StorageRetryPolicy
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.pipeline.transport import PipelineRequest, PipelineResponse
+    from azure.core.pipeline.transport import PipelineRequest, PipelineResponse  # pylint: disable=C4750
 
 
 _LOGGER = logging.getLogger(__name__)
