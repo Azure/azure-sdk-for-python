@@ -4,10 +4,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import hashlib
-from typing import Iterator, ContextManager, cast, Tuple, Dict, Any
+from typing import Iterator, ContextManager, cast, Tuple, Dict, Any, TypeVar
 from typing_extensions import Protocol, Self
 from azure.core.pipeline import PipelineResponse
 from ._models import DigestValidationError
+
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
 
 
 class GetNext(Protocol):
@@ -24,7 +27,7 @@ class DownloadBlobStream(
     def __init__(
         self,
         *,
-        response: PipelineResponse,
+        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
         get_next: GetNext,
         blob_size: int,
         downloaded: int,
@@ -43,7 +46,7 @@ class DownloadBlobStream(
     def __enter__(self) -> Self:
         return self
 
-    def __exit__(self, *args) -> None:
+    def __exit__(self, *args: Any) -> None:
         self.close()
 
     def __iter__(self) -> Self:
@@ -76,5 +79,5 @@ class DownloadBlobStream(
             self._response_bytes = self._response.http_response.iter_bytes()
             return self.__next__()
 
-    def close(self):
+    def close(self) -> None:
         self._response.http_response.close()

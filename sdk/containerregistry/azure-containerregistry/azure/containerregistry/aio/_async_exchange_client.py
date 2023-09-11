@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import Optional
+from typing import Any, Optional
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -39,7 +39,7 @@ class ACRExchangeClient(object):
     :paramtype credential_scopes: list[str]
     """
 
-    def __init__(self, endpoint: str, credential: AsyncTokenCredential, **kwargs) -> None:
+    def __init__(self, endpoint: str, credential: AsyncTokenCredential, **kwargs: Any) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint

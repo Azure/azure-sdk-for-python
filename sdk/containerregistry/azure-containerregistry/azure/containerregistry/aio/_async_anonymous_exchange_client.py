@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from types import TracebackType
-from typing import Optional, Union, Type
+from typing import Any, Optional, Union, Type
 
 from azure.core.credentials import AccessToken
 from azure.core.credentials_async import AsyncTokenCredential
@@ -47,7 +47,7 @@ class AnonymousACRExchangeClient(object):
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, endpoint: str, **kwargs
+        self, endpoint: str, **kwargs: Any
     ) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint

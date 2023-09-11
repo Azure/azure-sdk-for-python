@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
-from typing import Optional
+from typing import Any, Optional
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.credentials_async import AsyncTokenCredential
@@ -34,7 +34,7 @@ class ContainerRegistryBaseClient(object):
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Optional[AsyncTokenCredential], **kwargs) -> None:
+    def __init__(self, endpoint: str, credential: Optional[AsyncTokenCredential], **kwargs: Any) -> None:
         self._auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
             credential=credential or AsyncAnonymousAccessCredential(),
@@ -44,12 +44,12 @@ class ContainerRegistryBaseClient(object):
             **kwargs
         )
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "ContainerRegistryBaseClient":
         await self._auth_policy.__aenter__()
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args: Any) -> None:
         await self._auth_policy.__aexit__(*args)
         await self._client.__aexit__(*args)
 

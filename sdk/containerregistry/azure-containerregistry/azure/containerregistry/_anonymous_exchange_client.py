@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Optional, Union
+from typing import Any, Optional, Union
 
 from azure.core.credentials import TokenCredential, AccessToken
 
@@ -31,7 +31,7 @@ class AnonymousACRExchangeClient(object):
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, endpoint: str, **kwargs
+        self, endpoint: str, **kwargs: Any
     ) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint

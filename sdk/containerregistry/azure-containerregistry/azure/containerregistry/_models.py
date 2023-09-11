@@ -6,7 +6,7 @@
 import warnings
 from datetime import datetime
 from enum import Enum
-from typing import List
+from typing import Any, List, Mapping
 
 from azure.core import CaseInsensitiveEnumMeta
 from ._generated.models import (
@@ -76,7 +76,7 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
     :ivar Optional[List[str]] tags: Tags associated with a registry artifact.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self._architecture = kwargs.get("cpu_architecture", None)
         try:
             self._architecture = ArtifactArchitecture(self._architecture)
@@ -94,10 +94,10 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
         self._registry = kwargs.get("registry", None)
         self._size_in_bytes = kwargs.get("size_in_bytes", None)
         self._tags = kwargs.get("tags", None)
-        self.can_delete = kwargs.get("can_delete")
-        self.can_read = kwargs.get("can_read")
-        self.can_list = kwargs.get("can_list")
-        self.can_write = kwargs.get("can_write")
+        self.can_delete: bool = kwargs.get("can_delete")
+        self.can_read: bool = kwargs.get("can_read")
+        self.can_list: bool = kwargs.get("can_list")
+        self.can_write: bool = kwargs.get("can_write")
 
     @classmethod
     def _from_generated(cls, generated: ManifestAttributesBase, **kwargs) -> "ArtifactManifestProperties":
@@ -178,16 +178,16 @@ class RepositoryProperties:
     :ivar Optional[int] tag_count: Number of tags associated with the repository.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self._created_on = kwargs.get("created_on", None)
         self._last_updated_on = kwargs.get("last_updated_on", None)
         self._manifest_count = kwargs.get("manifest_count", None)
         self._name = kwargs.get("name", None)
         self._tag_count = kwargs.get("tag_count", None)
-        self.can_delete = kwargs.get("can_delete")
-        self.can_read = kwargs.get("can_read")
-        self.can_list = kwargs.get("can_list")
-        self.can_write = kwargs.get("can_write")
+        self.can_delete: bool = kwargs.get("can_delete")
+        self.can_read: bool = kwargs.get("can_read")
+        self.can_list: bool = kwargs.get("can_list")
+        self.can_write: bool = kwargs.get("can_write")
 
     @classmethod
     def _from_generated(cls, generated: GeneratedRepositoryProperties) -> "RepositoryProperties":
@@ -211,7 +211,7 @@ class RepositoryProperties:
             can_list=self.can_list,
         )
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> datetime:
         if name == "last_udpated_on":
             warnings.warn(
                 "The property name with a typo called 'last_udpated_on' has been deprecated and will be retired in future versions",  # pylint: disable=line-too-long
@@ -257,16 +257,16 @@ class ArtifactTagProperties:
     :ivar Optional[str] repository_name: Repository name the tag belongs to.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self._created_on = kwargs.get("created_on", None)
         self._digest = kwargs.get("digest", None)
         self._last_updated_on = kwargs.get("last_updated_on", None)
         self._name = kwargs.get("name", None)
         self._repository_name = kwargs.get("repository_name", None)
-        self.can_delete = kwargs.get("can_delete")
-        self.can_read = kwargs.get("can_read")
-        self.can_list = kwargs.get("can_list")
-        self.can_write = kwargs.get("can_write")
+        self.can_delete: bool = kwargs.get("can_delete")
+        self.can_read: bool = kwargs.get("can_read")
+        self.can_list: bool = kwargs.get("can_list")
+        self.can_write: bool = kwargs.get("can_write")
 
     @classmethod
     def _from_generated(cls, generated: TagAttributesBase, **kwargs) -> "ArtifactTagProperties":
@@ -320,10 +320,10 @@ class GetManifestResult:
     :ivar str digest: The manifest's digest, calculated by the registry.
     """
 
-    def __init__(self, **kwargs):
-        self.manifest = kwargs.get("manifest")
-        self.media_type = kwargs.get("media_type")
-        self.digest = kwargs.get("digest")
+    def __init__(self, **kwargs: Any) -> None:
+        self.manifest: Mapping[str, Any] = kwargs.get("manifest")
+        self.media_type: str = kwargs.get("media_type")
+        self.digest: str = kwargs.get("digest")
 
 
 class DigestValidationError(ValueError):
@@ -332,6 +332,6 @@ class DigestValidationError(ValueError):
     :param str message: Message for caller describing the reason for the failure.
     """
 
-    def __init__(self, message):
-        self.message = message
+    def __init__(self, message: str) -> None:
+        self.message: str = message
         super().__init__(self.message)

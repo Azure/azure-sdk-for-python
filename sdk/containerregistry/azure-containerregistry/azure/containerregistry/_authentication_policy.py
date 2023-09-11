@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Union, Optional
+from typing import Any, Union, Optional
 from io import SEEK_SET, UnsupportedOperation
 
 from azure.core.credentials import TokenCredential
@@ -19,7 +19,7 @@ from ._helpers import _enforce_https
 class ContainerRegistryChallengePolicy(HTTPPolicy):
     """Authentication policy for ACR which accepts a challenge"""
 
-    def __init__(self, credential: Optional[TokenCredential], endpoint: str, **kwargs) -> None:
+    def __init__(self, credential: Optional[TokenCredential], endpoint: str, **kwargs: Any) -> None:
         super(ContainerRegistryChallengePolicy, self).__init__()
         self._credential = credential
         if self._credential is None:

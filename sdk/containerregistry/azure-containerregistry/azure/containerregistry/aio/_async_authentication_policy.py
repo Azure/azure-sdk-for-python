@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Union, Optional
+from typing import Any, Union, Optional
 from io import SEEK_SET, UnsupportedOperation
 
 from azure.core.credentials_async import AsyncTokenCredential
@@ -17,7 +17,7 @@ from .._helpers import _enforce_https
 class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
     """Authentication policy for ACR which accepts a challenge"""
 
-    def __init__(self, credential: Optional[AsyncTokenCredential], endpoint: str, **kwargs) -> None:
+    def __init__(self, credential: Optional[AsyncTokenCredential], endpoint: str, **kwargs: Any) -> None:
         super().__init__()
         self._credential = credential
         if self._credential is None:

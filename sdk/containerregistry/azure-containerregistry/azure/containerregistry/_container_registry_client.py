@@ -70,8 +70,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         *,
         api_version: Optional[str] = None,
         audience: str = DEFAULT_AUDIENCE,
-        **kwargs,
-    ) -> None:
+        **kwargs: Any,
+    ):
         """Create a ContainerRegistryClient from an ACR endpoint and a credential.
 
         :param str endpoint: An ACR endpoint.
@@ -589,7 +589,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @overload
     def update_manifest_properties(
-        self, repository: str, tag_or_digest: str, properties: ArtifactManifestProperties, **kwargs
+        self, repository: str, tag_or_digest: str, properties: ArtifactManifestProperties, **kwargs: Any
     ) -> ArtifactManifestProperties:
         """Set the permission properties for a manifest.
 
@@ -632,7 +632,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         can_list: Optional[bool] = None,
         can_read: Optional[bool] = None,
         can_write: Optional[bool] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> ArtifactManifestProperties:
         """Set the permission properties for a manifest.
 
@@ -695,7 +695,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @overload
     def update_tag_properties(
-        self, repository: str, tag: str, properties: ArtifactTagProperties, **kwargs
+        self, repository: str, tag: str, properties: ArtifactTagProperties, **kwargs: Any
     ) -> ArtifactTagProperties:
         """Set the permission properties for a tag.
 
@@ -735,7 +735,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         can_list: Optional[bool] = None,
         can_read: Optional[bool] = None,
         can_write: Optional[bool] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> ArtifactTagProperties:
         """Set the permission properties for a tag.
 
@@ -792,7 +792,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @overload
     def update_repository_properties(
-        self, repository: str, properties: RepositoryProperties, **kwargs
+        self, repository: str, properties: RepositoryProperties, **kwargs: Any
     ) -> RepositoryProperties:
         """Set the permission properties of a repository.
 
@@ -815,7 +815,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         can_list: Optional[bool] = None,
         can_read: Optional[bool] = None,
         can_write: Optional[bool] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> RepositoryProperties:
         """Set the permission properties of a repository.
 
