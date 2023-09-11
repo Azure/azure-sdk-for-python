@@ -80,7 +80,9 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
             if sync_token_header:
                 request.http_request.headers.update({self._sync_token_header: sync_token_header})
 
-    def on_response(self, request: PipelineRequest, response: PipelineResponse) -> None:  # pylint: disable=arguments-differ
+    def on_response(
+        self, request: PipelineRequest, response: PipelineResponse
+    ) -> None:  # pylint: disable=arguments-differ
         """This is executed after the request comes back from the policy.
 
         :param request: The PipelineRequest object.
