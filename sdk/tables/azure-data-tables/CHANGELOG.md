@@ -11,7 +11,7 @@
 * Fixed a bug when retrieving an entity with partition key and/or row key in empty string, the empty string values were disappeared in result. ([#31920]https://github.com/Azure/azure-sdk-for-python/issues/31920)
 
 ### Other Changes
-* Bumped minimum dependency on `azure-core` to `>=1.27.1`. ([#28918](https://github.com/Azure/azure-sdk-for-python/issues/28918))
+* Bumped minimum dependency on `azure-core` to `>=1.29.4`. ([#28918](https://github.com/Azure/azure-sdk-for-python/issues/28918) [#31471](https://github.com/Azure/azure-sdk-for-python/issues/31471))
 
 ## 12.4.3 (2023-06-13)
 
