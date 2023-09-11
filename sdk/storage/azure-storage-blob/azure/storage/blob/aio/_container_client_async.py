@@ -10,6 +10,7 @@ from typing import (  # pylint: disable=unused-import
     Any, AnyStr, AsyncIterable, AsyncIterator, Dict, List, IO, Iterable, Optional, overload, Union,
     TYPE_CHECKING
 )
+import warnings
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
@@ -678,6 +679,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         if include and not isinstance(include, list):
             include = [include]
 
+        if kwargs.pop('prefix', None):
+            warnings.warn("Passing 'prefix' has no effect on filtering, " +
+                          "please use the 'name_starts_with' parameter instead.")
         results_per_page = kwargs.pop('results_per_page', None)
         timeout = kwargs.pop('timeout', None)
         command = functools.partial(

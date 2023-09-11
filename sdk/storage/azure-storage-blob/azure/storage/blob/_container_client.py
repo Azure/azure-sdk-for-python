@@ -11,6 +11,7 @@ from typing import (
     TYPE_CHECKING
 )
 from urllib.parse import urlparse, quote, unquote
+import warnings
 
 from typing_extensions import Self
 
@@ -817,6 +818,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             include = [include]
 
         results_per_page = kwargs.pop('results_per_page', None)
+        if kwargs.pop('prefix', None):
+            warnings.warn("Passing 'prefix' has no effect on filtering, " +
+                          "please use the 'name_starts_with' parameter instead.")
         timeout = kwargs.pop('timeout', None)
         command = functools.partial(
             self._client.container.list_blob_flat_segment,
