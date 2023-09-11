@@ -9,7 +9,7 @@ import pytest
 import base64
 
 from azure.core.messaging import CloudEvent
-from azure.eventgrid._helpers import _cloud_event_to_generated
+from azure.eventgrid._helpers import _check_cloud_event
 from azure.eventgrid import SystemEventNames, EventGridEvent
 from _mocks import (
     cloud_storage_dict,
@@ -38,7 +38,7 @@ class EventGridSerializationTests:
         
         cloud_event.subject = "subject" # to test explicit setting of prop
         encoded = base64.b64encode(data).decode('utf-8')
-        internal = _cloud_event_to_generated(cloud_event)
+        internal = _check_cloud_event(cloud_event)
 
         assert internal.additional_properties is not None
         assert 'e1' in internal.additional_properties
@@ -68,7 +68,7 @@ class EventGridSerializationTests:
                 )
         
         cloud_event.subject = "subject" # to test explicit setting of prop
-        internal = _cloud_event_to_generated(cloud_event)
+        internal = _check_cloud_event(cloud_event)
 
         assert internal.additional_properties is not None
         assert 'e1' in internal.additional_properties

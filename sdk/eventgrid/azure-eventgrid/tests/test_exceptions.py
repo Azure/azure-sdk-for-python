@@ -31,7 +31,7 @@ from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from azure.core.messaging import CloudEvent
 from azure.core.serialization import NULL
 from azure.eventgrid import EventGridPublisherClient, EventGridEvent, generate_sas
-from azure.eventgrid._helpers import _cloud_event_to_generated
+from azure.eventgrid._helpers import _check_cloud_event
 
 from eventgrid_preparer import (
     EventGridPreparer,

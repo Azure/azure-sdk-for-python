@@ -38,7 +38,7 @@ from .._helpers import (
     _is_eventgrid_event,
     _eventgrid_data_typecheck,
     _build_request,
-    _cloud_event_to_generated,
+    _check_cloud_event,
     _get_authentication_policy,
     _from_cncf_events,
 )
@@ -208,7 +208,7 @@ class EventGridPublisherClient: # pylint: disable=client-accepts-api-version-key
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
                 events = [
-                    _cloud_event_to_generated(e, **kwargs)
+                    _check_cloud_event(e, **kwargs)
                     for e in events  # pylint: disable=protected-access
                 ]
             except AttributeError:
