@@ -82,7 +82,7 @@ class TableClient(AsyncTablesBaseClient):
         """
         if not table_name:
             raise ValueError("Please specify a table name.")
-        self.table_name = table_name
+        self.table_name: str = table_name
         super(TableClient, self).__init__(endpoint, credential=credential, **kwargs)
 
     def _format_url(self, hostname):
@@ -206,7 +206,7 @@ class TableClient(AsyncTablesBaseClient):
             payload = None
             if value:
                 payload = TableAccessPolicy(
-                    start=serialize_iso(value.start), expiry=serialize_iso(value.expiry), permission=value.permission
+                    start=serialize_iso(value.start), expiry=serialize_iso(value.expiry), permission=value.permission  # type: ignore[arg-type]
                 )
             identifiers.append(SignedIdentifier(id=key, access_policy=payload))
         try:

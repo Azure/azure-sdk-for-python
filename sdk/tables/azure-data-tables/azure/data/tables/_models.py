@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from enum import Enum
 from datetime import datetime
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Union, Optional
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.exceptions import HttpResponseError
@@ -70,13 +70,56 @@ class TableAccessPolicy(GenAccessPolicy):
     :paramtype start: ~datetime.datetime or str
     """
 
-    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
-        self.start: Union[datetime, str] = kwargs.get("start")
-        self.expiry: Union[datetime, str] = kwargs.get("expiry")
-        self.permission: str = kwargs.get("permission")
+    def __init__(self, *, start: Union[datetime, str], expiry: Union[datetime, str], permission: str) -> None:  # pylint: disable=super-init-not-called
+        self.start: str = str(start) if isinstance(start, datetime) else start
+        self.expiry: str = str(expiry) if isinstance(expiry, datetime) else expiry
+        self.permission: str = permission
 
     def __repr__(self) -> str:
         return f"TableAccessPolicy(start={self.start}, expiry={self.expiry}, permission={self.permission})"[1024:]
+
+
+class TableRetentionPolicy(GeneratedRetentionPolicy):
+    def __init__(self, *, enabled: bool = False, days: Optional[int] = None) -> None:  # pylint: disable=super-init-not-called
+        """The retention policy which determines how long the associated data should
+        persist.
+
+        All required parameters must be populated in order to send to Azure.
+
+        :keyword bool enabled: Required. Indicates whether a retention policy is enabled
+            for the storage service. Default value is False.
+        :keyword days: Indicates the number of days that metrics or logging or
+            soft-deleted data should be retained. All data older than this value will
+            be deleted. Must be specified if policy is enabled.
+        :type days: int or None
+        """
+        self.enabled: bool = enabled
+        self.days: Optional[int] = days
+        if self.enabled and (self.days is None):
+            raise ValueError("If policy is enabled, 'days' must be specified.")
+
+    @classmethod
+    def _from_generated(cls, generated: GeneratedRetentionPolicy) -> "TableRetentionPolicy":
+        """The retention policy which determines how long the associated data should
+        persist.
+
+        All required parameters must be populated in order to send to Azure.
+
+        :param generated: Generated Retention Policy.
+        :type generated: ~azure.data.tables._generated.models.RetentionPolicy
+        :return: A TableRetentionPolicy object.
+        :rtype: ~azure.data.tables.TableRetentionPolicy
+        """
+
+        if not generated:
+            return cls()
+        return cls(
+            enabled=generated.enabled,
+            days=generated.days,
+        )
+
+    def __repr__(self) -> str:
+        return f"TableRetentionPolicy(enabled={self.enabled}, days={self.days})"[1024:]
 
 
 class TableAnalyticsLogging(GeneratedLogging):
@@ -92,12 +135,12 @@ class TableAnalyticsLogging(GeneratedLogging):
         The retention policy for the metrics.
     """
 
-    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
-        self.version: str = kwargs.get("version", "1.0")
-        self.delete: bool = kwargs.get("delete", False)
-        self.read: bool = kwargs.get("read", False)
-        self.write: bool = kwargs.get("write", False)
-        self.retention_policy: TableRetentionPolicy = kwargs.get("retention_policy") or TableRetentionPolicy()
+    def __init__(self, *, version: str = "1.0", delete: bool = False, read: bool = False, write: bool = False, retention_policy: TableRetentionPolicy = TableRetentionPolicy()) -> None:  # pylint: disable=super-init-not-called
+        self.version: str = version
+        self.delete: bool = delete
+        self.read: bool = read
+        self.write: bool = write
+        self.retention_policy: TableRetentionPolicy = retention_policy
 
     @classmethod
     def _from_generated(cls, generated):
@@ -127,17 +170,18 @@ class TableMetrics(GeneratedMetrics):
 
     :keyword str version: The version of Storage Analytics to configure.
     :keyword bool enabled: Required. Indicates whether metrics are enabled for the service.
-    :keyword bool include_apis: Indicates whether metrics should generate summary
+    :keyword include_apis: Indicates whether metrics should generate summary
         statistics for called API operations.
+    :type include_apis: bool or None
     :keyword ~azure.data.tables.TableRetentionPolicy retention_policy: Required.
         The retention policy for the metrics.
     """
 
-    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
-        self.version: str = kwargs.get("version", "1.0")
-        self.enabled: bool = kwargs.get("enabled", False)
-        self.include_apis: bool = kwargs.get("include_apis")
-        self.retention_policy: TableRetentionPolicy = kwargs.get("retention_policy") or TableRetentionPolicy()
+    def __init__(self, *, version: str = "1.0", enabled: bool = False, include_apis: Optional[bool] = None, retention_policy: TableRetentionPolicy = TableRetentionPolicy()) -> None:  # pylint: disable=super-init-not-called
+        self.version: str = version
+        self.enabled: bool = enabled
+        self.include_apis: Optional[bool] = include_apis
+        self.retention_policy: TableRetentionPolicy = retention_policy
 
     @classmethod
     def _from_generated(cls, generated) -> "TableMetrics":
@@ -164,48 +208,6 @@ class TableMetrics(GeneratedMetrics):
             retention_policy={self.retention_policy})"[
             1024:
         ]
-
-
-class TableRetentionPolicy(GeneratedRetentionPolicy):
-    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
-        """The retention policy which determines how long the associated data should
-        persist.
-
-        All required parameters must be populated in order to send to Azure.
-
-        :keyword bool enabled: Required. Indicates whether a retention policy is enabled
-            for the storage service. Default value is False.
-        :keyword int days: Indicates the number of days that metrics or logging or
-            soft-deleted data should be retained. All data older than this value will
-            be deleted. Must be specified if policy is enabled.
-        """
-        self.enabled: bool = kwargs.get("enabled", False)
-        self.days: int = kwargs.get("days")
-        if self.enabled and (self.days is None):
-            raise ValueError("If policy is enabled, 'days' must be specified.")
-
-    @classmethod
-    def _from_generated(cls, generated: GeneratedRetentionPolicy) -> "TableRetentionPolicy":
-        """The retention policy which determines how long the associated data should
-        persist.
-
-        All required parameters must be populated in order to send to Azure.
-
-        :param generated: Generated Retention Policy.
-        :type generated: ~azure.data.tables._generated.models.RetentionPolicy
-        :return: A TableRetentionPolicy object.
-        :rtype: ~azure.data.tables.TableRetentionPolicy
-        """
-
-        if not generated:
-            return cls()
-        return cls(
-            enabled=generated.enabled,
-            days=generated.days,
-        )
-
-    def __repr__(self) -> str:
-        return f"TableRetentionPolicy(enabled={self.enabled}, days={self.days})"[1024:]
 
 
 class TableCorsRule:

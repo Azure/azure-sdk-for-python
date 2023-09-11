@@ -102,12 +102,12 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
                 account = parsed_url.netloc.split(".table.core.")
                 self.account_name = account[0] if len(account) > 1 else None
 
-        secondary_hostname: str = None
+        secondary_hostname: str = ""
         self.credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = credential
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
         if isinstance(self.credential, AzureNamedKeyCredential):
-            self.account_name: str = self.credential.named_key.name
+            self.account_name = self.credential.named_key.name
             endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
             secondary_hostname = f"{self.account_name}-secondary.table.{endpoint_suffix}"
 
