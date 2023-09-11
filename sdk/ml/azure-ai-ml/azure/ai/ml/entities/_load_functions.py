@@ -5,12 +5,14 @@
 import logging
 import warnings
 from os import PathLike
-from typing import IO, AnyStr, Optional, Type, Union
+from pathlib import Path
+from typing import IO, AnyStr, Dict, List, Optional, Type, Union
 
 from marshmallow import ValidationError
 
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import load_yaml
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._assets._artifacts._package.model_package import ModelPackage
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._assets._artifacts.data import Data
@@ -35,7 +37,7 @@ from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._registry.registry import Registry
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._schedule.schedule import Schedule
-from azure.ai.ml.entities._validation import SchemaValidatableMixin, _ValidationResultBuilder
+from azure.ai.ml.entities._validation import PathAwareSchemaValidatableMixin, ValidationResultBuilder
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 from azure.ai.ml.entities._workspace.workspace import Workspace
 from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
@@ -96,20 +98,30 @@ def load_common(
     try:
         return _load_common_raising_marshmallow_error(cls, yaml_dict, relative_origin, params_override, **kwargs)
     except ValidationError as e:
-        if issubclass(cls, SchemaValidatableMixin):
-            validation_result = _ValidationResultBuilder.from_validation_error(e, source_path=relative_origin)
-            validation_result.try_raise(
-                # pylint: disable=protected-access
-                error_target=cls._get_validation_error_target(),
-                # pylint: disable=protected-access
-                schema=cls._create_schema_for_validation_with_base_path(),
-                raise_mashmallow_error=True,
-                additional_message=""
-                if type_str is None
-                else f"If you are trying to configure an entity that is not "
-                f"of type {type_str}, please specify the correct "
-                f"type in the 'type' property.",
-            )
+        if issubclass(cls, PathAwareSchemaValidatableMixin):
+            validation_result = ValidationResultBuilder.from_validation_error(e, source_path=relative_origin)
+            schema = cls._create_schema_for_validation(context={BASE_PATH_CONTEXT_KEY: Path.cwd()})
+            if type_str is None:
+                additional_message = ""
+            else:
+                additional_message = (
+                    f"If you are trying to configure an entity that is not "
+                    f"of type {type_str}, please specify the correct "
+                    f"type in the 'type' property."
+                )
+
+            def build_error(message, _):
+                from azure.ai.ml.entities._util import decorate_validation_error
+
+                return ValidationError(
+                    message=decorate_validation_error(
+                        schema=schema.__class__,
+                        pretty_error=message,
+                        additional_message=additional_message,
+                    ),
+                )
+
+            validation_result.try_raise(error_func=build_error)
         raise e
 
 
@@ -308,6 +320,7 @@ def load_compute(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
     relative_origin: Optional[str] = None,
+    params_override: Optional[List[Dict[str, str]]] = None,
     **kwargs,
 ) -> Compute:
     """Construct a compute object from a yaml file.
@@ -323,15 +336,23 @@ def load_compute(
         the relative locations of files referenced in the parsed yaml.
         Defaults to the inputted source's directory if it is a file or file path input.
         Defaults to "./" if the source is a stream input with no name value.
-    :paramtype relative_origin: str
+    :paramtype relative_origin: Optional[str]
     :keyword params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
-    :paramtype params_override: List[Dict]
-
+    :paramtype params_override: Optional[List[Dict]]
     :return: Loaded compute object.
-    :rtype: Compute
+    :rtype: ~azure.ai.ml.entities.Compute
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../samples/ml_samples_compute.py
+            :start-after: [START load_compute]
+            :end-before: [END load_compute]
+            :language: python
+            :dedent: 8
+            :caption: Loading a Compute object from a YAML file and overriding its description.
     """
-    return load_common(Compute, source, relative_origin, **kwargs)
+    return load_common(Compute, source, relative_origin, params_override=params_override, **kwargs)
 
 
 def load_component(
@@ -818,6 +839,7 @@ def load_feature_store_entity(
     return load_common(FeatureStoreEntity, source, relative_origin, **kwargs)
 
 
+@experimental
 def load_workspace_hub(
     source: Union[str, PathLike, IO[AnyStr]],
     *,

@@ -15,10 +15,10 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-from azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.environment_variables import (
+from opentelemetry.instrumentation.environment_variables import (
     OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,
 )
-from azure.monitor.opentelemetry.util._configurations import (
+from azure.monitor.opentelemetry._util.configurations import (
     SAMPLING_RATIO_ENV_VAR,
     _get_configurations,
 )

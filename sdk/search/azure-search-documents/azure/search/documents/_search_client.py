@@ -328,7 +328,7 @@ class SearchClient(HeadersMixin):
             highlight_post_tag=highlight_post_tag,
             highlight_pre_tag=highlight_pre_tag,
             minimum_coverage=minimum_coverage,
-            order_by=order_by,
+            order_by=order_by if isinstance(order_by, str) else None,
             query_type=query_type,
             scoring_parameters=scoring_parameters,
             scoring_profile=scoring_profile,
@@ -352,6 +352,9 @@ class SearchClient(HeadersMixin):
         )
         if isinstance(select, list):
             query.select(select)
+
+        if isinstance(order_by, list):
+            query.order_by(order_by)
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         kwargs["api_version"] = self._api_version
@@ -427,13 +430,15 @@ class SearchClient(HeadersMixin):
             highlight_post_tag=highlight_post_tag,
             highlight_pre_tag=highlight_pre_tag,
             minimum_coverage=minimum_coverage,
-            order_by=order_by,
+            order_by=order_by if isinstance(order_by, str) else None,
             search_fields=search_fields_str,
             select=select if isinstance(select, str) else None,
             top=top,
         )
         if isinstance(select, list):
             query.select(select)
+        if isinstance(order_by, list):
+            query.order_by(order_by)
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         response = self._client.documents.suggest_post(suggest_request=query.request, **kwargs)
         results = [r.as_dict() for r in response.results]
