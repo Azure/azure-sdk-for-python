@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import logging
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from typing_extensions import Literal
 
@@ -43,10 +43,10 @@ class DoWhile(LoopNode):
         self,
         *,
         body: Pipeline,
-        condition: str,
-        mapping: Dict[Union[str, Output], Union[str, Input, List]],
+        condition: Union[str, NodeInput, NodeOutput],
+        mapping: Dict,
         limits: Optional[Union[dict, DoWhileJobLimits]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
@@ -66,7 +66,7 @@ class DoWhile(LoopNode):
         self._init = False
 
     @property
-    def mapping(self):
+    def mapping(self) -> Dict:
         """Get the output-input mapping for each round of the do-while loop.
 
         :return: Output-Input mapping for each round of the do-while loop.
@@ -76,7 +76,7 @@ class DoWhile(LoopNode):
         return self._mapping
 
     @property
-    def condition(self):
+    def condition(self) -> Union[str, NodeInput, NodeOutput]:
         """Get the boolean type control output of the body as the do-while loop condition.
 
         :return: Control output of the body as the do-while loop condition.
@@ -85,7 +85,7 @@ class DoWhile(LoopNode):
         return self._condition
 
     @property
-    def limits(self):
+    def limits(self) -> Union[Dict, DoWhileJobLimits, None]:
         """Get the limits in running the do-while node.
 
         :return: Limits in running the do-while node.
@@ -102,7 +102,7 @@ class DoWhile(LoopNode):
         }
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs):
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "DoWhile":
         loaded_data = load_from_dict(DoWhileSchema, data, context, additional_message, **kwargs)
 
         return cls(**loaded_data)
@@ -179,7 +179,7 @@ class DoWhile(LoopNode):
         return do_while_instance
 
     @classmethod
-    def _create_schema_for_validation(cls, context):
+    def _create_schema_for_validation(cls, context: Any) -> DoWhileSchema:
         return DoWhileSchema(context=context)
 
     @classmethod
@@ -193,8 +193,9 @@ class DoWhile(LoopNode):
         self,
         *,
         max_iteration_count: int,
-        **kwargs,  # pylint: disable=unused-argument
-    ):
+        # pylint: disable=unused-argument
+        **kwargs: Any,
+    ) -> None:
         """
         Set the maximum iteration count for the do-while job.
 
@@ -208,7 +209,7 @@ class DoWhile(LoopNode):
         else:
             self._limits = DoWhileJobLimits(max_iteration_count=max_iteration_count)
 
-    def _customized_validate(self):
+    def _customized_validate(self) -> MutableValidationResult:
         validation_result = self._validate_loop_condition()
         validation_result.merge_with(self._validate_body())
         validation_result.merge_with(self._validate_do_while_limit())
@@ -266,7 +267,7 @@ class DoWhile(LoopNode):
             )
         return validation_result
 
-    def _validate_loop_condition(self):
+    def _validate_loop_condition(self) -> MutableValidationResult:
         # pylint: disable=protected-access
         validation_result = self._create_empty_validation_result()
         if self.condition is not None:
@@ -287,32 +288,33 @@ class DoWhile(LoopNode):
                     )
         return validation_result
 
-    def _validate_do_while_limit(self):
+    def _validate_do_while_limit(self) -> MutableValidationResult:
         validation_result = self._create_empty_validation_result()
-        if not self.limits or self.limits.max_iteration_count is None:
-            return validation_result
-        if isinstance(self.limits.max_iteration_count, InputOutputBase):
-            validation_result.append_error(
-                yaml_path="limit.max_iteration_count",
-                message="The max iteration count cannot be linked with an primitive type input.",
-            )
-        elif self.limits.max_iteration_count > DO_WHILE_MAX_ITERATION or self.limits.max_iteration_count < 0:
-            validation_result.append_error(
-                yaml_path="limit.max_iteration_count",
-                message=f"The max iteration count cannot be less than 0 or larger than {DO_WHILE_MAX_ITERATION}.",
-            )
+        if isinstance(self.limits, DoWhileJobLimits):
+            if not self.limits or self.limits.max_iteration_count is None:
+                return validation_result
+            if isinstance(self.limits.max_iteration_count, InputOutputBase):
+                validation_result.append_error(
+                    yaml_path="limit.max_iteration_count",
+                    message="The max iteration count cannot be linked with an primitive type input.",
+                )
+            elif self.limits.max_iteration_count > DO_WHILE_MAX_ITERATION or self.limits.max_iteration_count < 0:
+                validation_result.append_error(
+                    yaml_path="limit.max_iteration_count",
+                    message=f"The max iteration count cannot be less than 0 or larger than {DO_WHILE_MAX_ITERATION}.",
+                )
         return validation_result
 
-    def _validate_body_output_mapping(self):
+    def _validate_body_output_mapping(self) -> MutableValidationResult:
         # pylint disable=protected-access
         validation_result = self._create_empty_validation_result()
         if not isinstance(self.mapping, dict):
-            validation_result.append_error(
+            validation_result.append_error( # type: ignore
                 yaml_path="mapping", message=f"Mapping expects a dict type but passes in a {type(self.mapping)} type."
             )
         else:
             # Record the mapping relationship between input and output
-            input_output_mapping = {}
+            input_output_mapping: Dict = {}
             # Validate mapping input&output should come from while body
             for output, inputs in self.mapping.items():
                 # pylint: disable=protected-access
