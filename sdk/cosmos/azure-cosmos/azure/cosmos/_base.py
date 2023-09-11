@@ -753,3 +753,10 @@ def _internal_resourcetype(resource_type: str) -> str:
     if resource_type.lower() == "partitionkey":
         return "colls"
     return resource_type
+
+
+def _populate_bulk_headers(current_headers, pk_range_id):
+    current_headers.update({http_constants.HttpHeaders.IsBatchRequest: True})
+    current_headers.update({http_constants.HttpHeaders.PartitionKeyRangeID: pk_range_id})
+    current_headers.update({http_constants.HttpHeaders.IsBatchAtomic: False})
+    current_headers.update({http_constants.HttpHeaders.ShouldBatchContinueOnError: True})

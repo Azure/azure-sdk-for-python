@@ -1276,9 +1276,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             options = {}
 
         initial_headers = self.default_headers
-        initial_headers.update({http_constants.HttpHeaders.IsBatchRequest: True})
-        initial_headers.update({http_constants.HttpHeaders.PartitionKeyRangeID: pk_range_id})
-        initial_headers.update({http_constants.HttpHeaders.IsBatchAtomic: False})
+        base._populate_bulk_headers(initial_headers, pk_range_id)
         headers = base.GetHeaders(self, initial_headers, "post", path, collection_id, "docs", options)
 
         request_params = _request_object.RequestObject("docs", documents._OperationType.Batch)

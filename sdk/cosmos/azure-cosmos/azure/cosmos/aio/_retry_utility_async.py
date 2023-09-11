@@ -129,6 +129,7 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 http_request = args[3]
                 operations = json.loads(http_request.body)
                 responses = json.loads(e.response.text())
+                retry_bulk = False
                 for i in range(len(responses)):
                     if responses[i].get("statusCode") == StatusCodes.TOO_MANY_REQUESTS:
                         retry_policy = resourceThrottle_retry_policy
@@ -142,7 +143,11 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                         partial_batch_result.extend(responses[0:i])
                         # re-create request to be retried through request args
                         args = _refresh_bulk_throttle_request(i, operations, http_request, args)
+                        retry_bulk = True
                         break
+                # Didn't find any throttled operations, so we return normal results
+                if retry_bulk is False:
+                    return responses, e.headers
 
             # If none of the retry policies applies or there is no retry needed, set the
             # throttle related response headers and re-throw the exception back arg[0]

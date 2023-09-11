@@ -90,6 +90,7 @@ class HttpHeaders(object):
     # Bulk/Batch
     IsBatchRequest = "x-ms-cosmos-is-batch-request"
     IsBatchAtomic = "x-ms-cosmos-batch-atomic"
+    ShouldBatchContinueOnError = "x-ms-cosmos-batch-continue-on-error"
 
     # Query
     Query = "x-ms-documentdb-query"
