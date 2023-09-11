@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fix the error `NoneType object has no attribute 'settle_messages'` which was raised when a connection was dropped due to a blocked process ([#30514](https://github.com/Azure/azure-sdk-for-python/issues/30514))
+
 - Fixed a bug where `prefetch_count` was not being passed through correctly and caused messages to not return correctly when in `RECEIVE_AND_DELETE` mode ([#31712](https://github.com/Azure/azure-sdk-for-python/issues/31712), [#31711](https://github.com/Azure/azure-sdk-for-python/issues/31711)).
 
 ### Other Changes

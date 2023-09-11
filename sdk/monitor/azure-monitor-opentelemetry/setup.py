@@ -57,8 +57,10 @@ setup(
     author="Microsoft Corporation",
     author_email="ascl@microsoft.com",
     url="https://github.com/microsoft/ApplicationInsights-Python/tree/main/azure-monitor-opentelemetry",
+    keywords="azure, azure sdk",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Developers",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",
@@ -86,7 +88,7 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.24.0",
         "azure-core-tracing-opentelemetry~=1.0.0b10",
-        "azure-monitor-opentelemetry-exporter~=1.0.0b15",
+        "azure-monitor-opentelemetry-exporter~=1.0.0b16",
         "opentelemetry-api~=1.19.0",
         "opentelemetry-instrumentation-django~=0.40b0",
         "opentelemetry-instrumentation-fastapi~=0.40b0",
@@ -96,14 +98,13 @@ setup(
         "opentelemetry-instrumentation-urllib~=0.40b0",
         "opentelemetry-instrumentation-urllib3~=0.40b0",
         "opentelemetry-sdk~=1.19.0",
-        "wrapt >= 1.14.0, < 2.0.0",
     ],
     entry_points={
         "opentelemetry_distro": [
-            "azure_monitor_opentelemetry_distro = azure.monitor.opentelemetry.autoinstrumentation._distro:AzureMonitorDistro"
+            "azure_monitor_opentelemetry_distro = azure.monitor.opentelemetry._autoinstrumentation.distro:AzureMonitorDistro"
         ],
         "opentelemetry_configurator": [
-            "azure_monitor_opentelemetry_configurator = azure.monitor.opentelemetry.autoinstrumentation._configurator:AzureMonitorConfigurator"
+            "azure_monitor_opentelemetry_configurator = azure.monitor.opentelemetry._autoinstrumentation.configurator:AzureMonitorConfigurator"
         ],
     },
 )
