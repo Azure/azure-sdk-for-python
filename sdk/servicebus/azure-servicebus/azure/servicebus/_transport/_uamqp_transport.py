@@ -767,42 +767,10 @@ try:
                         except AttributeError:  # Handler may be disposed already.
                             pass
 
-        @staticmethod
-        def turn_on_prefetch(
-            receiver: "ServiceBusReceiver"  # pylint:disable=unused-argument
-        ) -> Optional[Literal[1]]:
-            """
-            Not used for uamqp. To be used with `__next__` calls.
-            If prefetch is turned off (prefetch_count = 0) on the receiver and handler has been opened,
-            sets the link credit on the ReceiveLink to 1 and returns 1. If prefetch is off and handler
-            has not been opened, returns 1 (to be passed in when creating the handler).
-            If prefetch was already turned on, returns None.
-            :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver to update link credit on.
-            :return: 1, the new link credit value if prefetch was off/0. Either link credit has already
-            been set to 1 on the RecieveLink or needs to be passed in when creating the handler.
-            None, if prefetch was already 1 or more.
-            :rtype: 1 or None
-            """
-            return None
-
-        @staticmethod
-        def turn_off_prefetch(
-            receiver: "ServiceBusReceiver"  # pylint:disable=unused-argument
-        ) -> None:
-            """
-            Not used for uamqp. To be used to reset link credit to 0 on ReceiveLink.
-            :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver to update link credit on.
-            :rtype: None
-            """
-            return None
-
-        # wait_time, link_credit used by pyamqp
+        # wait_time used by pyamqp
         @staticmethod
         def iter_next(
-            receiver: "ServiceBusReceiver",
-            wait_time: Optional[int] = None,
-            *,
-            link_credit: Optional[int] = None
+            receiver: "ServiceBusReceiver", wait_time: Optional[int] = None,
         ) -> "ServiceBusReceivedMessage":  # pylint: disable=unused-argument
             # pylint: disable=protected-access
             try:

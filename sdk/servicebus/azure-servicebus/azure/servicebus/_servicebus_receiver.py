@@ -331,12 +331,7 @@ class ServiceBusReceiver(
             )
         return cls(**constructor_args)
 
-    def _create_handler(
-        self,
-        auth: Union["pyamqp_JWTTokenAuth", "uamqp_JWTTokenAuth"],
-        *,
-        link_credit: Optional[int] = None   # passed in if handler opened in receive iterator and prefetch is 0
-    ) -> None:
+    def _create_handler(self, auth: Union["pyamqp_JWTTokenAuth", "uamqp_JWTTokenAuth"]) -> None:
 
         self._handler = self._amqp_transport.create_receive_client(
             receiver=self,
@@ -350,7 +345,7 @@ class ServiceBusReceiver(
             timeout=self._max_wait_time * self._amqp_transport.TIMEOUT_FACTOR
             if self._max_wait_time
             else 0,
-            link_credit=link_credit if link_credit else self._prefetch_count,
+            link_credit=self._prefetch_count,
             # If prefetch is "off", then keep_alive coroutine frequently listens on the connection for messages and
             # releases right away, since no "prefetched" messages should be in the internal buffer.
             keep_alive_interval=self._config.keep_alive
@@ -371,7 +366,7 @@ class ServiceBusReceiver(
                 self
             )
 
-    def _open(self, *, link_credit: Optional[int] = None) -> None:
+    def _open(self) -> None:
         # pylint: disable=protected-access
         if self._running:
             return
@@ -379,7 +374,7 @@ class ServiceBusReceiver(
             self._handler.close()
 
         auth = None if self._connection else create_authentication(self)
-        self._create_handler(auth, link_credit=link_credit)
+        self._create_handler(auth)
         try:
             self._handler.open(connection=self._connection)
             while not self._handler.client_ready():

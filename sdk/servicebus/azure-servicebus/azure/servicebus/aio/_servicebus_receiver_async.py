@@ -234,33 +234,24 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     def __aiter__(self):
         return self._iter_contextual_wrapper()
 
-    async def _inner_anext(
-        self,
-        wait_time: Optional[int] = None,
-        *,
-        link_credit: Optional[int] = None
-    ) -> "ServiceBusReceivedMessage":
+    async def _inner_anext(self, wait_time: Optional[int] = None) -> "ServiceBusReceivedMessage":
         # We do this weird wrapping such that an imperitive next() call, and a generator-based iter both trace sanely.
         self._check_live()
         while True:
             try:
-                return await self._do_retryable_operation(self._iter_next, wait_time=wait_time, link_credit=link_credit)
+                return await self._do_retryable_operation(self._iter_next, wait_time=wait_time)
             except StopAsyncIteration:
                 self._message_iter = None
                 raise
 
     async def __anext__(self):
-        update_link_credit = None
         try:
-            update_link_credit = self._amqp_transport.turn_on_prefetch(self)
             self._receive_context.set()
-            message = await self._inner_anext(link_credit=update_link_credit)
+            message = await self._inner_anext()
             links = get_receive_links(message)
             with receive_trace_context_manager(self, links=links):
                 return message
         finally:
-            if update_link_credit:
-                self._amqp_transport.turn_off_prefetch(self)
             self._receive_context.clear()
 
     @classmethod
@@ -324,12 +315,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             )
         return cls(**constructor_args)
 
-    def _create_handler(
-        self,
-        auth: Union["pyamqp_JWTTokenAuthAsync", "uamqp_JWTTokenAuthAsync"],
-        *,
-        link_credit: Optional[int] = None   # passed in if handler opened in receive iterator and prefetch is 0
-    ) -> None:
+    def _create_handler(self, auth: Union["pyamqp_JWTTokenAuthAsync", "uamqp_JWTTokenAuthAsync"]) -> None:
 
         self._handler = self._amqp_transport.create_receive_client_async(
             receiver=self,
@@ -343,7 +329,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             timeout=self._max_wait_time * self._amqp_transport.TIMEOUT_FACTOR
             if self._max_wait_time
             else 0,
-            link_credit=link_credit if link_credit else self._prefetch_count,
+            link_credit=self._prefetch_count,
             # If prefetch is 0, then keep_alive coroutine frequently listens on the connection for messages and
             # releases right away, since no "prefetched" messages should be in the internal buffer.
             keep_alive_interval=self._config.keep_alive
@@ -361,14 +347,14 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             # pylint: disable=protected-access
             self._amqp_transport.set_handler_message_received_async(self)
 
-    async def _open(self, *, link_credit: Optional[int] = None) -> None:
+    async def _open(self) -> None:
         # pylint: disable=protected-access
         if self._running:
             return
         if self._handler and not self._handler._shutdown:
             await self._handler.close_async()
         auth = None if self._connection else (await create_authentication(self))
-        self._create_handler(auth, link_credit=link_credit)
+        self._create_handler(auth)
         try:
             await self._handler.open_async(connection=self._connection)
             while not await self._handler.client_ready_async():

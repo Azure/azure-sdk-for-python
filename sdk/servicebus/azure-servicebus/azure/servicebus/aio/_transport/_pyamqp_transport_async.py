@@ -202,27 +202,19 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     async def iter_contextual_wrapper_async(
         receiver: "ServiceBusReceiver", max_wait_time: Optional[int] = None
     ) -> AsyncIterator["ServiceBusReceivedMessage"]:
-        # pylint: disable=protected-access
-        update_link_credit = PyamqpTransport.turn_on_prefetch(receiver)
         while True:
+            # pylint: disable=protected-access
             try:
-                # if handler has not been opened and prefetch is 0, pass link_credit=1 when creating handler
-                message = await receiver._inner_anext(wait_time=max_wait_time, link_credit=update_link_credit)
+                message = await receiver._inner_anext(wait_time=max_wait_time)
                 links = get_receive_links(message)
                 with receive_trace_context_manager(receiver, links=links):
                     yield message
             except StopAsyncIteration:
-                # reset to 0 link_credit if needed
-                if update_link_credit:
-                    PyamqpTransport.turn_off_prefetch(receiver)
                 break
 
     @staticmethod
     async def iter_next_async(
-        receiver: "ServiceBusReceiver",
-        wait_time: Optional[int] = None,
-        *,
-        link_credit: Optional[int] = None
+        receiver: "ServiceBusReceiver", wait_time: Optional[int] = None
     ) -> "ServiceBusReceivedMessage":
         # pylint: disable=protected-access
         try:
