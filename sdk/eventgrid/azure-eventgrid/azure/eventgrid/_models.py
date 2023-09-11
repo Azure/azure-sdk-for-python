@@ -88,8 +88,7 @@ class EventGridEvent(Model):
         kwargs.setdefault("data", data)
         kwargs.setdefault("data_version", data_version)
 
-        super().__init__(**kwargs)
-        self.id = id
+        self.id = kwargs.pop("id", None)
         self.topic = kwargs.pop("topic", None)
         self.subject = subject
         self.data = data
@@ -97,6 +96,8 @@ class EventGridEvent(Model):
         self.event_time = kwargs.pop("event_time", None)
         self.metadata_version = None
         self.data_version = data_version
+        super().__init__(**kwargs)
+
 
     def __repr__(self):
         return "EventGridEvent(subject={}, event_type={}, id={}, event_time={})".format(
@@ -116,4 +117,4 @@ class EventGridEvent(Model):
         :raises ValueError: If the provided JSON is invalid.
         """
         dict_event = _get_json_content(event)
-        return cast(EventGridEvent, EventGridEvent.from_dict(dict_event))
+        return cls.from_dict(dict_event)
