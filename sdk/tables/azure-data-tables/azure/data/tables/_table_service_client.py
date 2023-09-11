@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Dict
+from typing import Any, Dict
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
@@ -74,7 +74,7 @@ class TableServiceClient(TablesBaseClient):
         return f"{self.scheme}://{hostname}{self._query_str}"
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, **kwargs) -> "TableServiceClient":
+    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "TableServiceClient":
         """Create TableServiceClient from a connection string.
 
         :param str conn_str: A connection string to an Azure Storage or Cosmos account.
@@ -298,7 +298,7 @@ class TableServiceClient(TablesBaseClient):
             page_iterator_class=TablePropertiesPaged,
         )
 
-    def get_table_client(self, table_name: str, **kwargs) -> TableClient:
+    def get_table_client(self, table_name: str, **kwargs: Any) -> TableClient:
         """Get a client to interact with the specified table.
 
         The table need not already exist.

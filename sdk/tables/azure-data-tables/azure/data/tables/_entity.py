@@ -9,7 +9,7 @@ from typing import Any, Dict, Union, NamedTuple
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class TableEntity(dict):
+class TableEntity(dict[str, Any]):
     """
     An Entity dictionary with additional metadata
 

@@ -68,7 +68,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         self,
         account_url: str,
         credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         try:
             if not account_url.lower().startswith("http"):
@@ -85,7 +85,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         self._query_str, credential = format_query_string(sas_token, credential)
         self._location_mode = kwargs.get("location_mode", LocationMode.PRIMARY)
         self._hosts = kwargs.get("_hosts")
-        self.scheme = parsed_url.scheme
+        self.scheme: str = parsed_url.scheme
         self._cosmos_endpoint = _is_cosmos_endpoint(parsed_url)
         if ".core." in parsed_url.netloc or ".cosmos." in parsed_url.netloc:
             account = parsed_url.netloc.split(".table.core.")
@@ -102,12 +102,12 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
                 account = parsed_url.netloc.split(".table.core.")
                 self.account_name = account[0] if len(account) > 1 else None
 
-        secondary_hostname = None
-        self.credential = credential
+        secondary_hostname: str = None
+        self.credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = credential
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
-        if hasattr(self.credential, "named_key"):
-            self.account_name = self.credential.named_key.name  # type: ignore
+        if isinstance(self.credential, AzureNamedKeyCredential):
+            self.account_name: str = self.credential.named_key.name
             endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
             secondary_hostname = f"{self.account_name}-secondary.table.{endpoint_suffix}"
 
@@ -209,7 +209,7 @@ class TablesBaseClient(AccountHostsMixin):
         endpoint: str,
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Create TablesBaseClient from a Credential.
 
@@ -230,11 +230,11 @@ class TablesBaseClient(AccountHostsMixin):
         self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), **kwargs)
         self._client._config.version = get_api_version(kwargs, self._client._config.version)  # type: ignore # pylint: disable=protected-access
 
-    def __enter__(self):
+    def __enter__(self) -> "TablesBaseClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
+    def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)
 
     def _configure_policies(self, **kwargs):

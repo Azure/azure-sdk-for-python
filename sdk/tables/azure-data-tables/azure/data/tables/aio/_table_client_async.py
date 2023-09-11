@@ -61,7 +61,7 @@ class TableClient(AsyncTablesBaseClient):
         table_name: str,
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Create TableClient from a Credential.
 
@@ -96,7 +96,7 @@ class TableClient(AsyncTablesBaseClient):
         return f"{self.scheme}://{hostname}{self._query_str}"
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, table_name: str, **kwargs) -> "TableClient":
+    def from_connection_string(cls, conn_str: str, table_name: str, **kwargs: Any) -> "TableClient":
         """Create TableClient from a Connection string.
 
         :param str conn_str: A connection string to an Azure Tables account.
@@ -122,7 +122,7 @@ class TableClient(AsyncTablesBaseClient):
         table_url: str,
         *,
         credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "TableClient":
         """A client to interact with a specific Table.
 
@@ -277,15 +277,15 @@ class TableClient(AsyncTablesBaseClient):
                 raise
 
     @overload
-    async def delete_entity(self, partition_key: str, row_key: str, **kwargs) -> None:
+    async def delete_entity(self, partition_key: str, row_key: str, **kwargs: Any) -> None:
         ...
 
     @overload
-    async def delete_entity(self, entity: Union[TableEntity, Mapping[str, Any]], **kwargs) -> None:
+    async def delete_entity(self, entity: Union[TableEntity, Mapping[str, Any]], **kwargs: Any) -> None:
         ...
 
     @distributed_trace_async
-    async def delete_entity(self, *args: Union[TableEntity, str], **kwargs) -> None:
+    async def delete_entity(self, *args: Union[TableEntity, str], **kwargs: Any) -> None:
         """Deletes the specified entity in a table. No error will be raised if
         the entity or PartitionKey-RowKey pairing is not found.
 

@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from typing import Optional, Dict, List
+from typing import Optional, Any, Dict, List
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
@@ -77,7 +77,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         return f"{self.scheme}://{hostname}{self._query_str}"
 
     @classmethod
-    def from_connection_string(cls, conn_str: str, **kwargs) -> "TableServiceClient":
+    def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "TableServiceClient":
         """Create TableServiceClient from a Connection String.
 
         :param str conn_str: A connection string to an Azure Tables account.
@@ -306,7 +306,7 @@ class TableServiceClient(AsyncTablesBaseClient):
             page_iterator_class=TablePropertiesPaged,
         )
 
-    def get_table_client(self, table_name: str, **kwargs) -> TableClient:
+    def get_table_client(self, table_name: str, **kwargs: Any) -> TableClient:
         """Get a client to interact with the specified table.
 
         The table need not already exist.

@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime
-from typing import Optional, Union
+from typing import Optional, Union, Any
 from azure.core.credentials import AzureNamedKeyCredential
 
 from ._models import AccountSasPermissions, TableSasPermissions, ResourceTypes, SASProtocol
@@ -23,7 +23,7 @@ def generate_account_sas(
     resource_types: ResourceTypes,
     permission: Union[str, AccountSasPermissions],
     expiry: Union[datetime, str],
-    **kwargs
+    **kwargs: Any
 ) -> str:
     """
     Generates a shared access signature for the table service.
@@ -84,7 +84,7 @@ def generate_account_sas(
     )
 
 
-def generate_table_sas(credential: AzureNamedKeyCredential, table_name: str, **kwargs) -> str:
+def generate_table_sas(credential: AzureNamedKeyCredential, table_name: str, **kwargs: Any) -> str:
     """
     Generates a shared access signature for the table service.
     Use the returned signature with the sas_token parameter of TableService.

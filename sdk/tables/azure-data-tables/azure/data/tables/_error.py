@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import re
 from enum import Enum
+from typing import Any
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.exceptions import (
@@ -250,9 +251,9 @@ class TableTransactionError(HttpResponseError):
     :vartype additional_info: Mapping[str, Any]
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         super(TableTransactionError, self).__init__(**kwargs)
-        self.index = kwargs.get("index", self._extract_index())
+        self.index: int = kwargs.get("index", self._extract_index())
 
     def _extract_index(self):
         try:

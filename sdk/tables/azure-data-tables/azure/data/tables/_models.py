@@ -4,7 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 from enum import Enum
-from typing import Any, Dict, List
+from datetime import datetime
+from typing import Any, Dict, List, Union
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.exceptions import HttpResponseError
@@ -69,10 +70,10 @@ class TableAccessPolicy(GenAccessPolicy):
     :paramtype start: ~datetime.datetime or str
     """
 
-    def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
-        self.start = kwargs.get("start")
-        self.expiry = kwargs.get("expiry")
-        self.permission = kwargs.get("permission")
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
+        self.start: Union[datetime, str] = kwargs.get("start")
+        self.expiry: Union[datetime, str] = kwargs.get("expiry")
+        self.permission: str = kwargs.get("permission")
 
     def __repr__(self) -> str:
         return f"TableAccessPolicy(start={self.start}, expiry={self.expiry}, permission={self.permission})"[1024:]
@@ -91,12 +92,12 @@ class TableAnalyticsLogging(GeneratedLogging):
         The retention policy for the metrics.
     """
 
-    def __init__(self, **kwargs) -> None:  # pylint: disable=super-init-not-called
-        self.version = kwargs.get("version", "1.0")
-        self.delete = kwargs.get("delete", False)
-        self.read = kwargs.get("read", False)
-        self.write = kwargs.get("write", False)
-        self.retention_policy = kwargs.get("retention_policy") or TableRetentionPolicy()
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
+        self.version: str = kwargs.get("version", "1.0")
+        self.delete: bool = kwargs.get("delete", False)
+        self.read: bool = kwargs.get("read", False)
+        self.write: bool = kwargs.get("write", False)
+        self.retention_policy: TableRetentionPolicy = kwargs.get("retention_policy") or TableRetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated):
@@ -132,11 +133,11 @@ class TableMetrics(GeneratedMetrics):
         The retention policy for the metrics.
     """
 
-    def __init__(self, **kwargs) -> None:  # pylint: disable=super-init-not-called
-        self.version = kwargs.get("version", "1.0")
-        self.enabled = kwargs.get("enabled", False)
-        self.include_apis = kwargs.get("include_apis")
-        self.retention_policy = kwargs.get("retention_policy") or TableRetentionPolicy()
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
+        self.version: str = kwargs.get("version", "1.0")
+        self.enabled: bool = kwargs.get("enabled", False)
+        self.include_apis: bool = kwargs.get("include_apis")
+        self.retention_policy: TableRetentionPolicy = kwargs.get("retention_policy") or TableRetentionPolicy()
 
     @classmethod
     def _from_generated(cls, generated) -> "TableMetrics":
@@ -166,7 +167,7 @@ class TableMetrics(GeneratedMetrics):
 
 
 class TableRetentionPolicy(GeneratedRetentionPolicy):
-    def __init__(self, **kwargs) -> None:  # pylint: disable=super-init-not-called
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
         """The retention policy which determines how long the associated data should
         persist.
 
@@ -178,8 +179,8 @@ class TableRetentionPolicy(GeneratedRetentionPolicy):
             soft-deleted data should be retained. All data older than this value will
             be deleted. Must be specified if policy is enabled.
         """
-        self.enabled = kwargs.get("enabled", False)
-        self.days = kwargs.get("days")
+        self.enabled: bool = kwargs.get("enabled", False)
+        self.days: int = kwargs.get("days")
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
@@ -237,12 +238,12 @@ class TableCorsRule:
         headers. Each header can be up to 256 characters.
     """
 
-    def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs) -> None:
-        self.allowed_origins = allowed_origins
-        self.allowed_methods = allowed_methods
-        self.allowed_headers = kwargs.get("allowed_headers", [])
-        self.exposed_headers = kwargs.get("exposed_headers", [])
-        self.max_age_in_seconds = kwargs.get("max_age_in_seconds", 0)
+    def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
+        self.allowed_origins: List[str] = allowed_origins
+        self.allowed_methods: List[str] = allowed_methods
+        self.allowed_headers: List[str] = kwargs.get("allowed_headers", [])
+        self.exposed_headers: List[str] = kwargs.get("exposed_headers", [])
+        self.max_age_in_seconds: int = kwargs.get("max_age_in_seconds", 0)
 
     def _to_generated(self):
         return GeneratedCorsRule(
@@ -371,7 +372,7 @@ class TableEntityPropertiesPaged(PageIterator):
 
 
 class TableSasPermissions:
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         """
         :keyword bool read:
             Get entities and query entities.
@@ -383,10 +384,10 @@ class TableSasPermissions:
             Delete entities.
         """
         self._str = kwargs.pop("_str", "") or ""
-        self.read = kwargs.pop("read", False) or ("r" in self._str)
-        self.add = kwargs.pop("add", False) or ("a" in self._str)
-        self.update = kwargs.pop("update", False) or ("u" in self._str)
-        self.delete = kwargs.pop("delete", False) or ("d" in self._str)
+        self.read: bool = kwargs.pop("read", False) or ("r" in self._str)
+        self.add: bool = kwargs.pop("add", False) or ("a" in self._str)
+        self.update: bool = kwargs.pop("update", False) or ("u" in self._str)
+        self.delete: bool = kwargs.pop("delete", False) or ("d" in self._str)
 
     def __or__(self, other: "TableSasPermissions") -> "TableSasPermissions":
         """
@@ -421,7 +422,7 @@ class TableSasPermissions:
         ]
 
     @classmethod
-    def from_string(cls, permission: str, **kwargs) -> "TableSasPermissions":
+    def from_string(cls, permission: str, **kwargs: Any) -> "TableSasPermissions":
         """Create TableSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to
@@ -560,13 +561,13 @@ class ResourceTypes(object):
         Access to container-level APIs for tables (e.g. Create Tables etc.)
     """
 
-    def __init__(self, **kwargs) -> None:
-        self.service = kwargs.get("service", False)
-        self.object = kwargs.get("object", False)
-        self.container = kwargs.get("container", False)
+    def __init__(self, **kwargs: Any) -> None:
+        self.service: bool = kwargs.get("service", False)
+        self.object: bool = kwargs.get("object", False)
+        self.container: bool = kwargs.get("container", False)
         self._str = ("s" if self.service else "") + ("o" if self.object else "") + ("c" if self.container else "")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self._str
 
     @classmethod
@@ -617,15 +618,15 @@ class AccountSasPermissions(object):
         Valid for the following Object resource type only: queue messages.
     """
 
-    def __init__(self, **kwargs):
-        self.read = kwargs.pop("read", False)
-        self.write = kwargs.pop("write", False)
-        self.delete = kwargs.pop("delete", False)
-        self.list = kwargs.pop("list", False)
-        self.add = kwargs.pop("add", False)
-        self.create = kwargs.pop("create", False)
-        self.update = kwargs.pop("update", False)
-        self.process = kwargs.pop("process", False)
+    def __init__(self, **kwargs: Any) -> None:
+        self.read: bool = kwargs.pop("read", False)
+        self.write: bool = kwargs.pop("write", False)
+        self.delete: bool = kwargs.pop("delete", False)
+        self.list: bool = kwargs.pop("list", False)
+        self.add: bool = kwargs.pop("add", False)
+        self.create: bool = kwargs.pop("create", False)
+        self.update: bool = kwargs.pop("update", False)
+        self.process: bool = kwargs.pop("process", False)
         self._str = (
             ("r" if self.read else "")
             + ("w" if self.write else "")
@@ -637,11 +638,11 @@ class AccountSasPermissions(object):
             + ("p" if self.process else "")
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self._str
 
     @classmethod
-    def from_string(cls, permission: str, **kwargs) -> "AccountSasPermissions":
+    def from_string(cls, permission: str, **kwargs: Any) -> "AccountSasPermissions":
         """Create AccountSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to

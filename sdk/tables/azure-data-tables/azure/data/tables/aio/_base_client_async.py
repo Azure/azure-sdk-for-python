@@ -52,7 +52,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         endpoint: str,
         *,
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Create TablesBaseClient from a Credential.
 
@@ -73,11 +73,11 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), **kwargs)
         self._client._config.version = get_api_version(kwargs, self._client._config.version)  # type: ignore # pylint: disable=protected-access
 
-    async def __aenter__(self):
+    async def __aenter__(self) -> "AsyncTablesBaseClient":
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *args):
+    async def __aexit__(self, *args: Any) -> None:
         await self._client.__aexit__(*args)
 
     async def close(self) -> None:
@@ -104,7 +104,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
             HttpLoggingPolicy(**kwargs),
         ]
 
-    async def _batch_send(self, table_name: str, *reqs: HttpRequest, **kwargs) -> List[Mapping[str, Any]]:
+    async def _batch_send(self, table_name: str, *reqs: HttpRequest, **kwargs: Any) -> List[Mapping[str, Any]]:
         # pylint:disable=docstring-should-be-keyword
         """Given a series of request, do a Storage batch call.
 
