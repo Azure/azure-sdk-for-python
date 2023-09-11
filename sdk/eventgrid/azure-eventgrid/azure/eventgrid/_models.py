@@ -9,9 +9,7 @@ import uuid
 from ._messaging_shared import _get_json_content
 from ._serialization import Model
 
-InternalEventGrid: "EventGridEvent" = Model
-
-class EventGridEvent(InternalEventGrid):
+class EventGridEvent(Model):
     """Properties of an event published to an Event Grid topic using the EventGrid Schema.
 
     Variables are only populated by the server, and will be ignored when sending a request.
