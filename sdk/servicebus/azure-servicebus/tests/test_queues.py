@@ -575,62 +575,75 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                     messages.append(message)
                 assert len(messages) == 0
 
-            if not uamqp_transport:
-                # send 10 messages
-                with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                    for i in range(10):
-                        message = ServiceBusMessage("Handler message no. {}".format(i))
-                        sender.send_messages(message)
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasser()
+    def test_queue_by_queue_client_conn_str_receive_handler_receiveanddelete_prefetch(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+        if uamqp_transport:
+            pytest.skip(reason="uamqp has incorrect prefetch=0 behavior")
 
-                # check peek_messages returns correctly, with default prefetch_count = 0
-                messages = []
-                with sb_client.get_queue_receiver(servicebus_queue.name,
-                                                receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
-                                                max_wait_time=10) as receiver:
-                    # peek messages checks current state of queue, which should return 10
-                    # since none were prefetched, added to internal queue, and deleted
-                    peeked_msgs = receiver.peek_messages(max_message_count=10, timeout=10)
-                    assert len(peeked_msgs) == 10
+        with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
+            # send 10 messages
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                for i in range(10):
+                    message = ServiceBusMessage("Handler message no. {}".format(i))
+                    sender.send_messages(message)
 
-                    # iterator receives and deletes each message from SB queue
-                    for msg in receiver:
-                        messages.append(msg)
-                    assert len(messages) == 10
+            # check peek_messages returns correctly, with default prefetch_count = 0
+            messages = []
+            with sb_client.get_queue_receiver(servicebus_queue.name,
+                                            receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
+                                            max_wait_time=10) as receiver:
+                # peek messages checks current state of queue, which should return 10
+                # since none were prefetched, added to internal queue, and deleted
+                peeked_msgs = receiver.peek_messages(max_message_count=10, timeout=10)
+                assert len(peeked_msgs) == 10
 
-                    # queue should be empty now
-                    peeked_msgs = receiver.peek_messages(max_message_count=10, timeout=10)
-                    assert len(peeked_msgs) == 0
+                # iterator receives and deletes each message from SB queue
+                for msg in receiver:
+                    messages.append(msg)
+                assert len(messages) == 10
 
-                # send 10 messages
-                with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                    for i in range(10):
-                        message = ServiceBusMessage("Handler message no. {}".format(i))
-                        sender.send_messages(message)
+                # queue should be empty now
+                peeked_msgs = receiver.peek_messages(max_message_count=10, timeout=10)
+                assert len(peeked_msgs) == 0
 
-                # check peek_messages returns correctly, with default prefetch_count > 0
-                messages = []
-                # prefetch gets 2 messages from SB queue, stores in internal buffer, then deletes from SB queue
-                with sb_client.get_queue_receiver(servicebus_queue.name,
-                                                receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
-                                                prefetch_count=2,
-                                                max_wait_time=30) as receiver:
-                    # peek messages checks current state of SB queue, and returns 8 since 2 were prefetched and deleted
-                    peeked_msgs = receiver.peek_messages(max_message_count=10, timeout=10)
-                    assert len(peeked_msgs) == 8
+            # send 10 messages
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                for i in range(10):
+                    message = ServiceBusMessage("Handler message no. {}".format(i))
+                    sender.send_messages(message)
 
-                    # receive_messages returns 2 messages from internal buffer, then 3 more from SB queue and deletes from SB queue
-                    recvd_msgs = receiver.receive_messages(max_message_count=5, max_wait_time=10)
-                    assert len(recvd_msgs) == 5
+            # check peek_messages returns correctly, with default prefetch_count > 0
+            messages = []
+            # prefetch gets 2 messages from SB queue, stores in internal buffer, then deletes from SB queue
+            with sb_client.get_queue_receiver(servicebus_queue.name,
+                                            receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
+                                            prefetch_count=2,
+                                            max_wait_time=30) as receiver:
+                # peek messages checks current state of SB queue, and returns 8 since 2 were prefetched and deleted
+                peeked_msgs = receiver.peek_messages(max_message_count=10, timeout=10)
+                # in uamqp, this returns 10, b/c prefetch is not honored and is set to 0 in all cases
+                assert len(peeked_msgs) == 8
 
-                    # iterator receives and deletes 5 leftover messages in SB queue
-                    for msg in receiver:
-                        messages.append(msg)
-                    assert len(messages) == 5
+                # receive_messages returns 2 messages from internal buffer, then 3 more from SB queue and deletes from SB queue
+                recvd_msgs = receiver.receive_messages(max_message_count=5, max_wait_time=10)
+                assert len(recvd_msgs) == 5
 
-                    # queue should be empty now
-                    peeked_msgs = receiver.peek_messages(max_message_count=10, timeout=10)
-                    assert len(peeked_msgs) == 0
-            
+                # iterator receives and deletes 5 leftover messages in SB queue
+                for msg in receiver:
+                    messages.append(msg)
+                assert len(messages) == 5
+
+                # queue should be empty now
+                peeked_msgs = receiver.peek_messages(max_message_count=10, timeout=10)
+                assert len(peeked_msgs) == 0
+        
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -3033,10 +3046,10 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @ArgPasser()
     def test_queue_receive_iterator_resume_after_link_detach(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
 
-        def hack_iter_next_mock_error(self, wait_time=None, *, link_credit=None):
+        def hack_iter_next_mock_error(self, wait_time=None):
             try:
                 self._receive_context.set()
-                self._open(link_credit=link_credit)
+                self._open()
                 # when trying to receive the second message (execution_times is 1), raising LinkDetach error to mock 10 mins idle timeout
                 if self.execution_times == 1:
                     # TODO: update uamqp errors to pyamqp

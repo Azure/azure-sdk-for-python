@@ -219,7 +219,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         # pylint: disable=protected-access
         try:
             receiver._receive_context.set()
-            await receiver._open(link_credit=link_credit)
+            await receiver._open()
             if not receiver._message_iter or wait_time:
                 receiver._message_iter = await receiver._handler.receive_messages_iter_async(timeout=wait_time)
             pyamqp_message = await cast(AsyncIterator["Message"], receiver._message_iter).__anext__()

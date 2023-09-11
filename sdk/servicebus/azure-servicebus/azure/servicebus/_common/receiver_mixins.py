@@ -50,8 +50,8 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         self._last_received_sequenced_number = None
         self._message_iter = None
         self._connection = kwargs.get("connection")
-        self._prefetch_count = kwargs.get("prefetch_count", 0)
-        if int(self._prefetch_count) < 0 or int(self._prefetch_count) > 50000:
+        self._prefetch_count = int(kwargs.get("prefetch_count", 0))
+        if self._prefetch_count < 0 or self._prefetch_count > 50000:
             raise ValueError(
                 "prefetch_count must be an integer between 0 and 50000 inclusive."
             )
