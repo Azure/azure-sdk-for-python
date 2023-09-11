@@ -7,9 +7,10 @@ from typing import Any, cast
 import datetime as dt
 import uuid
 from ._messaging_shared import _get_json_content
+from ._serialization import Model
 
 
-class EventGridEvent(object):
+class EventGridEvent(Model):
     """Properties of an event published to an Event Grid topic using the EventGrid Schema.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -87,7 +88,15 @@ class EventGridEvent(object):
         kwargs.setdefault("data", data)
         kwargs.setdefault("data_version", data_version)
 
-        super(EventGridEvent, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.id = id
+        self.topic = kwargs.pop("topic", None)
+        self.subject = subject
+        self.data = data
+        self.event_type = event_type
+        self.event_time = kwargs.pop("event_time", None)
+        self.metadata_version = None
+        self.data_version = data_version
 
     def __repr__(self):
         return "EventGridEvent(subject={}, event_type={}, id={}, event_time={})".format(
