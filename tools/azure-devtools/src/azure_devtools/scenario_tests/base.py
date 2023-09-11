@@ -79,7 +79,7 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
         "x-ms-ratelimit-remaining-subscription-reads",
         "x-ms-request-id",
         "x-ms-routing-request-id",
-        "x-ms-gateway-service-instanceid",
+        "x-ms-gateway-service-instanceid",  # cspell:disable-line
         "x-ms-ratelimit-remaining-tenant-reads",
         "x-ms-served-by",
         "x-ms-authorization-auxiliary",
