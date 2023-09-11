@@ -671,7 +671,9 @@
         "MQTT",
         "Dicom",
         "Errored",
-        "Fhir"
+        "Fhir",
+        "ctxt",
+        "wday"
       ]
     },
     {
