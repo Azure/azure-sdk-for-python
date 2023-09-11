@@ -88,7 +88,7 @@ class AzureAppConfigurationClient:
                     "Please provide an instance from azure-identity or a class that implements the 'get_token' protocol"
                 )
         else:
-            credential_policy = AppConfigRequestsCredentialsPolicy(credential)
+            credential_policy = AppConfigRequestsCredentialsPolicy(credential)  # type: ignore
 
         self._impl = AzureAppConfiguration(
             base_url,
