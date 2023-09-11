@@ -33,7 +33,7 @@ PSS_MAP = {
 }
 
 
-class KeyVaultPrivateKey(RSAPrivateKey):
+class KeyVaultManagedKey(RSAPrivateKey):
     """An `RSAPrivateKey` implementation based on a key managed by Key Vault.
 
     :param str key_name: The name of the key vault key to use.
@@ -41,7 +41,7 @@ class KeyVaultPrivateKey(RSAPrivateKey):
     :type key_client: KeyClient
     """
 
-    def __init__(self, key_name: str, key_client: "KeyClient", **kwargs) -> None:  # pylint:disable=unused-argument
+    def __init__(self, key_name: str, key_client: "KeyClient") -> None:  # pylint:disable=unused-argument
         self._key_name: str = key_name
         self._key_client: "KeyClient" = key_client
         self._crypto_client: "CryptographyClient" = key_client.get_cryptography_client(key_name)
