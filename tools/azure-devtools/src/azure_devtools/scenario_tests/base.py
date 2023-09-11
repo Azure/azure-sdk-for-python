@@ -12,7 +12,8 @@ import shutil
 import logging
 import threading
 import six
-import vcr
+# We don't vcrpy anymore, if this code is loaded, fail
+# import vcr
 
 from .config import TestConfig
 from .const import ENV_TEST_DIAGNOSE
