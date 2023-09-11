@@ -2,13 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import logging
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from typing_extensions import Literal
 
 from azure.ai.ml._schema.pipeline.control_flow_job import DoWhileSchema
 from azure.ai.ml.constants._component import DO_WHILE_MAX_ITERATION, ControlFlowType
-from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.job_limits import DoWhileJobLimits
 from azure.ai.ml.entities._job.pipeline._io import InputOutputBase, NodeInput, NodeOutput
 from azure.ai.ml.entities._validation import MutableValidationResult
@@ -309,7 +308,7 @@ class DoWhile(LoopNode):
         # pylint disable=protected-access
         validation_result = self._create_empty_validation_result()
         if not isinstance(self.mapping, dict):
-            validation_result.append_error( # type: ignore
+            validation_result.append_error(  # type: ignore
                 yaml_path="mapping", message=f"Mapping expects a dict type but passes in a {type(self.mapping)} type."
             )
         else:
