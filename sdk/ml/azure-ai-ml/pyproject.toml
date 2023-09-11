@@ -28,7 +28,9 @@ extend_skip_glob = [
 ]
 
 [tool.mypy] 
-files = ['/mnt/vss/_work/1/s/sdk/ml/azure-ai-ml/azure/ai/ml/entities/**/*.py']
+exclude = [
+  "^(?!azure/ai/ml/entities).*",
+]
 disallow_untyped_defs = true 
 warn_unused_ignores = true 
 warn_return_any = true 
