@@ -15,9 +15,9 @@ from azure.core.pipeline import policies
 VERSION = "unknown"
 
 
-class AzureCommunicationCallAutomationServiceConfiguration(
+class AzureCommunicationCallAutomationServiceConfiguration(  # pylint: disable=too-many-instance-attributes,name-too-long
     Configuration
-):  # pylint: disable=too-many-instance-attributes
+):
     """Configuration for AzureCommunicationCallAutomationService.
 
     Note that all parameters used to create this instance are saved as instance
@@ -27,14 +27,14 @@ class AzureCommunicationCallAutomationServiceConfiguration(
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword api_version: Api Version. Default value is "2023-06-15-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-10-15". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
         super(AzureCommunicationCallAutomationServiceConfiguration, self).__init__(**kwargs)
-        api_version: str = kwargs.pop("api_version", "2023-06-15-preview")
+        api_version: str = kwargs.pop("api_version", "2023-10-15")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
