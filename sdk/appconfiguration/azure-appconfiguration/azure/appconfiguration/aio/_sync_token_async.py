@@ -42,9 +42,9 @@ class AsyncSyncTokenPolicy(SansIOHTTPPolicy):
         self._sync_tokens: Dict[str, Any] = {}
         self._lock = Lock()
 
-    async def on_request(
+    async def on_request(  # pylint: disable=invalid-overridden-method
         self, request: PipelineRequest
-    ) -> None:  # pylint: disable=arguments-differ, invalid-overridden-method
+    ) -> None:
         """This is executed before sending the request to the next policy.
 
         :param request: The PipelineRequest object.
@@ -55,9 +55,9 @@ class AsyncSyncTokenPolicy(SansIOHTTPPolicy):
             if sync_token_header:
                 request.http_request.headers.update({self._sync_token_header: sync_token_header})
 
-    async def on_response(
+    async def on_response(  # pylint: disable=invalid-overridden-method
         self, request: PipelineRequest, response: PipelineResponse
-    ) -> None:  # pylint: disable=arguments-differ, invalid-overridden-method
+    ) -> None:
         """This is executed after the request comes back from the policy.
 
         :param request: The PipelineRequest object.
@@ -71,7 +71,7 @@ class AsyncSyncTokenPolicy(SansIOHTTPPolicy):
         sync_token_strings = sync_token_header.split(",")
         if not sync_token_strings:
             return
-        for sync_token_string in sync_token_strings:
+        async for sync_token_string in sync_token_strings:
             sync_token = SyncToken.from_sync_token_string(sync_token_string)
             await self._update_sync_token(sync_token)
 

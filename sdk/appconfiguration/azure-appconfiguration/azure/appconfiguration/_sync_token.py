@@ -70,7 +70,7 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
         self._sync_tokens: Dict[str, Any] = {}
         self._lock = Lock()
 
-    def on_request(self, request: PipelineRequest) -> None:  # pylint: disable=arguments-differ
+    def on_request(self, request: PipelineRequest) -> None:
         """This is executed before sending the request to the next policy.
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
@@ -82,7 +82,7 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
 
     def on_response(
         self, request: PipelineRequest, response: PipelineResponse
-    ) -> None:  # pylint: disable=arguments-differ
+    ) -> None:
         """This is executed after the request comes back from the policy.
 
         :param request: The PipelineRequest object.
