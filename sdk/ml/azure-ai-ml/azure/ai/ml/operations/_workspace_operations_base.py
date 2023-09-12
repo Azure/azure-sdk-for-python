@@ -330,8 +330,8 @@ class WorkspaceOperationsBase:
         real_callback = callback
         injected_callback = kwargs.get("cls", None)
         if injected_callback:
-            # pylint: unnecessary-lambda-assignment
-            real_callback = lambda _, deserialized, args: injected_callback(callback(_, deserialized, args))
+            def real_callback(_, deserialized, args):
+                return injected_callback(callback(_, deserialized, args))
 
         poller = self._operation.begin_update(
             resource_group, workspace_name, update_param, polling=True, cls=real_callback
