@@ -208,7 +208,7 @@ class EventGridPublisherClient: # pylint: disable=client-accepts-api-version-key
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
                 events = [
-                    _check_cloud_event(e, **kwargs)
+                    _check_cloud_event(e)
                     for e in events  # pylint: disable=protected-access
                 ]
             except AttributeError:
