@@ -79,30 +79,20 @@ class BulkTests(unittest.TestCase):
                                "resourceBody": {"id": "item-" + str(i), "name": str(uuid.uuid4())},
                                "partitionKey": "item-" + str(i)})
 
-        # Negative test - see how many requests were throttled due to lack of RUs on default container
+        # check requests were throttled due to lack of RUs on default container
         bulk_result = await container.bulk(operations=operations)
-        # Get results from first batch of operations
-        batch_result = bulk_result[0]
-        throttle_count = 0
-        # Batch results are returned as a tuple, index 0 is the result and index 1 are the response headers
-        for operation in batch_result[0]:
-            if operation.get("statusCode") == 429:
-                throttle_count = throttle_count + 1
-        self.assertTrue(throttle_count > 10)
-        self.assertEqual(len(batch_result[0]), 100)
+        self.assertEqual(len(bulk_result[0][0]), 100)
+        batch_response_headers = bulk_result[0][1]
+        self.assertTrue(batch_response_headers.get(HttpHeaders.ThrottleRetryCount) > 0)
 
-        # Positive test - create all 100 items with more RUs
+        # create all 100 items with more RUs
         bulk_container = await self.test_database.create_container_if_not_exists(id="throughput_bulk_container",
                                                                                  partition_key=PartitionKey(path="/id"),
-                                                                                 offer_throughput=1500)
+                                                                                 offer_throughput=1000)
         bulk_result = await bulk_container.bulk(operations=operations)
-        batch_result = bulk_result[0]
-        throttle_count = 0
-        for operation in batch_result[0]:
-            if operation.get("statusCode") == 429:
-                throttle_count = throttle_count + 1
-        self.assertEqual(throttle_count, 0)
-        self.assertEqual(len(batch_result[0]), 100)
+        self.assertEqual(len(bulk_result[0][0]), 100)
+        batch_response_headers = bulk_result[0][1]
+        self.assertTrue(batch_response_headers.get(HttpHeaders.ThrottleRetryCount) is None)
 
     async def test_bulk_lsn(self):
         container = await self.test_database.create_container_if_not_exists(id="lsn_bulk_container",

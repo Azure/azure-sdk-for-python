@@ -134,6 +134,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 for i in range(len(responses)):
                     if responses[i].get("statusCode") == StatusCodes.TOO_MANY_REQUESTS:
                         retry_policy = resourceThrottle_retry_policy
+                        retry_policy.is_bulk_retry = True
                         # set retry header and save current headers
                         e.headers[HttpHeaders.RetryAfterInMilliseconds] = responses[i].get("retryAfterMilliseconds")
                         if len(partial_batch_headers) == 0:
@@ -146,7 +147,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                         args = _refresh_bulk_throttle_request(i, operations, http_request, args)
                         retry_bulk = True
                         break
-                # Didn't find any throttled operations, so we return normal results
+                # didn't find any throttled operations, so we return results with errors
                 if retry_bulk is False:
                     return responses, e.headers
 

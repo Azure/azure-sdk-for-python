@@ -33,6 +33,7 @@ class ResourceThrottleRetryPolicy(object):
         self._max_wait_time_in_milliseconds = max_wait_time_in_seconds * 1000
         self.current_retry_attempt_count = 0
         self.cumulative_wait_time_in_milliseconds = 0
+        self.is_bulk_retry = False
 
     def ShouldRetry(self, exception):
         """Returns true if should retry based on the passed-in exception.
@@ -40,6 +41,13 @@ class ResourceThrottleRetryPolicy(object):
         :param (exceptions.CosmosHttpResponseError instance) exception:
         :rtype: boolean
         """
+        # logic needed for bulk requests - retry until batch is completed
+        if self.is_bulk_retry:
+            self.current_retry_attempt_count += 1
+            self.retry_after_in_milliseconds = int(  # pylint: disable = attribute-defined-outside-init
+                exception.headers[http_constants.HttpHeaders.RetryAfterInMilliseconds])
+            return True
+
         if self.current_retry_attempt_count < self._max_retry_attempt_count:
             self.current_retry_attempt_count += 1
             self.retry_after_in_milliseconds = 0  # pylint: disable=attribute-defined-outside-init

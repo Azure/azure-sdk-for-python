@@ -226,8 +226,9 @@ async def bulk_items(database):
 
     # Run that list of operations
     bulk_response = await container.bulk(bulk_operations)
-    # The bulk response is a list containing each batch of requests that ran.
-    # In this case all our results will be in the first batch index.
+    # Bulk results are returned as a list, each index representing the result of one batch of requests
+    # Batch results are returned as a tuple, where index 0 is the result and index 1 is the response headers
+    # In this case all our results will be in the first batch index since we had less than 100 operations
     print("\nResult for the bulk operations: {}\n".format(bulk_response[0]))
 
 

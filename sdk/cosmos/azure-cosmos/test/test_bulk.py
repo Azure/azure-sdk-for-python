@@ -81,30 +81,20 @@ class BulkTests(unittest.TestCase):
                                "resourceBody": {"id": "item-" + str(i), "name": str(uuid.uuid4())},
                                "partitionKey": "item-" + str(i)})
 
-        # Negative test - see how many requests were throttled due to lack of RUs on default container
+        # check requests were throttled due to lack of RUs on default container
         bulk_result = container.bulk(operations=operations)
-        # Get results from first batch of operations
-        batch_result = bulk_result[0]
-        throttle_count = 0
-        # Batch results are returned as a tuple, index 0 is the result and index 1 are the response headers
-        for operation in batch_result[0]:
-            if operation.get("statusCode") == 429:
-                throttle_count = throttle_count + 1
-        self.assertTrue(throttle_count > 10)
-        self.assertEqual(len(batch_result[0]), 100)
+        self.assertEqual(len(bulk_result[0][0]), 100)
+        batch_response_headers = bulk_result[0][1]
+        self.assertTrue(batch_response_headers.get(HttpHeaders.ThrottleRetryCount) > 0)
 
-        # Positive test - create all 100 items with more RUs
+        # create all 100 items with more RUs
         bulk_container = self.test_database.create_container_if_not_exists(id="throughput_bulk_container",
                                                                            partition_key=PartitionKey(path="/id"),
-                                                                           offer_throughput=1500)
+                                                                           offer_throughput=1000)
         bulk_result = bulk_container.bulk(operations=operations)
-        batch_result = bulk_result[0]
-        throttle_count = 0
-        for operation in batch_result[0]:
-            if operation.get("statusCode") == 429:
-                throttle_count = throttle_count + 1
-        self.assertEqual(throttle_count, 0)
-        self.assertEqual(len(batch_result[0]), 100)
+        self.assertEqual(len(bulk_result[0][0]), 100)
+        batch_response_headers = bulk_result[0][1]
+        self.assertTrue(batch_response_headers.get(HttpHeaders.ThrottleRetryCount) is None)
 
     def test_bulk_lsn(self):
         container = self.test_database.create_container_if_not_exists(id="lsn_bulk_container",
@@ -159,7 +149,7 @@ class BulkTests(unittest.TestCase):
 
     def test_bulk_read_non_existent(self):
         container = self.test_database.create_container_if_not_exists(id="errors_bulk_container",
-                                                                      partition_key=PartitionKey(path="/pk"))
+                                                                      partition_key=PartitionKey(path="/id"))
         operations = [{"operationType": "Read",
                        "id": "read_item",
                        "partitionKey": "read_item"}]
@@ -169,7 +159,7 @@ class BulkTests(unittest.TestCase):
 
     def test_bulk_delete_non_existent(self):
         container = self.test_database.create_container_if_not_exists(id="errors_bulk_container",
-                                                                      partition_key=PartitionKey(path="/pk"))
+                                                                      partition_key=PartitionKey(path="/id"))
         operations = [{"operationType": "Delete",
                        "id": "delete_item",
                        "partitionKey": "delete_item"}]
@@ -179,13 +169,18 @@ class BulkTests(unittest.TestCase):
 
     def test_bulk_create_conflict(self):
         container = self.test_database.create_container_if_not_exists(id="errors_bulk_container",
-                                                                      partition_key=PartitionKey(path="/pk"))
+                                                                      partition_key=PartitionKey(path="/id"))
         operations = [{"operationType": "Create",
                        "resourceBody": {"id": "create_item", "name": str(uuid.uuid4())},
                        "partitionKey": "create_item"},
                       {"operationType": "Create",
                        "resourceBody": {"id": "create_item", "name": str(uuid.uuid4())},
+                       "partitionKey": "create_item"},
+                      {"operationType": "Create",
+                       "resourceBody": {"id": "create_item2", "name": str(uuid.uuid4())},
                        "partitionKey": "create_item"}]
 
         bulk_result = container.bulk(operations=operations)
+        self.assertEqual(bulk_result[0][0][0].get("statusCode"), StatusCodes.CREATED)
         self.assertEqual(bulk_result[0][0][1].get("statusCode"), StatusCodes.CONFLICT)
+        self.assertEqual(bulk_result[0][0][2].get("statusCode"), StatusCodes.CREATED)
