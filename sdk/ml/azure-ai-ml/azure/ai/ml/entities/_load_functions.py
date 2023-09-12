@@ -389,7 +389,7 @@ def load_component(
             :language: python
             :dedent: 8
             :caption: Loading a Component object from a YAML file, overriding its version to "1.0.2", and
-            registering it remotely.
+                registering it remotely.
     """
 
     client = kwargs.pop("client", None)
