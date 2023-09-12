@@ -338,7 +338,7 @@ class WorkspaceOperationsBase:
                 workspace.application_insights,
                 ArmConstants.AZURE_MGMT_APPINSIGHT_API_VERSION,
             )
-            if "WorkspaceResourceId" in app_insights.properties:
+            if app_insights != None and "WorkspaceResourceId" in app_insights.properties:
                 delete_resource_by_arm_id(
                     self._credentials,
                     self._subscription_id,
@@ -358,7 +358,7 @@ class WorkspaceOperationsBase:
                 workspace.application_insights,
                 ArmConstants.AZURE_MGMT_APPINSIGHT_API_VERSION,
             )
-            if "WorkspaceResourceId" in app_insights.properties:
+            if app_insights != None and "WorkspaceResourceId" in app_insights.properties:
                 delete_resource_by_arm_id(
                     self._credentials,
                     self._subscription_id,
