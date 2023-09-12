@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Union, Any, Dict, List, Optional, MutableMapping
+from typing import Union, Any, List, Optional, MutableMapping
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential

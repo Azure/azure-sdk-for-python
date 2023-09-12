@@ -189,6 +189,8 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         will be triggered. It checks the actions already queued and flushes them if:
         1. Auto_flush is on
         2. There are self._batch_action_count actions queued
+        :return: True if proces is needed, False otherwise
+        :rtype: bool
         """
         if not self._auto_flush:
             return False
