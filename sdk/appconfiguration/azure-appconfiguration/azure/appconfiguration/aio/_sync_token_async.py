@@ -71,7 +71,7 @@ class AsyncSyncTokenPolicy(SansIOHTTPPolicy):
         sync_token_strings = sync_token_header.split(",")
         if not sync_token_strings:
             return
-        async for sync_token_string in sync_token_strings:
+        for sync_token_string in sync_token_strings:
             sync_token = SyncToken.from_sync_token_string(sync_token_string)
             await self._update_sync_token(sync_token)
 
