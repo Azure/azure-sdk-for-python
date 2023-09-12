@@ -5,8 +5,28 @@
 Push-Location $RepoRoot
 try {
     $currentDur = Resolve-Path "."
+    $usingLockFile = Test-Path './eng/emitter-package-lock.json'
 
     Write-Host "Installing npm dependencies in $currentDur"
+
+    if ($usingLockFile -and (Test-Path "node_modules/.package-lock.json")) {
+        # If we have a lock file and a node_modules/.package-lock.json we may 
+        # be able to skip npm install.
+
+        # After install, the lock file in node_modules should match outer lock
+        # file, except for an empty string "self" package that only exists in
+        # the outer lock file.
+        $outerLockFile = Get-Content './eng/emitter-package-lock.json' -Raw | ConvertFrom-Json -AsHashtable
+        $outerLockFile.packages.Remove('')
+        
+        $nodeModulesLockFile = Get-Content 'node_modules/.package-lock.json' -Raw | ConvertFrom-Json -AsHashtable
+
+        if (($outerLockFile | ConvertTo-Json -Depth 100 -Compress) -eq ($nodeModulesLockFile | ConvertTo-Json -Depth 100 -Compress)) {
+            Write-Host "Skipping npm install because node_modules is up to date"
+            exit 0
+        }
+    }
+
 
     if (Test-Path "package.json") {
         Write-Host "Removing existing package.json"
@@ -26,7 +46,6 @@ try {
     Write-Host("Copying package.json from eng/emitter-package.json")
     Copy-Item -Path './eng/emitter-package.json' -Destination "package.json" -Force
 
-    $usingLockFile = Test-Path './eng/emitter-package-lock.json'
 
     if ($usingLockFile) {
         Write-Host("Copying package-lock.json from eng/emitter-package-lock.json")
