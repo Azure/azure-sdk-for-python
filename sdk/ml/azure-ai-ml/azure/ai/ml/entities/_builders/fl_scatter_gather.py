@@ -16,6 +16,7 @@ from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._component.component import Component
+from azure.ai.ml.entities._inputs_outputs.input import Input
 from azure.ai.ml.entities._job.pipeline._io.mixin import NodeIOMixin
 from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
@@ -167,7 +168,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             description="It includes all steps that need to be executed in silo and aggregation",
         )
         # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
-        def scatter_gather_iteration_body(**silo_inputs: Any) -> PipelineJob:
+        def scatter_gather_iteration_body(**silo_inputs: Input) -> PipelineJob:
             """
                 Performs a scatter-gather iteration by running copies of the silo step on different
             computes/datstores according to this node's silo configs. The outputs of these
