@@ -10,6 +10,7 @@ from io import IOBase
 import sys
 from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 
+from azure.core import MatchConditions
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -567,8 +568,9 @@ class TableOperations:
         *,
         timeout: Optional[int] = None,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        etag: Optional[str] = None,
         content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Update entity in a table.
@@ -587,12 +589,14 @@ class TableOperations:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
         :paramtype format: str or ~azure.table.models.OdataMetadataFormat
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword data_service_version: Specifies the data service version. Default value is "3.0". Note
          that overriding this default value may result in unsupported behavior.
         :paramtype data_service_version: str
@@ -611,8 +615,9 @@ class TableOperations:
         *,
         timeout: Optional[int] = None,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        etag: Optional[str] = None,
         content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Update entity in a table.
@@ -631,12 +636,14 @@ class TableOperations:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
         :paramtype format: str or ~azure.table.models.OdataMetadataFormat
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword data_service_version: Specifies the data service version. Default value is "3.0". Note
          that overriding this default value may result in unsupported behavior.
         :paramtype data_service_version: str
@@ -656,6 +663,7 @@ class TableOperations:
         timeout: Optional[int] = None,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
         etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Update entity in a table.
@@ -678,6 +686,8 @@ class TableOperations:
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword data_service_version: Specifies the data service version. Default value is "3.0". Note
          that overriding this default value may result in unsupported behavior.
         :paramtype data_service_version: str
@@ -729,6 +739,7 @@ class TableOperations:
             timeout=timeout,
             format=format,
             etag=etag,
+            match_condition=match_condition,
             data_service_version=data_service_version,
             content_type=content_type,
             version=self._config.version,
@@ -778,8 +789,9 @@ class TableOperations:
         *,
         timeout: Optional[int] = None,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        etag: Optional[str] = None,
         content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Merge entity in a table.
@@ -798,12 +810,14 @@ class TableOperations:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
         :paramtype format: str or ~azure.table.models.OdataMetadataFormat
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword data_service_version: Specifies the data service version. Default value is "3.0". Note
          that overriding this default value may result in unsupported behavior.
         :paramtype data_service_version: str
@@ -822,8 +836,9 @@ class TableOperations:
         *,
         timeout: Optional[int] = None,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
-        etag: Optional[str] = None,
         content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Merge entity in a table.
@@ -842,12 +857,14 @@ class TableOperations:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata". Default value is None.
         :paramtype format: str or ~azure.table.models.OdataMetadataFormat
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword data_service_version: Specifies the data service version. Default value is "3.0". Note
          that overriding this default value may result in unsupported behavior.
         :paramtype data_service_version: str
@@ -867,6 +884,7 @@ class TableOperations:
         timeout: Optional[int] = None,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
         etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> None:
         """Merge entity in a table.
@@ -889,6 +907,8 @@ class TableOperations:
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword data_service_version: Specifies the data service version. Default value is "3.0". Note
          that overriding this default value may result in unsupported behavior.
         :paramtype data_service_version: str
@@ -940,6 +960,7 @@ class TableOperations:
             timeout=timeout,
             format=format,
             etag=etag,
+            match_condition=match_condition,
             data_service_version=data_service_version,
             content_type=content_type,
             version=self._config.version,
@@ -987,6 +1008,7 @@ class TableOperations:
         row_key: str,
         *,
         etag: str,
+        match_condition: MatchConditions,
         timeout: Optional[int] = None,
         format: Optional[Union[str, _models.OdataMetadataFormat]] = None,
         **kwargs: Any
@@ -1001,6 +1023,8 @@ class TableOperations:
         :type row_key: str
         :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
         :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword format: Specifies the media type for the response. Known values are:
@@ -1041,6 +1065,7 @@ class TableOperations:
             partition_key=partition_key,
             row_key=row_key,
             etag=etag,
+            match_condition=match_condition,
             timeout=timeout,
             format=format,
             data_service_version=data_service_version,
