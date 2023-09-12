@@ -156,6 +156,7 @@ def _convert_to_entity(entry_element):
         else:
             properties[name] = value
 
+    # TODO: investigate whether we can entirely remove lines 160-168
     # Partition key is a known property
     partition_key = properties.pop("PartitionKey", None)
     if partition_key is not None:
