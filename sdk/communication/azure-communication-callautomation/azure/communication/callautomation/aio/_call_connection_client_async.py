@@ -16,7 +16,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
 from .._utils import (
-    get_repeatability_guid,
     process_repeatability_first_sent,
     serialize_phone_identifier,
     serialize_identifier
@@ -188,7 +187,6 @@ class CallConnectionClient:
             process_repeatability_first_sent(kwargs)
             await self._call_connection_client.terminate_call(
                 self._call_connection_id,
-                repeatability_request_id=get_repeatability_guid(),
                 **kwargs
             )
         else:
@@ -258,7 +256,6 @@ class CallConnectionClient:
         result = await self._call_connection_client.transfer_to_participant(
             self._call_connection_id,
             request,
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs
         )
         return TransferCallResult._from_generated(result)  # pylint:disable=protected-access
@@ -311,7 +308,6 @@ class CallConnectionClient:
         response = await self._call_connection_client.add_participant(
             self._call_connection_id,
             add_participant_request,
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs
         )
         return AddParticipantResult._from_generated(response)  # pylint:disable=protected-access
@@ -343,7 +339,6 @@ class CallConnectionClient:
         response = await self._call_connection_client.remove_participant(
             self._call_connection_id,
             remove_participant_request,
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs
         )
         return RemoveParticipantResult._from_generated(response)  # pylint:disable=protected-access
@@ -638,7 +633,6 @@ class CallConnectionClient:
         response = await self._call_media_client.send_dtmf_tones(
             self._call_connection_id,
             send_dtmf_tones_request,
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs
         )
 
@@ -671,7 +665,6 @@ class CallConnectionClient:
         response =  await self._call_connection_client.mute(
             self._call_connection_id,
             mute_participants_request,
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs
         )
         return MuteParticipantResult._from_generated(response) # pylint:disable=protected-access

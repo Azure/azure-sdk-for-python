@@ -29,7 +29,6 @@ from .._models import (
 )
 from ._content_downloader_async import ContentDownloader
 from .._utils import (
-    get_repeatability_guid,
     process_repeatability_first_sent,
     serialize_phone_identifier,
     serialize_identifier,
@@ -206,7 +205,6 @@ class CallAutomationClient:
         process_repeatability_first_sent(kwargs)
         result = await self._client.create_call(
             create_call_request=create_call_request,
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs
         )
         return CallConnectionProperties._from_generated(result)  # pylint:disable=protected-access
@@ -297,7 +295,6 @@ class CallAutomationClient:
         process_repeatability_first_sent(kwargs)
         result = await self._client.answer_call(
             answer_call_request=answer_call_request,
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs
         )
         return CallConnectionProperties._from_generated(result)  # pylint:disable=protected-access
@@ -333,7 +330,6 @@ class CallAutomationClient:
         process_repeatability_first_sent(kwargs)
         await self._client.redirect_call(
             redirect_call_request=redirect_call_request,
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs
         )
 
@@ -364,7 +360,6 @@ class CallAutomationClient:
         process_repeatability_first_sent(kwargs)
         await self._client.reject_call(
             reject_call_request=reject_call_request,
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs
         )
 
@@ -480,7 +475,6 @@ class CallAutomationClient:
         process_repeatability_first_sent(kwargs)
         recording_state_result = await self._call_recording_client.start_recording(
             start_call_recording=start_recording_request,
-            repeatability_request_id=get_repeatability_guid()
             **kwargs
         )
         return RecordingProperties._from_generated(recording_state_result)
