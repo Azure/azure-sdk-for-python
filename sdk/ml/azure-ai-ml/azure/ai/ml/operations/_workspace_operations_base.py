@@ -21,6 +21,7 @@ from azure.ai.ml._utils._appinsights_utils import get_log_analytics_arm_id
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._workspace_utils import (
+    get_generic_arm_resource_by_arm_id,
     delete_resource_by_arm_id,
     get_deployment_name,
     get_name_for_dependent_resource,
@@ -329,8 +330,21 @@ class WorkspaceOperationsBase:
         workspace = self.get(name, **kwargs)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
-        # prevent dependent resource delete for lean workspace, only delete appinsight
+        # prevent dependent resource delete for lean workspace, only delete appinsight and associated log analytics
         if workspace._kind == PROJECT_WORKSPACE_KIND and delete_dependent_resources:
+            app_insights = get_generic_arm_resource_by_arm_id(
+                self._credentials,
+                self._subscription_id,
+                workspace.application_insights,
+                ArmConstants.AZURE_MGMT_APPINSIGHT_API_VERSION,
+            )
+            if 'WorkspaceResourceId' in app_insights.properties:
+                delete_resource_by_arm_id(
+                    self._credentials,
+                    self._subscription_id,
+                    app_insights.properties['WorkspaceResourceId'],
+                    ArmConstants.AZURE_MGMT_LOGANALYTICS_API_VERSION,
+                )
             delete_resource_by_arm_id(
                 self._credentials,
                 self._subscription_id,
@@ -338,6 +352,19 @@ class WorkspaceOperationsBase:
                 ArmConstants.AZURE_MGMT_APPINSIGHT_API_VERSION,
             )
         elif delete_dependent_resources:
+            app_insights = get_generic_arm_resource_by_arm_id(
+                self._credentials,
+                self._subscription_id,
+                workspace.application_insights,
+                ArmConstants.AZURE_MGMT_APPINSIGHT_API_VERSION,
+            )
+            if 'WorkspaceResourceId' in app_insights.properties:
+                delete_resource_by_arm_id(
+                    self._credentials,
+                    self._subscription_id,
+                    app_insights.properties['WorkspaceResourceId'],
+                    ArmConstants.AZURE_MGMT_LOGANALYTICS_API_VERSION,
+                )
             delete_resource_by_arm_id(
                 self._credentials,
                 self._subscription_id,
