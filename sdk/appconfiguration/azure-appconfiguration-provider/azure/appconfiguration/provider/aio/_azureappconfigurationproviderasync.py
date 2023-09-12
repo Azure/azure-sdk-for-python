@@ -304,7 +304,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             )
             async for config in configurations:
                 key = self._process_key_name(config)
-                value = self._process_key_value(config)
+                value = await self._process_key_value(config)
 
                 if isinstance(config, FeatureFlagConfigurationSetting):
                     feature_management = configuration_settings.get(FEATURE_MANAGEMENT_KEY, {})
