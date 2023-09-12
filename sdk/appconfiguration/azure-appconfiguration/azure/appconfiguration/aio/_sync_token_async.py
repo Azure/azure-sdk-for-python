@@ -42,9 +42,7 @@ class AsyncSyncTokenPolicy(SansIOHTTPPolicy):
         self._sync_tokens: Dict[str, Any] = {}
         self._lock = Lock()
 
-    async def on_request(  # pylint: disable=invalid-overridden-method
-        self, request: PipelineRequest
-    ) -> None:
+    async def on_request(self, request: PipelineRequest) -> None:  # pylint: disable=invalid-overridden-method
         """This is executed before sending the request to the next policy.
 
         :param request: The PipelineRequest object.
