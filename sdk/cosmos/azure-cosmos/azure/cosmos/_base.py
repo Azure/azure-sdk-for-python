@@ -608,9 +608,6 @@ def TrimBeginningAndEndingSlashes(path):
 
 # Parses the paths into a list of token each representing a property
 def ParsePaths(paths):
-    if len(paths) > 3:
-        raise ValueError("Unsupported paths count.")
-
     segmentSeparator = "/"
     tokens = []
     for path in paths:

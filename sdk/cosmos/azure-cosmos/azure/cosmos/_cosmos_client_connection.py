@@ -52,11 +52,11 @@ from . import _runtime_constants as runtime_constants
 from . import _request_object
 from . import _synchronized_request as synchronized_request
 from . import _global_endpoint_manager as global_endpoint_manager
-from ._routing import routing_map_provider
+from ._routing import routing_map_provider, routing_range
 from ._retry_utility import ConnectionRetryPolicy
 from . import _session
 from . import _utils
-from .partition_key import _Undefined, _Empty
+from .partition_key import _Undefined, _Empty, PartitionKey
 from ._auth_policy import CosmosBearerTokenCredentialPolicy
 from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 
@@ -2539,6 +2539,32 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         # Query operations will use ReadEndpoint even though it uses POST(for regular query operations)
         request_params = _request_object.RequestObject(typ, documents._OperationType.SqlQuery)
         req_headers = base.GetHeaders(self, initial_headers, "post", path, id_, typ, options, partition_key_range_id)
+
+        #check if query has prefix partition key
+        isPrefixPartitionQuery = kwargs.pop("isPrefixPartitionQuery", None)
+        if isPrefixPartitionQuery:
+            #here get the overlap, then do one of two scenarios
+            partition_key_definition = kwargs.pop("partitionKeyDefinition", None)
+            pkproperties = partition_key_definition
+            partition_key_definition = PartitionKey(path=pkproperties["paths"], kind=pkproperties["kind"])
+            partition_key_value = pkproperties["partition_key"]
+            feedrangeEPK = partition_key_definition.get_epk_range_for_prefix_partition_key(partition_key_value)
+            over_lapping_ranges = self._routing_map_provider.get_overlapping_ranges(id_, [feedrangeEPK])
+            if over_lapping_ranges:
+                single_range = routing_range.Range.PartitionKeyRangeToRange(over_lapping_ranges[0])
+                if single_range.min == feedrangeEPK.min and single_range.max == feedrangeEPK.max:
+                    # 1 The EpkRange spans exactly one physical partition
+                    # In this case we can route to the physical pkrange id
+                    req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_ranges[0]["id"]
+                else:
+                    # 2) The EpkRange spans less than single physical partition
+                    # In this case we route to the physical partition and
+                    # pass the epk range headers to filter within partition
+                    req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_ranges[0]["id"]
+                    req_headers[http_constants.HttpHeaders.StartEpkString] = feedrangeEPK.min
+                    req_headers[http_constants.HttpHeaders.EndEpkString] = feedrangeEPK.max
+            req_headers[http_constants.HttpHeaders.ReadFeedKeyType] = "EffectivePartitionKeyRange"
+
         result, self.last_response_headers = self.__Post(path, request_params, query, req_headers, **kwargs)
 
         if response_hook:
@@ -2575,6 +2601,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                                 options,
                                 is_query_plan=True,
                                 **kwargs)
+
+
 
     def __CheckAndUnifyQueryFormat(self, query_body):
         """Checks and unifies the format of the query body.
@@ -2660,7 +2688,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 # Navigates the document to retrieve the partitionKey specified in the paths
                 val = self._retrieve_partition_key(partition_key_parts, document, is_system_key)
                 if val is _Undefined:
-                    raise ValueError("Undefined Value in MultiHash PartitionKey.")
+                    break
                 ret.append(val)
             return ret
 

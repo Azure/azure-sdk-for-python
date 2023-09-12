@@ -20,33 +20,26 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""End to end test.
+"""End-to-end test.
 """
-import json
-import logging
-import os.path
+
 import unittest
 import time
 from typing import Mapping
 import test_config
-import urllib.parse as urllib
 import uuid
 import pytest
-from azure.core import MatchConditions
-from azure.core.exceptions import AzureError, ServiceResponseError
 from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
-import azure.cosmos._base as base
 from azure.cosmos.aio import CosmosClient, _retry_utility_async
 from azure.cosmos.diagnostics import RecordDiagnostics
 from azure.cosmos.partition_key import PartitionKey
 import requests
-from urllib3.util.retry import Retry
+import azure.cosmos.aio._cosmos_client as cosmos_client
 
 pytestmark = pytest.mark.cosmosEmulator
-
 
 # IMPORTANT NOTES:
 #  	Most test cases in this file create collections in your Azure Cosmos account.
@@ -80,7 +73,12 @@ class CRUDTests(unittest.TestCase):
     """Python CRUD Tests.
     """
 
+    configs = test_config._test_config
+    host = configs.host
+    masterKey = configs.masterKey
+    connectionPolicy = configs.connectionPolicy
     last_headers = []
+    client = None
 
     async def __AssertHTTPFailureWithStatus(self, status_code, func, *args, **kwargs):
         """Assert HTTP failure with status.
@@ -97,8 +95,8 @@ class CRUDTests(unittest.TestCase):
 
     @classmethod
     async def setUpClass(cls):
-        cls.client = CosmosClient(cls.host, cls.masterKey, consistency_level="Session",
-                                  connection_policy=cls.connectionPolicy)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session"
+                                                , connection_policy=cls.connectionPolicy)
         cls.databaseForTest = await cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
 
     async def test_collection_crud(self):
@@ -303,8 +301,7 @@ class CRUDTests(unittest.TestCase):
 
     async def test_partitioned_collection_document_crud_and_query(self):
         created_db = self.databaseForTest
-
-        created_collection = await self.databaseForTest.create_container(
+        created_collection = await created_db.create_container(
             test_config._test_config.TEST_COLLECTION_MULTI_HASH_MULTI_PARTITION,
             PartitionKey(path=["/city", "/zipcode"], kind="MultiHash"))
 
@@ -403,15 +400,16 @@ class CRUDTests(unittest.TestCase):
 
         try:
             await created_collection.create_item(body=incomplete_document)
-            raise Exception("Test did not fail as expected.")
-        except ValueError as error:
-            self.assertTrue("Undefined Value in MultiHash PartitionKey." in
-                            str(error))
+            self.fail("Test did not fail as expected")
+        except exceptions.CosmosHttpResponseError as error:
+            self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
+            self.assertTrue("Partition key provided either doesn't correspond to definition in the collection"
+                            in error.message)
 
         # using incomplete partition key in read item
         try:
             await created_collection.read_item(created_document, partition_key=["Redmond"])
-            raise Exception("Test did not fail as expected")
+            self.fail("Test did not fail as expected")
         except exceptions.CosmosHttpResponseError as error:
             self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
             self.assertTrue("Partition key provided either doesn't correspond to definition in the collection"
@@ -425,6 +423,126 @@ class CRUDTests(unittest.TestCase):
         created_mixed_type_doc = await created_collection.create_item(body=doc_mixed_types)
         self.assertEqual(doc_mixed_types.get('city'), created_mixed_type_doc.get('city'))
         self.assertEqual(doc_mixed_types.get('zipcode'), created_mixed_type_doc.get('zipcode'))
+        await created_db.delete_container(created_collection.id)
+
+    async def test_partitioned_collection_prefix_partition_query(self):
+        created_db = self.databaseForTest
+        collection_id = 'test_partitioned_collection_partition_key_prefix_query_async ' + str(uuid.uuid4())
+        created_collection = await created_db.create_container(
+            id=collection_id,
+            partition_key=PartitionKey(path=['/state', '/city', '/zipcode'], kind=documents.PartitionKind.MultiHash)
+        )
+        item_values = [
+            ["CA", "Newbury Park", "91319"],
+            ["CA", "Oxnard", "93033"],
+            ["CA", "Oxnard", "93030"],
+            ["CA", "Oxnard", "93036"],
+            ["CA", "Thousand Oaks", "91358"],
+            ["CA", "Ventura", "93002"],
+            ["CA", "Ojai", "93023"],
+            ["CA", "Port Hueneme", "93041"],
+            ["WA", "Seattle", "98101"],
+            ["WA", "Bellevue", "98004"]
+        ]
+
+        document_definitions = [{'id': 'document1',
+                               'state': item_values[0][0],
+                               'city': item_values[0][1],
+                               'zipcode': item_values[0][2]
+                                 },
+                                {'id': 'document2',
+                                 'state': item_values[1][0],
+                                 'city': item_values[1][1],
+                                 'zipcode': item_values[1][2]
+                                 },
+                                {'id': 'document3',
+                                 'state': item_values[2][0],
+                                 'city': item_values[2][1],
+                                 'zipcode': item_values[2][2]
+                                 },
+                                {'id': 'document4',
+                                 'state': item_values[3][0],
+                                 'city': item_values[3][1],
+                                 'zipcode': item_values[3][2]
+                                 },
+                                {'id': 'document5',
+                                 'state': item_values[4][0],
+                                 'city': item_values[4][1],
+                                 'zipcode': item_values[4][2]
+                                 },
+                                {'id': 'document6',
+                                 'state': item_values[5][0],
+                                 'city': item_values[5][1],
+                                 'zipcode': item_values[5][2]
+                                 },
+                                {'id': 'document7',
+                                 'state': item_values[6][0],
+                                 'city': item_values[6][1],
+                                 'zipcode': item_values[6][2]
+                                 },
+                                {'id': 'document8',
+                                 'state': item_values[7][0],
+                                 'city': item_values[7][1],
+                                 'zipcode': item_values[7][2]
+                                 },
+                                {'id': 'document9',
+                                 'state': item_values[8][0],
+                                 'city': item_values[8][1],
+                                 'zipcode': item_values[8][2]
+                                 },
+                                {'id': 'document10',
+                                 'state': item_values[9][0],
+                                 'city': item_values[9][1],
+                                 'zipcode': item_values[9][2]
+                                 }
+                                ]
+        created_documents = []
+        for document_definition in document_definitions:
+            created_documents.append(await created_collection.create_item(
+                body=document_definition))
+        self.assertEqual(len(created_documents), len(document_definitions))
+
+        # Query all documents should return all items
+        document_list = [document async for document in created_collection.query_items(query='Select * from c'
+                                                                                       , enable_cross_partition_query=True)]  # pylint: disable=line-too-long
+        self.assertEqual(len(document_list), len(document_definitions))
+
+        # Query all items with only CA for 1st level. Should return only 8 items instead of 10
+        document_list = [document async for document in created_collection.query_items(query='Select * from c'
+                                                                                       , partition_key=['CA'])]
+        self.assertEqual(8, len(document_list))
+
+        # Query all items with CA for 1st level and Oxnard for second level. Should only return 3 items
+        document_list = [document async for document in created_collection.query_items(query='Select * from c'
+                                                                                       , partition_key=['CA', 'Oxnard'])]  # pylint: disable=line-too-long
+        self.assertEqual(3, len(document_list))
+
+        # Query for specific zipcode using 1st level of partition key value only:
+        document_list = [document async for document in created_collection.query_items(query='Select * from c where c.zipcode = "93033"'  # pylint: disable=line-too-long
+                                                                                       , partition_key=['CA'])]
+        self.assertEqual(1, len(document_list))
+
+        # Query Should work with None values:
+        document_list = [document async for document in created_collection.query_items(query='Select * from c'
+                                                                                       , partition_key=[None, '93033'])]
+        self.assertEqual(0, len(document_list))
+
+        # Query Should Work with non string values
+        document_list = [document async for document in created_collection.query_items(query='Select * from c'
+                                                                                       , partition_key=[0xFF, 0xFF])]
+        self.assertEqual(0, len(document_list))
+
+        # Negative Test, prefix query should not work if no partition is given (empty list is given)
+        try:
+            document_list = [document async for document in created_collection.query_items(query='Select * from c'
+                                                                                           , partition_key=[])]
+            self.fail("Test did not fail as expected")
+        except exceptions.CosmosHttpResponseError as error:
+            self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
+            self.assertTrue("Cross partition query is required but disabled"
+                            in error.message)
+
+        await created_db.delete_container(created_collection.id)
 
     async def _MockExecuteFunction(self, function, *args, **kwargs):
         self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey]

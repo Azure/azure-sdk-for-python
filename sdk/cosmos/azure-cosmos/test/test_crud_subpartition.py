@@ -20,36 +20,22 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-
-"""End to end test.
+"""End-to-end test.
 """
 
-import json
-import logging
-import os.path
 import unittest
 import time
-from typing import Mapping
-
-import urllib.parse as urllib
 import uuid
 import pytest
-from azure.core import MatchConditions
-from azure.core.exceptions import AzureError, ServiceResponseError
 from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 import test_config
-import azure.cosmos._base as base
 import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos.diagnostics import RecordDiagnostics
 from azure.cosmos.partition_key import PartitionKey
 from azure.cosmos import _retry_utility
 import requests
-from urllib3.util.retry import Retry
-
-pytestmark = pytest.mark.cosmosEmulator
 
 pytestmark = pytest.mark.cosmosEmulator
 
@@ -120,17 +106,11 @@ class CRUDTests(unittest.TestCase):
         before_create_collections_count = len(collections)
         collection_id = 'test_collection_crud ' + str(uuid.uuid4())
         collection_indexing_policy = {'indexingMode': 'consistent'}
-        created_recorder = RecordDiagnostics()
         created_collection = created_db.create_container(id=collection_id,
                                                          indexing_policy=collection_indexing_policy,
                                                          partition_key=PartitionKey(path=["/pk1", "/pk2", "/pk3"],
-                                                                                    kind="MultiHash"),
-                                                         response_hook=created_recorder)
+                                                                                    kind="MultiHash"))
         self.assertEqual(collection_id, created_collection.id)
-        assert isinstance(created_recorder.headers, Mapping)
-        assert 'Content-Type' in created_recorder.headers
-        assert isinstance(created_recorder.body, Mapping)
-        assert 'id' in created_recorder.body
 
         created_properties = created_collection.read()
         self.assertEqual('consistent', created_properties['indexingPolicy']['indexingMode'])
@@ -204,6 +184,23 @@ class CRUDTests(unittest.TestCase):
 
         self.assertEqual(expected_offer.offer_throughput, offer_throughput)
 
+        # Negative test, check that user can't make a subpartition higher than 3 levels
+        collection_definition2 = {'id': 'test_partitioned_collection2 ' + str(uuid.uuid4()),
+                                 'partitionKey':
+                                     {
+                                         'paths': ['/id', '/pk', '/id2', "/pk2"],
+                                         'kind': documents.PartitionKind.MultiHash,
+                                         'version': 2
+                                     }
+                                 }
+        try:
+            created_collection = created_db.create_container(id=collection_definition['id'],
+                                                         partition_key=collection_definition2['partitionKey'],
+                                                         offer_throughput=offer_throughput)
+        except exceptions.CosmosHttpResponseError as error:
+            self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
+            self.assertTrue("Too many partition key paths" in error.message)
+
         created_db.delete_container(created_collection.id)
 
     def test_partitioned_collection_partition_key_extraction(self):
@@ -248,8 +245,10 @@ class CRUDTests(unittest.TestCase):
             created_document = created_collection2.create_item(document_definition)
             _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
             self.assertFalse(True, 'Operation Should Fail.')
-        except ValueError as error:
-            self.assertEqual(str(error), "Undefined Value in MultiHash PartitionKey.")
+        except exceptions.CosmosHttpResponseError as error:
+            self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
+            self.assertTrue("Partition key provided either doesn't correspond to definition in the collection"
+                            in error.message)
 
         created_db.delete_container(created_collection.id)
         created_db.delete_container(created_collection2.id)
@@ -314,7 +313,11 @@ class CRUDTests(unittest.TestCase):
     def test_partitioned_collection_document_crud_and_query(self):
         created_db = self.databaseForTest
 
-        created_collection = self.configs.create_multi_hash_multi_partition_collection_if_not_exist(self.client)
+        collection_id = 'test_partitioned_collection_partition_document_crud_and_query ' + str(uuid.uuid4())
+        created_collection = created_db.create_container(
+            id=collection_id,
+            partition_key=PartitionKey(path=['/city', '/zipcode'], kind=documents.PartitionKind.MultiHash)
+        )
 
         document_definition = {'id': 'document',
                                'key': 'value',
@@ -416,15 +419,16 @@ class CRUDTests(unittest.TestCase):
 
         try:
             created_collection.create_item(body=incomplete_document)
-            raise Exception("Test did not fail as expected.")
-        except ValueError as error:
-            self.assertTrue("Undefined Value in MultiHash PartitionKey." in
-                            str(error))
+            self.fail("Test did not fail as expected")
+        except exceptions.CosmosHttpResponseError as error:
+            self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
+            self.assertTrue("Partition key provided either doesn't correspond to definition in the collection"
+                            in error.message)
 
         # using incomplete partition key in read item
         try:
             created_collection.read_item(created_document, partition_key=["Redmond"])
-            raise Exception("Test did not fail as expected")
+            self.fail("Test did not fail as expected")
         except exceptions.CosmosHttpResponseError as error:
             self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
             self.assertTrue("Partition key provided either doesn't correspond to definition in the collection"
@@ -438,6 +442,128 @@ class CRUDTests(unittest.TestCase):
         created_mixed_type_doc = created_collection.create_item(body=doc_mixed_types)
         self.assertEqual(doc_mixed_types.get('city'), created_mixed_type_doc.get('city'))
         self.assertEqual(doc_mixed_types.get('zipcode'), created_mixed_type_doc.get('zipcode'))
+
+    def test_partitioned_collection_prefix_partition_query(self):
+        created_db = self.databaseForTest
+
+        collection_id = 'test_partitioned_collection_partition_key_prefix_query ' + str(uuid.uuid4())
+        created_collection = created_db.create_container(
+            id=collection_id,
+            partition_key=PartitionKey(path=['/state', '/city', '/zipcode'], kind=documents.PartitionKind.MultiHash)
+        )
+
+        item_values = [
+            ["CA", "Newbury Park", "91319"],
+            ["CA", "Oxnard", "93033"],
+            ["CA", "Oxnard", "93030"],
+            ["CA", "Oxnard", "93036"],
+            ["CA", "Thousand Oaks", "91358"],
+            ["CA", "Ventura", "93002"],
+            ["CA", "Ojai", "93023"],
+            ["CA", "Port Hueneme", "93041"],
+            ["WA", "Seattle", "98101"],
+            ["WA", "Bellevue", "98004"]
+        ]
+
+        document_definitions = [{'id': 'document1',
+                               'state': item_values[0][0],
+                               'city': item_values[0][1],
+                               'zipcode': item_values[0][2]
+                                 },
+                                {'id': 'document2',
+                                 'state': item_values[1][0],
+                                 'city': item_values[1][1],
+                                 'zipcode': item_values[1][2]
+                                 },
+                                {'id': 'document3',
+                                 'state': item_values[2][0],
+                                 'city': item_values[2][1],
+                                 'zipcode': item_values[2][2]
+                                 },
+                                {'id': 'document4',
+                                 'state': item_values[3][0],
+                                 'city': item_values[3][1],
+                                 'zipcode': item_values[3][2]
+                                 },
+                                {'id': 'document5',
+                                 'state': item_values[4][0],
+                                 'city': item_values[4][1],
+                                 'zipcode': item_values[4][2]
+                                 },
+                                {'id': 'document6',
+                                 'state': item_values[5][0],
+                                 'city': item_values[5][1],
+                                 'zipcode': item_values[5][2]
+                                 },
+                                {'id': 'document7',
+                                 'state': item_values[6][0],
+                                 'city': item_values[6][1],
+                                 'zipcode': item_values[6][2]
+                                 },
+                                {'id': 'document8',
+                                 'state': item_values[7][0],
+                                 'city': item_values[7][1],
+                                 'zipcode': item_values[7][2]
+                                 },
+                                {'id': 'document9',
+                                 'state': item_values[8][0],
+                                 'city': item_values[8][1],
+                                 'zipcode': item_values[8][2]
+                                 },
+                                {'id': 'document10',
+                                 'state': item_values[9][0],
+                                 'city': item_values[9][1],
+                                 'zipcode': item_values[9][2]
+                                 }
+                                ]
+        created_documents = []
+        for document_definition in document_definitions:
+            created_documents.append(created_collection.create_item(
+                body=document_definition))
+        self.assertEqual(len(created_documents), len(document_definitions))
+
+        # Query all documents should return all items
+        document_list = list(created_collection.query_items(query='Select * from c', enable_cross_partition_query=True))
+        self.assertEqual(len(document_list), len(document_definitions))
+
+        # Query all items with only CA for 1st level. Should return only 8 items instead of 10
+        document_list = list(created_collection.query_items(query='Select * from c', partition_key=['CA']))
+        self.assertEqual(8, len(document_list))
+
+        # Query all items with CA for 1st level and Oxnard for second level. Should only return 3 items
+        document_list = list(created_collection.query_items(query='Select * from c', partition_key=['CA', 'Oxnard']))
+        self.assertEqual(3, len(document_list))
+
+        # Query for specific zipcode using 1st level of partition key value only:
+        document_list = list(created_collection.query_items(query='Select * from c where c.zipcode = "93033"',
+                                                            partition_key=['CA']))
+        self.assertEqual(1, len(document_list))
+
+        # Query Should work with None values:
+        document_list = list(created_collection.query_items(query='Select * from c', partition_key=[None, '93033']))
+        self.assertEqual(0, len(document_list))
+
+        # Query Should Work with non string values
+        document_list = list(created_collection.query_items(query='Select * from c', partition_key=[0xFF, 0xFF]))
+        self.assertEqual(0, len(document_list))
+
+        document_list = list(created_collection.query_items(query='Select * from c', partition_key=[None, None]))
+        self.assertEqual(0, len(document_list))
+
+        document_list = list(created_collection.query_items(query='Select * from c', partition_key=["", ""]))
+        self.assertEqual(0, len(document_list))
+
+        document_list = list(created_collection.query_items(query='Select * from c', partition_key=[""]))
+        self.assertEqual(0, len(document_list))
+
+        # Negative Test, prefix query should not work if no partition is given (empty list is given)
+        try:
+            document_list = list(created_collection.query_items(query='Select * from c', partition_key=[]))
+            self.fail("Test did not fail as expected")
+        except exceptions.CosmosHttpResponseError as error:
+            self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
+            self.assertTrue("Cross partition query is required but disabled"
+                            in error.message)
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
         self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey]

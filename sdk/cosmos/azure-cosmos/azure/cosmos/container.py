@@ -35,7 +35,7 @@ from .exceptions import CosmosResourceNotFoundError
 from .http_constants import StatusCodes
 from .offer import ThroughputProperties
 from .scripts import ScriptsProxy
-from .partition_key import NonePartitionKeyValue
+from .partition_key import NonePartitionKeyValue, PartitionKey
 
 __all__ = ("ContainerProxy",)
 
@@ -390,7 +390,13 @@ class ContainerProxy(object):
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
         if partition_key is not None:
-            feed_options["partitionKey"] = self._set_partition_key(partition_key)
+            if self.__is_prefix_partitionkey(partition_key):
+                kwargs["isPrefixPartitionQuery"] = True
+                properties = self._get_properties()
+                kwargs["partitionKeyDefinition"] = properties["partitionKey"]
+                kwargs["partitionKeyDefinition"]["partition_key"] = partition_key
+            else:
+                feed_options["partitionKey"] = self._set_partition_key(partition_key)
         if enable_scan_in_query is not None:
             feed_options["enableScanInQuery"] = enable_scan_in_query
         max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
@@ -416,6 +422,16 @@ class ContainerProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, items)
         return items
+
+    def __is_prefix_partitionkey(self, partition_key: Union[str, list]):
+        properties = self._get_properties()
+        pkproperties = properties["partitionKey"]
+        partition_key_definition = PartitionKey(path=pkproperties["paths"], kind=pkproperties["kind"])
+        if partition_key_definition.kind != "MultiHash":
+            return False
+        if type(partition_key) == list and len(partition_key_definition['paths']) == len(partition_key):
+            return False
+        return True
 
     @distributed_trace
     def replace_item(

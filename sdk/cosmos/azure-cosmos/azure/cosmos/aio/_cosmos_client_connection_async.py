@@ -24,6 +24,7 @@
 
 """Document client class for the Azure Cosmos database service.
 """
+import json
 # https://github.com/PyCQA/pylint/issues/3112
 # Currently pylint is locked to 2.3.3 and this is fixed in 2.4.4
 from typing import Dict, Any, Optional, TypeVar  # pylint: disable=unused-import
@@ -44,6 +45,7 @@ from azure.core.pipeline.policies import (
 
 from .. import _base as base
 from .. import documents
+from .._routing import routing_range
 from ..documents import ConnectionPolicy
 from .. import _constants as constants
 from .. import http_constants
@@ -56,7 +58,7 @@ from .._routing.aio import routing_map_provider
 from ._retry_utility_async import _ConnectionRetryPolicy
 from .. import _session
 from .. import _utils
-from ..partition_key import _Undefined, _Empty
+from ..partition_key import _Undefined, _Empty, PartitionKey
 from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 
@@ -2349,6 +2351,47 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         # Query operations will use ReadEndpoint even though it uses POST(for regular query operations)
         request_params = _request_object.RequestObject(typ, documents._OperationType.SqlQuery)
         req_headers = base.GetHeaders(self, initial_headers, "post", path, id_, typ, options, partition_key_range_id)
+
+        # check if query has prefix partition key
+        cont_prop = kwargs.pop("containerProperties", None)
+        partition_key = req_headers.get(http_constants.HttpHeaders.PartitionKey)
+        isPrefixPartitionQuery = False
+        partition_key_definition = None
+        if cont_prop:
+            cont_prop = await cont_prop()
+            pk_properties = cont_prop["partitionKey"]
+            partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
+            if partition_key_definition.kind != "MultiHash":
+                isPrefixPartitionQuery = False
+            elif type(partition_key) == list and len(partition_key_definition['paths']) == len(partition_key):
+                isPrefixPartitionQuery = False
+            else:
+                isPrefixPartitionQuery = True
+
+        if isPrefixPartitionQuery:
+            # here get the overlap, then do one of two scenarios
+            req_headers.pop(http_constants.HttpHeaders.PartitionKey, None)
+            partition_key = json.loads(partition_key)
+            feedrangeEPK = partition_key_definition.get_epk_range_for_prefix_partition_key(partition_key)
+            over_lapping_ranges = await self._routing_map_provider.get_overlapping_ranges(id_, [feedrangeEPK])
+
+            if over_lapping_ranges:
+                # For epk range filtering we can end up in one of 2 cases:
+                # overlappingRanges.Count == 1
+                single_range = routing_range.Range.PartitionKeyRangeToRange(over_lapping_ranges[0])
+                if single_range.min == feedrangeEPK.min and single_range.max == feedrangeEPK.max:
+                    # 1 The EpkRange spans exactly one physical partition
+                    # In this case we can route to the physical pkrange id
+                    req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_ranges[0]["id"]
+                else:
+                    # 2) The EpkRange spans less than single physical partition
+                    # In this case we route to the physical partition and
+                    # pass the epk range headers to filter within partition
+                    req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_ranges[0]["id"]
+                    req_headers[http_constants.HttpHeaders.StartEpkString] = feedrangeEPK.min
+                    req_headers[http_constants.HttpHeaders.EndEpkString] = feedrangeEPK.max
+            req_headers[http_constants.HttpHeaders.ReadFeedKeyType] = "EffectivePartitionKeyRange"
+
         result, self.last_response_headers = await self.__Post(path, request_params, query, req_headers, **kwargs)
 
         if response_hook:
@@ -2527,7 +2570,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 # Navigates the document to retrieve the partitionKey specified in the paths
                 val = self._retrieve_partition_key(partition_key_parts, document, is_system_key)
                 if val is _Undefined:
-                    raise ValueError("Undefined Value in MultiHash PartitionKey.")
+                    break
                 ret.append(val)
             return ret
 
