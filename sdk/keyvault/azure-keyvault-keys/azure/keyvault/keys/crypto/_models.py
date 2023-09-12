@@ -68,10 +68,11 @@ class ManagedRsaKey(RSAPrivateKey):
             # Public algorithm property was only added in https://github.com/pyca/cryptography/pull/9582
             # _algorithm property has been available in every version of the OAEP class, so we use it as a backup
             try:
-                algorithm = OAEP_MAP.get(padding.algorithm)
+                algorithm = padding.algorithm
             except AttributeError:
-                algorithm = OAEP_MAP.get(padding._algorithm)
-            if algorithm is None:
+                algorithm = padding._algorithm
+            mapped_algorithm = OAEP_MAP.get(type(algorithm))
+            if mapped_algorithm is None:
                 raise ValueError(f"Unsupported algorithm: {algorithm.name}")
     
             # Public mgf property was added at the same time as algorithm
@@ -81,11 +82,11 @@ class ManagedRsaKey(RSAPrivateKey):
                 mgf = padding._mgf
             if not isinstance(mgf, MGF1):
                 raise ValueError(f"Unsupported MGF: {mgf}")
-        if isinstance(padding, PKCS1v15):
-            algorithm = EncryptionAlgorithm.rsa1_5
+        elif isinstance(padding, PKCS1v15):
+            mapped_algorithm = EncryptionAlgorithm.rsa1_5
         else:
             raise ValueError(f"Unsupported padding: {padding.name}")
-        result = self._crypto_client.decrypt(algorithm, ciphertext)
+        result = self._crypto_client.decrypt(mapped_algorithm, ciphertext)
         return result.plaintext
 
     @property
@@ -139,7 +140,7 @@ class ManagedRsaKey(RSAPrivateKey):
 
         # If PSS padding is requested, use the PSS equivalent algorithm
         if isinstance(padding, PSS):
-            mapped_algorithm = PSS_MAP.get(mapped_algorithm)
+            mapped_algorithm = PSS_MAP.get(type(mapped_algorithm))
 
             # Public mgf property was only added in https://github.com/pyca/cryptography/pull/9582
             # _mgf property has been available in every version of the PSS class, so we use it as a backup

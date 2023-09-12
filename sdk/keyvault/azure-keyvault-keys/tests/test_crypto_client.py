@@ -7,14 +7,12 @@ import hashlib
 import os
 import time
 from datetime import datetime, timezone
+from unittest import mock
 
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 
-try:
-    from unittest import mock
-except ImportError:
-    import mock
-
+from cryptography.hazmat.primitives.hashes import SHA1
+from cryptography.hazmat.primitives.asymmetric.padding import MGF1, OAEP
 import pytest
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -24,6 +22,7 @@ from azure.keyvault.keys.crypto import (
     CryptographyClient,
     EncryptionAlgorithm,
     KeyWrapAlgorithm,
+    ManagedRsaKey,
     SignatureAlgorithm,
 )
 from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
@@ -193,6 +192,28 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         assert result.key_id == imported_key.id
         assert EncryptionAlgorithm.rsa_oaep == result.algorithm
         assert self.plaintext == result.plaintext
+
+    @pytest.mark.parametrize("api_version,is_hsm", only_vault_latest)
+    @KeysClientPreparer()
+    @recorded_by_proxy
+    def test_encrypt_and_decrypt_with_managed_key(self, key_client, **kwargs):
+        set_bodiless_matcher()
+        key_name = self.get_resource_name("keycrypt")
+
+        imported_key = self._import_test_key(key_client, key_name)
+        crypto_client = self.create_crypto_client(imported_key.id, api_version=key_client.api_version)
+
+        result = crypto_client.encrypt(EncryptionAlgorithm.rsa_oaep, self.plaintext)
+        assert result.key_id == imported_key.id
+
+        # Create a ManagedRsaKey that can perform decryption with `cryptography`'s interface
+        managed_key = ManagedRsaKey(key_name=key_name, key_client=key_client)
+        # We used RSA-OAEP to encrypt, so we use MGF1 and SHA1 as inputs to OAEP to match during decryption
+        algorithm = SHA1()
+        mgf = MGF1(algorithm)
+        padding = OAEP(mgf, algorithm, None)
+        plaintext = managed_key.decrypt(ciphertext=result.ciphertext, padding=padding)
+        assert self.plaintext == plaintext
 
     @pytest.mark.parametrize("api_version,is_hsm", no_get)
     @KeysClientPreparer(permissions=NO_GET)
