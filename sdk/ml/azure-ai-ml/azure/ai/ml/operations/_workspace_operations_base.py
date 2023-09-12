@@ -164,6 +164,7 @@ class WorkspaceOperationsBase:
         real_callback = callback
         injected_callback = kwargs.get("cls", None)
         if injected_callback:
+            # pylint: disable=function-redefined
             def real_callback():
                 return injected_callback(callback())
 
@@ -174,7 +175,7 @@ class WorkspaceOperationsBase:
             CustomArmTemplateDeploymentPollingMethod(poller, arm_submit, real_callback),
         )
 
-    # pylint: too-many-statements
+    # pylint: disable=too-many-statements
     def begin_update(
         self,
         workspace: Workspace,
@@ -330,6 +331,7 @@ class WorkspaceOperationsBase:
         real_callback = callback
         injected_callback = kwargs.get("cls", None)
         if injected_callback:
+            # pylint: disable=function-redefined
             def real_callback(_, deserialized, args):
                 return injected_callback(callback(_, deserialized, args))
 
