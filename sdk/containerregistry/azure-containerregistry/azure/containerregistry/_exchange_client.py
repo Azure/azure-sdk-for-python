@@ -52,8 +52,8 @@ class ACRExchangeClient(object):
             **kwargs
         )
         self._credential = credential
-        self._refresh_token = None  # type: Optional[str]
-        self._expiration_time = 0  # type: float
+        self._refresh_token: Optional[str] = None
+        self._expiration_time: float = 0
 
     def get_acr_access_token(  # pylint:disable=client-method-missing-tracing-decorator
         self, challenge: str, **kwargs

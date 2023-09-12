@@ -11,7 +11,7 @@ from ._models import DigestValidationError
 
 
 class GetNext(Protocol):
-    def __call__(self, *args: Any, range_header: str) -> Iterator[bytes]:
+    def __call__(self, *args: Any, range_header: str) -> Iterator[bytes]:  # pyright: ignore
         pass
 
 
