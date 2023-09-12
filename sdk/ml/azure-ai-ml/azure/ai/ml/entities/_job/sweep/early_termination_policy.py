@@ -62,7 +62,6 @@ class BanditPolicy(EarlyTerminationPolicy):
 
     .. admonition:: Example:
 
-
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_bandit_policy]
             :end-before: [END configure_sweep_job_bandit_policy]
@@ -112,7 +111,6 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
 
     .. admonition:: Example:
 
-
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_median_stopping_policy]
             :end-before: [END configure_sweep_job_median_stopping_policy]
@@ -154,7 +152,6 @@ class TruncationSelectionPolicy(EarlyTerminationPolicy):
     :paramtype truncation_percentage: int
 
     .. admonition:: Example:
-
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_truncation_selection_policy]

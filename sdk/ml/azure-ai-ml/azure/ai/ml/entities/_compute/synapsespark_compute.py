@@ -30,7 +30,6 @@ class AutoScaleSettings:
 
     .. admonition:: Example:
 
-
         .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
 
             :start-after: [START synapse_spark_compute_configuration]
@@ -76,7 +75,6 @@ class AutoPauseSettings:
     :paramtype enabled: Optional[bool]
 
     .. admonition:: Example:
-
 
         .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START synapse_spark_compute_configuration]
@@ -132,7 +130,6 @@ class SynapseSparkCompute(Compute):
     :paramtype kwargs: Optional[dict]
 
     .. admonition:: Example:
-
 
         .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START synapse_spark_compute_configuration]

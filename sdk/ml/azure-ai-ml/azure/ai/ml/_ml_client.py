@@ -131,6 +131,7 @@ class MLClient:
 
     .. admonition:: Additional Note
        :class: note
+
        When using sovereign domains (i.e. any cloud other than AZURE_PUBLIC_CLOUD), you must pass in the cloud name in
        kwargs and you must use an authority with DefaultAzureCredential.
 
