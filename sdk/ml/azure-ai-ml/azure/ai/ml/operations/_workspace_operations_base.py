@@ -164,8 +164,8 @@ class WorkspaceOperationsBase:
         real_callback = callback
         injected_callback = kwargs.get("cls", None)
         if injected_callback:
-            # pylint: unnecessary-lambda-assignment
-            real_callback = lambda: injected_callback(callback())
+            def real_callback():
+                return injected_callback(callback())
 
         return LROPoller(
             self._operation._client,
