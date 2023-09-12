@@ -453,6 +453,9 @@ class TestFeatureStoreOperation:
 
         mock_feature_store_operation._operation.get.side_effect = outgoing_call
         mocker.patch("azure.ai.ml.operations._workspace_operations_base.delete_resource_by_arm_id", return_value=None)
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.get_generic_arm_resource_by_arm_id", return_value=None
+        )
         mock_feature_store_operation.begin_delete("randstr", delete_dependent_resources=True)
         mock_feature_store_operation._operation.begin_delete.assert_called_once()
 
