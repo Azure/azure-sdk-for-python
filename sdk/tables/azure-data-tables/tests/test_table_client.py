@@ -210,7 +210,7 @@ class TestTableClient(AzureRecordedTestCase, TableTestCase):
                 service_client.create_table_if_not_exists(table_name="TestInsert")
 
     def check_request_auth(self, pipeline_request):
-        assert f"/?{self.sas_token}" not in pipeline_request.http_request.url
+        assert self.sas_token not in pipeline_request.http_request.url
         assert pipeline_request.http_request.headers.get("Authorization") is not None
 
     @tables_decorator
