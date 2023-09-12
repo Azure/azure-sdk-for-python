@@ -22,7 +22,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert "test.trimmed" not in client
         assert "FeatureManagementFeatureFlags" in client
         assert "Alpha" in client["FeatureManagementFeatureFlags"]
-        
+
     # method: provider_trim_prefixes
     @recorded_by_proxy
     @app_config_decorator_aad
