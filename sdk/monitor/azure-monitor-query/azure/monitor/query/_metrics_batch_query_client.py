@@ -55,7 +55,7 @@ class MetricsBatchQueryClient:  # pylint: disable=client-accepts-api-version-key
         *,
         timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]] = None,
         granularity: Optional[timedelta] = None,
-        aggregations: Optional[List[str]] = None,
+        aggregations: Optional[Sequence[str]] = None,
         max_results: Optional[int] = None,
         order_by: Optional[str] = None,
         filter: Optional[str] = None,

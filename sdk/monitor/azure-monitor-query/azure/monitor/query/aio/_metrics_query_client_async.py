@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=anomalous-backslash-in-string
 from datetime import timedelta, datetime
-from typing import Any, cast, List, Optional, Tuple, Union
+from typing import Any, cast, Optional, Tuple, Union, Sequence
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials_async import AsyncTokenCredential
@@ -60,11 +60,11 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
     async def query_resource(
         self,
         resource_uri: str,
-        metric_names: List[str],
+        metric_names: Sequence[str],
         *,
         timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]] = None,
         granularity: Optional[timedelta] = None,
-        aggregations: Optional[List[str]] = None,
+        aggregations: Optional[Sequence[str]] = None,
         max_results: Optional[int] = None,
         order_by: Optional[str] = None,
         filter: Optional[str] = None,

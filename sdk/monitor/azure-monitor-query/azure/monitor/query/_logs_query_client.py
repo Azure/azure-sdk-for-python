@@ -74,7 +74,7 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
         server_timeout: Optional[int] = None,
         include_statistics: bool = False,
         include_visualization: bool = False,
-        additional_workspaces: Optional[List[str]] = None,
+        additional_workspaces: Optional[Sequence[str]] = None,
         **kwargs: Any,
     ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
         """Execute a Kusto query.
@@ -191,7 +191,7 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
         server_timeout: Optional[int] = None,
         include_statistics: bool = False,
         include_visualization: bool = False,
-        additional_workspaces: Optional[List[str]] = None,
+        additional_workspaces: Optional[Sequence[str]] = None,
         **kwargs: Any,
     ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
         """Execute a Kusto query on a resource.
