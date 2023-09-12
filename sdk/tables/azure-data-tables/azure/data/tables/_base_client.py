@@ -201,7 +201,7 @@ class TablesBaseClient(AccountHostsMixin):
     :ivar str account_name: The name of the Tables account.
     :ivar str scheme: The scheme component in the full URL to the Tables account.
     :ivar str url: The storage endpoint.
-    :ivar str api_version: The service API version.
+    :ivar Optional[str] api_version: The service API version.
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
