@@ -3,7 +3,6 @@ from typing import Callable
 from unittest.mock import Mock
 
 import pytest
-import vcr
 from azure.identity import DefaultAzureCredential
 from pytest_mock import MockFixture
 
