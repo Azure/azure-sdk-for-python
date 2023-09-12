@@ -29,7 +29,7 @@ extend_skip_glob = [
 
 [tool.mypy] 
 exclude = [
-  "^(?!azure/ai/ml/entities).*",
+  "^(?!azure/ai/ml/entities/**/*.py).*",
 ]
 disallow_untyped_defs = true 
 warn_unused_ignores = true 
