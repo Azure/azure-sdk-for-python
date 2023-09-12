@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Union, Any, Dict, List, Optional
+from typing import Union, Any, Dict, List, Optional, MutableMapping
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureKeyCredential
@@ -139,7 +139,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         return SearchIndex._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def get_index_statistics(self, index_name: str, **kwargs: Any) -> Dict:
+    async def get_index_statistics(self, index_name: str, **kwargs: Any) -> MutableMapping[str, Any]:
         """Returns statistics for the given index, including a document count
         and storage usage.
 
@@ -179,7 +179,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         )
         kwargs.update(access_condition)
         try:
-            index_name = index.name
+            index_name = index.name  # type: ignore
         except AttributeError:
             index_name = index
         await self._client.indexes.delete(index_name=index_name, error_map=error_map, **kwargs)
@@ -206,7 +206,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         patched_index = index._to_generated()  # pylint:disable=protected-access
         result = await self._client.indexes.create(patched_index, **kwargs)
-        return result
+        return SearchIndex._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def create_or_update_index(
@@ -258,7 +258,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
             error_map=error_map,
             **kwargs
         )
-        return result
+        return SearchIndex._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def analyze_text(self, index_name: str, analyze_request: AnalyzeTextOptions, **kwargs: Any) -> AnalyzeResult:
@@ -389,7 +389,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         error_map, access_condition = get_access_conditions(synonym_map, match_condition)
         kwargs.update(access_condition)
         try:
-            name = synonym_map.name
+            name = synonym_map.name  # type: ignore
         except AttributeError:
             name = synonym_map
         await self._client.synonym_maps.delete(synonym_map_name=name, error_map=error_map, **kwargs)
@@ -450,7 +450,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         return SynonymMap._from_generated(result)  # pylint:disable=protected-access
 
     @distributed_trace_async
-    async def get_service_statistics(self, **kwargs) -> Dict:
+    async def get_service_statistics(self, **kwargs) -> MutableMapping[str, Any]:
         """Get service level statistics for a search service.
 
         :return: Service statistics result
@@ -534,7 +534,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
         error_map, access_condition = get_access_conditions(alias, match_condition)
         kwargs.update(access_condition)
         try:
-            alias_name = alias.name
+            alias_name = alias.name  # type: ignore
         except AttributeError:
             alias_name = alias
         await self._client.aliases.delete(alias_name=alias_name, error_map=error_map, **kwargs)

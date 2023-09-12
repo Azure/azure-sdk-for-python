@@ -214,7 +214,7 @@ class SearchField(_serialization.Model):
         self.vector_search_dimensions = kwargs.get("vector_search_dimensions", None)
         self.vector_search_configuration = kwargs.get("vector_search_configuration", None)
 
-    def _to_generated(self):
+    def _to_generated(self) -> _SearchField:
         fields = [pack_search_field(x) for x in self.fields] if self.fields else None
         retrievable = not self.hidden if self.hidden is not None else None
         return _SearchField(
@@ -579,7 +579,7 @@ class SearchIndex(_serialization.Model):
         self.vector_search = kwargs.get("vector_search", None)
         self.e_tag = kwargs.get("e_tag", None)
 
-    def _to_generated(self):
+    def _to_generated(self) -> _SearchIndex:
         if self.analyzers:
             analyzers = [pack_analyzer(x) for x in self.analyzers]  # type: ignore  # mypy: ignore
         else:
@@ -616,7 +616,7 @@ class SearchIndex(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, search_index):
+    def _from_generated(cls, search_index) -> "SearchIndex":
         if not search_index:
             return None
         if search_index.analyzers:

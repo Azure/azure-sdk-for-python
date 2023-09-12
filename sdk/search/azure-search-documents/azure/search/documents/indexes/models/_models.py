@@ -83,7 +83,7 @@ class SearchIndexerSkillset(_SearchIndexerSkillset):
         )
 
     @classmethod
-    def _from_generated(cls, skillset):
+    def _from_generated(cls, skillset) -> "SearchIndexerSkillset":
         custom_skills = []
         for skill in skillset.skills:
             skill_cls = type(skill)
@@ -759,7 +759,7 @@ class SynonymMap(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, synonym_map):
+    def _from_generated(cls, synonym_map) -> "SynonymMap":
         if not synonym_map:
             return None
         return cls(
@@ -870,7 +870,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, search_indexer_data_source):
+    def _from_generated(cls, search_indexer_data_source) -> "SearchIndexerDataSourceConnection":
         if not search_indexer_data_source:
             return None
         connection_string = (

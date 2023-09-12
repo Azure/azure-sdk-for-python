@@ -115,7 +115,7 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
         return continuation_token, results
 
     @_ensure_response
-    async def get_facets(self):
+    async def get_facets(self) -> Optional[Dict]:
         self.continuation_token = None
         facets = self._response.facets
         if facets is not None and self._facets is None:
@@ -123,16 +123,16 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
         return self._facets
 
     @_ensure_response
-    async def get_coverage(self):
+    async def get_coverage(self) -> float:
         self.continuation_token = None
         return self._response.coverage
 
     @_ensure_response
-    async def get_count(self):
+    async def get_count(self) -> int:
         self.continuation_token = None
         return self._response.count
 
     @_ensure_response
-    async def get_answers(self):
+    async def get_answers(self) -> Optional[List[AnswerResult]]:
         self.continuation_token = None
         return self._response.answers
