@@ -12,8 +12,8 @@ from azure.ai.ml._schema._feature_set.feature_window_schema import FeatureWindow
 
 
 class FeatureSetBackfillSchema(YamlFileSchema):
-    name = fields.Str()
-    version = fields.Str()
+    name = fields.Str(required=True)
+    version = fields.Str(required=True)
     feature_window = NestedField(FeatureWindowSchema)
     description = fields.Str()
     tags = fields.Dict()
