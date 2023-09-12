@@ -116,6 +116,7 @@ class AccessKeyConfigurationSchema(metaclass=PatchedSchemaMeta):
         data.pop("type")
         return AccessKeyConfiguration(**data)
 
+
 class ApiKeyConfigurationSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(
         allowed_values=ConnectionAuthType.API_KEY,
