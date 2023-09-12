@@ -402,7 +402,10 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                     )
                     feature_store_settings.offline_store_connection_name = offline_store_connection_name_new
                 else:
-                    module_logger.info("No need to update Offline store connection, name: %s.\n", feature_store_settings.offline_store_connection_name)
+                    module_logger.info(
+                        "No need to update Offline store connection, name: %s.\n",
+                        feature_store_settings.offline_store_connection_name,
+                    )
             else:
                 raise ValidationError("Materialization identity is required to setup offline store connection")
 
@@ -425,7 +428,10 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
                     )
                     feature_store_settings.online_store_connection_name = online_store_connection_name_new
                 else:
-                    module_logger.info("No need to update Online store connection, name: %s.\n", feature_store_settings.online_store_connection_name)
+                    module_logger.info(
+                        "No need to update Online store connection, name: %s.\n",
+                        feature_store_settings.online_store_connection_name,
+                    )
             else:
                 raise ValidationError("Materialization identity is required to setup online store connection")
 
