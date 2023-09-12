@@ -2,7 +2,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from ._models import DecryptResult, EncryptResult, ManagedRsaKey, SignResult, WrapResult, VerifyResult, UnwrapResult
+from ._models import (
+    DecryptResult,
+    EncryptResult,
+    KeyVaultRSAPrivateKey,
+    SignResult,
+    WrapResult,
+    VerifyResult,
+    UnwrapResult,
+)
 from ._enums import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 from ._client import CryptographyClient
 
@@ -12,8 +20,8 @@ __all__ = [
     "DecryptResult",
     "EncryptionAlgorithm",
     "EncryptResult",
+    "KeyVaultRSAPrivateKey",
     "KeyWrapAlgorithm",
-    "ManagedRsaKey",
     "SignatureAlgorithm",
     "SignResult",
     "WrapResult",

@@ -39,7 +39,7 @@ PSS_MAP = {
 }
 
 
-class ManagedRsaKey(RSAPrivateKey):
+class KeyVaultRSAPrivateKey(RSAPrivateKey):
     """An `RSAPrivateKey` implementation based on a key managed by Key Vault.
 
     :param str key_name: The name of the key vault key to use.

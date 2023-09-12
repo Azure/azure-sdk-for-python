@@ -21,8 +21,8 @@ from azure.keyvault.keys import JsonWebKey, KeyCurveName, KeyOperation, KeyVault
 from azure.keyvault.keys.crypto import (
     CryptographyClient,
     EncryptionAlgorithm,
+    KeyVaultRSAPrivateKey,
     KeyWrapAlgorithm,
-    ManagedRsaKey,
     SignatureAlgorithm,
 )
 from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
@@ -206,8 +206,8 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         result = crypto_client.encrypt(EncryptionAlgorithm.rsa_oaep, self.plaintext)
         assert result.key_id == imported_key.id
 
-        # Create a ManagedRsaKey that can perform decryption with `cryptography`'s interface
-        managed_key = ManagedRsaKey(key_name=key_name, key_client=key_client)
+        # Create a KeyVaultRSAPrivateKey that can perform decryption with `cryptography`'s interface
+        managed_key = KeyVaultRSAPrivateKey(key_name=key_name, key_client=key_client)
         # We used RSA-OAEP to encrypt, so we use MGF1 and SHA1 as inputs to OAEP to match during decryption
         algorithm = SHA1()
         mgf = MGF1(algorithm)
