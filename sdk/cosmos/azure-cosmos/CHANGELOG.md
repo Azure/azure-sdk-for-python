@@ -1,10 +1,6 @@
 ## Release History
 
-### 4.5.1 (Unreleased)
-
-#### Features Added
-
-#### Breaking Changes
+### 4.5.1 (2023-09-12)
 
 #### Bugs Fixed
 * Fixed bug when query with DISTINCT + OFFSET/LIMIT operators returns unexpected result. See [PR 31925](https://github.com/Azure/azure-sdk-for-python/pull/31925).
