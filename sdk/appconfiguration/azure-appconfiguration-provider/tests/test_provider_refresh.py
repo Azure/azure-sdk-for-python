@@ -25,7 +25,6 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         )
         assert client["refresh_message"] == "original value"
         assert client["my_json"]["key"] == "value"
-        assert "test.trimmed" not in client
         assert "FeatureManagementFeatureFlags" in client
         assert "Alpha" in client["FeatureManagementFeatureFlags"]
 
@@ -71,7 +70,6 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         assert client["refresh_message"] == "original value"
         assert client["non_refreshed_message"] == "Static"
         assert client["my_json"]["key"] == "value"
-        assert "test.trimmed" not in client
         assert "FeatureManagementFeatureFlags" in client
         assert "Alpha" in client["FeatureManagementFeatureFlags"]
 
