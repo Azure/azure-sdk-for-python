@@ -12,3 +12,5 @@ extends:
       Public:
         SubscriptionConfiguration: $(python-ml-pipeline-sub-scope)
         Location: eastus2euap
+        MatrixReplace:
+          - TestSamples=.*/true
