@@ -568,10 +568,11 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
                 self.encryption_version,
                 kwargs)
 
-        self._config.message_decode_policy.configure(
+        self.message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
-            resolver=self.key_resolver_function)
+            resolver=self.key_resolver_function
+        )
         try:
             message = await self._client.messages.dequeue(
                 number_of_messages=1,
@@ -643,7 +644,6 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
                 :caption: Receive messages from the queue.
         """
         timeout = kwargs.pop('timeout', None)
-        max_messages = kwargs.pop('max_messages', None)
         if self.key_encryption_key or self.key_resolver_function:
             modify_user_agent_for_encryption(
                 self._config.user_agent_policy.user_agent,
@@ -651,7 +651,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
                 self.encryption_version,
                 kwargs)
 
-        self._config.message_decode_policy.configure(
+        self.message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             resolver=self.key_resolver_function
@@ -856,7 +856,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
                 self.encryption_version,
                 kwargs)
 
-        self._config.message_decode_policy.configure(
+        self.message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             resolver=self.key_resolver_function

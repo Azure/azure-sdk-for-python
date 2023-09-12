@@ -312,12 +312,12 @@ class AccessPolicy(GenAccessPolicy):
         be UTC.
     """
 
-    permission: Optional[QueueSasPermissions] = None
+    permission: Optional[QueueSasPermissions] = None  # type: ignore [assignment]
     """The permissions associated with the shared access signature. The user is restricted to
         operations allowed by the permissions."""
-    expiry: Optional[Union["datetime", str]] = None
+    expiry: Optional[Union["datetime", str]] = None  # type: ignore [assignment]
     """The time at which the shared access signature becomes invalid."""
-    start: Optional[Union["datetime", str]] = None
+    start: Optional[Union["datetime", str]] = None  # type: ignore [assignment]
     """The time at which the shared access signature becomes valid."""
 
     def __init__(
@@ -338,11 +338,11 @@ class QueueMessage(DictMixin):
         identifies the message in the queue. This value may be used together
         with the value of pop_receipt to delete a message from the queue after
         it has been retrieved with the receive messages operation."""
-    inserted_on: "datetime"
+    inserted_on: Optional["datetime"]
     """A UTC date value representing the time the messages was inserted."""
-    expires_on: "datetime"
+    expires_on: Optional["datetime"]
     """A UTC date value representing the time the message expires."""
-    dequeue_count: int
+    dequeue_count: Optional[int]
     """Begins with a value of 1 the first time the message is received. This
         value is incremented each time the message is subsequently received."""
     content: Any
@@ -358,6 +358,7 @@ class QueueMessage(DictMixin):
         Only returned by receive messages operations. Set to None for peek messages."""
 
     def __init__(self, content: Any = None) -> None:
+        self.id = None  # type: ignore [assignment]
         self.content = content
         self.pop_receipt = None
         self.next_visible_on = None

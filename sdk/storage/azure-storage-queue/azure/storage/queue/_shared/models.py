@@ -556,7 +556,6 @@ class StorageConfiguration(Configuration):
     max_chunk_get_size: int
     max_range_size: int
     user_agent_policy: UserAgentPolicy
-    message_decode_policy: MessageDecodePolicy
 
     def __init__(self, **kwargs):
         super(StorageConfiguration, self).__init__(**kwargs)
@@ -570,4 +569,3 @@ class StorageConfiguration(Configuration):
         self.max_single_get_size = 32 * 1024 * 1024
         self.max_chunk_get_size = 4 * 1024 * 1024
         self.max_range_size = 4 * 1024 * 1024
-        self.message_decode_policy = NoDecodePolicy()

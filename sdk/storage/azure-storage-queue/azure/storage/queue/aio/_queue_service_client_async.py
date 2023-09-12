@@ -35,8 +35,7 @@ from .._shared.response_handlers import process_storage_error
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from .._generated.models import CorsRule
-    from .._models import Metrics, QueueAnalyticsLogging
+    from .._models import CorsRule, Metrics, QueueAnalyticsLogging
 
 
 class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # type: ignore [misc]  # pylint: disable=line-too-long
@@ -144,7 +143,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
             conn_str, credential, 'queue')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
-        return cls(account_url, credential=credential, **kwargs)  #type: ignore [arg-type]
+        return cls(account_url, credential=credential, **kwargs)  # type: ignore [arg-type]
 
     @distributed_trace_async
     async def get_service_stats(self, **kwargs: Any) -> Dict[str, Any]:
@@ -235,7 +234,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
             You can include up to five CorsRule elements in the
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
-        :type cors: Optional[list(~azure.storage.queue.CorsRule)]
+        :type cors: Optional[List(~azure.storage.queue.CorsRule)]
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
 
@@ -253,7 +252,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=cors
+            cors=cors  # type: ignore [arg-type]
         )
         try:
             await self._client.service.set_properties(props, timeout=timeout, **kwargs)

@@ -238,7 +238,6 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :type cors: Optional[List[~azure.storage.queue.CorsRule]]
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: None
 
         .. admonition:: Example:
 
@@ -254,7 +253,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=cors
+            cors=cors  # type: ignore [arg-type]
         )
         try:
             self._client.service.set_properties(props, timeout=timeout, **kwargs)
