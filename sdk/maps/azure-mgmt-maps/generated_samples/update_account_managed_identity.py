@@ -14,7 +14,7 @@ from azure.mgmt.maps import AzureMapsManagementClient
     pip install azure-identity
     pip install azure-mgmt-maps
 # USAGE
-    python delete_creator_resource.py
+    python update_account_managed_identity.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,31 @@ def main():
         subscription_id="21a9967a-e8a9-4656-a70b-96ff1c4d05a0",
     )
 
-    response = client.creators.delete(
+    response = client.accounts.update(
         resource_group_name="myResourceGroup",
         account_name="myMapsAccount",
-        creator_name="myCreator",
+        maps_account_update_parameters={
+            "identity": {
+                "type": "SystemAssigned, UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/21a9967a-e8a9-4656-a70b-96ff1c4d05a0/resourceGroups/myResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identityName": {}
+                },
+            },
+            "kind": "Gen2",
+            "properties": {
+                "linkedResources": [
+                    {
+                        "id": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/accounts/{storageName}",
+                        "uniqueName": "myBatchStorageAccount",
+                    }
+                ]
+            },
+            "sku": {"name": "G2"},
+        },
     )
     print(response)
 
 
-# x-ms-original-file: specification/maps/resource-manager/Microsoft.Maps/preview/2021-12-01-preview/examples/DeleteMapsCreator.json
+# x-ms-original-file: specification/maps/resource-manager/Microsoft.Maps/stable/2023-06-01/examples/UpdateAccountManagedIdentity.json
 if __name__ == "__main__":
     main()
