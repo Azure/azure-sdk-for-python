@@ -14,7 +14,7 @@ from azure.mgmt.maps import AzureMapsManagementClient
     pip install azure-identity
     pip install azure-mgmt-maps
 # USAGE
-    python list_accounts_by_resource_group.py
+    python update_account_gen1.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,14 @@ def main():
         subscription_id="21a9967a-e8a9-4656-a70b-96ff1c4d05a0",
     )
 
-    response = client.accounts.list_by_resource_group(
+    response = client.accounts.update(
         resource_group_name="myResourceGroup",
+        account_name="myMapsAccount",
+        maps_account_update_parameters={"kind": "Gen1", "sku": {"name": "S1"}},
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: specification/maps/resource-manager/Microsoft.Maps/stable/2023-06-01/examples/ListAccountsByResourceGroup.json
+# x-ms-original-file: specification/maps/resource-manager/Microsoft.Maps/stable/2023-06-01/examples/UpdateAccountGen1.json
 if __name__ == "__main__":
     main()
