@@ -146,7 +146,7 @@ class CodegenTestPR:
     def target_release_date(self) -> str:
         try:
             if self.target_date:
-                return (datetime.fromisoformat(self.target_date) + timedelta(days=-7)).strftime("%Y-%m-%d")
+                return (datetime.fromisoformat(self.target_date) + timedelta(days=-4)).strftime("%Y-%m-%d")
         except:
             log(f'Invalid target date: {self.target_date}')
         return current_time()
