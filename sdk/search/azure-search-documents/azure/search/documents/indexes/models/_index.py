@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from .._generated import _serialization
 from ._edm import Collection, ComplexType, String
@@ -616,7 +616,7 @@ class SearchIndex(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, search_index) -> "SearchIndex":
+    def _from_generated(cls, search_index) -> Optional["SearchIndex"]:
         if not search_index:
             return None
         if search_index.analyzers:
