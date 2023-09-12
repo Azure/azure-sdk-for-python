@@ -6,7 +6,7 @@ from typing import cast, Optional, Union, TYPE_CHECKING
 
 from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.asymmetric import utils as asym_utils
-from cryptography.hazmat.primitives.asymmetric.padding import AsymmetricPadding, OAEP, PKCS1v15, PSS
+from cryptography.hazmat.primitives.asymmetric.padding import AsymmetricPadding, OAEP, PKCS1v15, PSS, MGF1
 from cryptography.hazmat.primitives.asymmetric.rsa import (
     RSAPrivateKey,
     RSAPrivateNumbers,
@@ -17,6 +17,7 @@ from cryptography.hazmat.primitives.asymmetric.rsa import (
 from ._enums import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 
 if TYPE_CHECKING:
+    # Import clients only during TYPE_CHECKING to avoid circular dependency
     from ._client import CryptographyClient
     from .._client import KeyClient
 
@@ -25,6 +26,10 @@ SIGN_ALGORITHM_MAP = {
     hashes.SHA256: SignatureAlgorithm.rs256,
     hashes.SHA384: SignatureAlgorithm.rs384,
     hashes.SHA512: SignatureAlgorithm.rs512,
+}
+OAEP_MAP = {
+    hashes.SHA1: EncryptionAlgorithm.rsa_oaep,
+    hashes.SHA256: EncryptionAlgorithm.rsa_oaep_256
 }
 PSS_MAP = {
     SignatureAlgorithm.rs256: SignatureAlgorithm.ps256,
@@ -50,17 +55,31 @@ class KeyVaultManagedKey(RSAPrivateKey):
         """Decrypts the provided ciphertext.
 
         :param bytes ciphertext: Encrypted bytes to decrypt.
-        :param padding: The padding to use. Supported paddings are `OAEP` and `PKCS1v15`. For `OAEP` padding, `SHA256`
-            will be used as the encryption algorithm and MGF1 will be used as the mask generation function.
-            See https://learn.microsoft.com/azure/key-vault/keys/about-keys-details for details.
+        :param padding: The padding to use. Supported paddings are `OAEP` and `PKCS1v15`. For `OAEP` padding, supported
+            hash algorithms are `SHA1` and `SHA256`. The only supported mask generation function is `MGF1`. See
+            https://learn.microsoft.com/azure/key-vault/keys/about-keys-details for details.
         :type padding: AsymmetricPadding
 
         :returns: The decrypted plaintext, as bytes.
         :rtype: bytes
         """
         if isinstance(padding, OAEP):
-            # There's no public algorithm attribute attached to an OAEP padding instance, so we default to SHA256
-            algorithm = EncryptionAlgorithm.rsa_oaep_256
+            # Public algorithm property was only added in https://github.com/pyca/cryptography/pull/9582
+            # _algorithm property has been available in every version of the OAEP class, so we use it as a backup
+            try:
+                algorithm = OAEP_MAP.get(padding.algorithm)
+            except AttributeError:
+                algorithm = OAEP_MAP.get(padding._algorithm)
+            if algorithm is None:
+                raise ValueError(f"Unsupported algorithm: {algorithm.name}")
+    
+            # Public mgf property was added at the same time as algorithm
+            try:
+                mgf = padding.mgf
+            except AttributeError:
+                mgf = padding._mgf
+            if not isinstance(mgf, MGF1):
+                raise ValueError(f"Unsupported MGF: {mgf}")
         if isinstance(padding, PKCS1v15):
             algorithm = EncryptionAlgorithm.rsa1_5
         else:
@@ -99,9 +118,9 @@ class KeyVaultManagedKey(RSAPrivateKey):
         """Signs the data.
 
         :param bytes data: The data to sign, as bytes.
-        :param padding: The padding to use. Supported paddings are `PKCS1v15` and `PSS`. If `PSS` is given, the
-            operation will use RSASSA-PSS using SHA-x and MGF1 with SHA-x, where "x" is determined by the `algorithm`
-            provided. See https://learn.microsoft.com/azure/key-vault/keys/about-keys-details for details.
+        :param padding: The padding to use. Supported paddings are `PKCS1v15` and `PSS`. For `PSS`, the only supported
+            mask generation function is `MGF1`. See https://learn.microsoft.com/azure/key-vault/keys/about-keys-details
+            for details.
         :type padding: AsymmetricPadding
         :param algorithm: The algorithm to sign with. Only `HashAlgorithm`s are supported -- specifically, `SHA256`,
             `SHA384`, and `SHA512`.
@@ -116,9 +135,20 @@ class KeyVaultManagedKey(RSAPrivateKey):
         mapped_algorithm = SIGN_ALGORITHM_MAP.get(type(algorithm))
         if mapped_algorithm is None:
             raise ValueError(f"Unsupported algorithm: {algorithm.name}")
+
         # If PSS padding is requested, use the PSS equivalent algorithm
         if isinstance(padding, PSS):
             mapped_algorithm = PSS_MAP.get(mapped_algorithm)
+
+            # Public mgf property was only added in https://github.com/pyca/cryptography/pull/9582
+            # _mgf property has been available in every version of the PSS class, so we use it as a backup
+            try:
+                mgf = padding.mgf
+            except AttributeError:
+                mgf = padding._mgf
+            if not isinstance(mgf, MGF1):
+                raise ValueError(f"Unsupported MGF: {mgf}")
+
         # The only other padding accepted is PKCS1v15
         elif not isinstance(padding, PKCS1v15):
             raise ValueError(f"Unsupported padding: {padding.name}")
