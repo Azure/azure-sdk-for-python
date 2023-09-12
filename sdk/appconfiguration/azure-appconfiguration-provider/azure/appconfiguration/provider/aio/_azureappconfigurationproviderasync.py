@@ -259,11 +259,11 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             logging.debug("Refresh called but no refresh options set.")
             return
 
-        if not self._refresh_timer.needs_refresh():
-            logging.debug("Refresh called but refresh interval not elapsed.")
-            return
         try:
             async with self._update_lock:
+                if not self._refresh_timer.needs_refresh():
+                    logging.debug("Refresh called but refresh interval not elapsed.")
+                    return
                 for (key, label), etag in self._refresh_on.items():
                     updated_sentinel = await self._client.get_configuration_setting(
                         key=key, label=label, etag=etag, match_condition=MatchConditions.IfModified, **kwargs
@@ -331,9 +331,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             return trimmed_key[len(FEATURE_FLAG_PREFIX) :]
         return trimmed_key
 
-    def _process_key_value(self, config):
+    async def _process_key_value(self, config):
         if isinstance(config, SecretReferenceConfigurationSetting):
-            return _resolve_keyvault_reference(config, self)
+            return await _resolve_keyvault_reference(config, self)
         if _is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
             # Feature flags are of type json, but don't treat them as such
             try:
