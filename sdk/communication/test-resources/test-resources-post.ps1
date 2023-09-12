@@ -25,6 +25,13 @@ function Log($Message) {
 
 Log 'Starting sdk\communication\test-resources\test-resources-post.ps1'
 
+if($DeploymentOutputs.ContainsKey('COMMUNICATION_SERVICE_ENDPOINT')){
+    Write-Host "COMMUNICATION_SERVICE_ENDPOINT exists, proceeding."
+}else{
+    Write-Host "COMMUNICATION_SERVICE_ENDPOINT does not exist, ending"
+	exit
+}
+
 $communicationServiceEndpoint = $DeploymentOutputs["COMMUNICATION_SERVICE_ENDPOINT"]
 
 if ($communicationServiceEndpoint -notmatch '\/$') {
@@ -32,8 +39,22 @@ if ($communicationServiceEndpoint -notmatch '\/$') {
   $communicationServiceEndpoint = $communicationServiceEndpoint + "/"
 }
 
+if($DeploymentOutputs.ContainsKey('COMMUNICATION_SERVICE_ACCESS_KEY')){
+    Write-Host "COMMUNICATION_SERVICE_ACCESS_KEY exists, proceeding."
+}else{
+    Write-Host "COMMUNICATION_SERVICE_ACCESS_KEY does not exist, ending"
+	exit
+}
+
 $communicationServiceApiKey = $DeploymentOutputs["COMMUNICATION_SERVICE_ACCESS_KEY"]
 $testDomain = $DeploymentOutputs["AZURE_TEST_DOMAIN"]
+
+if($DeploymentOutputs.ContainsKey('AZURE_TEST_DOMAIN')){
+    Write-Host "AZURE_TEST_DOMAIN exists, proceeding."
+}else{
+    Write-Host "AZURE_TEST_DOMAIN does not exist, ending"
+	exit
+}
 
 $payload = @"
 {"domains": { "$testDomain": {"enabled": true}},"trunks": null,"routes": null}
@@ -49,9 +70,7 @@ $hostAndPort = $endpointParsedUri.Host
 $apiVersion = "2023-04-01-preview"
 $urlPathAndQuery = $communicationServiceEndpoint + "sip?api-version=$apiVersion"
 $stringToSign = "PATCH`n/sip?api-version=$apiVersion`n$utcNow;$hostAndPort;$contentHashBase64String"
-/* cspell:disable */
 $hasher = New-Object System.Security.Cryptography.HMACSHA256
-/* cspell:enable */
 $hasher.key = [System.Convert]::FromBase64String($communicationServiceApiKey)
 $signatureBytes = $hasher.ComputeHash([Text.Encoding]::ASCII.GetBytes($stringToSign))
 $requestSignatureBase64String = [Convert]::ToBase64String($signatureBytes)
