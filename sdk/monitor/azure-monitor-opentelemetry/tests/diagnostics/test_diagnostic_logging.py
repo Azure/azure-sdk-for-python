@@ -12,7 +12,7 @@ from pathlib import Path
 from unittest import TestCase
 from unittest.mock import patch
 
-import azure.monitor.opentelemetry.diagnostics._diagnostic_logging as diagnostic_logger
+import azure.monitor.opentelemetry._diagnostics.diagnostic_logging as diagnostic_logger
 
 TEST_LOGGER_PATH = str(Path.home())
 TEST_DIAGNOSTIC_LOGGER_FILE_NAME_TEMPLATE = "test-applicationinsights-extension-%s.log"
@@ -95,27 +95,27 @@ def set_up(
     reload(diagnostic_logger)
     assert not diagnostic_logger.AzureDiagnosticLogging._initialized
     patch(
-        "azure.monitor.opentelemetry.diagnostics._diagnostic_logging._DIAGNOSTIC_LOG_PATH",
+        "azure.monitor.opentelemetry._diagnostics.diagnostic_logging._DIAGNOSTIC_LOG_PATH",
         TEST_LOGGER_PATH,
     ).start()
     patch(
-        "azure.monitor.opentelemetry.diagnostics._diagnostic_logging._DIAGNOSTIC_LOGGER_FILE_NAME",
+        "azure.monitor.opentelemetry._diagnostics.diagnostic_logging._DIAGNOSTIC_LOGGER_FILE_NAME",
         get_test_file_name(test_id),
     ).start()
     patch(
-        "azure.monitor.opentelemetry.diagnostics._diagnostic_logging._get_customer_ikey_from_env_var",
+        "azure.monitor.opentelemetry._diagnostics.diagnostic_logging._get_customer_ikey_from_env_var",
         return_value=TEST_CUSTOMER_IKEY,
     ).start()
     patch(
-        "azure.monitor.opentelemetry.diagnostics._diagnostic_logging._EXTENSION_VERSION",
+        "azure.monitor.opentelemetry._diagnostics.diagnostic_logging._EXTENSION_VERSION",
         TEST_EXTENSION_VERSION,
     ).start()
     patch(
-        "azure.monitor.opentelemetry.diagnostics._diagnostic_logging.VERSION",
+        "azure.monitor.opentelemetry._diagnostics.diagnostic_logging.VERSION",
         TEST_VERSION,
     ).start()
     patch(
-        "azure.monitor.opentelemetry.diagnostics._diagnostic_logging._IS_DIAGNOSTICS_ENABLED",
+        "azure.monitor.opentelemetry._diagnostics.diagnostic_logging._IS_DIAGNOSTICS_ENABLED",
         is_diagnostics_enabled,
     ).start()
     diagnostic_logger.AzureDiagnosticLogging.enable(logger)

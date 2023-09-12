@@ -10,7 +10,7 @@ from pathlib import Path
 from unittest import TestCase
 from unittest.mock import patch
 
-from azure.monitor.opentelemetry.diagnostics._status_logger import (
+from azure.monitor.opentelemetry._diagnostics.status_logger import (
     AzureStatusLogger,
     _get_status_logger_file_name
 )
@@ -76,36 +76,36 @@ class TestStatusLogger(TestCase):
     def setUp(self) -> None:
         clear_file(test_id=self.id())
         patch(
-            "azure.monitor.opentelemetry.diagnostics._status_logger._get_status_logger_file_name",
+            "azure.monitor.opentelemetry._diagnostics.status_logger._get_status_logger_file_name",
             return_value=get_test_file_name(self.id()),
         ).start()
 
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._STATUS_LOG_PATH",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._STATUS_LOG_PATH",
         TEST_LOGGER_PATH,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._get_customer_ikey_from_env_var",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._get_customer_ikey_from_env_var",
         return_value=TEST_CUSTOMER_IKEY,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._EXTENSION_VERSION",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._EXTENSION_VERSION",
         TEST_EXTENSION_VERSION,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger.VERSION",
+        "azure.monitor.opentelemetry._diagnostics.status_logger.VERSION",
         TEST_VERSION,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._IS_DIAGNOSTICS_ENABLED",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._IS_DIAGNOSTICS_ENABLED",
         True,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger.getpid",
+        "azure.monitor.opentelemetry._diagnostics.status_logger.getpid",
         return_value=TEST_PID,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._MACHINE_NAME",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._MACHINE_NAME",
         TEST_MACHINE_NAME,
     )
     def test_log_status_success(self, mock_getpid, mock_get_ikey):
@@ -114,31 +114,31 @@ class TestStatusLogger(TestCase):
         check_file_for_messages(True, self.id(), MESSAGE2)
 
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._STATUS_LOG_PATH",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._STATUS_LOG_PATH",
         TEST_LOGGER_PATH,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._get_customer_ikey_from_env_var",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._get_customer_ikey_from_env_var",
         return_value=TEST_CUSTOMER_IKEY,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._EXTENSION_VERSION",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._EXTENSION_VERSION",
         TEST_EXTENSION_VERSION,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger.VERSION",
+        "azure.monitor.opentelemetry._diagnostics.status_logger.VERSION",
         TEST_VERSION,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._IS_DIAGNOSTICS_ENABLED",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._IS_DIAGNOSTICS_ENABLED",
         True,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger.getpid",
+        "azure.monitor.opentelemetry._diagnostics.status_logger.getpid",
         return_value=TEST_PID,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._MACHINE_NAME",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._MACHINE_NAME",
         TEST_MACHINE_NAME,
     )
     def test_log_status_failed_initialization(
@@ -149,31 +149,31 @@ class TestStatusLogger(TestCase):
         check_file_for_messages(False, self.id(), MESSAGE2)
 
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._STATUS_LOG_PATH",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._STATUS_LOG_PATH",
         TEST_LOGGER_PATH,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._get_customer_ikey_from_env_var",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._get_customer_ikey_from_env_var",
         return_value=TEST_CUSTOMER_IKEY,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._EXTENSION_VERSION",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._EXTENSION_VERSION",
         TEST_EXTENSION_VERSION,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger.VERSION",
+        "azure.monitor.opentelemetry._diagnostics.status_logger.VERSION",
         TEST_VERSION,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._IS_DIAGNOSTICS_ENABLED",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._IS_DIAGNOSTICS_ENABLED",
         True,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger.getpid",
+        "azure.monitor.opentelemetry._diagnostics.status_logger.getpid",
         return_value=TEST_PID,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._MACHINE_NAME",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._MACHINE_NAME",
         TEST_MACHINE_NAME,
     )
     def test_log_status_no_reason(self, mock_getpid, mock_get_ikey):
@@ -182,31 +182,31 @@ class TestStatusLogger(TestCase):
         check_file_for_messages(True, self.id())
 
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._STATUS_LOG_PATH",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._STATUS_LOG_PATH",
         TEST_LOGGER_PATH,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._get_customer_ikey_from_env_var",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._get_customer_ikey_from_env_var",
         return_value=TEST_CUSTOMER_IKEY,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._EXTENSION_VERSION",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._EXTENSION_VERSION",
         TEST_EXTENSION_VERSION,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger.VERSION",
+        "azure.monitor.opentelemetry._diagnostics.status_logger.VERSION",
         TEST_VERSION,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._IS_DIAGNOSTICS_ENABLED",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._IS_DIAGNOSTICS_ENABLED",
         False,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger.getpid",
+        "azure.monitor.opentelemetry._diagnostics.status_logger.getpid",
         return_value=TEST_PID,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._MACHINE_NAME",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._MACHINE_NAME",
         TEST_MACHINE_NAME,
     )
     def test_disabled_log_status_success(self, mock_getpid, mock_get_ikey):
@@ -215,31 +215,31 @@ class TestStatusLogger(TestCase):
         check_file_is_empty(self.id())
 
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._STATUS_LOG_PATH",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._STATUS_LOG_PATH",
         TEST_LOGGER_PATH,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._get_customer_ikey_from_env_var",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._get_customer_ikey_from_env_var",
         return_value=TEST_CUSTOMER_IKEY,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._EXTENSION_VERSION",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._EXTENSION_VERSION",
         TEST_EXTENSION_VERSION,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger.VERSION",
+        "azure.monitor.opentelemetry._diagnostics.status_logger.VERSION",
         TEST_VERSION,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._IS_DIAGNOSTICS_ENABLED",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._IS_DIAGNOSTICS_ENABLED",
         False,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger.getpid",
+        "azure.monitor.opentelemetry._diagnostics.status_logger.getpid",
         return_value=TEST_PID,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._MACHINE_NAME",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._MACHINE_NAME",
         TEST_MACHINE_NAME,
     )
     def test_disabled_log_status_failed_initialization(
@@ -250,31 +250,31 @@ class TestStatusLogger(TestCase):
         check_file_is_empty(self.id())
 
     # @patch(
-    #     "azure.monitor.opentelemetry.diagnostics._status_logger._STATUS_LOG_PATH",
+    #     "azure.monitor.opentelemetry._diagnostics.status_logger._STATUS_LOG_PATH",
     #     TEST_LOGGER_PATH,
     # )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._get_customer_ikey_from_env_var",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._get_customer_ikey_from_env_var",
         return_value=TEST_CUSTOMER_IKEY,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._EXTENSION_VERSION",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._EXTENSION_VERSION",
         TEST_EXTENSION_VERSION,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger.VERSION",
+        "azure.monitor.opentelemetry._diagnostics.status_logger.VERSION",
         TEST_VERSION,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._IS_DIAGNOSTICS_ENABLED",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._IS_DIAGNOSTICS_ENABLED",
         False,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger.getpid",
+        "azure.monitor.opentelemetry._diagnostics.status_logger.getpid",
         return_value=TEST_PID,
     )
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._MACHINE_NAME",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._MACHINE_NAME",
         TEST_MACHINE_NAME,
     )
     def test_disabled_log_status_no_reason(self, mock_getpid, mock_get_ikey):
@@ -283,7 +283,7 @@ class TestStatusLogger(TestCase):
         check_file_is_empty(self.id())
 
     @patch(
-        "azure.monitor.opentelemetry.diagnostics._status_logger._MACHINE_NAME",
+        "azure.monitor.opentelemetry._diagnostics.status_logger._MACHINE_NAME",
         TEST_MACHINE_NAME,
     )
     def test_get_status_logger_file_name(self):

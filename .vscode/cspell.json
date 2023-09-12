@@ -71,6 +71,8 @@
     "sdk/keyvault/azure-keyvault-certificates/tests/certs.py",
     "sdk/keyvault/azure-keyvault-keys/tests/keys.py",
     "sdk/modelsrepository/azure-iot-modelsrepository/**",
+    "sdk/remoterendering/test-resources.json",
+    "sdk/remoterendering/azure-mixedreality-remoterendering/swagger/azure/mixedreality/remoterendering/mr-arr.json",
     "sdk/servicefabric/azure-servicefabric/**",
     "sdk/search/azure-search-documents/**",
     "sdk/storage/azure-storage-blob-changefeed/**",
@@ -106,7 +108,15 @@
     "tools/azure-sdk-tools/setup.py",
     "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_serialization.py",
     "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_model_base.py",
-    "tools/azure-sdk-tools/tests/test_servicemetadata.py"
+    "tools/azure-sdk-tools/tests/test_servicemetadata.py",
+    "conda/conda-recipes/azure-ai-ml/meta.yaml",
+    "conda/conda-recipes/azure-eventhub/meta.yaml",
+    "conda/conda-recipes/azure-mgmt/meta.yaml",
+    "conda/conda-recipes/azure-security-attestation/meta.yaml",
+    "conda/conda-recipes/msal-extensions/meta.yaml",
+    "conda/conda-recipes/msrest/meta.yaml",
+    "conda/conda-recipes/uamqp/meta.yaml",
+    "conda/conda-releaselogs/azure-mgmt.md"
   ],
   "words": [
     "pyprojecttoml",
@@ -478,6 +488,12 @@
       ]
     },
     {
+      "filename": "sdk/identity/azure-identity/TROUBLESHOOTING.md",
+      "words": [
+        "wammsa"
+      ]
+    },    
+    {
       "filename": "sdk/tables/azure-data-tables/tests/**/*.py",
       "words": [
         "tzutc",
@@ -650,7 +666,11 @@
       "words": [
         "cncf",
         "CNCF",
-        "Cncf"
+        "Cncf",
+        "MQTT",
+        "Dicom",
+        "Errored",
+        "Fhir"
       ]
     },
     {

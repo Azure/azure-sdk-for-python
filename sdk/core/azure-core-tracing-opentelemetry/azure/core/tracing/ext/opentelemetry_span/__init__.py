@@ -62,7 +62,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
     :paramtype context: Dict[str, str]
     """
 
-    def __init__(self, span: Optional[Span] = None, name: str = "span", **kwargs: Any) -> None:
+    def __init__(self, span: Optional[Span] = None, name: Optional[str] = "span", **kwargs: Any) -> None:
         self._context_tokens = []
         self._current_ctxt_manager: Optional[ContextManager[Span]] = None
 
@@ -336,7 +336,7 @@ class OpenTelemetrySpan(HttpSpanMixin, object):
         return trace.get_tracer(__name__, __version__)
 
     @classmethod
-    def change_context(cls, span: Span) -> ContextManager:
+    def change_context(cls, span: Span) -> ContextManager[Span]:
         """Change the context for the life of this context manager.
 
         :param span: The span to use as the current span
