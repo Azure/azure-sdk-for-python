@@ -159,7 +159,7 @@ class TruncationSelectionPolicy(EarlyTerminationPolicy):
             :language: python
             :dedent: 8
             :caption: Configuring an early termination policy for a hyperparameter sweep job
-            using TruncationStoppingPolicy
+                using TruncationStoppingPolicy
     """
 
     def __init__(

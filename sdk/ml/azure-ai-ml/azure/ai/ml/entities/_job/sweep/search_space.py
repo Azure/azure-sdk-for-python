@@ -277,7 +277,7 @@ class Uniform(SweepDistribution):
             :language: python
             :dedent: 8
             :caption: Configuring Uniform distributions for learning rates and momentum
-            during a hyperparameter sweep on a Command job.
+                during a hyperparameter sweep on a Command job.
     """
 
     def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None, **kwargs) -> None:
