@@ -251,10 +251,9 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
                     }
                 )
         client.send([cloud_event])
-        internal = _check_cloud_event(cloud_event).serialize()
-        assert 'reasoncode' in internal
-        assert 'extension' in internal
-        assert internal['reasoncode'] == 204
+        cloud_event_verified = _check_cloud_event(cloud_event)
+        assert cloud_event_verified.extensions['reasoncode'] == 204
+        assert cloud_event_verified.extensions['extension'] == 'hello'
 
     @EventGridPreparer()
     @recorded_by_proxy
