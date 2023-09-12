@@ -35,5 +35,5 @@ def add_sanitizers(test_proxy):
     )
 
     add_general_regex_sanitizer(value="api-version=1970-01-01", regex="api-version=.+")
-    set_custom_default_matcher(ignored_headers="x-ms-content-sha256")
+    set_custom_default_matcher(ignored_headers="x-ms-content-sha256, Accept")
     add_oauth_response_sanitizer()
