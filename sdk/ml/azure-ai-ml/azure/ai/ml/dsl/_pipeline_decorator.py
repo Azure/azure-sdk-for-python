@@ -120,8 +120,8 @@ def pipeline(
       * A decorator, if `func` is None
       * The decorated `func`
     :rtype: Union[
-        Callable[[Callable], Callable[..., PipelineJob]],
-        Callable[P, PipelineJob]
+        Callable[[Callable], Callable[..., ~azure.ai.ml.entities.PipelineJob]],
+        Callable[P, ~azure.ai.ml.entities.PipelineJob]
       ]
 
     .. admonition:: Example:
