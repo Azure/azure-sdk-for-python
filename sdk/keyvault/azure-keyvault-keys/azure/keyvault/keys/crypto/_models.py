@@ -4,8 +4,6 @@
 # ------------------------------------
 from typing import cast, Optional, Union, TYPE_CHECKING
 
-from cryptography.hazmat.primitives import serialization, hashes
-from cryptography.hazmat.primitives.asymmetric import utils as asym_utils
 from cryptography.hazmat.primitives.asymmetric.padding import AsymmetricPadding, OAEP, PKCS1v15, PSS, MGF1
 from cryptography.hazmat.primitives.asymmetric.rsa import (
     RSAPrivateKey,
@@ -13,6 +11,9 @@ from cryptography.hazmat.primitives.asymmetric.rsa import (
     RSAPublicKey,
     RSAPublicNumbers,
 )
+from cryptography.hazmat.primitives.asymmetric.utils import Prehashed
+from cryptography.hazmat.primitives.hashes import Hash, HashAlgorithm, SHA1, SHA256, SHA384, SHA512
+from cryptography.hazmat.primitives.serialization import Encoding, KeySerializationEncryption, PrivateFormat
 
 from ._enums import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 
@@ -23,13 +24,13 @@ if TYPE_CHECKING:
 
 
 SIGN_ALGORITHM_MAP = {
-    hashes.SHA256: SignatureAlgorithm.rs256,
-    hashes.SHA384: SignatureAlgorithm.rs384,
-    hashes.SHA512: SignatureAlgorithm.rs512,
+    SHA256: SignatureAlgorithm.rs256,
+    SHA384: SignatureAlgorithm.rs384,
+    SHA512: SignatureAlgorithm.rs512,
 }
 OAEP_MAP = {
-    hashes.SHA1: EncryptionAlgorithm.rsa_oaep,
-    hashes.SHA256: EncryptionAlgorithm.rsa_oaep_256
+    SHA1: EncryptionAlgorithm.rsa_oaep,
+    SHA256: EncryptionAlgorithm.rsa_oaep_256
 }
 PSS_MAP = {
     SignatureAlgorithm.rs256: SignatureAlgorithm.ps256,
@@ -38,7 +39,7 @@ PSS_MAP = {
 }
 
 
-class KeyVaultManagedKey(RSAPrivateKey):
+class ManagedRsaKey(RSAPrivateKey):
     """An `RSAPrivateKey` implementation based on a key managed by Key Vault.
 
     :param str key_name: The name of the key vault key to use.
@@ -113,7 +114,7 @@ class KeyVaultManagedKey(RSAPrivateKey):
         self,
         data: bytes,
         padding: AsymmetricPadding,
-        algorithm: Union[asym_utils.Prehashed, hashes.HashAlgorithm],
+        algorithm: Union[Prehashed, HashAlgorithm],
     ) -> bytes:
         """Signs the data.
 
@@ -124,12 +125,12 @@ class KeyVaultManagedKey(RSAPrivateKey):
         :type padding: AsymmetricPadding
         :param algorithm: The algorithm to sign with. Only `HashAlgorithm`s are supported -- specifically, `SHA256`,
             `SHA384`, and `SHA512`.
-        :type algorithm: asym_utils.Prehashed or hashes.HashAlgorithm
+        :type algorithm: Prehashed or HashAlgorithm
 
         :returns: The signature, as bytes.
         :rtype: bytes
         """
-        if isinstance(algorithm, asym_utils.Prehashed):
+        if isinstance(algorithm, Prehashed):
             raise ValueError("`Prehashed` algorithms are unsupported. Please provide a `HashAlgorithm` instead.")
 
         mapped_algorithm = SIGN_ALGORITHM_MAP.get(type(algorithm))
@@ -153,7 +154,7 @@ class KeyVaultManagedKey(RSAPrivateKey):
         elif not isinstance(padding, PKCS1v15):
             raise ValueError(f"Unsupported padding: {padding.name}")
 
-        digest = hashes.Hash(algorithm)
+        digest = Hash(algorithm)
         digest.update(data)
         result = self._crypto_client.sign(cast(SignatureAlgorithm, mapped_algorithm), digest.finalize())
         return result.signature
@@ -164,9 +165,9 @@ class KeyVaultManagedKey(RSAPrivateKey):
 
     def private_bytes(  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         self,
-        encoding: serialization.Encoding,
-        format: serialization.PrivateFormat,
-        encryption_algorithm: serialization.KeySerializationEncryption,
+        encoding: Encoding,
+        format: PrivateFormat,
+        encryption_algorithm: KeySerializationEncryption,
     ) -> bytes:
         """Returns the key serialized as bytes. Not implemented, as the private key is managed by Key Vault."""
         raise NotImplementedError()
