@@ -31,7 +31,6 @@ class AutoScaleSettings:
     .. admonition:: Example:
 
         .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
-
             :start-after: [START synapse_spark_compute_configuration]
             :end-before: [END synapse_spark_compute_configuration]
             :language: python
