@@ -1,5 +1,10 @@
 # Release History
 
+## 12.18.1 (2023-09-13)
+
+### Bugs Fixed
+- compatibility between 12.18 and <12.18 through dynamic insertion of sdk_moniker
+
 ## 12.18.0 (2023-09-12)
 
 ### Features Added
