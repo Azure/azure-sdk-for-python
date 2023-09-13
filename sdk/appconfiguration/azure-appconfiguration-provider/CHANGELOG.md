@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0b1 (Unreleased)
+## 1.1.0b1 (2023-09-13)
 
 ### Features Added
 
