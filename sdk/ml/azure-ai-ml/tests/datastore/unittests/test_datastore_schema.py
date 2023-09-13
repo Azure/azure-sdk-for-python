@@ -280,10 +280,21 @@ class TestDatastore:
         internal_ds_from_rest = Datastore._from_rest_object(datastore_resource)
         assert internal_ds_from_rest == internal_ds
 
-    def test_one_lake_schema(self):
+    def test_one_lake_schema_with_service_principal(self):
         test_path = "./tests/test_configs/datastore/one_lake.yml"
-        cfg = load_yaml(test_path)
-        internal_ds = load_datastore(test_path)
+        self.validate_one_lake_schema_with_service_principal(
+            test_yaml_file_path=test_path, auth_url_key="authority_url"
+        )
+
+    def test_one_lake_authority_url_backward_compatible_schema(self):
+        test_path = "./tests/test_configs/datastore/one_lake_auth_url_back_compat.yml"
+        self.validate_one_lake_schema_with_service_principal(
+            test_yaml_file_path=test_path, auth_url_key="authority_uri"
+        )
+
+    def validate_one_lake_schema_with_service_principal(self, test_yaml_file_path, auth_url_key):
+        cfg = load_yaml(test_yaml_file_path)
+        internal_ds = load_datastore(test_yaml_file_path)
         assert isinstance(internal_ds, OneLakeDatastore)
         assert cfg["artifact"] == internal_ds.artifact
 
@@ -294,7 +305,7 @@ class TestDatastore:
         assert cfg_credentials["client_id"] == internal_credentials.client_id
         assert cfg_credentials["client_secret"] == internal_credentials.client_secret
         assert cfg_credentials["resource_url"] == internal_credentials.resource_url
-        assert cfg_credentials["authority_url"] == internal_credentials.authority_url
+        assert cfg_credentials[auth_url_key] == internal_credentials.authority_url
 
         assert cfg["one_lake_workspace_name"] == internal_ds.one_lake_workspace_name
         assert cfg["endpoint"] == internal_ds.endpoint
