@@ -636,7 +636,7 @@ class DataOperations(_ScopeDependentOperations):
     def mount(
         self,
         path: str,
-        mount_point: str = "/home/azureuser/mount/data",
+        mount_point: str = None,
         mode: str = "ro_mount",
         debug: bool = False,
         persistent: bool = False,
@@ -668,7 +668,7 @@ class DataOperations(_ScopeDependentOperations):
             self._operation_scope._subscription_id, self._resource_group_name, self._workspace_name, path
         )
         if persistent and ci_name is not None:
-            mount_name = f"unified_mount_{str(uuid.uuid4()).replace('-', '')}" # TODO: allow user to specify name
+            mount_name = f"unified_mount_{str(uuid.uuid4()).replace('-', '')}"
             self._compute_operation.update_data_mounts(
                 self._resource_group_name,
                 self._workspace_name,
@@ -678,7 +678,7 @@ class DataOperations(_ScopeDependentOperations):
                     source_type="URI",
                     mount_name=mount_name,
                     mount_action="Mount",
-                    mount_path=mount_point,
+                    mount_path=mount_point or '',
                 )],
                 api_version="2021-01-01",
             )
