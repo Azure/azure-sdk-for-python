@@ -848,6 +848,7 @@ def load_workspace_hub(
     **kwargs,
 ) -> WorkspaceHub:
     """Load a WorkspaceHub object from a yaml file.
+
     :param source: The local yaml source of a WorkspaceHub. Must be either a
         path to a local file, or an already-open file.
         If the source is a path, it will be open and read.
