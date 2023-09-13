@@ -31,7 +31,6 @@ python-dotenv==0.21.1; python_version <= '3.7'
 python-dotenv==1.0.0; python_version > '3.7'
 pyyaml==6.0.1
 urllib3==1.26.16
-tomli==2.0.1
 PyGithub==1.59.1
 ConfigArgParse==1.2.3
 six==1.14.0
