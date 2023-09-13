@@ -96,7 +96,7 @@ Also, the concepts for AMQP are well documented in [OASIS Advanced Messaging Que
 
 ### Thread safety
 
-We do not guarantee that the EventHubProducerClient, EventHubProducer, EventHubConsumerClient, and EventHubConsumer are thread-safe. We do not recommend reusing these instances across threads. It is up to the running application to use these classes in a thread-safe manner.
+We do not guarantee that the EventHubProducerClient or EventHubConsumerClient are thread-safe. We do not recommend reusing these instances across threads. It is up to the running application to use these classes in a thread-safe manner.
 
 The data model type, `EventDataBatch` is not thread-safe. It should not be shared across threads nor used concurrently with client methods.
 
