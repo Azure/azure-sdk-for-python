@@ -1015,15 +1015,6 @@ class MLClient:
         :return: The created or updated resource.
         :rtype: typing.Union[~azure.ai.ml.entities.Job, ~azure.ai.ml.entities.Model
             , ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component, ~azure.ai.ml.entities.Datastore]
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_misc.py
-                :start-after: [START ml_client_create_or_update]
-                :end-before: [END ml_client_create_or_update]
-                :language: python
-                :dedent: 8
-                :caption: Creating a resource asynchronously via MLClient.
         """
 
         return _create_or_update(entity, self._operation_container.all_operations, **kwargs)
@@ -1060,15 +1051,6 @@ class MLClient:
             , ~azure.ai.ml.entities.Registry, ~azure.ai.ml.entities.Compute, ~azure.ai.ml.entities.OnlineDeployment
             , ~azure.ai.ml.entities.OnlineEndpoint, ~azure.ai.ml.entities.BatchDeployment
             , ~azure.ai.ml.entities.BatchEndpoint, ~azure.ai.ml.entities.Schedule]]
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_misc.py
-                :start-after: [START ml_client_begin_create_or_update]
-                :end-before: [END ml_client_begin_create_or_update]
-                :language: python
-                :dedent: 8
-                :caption: Creating a resource asynchronously via MLClient.
         """
 
         return _begin_create_or_update(entity, self._operation_container.all_operations, **kwargs)
