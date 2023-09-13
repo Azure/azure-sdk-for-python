@@ -35,7 +35,7 @@ class TestAutoScaleAsync:
     connectionPolicy = test_config._test_config.connectionPolicy
 
     @classmethod
-    async def setUpClass(cls):
+    async def _set_up(cls):
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
@@ -48,6 +48,7 @@ class TestAutoScaleAsync:
         cls.created_database = await cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
 
     async def test_autoscale_create_container_async(self):
+        await self._set_up()
         created_container = await self.created_database.create_container(
             id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
@@ -85,6 +86,7 @@ class TestAutoScaleAsync:
         await self.created_database.delete_container(created_container.id)
 
     async def test_autoscale_create_database_async(self):
+        await self._set_up()
         # Testing auto_scale_settings for the create_database method
         created_database = await self.client.create_database("db1", offer_throughput=ThroughputProperties(
             auto_scale_max_throughput=5000,
@@ -110,6 +112,7 @@ class TestAutoScaleAsync:
         await self.client.delete_database("db2")
 
     async def test_replace_throughput_async(self):
+        await self._set_up()
         # need test for replace db throughput
         created_container = await self.created_database.create_container(
             id='container_with_auto_scale_settings',

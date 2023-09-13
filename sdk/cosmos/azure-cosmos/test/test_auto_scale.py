@@ -35,7 +35,7 @@ class TestAutoScale:
     connectionPolicy = test_config._test_config.connectionPolicy
 
     @classmethod
-    def setUpClass(cls):
+    def _set_up(cls):
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
@@ -48,6 +48,7 @@ class TestAutoScale:
         cls.created_database = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
 
     def test_autoscale_create_container(self):
+        self._set_up()
         created_container = self.created_database.create_container(
             id='auto_scale',
             partition_key=PartitionKey(path="/id"),
@@ -85,6 +86,7 @@ class TestAutoScale:
         self.created_database.delete_container(created_container.id)
 
     def test_autoscale_create_database(self):
+        self._set_up()
         # Testing auto_scale_settings for the create_database method
         created_database = self.client.create_database("db_auto_scale", offer_throughput=ThroughputProperties(
             auto_scale_max_throughput=5000,
@@ -111,6 +113,7 @@ class TestAutoScale:
         self.client.delete_database("db_auto_scale_2")
 
     def test_autoscale_replace_throughput(self):
+        self._set_up()
         created_container = self.created_database.create_container(
             id='container_with_replace_functionality',
             partition_key=PartitionKey(path="/id"),
