@@ -20,7 +20,7 @@ DEPENDENCIES = [
     "pyopenssl",
     "python-dotenv",
     "PyYAML",
-    "urllib3<2",
+    "urllib3",
     "tomli",
     # gh tools
     "PyGithub>=1.59.0"
