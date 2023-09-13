@@ -12,7 +12,7 @@ source =
 	sdk/
 	**/sdk
 
-[report]
+
 exclude_lines =
 	pragma: no cover
 	if raw:
