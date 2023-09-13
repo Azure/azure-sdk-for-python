@@ -2372,7 +2372,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             # here get the overlap, then do one of two scenarios
             req_headers.pop(http_constants.HttpHeaders.PartitionKey, None)
             partition_key = json.loads(partition_key)
-            feedrangeEPK = partition_key_definition.get_epk_range_for_prefix_partition_key(partition_key)
+            feedrangeEPK = partition_key_definition.get_epk_range_for_prefix_partition_key(partition_key)  # cspell:disable-line # pylint: disable=line-too-long
             over_lapping_ranges = await self._routing_map_provider.get_overlapping_ranges(id_, [feedrangeEPK])
 
             if over_lapping_ranges:
@@ -2381,7 +2381,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 single_range = routing_range.Range.PartitionKeyRangeToRange(over_lapping_ranges[0])
                 if single_range.min == feedrangeEPK.min and single_range.max == feedrangeEPK.max:
                     # 1 The EpkRange spans exactly one physical partition
-                    # In this case we can route to the physical pkrange id
+                    # In this case we can route to the physical pk range id
                     req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_ranges[0]["id"]
                 else:
                     # 2) The EpkRange spans less than single physical partition

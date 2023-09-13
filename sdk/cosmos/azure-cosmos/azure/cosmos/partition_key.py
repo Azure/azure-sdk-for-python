@@ -148,10 +148,10 @@ class PartitionKey(dict):
 
         if len(pk_value) >= len(self["paths"]):
             raise ValueError("Too many partition key components")
-
+        # Prefix Partitions always have exclusive max
         min_epk = self.get_effective_partition_key_string(pk_value)
         if min_epk == MinimumInclusiveEffectivePartitionKey:
-            min_epk = str(MinimumInclusiveEffectivePartitionKey)
+            min_epk = ""
             return Range(min_epk, min_epk, True, False)
 
         if min_epk == MaximumExclusiveEffectivePartitionKey:

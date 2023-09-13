@@ -425,8 +425,8 @@ class ContainerProxy(object):
 
     def __is_prefix_partitionkey(self, partition_key: Union[str, list]):
         properties = self._get_properties()
-        pkproperties = properties["partitionKey"]
-        partition_key_definition = PartitionKey(path=pkproperties["paths"], kind=pkproperties["kind"])
+        pk_properties = properties["partitionKey"]
+        partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
         if partition_key_definition.kind != "MultiHash":
             return False
         if type(partition_key) == list and len(partition_key_definition['paths']) == len(partition_key):

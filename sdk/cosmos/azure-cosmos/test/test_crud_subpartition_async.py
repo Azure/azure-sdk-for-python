@@ -439,16 +439,16 @@ class CRUDTests(unittest.TestCase):
             ["CA", "Oxnard", "93036"],
             ["CA", "Thousand Oaks", "91358"],
             ["CA", "Ventura", "93002"],
-            ["CA", "Ojai", "93023"],
-            ["CA", "Port Hueneme", "93041"],
+            ["CA", "Ojai", "93023"],  # cspell:disable-line
+            ["CA", "Port Hueneme", "93041"],  # cspell:disable-line
             ["WA", "Seattle", "98101"],
             ["WA", "Bellevue", "98004"]
         ]
 
         document_definitions = [{'id': 'document1',
-                               'state': item_values[0][0],
-                               'city': item_values[0][1],
-                               'zipcode': item_values[0][2]
+                                 'state': item_values[0][0],
+                                 'city': item_values[0][1],
+                                 'zipcode': item_values[0][2]
                                  },
                                 {'id': 'document2',
                                  'state': item_values[1][0],
