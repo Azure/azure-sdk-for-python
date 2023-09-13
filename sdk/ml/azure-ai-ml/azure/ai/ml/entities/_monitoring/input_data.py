@@ -3,10 +3,12 @@
 # ---------------------------------------------------------
 
 import datetime
-from typing import Dict
+import isodate
+from typing import Dict, Optional
 
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+    MonitoringInputDataBase as RestMonitorInputBase,
     FixedInputData as RestFixedInputData,
     TrailingInputData as RestTrailingInputData,
     StaticInputData as RestStaticInputData,
@@ -47,6 +49,17 @@ class MonitorInputData(RestTranslatableMixin):
         self.target_columns = target_columns
         self.job_type = job_type
         self.uri = uri
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestMonitorInputBase) -> Optional["MonitorInputData"]:
+        if obj.input_data_type == "Fixed":
+            return FixedInputData._from_rest_object(obj)
+        if obj.input_data_type == "Trailing":
+            return TrailingInputData._from_rest_object(obj)
+        if obj.input_data_type == "Static":
+            return StaticInputData._from_rest_object(obj)
+
+        return None
 
 
 @experimental
@@ -95,7 +108,7 @@ class TrailingInputData(MonitorInputData):
         job_type: str = None,
         uri: str = None,
         window_size: str = None,
-        window_offset: datetime.timedelta = None,
+        window_offset: str = None,
         pre_processing_component_id: str = None,
     ):
         super().__init__(
@@ -127,8 +140,8 @@ class TrailingInputData(MonitorInputData):
             target_columns=obj.columns,
             job_type=obj.job_input_type,
             uri=obj.uri,
-            window_size=obj.window_size,
-            window_offset=obj.window_offset,
+            window_size=str(isodate.duration_isoformat(obj.window_size)),
+            window_offset=str(isodate.duration_isoformat(obj.window_offset)),
             pre_processing_component_id=obj.preprocessing_component_id,
         )
 
@@ -164,8 +177,8 @@ class StaticInputData(MonitorInputData):
             job_input_type=self.job_type,
             uri=self.uri,
             preprocessing_component_id=self.pre_processing_component_id,
-            window_start=datetime.datetime.strptime(self.window_start, "%Y-%m-%d"),
-            window_end=datetime.datetime.strptime(self.window_end, "%Y-%m-%d"),
+            window_start=datetime.datetime.strptime(str(self.window_start), "%Y-%m-%d"),
+            window_end=datetime.datetime.strptime(str(self.window_end), "%Y-%m-%d"),
         )
 
     @classmethod
@@ -176,6 +189,6 @@ class StaticInputData(MonitorInputData):
             job_type=obj.job_input_type,
             uri=obj.uri,
             pre_processing_component_id=obj.preprocessing_component_id,
-            window_start=datetime.datetime.strftime(obj.window_start, "%Y-%m-%d"),
+            window_start=str(datetime.datetime.strftime(obj.window_start, "%Y-%m-%d")),
             window_end=datetime.datetime.strftime(obj.window_end, "%Y-%m-%d"),
         )

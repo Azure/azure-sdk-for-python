@@ -25,6 +25,11 @@ from azure.ai.ml._schema.monitoring.thresholds import (
     ModelPerformanceMetricThresholdSchema,
     CustomMonitoringMetricThresholdSchema,
 )
+from azure.ai.ml._schema.monitoring.input_data import (
+    FixedInputDataSchema,
+    TrailingInputDataSchema,
+    StaticInputDataSchema,
+)
 
 
 class DataSegmentSchema(metaclass=PatchedSchemaMeta):
@@ -257,9 +262,11 @@ class CustomMonitoringSignalSchema(metaclass=PatchedSchemaMeta):
     workspace_connection = NestedField(WorkspaceConnectionSchema)
     component_id = ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT)
     metric_thresholds = fields.List(NestedField(CustomMonitoringMetricThresholdSchema))
-    input_datasets = fields.Dict(keys=fields.Str(), values=NestedField(ProductionDataSchema))
+    input_data = fields.Dict(keys=fields.Str(), values=NestedField(ReferenceDataSchema))
     alert_enabled = fields.Bool()
-    input_literals = fields.Dict(keys=fields.Str, values=NestedField(DataInputSchema))
+    inputs = fields.Dict(
+        keys=fields.Str, values=UnionField(union_fields=[NestedField(DataInputSchema), NestedField(MLTableInputSchema)])
+    )
 
     @pre_dump
     def predump(self, data, **kwargs):
