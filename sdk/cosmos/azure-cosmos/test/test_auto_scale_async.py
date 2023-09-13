@@ -47,6 +47,7 @@ class TestAutoScaleAsync:
                                   connection_policy=cls.connectionPolicy)
         cls.created_database = await cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
 
+    @pytest.mark.asyncio
     async def test_autoscale_create_container_async(self):
         await self._set_up()
         created_container = await self.created_database.create_container(
@@ -85,6 +86,7 @@ class TestAutoScaleAsync:
 
         await self.created_database.delete_container(created_container.id)
 
+    @pytest.mark.asyncio
     async def test_autoscale_create_database_async(self):
         await self._set_up()
         # Testing auto_scale_settings for the create_database method
@@ -111,6 +113,7 @@ class TestAutoScaleAsync:
 
         await self.client.delete_database("db2")
 
+    @pytest.mark.asyncio
     async def test_replace_throughput_async(self):
         await self._set_up()
         # need test for replace db throughput
