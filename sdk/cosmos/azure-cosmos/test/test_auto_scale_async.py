@@ -18,10 +18,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-import unittest
+
 from azure.cosmos.aio import CosmosClient
 import azure.cosmos.exceptions as exceptions
-from azure.cosmos import ThroughputProperties, PartitionKey, http_constants
+from azure.cosmos import ThroughputProperties, PartitionKey
 import pytest
 import test_config
 
@@ -29,7 +29,7 @@ pytestmark = pytest.mark.cosmosEmulator
 
 
 @pytest.mark.usefixtures("teardown")
-class AutoScaleTest(unittest.TestCase):
+class TestAutoScale:
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
@@ -56,16 +56,15 @@ class AutoScaleTest(unittest.TestCase):
         )
         created_container_properties = await created_container.get_throughput()
         # Testing the input value of the max_throughput
-        self.assertEqual(
-            created_container_properties.auto_scale_max_throughput, 5000)
-        self.assertEqual(created_container_properties.auto_scale_increment_percent, 0)
-        self.assertEqual(created_container_properties.offer_throughput, None)
+        assert created_container_properties.auto_scale_max_throughput == 5000
+        assert created_container_properties.auto_scale_increment_percent == 0
+        assert created_container_properties.offer_throughput is None
 
         await self.created_database.delete_container(created_container)
 
         # Testing the incorrect passing of an input value of the max_throughput to verify negative behavior
         with pytest.raises(exceptions.CosmosHttpResponseError) as e:
-            created_container = await self.created_database.create_container(
+            await self.created_database.create_container(
                 id='container_with_wrong_auto_scale_settings',
                 partition_key=PartitionKey(path="/id"),
                 offer_throughput=ThroughputProperties(auto_scale_max_throughput=-200, auto_scale_increment_percent=0))
@@ -80,8 +79,7 @@ class AutoScaleTest(unittest.TestCase):
         )
         created_container_properties = await created_container.get_throughput()
         # Testing the incorrect input value of the max_throughput
-        self.assertNotEqual(
-            created_container_properties.auto_scale_max_throughput, 2000)
+        assert created_container_properties.auto_scale_max_throughput != 2000
 
         await self.created_database.delete_container(created_container)
 
@@ -93,8 +91,7 @@ class AutoScaleTest(unittest.TestCase):
         )
         created_container_properties = await created_container.get_throughput()
         # Testing the incorrect input value of the max_increment_percentage
-        self.assertNotEqual(
-            created_container_properties.auto_scale_increment_percent, 3)
+        assert created_container_properties.auto_scale_increment_percent != 3
 
         await self.created_database.delete_container(created_container)
 
@@ -105,11 +102,9 @@ class AutoScaleTest(unittest.TestCase):
             auto_scale_increment_percent=0))
         created_db_properties = await created_database.get_throughput()
         # Testing the input value of the max_throughput
-        self.assertEqual(
-            created_db_properties.auto_scale_max_throughput, 5000)
+        assert created_db_properties.auto_scale_max_throughput == 5000
         # Testing the input value of the increment_percentage
-        self.assertEqual(
-            created_db_properties.auto_scale_increment_percent, 0)
+        assert created_db_properties.auto_scale_increment_percent == 0
 
         await self.client.delete_database("db1")
 
@@ -120,11 +115,9 @@ class AutoScaleTest(unittest.TestCase):
             auto_scale_increment_percent=11))
         created_db_properties = await created_database.get_throughput()
         # Testing the input value of the max_throughput
-        self.assertNotEqual(
-            created_db_properties.auto_scale_max_throughput, 8000)
+        assert created_db_properties.auto_scale_max_throughput != 8000
         # Testing the input value of the increment_percentage
-        self.assertEqual(
-            created_db_properties.auto_scale_increment_percent, 11)
+        assert created_db_properties.auto_scale_increment_percent == 11
 
         await self.client.delete_database("db2")
 
@@ -135,13 +128,11 @@ class AutoScaleTest(unittest.TestCase):
             offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)
 
         )
-        new_throughput = await created_container.replace_throughput(
+        await created_container.replace_throughput(
             throughput=ThroughputProperties(auto_scale_max_throughput=7000, auto_scale_increment_percent=20))
         created_container_properties = await created_container.get_throughput()
         # Testing the input value of the replaced auto_scale settings
-        self.assertEqual(
-            created_container_properties.auto_scale_max_throughput, 7000)
-        self.assertEqual(
-            created_container_properties.auto_scale_increment_percent, 20)
+        assert created_container_properties.auto_scale_max_throughput == 7000
+        assert created_container_properties.auto_scale_increment_percent == 20
 
         await self.client.delete_database(test_config._test_config.TEST_DATABASE_ID)
