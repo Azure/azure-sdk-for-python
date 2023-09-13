@@ -411,7 +411,7 @@ def parse_connection_str(conn_str, credential, service):
 def create_configuration(**kwargs):
     # type: (**Any) -> Configuration
     if not kwargs.get("skd_moniker"):
-        kwargs["sdk_moniker"] = f"storage-{kwargs.get("storage-sdk")}/{VERSION}"
+        kwargs["sdk_moniker"] = f"storage-{kwargs.get("storage-sdk")}"
     config = Configuration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
     config.user_agent_policy = UserAgentPolicy(**kwargs)
