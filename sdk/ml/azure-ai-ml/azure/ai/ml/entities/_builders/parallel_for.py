@@ -94,7 +94,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         :return: The dictionary containing the outputs of the parallel for loop.
         :rtype: dict[str, Union[str, ~azure.ai.ml.Output]]
         """
-        return dict(self._outputs)
+        return self._outputs
 
     @property
     def items(self) -> Union[list, dict, str, PipelineInput, NodeOutput]:
