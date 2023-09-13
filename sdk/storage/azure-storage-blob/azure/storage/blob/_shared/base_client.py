@@ -410,7 +410,7 @@ def parse_connection_str(conn_str, credential, service):
 
 def create_configuration(**kwargs):
     # type: (**Any) -> Configuration
-    # Backwards compatiblity if someone is not passing sdk_moniker
+    # Backwards compatibility if someone is not passing sdk_moniker
     if not kwargs.get("sdk_moniker"):
         kwargs["sdk_moniker"] = f"storage-{kwargs.pop('storage_sdk')}/{VERSION}"
     config = Configuration(**kwargs)
