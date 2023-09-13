@@ -4,7 +4,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 from marshmallow import Schema
 
@@ -77,7 +77,7 @@ class Import(BaseNode):
         )
 
     @classmethod
-    def _get_supported_inputs_types(cls) -> type[str]:
+    def _get_supported_inputs_types(cls) -> Type[str]:
         # import source parameters type, connection, query, path are always str
         return str
 
