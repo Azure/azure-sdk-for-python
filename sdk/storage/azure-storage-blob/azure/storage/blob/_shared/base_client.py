@@ -410,9 +410,11 @@ def parse_connection_str(conn_str, credential, service):
 
 def create_configuration(**kwargs):
     # type: (**Any) -> Configuration
+    if not kwargs.get("skd_moniker"):
+        kwargs["sdk_moniker"] = f"storage-{kwargs.get("storage-sdk")}/{VERSION}"
     config = Configuration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
-    config.user_agent_policy = UserAgentPolicy(sdk_moniker=kwargs.pop('sdk_moniker'), **kwargs)
+    config.user_agent_policy = UserAgentPolicy(**kwargs)
     config.retry_policy = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
