@@ -5,7 +5,7 @@
 ### Bugs Fixed
 
 - Handle missing or empty message data
-    ([#31944](https://github.com/Azure/azure-sdk-for-python/pull/31944))
+    ([#31944](https://github.com/Azure/azure-sdk-for-python/pull/31944)) 
 
 ## 1.0.0b16 (2023-08-30)
 
