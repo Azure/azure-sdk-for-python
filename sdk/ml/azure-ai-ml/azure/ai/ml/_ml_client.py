@@ -635,15 +635,13 @@ class MLClient:
                 :dedent: 8
                 :caption: Creating an MLClient from a file named "config.json" in directory "src".
 
-        .. admonition:: Example:
-
             .. literalinclude:: ../samples/ml_samples_authentication.py
                 :start-after: [START create_ml_client_from_config_custom_filename]
                 :end-before: [END create_ml_client_from_config_custom_filename]
                 :language: python
                 :dedent: 8
                 :caption: Creating an MLClient from a file named "team_workspace_configuration.json" in the current
-                directory.
+                    directory.
         """
 
         path = Path(".") if path is None else Path(path)
