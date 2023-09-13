@@ -191,6 +191,8 @@ from ._monitoring.thresholds import (
     CustomMonitoringMetricThreshold,
     CategoricalDriftMetrics,
     NumericalDriftMetrics,
+    DataQualityMetricsNumerical,
+    DataQualityMetricsCategorical,
 )
 
 from ._workspace_hub.workspace_hub import WorkspaceHub, WorkspaceHubConfig
@@ -427,6 +429,8 @@ __all__ = [
     "CustomMonitoringMetricThreshold",
     "CategoricalDriftMetrics",
     "NumericalDriftMetrics",
+    "DataQualityMetricsNumerical",
+    "DataQualityMetricsCategorical",
     "DataCollector",
     "IntellectualProperty",
     "DeploymentCollection",
