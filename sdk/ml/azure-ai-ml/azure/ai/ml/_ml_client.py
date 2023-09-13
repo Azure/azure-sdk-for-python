@@ -601,6 +601,7 @@ class MLClient:
         format:
 
         .. code-block:: json
+
             {
                 "subscription_id": "<subscription-id>",
                 "resource_group": "<resource-group>",
