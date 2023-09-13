@@ -56,7 +56,6 @@ websocket-client
 avro
 uamqp
 yarl
-importlib-metadata
 azure-identity
 openai
 wrapt
