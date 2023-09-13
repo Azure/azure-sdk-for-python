@@ -9,7 +9,7 @@ DEPENDENCIES = [
     "packaging",
     "wheel",
     "Jinja2",
-    "MarkupSafe==2.0.1",
+    "MarkupSafe",
     # black,
     "pytoml",
     "json-delta>=2.0",
