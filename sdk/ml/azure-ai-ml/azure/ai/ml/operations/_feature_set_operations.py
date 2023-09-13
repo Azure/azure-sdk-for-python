@@ -14,8 +14,8 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     FeaturesetVersion,
     FeaturesetVersionBackfillRequest,
     FeatureWindow,
@@ -59,7 +59,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: ServiceClient042023Preview,
+        service_client: ServiceClient082023Preview,
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
@@ -67,6 +67,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         ops_logger.update_info(kwargs)
         self._operation = service_client.featureset_versions
         self._container_operation = service_client.featureset_containers
+        self._jobs_operation = service_client.jobs
         self._feature_operation = service_client.features
         self._service_client = service_client
         self._datastore_operation = datastore_operations
@@ -239,7 +240,6 @@ class FeatureSetOperations(_ScopeDependentOperations):
         *,
         feature_window_start_time: Optional[Union[str, datetime]] = None,
         feature_window_end_time: Optional[Union[str, datetime]] = None,
-        filters: Optional[str] = None,
         **kwargs: Dict,
     ) -> ItemPaged[FeatureSetMaterializationMetadata]:
         """List Materialization operation.
@@ -259,16 +259,18 @@ class FeatureSetOperations(_ScopeDependentOperations):
         """
         feature_window_start_time = _datetime_to_str(feature_window_start_time) if feature_window_start_time else None
         feature_window_end_time = _datetime_to_str(feature_window_end_time) if feature_window_end_time else None
-        materialization_jobs = self._operation.list_materialization_jobs(
+        properties = f"azureml.FeatureSetName={name},azureml.FeatureSetVersion={version}"
+        if feature_window_start_time:
+            properties = properties + f",azureml.FeatureWindowStart={feature_window_start_time}"
+        if feature_window_end_time:
+            properties = properties + f",azureml.FeatureWindowEnd={feature_window_end_time}"
+
+        materialization_jobs = self._jobs_operation.list(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
-            name=name,
-            version=version,
-            filters=filters,
-            feature_window_start=feature_window_start_time,
-            feature_window_end=feature_window_end_time,
-            **kwargs,
+            properties=properties,
             cls=lambda objs: [FeatureSetMaterializationMetadata._from_rest_object(obj) for obj in objs],
+            **kwargs,
         )
         return materialization_jobs
 

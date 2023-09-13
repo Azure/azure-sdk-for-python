@@ -5,19 +5,19 @@ from unittest.mock import Mock, patch
 import pytest
 from test_utilities.constants import Test_Resource_Group, Test_Workspace_Name
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models._models_py3 import (
+    FeatureResourceArmPaginatedResult,
     FeaturesetContainer,
     FeaturesetContainerProperties,
     FeaturesetVersion,
     FeaturesetVersionProperties,
-    FeaturesetJobArmPaginatedResult,
-    FeatureResourceArmPaginatedResult,
+    JobBaseResourceArmPaginatedResult,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
-from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
-from azure.ai.ml.entities._feature_set.feature_set_materialization_metadata import FeatureSetMaterializationMetadata
-from azure.ai.ml.entities._feature_set.feature import Feature
 from azure.ai.ml.entities import FeatureSet, FeatureSetSpecification
+from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
+from azure.ai.ml.entities._feature_set.feature import Feature
+from azure.ai.ml.entities._feature_set.feature_set_materialization_metadata import FeatureSetMaterializationMetadata
 from azure.ai.ml.operations import DatastoreOperations
 from azure.ai.ml.operations._feature_set_operations import FeatureSetOperations
 from azure.core.paging import ItemPaged
@@ -41,13 +41,13 @@ def mock_datastore_operation(
 def mock_feature_set_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2023_04_01_preview: Mock,
+    mock_aml_services_2023_08_01_preview: Mock,
     mock_datastore_operation: Mock,
 ) -> FeatureSetOperations:
     yield FeatureSetOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client=mock_aml_services_2023_04_01_preview,
+        service_client=mock_aml_services_2023_08_01_preview,
         datastore_operations=mock_datastore_operation,
     )
 
@@ -106,12 +106,12 @@ class TestFeatureSetOperations:
         mock_feature_set_operations._operation.begin_backfill.assert_called_once()
 
     def test_list_materialization_operation(self, mock_feature_set_operations: FeatureSetOperations) -> None:
-        mock_feature_set_operations._operation.list_materialization_jobs.return_value = [
-            Mock(FeaturesetJobArmPaginatedResult) for _ in range(10)
+        mock_feature_set_operations._jobs_operation.list.return_value = [
+            Mock(JobBaseResourceArmPaginatedResult) for _ in range(10)
         ]
         result = mock_feature_set_operations.list_materialization_operations(name="random_name", version="1")
         assert isinstance(result, Iterable)
-        mock_feature_set_operations._operation.list_materialization_jobs.assert_called_once()
+        mock_feature_set_operations._jobs_operation.list.assert_called_once()
 
     def test_list_features(self, mock_feature_set_operations: FeatureSetOperations) -> None:
         mock_feature_set_operations._feature_operation.list.return_value = [

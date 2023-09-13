@@ -5,7 +5,7 @@
 from datetime import datetime, timedelta
 from typing import Dict, Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import FeaturesetJob as RestFeaturesetJob
+from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as RestJobBase
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
@@ -45,17 +45,30 @@ class FeatureSetMaterializationMetadata(RestTranslatableMixin):
         self.tags = tags
 
     @classmethod
-    def _from_rest_object(cls, obj: RestFeaturesetJob) -> "FeatureSetMaterializationMetadata":
+    def _from_rest_object(cls, obj: RestJobBase) -> "FeatureSetMaterializationMetadata":
         if not obj:
             return None
+        job_properties = obj.properties
+        job_type = job_properties.properties.get("azureml.FeatureStoreJobType", None)
+        feature_window_start_time = job_properties.properties.get("azureml.FeatureWindowStart", None)
+        feature_window_end_time = job_properties.properties.get("azureml.FeatureWindowEnd", None)
+
+        time_format = "%Y-%m-%dT%H:%M:%SZ"
+        feature_window_start_time = (
+            datetime.strptime(feature_window_start_time, time_format) if feature_window_start_time else None
+        )
+        feature_window_end_time = (
+            datetime.strptime(feature_window_end_time, time_format) if feature_window_end_time else None
+        )
+
         return FeatureSetMaterializationMetadata(
-            type=FeaturestoreJobTypeMap.get(obj.type),
-            feature_window_start_time=obj.feature_window.feature_window_start,
-            feature_window_end_time=obj.feature_window.feature_window_end,
-            name=obj.job_id,
-            display_name=obj.display_name,
-            creation_context=SystemData(created_at=obj.created_date),
-            duration=obj.duration,
-            status=obj.status,
-            tags=obj.tags,
+            type=FeaturestoreJobTypeMap.get(job_type),
+            feature_window_start_time=feature_window_start_time,
+            feature_window_end_time=feature_window_end_time,
+            name=obj.name,
+            display_name=job_properties.display_name,
+            creation_context=SystemData(created_at=obj.system_data.created_at),
+            status=job_properties.status,
+            tags=job_properties.tags,
+            duration=None,
         )
