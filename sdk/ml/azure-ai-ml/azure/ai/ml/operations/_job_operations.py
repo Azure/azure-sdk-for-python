@@ -272,7 +272,7 @@ class JobOperations(_ScopeDependentOperations):
                 :language: python
                 :dedent: 8
                 :caption: Retrieving a list of the archived jobs in a workspace with parent job named
-                "iris-dataset-jobs".
+                    "iris-dataset-jobs".
         """
 
         schedule_defined = kwargs.pop("schedule_defined", None)
