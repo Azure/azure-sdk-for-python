@@ -3,9 +3,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
-import sys
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Union, cast
+from typing_extensions import Literal
 
 from azure.core.rest import HttpResponse
 from ._generated._serialization import Model
@@ -15,12 +15,6 @@ from ._generated.models import (
     Snapshot as GeneratedSnapshot,
     SnapshotStatus,
 )
-
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # pylint: disable=ungrouped-imports
-
 
 PolymorphicConfigurationSetting = Union[
     "ConfigurationSetting", "SecretReferenceConfigurationSetting", "FeatureFlagConfigurationSetting"
@@ -38,7 +32,7 @@ class ConfigurationSetting(Model):
     """The key of the configuration setting."""
     label: str
     """The label of the configuration setting."""
-    content_type: str
+    content_type: Optional[str]
     """The content_type of the configuration setting."""
     last_modified: datetime
     """A date representing the last time the key-value was modified."""
@@ -59,6 +53,7 @@ class ConfigurationSetting(Model):
     }
 
     kind = "Generic"
+    content_type = None
 
     def __init__(self, **kwargs: Any) -> None:
         super(ConfigurationSetting, self).__init__(**kwargs)

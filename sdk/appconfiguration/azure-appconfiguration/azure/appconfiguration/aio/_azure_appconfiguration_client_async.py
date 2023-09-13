@@ -4,8 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 import binascii
-import sys
 from typing import Any, Dict, List, Mapping, Optional, Union, cast
+from typing_extensions import Literal
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials_async import AsyncTokenCredential
@@ -36,11 +36,6 @@ from .._utils import (
     prep_if_match,
     prep_if_none_match,
 )
-
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # pylint: disable=ungrouped-imports
 
 
 class AzureAppConfigurationClient:
@@ -275,7 +270,7 @@ class AzureAppConfigurationClient:
 
         try:
             key_value_added = await self._impl.put_key_value(
-                entity=key_value,  # pyright: ignore
+                entity=key_value,
                 key=key_value.key,  # type: ignore
                 label=key_value.label,
                 if_none_match="*",
@@ -344,7 +339,7 @@ class AzureAppConfigurationClient:
 
         try:
             key_value_set = await self._impl.put_key_value(
-                entity=key_value,  # pyright: ignore
+                entity=key_value,
                 key=key_value.key,  # type: ignore
                 label=key_value.label,
                 if_match=prep_if_match(configuration_setting.etag, match_condition),
