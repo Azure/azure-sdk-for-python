@@ -32,7 +32,6 @@ from ._models import (
 )
 from ._content_downloader import ContentDownloader
 from ._utils import (
-    get_repeatability_guid,
     serialize_phone_identifier,
     serialize_identifier,
     serialize_communication_user_identifier,
@@ -207,7 +206,6 @@ class CallAutomationClient:
         process_repeatability_first_sent(kwargs)
         result = self._client.create_call(
             create_call_request=create_call_request,
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs
         )
         return CallConnectionProperties._from_generated(result)  # pylint:disable=protected-access
@@ -300,7 +298,6 @@ class CallAutomationClient:
         process_repeatability_first_sent(kwargs)
         result = self._client.answer_call(
             answer_call_request=answer_call_request,
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs
         )
         return CallConnectionProperties._from_generated(result)  # pylint:disable=protected-access
@@ -334,7 +331,6 @@ class CallAutomationClient:
         process_repeatability_first_sent(kwargs)
         self._client.redirect_call(
             redirect_call_request=redirect_call_request,
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs
         )
 
@@ -365,7 +361,6 @@ class CallAutomationClient:
         process_repeatability_first_sent(kwargs)
         self._client.reject_call(
             reject_call_request=reject_call_request,
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs
         )
 
@@ -481,7 +476,6 @@ class CallAutomationClient:
         process_repeatability_first_sent(kwargs)
         recording_state_result = self._call_recording_client.start_recording(
             start_call_recording=start_recording_request,
-            repeatability_request_id=get_repeatability_guid(),
             **kwargs
         )
         return RecordingProperties._from_generated(recording_state_result)
