@@ -29,7 +29,7 @@ pytestmark = pytest.mark.cosmosEmulator
 
 
 @pytest.mark.usefixtures("teardown")
-class TestAutoScale:
+class TestAutoScaleAsync:
     host = test_config._test_config.host
     masterKey = test_config._test_config.masterKey
     connectionPolicy = test_config._test_config.connectionPolicy
@@ -47,7 +47,7 @@ class TestAutoScale:
                                   connection_policy=cls.connectionPolicy)
         cls.created_database = await cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
 
-    async def test_auto_scale(self):
+    async def test_autoscale_create_container_async(self):
         created_container = await self.created_database.create_container(
             id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
@@ -70,32 +70,21 @@ class TestAutoScale:
                 offer_throughput=ThroughputProperties(auto_scale_max_throughput=-200, auto_scale_increment_percent=0))
         assert "Requested throughput -200 is less than required minimum throughput 1000" in str(e.value)
 
-    async def test_create_container_if_not_exist(self):
         # Testing auto_scale_settings for the create_container_if_not_exists method
         created_container = await self.created_database.create_container_if_not_exists(
             id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
-            offer_throughput=ThroughputProperties(auto_scale_max_throughput=1000, auto_scale_increment_percent=0)
+            offer_throughput=ThroughputProperties(auto_scale_max_throughput=1000, auto_scale_increment_percent=3)
         )
         created_container_properties = await created_container.get_throughput()
-        # Testing the incorrect input value of the max_throughput
-        assert created_container_properties.auto_scale_max_throughput != 2000
+        # Testing the input value of the max_throughput
+        assert created_container_properties.auto_scale_max_throughput == 1000
+        # Testing the input value of the increment_percentage
+        assert created_container_properties.auto_scale_increment_percent == 3
 
-        await self.created_database.delete_container(created_container)
+        await self.created_database.delete_container(created_container.id)
 
-        created_container = await self.created_database.create_container_if_not_exists(
-            id='container_with_auto_scale_settings',
-            partition_key=PartitionKey(path="/id"),
-            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=2)
-
-        )
-        created_container_properties = await created_container.get_throughput()
-        # Testing the incorrect input value of the max_increment_percentage
-        assert created_container_properties.auto_scale_increment_percent != 3
-
-        await self.created_database.delete_container(created_container)
-
-    async def test_create_database(self):
+    async def test_autoscale_create_database_async(self):
         # Testing auto_scale_settings for the create_database method
         created_database = await self.client.create_database("db1", offer_throughput=ThroughputProperties(
             auto_scale_max_throughput=5000,
@@ -108,20 +97,20 @@ class TestAutoScale:
 
         await self.client.delete_database("db1")
 
-    async def test_create_database_if_not_exists(self):
         # Testing auto_scale_settings for the create_database_if_not_exists method
         created_database = await self.client.create_database_if_not_exists("db2", offer_throughput=ThroughputProperties(
             auto_scale_max_throughput=9000,
             auto_scale_increment_percent=11))
         created_db_properties = await created_database.get_throughput()
         # Testing the input value of the max_throughput
-        assert created_db_properties.auto_scale_max_throughput != 8000
+        assert created_db_properties.auto_scale_max_throughput == 9000
         # Testing the input value of the increment_percentage
         assert created_db_properties.auto_scale_increment_percent == 11
 
         await self.client.delete_database("db2")
 
-    async def test_replace_throughput(self):
+    async def test_replace_throughput_async(self):
+        # need test for replace db throughput
         created_container = await self.created_database.create_container(
             id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
