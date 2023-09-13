@@ -21,7 +21,8 @@ Their main purpose is to be used in inline examples for class and methods throug
         :end-before: [END create_ml_client_from_config_default]
         :language: python
         :dedent: 8
-        :caption: Creating an MLClient from a file named "config.json" in directory "src".
+        :caption: Creating an MLClient from a file named "config.json"
+            in directory "src".
 ```
 
 If adding or updating

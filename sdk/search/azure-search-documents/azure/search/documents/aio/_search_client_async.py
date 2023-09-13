@@ -664,17 +664,18 @@ class SearchClient(HeadersMixin):
                 actions=actions[:pos], error_map=error_map, **kwargs
             )
             if batch_response_first_half:
-                result_first_half = cast(List[IndexingResult], batch_response_first_half.results)
+                result_first_half = batch_response_first_half
             else:
                 result_first_half = []
             batch_response_second_half = await self._index_documents_actions(
                 actions=actions[pos:], error_map=error_map, **kwargs
             )
             if batch_response_second_half:
-                result_second_half = cast(List[IndexingResult], batch_response_second_half.results)
+                result_second_half = batch_response_second_half
             else:
                 result_second_half = []
-            return result_first_half.extend(result_second_half)
+            result_first_half.extend(result_second_half)
+            return result_first_half
 
     async def __aenter__(self) -> "SearchClient":
         await self._client.__aenter__()  # pylint: disable=no-member
