@@ -34,7 +34,7 @@ class FeatureSetBackfillRequest(RestTranslatableMixin):
         tags: Optional[Dict[str, str]] = None,
         resource: Optional[MaterializationComputeResource] = None,
         spark_conf: Optional[Dict[str, str]] = None,
-        data_availability_status:  Optional[List[str]] = None,
+        data_availability_status: Optional[List[str]] = None,
         job_id: Optional[str] = None,
         **kwargs,
     ):
