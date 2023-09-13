@@ -43,8 +43,7 @@ class TestAutoScaleAsync:
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = CosmosClient(cls.host, cls.masterKey, consistency_level="Session",
-                                  connection_policy=cls.connectionPolicy)
+        cls.client = CosmosClient(cls.host, cls.masterKey, consistency_level="Session")
         cls.created_database = await cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
 
     @pytest.mark.asyncio

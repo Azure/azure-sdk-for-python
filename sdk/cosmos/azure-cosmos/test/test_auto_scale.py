@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import azure.cosmos.cosmos_client as cosmos_client
+from azure.cosmos import CosmosClient
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos import ThroughputProperties, PartitionKey
 import pytest
@@ -43,8 +43,7 @@ class TestAutoScale:
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session",
-                                                connection_policy=cls.connectionPolicy)
+        cls.client = CosmosClient(cls.host, cls.masterKey, consistency_level="Session")
         cls.created_database = cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
 
     def test_autoscale_create_container(self):
