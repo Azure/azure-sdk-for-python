@@ -20,11 +20,10 @@ import os
 
 class PipelineConfigurationOptions(object):
     def ml_pipeline_config(self):
-        from azure.identity import DefaultAzureCredential
-
         from azure.ai.ml import Input, MLClient
         from azure.ai.ml.constants._common import AssetTypes
         from azure.ai.ml.entities import Environment
+        from azure.identity import DefaultAzureCredential
 
         subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
         resource_group = os.environ["RESOURCE_GROUP_NAME"]
@@ -46,7 +45,9 @@ class PipelineConfigurationOptions(object):
         from azure.ai.ml import load_component
         from azure.ai.ml.dsl import pipeline
 
-        component_func = load_component(source=r"../tests/test_configs/components/helloworld_component.yml")
+        component_func = load_component(
+            source="./sdk/ml/azure-ai-ml/tests/test_configs/components/helloworld_component.yml"
+        )
 
         # Define a pipeline with decorator
         @pipeline(name="sample_pipeline", description="pipeline description")

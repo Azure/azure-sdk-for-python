@@ -332,6 +332,7 @@ class ArmConstants:
     AZURE_MGMT_RESOURCE_API_VERSION = "2020-06-01"
     AZURE_MGMT_STORAGE_API_VERSION = "2019-06-01"
     AZURE_MGMT_APPINSIGHT_API_VERSION = "2015-05-01"
+    AZURE_MGMT_LOGANALYTICS_API_VERSION = "2015-03-20"
     AZURE_MGMT_KEYVAULT_API_VERSION = "2019-09-01"
     AZURE_MGMT_CONTAINER_REG_API_VERSION = "2019-05-01"
 
@@ -379,6 +380,18 @@ class CommonYamlFields:
     """Name."""
     SCHEMA = "$schema"
     """Schema."""
+
+
+class SchemaUrl:
+    """Schema urls.
+
+    Schema urls will be used in VSCode extension to validate yaml files. It will also be used to identify the
+    corresponding entity type of a yaml file, especially for some internal yaml files.
+    """
+
+    PROMPTFLOW_PREFIX = "https://azuremlschemas.azureedge.net/promptflow/"
+    PROMPTFLOW_FLOW = PROMPTFLOW_PREFIX + "latest/Flow.schema.json"
+    PROMPTFLOW_RUN = PROMPTFLOW_PREFIX + "latest/Run.schema.json"
 
 
 class GitProperties:

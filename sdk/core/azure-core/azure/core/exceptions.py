@@ -40,6 +40,7 @@ from typing import (
     TypeVar,
     Generic,
     Dict,
+    NoReturn,
     TYPE_CHECKING,
 )
 from typing_extensions import Protocol, runtime_checkable
@@ -79,7 +80,7 @@ __all__ = [
 ]
 
 
-def raise_with_traceback(exception: Callable, *args: Any, **kwargs: Any) -> None:
+def raise_with_traceback(exception: Callable, *args: Any, **kwargs: Any) -> NoReturn:
     """Raise exception with a specified traceback.
     This MUST be called inside a "except" clause.
 
@@ -113,18 +114,18 @@ class _HttpResponseCommonAPI(Protocol):
 
     @property
     def reason(self) -> Optional[str]:
-        pass
+        ...
 
     @property
     def status_code(self) -> Optional[int]:
-        pass
+        ...
 
     def text(self) -> str:
-        pass
+        ...
 
     @property
     def request(self) -> object:  # object as type, since all we need is str() on it
-        pass
+        ...
 
 
 class ErrorMap(Generic[KeyType, ValueType]):

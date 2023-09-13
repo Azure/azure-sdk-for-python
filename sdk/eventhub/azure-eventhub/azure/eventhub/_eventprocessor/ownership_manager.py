@@ -53,7 +53,11 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
         self.partition_id = partition_id
 
     def claim_ownership(self) -> List[str]:
-        """Claims ownership for this EventProcessor"""
+        """Claims ownership for this EventProcessor
+
+        :return: The list of partition ids that the EventProcessor claimed.
+        :rtype: list[str]
+        """
         if not self.cached_parition_ids:
             self._retrieve_partition_ids()
 
@@ -83,6 +87,9 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
 
         This is called when a consumer is shutdown, and is achieved by resetting the associated
         owner ID.
+
+        :param partition_id: The partition id to release ownership.
+        :type partition_id: str
         """
         if not self.checkpoint_store:
             return
@@ -108,7 +115,16 @@ class OwnershipManager(object):  # pylint:disable=too-many-instance-attributes
         ownership_list: Iterable[Dict[str, Any]],
         all_partition_ids: List[str]
     ) -> List[Dict[str, Any]]:
-        """Balances and claims ownership of partitions for this EventProcessor."""
+        """Balances and claims ownership of partitions for this EventProcessor.
+
+        :param ownership_list: The list of current ownership.
+        :type ownership_list: iterable[dict[str,any]]
+        :param all_partition_ids: The list of all partition ids of the event hub that the EventProcessor is working on.
+        :type all_partition_ids: list[str]
+        :return: The balanced list of ownership that the EventProcessor claimed.
+        :rtype: list[dict[str, any]]
+
+        """
         now = time.time()
         ownership_dict = {
             x["partition_id"]: x for x in ownership_list

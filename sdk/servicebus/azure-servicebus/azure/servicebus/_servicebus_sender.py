@@ -297,7 +297,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         :type schedule_time_utc: ~datetime.datetime
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.
-        :rtype: List[int]
+        :returns: A list of the sequence numbers of the enqueued messages.
+        :rtype: list[int]
 
         .. admonition:: Example:
 
@@ -500,6 +501,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         :param Optional[int] max_size_in_bytes: The maximum size of bytes data that a ServiceBusMessageBatch object can
          hold. By default, the value is determined by your Service Bus tier.
+        :return: A ServiceBusMessageBatch object
         :rtype: ~azure.servicebus.ServiceBusMessageBatch
 
         .. admonition:: Example:

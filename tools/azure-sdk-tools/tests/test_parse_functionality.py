@@ -93,6 +93,7 @@ setup(
         'pytyped': ['py.typed'],
     },
     python_requires=">=3.7",
+    keywords=["azure sdk", "hello world"],
     install_requires=[
         'requests>=2.18.4',
         'six>=1.11.0',
@@ -116,3 +117,5 @@ setup(
     assert len(result.classifiers) > 0
     assert result.classifiers[0] == "Development Status :: 5 - Production/Stable"
     assert result.classifiers[5] == "Programming Language :: Python :: 3.8"
+    assert result.keywords[0] == "azure sdk"
+    assert len(result.keywords) == 2

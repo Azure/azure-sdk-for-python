@@ -1,14 +1,23 @@
 # Release History
 
-## 7.11.2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 7.11.2 (2023-09-13)
 
 ### Bugs Fixed
 
+- Fixed the error `NoneType object has no attribute 'settle_messages'` which was raised when a connection was dropped due to a blocked process ([#30514](https://github.com/Azure/azure-sdk-for-python/issues/30514))
+
 ### Other Changes
+
+- The `__contains__` method was added to `azure.servicebus` for the following (PR #30846, thanks @pamelafox).
+  - `ServiceBusConnectionStringProperties`
+  - `amqp.AmqpMessageHeader`
+  - `amqp.AmqpMessageProperties`
+  - `management.AccessRights`
+  - `management.NamespaceProperties`
+  - `management.QueueProperties`
+  - `management.TopicProperties`
+  - `management.SubscriptionProperties`
+  - `management.RuleProperties`
 
 ## 7.11.1 (2023-07-12)
 
