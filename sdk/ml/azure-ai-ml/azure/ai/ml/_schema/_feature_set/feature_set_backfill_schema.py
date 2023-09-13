@@ -19,3 +19,5 @@ class FeatureSetBackfillSchema(YamlFileSchema):
     tags = fields.Dict()
     resource = NestedField(MaterializationComputeResourceSchema)
     spark_conf = fields.Dict()
+    data_availability_status = fields.List(fields.Str())
+    job_id = fields.Str()

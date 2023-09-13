@@ -6,9 +6,9 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Union, List
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import FeatureWindow
+from azure.ai.ml._restclient.v2023_08_01_preview.models import FeatureWindow
 
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._feature_set.materialization_compute_resource import (
@@ -34,6 +34,8 @@ class FeatureSetBackfillRequest(RestTranslatableMixin):
         tags: Optional[Dict[str, str]] = None,
         resource: Optional[MaterializationComputeResource] = None,
         spark_conf: Optional[Dict[str, str]] = None,
+        data_availability_status:  Optional[List[str]] = None,
+        job_id: Optional[str] = None,
         **kwargs,
     ):
         self.name = name
@@ -43,6 +45,8 @@ class FeatureSetBackfillRequest(RestTranslatableMixin):
         self.resource = resource
         self.tags = tags
         self.spark_conf = spark_conf
+        self.data_availability_status = data_availability_status
+        self.job_id = job_id
 
     @classmethod
     # pylint: disable=unused-argument
@@ -67,7 +71,6 @@ class FeatureSetBackfillRequest(RestTranslatableMixin):
         **kwargs,
     ) -> "FeatureSetBackfillRequest":
         data = data or {}
-        print(data)
         params_override = params_override or []
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),

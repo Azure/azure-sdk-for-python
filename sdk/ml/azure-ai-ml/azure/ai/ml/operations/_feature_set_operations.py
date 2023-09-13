@@ -8,14 +8,14 @@ import json
 import os
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Union, List
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     FeaturesetVersion,
     FeaturesetVersionBackfillRequest,
     FeatureWindow,
@@ -59,7 +59,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: ServiceClient042023Preview,
+        service_client: ServiceClient082023Preview,
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
@@ -184,6 +184,8 @@ class FeatureSetOperations(_ScopeDependentOperations):
         tags: Optional[Dict[str, str]] = None,
         compute_resource: Optional[MaterializationComputeResource] = None,
         spark_configuration: Optional[Dict[str, str]] = None,
+        data_availability_status: Optional[List[str]] = None,
+        job_id: Optional[str] = None,
         **kwargs: Dict,
     ) -> LROPoller[FeatureSetBackfillMetadata]:
         """Backfill.
@@ -209,7 +211,6 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :return: An instance of LROPoller that returns ~azure.ai.ml.entities.FeatureSetBackfillMetadata
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureSetBackfillMetadata]
         """
-
         request_body: FeaturesetVersionBackfillRequest = FeaturesetVersionBackfillRequest(
             description=description,
             display_name=display_name,
@@ -218,8 +219,11 @@ class FeatureSetOperations(_ScopeDependentOperations):
             ),
             resource=compute_resource._to_rest_object() if compute_resource else None,
             spark_configuration=spark_configuration,
+            data_availability_status=data_availability_status,
+            job_id=job_id,
             tags=tags,
         )
+
         return self._operation.begin_backfill(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,

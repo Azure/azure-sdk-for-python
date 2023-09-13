@@ -23,6 +23,8 @@ class TestFeatureSetBackfillRequestSchema:
         assert backfill_request.name == target["name"]
         assert backfill_request.version == target["version"]
         assert backfill_request.description == target["description"]
+        assert backfill_request.data_availability_status == target["data_availability_status"]
+        assert backfill_request.job_id == target["job_id"]
         assert backfill_request.tags is not None
         assert backfill_request.resource is not None
         assert backfill_request.spark_conf is not None
