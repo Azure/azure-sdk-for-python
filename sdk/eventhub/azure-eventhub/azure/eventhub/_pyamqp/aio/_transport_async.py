@@ -540,7 +540,11 @@ class WebSocketTransportAsync(
                     self._read_buffer = BytesIO(data[toread:])
                     toread = 0
             return view
-        except:
+        except TypeError as te:
+            # aiohttp websocket raises TypeError when a websocket disconnects, as it ends up
+            # reading None over the wire and cant convert to bytes.
+            raise ConnectionError("Websocket disconnected: %r" % te) from None
+        except Exception:
             self._read_buffer = BytesIO(view[:length])
             raise
 
