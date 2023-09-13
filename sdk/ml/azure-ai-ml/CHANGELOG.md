@@ -3,6 +3,8 @@
 ## 1.11.0 (unreleased)
 
 ### Features Added
+- Now, when you specify `delete_dependent_resources` as True when deleting a workspace, the log analytics resource
+  associated with the workspace application insights resource will also be deleted.
 
 ### Bugs Fixed
 
