@@ -44,7 +44,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
     :ivar str account_name: The name of the Tables account.
     :ivar str scheme: The scheme component in the full URL to the Tables account.
     :ivar str url: The storage endpoint.
-    :ivar Optional[str] api_version: The service API version.
+    :ivar str api_version: The service API version.
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
@@ -67,7 +67,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
             ~azure.core.credentials_async.AsyncTokenCredential or None
         :keyword api_version: Specifies the version of the operation to use for this request. Default value
             is "2019-02-02".
-        :paramtype api_version: str
+        :paramtype api_version: str or None
         """
         super(AsyncTablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)  # type: ignore
         self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), **kwargs)
