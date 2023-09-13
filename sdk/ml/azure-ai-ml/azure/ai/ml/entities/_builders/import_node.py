@@ -4,7 +4,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from marshmallow import Schema
 
@@ -57,7 +57,7 @@ class Import(BaseNode):
         component: Union[str, ImportComponent],
         inputs: Optional[Dict[str, str]] = None,
         outputs: Optional[Dict[str, Output]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
@@ -77,12 +77,12 @@ class Import(BaseNode):
         )
 
     @classmethod
-    def _get_supported_inputs_types(cls):
+    def _get_supported_inputs_types(cls) -> type[str]:
         # import source parameters type, connection, query, path are always str
         return str
 
     @classmethod
-    def _get_supported_outputs_types(cls):
+    def _get_supported_outputs_types(cls) -> Tuple:
         return str, Output
 
     @property
@@ -112,7 +112,7 @@ class Import(BaseNode):
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
         return []
 
-    def _to_rest_object(self, **kwargs) -> dict:
+    def _to_rest_object(self, **kwargs: Any) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
         rest_obj.update(
             convert_ordered_dict_to_dict(
@@ -121,17 +121,17 @@ class Import(BaseNode):
                 }
             )
         )
-        return rest_obj
+        return dict(rest_obj)
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Import":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Import":
         from .import_func import import_job
 
         loaded_data = load_from_dict(ImportJobSchema, data, context, additional_message, **kwargs)
 
-        import_job = import_job(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
+        _import_job: Import = import_job(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
-        return import_job
+        return _import_job
 
     @classmethod
     def _load_from_rest_job(cls, obj: JobBaseData) -> "Import":
@@ -141,7 +141,7 @@ class Import(BaseNode):
         inputs = from_rest_inputs_to_dataset_literal(rest_command_job.inputs)
         outputs = from_rest_data_outputs(rest_command_job.outputs)
 
-        import_job = import_job(
+        _import_job: Import = import_job(
             name=obj.name,
             display_name=rest_command_job.display_name,
             description=rest_command_job.description,
@@ -151,19 +151,22 @@ class Import(BaseNode):
             inputs=inputs,
             output=outputs["output"] if "output" in outputs else None,
         )
-        import_job._id = obj.id
-        import_job.component._source = ComponentSource.REMOTE_WORKSPACE_JOB  # This is used by pipeline job telemetries.
+        _import_job._id = obj.id
+        if isinstance(_import_job.component, ImportComponent):
+            _import_job.component._source = (
+                ComponentSource.REMOTE_WORKSPACE_JOB
+            )  # This is used by pipeline job telemetries.
 
-        return import_job
+        return _import_job
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
         from azure.ai.ml._schema.pipeline import ImportSchema
 
         return ImportSchema(context=context)
 
     # pylint: disable-next=docstring-missing-param
-    def __call__(self, *args, **kwargs) -> "Import":
+    def __call__(self, *args: Any, **kwargs: Any) -> "Import":
         """Call Import as a function will return a new instance each time.
 
         :return: An Import node.
@@ -171,7 +174,7 @@ class Import(BaseNode):
         """
         if isinstance(self._component, Component):
             # call this to validate inputs
-            node = self._component(*args, **kwargs)
+            node: Import = self._component(*args, **kwargs)
             # merge inputs
             for name, original_input in self.inputs.items():
                 if name not in kwargs:

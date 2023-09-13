@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities._component.import_component import ImportComponent
@@ -25,7 +25,7 @@ def import_job(
     source: Optional[ImportSource] = None,
     output: Optional[Output] = None,
     is_deterministic: bool = True,
-    **kwargs,
+    **kwargs: Any,
 ) -> Import:
     """Create an Import object which can be used inside dsl.pipeline as a function
     and can also be created as a standalone import job.
