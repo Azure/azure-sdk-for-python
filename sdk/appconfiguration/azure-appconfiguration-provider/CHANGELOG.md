@@ -1,8 +1,11 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.1.0b1 (Unreleased)
 
 ### Features Added
+
+* New API for Azure App Configuration Provider, `refresh`, which can be used to refresh the configuration from the Azure App Configuration service. `refresh` by default can check every 30 seconds for changes to specified sentinel keys. If a change is detected then all configurations are reloaded. Sentinel keys can be set by passing  a list of `SentinelKey`'s to `refresh_on`.
+* Added support for customer provided user agent prefix.
 
 ### Breaking Changes
 
