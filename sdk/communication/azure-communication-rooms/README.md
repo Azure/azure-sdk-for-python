@@ -160,7 +160,7 @@ Retrieve the list of participants for an existing room by referencing the `room_
 
 ```python
 try:
-    participants = client.list_participants("id of the room to list participants")
+    participants = client.list_participants(room_id="id of the room to list participants")
 except HttpResponseError as ex:
     print(ex)
 ```
