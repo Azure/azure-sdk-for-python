@@ -1,6 +1,5 @@
 -e ../../../tools/azure-sdk-tools
 -e ../../../tools/azure-devtools
-../azure-monitor-opentelemetry-exporter
 pytest
 django
 fastapi
