@@ -1,5 +1,10 @@
 # Release History
 
+## 12.8.0b1 (Unreleased)
+
+### Features Added
+
+
 ## 12.7.1 (2023-09-13)
 
 ### Bugs Fixed
