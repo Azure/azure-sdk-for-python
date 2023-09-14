@@ -671,7 +671,7 @@ class FADProductionData(RestTranslatableMixin):
         self.data_window_size = data_window_size
 
     def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
-        default_data_window_size = kwargs.get("default_data_window_size")
+        default_data_window_size = kwargs.get("default")
         if self.data_window_size is None:
             self.data_window_size = default_data_window_size
         uri = self.input_data.path
@@ -697,7 +697,7 @@ class FADProductionData(RestTranslatableMixin):
             data_context=obj.data_context,
             data_column_names=obj.columns,
             pre_processing_component=obj.preprocessing_component_id,
-            data_window_size=obj.window_size,
+            data_window_size=isodate.duration_isoformat(obj.window_size),
         )
 
 
@@ -737,8 +737,9 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
     def _to_rest_object(
         self, **kwargs  # pylint: disable=unused-argument
     ) -> RestFeatureAttributionDriftMonitoringSignal:
+        default_window_size = kwargs.get("default_data_window_size")
         return RestFeatureAttributionDriftMonitoringSignal(
-            production_data=[data._to_rest_object() for data in self.production_data],
+            production_data=[data._to_rest_object(default=default_window_size) for data in self.production_data],
             reference_data=self.reference_data._to_rest_object(),
             metric_threshold=self.metric_thresholds._to_rest_object(),
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
