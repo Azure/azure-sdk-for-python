@@ -56,7 +56,6 @@ from .response_handlers import process_storage_error, PartialBatchErrorException
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from .._models import BlobAudience
 
 _LOGGER = logging.getLogger(__name__)
 _SERVICE_PARAMS = {
@@ -73,8 +72,6 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         parsed_url,  # type: Any
         service,  # type: str
         credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-        *,
-        audience: Optional[Union["BlobAudience", Any]],
         **kwargs  # type: Any
     ):
         # type: (...) -> None
