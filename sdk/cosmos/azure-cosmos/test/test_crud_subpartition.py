@@ -247,7 +247,7 @@ class CRUDTests(unittest.TestCase):
             self.fail('Operation Should Fail.')
         except exceptions.CosmosHttpResponseError as error:
             self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
-            self.assertTrue("Partition key provided either doesn't correspond to definition in the collection"
+            self.assertTrue("Partition key [[]] is invalid"
                             in error.message)
 
         created_db.delete_container(created_collection.id)
