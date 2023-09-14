@@ -26,7 +26,7 @@ def parse_connection_string(conn_str: str, case_sensitive_keys: bool = False) ->
     cs_args = [s.split("=", 1) for s in conn_str.strip().rstrip(";").split(";")]
     if any(len(tup) != 2 or not all(tup) for tup in cs_args):
         raise ValueError("Connection string is either blank or malformed.")
-    args_dict = dict(cs_args)  # type: ignore
+    args_dict = dict(cs_args)
 
     if len(cs_args) != len(args_dict):
         raise ValueError("Connection string is either blank or malformed.")

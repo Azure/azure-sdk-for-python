@@ -42,8 +42,10 @@ try:
             """
             Creates and returns the uamqp Connection object.
             :param str host: The hostname, used by uamqp.
-            :param JWTTokenAuth auth: The auth, used by uamqp.
+            :param ~uamqp.authentication.JWTTokenAuth auth: The auth, used by uamqp.
             :param bool network_trace: Required.
+            :return: An instance of ConnectionAsync.
+            :rtype: ~uamqp.async_ops.ConnectionAsync
             """
             custom_endpoint_address = kwargs.pop("custom_endpoint_address") # pylint:disable=unused-variable
             ssl_opts = kwargs.pop("ssl_opts") # pylint:disable=unused-variable
@@ -59,7 +61,7 @@ try:
         async def close_connection_async(connection: "ConnectionAsync") -> None:
             """
             Closes existing connection.
-            :param connection: uamqp or pyamqp Connection.
+            :param ~uamqp.async_ops.ConnectionAsync connection: uamqp Connection.
             """
             await connection.destroy_async()
 
@@ -80,6 +82,9 @@ try:
             :keyword str client_name: Required.
             :keyword dict link_properties: Required.
             :keyword properties: Required.
+
+            :return: An instance of SendClient.
+            :rtype: ~uamqp.aio.SendClientAsync
             """
             target = kwargs.pop("target")
             retry_policy = kwargs.pop("retry_policy")
@@ -107,7 +112,7 @@ try:
             :param message: ServiceBusMessage with uamqp.Message to be sent.
             :paramtype message: ~azure.servicebus.ServiceBusMessage or ~azure.servicebus.ServiceBusMessageBatch
             :param int timeout: Timeout time.
-            :param last_exception: Exception to raise if message timed out. Only used by uamqp transport.
+            :param Exception last_exception: Exception to raise if message timed out. Only used by uamqp transport.
             :param logger: Logger.
             """
             # pylint: disable=protected-access
@@ -125,7 +130,7 @@ try:
         ) -> "ReceiveClientAsync":
             """
             Creates and returns the receive client.
-            :param Configuration config: The configuration.
+            :param ~auzre.servicebus.aio.ServiceBusReceiver receiver: The receiver.
 
             :keyword str source: Required. The source.
             :keyword str offset: Required.
@@ -142,6 +147,9 @@ try:
             :keyword desired_capabilities: Required.
             :keyword streaming_receive: Required.
             :keyword timeout: Required.
+
+            :return: An instance of ReceiveClientAsync.
+            :rtype: ~uamqp.ReceiveClientAsync
             """
             source = kwargs.pop("source")
             retry_policy = kwargs.pop("retry_policy")
@@ -171,7 +179,15 @@ try:
             receiver: "ServiceBusReceiver", max_wait_time: Optional[int] = None
         ) -> AsyncIterator["ServiceBusReceivedMessage"]:
             """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
-            and per-iter argument passing that requires the former."""
+            and per-iter argument passing that requires the former.
+
+            :param receiver: The receiver.
+            :type receiver: ~azure.servicebus.aio.ServiceBusReceiver
+            :param max_wait_time: The maximum amount of time to wait for messages, in seconds.
+            :type max_wait_time: int or None
+            :return: An iterator of messages.
+            :rtype: asynciterator[~azure.servicebus.aio.ServiceBusReceivedMessage]
+            """
             # pylint: disable=protected-access
             original_timeout = None
             while True:
@@ -271,13 +287,15 @@ try:
             """
             Creates the JWTTokenAuth.
             :param str auth_uri: The auth uri to pass to JWTTokenAuth.
-            :param get_token: The callback function used for getting and refreshing
+            :param callable get_token: The callback function used for getting and refreshing
             tokens. It should return a valid jwt token each time it is called.
             :param bytes token_type: Token type.
             :param Configuration config: EH config.
 
             :keyword bool update_token: Required. Whether to update token. If not updating token,
             then pass 300 to refresh_window.
+            :return: An instance of JWTTokenAuth.
+            :rtype: ~uamqp.authentication.JWTTokenAuth
             """
             update_token = kwargs.pop("update_token")
             refresh_window = 0 if update_token else 300
@@ -312,13 +330,15 @@ try:
         ) -> "ServiceBusReceivedMessage":
             """
             Send mgmt request.
-            :param AMQPClient mgmt_client: Client to send request with.
-            :param Message mgmt_msg: Message.
+            :param ~uamqp.AMQPClient mgmt_client: Client to send request with.
+            :param ~uamqp.Message mgmt_msg: Message.
             :keyword bytes operation: Operation.
             :keyword bytes operation_type: Op type.
             :keyword bytes node: Mgmt target.
             :keyword int timeout: Timeout.
-            :keyword Callable callback: Callback to process request response.
+            :keyword callable callback: Callback to process request response.
+            :return: The received mgmt response.
+            :rtype: ~azure.servicebus.ServiceBusReceivedMessage
             """
             return await mgmt_client.mgmt_request_async(
                 mgmt_msg,

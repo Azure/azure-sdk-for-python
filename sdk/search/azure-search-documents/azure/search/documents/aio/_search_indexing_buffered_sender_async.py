@@ -147,9 +147,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         if not self._index_key:
             try:
                 client = SearchServiceClient(self._endpoint, self._credential)
-                result = await client.get_index(self._index_name)
-                if result:
-                    for field in result.fields:
+                index_result = await client.get_index(self._index_name)
+                if index_result:
+                    for field in index_result.fields:
                         if field.key:
                             self._index_key = field.name
                             break
@@ -182,20 +182,23 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
                 if raise_error:
                     raise
                 return True
+        return has_error
 
     async def _process_if_needed(self) -> bool:
         """Every time when a new action is queued, this method
         will be triggered. It checks the actions already queued and flushes them if:
         1. Auto_flush is on
         2. There are self._batch_action_count actions queued
+        :return: True if proces is needed, False otherwise
+        :rtype: bool
         """
         if not self._auto_flush:
-            return
+            return False
 
         if len(self._index_documents_batch.actions) < self._batch_action_count:
-            return
+            return False
 
-        await self._process(raise_error=False)
+        return await self._process(raise_error=False)
 
     def _reset_timer(self):
         # pylint: disable=access-member-before-definition
@@ -274,7 +277,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
                 raise
             pos = round(len(actions) / 2)
             if pos < self._batch_action_count:
-                self._index_documents_batch = pos
+                await self._index_documents_batch.enqueue_actions(actions)
             now = int(time.time())
             remaining = timeout - (now - begin_time)
             if remaining < 0:
@@ -283,7 +286,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
                 actions=actions[:pos], error_map=error_map, **kwargs
             )
             if len(batch_response_first_half) > 0:
-                result_first_half = cast(List[IndexingResult], batch_response_first_half.results)
+                result_first_half = batch_response_first_half
             else:
                 result_first_half = []
             now = int(time.time())
@@ -294,10 +297,11 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
                 actions=actions[pos:], error_map=error_map, **kwargs
             )
             if len(batch_response_second_half) > 0:
-                result_second_half = cast(List[IndexingResult], batch_response_second_half.results)
+                result_second_half = batch_response_second_half
             else:
                 result_second_half = []
-            return result_first_half.extend(result_second_half)
+            result_first_half.extend(result_second_half)
+            return result_first_half
 
     async def __aenter__(self) -> "SearchIndexingBufferedSender":
         await self._client.__aenter__()  # pylint: disable=no-member

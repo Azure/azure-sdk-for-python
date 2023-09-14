@@ -9,9 +9,7 @@ from functools import partial
 from inspect import Parameter, signature
 from os import PathLike
 from pathlib import Path
-from typing import Any, Callable, Dict, Iterable, List, Optional, Union
-
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
@@ -39,12 +37,13 @@ from azure.ai.ml._vendor.azure_resources.operations import DeploymentsOperations
 from azure.ai.ml.constants._common import (
     DEFAULT_COMPONENT_VERSION,
     DEFAULT_LABEL_NAME,
-    DefaultOpenEncoding,
     AzureMLResourceType,
+    DefaultOpenEncoding,
     LROConfigurations,
 )
 from azure.ai.ml.entities import Component, Environment, ValidationResult
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 from .._utils._cache_utils import CachedNodeResolver
 from .._utils._experimental import experimental
@@ -58,7 +57,7 @@ from ..entities._component.pipeline_component import PipelineComponent
 from ..entities._job.pipeline._attr_dict import has_attr_safe
 from ._code_operations import CodeOperations
 from ._environment_operations import EnvironmentOperations
-from ._operation_orchestrator import _AssetResolver, OperationOrchestrator
+from ._operation_orchestrator import OperationOrchestrator, _AssetResolver
 from ._workspace_operations import WorkspaceOperations
 
 ops_logger = OpsLogger(__name__)
@@ -415,13 +414,115 @@ class ComponentOperations(_ScopeDependentOperations):
                 ),
                 **self._init_args,
             )
-            result.merge_with(remote_validation_result.result(), overwrite=True)
+            result.merge_with(
+                # pylint: disable=protected-access
+                component._build_validation_result_from_rest_object(remote_validation_result.result()),
+                overwrite=True,
+            )
         # resolve location for diagnostics from remote validation
         result.resolve_location_for_diagnostics(component._source_path)
-        return result.try_raise(
-            error_target=ErrorTarget.COMPONENT,
+        return component._try_raise(  # pylint: disable=protected-access
+            result,
             raise_error=raise_on_failure,
         )
+
+    def _update_flow_rest_object(self, rest_component_resource):
+        import re
+
+        from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
+
+        component_spec = rest_component_resource.properties.component_spec
+        code, flow_file_name = AMLVersionedArmId(component_spec["code"]), component_spec.pop("flow_file_name")
+        # TODO: avoid remote request here if met performance issue
+        created_code = self._code_operations.get(name=code.asset_name, version=code.asset_version)
+        # remove port number and append flow file name to get full uri for flow.dag.yaml
+        component_spec["flow_definition_uri"] = f"{re.sub(r':[0-9]+/', '/', created_code.path)}/{flow_file_name}"
+
+    def _reset_version_if_no_change(
+        self, component: Component, current_name: str, current_version: str
+    ) -> Tuple[str, ComponentVersion]:
+        """Reset component version to default version if there's no change in the component.
+
+        :param component: The component object
+        :type component: Component
+        :param current_name: The component name
+        :type current_name: str
+        :param current_version: The component version
+        :type current_version: str
+        :return: The new version and rest component resource
+        :rtype: Tuple[str, ComponentVersion]
+        """
+        rest_component_resource = component._to_rest_object()
+
+        try:
+            client_component_hash = rest_component_resource.properties.properties.get("client_component_hash")
+            remote_component_version = self._get_component_version(name=current_name)  # will raise error if not found.
+            remote_component_hash = remote_component_version.properties.properties.get("client_component_hash")
+            if client_component_hash == remote_component_hash:
+                component.version = remote_component_version.properties.component_spec.get(
+                    "version"
+                )  # only update the default version component instead of creating a new version component
+                logger.warning(
+                    "The component is not modified compared to the default version "
+                    "and the new version component registration is skipped."
+                )
+                return component.version, component._to_rest_object()
+        except ResourceNotFoundError as e:
+            logger.info("Failed to get component version, %s", e)
+        except Exception as e:  # pylint: disable=broad-except
+            logger.error("Failed to compare client_component_hash, %s", e)
+
+        return current_version, rest_component_resource
+
+    def _create_or_update_component_version(self, component, name, version, rest_component_resource):
+        try:
+            if self._registry_name:
+                start_time = time.time()
+                path_format_arguments = {
+                    "componentName": component.name,
+                    "resourceGroupName": self._resource_group_name,
+                    "registryName": self._registry_name,
+                }
+                poller = self._version_operation.begin_create_or_update(
+                    name=name,
+                    version=version,
+                    resource_group_name=self._operation_scope.resource_group_name,
+                    registry_name=self._registry_name,
+                    body=rest_component_resource,
+                    polling=AzureMLPolling(
+                        LROConfigurations.POLL_INTERVAL,
+                        path_format_arguments=path_format_arguments,
+                    ),
+                )
+                message = f"Creating/updating registry component {component.name} with version {component.version} "
+                polling_wait(poller=poller, start_time=start_time, message=message, timeout=None)
+
+            else:
+                # _auto_increment_version can be True for non-registry component creation operation;
+                # and anonymous component should use hash as version
+                if not component._is_anonymous and component._auto_increment_version:
+                    return _create_or_update_autoincrement(
+                        name=name,
+                        body=rest_component_resource,
+                        version_operation=self._version_operation,
+                        container_operation=self._container_operation,
+                        resource_group_name=self._operation_scope.resource_group_name,
+                        workspace_name=self._workspace_name,
+                        **self._init_args,
+                    )
+
+                return self._version_operation.create_or_update(
+                    name=name,
+                    version=version,
+                    resource_group_name=self._resource_group_name,
+                    workspace_name=self._workspace_name,
+                    body=rest_component_resource,
+                    **self._init_args,
+                )
+        except Exception as e:
+            raise e
+
+        return None
 
     @monitor_with_telemetry_mixin(
         logger,
@@ -495,74 +596,27 @@ class ComponentOperations(_ScopeDependentOperations):
             self._resolve_arm_id_or_upload_dependencies(component)
 
         name, version = component._get_rest_name_version()
-        rest_component_resource = component._to_rest_object()
-        result = None
-        try:
-            if not component._is_anonymous and kwargs.get("skip_if_no_change"):
-                client_component_hash = rest_component_resource.properties.properties.get("client_component_hash")
-                remote_component_version = self._get_component_version(name=name)  # will raise error if not found.
-                remote_component_hash = remote_component_version.properties.properties.get("client_component_hash")
-                if client_component_hash == remote_component_hash:
-                    component.version = remote_component_version.properties.component_spec.get(
-                        "version"
-                    )  # only update the default version component instead of creating a new version component
-                    version = component.version
-                    rest_component_resource = component._to_rest_object()
-                    logger.warning(
-                        "The component is not modified compared to the default version "
-                        "and the new version component registration is skipped."
-                    )
-        except ResourceNotFoundError as e:
-            logger.info("Failed to get component version, %s", e)
-        except Exception as e:  # pylint: disable=broad-except
-            logger.error("Failed to compare client_component_hash, %s", e)
+        if not component._is_anonymous and kwargs.get("skip_if_no_change"):
+            version, rest_component_resource = self._reset_version_if_no_change(
+                component,
+                current_name=name,
+                current_version=version,
+            )
+        else:
+            rest_component_resource = component._to_rest_object()
 
-        try:
-            if self._registry_name:
-                start_time = time.time()
-                path_format_arguments = {
-                    "componentName": component.name,
-                    "resourceGroupName": self._resource_group_name,
-                    "registryName": self._registry_name,
-                }
-                poller = self._version_operation.begin_create_or_update(
-                    name=name,
-                    version=version,
-                    resource_group_name=self._operation_scope.resource_group_name,
-                    registry_name=self._registry_name,
-                    body=rest_component_resource,
-                    polling=AzureMLPolling(
-                        LROConfigurations.POLL_INTERVAL,
-                        path_format_arguments=path_format_arguments,
-                    ),
-                )
-                message = f"Creating/updating registry component {component.name} with version {component.version} "
-                polling_wait(poller=poller, start_time=start_time, message=message, timeout=None)
+        # TODO: remove this after server side support directly using client created code
+        from azure.ai.ml.entities._component.flow import FlowComponent
 
-            else:
-                # _auto_increment_version can be True for non-registry component creation operation;
-                # and anonymous component should use hash as version
-                if not component._is_anonymous and component._auto_increment_version:
-                    result = _create_or_update_autoincrement(
-                        name=name,
-                        body=rest_component_resource,
-                        version_operation=self._version_operation,
-                        container_operation=self._container_operation,
-                        resource_group_name=self._operation_scope.resource_group_name,
-                        workspace_name=self._workspace_name,
-                        **self._init_args,
-                    )
-                else:
-                    result = self._version_operation.create_or_update(
-                        name=name,
-                        version=version,
-                        resource_group_name=self._resource_group_name,
-                        workspace_name=self._workspace_name,
-                        body=rest_component_resource,
-                        **self._init_args,
-                    )
-        except Exception as e:
-            raise e
+        if isinstance(component, FlowComponent):
+            self._update_flow_rest_object(rest_component_resource)
+
+        result = self._create_or_update_component_version(
+            component,
+            name,
+            version,
+            rest_component_resource,
+        )
 
         if not result:
             component = self.get(name=component.name, version=component.version)
@@ -1147,4 +1201,4 @@ def _try_resolve_code_for_component(component: Component, resolver: _AssetResolv
                 code = component._get_origin_code_value()
             if code is None:
                 return
-            component.code = resolver(code, azureml_type=AzureMLResourceType.CODE)
+            component._fill_back_code_value(resolver(code, azureml_type=AzureMLResourceType.CODE))

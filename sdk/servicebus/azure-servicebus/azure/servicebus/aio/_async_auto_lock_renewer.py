@@ -102,7 +102,7 @@ class AutoLockRenewer:
             raise ServiceBusError(
                 "Cannot renew an entity without an associated receiver.  "
                 "ServiceBusReceivedMessage and active ServiceBusReceiver.Session objects are expected."
-            )
+            ) from None
         return True
 
     async def _auto_lock_renew(

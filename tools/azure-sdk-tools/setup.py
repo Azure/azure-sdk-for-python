@@ -40,19 +40,23 @@ setup(
         "console_scripts": [
             "generate_package=packaging_tools.generate_package:generate_main",
             "generate_sdk=packaging_tools.generate_sdk:generate_main",
+            "generate_client=packaging_tools.generate_client:generate_main",
             "sdk_generator=packaging_tools.sdk_generator:generate_main",
             "sdk_package=packaging_tools.sdk_package:generate_main",
             "sdk_build=ci_tools.build:build",
+            "sdk_build_conda=ci_tools.conda:entrypoint",
             "sdk_set_dev_version=ci_tools.versioning.version_set_dev:version_set_dev_main",
             "sdk_set_version=ci_tools.versioning.version_set:version_set_main",
             "sdk_increment_version=ci_tools.versioning.version_increment:version_increment_main",
             "sdk_analyze_deps=ci_tools.dependency_analysis:analyze_dependencies",
             "sdk_find_invalid_versions=ci_tools.versioning.find_invalid_versions:find_invalid_versions_main",
+            "sdk_verify_keywords=ci_tools.keywords_verify:entrypoint",
             "multiapi_combiner=packaging_tools.multiapi_combiner:combine",
         ],
     },
     extras_require={
         ":python_version>='3.5'": ["pytest-asyncio>=0.9.0"],
         "build": ["six", "setuptools", "pyparsing", "certifi"],
+        "conda": ["beautifulsoup4"]
     },
 )

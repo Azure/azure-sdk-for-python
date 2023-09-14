@@ -110,6 +110,13 @@ steps:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
 
+  - task: PythonScript@0
+    displayName: 'Run Keyword Validation Check'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verify_keywords'
+    condition: and(succeededOrFailed(), ne(variables['Skip.KeywordCheck'],'true'))
+
   - task: DownloadPipelineArtifact@2
     condition: succeededOrFailed()
     inputs:

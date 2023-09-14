@@ -1,10 +1,8 @@
 import pytest
 from azure.core.utils import parse_connection_string
 
-from devtools_testutils import AzureMgmtTestCase
 
-
-class CoreConnectionStringParserTests(AzureMgmtTestCase):
+class TestCoreConnectionStringParser:
     # cSpell:disable
     def test_parsing_with_case_sensitive_keys_for_sensitive_conn_str(self, **kwargs):
         conn_str = "Endpoint=XXXXENDPOINTXXXX;SharedAccessKeyName=XXXXPOLICYXXXX;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="
@@ -55,7 +53,7 @@ class CoreConnectionStringParserTests(AzureMgmtTestCase):
         for conn_str in ["", "foobar", "foo;bar;baz", ";", "foo=;bar=;", "=", "=;=="]:
             with pytest.raises(ValueError) as e:
                 parse_result = parse_connection_string(conn_str)
-            self.assertEqual(str(e.value), "Connection string is either blank or malformed.")
+            assert str(e.value) == "Connection string is either blank or malformed."
 
     def test_case_insensitive_clear_method(self):
         conn_str = "enDpoiNT=XXXXENDPOINTXXXX;sharedaccesskeyname=XXXXPOLICYXXXX;SHAREDACCESSKEY=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX="

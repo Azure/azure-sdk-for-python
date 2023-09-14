@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Type, Union
+from typing import Type, Union, List
 from ._generated.models import AutocompleteRequest, SearchRequest, SuggestRequest
 
 
@@ -26,7 +26,7 @@ class _QueryBase:
         self._request.filter = expression
 
     @property
-    def request(self) -> Union[Type[AutocompleteRequest], Type[SearchRequest], Type[SuggestRequest]]:
+    def request(self) -> Union[AutocompleteRequest, SearchRequest, SuggestRequest]:
         """The service request for this operation.
 
         :return: The service request for this operation.
@@ -50,23 +50,30 @@ class SearchQuery(_QueryBase):
 
     __doc__ = SearchRequest.__doc__
 
-    def order_by(self, *fields: str) -> None:
+    def order_by(self, *fields: Union[str, List[str]]) -> None:
         """Update the `orderby` property for the search results.
 
         :param fields: A list of fields for the query result to be ordered by.
-        :type fields: str
+        :type fields: str or list[str]
         :raises: ValueError
         """
         if not fields:
             raise ValueError("At least one field must be provided")
+        if not fields:
+            raise ValueError("At least one field must be provided")
+        selects = []
+        for field in fields:
+            if isinstance(field, list):
+                selects.append(",".join(field))
+            else:
+                selects.append(field)
+        self._request.order_by = ",".join(selects)
 
-        self._request.order_by = ",".join(fields)
-
-    def select(self, *fields: str) -> None:
+    def select(self, *fields: Union[str, List[str]]) -> None:
         """Update the `select` property for the search results.
 
         :param fields: A list of fields for the query result to return.
-        :type fields: str
+        :type fields: str or list[str]
         :raises: ValueError
         """
         if not fields:
@@ -87,11 +94,30 @@ class SuggestQuery(_QueryBase):
 
     __doc__ = SuggestRequest.__doc__
 
-    def select(self, *fields: str) -> None:
+    def order_by(self, *fields: Union[str, List[str]]) -> None:
+        """Update the `orderby` property for the search results.
+
+        :param fields: A list of fields for the query result to be ordered by.
+        :type fields: str or list[str]
+        :raises: ValueError
+        """
+        if not fields:
+            raise ValueError("At least one field must be provided")
+        if not fields:
+            raise ValueError("At least one field must be provided")
+        selects = []
+        for field in fields:
+            if isinstance(field, list):
+                selects.append(",".join(field))
+            else:
+                selects.append(field)
+        self._request.order_by = ",".join(selects)
+
+    def select(self, *fields: Union[str, List[str]]) -> None:
         """Update the `select` property for the search results.
 
         :param fields: A list of fields for the query result to return.
-        :type fields: str
+        :type fields: str or list[str]
         :raises: ValueError
         """
         if not fields:

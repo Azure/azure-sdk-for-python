@@ -133,7 +133,7 @@ class SearchPageIterator(PageIterator):
         return continuation_token, results
 
     @_ensure_response
-    def get_facets(self):
+    def get_facets(self) -> Optional[Dict]:
         self.continuation_token = None
         facets = self._response.facets
         if facets is not None and self._facets is None:
@@ -141,16 +141,16 @@ class SearchPageIterator(PageIterator):
         return self._facets
 
     @_ensure_response
-    def get_coverage(self):
+    def get_coverage(self) -> float:
         self.continuation_token = None
         return self._response.coverage
 
     @_ensure_response
-    def get_count(self):
+    def get_count(self) -> int:
         self.continuation_token = None
         return self._response.count
 
     @_ensure_response
-    def get_answers(self):
+    def get_answers(self) -> Optional[List[AnswerResult]]:
         self.continuation_token = None
         return self._response.answers
