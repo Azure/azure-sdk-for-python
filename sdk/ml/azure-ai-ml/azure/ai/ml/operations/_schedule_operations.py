@@ -338,11 +338,14 @@ class ScheduleOperations(_ScopeDependentOperations):
         # resolve ARM id for each signal and populate any defaults if needed
         for signal_name, signal in schedule.create_monitor.monitoring_signals.items():
             if signal.type == MonitorSignalType.CUSTOM:
-                for input_value in signal.input_literals.values():
-                    self._job_operations._resolve_job_input(input_value, schedule._base_path)
-                for prod_data in signal.input_datasets.values():
-                    prod_data.pre_processing_component = self._orchestrators.get_asset_arm_id(
-                        asset=prod_data.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
+                for inputs in signal.inputs.values():
+                    self._job_operations._resolve_job_input(inputs, schedule._base_path)
+                for data in signal.input_data.values():
+                    data.pre_processing_component = self._orchestrators.get_asset_arm_id(
+                        asset=data.pre_processing_component
+                        if hasattr(data, "pre_processing_component")
+                        else None,
+                        azureml_type=AzureMLResourceType.COMPONENT
                     )
                 continue
             if signal.type == MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT:
