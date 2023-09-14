@@ -63,16 +63,9 @@ class _test_config(object):
     TEST_COLLECTION_SINGLE_PARTITION_ID = "Single Partition Test Collection"
     TEST_COLLECTION_MULTI_PARTITION_ID = "Multi Partition Test Collection"
     TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID = "Multi Partition Test Collection With Custom PK"
-    TEST_COLLECTION_MULTI_HASH_SINGLE_PARTITION_ID = "Multi Hash Single Partition Test Collection"
-    TEST_COLLECTION_MULTI_HASH_MULTI_PARTITION_ID = "Multi Hash Multi Partition Test Collection"
-    TEST_COLLECTION_MULTI_HASH_MULTI_PARTITION_WITH_CUSTOM_PK_ID = "Multi Hash Multi Partition Test" \
-                                                                   " Collection With Custom PK"
 
     TEST_COLLECTION_MULTI_PARTITION_PARTITION_KEY = "id"
     TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_PARTITION_KEY = "pk"
-
-    TEST_COLLECTION_MULTI_HASH_MULTI_PARTITION_PARTITION_KEY = ["/city", "/zipcode"]
-    TEST_COLLECTION_MULTI_HASH_MULTI_PARTITION_WITH_CUSTOM_PK_PARTITION_KEY = ["/pk level 1", "/pk level 2"]
 
     TEST_DATABASE = None
     TEST_COLLECTION_SINGLE_PARTITION = None
@@ -129,15 +122,6 @@ class _test_config(object):
         return cls.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK
 
     @classmethod
-    def create_multi_hash_multi_partition_collection_if_not_exist(cls, client):
-        # type: (CosmosClient) -> Container
-        if cls.TEST_COLLECTION_MULTI_HASH_MULTI_PARTITION is None:
-            cls.TEST_COLLECTION_MULTI_HASH_MULTI_PARTITION = cls.create_multi_hash_collection_with_required_throughput(client,
-                    cls.THROUGHPUT_FOR_5_PARTITIONS, False)
-        cls.remove_all_documents(cls.TEST_COLLECTION_MULTI_HASH_MULTI_PARTITION, False)
-        return cls.TEST_COLLECTION_MULTI_HASH_MULTI_PARTITION
-
-    @classmethod
     def create_collection_with_required_throughput(cls, client, throughput, use_custom_partition_key):
         # type: (CosmosClient, int, boolean) -> Container
         database = cls.create_database_if_not_exist(client)
@@ -156,28 +140,6 @@ class _test_config(object):
         document_collection = database.create_container_if_not_exists(
             id=collection_id,
             partition_key=PartitionKey(path='/' + partition_key, kind='Hash'),
-            offer_throughput=throughput)
-        return document_collection
-
-    @classmethod
-    def create_multi_hash_collection_with_required_throughput(cls, client, throughput, use_custom_partition_key):
-        # type: (CosmosClient, int, boolean) -> Container
-        database = cls.create_database_if_not_exist(client)
-
-        if throughput == cls.THROUGHPUT_FOR_1_PARTITION:
-            collection_id = cls.TEST_COLLECTION_MULTI_HASH_SINGLE_PARTITION_ID
-            partition_key = cls.TEST_COLLECTION_MULTI_HASH_MULTI_PARTITION_PARTITION_KEY
-        else:
-            if use_custom_partition_key:
-                collection_id = cls.TEST_COLLECTION_MULTI_HASH_MULTI_PARTITION_WITH_CUSTOM_PK_ID
-                partition_key = cls.TEST_COLLECTION_MULTI_HASH_MULTI_PARTITION_WITH_CUSTOM_PK_PARTITION_KEY
-            else:
-                collection_id = cls.TEST_COLLECTION_MULTI_HASH_MULTI_PARTITION_ID
-                partition_key = cls.TEST_COLLECTION_MULTI_HASH_MULTI_PARTITION_PARTITION_KEY
-
-        document_collection = database.create_container_if_not_exists(
-            id=collection_id,
-            partition_key=PartitionKey(path=partition_key, kind='MultiHash'),
             offer_throughput=throughput)
         return document_collection
 
