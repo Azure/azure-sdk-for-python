@@ -136,7 +136,6 @@ def _check_cloud_event(cloud_event, **kwargs):
             datacontenttype=cloud_event.datacontenttype,
             subject=cloud_event.subject,
             extensions=cloud_event.extensions,
-            **kwargs
         )
     except TypeError:
         return CloudEvent.from_dict(
