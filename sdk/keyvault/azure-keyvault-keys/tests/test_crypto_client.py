@@ -207,7 +207,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         assert result.key_id == imported_key.id
 
         # Create a KeyVaultRSAPrivateKey that can perform decryption with `cryptography`'s interface
-        managed_key = KeyVaultRSAPrivateKey(key_name=key_name, key_client=key_client)
+        managed_key = crypto_client.create_rsa_private_key()
         # We used RSA-OAEP to encrypt, so we use MGF1 and SHA1 as inputs to OAEP to match during decryption
         algorithm = SHA1()
         mgf = MGF1(algorithm)
