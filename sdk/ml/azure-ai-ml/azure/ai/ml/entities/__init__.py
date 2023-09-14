@@ -182,6 +182,11 @@ from ._monitoring.signals import (
     ProductionData,
     ReferenceData,
 )
+from ._monitoring.input_data import (
+    FixedInputData,
+    StaticInputData,
+    TrailingInputData,
+)
 from ._monitoring.target import MonitoringTarget
 from ._monitoring.thresholds import (
     DataDriftMetricThreshold,
@@ -422,6 +427,9 @@ __all__ = [
     "ProductionData",
     "ReferenceData",
     "MonitoringTarget",
+    "FixedInputData",
+    "StaticInputData",
+    "TrailingInputData",
     "DataDriftMetricThreshold",
     "DataQualityMetricThreshold",
     "PredictionDriftMetricThreshold",
