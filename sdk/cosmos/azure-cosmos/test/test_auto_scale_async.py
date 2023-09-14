@@ -115,13 +115,23 @@ class TestAutoScaleAsync:
     @pytest.mark.asyncio
     async def test_replace_throughput_async(self):
         await self._set_up()
-        # need test for replace db throughput
+
+        created_database = await self.client.create_database("replace_db", offer_throughput=ThroughputProperties(
+            auto_scale_max_throughput=5000,
+            auto_scale_increment_percent=0))
+        await created_database.replace_throughput(
+            throughput=ThroughputProperties(auto_scale_max_throughput=7000, auto_scale_increment_percent=20))
+        created_db_properties = await created_database.get_throughput()
+        # Testing the replaced value of the max_throughput
+        assert created_db_properties.auto_scale_max_throughput == 7000
+        # Testing the replaced value of the increment_percentage
+        assert created_db_properties.auto_scale_increment_percent == 20
+        await self.client.delete_database("replace_db")
+
         created_container = await self.created_database.create_container(
             id='container_with_auto_scale_settings',
             partition_key=PartitionKey(path="/id"),
-            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)
-
-        )
+            offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0)        )
         await created_container.replace_throughput(
             throughput=ThroughputProperties(auto_scale_max_throughput=7000, auto_scale_increment_percent=20))
         created_container_properties = await created_container.get_throughput()
