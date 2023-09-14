@@ -10,6 +10,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from . import DecryptResult, EncryptionAlgorithm, EncryptResult, SignResult, VerifyResult, UnwrapResult, WrapResult
 from ._key_validity import raise_if_time_invalid
+from ._models import KeyVaultRSAPrivateKey
 from ._providers import get_local_cryptography_provider, NoLocalCryptography
 from .. import KeyOperation
 from .._models import JsonWebKey, KeyVaultKey
@@ -210,6 +211,15 @@ class CryptographyClient(KeyVaultClientBase):
         else:
             # try to get the key again next time unless we know we're forbidden to do so
             self._initialized = self._keys_get_forbidden
+
+    @distributed_trace
+    def create_rsa_private_key(self) -> KeyVaultRSAPrivateKey:
+        """Create an `RSAPrivateKey` implementation backed by this `CryptographyClient` and key.
+
+        The `CryptographyClient` will attempt to download the key, if it hasn't been already, as part of this operation.
+        """
+        self._initialize()
+        return KeyVaultRSAPrivateKey(client=self, key_id=self.key_id, key_material=cast(JsonWebKey, self._key))
 
     @distributed_trace
     def encrypt(self, algorithm: "EncryptionAlgorithm", plaintext: bytes, **kwargs) -> EncryptResult:

@@ -16,11 +16,12 @@ from cryptography.hazmat.primitives.hashes import Hash, HashAlgorithm, SHA1, SHA
 from cryptography.hazmat.primitives.serialization import Encoding, KeySerializationEncryption, PrivateFormat
 
 from ._enums import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
+from .._models import JsonWebKey
+from .._shared import KeyVaultResourceId, parse_key_vault_id
 
 if TYPE_CHECKING:
-    # Import clients only during TYPE_CHECKING to avoid circular dependency
+    # Import client only during TYPE_CHECKING to avoid circular dependency
     from ._client import CryptographyClient
-    from .._client import KeyClient
 
 
 SIGN_ALGORITHM_MAP = {
@@ -40,17 +41,20 @@ PSS_MAP = {
 
 
 class KeyVaultRSAPrivateKey(RSAPrivateKey):
-    """An `RSAPrivateKey` implementation based on a key managed by Key Vault.
+    """An `RSAPrivateKey` implementation based on a key managed by Key Vault."""
 
-    :param str key_name: The name of the key vault key to use.
-    :param key_client: The client that will be used to communicate with Key Vault.
-    :type key_client: KeyClient
-    """
+    def __init__(self, client: "CryptographyClient", key_id: str, key_material: JsonWebKey) -> None:
+        """Creates a `KeyVaultRSAPrivateKey` from a `CryptographyClient` and key.
 
-    def __init__(self, key_name: str, key_client: "KeyClient") -> None:  # pylint:disable=unused-argument
-        self._key_name: str = key_name
-        self._key_client: "KeyClient" = key_client
-        self._crypto_client: "CryptographyClient" = key_client.get_cryptography_client(key_name)
+        :param client: The client that will be used to communicate with Key Vault.
+        :type client: :class:`~azure.keyvault.keys.crypto.CryptographyClient`
+        :param str key_id: The full identifier of the Key Vault key.
+        :param key_material: They Key Vault key's material, as a `JsonWebKey`.
+        :type key_material: :class:`~azure.keyvault.keys.JsonWebKey`
+        """
+        self._client: "CryptographyClient" = client
+        self._key_id: str = parse_key_vault_id(key_id)
+        self._key: JsonWebKey = key_material
 
     def decrypt(self, ciphertext: bytes, padding: AsymmetricPadding) -> bytes:
         """Decrypts the provided ciphertext.
@@ -86,7 +90,7 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
             mapped_algorithm = EncryptionAlgorithm.rsa1_5
         else:
             raise ValueError(f"Unsupported padding: {padding.name}")
-        result = self._crypto_client.decrypt(mapped_algorithm, ciphertext)
+        result = self._client.decrypt(mapped_algorithm, ciphertext)
         return result.plaintext
 
     @property
@@ -96,8 +100,7 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         :returns: The key's size.
         :rtype: int
         """
-        key = self._key_client.get_key(self._key_name)
-        return int.from_bytes(key.key.n, "big").bit_length()  # type: ignore[attr-defined]
+        return int.from_bytes(self._key.n, "big").bit_length()  # type: ignore[attr-defined]
 
     def public_key(self) -> RSAPublicKey:
         """The `RSAPublicKey` associated with this private key.
@@ -105,9 +108,8 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         :returns: The `RSAPublicKey` associated with the key.
         :rtype: RSAPublicKey
         """
-        key = self._key_client.get_key(self._key_name)
-        e = int.from_bytes(key.key.e, "big")  # type: ignore[attr-defined]
-        n = int.from_bytes(key.key.n, "big")  # type: ignore[attr-defined]
+        e = int.from_bytes(self._key.e, "big")  # type: ignore[attr-defined]
+        n = int.from_bytes(self._key.n, "big")  # type: ignore[attr-defined]
         public_numbers = RSAPublicNumbers(e, n)
         return public_numbers.public_key()
 
@@ -157,7 +159,7 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
 
         digest = Hash(algorithm)
         digest.update(data)
-        result = self._crypto_client.sign(cast(SignatureAlgorithm, mapped_algorithm), digest.finalize())
+        result = self._client.sign(cast(SignatureAlgorithm, mapped_algorithm), digest.finalize())
         return result.signature
 
     def private_numbers(self) -> RSAPrivateNumbers:  # pylint:disable=docstring-missing-return,docstring-missing-rtype
