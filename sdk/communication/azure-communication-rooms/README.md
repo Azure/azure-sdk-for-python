@@ -58,14 +58,15 @@ from azure.communication.rooms import (
     ParticipantRole
 )
 from azure.communication.identity import CommunicationUserIdentifier
+from dateutil.relativedelta import relativedelta
 
 client = RoomsClient.from_connection_string(conn_str='<connection_str>')
 valid_from = datetime.now()
 valid_until = valid_from + relativedelta(months=+1)
 participants = []
-participants.append(RoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 1>")))
-participants.append(RoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 2>"), ParticipantRole.CONSUMER))
-participants.append(RoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 3>"), ParticipantRole.PRESENTER))
+participants.append(RoomParticipant(communication_identifier=CommunicationUserIdentifier("<ACS User MRI identity 1>")))
+participants.append(RoomParticipant(communication_identifier=CommunicationUserIdentifier("<ACS User MRI identity 2>"), role=ParticipantRole.CONSUMER))
+participants.append(RoomParticipant(communication_identifier=CommunicationUserIdentifier("<ACS User MRI identity 3>"), role=ParticipantRole.PRESENTER))
 
 try:
     create_room_response = client.create_room(
@@ -128,9 +129,9 @@ In order to insert new participants or update existing participants, call the `a
 
 ```python
 participants = []
-participants.append(RoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 1>")))
-participants.append(RoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 2>"), ParticipantRole.ATTENDEE))
-participants.append(RoomParticipant(CommunicationUserIdentifier("<ACS User MRI identity 3>"), ParticipantRole.CONSUMER))
+participants.append(RoomParticipant(communication_identifier=CommunicationUserIdentifier("<ACS User MRI identity 1>")))
+participants.append(RoomParticipant(communication_identifier=CommunicationUserIdentifier("<ACS User MRI identity 2>"), role=ParticipantRole.ATTENDEE))
+participants.append(RoomParticipant(communication_identifier=CommunicationUserIdentifier("<ACS User MRI identity 3>"), role=ParticipantRole.CONSUMER))
 try:
     response = client.add_or_update_participants(
         room_id="id of the room to be updated",
@@ -148,7 +149,7 @@ communication_identifiers = [CommunicationUserIdentifier("<ACS User MRI identity
 
 try:
     remove_participants_response = client.remove_participants(
-        room_id=room_id,
+        room_id="id of the room to remove participants",
         participants=communication_identifiers
     )
 except HttpResponseError as ex:
@@ -159,7 +160,7 @@ Retrieve the list of participants for an existing room by referencing the `room_
 
 ```python
 try:
-    participants = self.rooms_client.list_participants(room_id)
+    participants = client.list_participants("id of the room to list participants")
 except HttpResponseError as ex:
     print(ex)
 ```
