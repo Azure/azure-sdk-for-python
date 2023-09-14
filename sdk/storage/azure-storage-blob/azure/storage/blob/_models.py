@@ -7,7 +7,7 @@
 # pylint: disable=super-init-not-called, too-many-lines
 
 from enum import Enum
-from typing import Dict, List, Optional, TYPE_CHECKING
+from typing import Dict, List, Optional, Self, TYPE_CHECKING
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.paging import PageIterator
@@ -26,6 +26,8 @@ from ._generated.models import AccessPolicy as GenAccessPolicy
 
 if TYPE_CHECKING:
     from datetime import datetime
+
+PUBLIC_AUDIENCE = "https://storage.azure.com/.default"
 
 # Parse a generated PageList into a single list of PageRange sorted by start.
 def parse_page_list(page_list):
@@ -1302,3 +1304,52 @@ class BlobQueryError(object):
         self.is_fatal = is_fatal
         self.description = description
         self.position = position
+
+class BlobAudience(object):
+    """Audiences available for Blobs.
+
+    :keyword str value: The Azure Active Directory audience to use when forming authorization scopes.
+        For the Language service, this value corresponds to a URL that identifies the Azure cloud
+        where the resource is located. For more information please take a look at:
+        https://learn.microsoft.com/en-us/azure/storage/blobs/authorize-access-azure-active-directory
+        Please use one of the static constant members over creating a custom value unless you have
+        a specific scenario for doing so.
+    """
+
+    value: Optional[str] = None
+
+    def __init__(self, value: Optional[str]) -> None:
+        self.value = value
+
+    @staticmethod
+    def _public_audience() -> Self:
+        """Default Audience. Use to acquire a token for authorizing requests to any Azure Storage account.
+        
+        Resource ID: 'https://storage.azure.com/'
+        If no audience is specified, this is the default value.
+
+        :returns: The Default Audience.
+        :rtype: BlobAudience
+        """
+        return BlobAudience(PUBLIC_AUDIENCE)
+
+    @staticmethod
+    def _get_blob_service_account_audience(storageAccountName: str) -> Self:
+        """The service endpoint for a given Storage account. Use this method
+        to acquire a token for authorizing requests to that specific Azure Storage account and
+        service only.
+
+        :param str storageAccountName: The storage account name used to populate the service endpoint.
+        :returns: The Audience for the given Storage account and respective service endpoint.
+        :rtype: BlobAudience
+        """
+        return BlobAudience(f'https://{storageAccountName}.blob.core.windows.net/')
+
+    def __eq__(self, other: object) -> bool:
+        return self.value == other.value
+
+    def __ne__(self, other: object) -> bool:
+        return self.value != other.value
+
+    def __str__(self) -> str:
+        return self.value

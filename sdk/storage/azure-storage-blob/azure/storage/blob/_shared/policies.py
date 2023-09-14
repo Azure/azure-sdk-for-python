@@ -51,6 +51,7 @@ except NameError:
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline import PipelineRequest, PipelineResponse
+    from .._models import BlobAudience
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -647,9 +648,10 @@ class LinearRetry(StorageRetryPolicy):
 class StorageBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
     """ Custom Bearer token credential policy for following Storage Bearer challenges """
 
-    def __init__(self, credential, **kwargs):
+    def __init__(self, credential, *, audience: "BlobAudience", **kwargs):
         # type: (TokenCredential, **Any) -> None
-        super(StorageBearerTokenCredentialPolicy, self).__init__(credential, STORAGE_OAUTH_SCOPE, **kwargs)
+        audience = kwargs.pop('audience', STORAGE_OAUTH_SCOPE)
+        super(StorageBearerTokenCredentialPolicy, self).__init__(credential, str(audience), **kwargs)
 
     def on_challenge(self, request, response):
         # type: (PipelineRequest, PipelineResponse) -> bool
