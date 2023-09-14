@@ -100,7 +100,7 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         :returns: The key's size.
         :rtype: int
         """
-        return int.from_bytes(self._key.n, "big").bit_length()  # type: ignore[attr-defined]
+        return len(self._key.n) * 8  # type: ignore[attr-defined]
 
     def public_key(self) -> RSAPublicKey:
         """The `RSAPublicKey` associated with this private key.
