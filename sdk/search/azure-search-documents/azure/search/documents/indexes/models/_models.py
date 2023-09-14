@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Optional
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 from .._generated import _serialization

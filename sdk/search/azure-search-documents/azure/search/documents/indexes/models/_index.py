@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from .._generated import _serialization
 from ._edm import Collection, ComplexType, String
@@ -20,7 +20,7 @@ from ._models import (
 )
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, List
+    from typing import Any, Dict
 
 __all__ = ("ComplexField", "SearchableField", "SimpleField")
 
