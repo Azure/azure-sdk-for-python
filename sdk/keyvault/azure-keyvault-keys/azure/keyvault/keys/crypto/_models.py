@@ -198,7 +198,11 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         format: PrivateFormat,
         encryption_algorithm: KeySerializationEncryption,
     ) -> NoReturn:
-        """Returns the key serialized as bytes. Not implemented, as the private key is managed by Key Vault."""
+        """Not implemented."""
+        raise NotImplementedError()
+
+    def signer(self, padding: AsymmetricPadding, algorithm: HashAlgorithm) -> NoReturn:  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
+        """Not implemented. This method was deprecated in `cryptography` 2.0 and removed in 37.0.0."""
         raise NotImplementedError()
 
 
