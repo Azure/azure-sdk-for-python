@@ -4,7 +4,6 @@ virtualenv==20.23.0
 packaging==23.1
 wheel==0.37.0
 tox==4.5.0
-twine==3.1.1; python_version >= '3.6'
 pathlib2==2.3.5
 doc-warden==0.7.2
 beautifulsoup4==4.9.1
