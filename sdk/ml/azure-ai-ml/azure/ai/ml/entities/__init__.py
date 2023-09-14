@@ -181,6 +181,7 @@ from ._monitoring.signals import (
     FADProductionData,
     ProductionData,
     ReferenceData,
+    BaselineDataRange,
 )
 from ._monitoring.input_data import (
     FixedInputData,
@@ -426,6 +427,7 @@ __all__ = [
     "FADProductionData",
     "ProductionData",
     "ReferenceData",
+    "BaselineDataRange",
     "MonitoringTarget",
     "FixedInputData",
     "StaticInputData",
