@@ -883,7 +883,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
         metric_thresholds: List[CustomMonitoringMetricThreshold],
         component_id: str,
         workspace_connection: Optional[WorkspaceConnection] = None,
-        input_data: Optional[Dict[str, ReferenceData]] = None,
+        input_data: Optional[Dict[str, Union[ReferenceData, FixedInputData, TrailingInputData, StaticInputData]]] = None,
         alert_enabled: bool = True,
         properties: Optional[Dict[str, str]] = None,
     ):
