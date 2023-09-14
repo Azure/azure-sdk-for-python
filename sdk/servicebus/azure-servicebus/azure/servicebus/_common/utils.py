@@ -246,8 +246,7 @@ def transform_outbound_messages(
         return [
             _convert_to_single_service_bus_message(m, message_type, to_outgoing_amqp_message) for m in messages
         ]
-    else:
-        return _convert_to_single_service_bus_message(messages, message_type, to_outgoing_amqp_message)
+    return _convert_to_single_service_bus_message(messages, message_type, to_outgoing_amqp_message)
 
 
 def strip_protocol_from_uri(uri: str) -> str:
