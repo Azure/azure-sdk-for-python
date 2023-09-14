@@ -9,7 +9,7 @@ import json
 import logging
 import re
 from enum import Enum
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Type, Union
 
 from marshmallow import Schema
 
@@ -357,7 +357,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
             outputs=self._job_outputs,
         )
 
-    def _parallel_attr_to_dict(self, attr, base_type) -> dict:
+    def _parallel_attr_to_dict(self, attr: str, base_type: Type) -> dict:
         # Convert parallel attribute to dict
         rest_attr = None
         parallel_attr = getattr(self, attr)
