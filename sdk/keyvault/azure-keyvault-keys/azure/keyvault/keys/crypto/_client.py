@@ -213,10 +213,13 @@ class CryptographyClient(KeyVaultClientBase):
             self._initialized = self._keys_get_forbidden
 
     @distributed_trace
-    def create_rsa_private_key(self) -> KeyVaultRSAPrivateKey:
+    def create_rsa_private_key(self) -> KeyVaultRSAPrivateKey:  # pylint:disable=client-method-missing-kwargs
         """Create an `RSAPrivateKey` implementation backed by this `CryptographyClient`, as a `KeyVaultRSAPrivateKey`.
 
         The `CryptographyClient` will attempt to download the key, if it hasn't been already, as part of this operation.
+
+        :returns: A `KeyVaultRSAPrivateKey`, which implements `cryptography`'s `RSAPrivateKey` interface.
+        :rtype: :class:`~azure.keyvault.keys.crypto.KeyVaultRSAPrivateKey`
         """
         self._initialize()
         return KeyVaultRSAPrivateKey(client=self, key_material=cast(JsonWebKey, self._key))
