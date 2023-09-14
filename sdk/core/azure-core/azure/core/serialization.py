@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 import base64
 from json import JSONEncoder
-from typing import Union, cast
+from typing import Union, cast, Any
 from datetime import datetime, date, time, timedelta
 from datetime import timezone
 
@@ -18,7 +18,7 @@ TZ_UTC = timezone.utc
 class _Null:
     """To create a Falsy object"""
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return False
 
 
@@ -115,7 +115,7 @@ def _datetime_as_isostr(dt: Union[datetime, date, time, timedelta]) -> str:
 class AzureJSONEncoder(JSONEncoder):
     """A JSON encoder that's capable of serializing datetime objects and bytes."""
 
-    def default(self, o):  # pylint: disable=too-many-return-statements
+    def default(self, o: Any) -> Any:  # pylint: disable=too-many-return-statements
         if isinstance(o, (bytes, bytearray)):
             return base64.b64encode(o).decode()
         try:

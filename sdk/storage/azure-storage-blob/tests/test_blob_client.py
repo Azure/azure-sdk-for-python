@@ -9,7 +9,6 @@ from datetime import datetime, timedelta
 
 import pytest
 from azure.core.credentials import AzureSasCredential
-from azure.core.exceptions import AzureError
 from azure.storage.blob import (
     AccountSasPermissions,
     BlobClient,
@@ -19,6 +18,7 @@ from azure.storage.blob import (
     ResourceTypes,
     VERSION,
 )
+from azure.storage.blob._shared.base_client import create_configuration
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
@@ -717,5 +717,18 @@ class TestStorageClient(StorageRecordedTestCase):
             service = client(
                 self.account_url(storage_account_name, "blob"), credential=storage_account_key, container_name='foo', blob_name='bar')
             service.close()
+
+    @BlobPreparer()
+    def test_create_configuration_legacy(self, **kwargs):
+        # Arrange
+        sdk_name = 'Blob-test'
+
+        # Act
+        config = create_configuration(storage_sdk=sdk_name)
+
+        # Assert
+        assert config is not None
+        assert config.max_block_size == 4 * 1024 * 1024
+        assert sdk_name in config.user_agent_policy.user_agent
 
 # ------------------------------------------------------------------------------

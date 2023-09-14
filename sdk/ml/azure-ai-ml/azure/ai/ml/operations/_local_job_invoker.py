@@ -12,7 +12,6 @@ import shutil
 import subprocess
 import tarfile
 import tempfile
-import time
 import urllib.parse
 import zipfile
 from pathlib import Path
@@ -28,11 +27,11 @@ from azure.ai.ml._utils.utils import DockerProxy
 from azure.ai.ml.constants._common import (
     AZUREML_RUN_SETUP_DIR,
     AZUREML_RUNS_DIR,
-    DefaultOpenEncoding,
     EXECUTION_SERVICE_URL_KEY,
     INVOCATION_BASH_FILE,
     INVOCATION_BAT_FILE,
     LOCAL_JOB_FAILURE_MSG,
+    DefaultOpenEncoding,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
 
@@ -133,8 +132,10 @@ def get_execution_service_response(
 
     :param job_definition: Job definition data
     :type job_definition: JobBaseData
-    :param token:
+    :param token: The bearer token to use when retrieving information from Execution Service
     :type token: str
+    :param requests_pipeline: The HttpPipeline to use when sending network requests
+    :type requests_pipeline: HttpPipeline
     :return: Execution service response and snapshot ID
     :rtype: Tuple[Dict[str, str], str]
     """
@@ -232,12 +233,12 @@ class CommonRuntimeHelper:
         if registry:
             try:
                 client.login(
-                    username=registry["username"],
-                    password=registry["password"],
-                    registry=registry["url"],
+                    username=registry.get("username"),
+                    password=registry.get("password"),
+                    registry=registry.get("url"),
                 )
             except Exception as e:
-                raise RuntimeError(self.DOCKER_LOGIN_FAILURE_MSG.format(registry["url"], e)) from e
+                raise RuntimeError(self.DOCKER_LOGIN_FAILURE_MSG.format(registry.get("url"), e)) from e
         else:
             raise RuntimeError("Registry information is missing from bootstrapper configuration.")
 
@@ -292,9 +293,7 @@ class CommonRuntimeHelper:
         """Copy bootstrapper binary from the bootstrapper image to local machine.
 
         :param bootstrapper_info:
-        :type bootstrapper: Dict[str, str]
-        :return: bootstrapper binary path (.azureml-common-runtime/<job_name>/vm-bootstrapper)
-        :rtype: str
+        :type bootstrapper_info: Dict[str, str]
         """
         Path(self.common_runtime_temp_folder).mkdir(parents=True, exist_ok=True)
 
@@ -370,7 +369,7 @@ class CommonRuntimeHelper:
         """Check if bootstrapper process status is non-zero.
 
         :param bootstrapper_process: bootstrapper process
-        :type bootstrapper: subprocess.Popen
+        :type bootstrapper_process: subprocess.Popen
         :return: return_code
         :rtype: int
         """
@@ -396,29 +395,20 @@ def start_run_if_local(
     :type credential: TokenCredential
     :param ws_base_url: Base url to workspace
     :type ws_base_url: str
+    :param requests_pipeline: The HttpPipeline to use when sending network requests
+    :type requests_pipeline: HttpPipeline
     :return: snapshot ID
     :rtype: str
     """
     token = credential.get_token(ws_base_url + "/.default").token
     (zip_content, snapshot_id) = get_execution_service_response(job_definition, token, requests_pipeline)
 
-    if os.name != "nt":
-        cr_helper = CommonRuntimeHelper(job_definition.name)
-        bootstrapper_info, job_spec = cr_helper.get_common_runtime_info_from_response(zip_content)
-        cr_helper.get_bootstrapper_binary(bootstrapper_info)
-        bootstrapper_process = None
+    try:
+        temp_dir = unzip_to_temporary_file(job_definition, zip_content)
+        invoke_command(temp_dir)
+    except Exception as e:
+        raise Exception(LOCAL_JOB_FAILURE_MSG.format(e)) from e
 
-        bootstrapper_process = cr_helper.execute_bootstrapper(cr_helper.vm_bootstrapper_full_path, job_spec)
-        while not os.path.exists(
-            cr_helper.common_runtime_temp_folder
-        ) and not cr_helper.check_bootstrapper_process_status(bootstrapper_process):
-            time.sleep(3)
-    else:
-        try:
-            temp_dir = unzip_to_temporary_file(job_definition, zip_content)
-            invoke_command(temp_dir)
-        except Exception as e:
-            raise Exception(LOCAL_JOB_FAILURE_MSG.format(e)) from e
     return snapshot_id
 
 

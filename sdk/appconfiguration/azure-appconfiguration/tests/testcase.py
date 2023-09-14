@@ -84,13 +84,12 @@ class AppConfigTestCase(AzureRecordedTestCase):
         assert key1.content_type == key2.content_type
         assert key1.tags == key2.tags
         assert key1.etag != key2.etag
+        assert key1.value == key2.value
         if isinstance(key1, FeatureFlagConfigurationSetting):
             assert key1.enabled == key2.enabled
             assert len(key1.filters) == len(key2.filters)
         elif isinstance(key1, SecretReferenceConfigurationSetting):
             assert key1.secret_id == key2.secret_id
-        else:
-            assert key1.value == key2.value
 
     def _assert_snapshots(self, snapshot: Snapshot, expected_snapshot: Snapshot):
         assert snapshot.composition_type == expected_snapshot.composition_type
@@ -101,7 +100,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         for index, filter in enumerate(snapshot.filters):
             assert filter.key == expected_snapshot.filters[index].key
             assert filter.label == expected_snapshot.filters[index].label
-        assert snapshot.items_count == expected_snapshot.items_count
+        assert snapshot.item_count == expected_snapshot.item_count
         assert snapshot.name == expected_snapshot.name
         assert snapshot.retention_period == expected_snapshot.retention_period
         assert snapshot.size == expected_snapshot.size

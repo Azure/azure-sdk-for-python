@@ -1,6 +1,6 @@
 # Release History
 
-## 1.14.0b3 (Unreleased)
+## 1.15.0b2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,44 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.15.0b1 (2023-09-12)
+
+### Features Added
+
+- Added Windows Web Account Manager (WAM) Brokered Authentication support.
+- Added `enable_msa_passthrough` suppport for `InteractiveBrowserCredential`. By default `InteractiveBrowserCredential` only lists AAD accounts. If you set `enable_msa_passthrough` to `True`, it lists both AAD accounts and MSA outlook.com accounts that are logged in to Windows.
+
+### Bugs Fixed
+
+- Ensure `AzurePowershellCredential` calls PowerShell with the `-NoProfile` flag to avoid loading user profiles for more consistent behavior.  ([#31682](https://github.com/Azure/azure-sdk-for-python/pull/31682))
+- Fixed an issue with subprocess-based developer credentials (such as AzureCliCredential) where the process would sometimes hang waiting for user input.  ([#31534](https://github.com/Azure/azure-sdk-for-python/pull/31534))
+- Fixed an issue with `ClientAssertionCredential` not properly checking if CAE should be enabled.  ([#31544](https://github.com/Azure/azure-sdk-for-python/pull/31544))
+- `ManagedIdentityCredential` will fall through to the next credential in the chain in the case that Docker Desktop returns a 403 response when attempting to access the IMDS endpoint.  ([#31824](https://github.com/Azure/azure-sdk-for-python/pull/31824))
+
+### Other Changes
+
+- Update typing of async credentials to match the `AsyncTokenCredential` protocol.
+- If within `DefaultAzureCredential`, `EnvironmentCredential` will now use log level INFO instead of WARNING to inform users of an incomplete environment configuration.  ([#31814](https://github.com/Azure/azure-sdk-for-python/pull/31814))
+- Strengthened `AzureCliCredential` and `AzureDeveloperCliCredential` error checking when determining if a user is logged in or not. Now, if an AADSTS error exists in the error, the full error message is propagated instead of a canned error message. ([#30047](https://github.com/Azure/azure-sdk-for-python/pull/30047))
+- `ManagedIdentityCredential` instances using IMDS will now be allowed to continue sending requests to the IMDS endpoint even after previous attempts failed. This is to prevent credential instances from potentially being permanently disabled after a temporary network failure.
+- IMDS endpoint probes in `ManagedIdentityCredential` will now only occur when inside a credential chain such as `DefaultAzureCredential`. This probe request timeout has been increased to 1 second from 0.3 seconds to reduce the likelihood of false negatives.
+
+## 1.14.0 (2023-08-08)
+
+### Features Added
+
+- Continuous Access Evaluation (CAE) is now configurable per-request by setting the `enable_cae` keyword argument to `True` in `get_token`. This applies to user credentials and service principal credentials.  ([#30777](https://github.com/Azure/azure-sdk-for-python/pull/30777))
+
+### Breaking Changes
+
+- CP1 client capabilities for CAE is no longer always-on by default for user credentials. This capability will now be configured as-needed in each `get_token` request by each SDK.  ([#30777](https://github.com/Azure/azure-sdk-for-python/pull/30777))
+  - Suffixes are now appended to persistent cache names to indicate whether CAE or non-CAE tokens are stored in the cache. This is to prevent CAE and non-CAE tokens from being mixed/overwritten in the same cache. This could potentially cause issues if you are trying to share the same cache between applications that are using different versions of the Azure Identity library as each application would be reading from a different cache file.
+  - Since CAE is no longer always enabled for user-credentials, the `AZURE_IDENTITY_DISABLE_CP1` environment variable is no longer supported.
+
+### Bugs Fixed
+
+- Credential types correctly implement `azure-core`'s `TokenCredential` protocol.  ([#25175](https://github.com/Azure/azure-sdk-for-python/issues/25175))
 
 ## 1.14.0b2 (2023-07-11)
 

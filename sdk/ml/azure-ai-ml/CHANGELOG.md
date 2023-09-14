@@ -1,9 +1,10 @@
 # Release History
 
-
-## 1.10.0 (Unreleased)
+## 1.11.0 (unreleased)
 
 ### Features Added
+- Now, when you specify `delete_dependent_resources` as True when deleting a workspace, the log analytics resource
+  associated with the workspace application insights resource will also be deleted.
 
 ### Bugs Fixed
 
@@ -11,10 +12,26 @@
 
 ### Other Changes
 
+## 1.10.0 (2023-09-07)
+
+### Features Added
+- Added support of features that are known into the future/at forecast time for dnn in AutoML Forecasting jobs.
+- Added support for new workspace connection types: azure_open_ai, cognitive_search, and cognitive_service.
+- Added support for new credential type: ApiKeyConfiguration.
+- Added support of `download` for component operations.
+
+### Bugs Fixed
+- Local job runs will no longer fail if Docker registry has no username/password
+- Fixed an issue that code asset doesn't work with relative symbol links.
+- Fixed [Issue 31319](https://github.com/Azure/azure-sdk-for-python/issues/31319): can't accept `PathLike` for `CommandComponent.code`.
+
+### Other Changes
+
 - `azure-ai-ml` now performs all file i/o on `utf-8` encoded files per Azure SDK guidance. 
   (instead of the default behavior for python < 3.15, which uses locale specific encodings)
+- Removed references to deprecated "feature_store" workspace connection type.
 
-## 1.9.0 (Unreleased)
+## 1.9.0 (2023-07-25)
 
 ### Features Added
 - Added support to enable gpu access (local_enable_gpu) for local deployment.
@@ -23,7 +40,6 @@
 
 - Improved the output when printing a workspace object to be more clean and readable.
 - Log level of unknown field notifications for pipeline nodes raised from INFO to WARNING.
-
 ## 1.8.0 (2023-06-12)
 
 ### Features Added

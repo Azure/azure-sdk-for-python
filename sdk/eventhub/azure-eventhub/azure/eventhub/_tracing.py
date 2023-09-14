@@ -76,8 +76,14 @@ def is_tracing_enabled():
 
 @contextmanager
 def send_context_manager(client: Optional[ClientBase], links: Optional[List[Link]] = None) -> Iterator[None]:
-    """Tracing for message sending."""
-    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
+    """Tracing for message sending.
+
+    :param ~azure.eventhub._client_base.ClientBase or None client: The client that is sending the message.
+    :param list[~azure.core.tracing.Link] or None links: A list of links to add to the span.
+    :return: A context manager that will start and end the span.
+    :rtype: iterator[None]
+    """
+    span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
     if span_impl_type is not None:
         links = links or []
         with span_impl_type(name="EventHubs.send", kind=SpanKind.CLIENT, links=links) as span:
@@ -91,8 +97,15 @@ def send_context_manager(client: Optional[ClientBase], links: Optional[List[Link
 def receive_context_manager(
     client: Optional[ClientBase], links: Optional[List[Link]] = None, start_time: Optional[int] = None
 )  -> Iterator[None]:
-    """Tracing for message receiving."""
-    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
+    """Tracing for message receiving.
+
+    :param ~azure.eventhub._client_base.ClientBase or None client: The client that is receiving the message.
+    :param list[~azure.core.tracing.Link] or None links: A list of links to add to the span.
+    :param int or None start_time: The time the receive operation started.
+    :return: A context manager that will start and end the span.
+    :rtype: iterator[None]
+    """
+    span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
     if span_impl_type is not None:
         links = links or []
         with span_impl_type(
@@ -108,8 +121,15 @@ def receive_context_manager(
 def process_context_manager(
     client: Optional[ClientBase], links: Optional[List[Link]] = None, is_batch: bool = False
 ) -> Iterator[None]:
-    """Tracing for message processing."""
-    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
+    """Tracing for message processing.
+
+    :param ~azure.eventhub._client_base.ClientBase or None client: The client that is processing the message.
+    :param list[~azure.core.tracing.Link] or None links: A list of links to add to the span.
+    :param bool is_batch: Whether the processing is done in a batch.
+    :return: A context manager that will start and end the span.
+    :rtype: iterator[None]
+    """
+    span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
     if span_impl_type is not None:
         context = None
         links = links or []
@@ -134,9 +154,15 @@ def trace_message(
     """Add tracing information to the message and return the updated message.
 
     Will open and close an message span, and add trace context to the app properties of the message.
+
+    :param uamqp.Message or ~azure.eventhub._pyamqp.message.Message message: The message to trace.
+    :param ~azure.eventhub._transport._base.AmqpTransport amqp_transport: The transport to use for tracing.
+    :param dict[str,any] or None additional_attributes: Additional attributes to add to the span.
+    :rtype: uamqp.Message or ~azure.eventhub._pyamqp.message.Message
+    :return: The message with tracing information added.
     """
     try:
-        span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
+        span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
         if span_impl_type is not None:
             with span_impl_type(name="EventHubs.message", kind=SpanKind.PRODUCER) as message_span:
                 headers = message_span.to_header()
@@ -180,6 +206,10 @@ def get_span_links_from_received_events(events: Union[EventData, Iterable[EventD
 
     This will extract the traceparent and tracestate from the event properties and create span links
     based on these values. The time the event was enqueued is also added as a link attribute.
+
+    :param ~azure.eventhub.EventData or iterable[~azure.eventhub.EventData] events: The received events.
+    :rtype: list[~azure.core.tracing.Link]
+    :return: A list of span links.
     """
     # pylint:disable=isinstance-second-argument-not-valid-type
     trace_events = events if isinstance(events, Iterable) else (events,)
@@ -210,7 +240,12 @@ def get_span_links_from_received_events(events: Union[EventData, Iterable[EventD
 
 
 def get_span_links_from_batch(batch: EventDataBatch) -> List[Link]:
-    """Create span links from a batch of events."""
+    """Create span links from a batch of events.
+
+    :param ~azure.eventhub.EventDataBatch batch: The batch of events to extract the span links from.
+    :rtype: list[~azure.core.tracing.Link]
+    :return: A list of span links.
+    """
     links = []
     try:
         for event in batch._internal_events:  # pylint: disable=protected-access
@@ -229,6 +264,12 @@ def get_span_link_from_message(message: Union[AmqpAnnotatedMessage, Message]) ->
 
     This will extract the traceparent and tracestate from the message application properties and create span links
     based on these values.
+
+    :param message: The message to extract the traceparent and tracestate from.
+    :type message: ~azure.eventhub.amqp.AmqpAnnotatedMessage
+     or ~azure.eventhub._pyamqp.message.Message or ~uamqp.Message
+    :rtype: ~azure.core.tracing.Link
+    :return: A span link.
     """
     headers = {}
     try:
@@ -256,7 +297,13 @@ def add_span_attributes(
         client: Optional[ClientBase],
         message_count: int = 0
 ) -> None:
-    """Add attributes to span based on the operation type."""
+    """Add attributes to span based on the operation type.
+
+    :param ~azure.core.tracing.AbstractSpan span: The span to add attributes to.
+    :param TraceOperationTypes operation_type: The type of operation to add attributes for.
+    :param ~azure.eventhub._client_base.ClientBase or None client: The client that is performing the operation.
+    :param int message_count: The number of messages being processed.
+    """
 
     span.add_attribute(TraceAttributes.TRACE_NAMESPACE_ATTRIBUTE, TraceAttributes.TRACE_NAMESPACE)
     span.add_attribute(TraceAttributes.TRACE_MESSAGING_SYSTEM_ATTRIBUTE, TraceAttributes.TRACE_MESSAGING_SYSTEM)

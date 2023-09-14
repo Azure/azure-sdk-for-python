@@ -3,21 +3,32 @@ mypy = false
 pyright = false
 type_check_samples = false
 verifytypes = false
-pylint = false
+pylint = true
 
 [tool.interrogate]
-fail-under = 35
+fail-under = 75
 verbose = 2
 ignore-module = true
-exclude = ["setup.py", "tests", "azure/ai/ml/_restclient", "scripts"]
+exclude = ["setup.py", "tests", "azure/ai/ml/_restclient", "scripts", "samples"]
+ignore-init-method = true  # constructor docstrings are placed in the class docstring, not the init docstring 
+ignore-private = true
+ignore-semiprivate = true
+ignore-magic = true
 
 [tool.isort]
 profile = "black"
 line_length = 120
+known_first_party = ["azure"]
+extend_skip_glob = [
+  "*/_vendor/*",
+  "*/_generated/*",
+  "*/_restclient/*",
+  "*/doc/*",
+  "*/.tox/*",
+]
 
 [tool.mypy] 
 exclude = ["azure/ai/ml/_vendor", "azure/ai/ml/_restclient"] 
-disallow_any_explicit = true 
 disallow_untyped_defs = true 
 warn_unused_ignores = true 
 warn_return_any = true 

@@ -15,12 +15,21 @@ from azure.ai.ml.entities._validation import MutableValidationResult
 
 
 class ConditionNode(ControlFlowNode):
-    """Conditional node in pipeline.
+    """Conditional node in the pipeline.
 
     Please do not directly use this class.
+
+    :param condition: The condition for the conditional node.
+    :type condition: Any
+    :param true_block: The list of nodes to execute when the condition is true.
+    :type true_block: List[~azure.ai.ml.entities._builders.BaseNode]
+    :param false_block: The list of nodes to execute when the condition is false.
+    :type false_block: List[~azure.ai.ml.entities._builders.BaseNode]
     """
 
-    def __init__(self, condition, *, true_block=None, false_block=None, **kwargs):  # pylint: disable=unused-argument
+    def __init__(
+        self, condition, *, true_block=None, false_block=None, **kwargs
+    ) -> None:  # pylint: disable=unused-argument
         kwargs.pop("type", None)
         super(ConditionNode, self).__init__(type=ControlFlowType.IF_ELSE, **kwargs)
         self.condition = condition
@@ -43,24 +52,37 @@ class ConditionNode(ControlFlowNode):
 
     @classmethod
     def _create_instance_from_schema_dict(cls, loaded_data: Dict) -> "ConditionNode":
-        """Create a condition node instance from schema parsed dict."""
+        """Create a condition node instance from schema parsed dict.
+
+        :param loaded_data: The loaded data
+        :type loaded_data: Dict
+        :return: The ConditionNode node
+        :rtype: ConditionNode
+        """
         return cls(**loaded_data)
 
     @property
     def true_block(self) -> List[BaseNode]:
+        """Get the list of nodes to execute when the condition is true.
+
+        :return: The list of nodes to execute when the condition is true.
+        :rtype: List[~azure.ai.ml.entities._builders.BaseNode]
+        """
         return self._true_block
 
     @property
     def false_block(self) -> List[BaseNode]:
+        """Get the list of nodes to execute when the condition is false.
+
+        :return: The list of nodes to execute when the condition is false.
+        :rtype: List[~azure.ai.ml.entities._builders.BaseNode]
+        """
         return self._false_block
 
-    def _to_dict(self) -> Dict:
-        return self._dump_for_validation()
-
     def _customized_validate(self) -> MutableValidationResult:
-        return self._validate_params(raise_error=False)
+        return self._validate_params()
 
-    def _validate_params(self, raise_error=True) -> MutableValidationResult:
+    def _validate_params(self) -> MutableValidationResult:
         # pylint disable=protected-access
         validation_result = self._create_empty_validation_result()
         if not isinstance(self.condition, (str, bool, InputOutputBase)):
@@ -75,11 +97,11 @@ class ConditionNode(ControlFlowNode):
         if isinstance(self.condition, InputOutputBase) and self.condition._meta is not None:
             # pylint: disable=protected-access
             output_definition = self.condition._meta
-            if output_definition is not None and not output_definition._is_control_or_primitive_type:
+            if output_definition is not None and not output_definition._is_primitive_type:
                 validation_result.append_error(
                     yaml_path="condition",
-                    message=f"'condition' of dsl.condition node must have 'is_control' field or is primitive type "
-                    f"with value 'True', got {output_definition._is_control_or_primitive_type}",
+                    message=f"'condition' of dsl.condition node must be primitive type "
+                    f"with value 'True', got {output_definition._is_primitive_type}",
                 )
 
         # check if condition is valid binding
@@ -121,4 +143,4 @@ class ConditionNode(ControlFlowNode):
                         message=f"'{name}' of dsl.condition has invalid binding expression: {block}, {error_tail}",
                     )
 
-        return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
+        return validation_result

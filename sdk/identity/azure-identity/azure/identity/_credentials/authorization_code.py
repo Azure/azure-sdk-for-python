@@ -61,7 +61,9 @@ class AuthorizationCodeCredential(GetTokenMixin):
         """Close the credential's transport session."""
         self.__exit__()
 
-    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
@@ -73,6 +75,8 @@ class AuthorizationCodeCredential(GetTokenMixin):
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+            claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
@@ -82,7 +86,7 @@ class AuthorizationCodeCredential(GetTokenMixin):
           ``response`` attribute.
         """
         # pylint:disable=useless-super-delegation
-        return super(AuthorizationCodeCredential, self).get_token(*scopes, **kwargs)
+        return super(AuthorizationCodeCredential, self).get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
 
     def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)

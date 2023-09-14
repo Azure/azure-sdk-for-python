@@ -4,7 +4,7 @@
 # ------------------------------------
 import asyncio
 import sys
-from typing import cast, List, Any, Optional
+from typing import Any, cast, List, Optional
 from azure.core.credentials import AccessToken
 
 from .._internal import AsyncContextManager
@@ -47,16 +47,20 @@ class AzurePowerShellCredential(AsyncContextManager):
         tenant_id: str = "",
         additionally_allowed_tenants: Optional[List[str]] = None,
         process_timeout: int = 10,
-        _is_chained: bool = False
     ) -> None:
 
         self.tenant_id = tenant_id
-        self._is_chained = _is_chained
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
 
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    async def get_token(
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,  # pylint:disable=unused-argument
+        tenant_id: Optional[str] = None,
+        **kwargs: Any,
+    ) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -65,6 +69,7 @@ class AzurePowerShellCredential(AsyncContextManager):
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: not used by this credential; any value provided will be ignored.
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
@@ -76,14 +81,17 @@ class AzurePowerShellCredential(AsyncContextManager):
         """
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
-            return _SyncCredential().get_token(*scopes, **kwargs)
+            return _SyncCredential().get_token(*scopes, tenant_id=tenant_id, **kwargs)
 
         tenant_id = resolve_tenant(
-            default_tenant=self.tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
+            default_tenant=self.tenant_id,
+            tenant_id=tenant_id,
+            additionally_allowed_tenants=self._additionally_allowed_tenants,
+            **kwargs,
         )
         command_line = get_command_line(scopes, tenant_id)
         output = await run_command_line(command_line, self._process_timeout)
-        token = parse_token(output, _is_chained=self._is_chained)
+        token = parse_token(output)
         return token
 
     async def close(self) -> None:
@@ -131,5 +139,6 @@ async def start_process(command_line):
         cwd=working_directory,
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
+        stdin=asyncio.subprocess.DEVNULL,
     )
     return proc

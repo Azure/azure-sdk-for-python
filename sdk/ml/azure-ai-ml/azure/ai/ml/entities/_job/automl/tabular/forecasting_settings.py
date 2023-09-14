@@ -17,7 +17,9 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     CustomTargetRollingWindowSize,
     ForecastHorizonMode,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ForecastingSettings as RestForecastingSettings
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    ForecastingSettings as RestForecastingSettings,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     SeasonalityMode,
     TargetLagsMode,
@@ -31,36 +33,202 @@ class ForecastingSettings(RestTranslatableMixin):
 
     :param country_or_region_for_holidays: The country/region used to generate holiday features. These should be ISO
         3166 two-letter country/region code, for example 'US' or 'GB'.
-    :type country_or_region_for_holidays: str
-    :param forecast_horizon: The desired maximum forecast horizon in units of time-series frequency.
-    :type forecast_horizon: int
-    :param target_lags: The number of past periods to lag from the target column. Use 'auto' to use the automatic
-        heuristic based lag.
+    :type country_or_region_for_holidays: Optional[str]
+    :param cv_step_size:
+        Number of periods between the origin_time of one CV fold and the next fold. For
+        example, if `n_step` = 3 for daily data, the origin time for each fold will be
+        three days apart.
+    :type cv_step_size: Optional[int]
+    :param forecast_horizon:
+        The desired maximum forecast horizon in units of time-series frequency. The default value is 1.
+
+        Units are based on the time interval of your training data, e.g., monthly, weekly that the forecaster
+        should predict out. When task type is forecasting, this parameter is required. For more information on
+        setting forecasting parameters, see `Auto-train a time-series forecast model <https://docs.microsoft.com/
+        azure/machine-learning/how-to-auto-train-forecast>`_.
+    :type forecast_horizon: Optional[Union[int, str]]
+    :param target_lags:
+        The number of past periods to lag from the target column. By default the lags are turned off.
+
+        When forecasting, this parameter represents the number of rows to lag the target values based
+        on the frequency of the data. This is represented as a list or single integer. Lag should be used
+        when the relationship between the independent variables and dependent variable do not match up or
+        correlate by default. For example, when trying to forecast demand for a product, the demand in any
+        month may depend on the price of specific commodities 3 months prior. In this example, you may want
+        to lag the target (demand) negatively by 3 months so that the model is training on the correct
+        relationship. For more information, see `Auto-train a time-series forecast model
+        <https://docs.microsoft.com/azure/machine-learning/how-to-auto-train-forecast>`_.
+
+        **Note on auto detection of target lags and rolling window size.
+        Please see the corresponding comments in the rolling window section.**
+        We use the next algorithm to detect the optimal target lag and rolling window size.
+
+        #. Estimate the maximum lag order for the look back feature selection. In our case it is the number of
+           periods till the next date frequency granularity i.e. if frequency is daily, it will be a week (7),
+           if it is a week, it will be month (4). That values multiplied by two is the largest
+           possible values of lags/rolling windows. In our examples, we will consider the maximum lag
+           order of 14 and 8 respectively).
+        #. Create a de-seasonalized series by adding trend and residual components. This will be used
+           in the next step.
+        #. Estimate the PACF - Partial Auto Correlation Function on the on the data from (2)
+           and search for points, where the auto correlation is significant i.e. its absolute
+           value is more then 1.96/square_root(maximal lag value), which correspond to significance of 95%.
+        #. If all points are significant, we consider it being strong seasonality
+           and do not create look back features.
+        #. We scan the PACF values from the beginning and the value before the first insignificant
+           auto correlation will designate the lag. If first significant element (value correlate with
+           itself) is followed by insignificant, the lag will be 0 and we will not use look back features.
     :type target_lags: Union[str, int, List[int]]
-    :param target_rolling_window_size: The number of past periods used to create a rolling window average of the
-        target column.
-    :type target_rolling_window_size: int
-    :param frequency: Forecast frequency. When forecasting, this parameter represents the period with which the
-        forecast is desired, for example daily, weekly, yearly, etc.
-    :type frequency: str
-    :param feature_lags: Flag for generating lags for the numeric features with 'auto'
-    :type feature_lags: str
-    :param seasonality: Set time series seasonality as an integer multiple of the series frequency. Use 'auto' for
-        automatic settings.
-    :type seasonality: Union[str, int]
-    :param use_stl: Configure STL Decomposition of the time-series target column. use_stl can take two values:
-        'season' - only generate season component and 'season_trend' - generate both season and trend components.
-    :type use_stl: str
-    :param short_series_handling_config: The parameter defining how if AutoML should handle short time series.
-    :type short_series_handling_config: str
-    :param target_aggregate_function: The function to be used to aggregate the time series target column to conform
-        to a user specified frequency. If the target_aggregation_function is set, but the freq parameter is not set,
-        the error is raised. The possible target aggregation functions are: "sum", "max", "min" and "mean".
+    :param target_rolling_window_size:
+        The number of past periods used to create a rolling window average of the target column.
+
+        When forecasting, this parameter represents `n` historical periods to use to generate forecasted values,
+        <= training set size. If omitted, `n` is the full training set size. Specify this parameter
+        when you only want to consider a certain amount of history when training the model.
+        If set to 'auto', rolling window will be estimated as the last
+        value where the PACF is more then the significance threshold. Please see target_lags section for details.
+    :type target_rolling_window_size: Optional[Union[str, int]]
+    :param frequency: Forecast frequency.
+
+        When forecasting, this parameter represents the period with which the forecast is desired,
+        for example daily, weekly, yearly, etc. The forecast frequency is dataset frequency by default.
+        You can optionally set it to greater (but not lesser) than dataset frequency.
+        We'll aggregate the data and generate the results at forecast frequency. For example,
+        for daily data, you can set the frequency to be daily, weekly or monthly, but not hourly.
+        The frequency needs to be a pandas offset alias.
+        Please refer to pandas documentation for more information:
+        https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#dateoffset-objects
+    :type frequency: Optional[str]
+    :param feature_lags: Flag for generating lags for the numeric features with 'auto' or None.
+    :type feature_lags: Optional[str]
+    :param seasonality: Set time series seasonality as an integer multiple of the series frequency.
+                If seasonality is set to 'auto', it will be inferred.
+                If set to None, the time series is assumed non-seasonal which is equivalent to seasonality=1.
+    :type seasonality: Optional[Union[int, str]]
+    :param use_stl: Configure STL Decomposition of the time-series target column.
+                use_stl can take three values: None (default) - no stl decomposition, 'season' - only generate
+                season component and season_trend - generate both season and trend components.
+    :type use_stl: Optional[str]
+    :param short_series_handling_config:
+        The parameter defining how if AutoML should handle short time series.
+
+        Possible values: 'auto' (default), 'pad', 'drop' and None.
+        * **auto** short series will be padded if there are no long series,
+        otherwise short series will be dropped.
+        * **pad** all the short series will be padded.
+        * **drop**  all the short series will be dropped".
+        * **None** the short series will not be modified.
+        If set to 'pad', the table will be padded with the zeroes and
+        empty values for the regressors and random values for target with the mean
+        equal to target value median for given time series id. If median is more or equal
+        to zero, the minimal padded value will be clipped by zero.
+        Input:
+
+        +------------+---------------+----------+--------+
+        | Date       | numeric_value | string   | target |
+        +============+===============+==========+========+
+        | 2020-01-01 | 23            | green    | 55     |
+        +------------+---------------+----------+--------+
+
+        Output assuming minimal number of values is four:
+
+        +------------+---------------+----------+--------+
+        | Date       | numeric_value | string   | target |
+        +============+===============+==========+========+
+        | 2019-12-29 | 0             | NA       | 55.1   |
+        +------------+---------------+----------+--------+
+        | 2019-12-30 | 0             | NA       | 55.6   |
+        +------------+---------------+----------+--------+
+        | 2019-12-31 | 0             | NA       | 54.5   |
+        +------------+---------------+----------+--------+
+        | 2020-01-01 | 23            | green    | 55     |
+        +------------+---------------+----------+--------+
+
+        **Note:** We have two parameters short_series_handling_configuration and
+        legacy short_series_handling. When both parameters are set we are
+        synchronize them as shown in the table below (short_series_handling_configuration and
+        short_series_handling for brevity are marked as handling_configuration and handling
+        respectively).
+
+        +------------+--------------------------+----------------------+-----------------------------+
+        | | handling | | handling configuration | | resulting handling | | resulting handling        |
+        |            |                          |                      | | configuration             |
+        +============+==========================+======================+=============================+
+        | True       | auto                     | True                 | auto                        |
+        +------------+--------------------------+----------------------+-----------------------------+
+        | True       | pad                      | True                 | auto                        |
+        +------------+--------------------------+----------------------+-----------------------------+
+        | True       | drop                     | True                 | auto                        |
+        +------------+--------------------------+----------------------+-----------------------------+
+        | True       | None                     | False                | None                        |
+        +------------+--------------------------+----------------------+-----------------------------+
+        | False      | auto                     | False                | None                        |
+        +------------+--------------------------+----------------------+-----------------------------+
+        | False      | pad                      | False                | None                        |
+        +------------+--------------------------+----------------------+-----------------------------+
+        | False      | drop                     | False                | None                        |
+        +------------+--------------------------+----------------------+-----------------------------+
+        | False      | None                     | False                | None                        |
+        +------------+--------------------------+----------------------+-----------------------------+
+
+    :type short_series_handling_config: Optional[str]
+    :param target_aggregate_function: The function to be used to aggregate the time series target
+                                      column to conform to a user specified frequency. If the
+                                      target_aggregation_function is set, but the freq parameter
+                                      is not set, the error is raised. The possible target
+                                      aggregation functions are: "sum", "max", "min" and "mean".
+
+            * The target column values are aggregated based on the specified operation.
+              Typically, sum is appropriate for most scenarios.
+            * Numerical predictor columns in your data are aggregated by sum, mean, minimum value,
+              and maximum value. As a result, automated ML generates new columns suffixed with the
+              aggregation function name and applies the selected aggregate operation.
+            * For categorical predictor columns, the data is aggregated by mode,
+              the most prominent category in the window.
+            * Date predictor columns are aggregated by minimum value, maximum value and mode.
+
+            +----------------+-------------------------------+--------------------------------------+
+            |     | freq     | | target_aggregation_function | | Data regularity                    |
+            |                |                               | | fixing mechanism                   |
+            +================+===============================+======================================+
+            | None (Default) | None (Default)                | | The aggregation is not             |
+            |                |                               | | applied. If the valid              |
+            |                |                               | | frequency can not be               |
+            |                |                               | | determined the error will          |
+            |                |                               | | be raised.                         |
+            +----------------+-------------------------------+--------------------------------------+
+            | Some Value     | None (Default)                | | The aggregation is not             |
+            |                |                               | | applied. If the number             |
+            |                |                               | | of data points compliant           |
+            |                |                               | | to given frequency grid            |
+            |                |                               | | is less then 90% these points      |
+            |                |                               | | will be removed, otherwise         |
+            |                |                               | | the error will be raised.          |
+            +----------------+-------------------------------+--------------------------------------+
+            | None (Default) | Aggregation function          | | The error about missing            |
+            |                |                               | | frequency parameter                |
+            |                |                               | | is raised.                         |
+            +----------------+-------------------------------+--------------------------------------+
+            | Some Value     | Aggregation function          | | Aggregate to frequency using       |
+            |                |                               | | provided aggregation function.     |
+            +----------------+-------------------------------+--------------------------------------+
     :type target_aggregate_function: str
-    :param time_column_name: The name of the time column.
-    :type time_column_name: str
-    :param time_series_id_column_names:  The names of columns used to group a timeseries.
+    :param time_column_name:
+        The name of the time column. This parameter is required when forecasting to specify the datetime
+        column in the input data used for building the time series and inferring its frequency.
+    :type time_column_name: Optional[str]
+    :param time_series_id_column_names:
+        The names of columns used to group a timeseries.
+        It can be used to create multiple series. If time series id column names is not defined or
+        the identifier columns specified do not identify all the series in the dataset, the time series identifiers
+        will be automatically created for your dataset.
     :type time_series_id_column_names: Union[str, List[str]]
+    :param features_unknown_at_forecast_time:
+        The feature columns that are available for training but unknown at the time of forecast/inference.
+        If features_unknown_at_forecast_time is set to an empty list, it is assumed that
+        all the feature columns in the dataset are known at inference time. If this parameter is not set
+        the support for future features is not enabled.
+    :type features_unknown_at_forecast_time: Optional[Union[str, List[str]]]
     """
 
     def __init__(
@@ -79,6 +247,7 @@ class ForecastingSettings(RestTranslatableMixin):
         target_aggregate_function: Optional[str] = None,
         time_column_name: Optional[str] = None,
         time_series_id_column_names: Optional[Union[str, List[str]]] = None,
+        features_unknown_at_forecast_time: Optional[Union[str, List[str]]] = None,
     ):
         self.country_or_region_for_holidays = country_or_region_for_holidays
         self.cv_step_size = cv_step_size
@@ -93,6 +262,7 @@ class ForecastingSettings(RestTranslatableMixin):
         self.target_aggregate_function = target_aggregate_function
         self.time_column_name = time_column_name
         self.time_series_id_column_names = time_series_id_column_names
+        self.features_unknown_at_forecast_time = features_unknown_at_forecast_time
 
     def _to_rest_object(self) -> RestForecastingSettings:
         forecast_horizon = None
@@ -124,6 +294,10 @@ class ForecastingSettings(RestTranslatableMixin):
         if isinstance(self.time_series_id_column_names, str) and self.time_series_id_column_names:
             time_series_id_column_names = [self.time_series_id_column_names]
 
+        features_unknown_at_forecast_time = self.features_unknown_at_forecast_time
+        if isinstance(self.features_unknown_at_forecast_time, str) and self.features_unknown_at_forecast_time:
+            features_unknown_at_forecast_time = [self.features_unknown_at_forecast_time]
+
         return RestForecastingSettings(
             country_or_region_for_holidays=self.country_or_region_for_holidays,
             cv_step_size=self.cv_step_size,
@@ -138,6 +312,7 @@ class ForecastingSettings(RestTranslatableMixin):
             short_series_handling_config=self.short_series_handling_config,
             target_aggregate_function=self.target_aggregate_function,
             time_series_id_column_names=time_series_id_column_names,
+            features_unknown_at_forecast_time=features_unknown_at_forecast_time,
         )
 
     @classmethod
@@ -181,6 +356,7 @@ class ForecastingSettings(RestTranslatableMixin):
             target_aggregate_function=obj.target_aggregate_function,
             time_column_name=obj.time_column_name,
             time_series_id_column_names=obj.time_series_id_column_names,
+            features_unknown_at_forecast_time=obj.features_unknown_at_forecast_time,
         )
 
     def __eq__(self, other: object) -> bool:
@@ -200,6 +376,7 @@ class ForecastingSettings(RestTranslatableMixin):
             and self.target_aggregate_function == other.target_aggregate_function
             and self.time_column_name == other.time_column_name
             and self.time_series_id_column_names == other.time_series_id_column_names
+            and self.features_unknown_at_forecast_time == other.features_unknown_at_forecast_time
         )
 
     def __ne__(self, other: object) -> bool:

@@ -30,6 +30,7 @@ __version__ = VERSION
 from ._schema_registry_client import SchemaRegistryClient
 from ._common._constants import SchemaFormat, ApiVersion
 from ._common._schema import Schema, SchemaProperties
+from ._encoder_protocols import SchemaContentValidate, MessageContent, MessageType, SchemaEncoder
 
 __all__ = [
     "ApiVersion",
@@ -37,4 +38,8 @@ __all__ = [
     "SchemaFormat",
     "Schema",
     "SchemaProperties",
+    "SchemaContentValidate",
+    "MessageContent",
+    "MessageType",
+    "SchemaEncoder"
 ]

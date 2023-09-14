@@ -14,7 +14,7 @@ from azure.core.exceptions import (
 )
 
 
-def quote_etag(etag):
+def quote_etag(etag: Optional[str]) -> Optional[str]:
     if not etag or etag == "*":
         return etag
     if etag.startswith('"') and etag.endswith('"'):
@@ -24,7 +24,7 @@ def quote_etag(etag):
     return '"' + etag + '"'
 
 
-def prep_if_match(etag: str, match_condition: MatchConditions) -> Optional[str]:
+def prep_if_match(etag: Optional[str], match_condition: MatchConditions) -> Optional[str]:
     if match_condition == MatchConditions.IfNotModified:
         if_match = quote_etag(etag) if etag else None
         return if_match

@@ -34,7 +34,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_query_pipeline_runs_by_workspace_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_query_pipeline_runs_by_workspace_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 

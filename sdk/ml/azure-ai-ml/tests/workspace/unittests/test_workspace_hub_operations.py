@@ -3,11 +3,12 @@ from unittest.mock import DEFAULT, Mock
 import pytest
 from pytest_mock import MockFixture
 
-from azure.ai.ml import load_workspace
+from azure.ai.ml import load_workspace_hub
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import (
     WorkspaceHub,
     Workspace,
+    WorkspaceHubConfig,
 )
 from azure.ai.ml.operations import WorkspaceHubOperations
 from azure.core.polling import LROPoller
@@ -45,7 +46,7 @@ class TestWorkspaceHubOperation:
             mock_workspace_hub_operation._operation.list_by_resource_group.assert_called_once()
 
     def test_get(self, mock_workspace_hub_operation: WorkspaceHubOperations) -> None:
-        mock_workspace_hub_operation.get("random_name")
+        mock_workspace_hub_operation.get(name="random_name")
         mock_workspace_hub_operation._operation.get.assert_called_once()
 
     def test_begin_create(
@@ -79,13 +80,16 @@ class TestWorkspaceHubOperation:
 
         mock_workspace_hub_operation._operation.get.side_effect = outgoing_get_call
         mock_workspace_hub_operation._operation.begin_update.side_effect = outgoing_call
-        mock_workspace_hub_operation.begin_update(workspaceHub, update_dependent_resources=True)
+        mock_workspace_hub_operation.begin_update(workspace_hub=workspaceHub, update_dependent_resources=True)
         mock_workspace_hub_operation._operation.begin_update.assert_called()
 
     def test_delete(self, mock_workspace_hub_operation: WorkspaceHubOperations, mocker: MockFixture) -> None:
         def outgoing_call(rg, name):
             return WorkspaceHub(name=name)._to_rest_object()
 
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.get_generic_arm_resource_by_arm_id", return_value=None
+        )
         mock_workspace_hub_operation._operation.get.side_effect = outgoing_call
         mock_workspace_hub_operation.begin_delete("randstr", delete_dependent_resources=True)
         mock_workspace_hub_operation._operation.begin_delete.assert_called_once()
@@ -98,5 +102,16 @@ class TestWorkspaceHubOperation:
 
         mock_workspace_hub_operation._operation.get.side_effect = outgoing_call
         mocker.patch("azure.ai.ml.operations._workspace_operations_base.delete_resource_by_arm_id", return_value=None)
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.get_generic_arm_resource_by_arm_id", return_value=None
+        )
         with pytest.raises(Exception):
             mock_workspace_hub_operation.begin_delete("randstr", delete_dependent_resources=True)
+
+    def test_load_workspace_hub_from_yaml(self, mock_workspace_hub_operation: WorkspaceHubOperations):
+        params_override = []
+        hub = load_workspace_hub(
+            "./tests/test_configs/workspace/workspacehub_min.yaml", params_override=params_override
+        )
+        assert isinstance(hub.enable_data_isolation, bool)
+        assert isinstance(hub.workspace_hub_config, WorkspaceHubConfig)

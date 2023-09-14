@@ -18,13 +18,9 @@ from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIden
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._workspace.compute_runtime import ComputeRuntime
 from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
+from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 
-from ._constants import (
-    DEFAULT_SPARK_RUNTIME_VERSION,
-    FEATURE_STORE_KIND,
-    OFFLINE_STORE_CONNECTION_NAME,
-    ONLINE_STORE_CONNECTION_NAME,
-)
+from ._constants import DEFAULT_SPARK_RUNTIME_VERSION, FEATURE_STORE_KIND
 from .materialization_store import MaterializationStore
 
 
@@ -53,6 +49,7 @@ class FeatureStore(Workspace):
         public_network_access: Optional[str] = None,
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
+        managed_network: Optional[ManagedNetwork] = None,
         **kwargs,
     ):
         """FeatureStore.
@@ -108,6 +105,8 @@ class FeatureStore(Workspace):
         :type identity: IdentityConfiguration
         :param primary_user_assigned_identity: The workspace's primary user assigned identity
         :type primary_user_assigned_identity: str
+        :param managed_network: workspace's Managed Network configuration
+        :type managed_network: ManagedNetwork
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
@@ -116,12 +115,6 @@ class FeatureStore(Workspace):
             compute_runtime=compute_runtime
             if compute_runtime
             else ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION),
-            offline_store_connection_name=(
-                OFFLINE_STORE_CONNECTION_NAME if materialization_identity and offline_store else None
-            ),
-            online_store_connection_name=(
-                ONLINE_STORE_CONNECTION_NAME if materialization_identity and online_store else None
-            ),
         )
         self._workspace_id = kwargs.pop("workspace_id", "")
         super().__init__(
@@ -140,6 +133,7 @@ class FeatureStore(Workspace):
             customer_managed_key=customer_managed_key,
             image_build_compute=image_build_compute,
             public_network_access=public_network_access,
+            managed_network=managed_network,
             identity=identity,
             primary_user_assigned_identity=primary_user_assigned_identity,
             feature_store_settings=feature_store_settings,
@@ -149,6 +143,8 @@ class FeatureStore(Workspace):
         self.online_store = online_store
         self.materialization_identity = materialization_identity
         self.identity = identity
+        self.public_network_access = public_network_access
+        self.managed_network = managed_network
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspace) -> "FeatureStore":
@@ -179,6 +175,7 @@ class FeatureStore(Workspace):
             public_network_access=workspace_object.public_network_access,
             identity=workspace_object.identity,
             primary_user_assigned_identity=workspace_object.primary_user_assigned_identity,
+            managed_network=workspace_object.managed_network,
             workspace_id=rest_obj.workspace_id,
         )
 

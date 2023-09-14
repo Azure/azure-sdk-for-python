@@ -1,0 +1,9 @@
+name: test_ws_conn_cog_search
+type: cognitive_search
+target: dummy
+metadata:
+  ApiVersion: dummy
+credentials:
+  type: username_password
+  username: dummy
+  password: dummy

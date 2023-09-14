@@ -52,19 +52,11 @@ async def test_custom_hooks(environ):
         )
     await credential.get_token(scope)
 
-    if environ:
-        # some environment variables are set, so we're not mocking IMDS and should expect 1 request
-        assert request_hook.call_count == 1
-        assert response_hook.call_count == 1
-        args, kwargs = response_hook.call_args
-        pipeline_response = args[0]
-        assert pipeline_response.http_response == expected_response
-    else:
-        # we're mocking IMDS and should expect 2 requests
-        assert request_hook.call_count == 2
-        assert response_hook.call_count == 2
-        responses = [args[0].http_response for args, _ in response_hook.call_args_list]
-        assert responses == [expected_response] * 2
+    assert request_hook.call_count == 1
+    assert response_hook.call_count == 1
+    args, kwargs = response_hook.call_args
+    pipeline_response = args[0]
+    assert pipeline_response.http_response == expected_response
 
 
 @pytest.mark.asyncio
@@ -94,19 +86,11 @@ async def test_tenant_id(environ):
         )
     await credential.get_token(scope)
 
-    if environ:
-        # some environment variables are set, so we're not mocking IMDS and should expect 1 request
-        assert request_hook.call_count == 1
-        assert response_hook.call_count == 1
-        args, kwargs = response_hook.call_args
-        pipeline_response = args[0]
-        assert pipeline_response.http_response == expected_response
-    else:
-        # we're mocking IMDS and should expect 2 requests
-        assert request_hook.call_count == 2
-        assert response_hook.call_count == 2
-        responses = [args[0].http_response for args, _ in response_hook.call_args_list]
-        assert responses == [expected_response] * 2
+    assert request_hook.call_count == 1
+    assert response_hook.call_count == 1
+    args, kwargs = response_hook.call_args
+    pipeline_response = args[0]
+    assert pipeline_response.http_response == expected_response
 
 
 @pytest.mark.asyncio
@@ -451,7 +435,10 @@ async def test_app_service_2019_08_01():
     new_secret = "new-expected-secret"
     scope = "scope"
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert request.url.startswith(new_endpoint)
         assert request.method == "GET"
         assert request.headers["X-IDENTITY-HEADER"] == new_secret
@@ -494,7 +481,10 @@ async def test_app_service_2019_08_01_tenant_id():
     new_secret = "new-expected-secret"
     scope = "scope"
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert request.url.startswith(new_endpoint)
         assert request.method == "GET"
         assert request.headers["X-IDENTITY-HEADER"] == new_secret
@@ -592,7 +582,10 @@ async def test_client_id_none():
     expected_access_token = "****"
     scope = "scope"
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert "client_id" not in request.query  # IMDS
         if request.data:
             assert "client_id" not in request.body  # Cloud Shell
@@ -621,7 +614,6 @@ async def test_imds():
     scope = "scope"
     transport = async_validating_transport(
         requests=[
-            Request(base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH),
             Request(
                 base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH,
                 method="GET",
@@ -630,8 +622,6 @@ async def test_imds():
             ),
         ],
         responses=[
-            # probe receives error response
-            mock_response(status_code=400, json_payload={"error": "this is an error message"}),
             mock_response(
                 json_payload={
                     "access_token": access_token,
@@ -660,7 +650,6 @@ async def test_imds_tenant_id():
     scope = "scope"
     transport = async_validating_transport(
         requests=[
-            Request(base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH),
             Request(
                 base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH,
                 method="GET",
@@ -669,8 +658,6 @@ async def test_imds_tenant_id():
             ),
         ],
         responses=[
-            # probe receives error response
-            mock_response(status_code=400, json_payload={"error": "this is an error message"}),
             mock_response(
                 json_payload={
                     "access_token": access_token,
@@ -700,7 +687,6 @@ async def test_imds_user_assigned_identity():
     client_id = "some-guid"
     transport = async_validating_transport(
         requests=[
-            Request(base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH),
             Request(
                 base_url=IMDS_AUTHORITY + IMDS_TOKEN_PATH,
                 method="GET",
@@ -709,8 +695,6 @@ async def test_imds_user_assigned_identity():
             ),
         ],
         responses=[
-            # probe receives error response
-            mock_response(status_code=400, json_payload={"error": "this is an error message"}),
             mock_response(
                 json_payload={
                     "access_token": access_token,
@@ -742,7 +726,10 @@ async def test_service_fabric():
     thumbprint = "SHA1HEX"
     scope = "scope"
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert request.url.startswith(endpoint)
         assert request.method == "GET"
         assert request.headers["Secret"] == secret
@@ -780,7 +767,10 @@ async def test_service_fabric_tenant_id():
     thumbprint = "SHA1HEX"
     scope = "scope"
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert request.url.startswith(endpoint)
         assert request.method == "GET"
         assert request.headers["Secret"] == secret
