@@ -544,6 +544,56 @@ class CRUDTests(unittest.TestCase):
 
         await created_db.delete_container(created_collection.id)
 
+    # Commenting out delete all items by pk until pipelines support it
+    # async def test_delete_all_items_by_partition_key(self):
+    #     # create database
+    #     created_db = self.databaseForTest
+    #
+    #     # create container
+    #     created_collection = await created_db.create_container(
+    #         id='test_delete_all_items_by_partition_key ' + str(uuid.uuid4()),
+    #         partition_key=PartitionKey(path=['/pk1','/pk2','/pk3'], kind='MultiHash')
+    #     )
+    #     # Create two partition keys
+    #     partition_key1 = "{}-{}".format("Partition Key 1", str(uuid.uuid4()))
+    #     partition_key2 = "{}-{}".format("Partition Key 2", str(uuid.uuid4()))
+    #
+    #     #Create two partition keys
+    #     partition_key1 = ['pkA1 ' + str(uuid.uuid4()), 'pkA2 ' + str(uuid.uuid4()), 'pkA3 ' + str(uuid.uuid4())]
+    #     partition_key2 = ['pkB1 ' + str(uuid.uuid4()), 'pkB2 ' + str(uuid.uuid4()), 'pkB3 ' + str(uuid.uuid4())]
+    #
+    #     # add items for partition key 1
+    #     for i in range(1, 3):
+    #         created_collection.upsert_item(
+    #             dict(id="item{}".format(i), pk1=partition_key1[0], pk2=partition_key1[1], pk3=partition_key1[2])
+    #         )
+    #
+    #     # add items for partition key 2
+    #
+    #     pk2_item = created_collection.upsert_item(dict(id="item{}".format(3), pk1=partition_key2[0]
+    #                                               , pk2=partition_key2[1], pk3=partition_key2[2]))
+    #
+    #     # delete all items for partition key 1
+    #     await created_collection.delete_all_items_by_partition_key(partition_key1)
+    #
+    #     # check that only items from partition key 1 have been deleted
+    #     items = [item async for item in created_collection.read_all_items()]
+    #
+    #     # items should only have 1 item, and it should equal pk2_item
+    #     self.assertDictEqual(pk2_item, items[0])
+    #
+    #     # attempting to delete a non-existent partition key or passing none should not delete
+    #     # anything and leave things unchanged
+    #     await created_collection.delete_all_items_by_partition_key(None)
+    #
+    #     # check that no changes were made by checking if the only item is still there
+    #     items = [item async for item in created_collection.read_all_items()]
+    #
+    #     # items should only have 1 item, and it should equal pk2_item
+    #     self.assertDictEqual(pk2_item, items[0])
+    #
+    #     await created_db.delete_container(created_collection)
+
     async def _MockExecuteFunction(self, function, *args, **kwargs):
         self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey]
                                  if HttpHeaders.PartitionKey in args[4].headers else '')

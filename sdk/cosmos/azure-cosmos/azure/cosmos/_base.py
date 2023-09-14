@@ -216,8 +216,8 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         # else serialize using json dumps method which apart from regular values will serialize None into null
         else:
             # single partitioning uses a string and needs to be turned into a list
-            pk_val = [options["partitionKey"]] if isinstance(options["partitionKey"], str) else options["partitionKey"]
-            headers[http_constants.HttpHeaders.PartitionKey] = json.dumps(pk_val)
+            pk_val = options["partitionKey"] if isinstance(options["partitionKey"], list) and options["partitionKey"] else [options["partitionKey"]]  # pylint: disable=line-too-long
+            headers[http_constants.HttpHeaders.PartitionKey] = json.dumps(pk_val, separators=(',', ':'))
 
     if options.get("enableCrossPartitionQuery"):
         headers[http_constants.HttpHeaders.EnableCrossPartitionQuery] = options["enableCrossPartitionQuery"]
@@ -226,7 +226,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         headers[http_constants.HttpHeaders.PopulateQueryMetrics] = options["populateQueryMetrics"]
 
     if options.get("responseContinuationTokenLimitInKb"):
-        headers[http_constants.HttpHeaders.ResponseContinuationTokenLimitInKb] = options["responseContinuationTokenLimitInKb"] # pylint: disable=line-too-long
+        headers[http_constants.HttpHeaders.ResponseContinuationTokenLimitInKb] = options["responseContinuationTokenLimitInKb"]  # pylint: disable=line-too-long
 
     if cosmos_client_connection.master_key:
         #formatedate guarantees RFC 1123 date format regardless of current locale

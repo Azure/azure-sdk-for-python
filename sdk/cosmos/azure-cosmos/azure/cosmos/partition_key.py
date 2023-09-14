@@ -20,24 +20,22 @@
 # SOFTWARE.
 """Create partition keys in the Azure Cosmos DB SQL API service.
 """
-from typing import Any, Dict, List, Optional, Union, Iterable, cast, overload  # pylint: disable=unused-import
 from io import BytesIO
 from ._cosmos_integers import UInt64, UInt128
 from ._cosmos_murmurhash3 import murmurhash3_128
 import binascii
 from ._routing.routing_range import Range
-import json
 
-MaximumExclusiveEffectivePartitionKey = 0xFF
-MinimumInclusiveEffectivePartitionKey = 0x00
-MaxStringChars = 100
-MaxStringBytesToAppend = 100
-MaxPartitionKeyBinarySize = (
-    1  # type marker
-    + 9  # hash value
-    + 1  # type marker
-    + MaxStringBytesToAppend
-    + 1  # trailing zero
+_MaximumExclusiveEffectivePartitionKey = 0xFF
+_MinimumInclusiveEffectivePartitionKey = 0x00
+_MaxStringChars = 100
+_MaxStringBytesToAppend = 100
+_MaxPartitionKeyBinarySize = (
+ 1  # type marker
+ + 9  # hash value
+ + 1  # type marker
+ + _MaxStringBytesToAppend
+ + 1  # trailing zero
 ) * 3
 
 
@@ -84,10 +82,6 @@ class _Undefined(object):
 
 class _Infinity(object):
     """Represents infinity value for partitionKey."""
-
-
-class PartitionKeyError(Exception):
-    """Error in PartitionKey"""
 
 
 class PartitionKey(dict):
@@ -149,43 +143,41 @@ class PartitionKey(dict):
         if len(pk_value) >= len(self["paths"]):
             raise ValueError("Too many partition key components")
         # Prefix Partitions always have exclusive max
-        min_epk = self.get_effective_partition_key_string(pk_value)
-        if min_epk == MinimumInclusiveEffectivePartitionKey:
+        min_epk = self._get_effective_partition_key_string(pk_value)
+        if min_epk == _MinimumInclusiveEffectivePartitionKey:
             min_epk = ""
             return Range(min_epk, min_epk, True, False)
 
-        if min_epk == MaximumExclusiveEffectivePartitionKey:
+        if min_epk == _MaximumExclusiveEffectivePartitionKey:
             return Range("FF", "FF", True, False)
 
         max_epk = min_epk + "FF"
         return Range(min_epk, max_epk, True, False)
 
-    def get_effective_partition_key_for_hash_partitioning(self) -> str:
+    def _get_effective_partition_key_for_hash_partitioning(self) -> str:
         """We shouldn't be supporting V1"""
         pass
 
-    def get_effective_partition_key_string(self, pk_value: list):
+    def _get_effective_partition_key_string(self, pk_value: list):
         if not pk_value:
-            return MinimumInclusiveEffectivePartitionKey
+            return _MinimumInclusiveEffectivePartitionKey
 
         if isinstance(self, _Infinity):
-            return MaximumExclusiveEffectivePartitionKey
+            return _MaximumExclusiveEffectivePartitionKey
 
         kind = self.kind
         if kind == 'Hash':
             version = self.version or 'V1'
             if version == 'V1':
-                return self.get_effective_partition_key_for_hash_partitioning()
+                return self._get_effective_partition_key_for_hash_partitioning()
             elif version == 'V2':
-                return self.get_effective_partition_key_for_hash_partitioning_v2(pk_value)
-            else:
-                raise PartitionKeyError('Unexpected PartitionKeyDefinitionVersion')
+                return self._get_effective_partition_key_for_hash_partitioning_v2(pk_value)
         elif kind == 'MultiHash':
-            return self.get_effective_partition_key_for_multi_hash_partitioning_v2(pk_value)
+            return self._get_effective_partition_key_for_multi_hash_partitioning_v2(pk_value)
         else:
-            return to_hex_encoded_binary_string(pk_value)
+            return _to_hex_encoded_binary_string(pk_value)
 
-    def write_for_hashing_v2(self, value, writer):
+    def _write_for_hashing_v2(self, value, writer):
         if value is True:
             writer.write(bytes([PartitionKeyComponentType.PTrue]))
         elif value is False:
@@ -202,10 +194,10 @@ class PartitionKey(dict):
         elif isinstance(value, _Undefined):
             writer.write(bytes([PartitionKeyComponentType.Undefined]))
 
-    def get_effective_partition_key_for_hash_partitioning_v2(self, pk_value: list):
+    def _get_effective_partition_key_for_hash_partitioning_v2(self, pk_value: list):
         with BytesIO() as ms:
             for component in pk_value:
-                self.write_for_hashing_v2(component, ms)
+                self._write_for_hashing_v2(component, ms)
 
             ms_bytes = ms.getvalue()
             hash128 = murmurhash3_128(bytearray(ms_bytes), UInt128(0, 0))
@@ -218,14 +210,14 @@ class PartitionKey(dict):
 
         return ''.join('{:02X}'.format(x) for x in hash_bytes)
 
-    def get_effective_partition_key_for_multi_hash_partitioning_v2(self, pk_value: list):
+    def _get_effective_partition_key_for_multi_hash_partitioning_v2(self, pk_value: list):
         sb = []
         for i in range(len(pk_value)):
             ms = BytesIO()
             binary_writer = ms  # In Python, you can write bytes directly to a BytesIO object
 
             # Assuming paths[i] is the correct object to call write_for_hashing_v2 on
-            self.write_for_hashing_v2(pk_value[i], binary_writer)
+            self._write_for_hashing_v2(pk_value[i], binary_writer)
 
             ms_bytes = ms.getvalue()
             hash128 = murmurhash3_128(bytearray(ms_bytes), UInt128(0, 0))
@@ -236,26 +228,26 @@ class PartitionKey(dict):
             # Plus one more just in case.
             hash_v[0] &= 0x3F
 
-            sb.append(to_hex(bytearray(hash_v), 0, len(hash_v)))
+            sb.append(_to_hex(bytearray(hash_v), 0, len(hash_v)))
 
         return ''.join(sb).upper()
 
 
-def to_hex(bytes_object, start, length):
+def _to_hex(bytes_object, start, length):
     return binascii.hexlify(bytes_object[start:start + length]).decode()
 
 
-def to_hex_encoded_binary_string(components):
-    buffer_bytes = bytearray(MaxPartitionKeyBinarySize)
+def _to_hex_encoded_binary_string(components):
+    buffer_bytes = bytearray(_MaxPartitionKeyBinarySize)
     ms = BytesIO(buffer_bytes)
 
     for component in components:
-        write_for_binary_encoding(component, ms)
+        _write_for_binary_encoding(component, ms)
 
-    return to_hex(buffer_bytes[:ms.tell()], 0, ms.tell())
+    return _to_hex(buffer_bytes[:ms.tell()], 0, ms.tell())
 
 
-def write_for_binary_encoding(value, binary_writer):
+def _write_for_binary_encoding(value, binary_writer):
     if isinstance(value, bool):
         binary_writer.write(bytes([(PartitionKeyComponentType.PTrue if value else PartitionKeyComponentType.PFalse)]))
 
@@ -288,9 +280,9 @@ def write_for_binary_encoding(value, binary_writer):
     elif isinstance(value, str):
         binary_writer.write(bytes([PartitionKeyComponentType.String]))
         utf8_value = value.encode('utf-8')
-        short_string = len(utf8_value) <= MaxStringBytesToAppend
+        short_string = len(utf8_value) <= _MaxStringBytesToAppend
 
-        for index in range(short_string and len(utf8_value) or MaxStringBytesToAppend + 1):
+        for index in range(short_string and len(utf8_value) or _MaxStringBytesToAppend + 1):
             char_byte = utf8_value[index]
             if char_byte < 0xFF:
                 char_byte += 1

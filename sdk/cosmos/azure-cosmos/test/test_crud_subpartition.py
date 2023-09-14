@@ -186,17 +186,17 @@ class CRUDTests(unittest.TestCase):
 
         # Negative test, check that user can't make a subpartition higher than 3 levels
         collection_definition2 = {'id': 'test_partitioned_collection2 ' + str(uuid.uuid4()),
-                                 'partitionKey':
-                                     {
+                                  'partitionKey':
+                                  {
                                          'paths': ['/id', '/pk', '/id2', "/pk2"],
                                          'kind': documents.PartitionKind.MultiHash,
                                          'version': 2
                                      }
-                                 }
+                                  }
         try:
             created_collection = created_db.create_container(id=collection_definition['id'],
-                                                         partition_key=collection_definition2['partitionKey'],
-                                                         offer_throughput=offer_throughput)
+                                                             partition_key=collection_definition2['partitionKey'],
+                                                             offer_throughput=offer_throughput)
         except exceptions.CosmosHttpResponseError as error:
             self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
             self.assertTrue("Too many partition key paths" in error.message)
@@ -240,7 +240,7 @@ class CRUDTests(unittest.TestCase):
 
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
-        # Create document with partitionkey not present in the document
+        # Create document with partition key not present in the document
         try:
             created_document = created_collection2.create_item(document_definition)
             _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
@@ -564,6 +564,52 @@ class CRUDTests(unittest.TestCase):
             self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
             self.assertTrue("Cross partition query is required but disabled"
                             in error.message)
+
+    # Commenting out delete items by pk until test pipelines support it
+    # def test_delete_all_items_by_partition_key(self):
+    #     # create database
+    #     created_db = self.databaseForTest
+    #
+    #     # create container
+    #     created_collection = created_db.create_container(
+    #         id='test_delete_all_items_by_partition_key ' + str(uuid.uuid4()),
+    #         partition_key=PartitionKey(path=['/pk1','/pk2','/pk3'], kind='MultiHash')
+    #     )
+    #     # Create two partition keys
+    #     partition_key1 = ['pkA1 ' + str(uuid.uuid4()), 'pkA2 ' + str(uuid.uuid4()), 'pkA3 ' + str(uuid.uuid4())]
+    #     partition_key2 = ['pkB1 ' + str(uuid.uuid4()), 'pkB2 ' + str(uuid.uuid4()), 'pkB3 ' + str(uuid.uuid4())]
+    #
+    #     # add items for partition key 1
+    #     for i in range(1, 3):
+    #         created_collection.upsert_item(
+    #             dict(id="item{}".format(i), pk1=partition_key1[0], pk2=partition_key1[1], pk3=partition_key1[2])
+    #         )
+    #
+    #     # add items for partition key 2
+    #
+    #     pk2_item = created_collection.upsert_item(dict(id="item{}".format(3), pk1=partition_key2[0]
+    #                                               , pk2=partition_key2[1], pk3=partition_key2[2]))
+    #
+    #     # delete all items for partition key 1
+    #     created_collection.delete_all_items_by_partition_key(partition_key1)
+    #
+    #     # check that only items from partition key 1 have been deleted
+    #     items = list(created_collection.read_all_items())
+    #
+    #     # items should only have 1 item and it should equal pk2_item
+    #     self.assertDictEqual(pk2_item, items[0])
+    #
+    #     # attempting to delete a non-existent partition key or passing none should not delete
+    #     # anything and leave things unchanged
+    #     created_collection.delete_all_items_by_partition_key(None)
+    #
+    #     # check that no changes were made by checking if the only item is still there
+    #     items = list(created_collection.read_all_items())
+    #
+    #     # items should only have 1 item and it should equal pk2_item
+    #     self.assertDictEqual(pk2_item, items[0])
+    #
+    #     created_db.delete_container(created_collection)
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
         self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey]
