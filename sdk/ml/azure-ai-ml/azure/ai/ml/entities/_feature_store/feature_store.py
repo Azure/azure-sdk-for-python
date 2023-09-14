@@ -156,6 +156,8 @@ class FeatureStore(Workspace):
 
         workspace_object = Workspace._from_rest_object(rest_obj)
 
+        print(f"feature_store_settings2: {workspace_object._feature_store_settings}")
+
         return FeatureStore(
             name=workspace_object.name,
             description=workspace_object.description,
