@@ -718,11 +718,11 @@ def _decrypt_message(
         # decrypt data
         decrypted_data = message
         decryptor = cipher.decryptor()
-        decrypted_data = (decryptor.update(decrypted_data) + decryptor.finalize())  #type: ignore
+        decrypted_data = (decryptor.update(decrypted_data) + decryptor.finalize())
 
         # unpad data
         unpadder = PKCS7(128).unpadder()
-        decrypted_data = (unpadder.update(decrypted_data) + unpadder.finalize())  #type: ignore
+        decrypted_data = (unpadder.update(decrypted_data) + unpadder.finalize())
 
     elif encryption_data.encryption_agent.protocol == _ENCRYPTION_PROTOCOL_V2:
         block_info = encryption_data.encrypted_region_info
@@ -735,12 +735,11 @@ def _decrypt_message(
         nonce_length = encryption_data.encrypted_region_info.nonce_length
 
         # First bytes are the nonce
-        message_as_bytes = message.encode('utf-8')
-        nonce = message_as_bytes[:nonce_length]
-        ciphertext_with_tag = message_as_bytes[nonce_length:]
+        nonce = message[:nonce_length]
+        ciphertext_with_tag = message[nonce_length:]
 
         aesgcm = AESGCM(content_encryption_key)
-        decrypted_data = (aesgcm.decrypt(nonce, ciphertext_with_tag, None)).decode()
+        decrypted_data = (aesgcm.decrypt(nonce, ciphertext_with_tag, None))
 
     else:
         raise ValueError('Specified encryption version is not supported.')
@@ -1111,7 +1110,7 @@ def decrypt_queue_message(
 
         return message
     try:
-        return _decrypt_message(decoded_data, encryption_data, key_encryption_key, resolver)
+        return _decrypt_message(decoded_data, encryption_data, key_encryption_key, resolver).decode('utf-8')
     except Exception as error:
         raise HttpResponseError(
             message="Decryption failed.",

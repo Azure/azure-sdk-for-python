@@ -10,7 +10,6 @@ from typing import Optional
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.configuration import Configuration
 from azure.core.pipeline.policies import UserAgentPolicy
-from .._message_encoding import MessageDecodePolicy, NoDecodePolicy
 
 
 def get_enum_value(value):
