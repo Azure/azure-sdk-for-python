@@ -225,7 +225,7 @@ class CRUDTests(unittest.TestCase):
         # create document without partition key being specified
         created_document = created_collection.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEqual(self.last_headers[1], '["WA", "Redmond"]')
+        self.assertEqual(self.last_headers[1], '["WA","Redmond"]')
         del self.last_headers[:]
 
         self.assertEqual(created_document.get('id'), document_definition.get('id'))
@@ -244,7 +244,7 @@ class CRUDTests(unittest.TestCase):
         try:
             created_document = created_collection2.create_item(document_definition)
             _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-            self.assertFalse(True, 'Operation Should Fail.')
+            self.fail('Operation Should Fail.')
         except exceptions.CosmosHttpResponseError as error:
             self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
             self.assertTrue("Partition key provided either doesn't correspond to definition in the collection"
@@ -273,7 +273,7 @@ class CRUDTests(unittest.TestCase):
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
         created_document = created_collection1.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEqual(self.last_headers[1], '["val1", "val2"]')
+        self.assertEqual(self.last_headers[1], '["val1","val2"]')
         del self.last_headers[:]
 
         collection_definition2 = {
@@ -304,7 +304,7 @@ class CRUDTests(unittest.TestCase):
         # create document without partition key being specified
         created_document = created_collection2.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEqual(self.last_headers[1], '["val3", "val4"]')
+        self.assertEqual(self.last_headers[1], '["val3","val4"]')
         del self.last_headers[:]
 
         created_db.delete_container(created_collection1.id)
