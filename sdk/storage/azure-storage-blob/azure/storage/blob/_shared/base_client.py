@@ -106,6 +106,9 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip('/')
             self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
 
+        if kwargs.get("audience"):
+            kwargs["audience"] = str(kwargs["audience"])
+
         self._sdk_moniker = f"storage-{service}/{VERSION}"
         self._config, self._pipeline = self._create_pipeline(self.credential, sdk_moniker=self._sdk_moniker, **kwargs)
 
@@ -221,8 +224,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
         if hasattr(credential, "get_token"):
-            audience = kwargs.pop('audience', None)
-            self._credential_policy = StorageBearerTokenCredentialPolicy(credential=credential, audience=audience)
+            self._credential_policy = StorageBearerTokenCredentialPolicy(credential=credential, audience=kwargs["audience"])
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):

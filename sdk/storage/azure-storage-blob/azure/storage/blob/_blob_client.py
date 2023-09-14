@@ -60,7 +60,7 @@ from ._download import StorageStreamDownloader
 from ._encryption import modify_user_agent_for_encryption, StorageEncryptionMixin
 from ._lease import BlobLeaseClient
 from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, QuickQueryDialect, \
-    DelimitedJsonDialect, DelimitedTextDialect, PageRangePaged, PageRange, BlobAudience
+    DelimitedJsonDialect, DelimitedTextDialect, PageRangePaged, PageRange, BlobTokenAudience
 from ._quick_query_helper import BlobQueryReader
 from ._upload_helpers import (
     upload_block_blob,
@@ -136,7 +136,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         or 4MB.
     :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
         specifies the version of the blob to operate on.
-    :keyword BlobAudience audience: The Azure Active Directory Audience to use when authorizing requests.
+    :keyword BlobTokenAudience audience: The Azure Active Directory Audience to use when authorizing requests.
 
     .. admonition:: Example:
 
@@ -161,7 +161,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             snapshot: Optional[Union[str, Dict[str, Any]]] = None,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             *,
-            audience: Optional[BlobAudience] = None,
+            audience: Optional[BlobTokenAudience] = None,
             **kwargs: Any
         ) -> None:
         try:

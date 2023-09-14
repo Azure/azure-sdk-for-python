@@ -5,8 +5,11 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-instance-attributes
 from enum import Enum
+from typing import Protocol
+from typing_extensions import Self
 
 from azure.core import CaseInsensitiveEnumMeta
+from .constants import STORAGE_OAUTH_SCOPE
 
 
 def get_enum_value(value):
@@ -487,3 +490,53 @@ class UserDelegationKey(object):
         self.signed_service = None
         self.signed_version = None
         self.value = None
+
+class TokenAudience(Protocol):
+    """
+    Protocol that defines what calling functions and attributes should be defined for an Azure Active
+    Directory audience token.
+
+    :param str value: The Azure Active Directory audience to use when forming authorization scopes.
+        For the Language service, this value corresponds to a URL that identifies the Azure cloud
+        where the resource is located. For more information please take a look at:
+        https://learn.microsoft.com/azure/storage/blobs/authorize-access-azure-active-directory
+        Please use one of the static constant members over creating a custom value unless you have
+        a specific scenario for doing so.
+    """
+    _value: str
+
+    def __init__(self, value: str) -> None:
+        self._value = value
+
+    @classmethod
+    def public_audience(cls) -> Self:
+        """Default Audience. Use to acquire a token for authorizing requests to any Azure Storage account.
+        
+        Resource ID: 'https://storage.azure.com/'
+        If no audience is specified, this is the default value.
+
+        :returns: The Default Audience.
+        :rtype: TokenAudience
+        """
+        return cls(STORAGE_OAUTH_SCOPE)
+
+    @classmethod
+    def get_service_account_audience(cls, storageAccountName: str) -> Self:
+        """The service endpoint for a given Storage account. Use this method
+        to acquire a token for authorizing requests to that specific Azure Storage account and
+        service only.
+
+        :param str storageAccountName: The storage account name used to populate the service endpoint.
+        :returns: The Audience for the given Storage account and respective service endpoint.
+        :rtype: TokenAudience
+        """
+        ...
+
+    def __eq__(self, other: object) -> bool:
+        return self._value == other._value
+
+    def __ne__(self, other: object) -> bool:
+        return self._value != other._value
+
+    def __str__(self) -> str:
+        return self._value
