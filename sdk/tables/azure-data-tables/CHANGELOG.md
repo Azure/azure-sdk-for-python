@@ -1,5 +1,15 @@
 # Release History
 
+## 12.4.5 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 12.4.4 (2023-09-14)
 
 ### Features Added
