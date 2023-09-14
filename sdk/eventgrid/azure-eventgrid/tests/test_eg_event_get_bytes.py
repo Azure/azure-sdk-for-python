@@ -59,7 +59,6 @@ class MockEventhubData(object):
         self.content_type = None
         self.correlation_id = None
 
-
 class MockBody(object):
     def __init__(self, data=None):
         self.data = data
@@ -73,7 +72,6 @@ class MockBody(object):
         return self.data
 
     next = __next__
-
 
 class MockEhBody(object):
     def __init__(self, data=None):
@@ -166,7 +164,6 @@ def test_get_bytes_servicebus_wrong_content():
     with pytest.raises(ValueError, match="Failed to load JSON content from the object."):
         dict = _get_json_content(obj)
 
-
 def test_get_bytes_eventhubs():
     obj = MockEventhubData(
         body=MockEhBody()
@@ -182,7 +179,6 @@ def test_get_bytes_eventhubs_wrong_content():
 
     with pytest.raises(ValueError, match="Failed to load JSON content from the object."):
         dict = _get_json_content(obj)
-
 
 def test_get_bytes_random_obj():
     json_str = '{"id": "de0fd76c-4ef4-4dfb-ab3a-8f24a307e033", "subject": "https://egtest.dev/cloudcustomevent", "data": {"team": "event grid squad"}, "event_type": "Azure.Sdk.Sample", "event_time": "2020-08-07T02:06:08.11969Z", "data_version": "1.0"}'
@@ -257,7 +253,6 @@ def test_from_json_storage():
             "sequencer":"00000000000004420000000000028963",
             "storage_diagnostics":{"batchId":"b68529f3-68cd-4744-baa4-3c0498ec19f0"}
         }
-
 
 def test_from_json():
     json_str = '{"id": "de0fd76c-4ef4-4dfb-ab3a-8f24a307e033", "subject": "https://egtest.dev/cloudcustomevent", "data": {"team": "event grid squad"}, "event_type": "Azure.Sdk.Sample", "event_time": "2020-08-07T02:06:08.11969Z", "data_version": "1.0"}'
