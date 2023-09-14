@@ -17,7 +17,12 @@ from cryptography.hazmat.primitives.asymmetric.rsa import (
 )
 from cryptography.hazmat.primitives.asymmetric.utils import Prehashed
 from cryptography.hazmat.primitives.hashes import Hash, HashAlgorithm, SHA1, SHA256, SHA384, SHA512
-from cryptography.hazmat.primitives.serialization import Encoding, KeySerializationEncryption, PrivateFormat
+from cryptography.hazmat.primitives.serialization import (
+    Encoding,
+    KeySerializationEncryption,
+    PrivateFormat,
+    PublicFormat,
+)
 
 from ._enums import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 from .._models import JsonWebKey
@@ -32,10 +37,7 @@ SIGN_ALGORITHM_MAP = {
     SHA384: SignatureAlgorithm.rs384,
     SHA512: SignatureAlgorithm.rs512,
 }
-OAEP_MAP = {
-    SHA1: EncryptionAlgorithm.rsa_oaep,
-    SHA256: EncryptionAlgorithm.rsa_oaep_256
-}
+OAEP_MAP = {SHA1: EncryptionAlgorithm.rsa_oaep, SHA256: EncryptionAlgorithm.rsa_oaep_256}
 PSS_MAP = {
     SignatureAlgorithm.rs256: SignatureAlgorithm.ps256,
     SignatureAlgorithm.rs384: SignatureAlgorithm.ps384,
@@ -201,7 +203,81 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         """Not implemented."""
         raise NotImplementedError()
 
-    def signer(self, padding: AsymmetricPadding, algorithm: HashAlgorithm) -> NoReturn:  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
+    def signer(
+        self, padding: AsymmetricPadding, algorithm: HashAlgorithm
+    ) -> NoReturn:  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
+        """Not implemented. This method was deprecated in `cryptography` 2.0 and removed in 37.0.0."""
+        raise NotImplementedError()
+
+
+class KeyVaultRSAPublicKey(RSAPublicKey):
+    """An `RSAPublicKey` implementation based on a key managed by Key Vault."""
+
+    def __init__(self, client: "CryptographyClient", key_material: JsonWebKey) -> None:
+        """Creates a `KeyVaultRSAPublicKey` from a `CryptographyClient` and key.
+
+        :param client: The client that will be used to communicate with Key Vault.
+        :type client: :class:`~azure.keyvault.keys.crypto.CryptographyClient`
+        :param key_material: They Key Vault key's material, as a `JsonWebKey`.
+        :type key_material: :class:`~azure.keyvault.keys.JsonWebKey`
+        """
+        self._client: "CryptographyClient" = client
+        self._key: JsonWebKey = key_material
+
+    def encrypt(self, plaintext: bytes, padding: AsymmetricPadding) -> bytes:
+        """
+        Encrypts the given plaintext.
+        """
+
+    @property
+    def key_size(self) -> int:
+        """
+        The bit length of the public modulus.
+        """
+
+    def public_numbers(self) -> RSAPublicNumbers:
+        """
+        Returns an RSAPublicNumbers
+        """
+
+    def public_bytes(
+        self,
+        encoding: Encoding,
+        format: PublicFormat,
+    ) -> bytes:
+        """
+        Returns the key serialized as bytes.
+        """
+
+    def verify(
+        self,
+        signature: bytes,
+        data: bytes,
+        padding: AsymmetricPadding,
+        algorithm: Union[Prehashed, HashAlgorithm],
+    ) -> None:
+        """
+        Verifies the signature of the data.
+        """
+
+    def recover_data_from_signature(
+        self,
+        signature: bytes,
+        padding: AsymmetricPadding,
+        algorithm: Optional[HashAlgorithm],
+    ) -> bytes:
+        """
+        Recovers the original data from the signature.
+        """
+
+    def __eq__(self, other: object) -> bool:
+        """
+        Checks equality.
+        """
+
+    def verifier(
+        self, signature: bytes, padding: AsymmetricPadding, algorithm: HashAlgorithm
+    ) -> NoReturn:  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         """Not implemented. This method was deprecated in `cryptography` 2.0 and removed in 37.0.0."""
         raise NotImplementedError()
 

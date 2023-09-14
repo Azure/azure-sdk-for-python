@@ -10,7 +10,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from . import DecryptResult, EncryptionAlgorithm, EncryptResult, SignResult, VerifyResult, UnwrapResult, WrapResult
 from ._key_validity import raise_if_time_invalid
-from ._models import KeyVaultRSAPrivateKey
+from ._models import KeyVaultRSAPrivateKey, KeyVaultRSAPublicKey
 from ._providers import get_local_cryptography_provider, NoLocalCryptography
 from .. import KeyOperation
 from .._models import JsonWebKey, KeyVaultKey
@@ -223,6 +223,18 @@ class CryptographyClient(KeyVaultClientBase):
         """
         self._initialize()
         return KeyVaultRSAPrivateKey(client=self, key_material=cast(JsonWebKey, self._key))
+
+    @distributed_trace
+    def create_rsa_public_key(self) -> KeyVaultRSAPublicKey:  # pylint:disable=client-method-missing-kwargs
+        """Create an `RSAPublicKey` implementation backed by this `CryptographyClient`, as a `KeyVaultRSAPublicKey`.
+
+        The `CryptographyClient` will attempt to download the key, if it hasn't been already, as part of this operation.
+
+        :returns: A `KeyVaultRSAPublicKey`, which implements `cryptography`'s `RSAPublicKey` interface.
+        :rtype: :class:`~azure.keyvault.keys.crypto.KeyVaultRSAPublicKey`
+        """
+        self._initialize()
+        return KeyVaultRSAPublicKey(client=self, key_material=cast(JsonWebKey, self._key))
 
     @distributed_trace
     def encrypt(self, algorithm: "EncryptionAlgorithm", plaintext: bytes, **kwargs) -> EncryptResult:
