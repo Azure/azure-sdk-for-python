@@ -123,34 +123,28 @@ def _eventgrid_data_typecheck(event):
         )
 
 def _check_cloud_event(cloud_event, **kwargs):
-    if isinstance(cloud_event.data, bytes):
-        data_base64 = base64.b64encode(cloud_event.data)
-        data = None
-    else:
-        data = cloud_event.data
-        data_base64 = None
+    # Check if it is a CloudEvent or a dict
     try:
-        return CloudEvent.from_dict(
-            id=cloud_event.id,
-            source=cloud_event.source,
-            type=cloud_event.type,
-            specversion=cloud_event.specversion,
-            data=data,
-            time=cloud_event.time,
-            dataschema=cloud_event.dataschema,
-            datacontenttype=cloud_event.datacontenttype,
-            subject=cloud_event.subject,
-            extensions=cloud_event.extensions,
-            data_base64=data_base64,
-            **kwargs
-        )
-    except TypeError as err:
         return CloudEvent(
             id=cloud_event.id,
             source=cloud_event.source,
             type=cloud_event.type,
             specversion=cloud_event.specversion,
-            data=data,
+            data=cloud_event.data,
+            time=cloud_event.time,
+            dataschema=cloud_event.dataschema,
+            datacontenttype=cloud_event.datacontenttype,
+            subject=cloud_event.subject,
+            extensions=cloud_event.extensions,
+            **kwargs
+        )
+    except TypeError:
+        return CloudEvent.from_dict(
+            id=cloud_event.id,
+            source=cloud_event.source,
+            type=cloud_event.type,
+            specversion=cloud_event.specversion,
+            data=cloud_event.data,
             time=cloud_event.time,
             dataschema=cloud_event.dataschema,
             datacontenttype=cloud_event.datacontenttype,
@@ -221,7 +215,10 @@ def _to_json_http_request(endpoint, content_type, events, **kwargs):
         data["source"] = _SERIALIZER.body(event.source, "str")
         data["subject"] = _SERIALIZER.body(event.subject, "str")
         data["id"] = _SERIALIZER.body(event.id, "str")
-        data["data"] = _SERIALIZER.body(event.data, "object")
+        if isinstance(event.data, bytes):
+            data["data_base64"] = _SERIALIZER.body(base64.b64encode(event.data), "str")
+        else:
+            data["data"] = _SERIALIZER.body(event.data, "object")
         data["time"] = _SERIALIZER.body(event.time, "str")
         data["datacontenttype"] = _SERIALIZER.body(event.datacontenttype, "str")
         if event.extensions:
