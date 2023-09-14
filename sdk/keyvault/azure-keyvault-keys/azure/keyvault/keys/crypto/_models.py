@@ -2,10 +2,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import cast, Optional, Union, TYPE_CHECKING
+from typing import cast, Optional, NoReturn, Union, TYPE_CHECKING
 
 from cryptography.hazmat.primitives.asymmetric.padding import AsymmetricPadding, OAEP, PKCS1v15, PSS, MGF1
 from cryptography.hazmat.primitives.asymmetric.rsa import (
+    rsa_crt_dmp1,
+    rsa_crt_dmq1,
+    rsa_crt_iqmp,
+    rsa_recover_prime_factors,
     RSAPrivateKey,
     RSAPrivateNumbers,
     RSAPublicKey,
@@ -53,7 +57,7 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         :type key_material: :class:`~azure.keyvault.keys.JsonWebKey`
         """
         self._client: "CryptographyClient" = client
-        self._key_id: str = parse_key_vault_id(key_id)
+        self._key_id: KeyVaultResourceId = parse_key_vault_id(key_id)
         self._key: JsonWebKey = key_material
 
     def decrypt(self, ciphertext: bytes, padding: AsymmetricPadding) -> bytes:
@@ -74,16 +78,16 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
             try:
                 algorithm = padding.algorithm
             except AttributeError:
-                algorithm = padding._algorithm
+                algorithm = padding._algorithm  # pylint:disable=protected-access
             mapped_algorithm = OAEP_MAP.get(type(algorithm))
             if mapped_algorithm is None:
                 raise ValueError(f"Unsupported algorithm: {algorithm.name}")
-    
+
             # Public mgf property was added at the same time as algorithm
             try:
                 mgf = padding.mgf
             except AttributeError:
-                mgf = padding._mgf
+                mgf = padding._mgf  # pylint:disable=protected-access
             if not isinstance(mgf, MGF1):
                 raise ValueError(f"Unsupported MGF: {mgf}")
         elif isinstance(padding, PKCS1v15):
@@ -149,7 +153,7 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
             try:
                 mgf = padding.mgf
             except AttributeError:
-                mgf = padding._mgf
+                mgf = padding._mgf  # pylint:disable=protected-access
             if not isinstance(mgf, MGF1):
                 raise ValueError(f"Unsupported MGF: {mgf}")
 
@@ -163,15 +167,40 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         return result.signature
 
     def private_numbers(self) -> RSAPrivateNumbers:  # pylint:disable=docstring-missing-return,docstring-missing-rtype
-        """Returns an RSAPrivateNumbers. Not implemented, as the private key is managed by Key Vault."""
-        raise NotImplementedError()
+        """Returns an `RSAPrivateNumbers`."""
+        # Fetch public numbers from JWK
+        e = int.from_bytes(self._key.e, "big")  # type: ignore[attr-defined]
+        n = int.from_bytes(self._key.n, "big")  # type: ignore[attr-defined]
+        public_numbers = RSAPublicNumbers(e, n)
+
+        # Fetch private numbers from JWK
+        p = int.from_bytes(self._key.p, "big") if self._key.p else None  # type: ignore[attr-defined]
+        q = int.from_bytes(self._key.q, "big") if self._key.q else None  # type: ignore[attr-defined]
+        d = int.from_bytes(self._key.d, "big") if self._key.d else None  # type: ignore[attr-defined]
+        dmp1 = int.from_bytes(self._key.dp, "big") if self._key.dp else None  # type: ignore[attr-defined]
+        dmq1 = int.from_bytes(self._key.dq, "big") if self._key.dq else None  # type: ignore[attr-defined]
+        iqmp = int.from_bytes(self._key.qi, "big") if self._key.qi else None  # type: ignore[attr-defined]
+
+        # Calculate any missing attributes
+        if p is None or q is None:
+            if d is None:
+                raise ValueError("An 'RSAPrivateNumbers' couldn't be created with the available key material.")
+            p, q = rsa_recover_prime_factors(n, e, d)
+        if dmp1 is None:
+            dmp1 = rsa_crt_dmp1(d, p)
+        if dmq1 is None:
+            dmq1 = rsa_crt_dmq1(d, q)
+        if iqmp is None:
+            iqmp = rsa_crt_iqmp(p, q)
+
+        return RSAPrivateNumbers(p, q, d, dmp1, dmq1, iqmp, public_numbers)
 
     def private_bytes(  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         self,
         encoding: Encoding,
         format: PrivateFormat,
         encryption_algorithm: KeySerializationEncryption,
-    ) -> bytes:
+    ) -> NoReturn:
         """Returns the key serialized as bytes. Not implemented, as the private key is managed by Key Vault."""
         raise NotImplementedError()
 
