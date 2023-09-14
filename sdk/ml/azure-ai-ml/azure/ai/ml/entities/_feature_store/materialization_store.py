@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from azure.ai.ml._utils._arm_id_utils import AzureResourceId
 from azure.ai.ml._utils._experimental import experimental
 
 
@@ -16,4 +17,14 @@ class MaterializationStore:
         """
 
         self.type = type
-        self.target = target
+        _ = AzureResourceId(target)
+        self.__target = target
+
+    @property
+    def target(self):
+        return self.__target
+
+    @target.setter
+    def target(self, value: str):
+        _ = AzureResourceId(value)
+        self.__target = value

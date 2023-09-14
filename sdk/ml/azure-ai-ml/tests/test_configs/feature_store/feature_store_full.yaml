@@ -1,12 +1,15 @@
 name: testfs
 compute_runtime:
   spark_runtime_version: 3.2.0
+online_store:
+  type: redis
+  target: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/test_rg/providers/Microsoft.Cache/Redis/test_cache
 offline_store:
-  type: "azure_adls_gen2"
-  target: "test/target/azureml/container"
+  type: azure_adls_gen2
+  target: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/test_rg/providers/Microsoft.Storage/storageAccounts/test_storage/blobServices/default/containers/offlinestore
 materialization_identity:
   client_id: a3213nfa-cw23s234-12kd23-1234,
-  resource_id: test/resource/id,
+  resource_id: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/test_rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test_identity
 description: test feature store
 display_name: test_fs
 location: WestCentralUS

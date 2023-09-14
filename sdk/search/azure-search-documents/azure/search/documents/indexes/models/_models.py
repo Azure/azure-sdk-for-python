@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from typing import Optional
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 from .._generated import _serialization
@@ -83,7 +84,7 @@ class SearchIndexerSkillset(_SearchIndexerSkillset):
         )
 
     @classmethod
-    def _from_generated(cls, skillset):
+    def _from_generated(cls, skillset) -> Optional["SearchIndexerSkillset"]:
         custom_skills = []
         for skill in skillset.skills:
             skill_cls = type(skill)
@@ -759,7 +760,7 @@ class SynonymMap(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, synonym_map):
+    def _from_generated(cls, synonym_map) -> Optional["SynonymMap"]:
         if not synonym_map:
             return None
         return cls(
@@ -870,7 +871,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, search_indexer_data_source):
+    def _from_generated(cls, search_indexer_data_source) -> Optional["SearchIndexerDataSourceConnection"]:
         if not search_indexer_data_source:
             return None
         connection_string = (

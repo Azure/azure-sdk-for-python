@@ -1,14 +1,10 @@
 # Release History
 
-## 4.13.1 (Unreleased)
+## 4.14.0 (2023-09-13)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added new enum values to `SystemEventNames` related to Azure App Configuration and Azure EventGrid.
 
 ## 4.13.0 (2023-06-08)
 

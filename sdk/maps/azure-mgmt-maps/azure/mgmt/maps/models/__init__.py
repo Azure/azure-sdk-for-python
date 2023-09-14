@@ -7,16 +7,16 @@
 # --------------------------------------------------------------------------
 
 from ._models_py3 import AccountSasParameters
-from ._models_py3 import (
-    Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties,
-)
 from ._models_py3 import CorsRule
 from ._models_py3 import CorsRules
 from ._models_py3 import Creator
 from ._models_py3 import CreatorList
 from ._models_py3 import CreatorProperties
 from ._models_py3 import CreatorUpdateParameters
+from ._models_py3 import CustomerManagedKeyEncryption
+from ._models_py3 import CustomerManagedKeyEncryptionKeyIdentity
 from ._models_py3 import Dimension
+from ._models_py3 import Encryption
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
@@ -38,27 +38,32 @@ from ._models_py3 import ServiceSpecification
 from ._models_py3 import Sku
 from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
+from ._models_py3 import UserAssignedIdentity
 
 from ._azure_maps_management_client_enums import CreatedByType
+from ._azure_maps_management_client_enums import IdentityType
+from ._azure_maps_management_client_enums import InfrastructureEncryption
 from ._azure_maps_management_client_enums import KeyType
 from ._azure_maps_management_client_enums import Kind
+from ._azure_maps_management_client_enums import ManagedServiceIdentityType
 from ._azure_maps_management_client_enums import Name
-from ._azure_maps_management_client_enums import ResourceIdentityType
 from ._azure_maps_management_client_enums import SigningKey
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AccountSasParameters",
-    "Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties",
     "CorsRule",
     "CorsRules",
     "Creator",
     "CreatorList",
     "CreatorProperties",
     "CreatorUpdateParameters",
+    "CustomerManagedKeyEncryption",
+    "CustomerManagedKeyEncryptionKeyIdentity",
     "Dimension",
+    "Encryption",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
@@ -80,11 +85,14 @@ __all__ = [
     "Sku",
     "SystemData",
     "TrackedResource",
+    "UserAssignedIdentity",
     "CreatedByType",
+    "IdentityType",
+    "InfrastructureEncryption",
     "KeyType",
     "Kind",
+    "ManagedServiceIdentityType",
     "Name",
-    "ResourceIdentityType",
     "SigningKey",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.5.1 (Unreleased)
+### 4.5.2 (Unreleased)
 
 #### Features Added
 
@@ -9,6 +9,14 @@
 #### Bugs Fixed
 
 #### Other Changes
+
+### 4.5.1 (2023-09-12)
+
+#### Bugs Fixed
+* Fixed bug when query with DISTINCT + OFFSET/LIMIT operators returns unexpected result. See [PR 31925](https://github.com/Azure/azure-sdk-for-python/pull/31925).
+
+#### Other Changes
+- Added additional checks for resource creation using specific characters that cause issues. See [PR 31861](https://github.com/Azure/azure-sdk-for-python/pull/31861).
 
 ### 4.5.0 (2023-08-09)
 

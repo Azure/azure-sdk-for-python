@@ -62,7 +62,6 @@ class BanditPolicy(EarlyTerminationPolicy):
 
     .. admonition:: Example:
 
-
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_bandit_policy]
             :end-before: [END configure_sweep_job_bandit_policy]
@@ -112,7 +111,6 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
 
     .. admonition:: Example:
 
-
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_median_stopping_policy]
             :end-before: [END configure_sweep_job_median_stopping_policy]
@@ -155,14 +153,13 @@ class TruncationSelectionPolicy(EarlyTerminationPolicy):
 
     .. admonition:: Example:
 
-
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_truncation_selection_policy]
             :end-before: [END configure_sweep_job_truncation_selection_policy]
             :language: python
             :dedent: 8
             :caption: Configuring an early termination policy for a hyperparameter sweep job
-            using TruncationStoppingPolicy
+                using TruncationStoppingPolicy
     """
 
     def __init__(
