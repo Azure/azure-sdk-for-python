@@ -57,8 +57,10 @@ setup(
     author="Microsoft Corporation",
     author_email="ascl@microsoft.com",
     url="https://github.com/microsoft/ApplicationInsights-Python/tree/main/azure-monitor-opentelemetry",
+    keywords="azure, azure sdk",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Developers",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",
@@ -86,28 +88,22 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.24.0",
         "azure-core-tracing-opentelemetry~=1.0.0b10",
-        "azure-monitor-opentelemetry-exporter~=1.0.0b15",
-        "opentelemetry-api~=1.19.0",
-        "opentelemetry-sdk~=1.19.0",
-        "wrapt >= 1.14.0, < 2.0.0",
-        "importlib-metadata>=6.0,<6.8; python_version < '3.8'",
-        "importlib-metadata~=6.0; python_version >= '3.8'",
+        "azure-monitor-opentelemetry-exporter~=1.0.0b17",
+        "opentelemetry-instrumentation-django~=0.41b0",
+        "opentelemetry-instrumentation-fastapi~=0.41b0",
+        "opentelemetry-instrumentation-flask~=0.41b0",
+        "opentelemetry-instrumentation-psycopg2~=0.41b0",
+        "opentelemetry-instrumentation-requests~=0.41b0",
+        "opentelemetry-instrumentation-urllib~=0.41b0",
+        "opentelemetry-instrumentation-urllib3~=0.41b0",
+        "opentelemetry-resource-detector-azure~=0.1.0",
     ],
     entry_points={
         "opentelemetry_distro": [
-            "azure_monitor_opentelemetry_distro = azure.monitor.opentelemetry.autoinstrumentation._distro:AzureMonitorDistro"
+            "azure_monitor_opentelemetry_distro = azure.monitor.opentelemetry._autoinstrumentation.distro:AzureMonitorDistro"
         ],
         "opentelemetry_configurator": [
-            "azure_monitor_opentelemetry_configurator = azure.monitor.opentelemetry.autoinstrumentation._configurator:AzureMonitorConfigurator"
-        ],
-        "azure_monitor_opentelemetry_instrumentor": [
-            "django = azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.django:DjangoInstrumentor",
-            "fastapi = azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.fastapi:FastAPIInstrumentor",
-            "flask = azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.flask:FlaskInstrumentor",
-            "psycopg2 = azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.psycopg2:Psycopg2Instrumentor",
-            "requests = azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.requests:RequestsInstrumentor",
-            "urllib = azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.urllib:URLLibInstrumentor",
-            "urllib3 = azure.monitor.opentelemetry._vendor.v0_39b0.opentelemetry.instrumentation.urllib3:URLLib3Instrumentor",
+            "azure_monitor_opentelemetry_configurator = azure.monitor.opentelemetry._autoinstrumentation.configurator:AzureMonitorConfigurator"
         ],
     },
 )

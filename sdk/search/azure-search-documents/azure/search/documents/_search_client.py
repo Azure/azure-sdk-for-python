@@ -328,7 +328,7 @@ class SearchClient(HeadersMixin):
             highlight_post_tag=highlight_post_tag,
             highlight_pre_tag=highlight_pre_tag,
             minimum_coverage=minimum_coverage,
-            order_by=order_by,
+            order_by=order_by if isinstance(order_by, str) else None,
             query_type=query_type,
             scoring_parameters=scoring_parameters,
             scoring_profile=scoring_profile,
@@ -352,6 +352,9 @@ class SearchClient(HeadersMixin):
         )
         if isinstance(select, list):
             query.select(select)
+
+        if isinstance(order_by, list):
+            query.order_by(order_by)
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         kwargs["api_version"] = self._api_version
@@ -427,13 +430,15 @@ class SearchClient(HeadersMixin):
             highlight_post_tag=highlight_post_tag,
             highlight_pre_tag=highlight_pre_tag,
             minimum_coverage=minimum_coverage,
-            order_by=order_by,
+            order_by=order_by if isinstance(order_by, str) else None,
             search_fields=search_fields_str,
             select=select if isinstance(select, str) else None,
             top=top,
         )
         if isinstance(select, list):
             query.select(select)
+        if isinstance(order_by, list):
+            query.order_by(order_by)
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         response = self._client.documents.suggest_post(suggest_request=query.request, **kwargs)
         results = [r.as_dict() for r in response.results]
@@ -656,17 +661,18 @@ class SearchClient(HeadersMixin):
                 actions=actions[:pos], error_map=error_map, **kwargs
             )
             if batch_response_first_half:
-                result_first_half = cast(List[IndexingResult], batch_response_first_half.results)
+                result_first_half = batch_response_first_half
             else:
                 result_first_half = []
             batch_response_second_half = self._index_documents_actions(
                 actions=actions[pos:], error_map=error_map, **kwargs
             )
             if batch_response_second_half:
-                result_second_half = cast(List[IndexingResult], batch_response_second_half.results)
+                result_second_half = batch_response_second_half
             else:
                 result_second_half = []
-            return result_first_half.extend(result_second_half)
+            result_first_half.extend(result_second_half)
+            return result_first_half
 
     def __enter__(self) -> "SearchClient":
         self._client.__enter__()  # pylint:disable=no-member

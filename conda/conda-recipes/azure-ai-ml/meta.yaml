@@ -1,0 +1,88 @@
+{% set name = "azure-ai-ml" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+
+source:
+  url: {{ environ.get('ML_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - aiohttp
+    - azure-storage >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - colorama <=0.4.4
+    - isodate
+    - jsonschema <5.0.0,>=4.0.0
+    - marshmallow <4.0.0,>=3.5
+    - pip
+    - pydash <6.0.0
+    - pyjwt <3.0.0
+    - python
+    - pyyaml <7.0.0,>=5.1.0
+    - strictyaml <=1.6.1
+    - tqdm <=4.63.0
+    - typing-extensions <5.0.0
+    - opencensus >=0.11.0
+    - opencensus-context
+    - opencensus-ext-azure
+  run:
+    - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - aiohttp
+    - azure-storage >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
+    - colorama <=0.4.4
+    - isodate
+    - jsonschema <5.0.0,>=4.0.0
+    - marshmallow <4.0.0,>=3.5
+    - pydash <6.0.0
+    - pyjwt <3.0.0
+    - python
+    - pyyaml <7.0.0,>=5.1.0
+    - strictyaml <=1.6.1
+    - tqdm <=4.63.0
+    - typing-extensions <5.0.0
+    - opencensus >=0.11.0
+    - opencensus-context
+    - opencensus-ext-azure
+
+test:
+  imports:
+    - azure.ai.ml
+    - azure.ai.ml.automl
+    - azure.ai.ml.constants
+    - azure.ai.ml.dsl
+    - azure.ai.ml.entities
+    - azure.ai.ml.identity
+    - azure.ai.ml.operations
+    - azure.ai.ml.parallel
+    - azure.ai.ml.sweep
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml"
+  license: MIT
+  license_family: MIT
+  license_file: 
+  summary: "Microsoft Azure Machine Learning Client Library for Python"
+  description: |
+    We are excited to introduce the public preview of Azure Machine Learning Python SDK v2. The Python SDK v2 introduces new SDK
+    capabilities like standalone local jobs, reusable components for pipelines and managed online/batch inferencing. Python SDK v2
+    allows you to move from simple to complex tasks easily and incrementally. This is enabled by using a common object model which
+    brings concept reuse and consistency of actions across various tasks. The SDK v2 shares its foundation with the CLI v2 which is
+    currently in also in public preview.
+    Please see https://aka.ms/azsdk/conda/releases/ml for version details.
+  doc_url: 
+  dev_url: 
+
+extra:
+  recipe-maintainers:
+    - xiangyan99

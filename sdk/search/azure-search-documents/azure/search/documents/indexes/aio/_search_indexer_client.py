@@ -217,7 +217,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         error_map, access_condition = get_access_conditions(indexer, match_condition)
         kwargs.update(access_condition)
         try:
-            name = indexer.name
+            name = indexer.name  # type: ignore
         except AttributeError:
             name = indexer
         await self._client.indexers.delete(name, error_map=error_map, **kwargs)
@@ -286,11 +286,11 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         kwargs["keys_or_ids"] = keys_or_ids
         try:
-            name = indexer.name
+            name = indexer.name  # type: ignore
         except AttributeError:
             name = indexer
-        result = await self._client.indexers.reset_docs(name, **kwargs)
-        return result
+        await self._client.indexers.reset_docs(name, **kwargs)
+        return
 
     @distributed_trace_async
     async def get_indexer_status(self, name: str, **kwargs: Any) -> SearchIndexerStatus:
@@ -410,7 +410,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         )
         kwargs.update(access_condition)
         try:
-            name = data_source_connection.name
+            name = data_source_connection.name  # type: ignore
         except AttributeError:
             name = data_source_connection
         await self._client.data_sources.delete(data_source_name=name, error_map=error_map, **kwargs)
@@ -574,7 +574,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         error_map, access_condition = get_access_conditions(skillset, match_condition)
         kwargs.update(access_condition)
         try:
-            name = skillset.name
+            name = skillset.name  # type: ignore
         except AttributeError:
             name = skillset
         await self._client.skillsets.delete(name, error_map=error_map, **kwargs)
@@ -657,9 +657,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         try:
-            name = skillset.name
+            name = skillset.name  # type: ignore
         except AttributeError:
             name = skillset
         names = SkillNames(skill_names=skill_names)
-        result = await self._client.skillsets.reset_skills(skillset_name=name, skill_names=names, **kwargs)
-        return result
+        await self._client.skillsets.reset_skills(skillset_name=name, skill_names=names, **kwargs)
+        return
