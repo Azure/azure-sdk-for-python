@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import os
+
 from logging import getLogger
 from typing import Dict, cast
 
@@ -14,6 +16,7 @@ from opentelemetry.instrumentation.instrumentor import (
     BaseInstrumentor,
 )
 from opentelemetry.metrics import set_meter_provider
+from opentelemetry.sdk.environment_variables import OTEL_EXPERIMENTAL_RESOURCE_DETECTORS
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.metrics import MeterProvider
@@ -54,6 +57,11 @@ _SUPPORTED_INSTRUMENTED_LIBRARIES = (
     "urllib3",
 )
 
+_SUPPORTED_RESOURCE_DETECTORS = (
+    "azure_app_service",
+    "azure_vm",
+)
+
 
 def configure_azure_monitor(**kwargs) -> None:
     """This function works as a configuration layer that allows the
@@ -77,6 +85,9 @@ def configure_azure_monitor(**kwargs) -> None:
     disable_logging = configurations[DISABLE_LOGGING_ARG]
     disable_metrics = configurations[DISABLE_METRICS_ARG]
 
+    # Setup resources
+    _setup_resources()
+
     # Setup tracing pipeline
     if not disable_tracing:
         _setup_tracing(configurations)
@@ -93,6 +104,13 @@ def configure_azure_monitor(**kwargs) -> None:
     # Instrumentations need to be setup last so to use the global providers
     # instanstiated in the other setup steps
     _setup_instrumentations(configurations)
+
+def _setup_resources():
+    detectors = os.environ.get(OTEL_EXPERIMENTAL_RESOURCE_DETECTORS, "")
+    if detectors:
+        detectors = detectors + ","
+    detectors += ",".join(_SUPPORTED_RESOURCE_DETECTORS)
+    os.environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS] = detectors
 
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
