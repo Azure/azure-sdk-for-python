@@ -124,8 +124,9 @@ class TestAutoScale:
         assert created_db_properties.auto_scale_max_throughput == 7000
         # Testing the input value of the increment_percentage
         assert created_db_properties.auto_scale_increment_percent == 20
+        self.client.delete_database("replace_db")
 
-        created_container = created_database.create_container(
+        created_container = self.created_database.create_container(
             id='container_with_replace_functionality',
             partition_key=PartitionKey(path="/id"),
             offer_throughput=ThroughputProperties(auto_scale_max_throughput=5000, auto_scale_increment_percent=0))
@@ -136,4 +137,4 @@ class TestAutoScale:
         assert created_container_properties.auto_scale_max_throughput == 7000
         assert created_container_properties.auto_scale_increment_percent == 20
 
-        self.created_database.delete_database(created_database.id)
+        self.created_database.delete_container(created_container.id)
