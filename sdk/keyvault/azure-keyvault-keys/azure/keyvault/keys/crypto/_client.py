@@ -214,12 +214,12 @@ class CryptographyClient(KeyVaultClientBase):
 
     @distributed_trace
     def create_rsa_private_key(self) -> KeyVaultRSAPrivateKey:
-        """Create an `RSAPrivateKey` implementation backed by this `CryptographyClient` and key.
+        """Create an `RSAPrivateKey` implementation backed by this `CryptographyClient`, as a `KeyVaultRSAPrivateKey`.
 
         The `CryptographyClient` will attempt to download the key, if it hasn't been already, as part of this operation.
         """
         self._initialize()
-        return KeyVaultRSAPrivateKey(client=self, key_id=self.key_id, key_material=cast(JsonWebKey, self._key))
+        return KeyVaultRSAPrivateKey(client=self, key_material=cast(JsonWebKey, self._key))
 
     @distributed_trace
     def encrypt(self, algorithm: "EncryptionAlgorithm", plaintext: bytes, **kwargs) -> EncryptResult:

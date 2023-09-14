@@ -21,7 +21,6 @@ from cryptography.hazmat.primitives.serialization import Encoding, KeySerializat
 
 from ._enums import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 from .._models import JsonWebKey
-from .._shared import KeyVaultResourceId, parse_key_vault_id
 
 if TYPE_CHECKING:
     # Import client only during TYPE_CHECKING to avoid circular dependency
@@ -47,17 +46,15 @@ PSS_MAP = {
 class KeyVaultRSAPrivateKey(RSAPrivateKey):
     """An `RSAPrivateKey` implementation based on a key managed by Key Vault."""
 
-    def __init__(self, client: "CryptographyClient", key_id: str, key_material: JsonWebKey) -> None:
+    def __init__(self, client: "CryptographyClient", key_material: JsonWebKey) -> None:
         """Creates a `KeyVaultRSAPrivateKey` from a `CryptographyClient` and key.
 
         :param client: The client that will be used to communicate with Key Vault.
         :type client: :class:`~azure.keyvault.keys.crypto.CryptographyClient`
-        :param str key_id: The full identifier of the Key Vault key.
         :param key_material: They Key Vault key's material, as a `JsonWebKey`.
         :type key_material: :class:`~azure.keyvault.keys.JsonWebKey`
         """
         self._client: "CryptographyClient" = client
-        self._key_id: KeyVaultResourceId = parse_key_vault_id(key_id)
         self._key: JsonWebKey = key_material
 
     def decrypt(self, ciphertext: bytes, padding: AsymmetricPadding) -> bytes:
@@ -76,7 +73,7 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
             # Public algorithm property was only added in https://github.com/pyca/cryptography/pull/9582
             # _algorithm property has been available in every version of the OAEP class, so we use it as a backup
             try:
-                algorithm = padding.algorithm
+                algorithm = padding.algorithm  # type: ignore[attr-defined]
             except AttributeError:
                 algorithm = padding._algorithm  # pylint:disable=protected-access
             mapped_algorithm = OAEP_MAP.get(type(algorithm))
@@ -85,7 +82,7 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
 
             # Public mgf property was added at the same time as algorithm
             try:
-                mgf = padding.mgf
+                mgf = padding.mgf  # type: ignore[attr-defined]
             except AttributeError:
                 mgf = padding._mgf  # pylint:disable=protected-access
             if not isinstance(mgf, MGF1):
@@ -146,12 +143,12 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
 
         # If PSS padding is requested, use the PSS equivalent algorithm
         if isinstance(padding, PSS):
-            mapped_algorithm = PSS_MAP.get(type(mapped_algorithm))
+            mapped_algorithm = PSS_MAP.get(mapped_algorithm)
 
             # Public mgf property was only added in https://github.com/pyca/cryptography/pull/9582
             # _mgf property has been available in every version of the PSS class, so we use it as a backup
             try:
-                mgf = padding.mgf
+                mgf = padding.mgf  # type: ignore[attr-defined]
             except AttributeError:
                 mgf = padding._mgf  # pylint:disable=protected-access
             if not isinstance(mgf, MGF1):
@@ -182,9 +179,9 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         iqmp = int.from_bytes(self._key.qi, "big") if self._key.qi else None  # type: ignore[attr-defined]
 
         # Calculate any missing attributes
+        if d is None:
+            raise ValueError("An 'RSAPrivateNumbers' couldn't be created with the available key material.")
         if p is None or q is None:
-            if d is None:
-                raise ValueError("An 'RSAPrivateNumbers' couldn't be created with the available key material.")
             p, q = rsa_recover_prime_factors(n, e, d)
         if dmp1 is None:
             dmp1 = rsa_crt_dmp1(d, p)
