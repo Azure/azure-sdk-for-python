@@ -5,7 +5,7 @@
 ### Features Added
 
 - Add Azure resource detectors
-    ([#31931](https://github.com/Azure/azure-sdk-for-python/pull/31931))
+    ([#32087](https://github.com/Azure/azure-sdk-for-python/pull/32087))
 
 ### Other Changes
 
