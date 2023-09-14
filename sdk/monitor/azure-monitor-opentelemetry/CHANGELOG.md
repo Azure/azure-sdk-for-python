@@ -2,6 +2,11 @@
 
 ## 1.0.0 (2023-09-12)
 
+### Features Added
+
+- Add Azure resource detectors
+    ([#31931](https://github.com/Azure/azure-sdk-for-python/pull/31931))
+
 ### Other Changes
 
 - The `autoinstrumentation', 'diagnostics' and 'util' subnamespaces have been made internal.
