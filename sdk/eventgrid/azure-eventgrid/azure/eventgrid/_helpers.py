@@ -124,23 +124,18 @@ def _eventgrid_data_typecheck(event):
 
 def _check_cloud_event(cloud_event, **kwargs):
     # Check if it is a CloudEvent or a dict
-    try:
-        return CloudEvent.from_dict(
-            cloud_event
-        )
-    except TypeError:
-        return CloudEvent(
-            id=cloud_event.id,
-            source=cloud_event.source,
-            type=cloud_event.type,
-            specversion=cloud_event.specversion,
-            data=cloud_event.data,
-            time=cloud_event.time,
-            dataschema=cloud_event.dataschema,
-            datacontenttype=cloud_event.datacontenttype,
-            subject=cloud_event.subject,
-            extensions=cloud_event.extensions,
-        )
+    return CloudEvent(
+        id=cloud_event.id,
+        source=cloud_event.source,
+        type=cloud_event.type,
+        specversion=cloud_event.specversion,
+        data=cloud_event.data,
+        time=cloud_event.time,
+        dataschema=cloud_event.dataschema,
+        datacontenttype=cloud_event.datacontenttype,
+        subject=cloud_event.subject,
+        extensions=cloud_event.extensions,
+    )
 
 
 def _from_cncf_events(event): # pylint: disable=inconsistent-return-statements
