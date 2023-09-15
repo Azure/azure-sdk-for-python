@@ -149,7 +149,8 @@ class TestCRUDAsync:
 
         database_proxy = await self.client.create_database_if_not_exists(id=database_id, offer_throughput=10000)
         assert database_id == database_proxy.id
-        assert 10000 == await database_proxy.get_throughput().offer_throughput
+        db_throughput = await database_proxy.get_throughput()
+        assert 10000 == db_throughput.offer_throughput
 
         database_proxy = await self.client.create_database_if_not_exists(id=database_id, offer_throughput=9000)
         assert database_id == database_proxy.id
