@@ -426,7 +426,8 @@ class TestQueryAsync:
         values = []
         for i in range(10):
             document_definition = {'pk': i, 'id': 'myId' + str(uuid.uuid4()), 'value': i // 3}
-            values.append(await created_collection.create_item(body=document_definition)['pk'])
+            current_document = await created_collection.create_item(body=document_definition)
+            values.append(current_document['pk'])
 
         await self._validate_distinct_offset_limit(created_collection=created_collection,
                                              query='SELECT DISTINCT c["value"] from c ORDER BY c.pk OFFSET 0 LIMIT 2',
