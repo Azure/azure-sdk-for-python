@@ -207,10 +207,8 @@ class EventGridPublisherClient: # pylint: disable=client-accepts-api-version-key
         content_type = kwargs.pop("content_type", "application/json; charset=utf-8")
         if isinstance(events[0], CloudEvent) or _is_cloud_event(events[0]):
             try:
-                events = [
-                    _check_cloud_event(e)
-                    for e in events  # pylint: disable=protected-access
-                ]
+                for e in events:
+                    _check_cloud_event(e) # pylint: disable=protected-access
             except AttributeError:
                 ## this is either a dictionary or a CNCF cloud event
                 events = [
@@ -220,8 +218,10 @@ class EventGridPublisherClient: # pylint: disable=client-accepts-api-version-key
         elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
             for event in events:
                 _eventgrid_data_typecheck(event)
+        request = _build_request(self._endpoint, content_type, events, channel_name=channel_name)
+        request.url = self._client.format_url(request.url)
         response = await self._client.send_request(  # pylint: disable=protected-access
-            _build_request(self._endpoint, content_type, events, channel_name=channel_name), **kwargs
+            request, **kwargs
         )
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         if response.status_code != 200:
