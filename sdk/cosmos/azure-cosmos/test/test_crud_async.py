@@ -1527,7 +1527,7 @@ class TestCRUDAsync:
     async def test_script_logging_execute_stored_procedure_async(self):
         await self._set_up()
 
-        created_collection = await self.database_for_test.create_container(str(uuid.uuid4), PartitionKey(path="/id"))
+        created_collection = await self.database_for_test.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
 
         sproc = {
             'id': 'storedProcedure' + str(uuid.uuid4()),
