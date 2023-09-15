@@ -67,7 +67,7 @@ class TimeoutTransport(RequestsTransport):
 
 
 @pytest.mark.usefixtures("teardown")
-class SubpartitionCRUDTests:
+class TestSubpartitionCRUD:
     """Python CRUD Tests.
     """
 
