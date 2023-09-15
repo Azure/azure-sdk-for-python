@@ -29,7 +29,7 @@ class FeatureSetBackfillRequest(RestTranslatableMixin):
         *,
         name: str,
         version: str,
-        feature_window: FeatureWindow,
+        feature_window: Optional[FeatureWindow] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         resource: Optional[MaterializationComputeResource] = None,
