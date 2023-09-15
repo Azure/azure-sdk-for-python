@@ -52,6 +52,7 @@ class TestQueryAsync:
 
     @pytest.mark.asyncio
     async def test_query_change_feed_with_pk_async(self):
+        await self._set_up()
         created_collection = await self.created_db.create_container_if_not_exists(
             "change_feed_test_" + str(uuid.uuid4()),
             PartitionKey(path="/pk"))
@@ -466,6 +467,7 @@ class TestQueryAsync:
     # TODO: Look into distinct query behavior to re-enable this test when possible
     @pytest.mark.skip("intermittent failures in the pipeline")
     async def test_distinct_async(self):
+        await self._set_up()
         created_database = await self.config.create_database_if_not_exist(self.client)
         distinct_field = 'distinct_field'
         pk_field = "pk"

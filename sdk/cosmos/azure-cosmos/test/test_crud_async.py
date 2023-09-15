@@ -110,6 +110,10 @@ class TestCRUDAsync:
         cls.database_for_test = await cls.client.create_database_if_not_exists(
             test_config._test_config.TEST_DATABASE_ID)
 
+    async def _clear(self):
+        async for db in self.client.list_databases():
+            self.client.delete_database(db["id"])
+
     @pytest.mark.asyncio
     async def test_database_crud_async(self):
         await self._set_up()
@@ -150,8 +154,7 @@ class TestCRUDAsync:
         database_proxy = await self.client.create_database_if_not_exists(id=database_id, offer_throughput=9000)
         assert database_id == database_proxy.id
         assert 10000 == await database_proxy.get_throughput().offer_throughput
-
-        await self.client.delete_database(database_id)
+        await self._clear()
 
     # @pytest.mark.skip("skipping as the TestResources subscription doesn't support this offer")
     @pytest.mark.asyncio
@@ -174,7 +177,7 @@ class TestCRUDAsync:
         new_offer_throughput = 2000
         offer = await created_db.replace_throughput(new_offer_throughput)
         assert offer.offer_throughput == new_offer_throughput
-        await self.client.delete_database(created_db.id)
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_sql_query_crud_async(self):
@@ -202,8 +205,7 @@ class TestCRUDAsync:
         databases = [database async for database in
                      self.client.query_databases('SELECT * FROM root r WHERE r.id="' + db2.id + '"')]  # nosec
         assert 1 == len(databases)
-        await self.client.delete_database(db1.id)
-        await self.client.delete_database(db2.id)
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_collection_crud_async(self):
@@ -260,7 +262,7 @@ class TestCRUDAsync:
         assert created_container.id == container_proxy.id
         assert PartitionKey(path='/id', kind='Hash') == container_proxy._properties['partitionKey']
 
-        await created_db.delete_container(created_collection.id)
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_partitioned_collection_async(self):
@@ -312,6 +314,7 @@ class TestCRUDAsync:
             populate_quota_info=True)
         assert retrieved_collection_properties.get("statistics") is not None
         assert created_db.client_connection.last_response_headers.get("x-ms-resource-usage") is not None
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_partitioned_collection_partition_key_extraction_async(self):
@@ -371,11 +374,7 @@ class TestCRUDAsync:
         assert self.last_headers[1] == [{}]
         del self.last_headers[:]
 
-        # self.assertEqual(options['partitionKey'], documents.Undefined)
-
-        await created_db.delete_container(created_collection.id)
-        await created_db.delete_container(created_collection1.id)
-        await created_db.delete_container(created_collection2.id)
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_partitioned_collection_partition_key_extraction_special_chars_async(self):
@@ -417,9 +416,7 @@ class TestCRUDAsync:
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
         assert self.last_headers[1] == '["val2"]'
         del self.last_headers[:]
-
-        await created_db.delete_container(created_collection1.id)
-        await created_db.delete_container(created_collection2.id)
+        await self._clear()
 
     def test_partitioned_collection_path_parser(self):
         test_dir = os.path.dirname(os.path.abspath(__file__))
@@ -508,6 +505,7 @@ class TestCRUDAsync:
         )]
 
         assert len(document_list) == 1
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_partitioned_collection_permissions_async(self):
@@ -593,8 +591,7 @@ class TestCRUDAsync:
                 document_definition['id']
             )
 
-            await created_db.delete_container(all_collection)
-            await created_db.delete_container(read_collection)
+            await self._clear()
 
     @pytest.mark.asyncio
     async def test_partitioned_collection_execute_stored_procedure_async(self):
@@ -629,6 +626,7 @@ class TestCRUDAsync:
             created_collection.scripts.execute_stored_procedure,
             created_sproc['id'],
             3)
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_partitioned_collection_partition_key_value_types_async(self):
@@ -692,13 +690,13 @@ class TestCRUDAsync:
             document_definition
         )
 
-        await created_db.delete_container(created_collection)
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_partitioned_collection_conflict_crud_and_query_async(self):
         await self._set_up()
 
-        created_collection = await self.database_for_test.create_container(str(uuid.uuid4), PartitionKey(path="/id"))
+        created_collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4), PartitionKey(path="/id"))
 
         conflict_definition = {'id': 'new conflict',
                                'resourceId': 'doc1',
@@ -742,6 +740,7 @@ class TestCRUDAsync:
         )]
 
         assert len(conflict_list) == 0
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_document_crud_async(self):
@@ -888,13 +887,14 @@ class TestCRUDAsync:
                                                      created_collection.read_item,
                                                      replaced_document['id'],
                                                      replaced_document['id'])
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_document_upsert_async(self):
         await self._set_up()
 
         # create collection
-        created_collection = await self.database_for_test.create_container(str(uuid.uuid4), PartitionKey(path="/id"))
+        created_collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4), PartitionKey(path="/id"))
 
         # read documents and check count
         document_list = [document async for document in created_collection.read_all_items()]
@@ -967,6 +967,7 @@ class TestCRUDAsync:
         # read documents after delete and verify count is same as original
         document_list = [document async for document in created_collection.read_all_items()]
         assert len(document_list) == before_create_documents_count
+        await self._clear()
 
     @pytest.mark.asyncio
     async def _test_spatial_index(self):
@@ -1018,7 +1019,7 @@ class TestCRUDAsync:
         assert len(results) == 1
         assert 'loc1' == results[0]['id']
 
-        await db.delete_container(container=collection)
+        await self._clear()
 
     # CRUD test for User resource
     @pytest.mark.asyncio
@@ -1065,6 +1066,7 @@ class TestCRUDAsync:
         deleted_user = db.get_user_client(user.id)
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
                                                      deleted_user.read)
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_user_upsert_async(self):
@@ -1119,6 +1121,7 @@ class TestCRUDAsync:
         # read users after delete and verify count remains the same
         users = [user async for user in db.list_users()]
         assert len(users) == before_create_count
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_permission_crud_async(self):
@@ -1166,6 +1169,7 @@ class TestCRUDAsync:
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
                                                      user.get_permission,
                                                      permission.id)
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_permission_upsert_async(self):
@@ -1237,6 +1241,7 @@ class TestCRUDAsync:
         # read permissions and verify count remains the same
         permissions = [permission async for permission in user.list_permissions()]
         assert len(permissions) == before_create_count
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_authorization_async(self):
@@ -1366,12 +1371,13 @@ class TestCRUDAsync:
 
             db.client_connection = old_client_connection
             await db.delete_container(entities['coll'])
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_trigger_crud_async(self):
         await self._set_up()
         # create collection
-        collection = await self.database_for_test.create_container(str(uuid.uuid4), PartitionKey(path="/id"))
+        collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4), PartitionKey(path="/id"))
         # read triggers
         triggers = [trigger async for trigger in collection.scripts.list_triggers()]
         # create a trigger
@@ -1420,12 +1426,13 @@ class TestCRUDAsync:
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
                                                      collection.scripts.delete_trigger,
                                                      replaced_trigger['id'])
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_udf_crud_async(self):
         await self._set_up()
         # create collection
-        collection = await self.database_for_test.create_container(str(uuid.uuid4), PartitionKey(path="/id"))
+        collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4), PartitionKey(path="/id"))
         # read udfs
         udfs = [udf async for udf in collection.scripts.list_user_defined_functions()]
         # create a udf
@@ -1463,6 +1470,7 @@ class TestCRUDAsync:
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
                                                      collection.scripts.get_user_defined_function,
                                                      replaced_udf['id'])
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_sproc_crud_async(self):
@@ -1513,6 +1521,7 @@ class TestCRUDAsync:
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
                                                      collection.scripts.get_stored_procedure,
                                                      replaced_sproc['id'])
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_script_logging_execute_stored_procedure_async(self):
@@ -1564,6 +1573,7 @@ class TestCRUDAsync:
 
         assert result == 'Success!'
         assert HttpHeaders.ScriptLogResults not in created_collection.scripts.client_connection.last_response_headers
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_collection_indexing_policy_async(self):
@@ -1623,7 +1633,7 @@ class TestCRUDAsync:
         collection_with_indexing_policy_properties = await collection_with_indexing_policy.read()
         assert 1 == len(collection_with_indexing_policy_properties['indexingPolicy']['includedPaths'])
         assert 2 == len(collection_with_indexing_policy_properties['indexingPolicy']['excludedPaths'])
-        await db.delete_container(container=collection_with_indexing_policy)
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_create_default_indexing_policy_async(self):
@@ -1702,7 +1712,7 @@ class TestCRUDAsync:
         )
         collection_properties = await collection.read()
         await self._check_default_indexing_policy_paths(collection_properties['indexingPolicy'])
-        await db.delete_container(container=collection)
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_create_indexing_policy_with_composite_and_spatial_indexes_async(self):
@@ -1784,7 +1794,7 @@ class TestCRUDAsync:
             assert indexing_policy['spatialIndexes'] == read_indexing_policy['spatialIndexes']
 
         assert indexing_policy['compositeIndexes'] == read_indexing_policy['compositeIndexes']
-        await db.delete_container(container=created_container)
+        await self._clear()
 
     async def _check_default_indexing_policy_paths(self, indexing_policy):
         def __get_first(array):
@@ -1857,7 +1867,6 @@ class TestCRUDAsync:
             async with CosmosClient(
                     "https://localhost:9999",
                     TestCRUDAsync.masterKey,
-                    consistency_level="Session",
                     connection_retry_policy=retry_policy) as client:
                 print('Async initialization')
             pytest.fail()
@@ -1983,13 +1992,14 @@ class TestCRUDAsync:
         results = resources['coll'].read_all_items(max_item_count=2)
 
         page_iter = results.by_page()
-        first_block = [page async for page in next(page_iter)]
+        first_block = [page async for page in await page_iter.__anext__()]
         assert 2 == len(first_block)
         assert resources['doc1']['id'] == first_block[0]['id']
         assert resources['doc2']['id'] == first_block[1]['id']
-        assert 1 == len([page async for page in next(page_iter)])
-        with pytest.raises(StopIteration):
-            next(page_iter)
+        assert 1 == len([page async for page in await page_iter.__anext__()])
+        with pytest.raises(StopAsyncIteration):
+            await page_iter.__anext__()
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_trigger_functionality_async(self):
@@ -2133,9 +2143,7 @@ class TestCRUDAsync:
                 post_trigger_include='triggerOpType'
             )
 
-        await db.delete_container(collection1)
-        await db.delete_container(collection2)
-        await db.delete_container(collection3)
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_stored_procedure_functionality_async(self):
@@ -2191,6 +2199,7 @@ class TestCRUDAsync:
             partition_key=1
         )
         assert result == 'aso'
+        await self._clear()
 
     def __validate_offer_response_body(self, offer, expected_coll_link, expected_offer_type):
         # type: (Offer, str, Any) -> None
@@ -2223,6 +2232,7 @@ class TestCRUDAsync:
         await db.delete_container(container=collection)
         # Reading fails.
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND, collection.get_throughput)
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_offer_replace_async(self):
@@ -2242,6 +2252,7 @@ class TestCRUDAsync:
         # Check if the replaced offer is what we expect.
         assert expected_offer.properties.get('content').get('offerThroughput') + 100 == replaced_offer.properties.get('content').get('offerThroughput')
         assert expected_offer.offer_throughput + 100 == replaced_offer.offer_throughput
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_database_account_functionality_async(self):
@@ -2257,6 +2268,7 @@ class TestCRUDAsync:
                 self.client.client_connection.last_response_headers):
             assert database_account.CurrentMediaStorageUsageInMB == self.client.client_connection.last_response_headers[HttpHeaders.CurrentMediaStorageUsageInMB]
         assert database_account.ConsistencyPolicy['defaultConsistencyLevel'] is not None
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_index_progress_headers_async(self):
@@ -2284,8 +2296,7 @@ class TestCRUDAsync:
         assert HttpHeaders.LazyIndexingProgress not in created_db.client_connection.last_response_headers
         assert HttpHeaders.IndexTransformationProgress in created_db.client_connection.last_response_headers
 
-        await created_db.delete_container(consistent_coll)
-        await created_db.delete_container(none_coll)
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_get_resource_with_dictionary_and_object_async(self):
@@ -2404,6 +2415,7 @@ class TestCRUDAsync:
         # read permission with properties
         read_permission = await created_user.get_permission(created_permission.properties)
         assert read_permission.id == created_permission.id
+        await self._clear()
 
     # Commenting out delete all items by pk until pipelines support it
     # @pytest.mark.asyncio
@@ -2519,6 +2531,7 @@ class TestCRUDAsync:
                                                patch_operations=operations)
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == StatusCodes.BAD_REQUEST
+        await self._clear()
 
     @pytest.mark.asyncio
     async def test_conditional_patching_async(self):
@@ -2570,6 +2583,7 @@ class TestCRUDAsync:
         assert patched_item.get("address").get("new_city") == "Atlanta"
         assert patched_item.get("number") == 10
         assert patched_item.get("favorite_color") == "yellow"
+        await self._clear()
 
     # Temporarily commenting analytical storage tests until emulator support comes.
     # @pytest.mark.asyncio
