@@ -1304,10 +1304,10 @@ class TestCRUDAsync:
             return entities
 
         # Client without any authorization will fail.
-        async with CosmosClient(TestCRUDAsync.host, {}) as client:
-            try:
+        try:
+            async with CosmosClient(TestCRUDAsync.host, {}) as client:
                 [db async for db in client.list_databases()]
-            except exceptions.CosmosHttpResponseError as e:
+        except exceptions.CosmosHttpResponseError as e:
                 assert e.status_code == StatusCodes.UNAUTHORIZED
 
         # Client with master key.
