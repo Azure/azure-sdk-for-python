@@ -414,6 +414,7 @@ class TestQueryAsync:
 
     @pytest.mark.asyncio
     async def test_offset_limit_async(self):
+        await self._set_up()
         created_collection = await self.created_db.create_container_if_not_exists("offset_limit_" + str(uuid.uuid4()),
                                                                                   PartitionKey(path="/pk"))
         values = []
@@ -685,6 +686,7 @@ class TestQueryAsync:
 
     @pytest.mark.asyncio
     async def test_paging_with_continuation_token_async(self):
+        await self._set_up()
         created_collection = await self.created_db.create_container_if_not_exists(
             self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
 
@@ -712,6 +714,7 @@ class TestQueryAsync:
 
     @pytest.mark.asyncio
     async def test_cross_partition_query_with_continuation_token_async(self):
+        await self._set_up()
         created_collection = await self.created_db.create_container_if_not_exists(
             self.config.TEST_COLLECTION_MULTI_PARTITION_ID,
             PartitionKey(path="/id"))

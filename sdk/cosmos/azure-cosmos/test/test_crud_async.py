@@ -301,8 +301,7 @@ class TestCRUDAsync:
         await self._set_up()
         created_db = self.database_for_test
 
-        created_collection = await self.database_for_test.create_container(
-            test_config._test_config.TEST_COLLECTION_MULTI_PARTITION)
+        created_collection = await self.database_for_test.create_container(str(uuid.uuid4), PartitionKey(path="/id"))
 
         retrieved_collection = created_db.get_container_client(
             container=created_collection.id
@@ -700,8 +699,7 @@ class TestCRUDAsync:
     async def test_partitioned_collection_conflict_crud_and_query_async(self):
         await self._set_up()
 
-        created_collection = await self.database_for_test.create_container(
-            test_config._test_config.TEST_COLLECTION_MULTI_PARTITION)
+        created_collection = await self.database_for_test.create_container(str(uuid.uuid4), PartitionKey(path="/id"))
 
         conflict_definition = {'id': 'new conflict',
                                'resourceId': 'doc1',
@@ -750,8 +748,7 @@ class TestCRUDAsync:
     async def test_document_crud_async(self):
         await self._set_up()
         # create collection
-        created_collection = await self.database_for_test.create_container(
-            test_config._test_config.TEST_COLLECTION_MULTI_PARTITION)
+        created_collection = await self.database_for_test.create_container(str(uuid.uuid4), PartitionKey(path="/id"))
         # read documents
         document_list = [document async for document in created_collection.read_all_items()]
         # create a document
@@ -898,8 +895,7 @@ class TestCRUDAsync:
         await self._set_up()
 
         # create collection
-        created_collection = await self.database_for_test.create_container(
-            test_config._test_config.TEST_COLLECTION_MULTI_PARTITION)
+        created_collection = await self.database_for_test.create_container(str(uuid.uuid4), PartitionKey(path="/id"))
 
         # read documents and check count
         document_list = [document async for document in created_collection.read_all_items()]
@@ -1304,8 +1300,7 @@ class TestCRUDAsync:
             return entities
 
         # Client without any authorization will fail.
-        async with CosmosClient(TestCRUDAsync.host, {}, consistency_level="Session",
-                                connection_policy=TestCRUDAsync.connectionPolicy) as client:
+        async with CosmosClient(TestCRUDAsync.host, {}) as client:
             try:
                 [db async for db in client.list_databases()]
             except exceptions.CosmosHttpResponseError as e:
@@ -1377,8 +1372,7 @@ class TestCRUDAsync:
     async def test_trigger_crud_async(self):
         await self._set_up()
         # create collection
-        collection = await self.database_for_test.create_container(
-            test_config._test_config.TEST_COLLECTION_MULTI_PARTITION)
+        collection = await self.database_for_test.create_container(str(uuid.uuid4), PartitionKey(path="/id"))
         # read triggers
         triggers = [trigger async for trigger in collection.scripts.list_triggers()]
         # create a trigger
@@ -1432,8 +1426,7 @@ class TestCRUDAsync:
     async def test_udf_crud_async(self):
         await self._set_up()
         # create collection
-        collection = await self.database_for_test.create_container(
-            test_config._test_config.TEST_COLLECTION_MULTI_PARTITION)
+        collection = await self.database_for_test.create_container(str(uuid.uuid4), PartitionKey(path="/id"))
         # read udfs
         udfs = [udf async for udf in collection.scripts.list_user_defined_functions()]
         # create a udf
@@ -1476,8 +1469,7 @@ class TestCRUDAsync:
     async def test_sproc_crud_async(self):
         await self._set_up()
         # create collection
-        collection = await self.database_for_test.create_container(
-            test_config._test_config.TEST_COLLECTION_MULTI_PARTITION)
+        collection = await self.database_for_test.create_container(str(uuid.uuid4), PartitionKey(path="/id"))
         # read sprocs
         sprocs = [sproc async for sproc in collection.scripts.list_stored_procedures()]
         # create a sproc
@@ -1527,8 +1519,7 @@ class TestCRUDAsync:
     async def test_script_logging_execute_stored_procedure_async(self):
         await self._set_up()
 
-        created_collection = await self.database_for_test.create_container(
-            test_config._test_config.TEST_COLLECTION_MULTI_PARTITION)
+        created_collection = await self.database_for_test.create_container(str(uuid.uuid4), PartitionKey(path="/id"))
 
         sproc = {
             'id': 'storedProcedure' + str(uuid.uuid4()),
@@ -2151,8 +2142,7 @@ class TestCRUDAsync:
     async def test_stored_procedure_functionality_async(self):
         await self._set_up()
         # create collection
-        collection = await self.database_for_test.create_container(
-            test_config._test_config.TEST_COLLECTION_MULTI_PARTITION)
+        collection = await self.database_for_test.create_container(str(uuid.uuid4), PartitionKey(path="/id"))
 
         sproc1 = {
             'id': 'storedProcedure1' + str(uuid.uuid4()),
@@ -2239,8 +2229,9 @@ class TestCRUDAsync:
     async def test_offer_replace_async(self):
         await self._set_up()
         # Create collection.
-        collection = await self.database_for_test.create_container(
-            test_config._test_config.TEST_COLLECTION_MULTI_PARTITION)
+        container_id = str(uuid.uuid4())
+        partition_key = PartitionKey(path="/id")
+        collection = await self.database_for_test.create_container(container_id, partition_key)
         # Read Offer
         expected_offer = await collection.get_throughput()
         collection_properties = await collection.read()
