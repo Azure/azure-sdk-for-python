@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-import time
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, ResponseCallback
 
@@ -17,7 +16,8 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline.policies import RetryMode
 from azure.core.pipeline.transport import RequestsTransport
-from azure.data.tables import TableServiceClient, TableClient, LocationMode
+from azure.data.tables import TableServiceClient, TableClient
+from azure.data.tables._models import LocationMode
 
 from _shared.testcase import TableTestCase
 
@@ -361,114 +361,4 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
         # clean up
         with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
             client.delete_table()
-
-    @tables_decorator
-    @recorded_by_proxy
-    def test_table_client_failover_and_retry_on_primary(
-        self, tables_storage_account_name, tables_primary_storage_account_key
-    ):
-        url = self.account_url(tables_storage_account_name, "table")
-        table_name = self.get_resource_name("mytable")
-
-        breakpoint()
-        with TableClient(
-            url,
-            table_name,
-            credential=tables_primary_storage_account_key,
-            retry_total=5,
-            location_mode=LocationMode.SECONDARY,
-            transport=SecondaryFailoverRetryTransport(),
-        ) as client:
-            # add the entity then try get_entity() again
-            entity = {"PartitionKey": "foo", "RowKey": "bar"}
-
-            with pytest.raises(ServiceRequestError) as ex:
-                client.upsert_entity(
-                    entity, failover=ServiceRequestError("Attempting to force failover")
-                )  # PATCH, not retry
-            assert "Attempting to force failover" in str(ex.value)
-
-        breakpoint()
-        with TableClient(
-            url,
-            table_name,
-            credential=tables_primary_storage_account_key,
-            retry_total=5,
-            location_mode=LocationMode.SECONDARY,
-            transport=SecondaryFailoverRetryTransport(),
-        ) as client:
-            entities = client.list_entities(
-                failover=ServiceRequestError("Attempting to force failover")
-            )  # GET, succeed when retry
-            for e in entities:
-                pass
-
-        breakpoint()
-        with TableClient(
-            url,
-            table_name,
-            credential=tables_primary_storage_account_key,
-            retry_total=5,
-            location_mode=LocationMode.SECONDARY,
-            transport=SecondaryFailoverRetryTransport(),
-        ) as client:
-            client.delete_entity(
-                entity, failover=ServiceRequestError("Attempting to force failover")
-            )  # DELETE, succeed when retry
-
-            # clean up
-            client.delete_table()
-
-        breakpoint()
-        # TODO: add more entities to make the result having more than one page
-        entities = tc.list_entities(failover=ServiceRequestError("Attempting to force failover"))
-        for e in entities:
-            pass
-        # assert request.url == secondary url
-        # TODO: add test for failing on second page, need another failover transport
-
-        # TODO: pass retry_to_secondary in function call and test the same above
-
-        breakpoint()
-
-        # test location_mode, try start with secondary to see if it will failover on primary
-        tc = TableClient(
-            url, table_name, credential=tables_primary_storage_account_key, location_mode=LocationMode.SECONDARY
-        )
-        with pytest.raises(HttpResponseError) as ex:
-            tc.create_table()
-        assert "Write operations are not allowed." in str(ex.value)
-        breakpoint()
-        with pytest.raises(HttpResponseError) as ex:
-            tc.create_entity({"PartitionKey": "foo2", "RowKey": "bar2"})
-        assert "Operation returned an invalid status 'Forbidden'" in str(ex.value)
-        breakpoint()
-        with pytest.raises(HttpResponseError) as ex:
-            tc.upsert_entity({"PartitionKey": "foo3", "RowKey": "bar3"})
-        assert "Write operations are not allowed." in str(ex.value)
-        breakpoint()
-        # TODO: prepare multiple pages
-        entities = tc.list_entities()
-        for e in entities:
-            pass
-
-        # TODO: pass location_mode in function call and test the same above
-
-        # TODO: need some tests with both retry_to_secondary and location_mode
-        # TODO: pass them in function call as well
-
-        # test use_location
-        tc = TableClient(url, table_name, credential=tables_primary_storage_account_key)
-        tc.delete_table()
-        with pytest.raises(HttpResponseError) as ex:
-            tc.create_table(use_location=LocationMode.SECONDARY)  # HttpResponseError: Write operations are not allowed.
-        assert "Write operations are not allowed." in str(ex.value)
-        # TODO: test get_entity() and upsert_entity() and delete_entity() and list_entities()
-        breakpoint()
-
-        tc = TableClient(url, table_name + "1", credential=tables_primary_storage_account_key)
-        tc.create_table(retry_to_secondary=True)
-        tc.delete_table()
-
-
 # ------------------------------------------------------------------------------

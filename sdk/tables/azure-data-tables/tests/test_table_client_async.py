@@ -14,8 +14,9 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ClientAuthenticationError
 from azure.identity.aio import DefaultAzureCredential
-from azure.data.tables import AccountSasPermissions, ResourceTypes, LocationMode, generate_account_sas
+from azure.data.tables import AccountSasPermissions, ResourceTypes, generate_account_sas
 from azure.data.tables.aio import TableServiceClient, TableClient
+from azure.data.tables._models import LocationMode
 from azure.data.tables._version import VERSION
 from azure.data.tables._constants import DEFAULT_STORAGE_ENDPOINT_SUFFIX
 

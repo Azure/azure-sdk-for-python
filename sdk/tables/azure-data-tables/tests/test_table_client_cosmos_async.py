@@ -13,7 +13,8 @@ from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.data.tables.aio import TableServiceClient, TableClient
-from azure.data.tables import __version__ as VERSION, TableTransactionError, LocationMode
+from azure.data.tables import __version__ as VERSION, TableTransactionError
+from azure.data.tables._models import LocationMode
 from azure.data.tables._constants import DEFAULT_COSMOS_ENDPOINT_SUFFIX
 from test_table_client_cosmos import validate_standard_account_endpoints
 

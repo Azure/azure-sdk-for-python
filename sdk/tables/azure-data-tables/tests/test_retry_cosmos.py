@@ -4,12 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-import time
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from azure.core.exceptions import ServiceRequestError
-from azure.data.tables import TableClient, LocationMode
+from azure.data.tables import TableClient
+from azure.data.tables._models import LocationMode
 
 from test_retry import FailoverRetryTransport, SecondaryFailoverRetryTransport, SecondpageFailoverRetryTransport
 from preparers import cosmos_decorator

@@ -10,8 +10,8 @@ import os
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from azure.data.tables._error import _validate_cosmos_tablename
-from azure.data.tables import TableServiceClient, TableClient, TableTransactionError, LocationMode
-from azure.data.tables import __version__ as VERSION
+from azure.data.tables import TableServiceClient, TableClient, TableTransactionError, __version__ as VERSION
+from azure.data.tables._models import LocationMode
 from azure.data.tables._constants import DEFAULT_COSMOS_ENDPOINT_SUFFIX
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError

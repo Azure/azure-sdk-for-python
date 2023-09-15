@@ -15,12 +15,12 @@ from azure.data.tables import (
     TableClient,
     AccountSasPermissions,
     ResourceTypes,
-    LocationMode,
     generate_account_sas,
+    __version__ as VERSION,
 )
-from azure.data.tables import __version__ as VERSION
 from azure.data.tables._constants import DEFAULT_STORAGE_ENDPOINT_SUFFIX
 from azure.data.tables._error import _validate_storage_tablename
+from azure.data.tables._models import LocationMode
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ClientAuthenticationError
 from azure.identity import DefaultAzureCredential
