@@ -270,12 +270,11 @@ class CRUDTests(unittest.TestCase):
                                "first level' 1*()": {"le/vel2": 'val1'},
                                "second level' 1*()": {"le/vel2": 'val2'}
                                }
-
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
         created_document = created_collection1.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEqual(self.last_headers[1], '["val1","val2"]')
+        self.assertEqual(self.last_headers[-1], '["val1","val2"]')
         del self.last_headers[:]
 
         collection_definition2 = {
@@ -304,7 +303,7 @@ class CRUDTests(unittest.TestCase):
         # create document without partition key being specified
         created_document = created_collection2.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEqual(self.last_headers[1], '["val3","val4"]')
+        self.assertEqual(self.last_headers[-1], '["val3","val4"]')
         del self.last_headers[:]
 
         created_db.delete_container(created_collection1.id)
@@ -614,7 +613,7 @@ class CRUDTests(unittest.TestCase):
     def _MockExecuteFunction(self, function, *args, **kwargs):
         try:
             self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey]
-                                    if HttpHeaders.PartitionKey in args[4].headers else '')
+                                     if HttpHeaders.PartitionKey in args[4].headers else '')
         except IndexError:
             self.last_headers.append('')
         return self.OriginalExecuteFunction(function, *args, **kwargs)
