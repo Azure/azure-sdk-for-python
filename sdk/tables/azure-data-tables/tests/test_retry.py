@@ -85,6 +85,29 @@ class SecondaryFailoverRetryTransport(RequestsTransport):
         self._already_raised = False
         return super().send(request, **kwargs)
 
+class SecondpageFailoverRetryTransport(RequestsTransport):
+    """Transport to attempt to raise while listing on second page."""
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._already_raised = False
+        self.count = 0
+    
+    def send(self, request, **kwargs):
+        if self._already_raised:
+            assert "-secondary" in request.url
+        else:
+            assert "-secondary" not in request.url
+        
+        self.count += 1
+        failover_on_error = kwargs.pop("failover", None)
+        if self.count >=2 and failover_on_error and not self._already_raised:
+            self.count -= 1
+            self._already_raised = True
+            raise failover_on_error
+
+        self._already_raised = False
+        return super().send(request, **kwargs)
+
 
 # --Test Class -----------------------------------------------------------------
 class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
@@ -272,7 +295,7 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
 
             # clean up
             client.delete_table()
-
+    
     @tables_decorator
     @recorded_by_proxy
     def test_failover_and_retry_on_primary(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -309,4 +332,27 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
         with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
             client.delete_table()
 
+    @tables_decorator
+    @recorded_by_proxy
+    def test_failover_and_retry_in_second_page_while_listing(self, tables_storage_account_name, tables_primary_storage_account_key):
+        url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+        entity1 = {"PartitionKey": "k1", "RowKey": "r1"}
+        entity2 = {"PartitionKey": "k2", "RowKey": "r2"}
+        
+        # prepare entities so that can list in more than one page
+        with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
+            client.create_table()
+            client.create_entity(entity1)
+            client.create_entity(entity2)
+        
+        with TableClient(url, table_name, credential=tables_primary_storage_account_key, transport=SecondpageFailoverRetryTransport()) as client:
+            entities = client.list_entities(results_per_page=1, failover=ServiceRequestError("Attempting to force failover"))
+            next(entities)
+            with pytest.raises(AssertionError):
+                next(entities)
+        
+        # clean up
+        with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
+            client.delete_table()
 # ------------------------------------------------------------------------------

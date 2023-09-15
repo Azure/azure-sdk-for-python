@@ -11,7 +11,7 @@ from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from azure.core.exceptions import ServiceRequestError
 from azure.data.tables import TableClient, LocationMode
 
-from test_retry import FailoverRetryTransport, SecondaryFailoverRetryTransport
+from test_retry import FailoverRetryTransport, SecondaryFailoverRetryTransport, SecondpageFailoverRetryTransport
 from preparers import cosmos_decorator
 from _shared.testcase import TableTestCase
 
@@ -122,6 +122,30 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             for e in entities:
                 pass
 
+        # clean up
+        with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
+            client.delete_table()
+    
+    @cosmos_decorator
+    @recorded_by_proxy
+    def test_failover_and_retry_in_second_page_while_listing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        table_name = self.get_resource_name("mytable")
+        entity1 = {"PartitionKey": "k1", "RowKey": "r1"}
+        entity2 = {"PartitionKey": "k2", "RowKey": "r2"}
+        
+        # prepare entities so that can list in more than one page
+        with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
+            client.create_table()
+            client.create_entity(entity1)
+            client.create_entity(entity2)
+        
+        with TableClient(url, table_name, credential=tables_primary_cosmos_account_key, transport=SecondpageFailoverRetryTransport()) as client:
+            entities = client.list_entities(results_per_page=1, failover=ServiceRequestError("Attempting to force failover"))
+            next(entities)
+            with pytest.raises(AssertionError):
+                next(entities)
+        
         # clean up
         with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.delete_table()
