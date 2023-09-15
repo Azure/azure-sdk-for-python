@@ -655,7 +655,7 @@ class ModelSignal(MonitoringSignal):
 
 @experimental
 class FADProductionData(RestTranslatableMixin):
-    """ Feature Attribution Production Data
+    """Feature Attribution Production Data
 
     :keyword input_data: Input data used by the monitor.
     :paramtype input_data: ~azure.ai.ml.Input
@@ -667,9 +667,10 @@ class FADProductionData(RestTranslatableMixin):
     :keyword pre_processing_component : The ARM (Azure Resource Manager) resource ID of the component resource used to
         preprocess the data.
     :paramtype pre_processing_component: string
-    :param data_window_size: The size of the data window to use for the monitor.
+    :param data_window_size: The number of days a single monitor looks back over the target.
     :type data_window_size: string
     """
+
     def __init__(
         self,
         *,

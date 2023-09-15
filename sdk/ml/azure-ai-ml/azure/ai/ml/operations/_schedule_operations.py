@@ -436,7 +436,7 @@ class ScheduleOperations(_ScopeDependentOperations):
                                     ),
                                     data_context=MonitorDatasetContext.MODEL_OUTPUTS,
                                     data_window_size="P7D",
-                                )
+                                ),
                             ]
                     elif not mdc_output_enabled and not signal.production_data:
                         # if target dataset is absent and data collector for output is not enabled,
