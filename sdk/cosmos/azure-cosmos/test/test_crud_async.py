@@ -304,7 +304,7 @@ class TestCRUDAsync:
         await self._set_up()
         created_db = self.database_for_test
 
-        created_collection = await self.database_for_test.create_container(str(uuid.uuid4), PartitionKey(path="/id"))
+        created_collection = await self.database_for_test.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
 
         retrieved_collection = created_db.get_container_client(
             container=created_collection.id
