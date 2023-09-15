@@ -25,7 +25,11 @@ from ._cosmos_integers import UInt64, UInt128
 from ._cosmos_murmurhash3 import murmurhash3_128
 import binascii
 from ._routing.routing_range import Range
-from typing import Literal, overload
+from typing import overload
+try:
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal
 
 _MaximumExclusiveEffectivePartitionKey = 0xFF
 _MinimumInclusiveEffectivePartitionKey = 0x00
