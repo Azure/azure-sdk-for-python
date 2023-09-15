@@ -27,14 +27,7 @@ from azure.identity import DefaultAzureCredential
 from _shared.testcase import TableTestCase
 from preparers import tables_decorator
 
-SERVICES = {
-    TableServiceClient: "table",
-    TableClient: "table",
-}
-
-_CONNECTION_ENDPOINTS = {"table": "TableEndpoint", "cosmos": "TableEndpoint"}
-
-_CONNECTION_ENDPOINTS_SECONDARY = {"table": "TableSecondaryEndpoint", "cosmos": "TableSecondaryEndpoint"}
+SERVICES = [TableServiceClient, TableClient]
 
 
 class TestTableClient(AzureRecordedTestCase, TableTestCase):
@@ -550,11 +543,10 @@ class TestTableClientUnitTests(TableTestCase):
 
     # --Direct Parameters Test Cases --------------------------------------------
     def test_create_service_with_key(self):
-        for client, url in SERVICES.items():
+        url = self.account_url(self.tables_storage_account_name, "table")
+        for client in SERVICES:
             # Act
-            service = client(
-                self.account_url(self.tables_storage_account_name, url), credential=self.credential, table_name="foo"
-            )
+            service = client(url, credential=self.credential, table_name="foo")
 
             # Assert
             validate_standard_account_endpoints(
@@ -563,14 +555,10 @@ class TestTableClientUnitTests(TableTestCase):
             assert service.scheme == "https"
 
     def test_create_service_with_connection_string(self):
-        for service_type in SERVICES.items():
+        conn_string = f"AccountName={self.tables_storage_account_name};AccountKey={self.tables_primary_storage_account_key};"
+        for service_type in SERVICES:
             # Act
-            service = service_type[0].from_connection_string(
-                self.storage_connection_string(
-                    self.tables_storage_account_name, self.tables_primary_storage_account_key
-                ),
-                table_name="test",
-            )
+            service = service_type.from_connection_string(conn_string, table_name="test")
 
             # Assert
             validate_standard_account_endpoints(
@@ -580,25 +568,26 @@ class TestTableClientUnitTests(TableTestCase):
 
     def test_create_service_with_sas(self):
         # Arrange
-        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
-        token = AzureSasCredential(self.generate_sas_token())
+        sas_token = self.generate_sas_token()
+        url = self.account_url(self.tables_storage_account_name, "table")
         for service_type in SERVICES:
             # Act
             service = service_type(
-                self.account_url(self.tables_storage_account_name, "table"), credential=token, table_name="foo"
+                url, credential=AzureSasCredential(sas_token), table_name="foo"
             )
 
             # Assert
             assert service is not None
             assert service.account_name == self.tables_storage_account_name
-            assert service.url.startswith("https://" + self.tables_storage_account_name + ".table." + endpoint_suffix)
+            assert service.url.startswith(f"https://{self.tables_storage_account_name}.table.core.windows.net")
             assert isinstance(service.credential, AzureSasCredential)
 
     def test_create_service_protocol(self):
-        for service_type in SERVICES.items():
+        url = self.account_url(self.tables_storage_account_name, "table").replace("https", "http")
+        for service_type in SERVICES:
             # Act
-            url = self.account_url(self.tables_storage_account_name, "table").replace("https", "http")
-            service = service_type[0](url, credential=self.credential, table_name="foo")
+            
+            service = service_type(url, credential=self.credential, table_name="foo")
 
             # Assert
             validate_standard_account_endpoints(
@@ -607,10 +596,7 @@ class TestTableClientUnitTests(TableTestCase):
             assert service.scheme == "http"
 
     def test_create_service_empty_key(self):
-        # Arrange
-        TABLE_SERVICES = [TableServiceClient, TableClient]
-
-        for service_type in TABLE_SERVICES:
+        for service_type in SERVICES:
             # Act
             with pytest.raises(ValueError) as e:
                 test_service = service_type("testaccount", credential="", table_name="foo")
@@ -622,19 +608,11 @@ class TestTableClientUnitTests(TableTestCase):
             assert str(e.value) == "You need to provide either an AzureSasCredential or AzureNamedKeyCredential"
 
     def test_create_service_with_socket_timeout(self):
-        for service_type in SERVICES.items():
+        url = self.account_url(self.tables_storage_account_name, "table")
+        for service_type in SERVICES:
             # Act
-            default_service = service_type[0](
-                self.account_url(self.tables_storage_account_name, "table"),
-                credential=self.credential,
-                table_name="foo",
-            )
-            service = service_type[0](
-                self.account_url(self.tables_storage_account_name, "table"),
-                credential=self.credential,
-                table_name="foo",
-                connection_timeout=22,
-            )
+            default_service = service_type(url, credential=self.credential, table_name="foo")
+            service = service_type(url, credential=self.credential, table_name="foo", connection_timeout=22)
 
             # Assert
             validate_standard_account_endpoints(
@@ -656,13 +634,11 @@ class TestTableClientUnitTests(TableTestCase):
     # --Connection String Test Cases --------------------------------------------
     def test_create_service_with_connection_string_key(self):
         # Arrange
-        conn_string = "AccountName={};AccountKey={};".format(
-            self.tables_storage_account_name, self.tables_primary_storage_account_key
-        )
+        conn_string = f"AccountName={self.tables_storage_account_name};AccountKey={self.tables_primary_storage_account_key};"
 
-        for service_type in SERVICES.items():
+        for service_type in SERVICES:
             # Act
-            service = service_type[0].from_connection_string(conn_string, table_name="foo")
+            service = service_type.from_connection_string(conn_string, table_name="foo")
 
             # Assert
             validate_standard_account_endpoints(
@@ -672,11 +648,8 @@ class TestTableClientUnitTests(TableTestCase):
 
     def test_create_service_with_connection_string_sas(self):
         # Arrange
-        token = AzureSasCredential(self.generate_sas_token())
-        conn_string = "AccountName={};SharedAccessSignature={};".format(
-            self.tables_storage_account_name, token.signature
-        )
-        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
+        sas_token = self.generate_sas_token()
+        conn_string = f"AccountName={self.tables_storage_account_name};SharedAccessSignature={AzureSasCredential(sas_token)}"
 
         for service_type in SERVICES:
             # Act
@@ -685,29 +658,23 @@ class TestTableClientUnitTests(TableTestCase):
             # Assert
             assert service is not None
             assert service.account_name == self.tables_storage_account_name
-            assert service.url.startswith("https://" + self.tables_storage_account_name + ".table." + endpoint_suffix)
+            assert service.url.startswith(f"https://{self.tables_storage_account_name}.table.core.windows.net")
             assert isinstance(service.credential, AzureSasCredential)
 
     def test_create_service_with_connection_string_emulated(self):
+        conn_string = "UseDevelopmentStorage=true;"
         # Arrange
-        for service_type in SERVICES.items():
-            conn_string = "UseDevelopmentStorage=true;".format(
-                self.tables_storage_account_name, self.tables_primary_storage_account_key
-            )
-
+        for service_type in SERVICES:
             # Act
             with pytest.raises(ValueError):
-                service = service_type[0].from_connection_string(conn_string, table_name="foo")
+                service = service_type.from_connection_string(conn_string, table_name="foo")
 
     def test_create_service_with_connection_string_custom_domain(self):
         # Arrange
-        for service_type in SERVICES.items():
-            conn_string = "AccountName={};AccountKey={};TableEndpoint=www.mydomain.com;".format(
-                self.tables_storage_account_name, self.tables_primary_storage_account_key
-            )
-
+        conn_string = f"AccountName={self.tables_storage_account_name};AccountKey={self.tables_primary_storage_account_key};TableEndpoint=www.mydomain.com;"
+        for service_type in SERVICES:
             # Act
-            service = service_type[0].from_connection_string(conn_string, table_name="foo")
+            service = service_type.from_connection_string(conn_string, table_name="foo")
 
             # Assert
             assert service is not None
@@ -717,13 +684,10 @@ class TestTableClientUnitTests(TableTestCase):
 
     def test_create_service_with_conn_str_custom_domain_trailing_slash(self):
         # Arrange
-        for service_type in SERVICES.items():
-            conn_string = "AccountName={};AccountKey={};TableEndpoint=www.mydomain.com/;".format(
-                self.tables_storage_account_name, self.tables_primary_storage_account_key
-            )
-
+        conn_string = f"AccountName={self.tables_storage_account_name};AccountKey={self.tables_primary_storage_account_key};TableEndpoint=www.mydomain.com/;"
+        for service_type in SERVICES:
             # Act
-            service = service_type[0].from_connection_string(conn_string, table_name="foo")
+            service = service_type.from_connection_string(conn_string, table_name="foo")
 
             # Assert
             assert service is not None
@@ -733,13 +697,10 @@ class TestTableClientUnitTests(TableTestCase):
 
     def test_create_service_with_conn_str_custom_domain_sec_override(self):
         # Arrange
-        for service_type in SERVICES.items():
-            conn_string = "AccountName={};AccountKey={};TableEndpoint=www.mydomain.com/;".format(
-                self.tables_storage_account_name, self.tables_primary_storage_account_key
-            )
-
+        conn_string = f"AccountName={self.tables_storage_account_name};AccountKey={self.tables_primary_storage_account_key};TableEndpoint=www.mydomain.com/;"
+        for service_type in SERVICES:
             # Act
-            service = service_type[0].from_connection_string(
+            service = service_type.from_connection_string(
                 conn_string, secondary_hostname="www-sec.mydomain.com", table_name="foo"
             )
 
@@ -750,31 +711,21 @@ class TestTableClientUnitTests(TableTestCase):
             assert service._primary_endpoint.startswith("https://www.mydomain.com")
 
     def test_create_service_with_conn_str_fails_if_sec_without_primary(self):
-        for service_type in SERVICES.items():
-            # Arrange
-            conn_string = "AccountName={};AccountKey={};{}=www.mydomain.com;".format(
-                self.tables_storage_account_name,
-                self.tables_primary_storage_account_key,
-                _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]),
-            )
-
+        # Arrange
+        conn_string = f"AccountName={self.tables_storage_account_name};AccountKey={self.tables_primary_storage_account_key};TableSecondaryEndpoint=www.mydomain.com;"
+        for service_type in SERVICES:
             # Act
             # Fails if primary excluded
-            with pytest.raises(ValueError):
-                service = service_type[0].from_connection_string(conn_string, table_name="foo")
+            with pytest.raises(ValueError) as ex:
+                service = service_type.from_connection_string(conn_string, table_name="foo")
+            assert str(ex.value) == "Connection string specifies only secondary endpoint."
 
     def test_create_service_with_conn_str_succeeds_if_sec_with_primary(self):
-        for service_type in SERVICES.items():
-            # Arrange
-            conn_string = "AccountName={};AccountKey={};{}=www.mydomain.com;{}=www-sec.mydomain.com;".format(
-                self.tables_storage_account_name,
-                self.tables_primary_storage_account_key,
-                _CONNECTION_ENDPOINTS.get(service_type[1]),
-                _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]),
-            )
-
+        # Arrange
+        conn_string = f"AccountName={self.tables_storage_account_name};AccountKey={self.tables_primary_storage_account_key};TableEndpoint=www.mydomain.com;TableSecondaryEndpoint=www-sec.mydomain.com;"
+        for service_type in SERVICES:
             # Act
-            service = service_type[0].from_connection_string(conn_string, table_name="foo")
+            service = service_type.from_connection_string(conn_string, table_name="foo")
 
             # Assert
             assert service is not None
@@ -783,15 +734,12 @@ class TestTableClientUnitTests(TableTestCase):
             assert service._primary_endpoint.startswith("https://www.mydomain.com")
 
     def test_create_service_with_custom_account_endpoint_path(self):
-        token = AzureSasCredential(self.generate_sas_token())
-        custom_account_url = "http://local-machine:11002/custom/account/path/" + token.signature
-        for service_type in SERVICES.items():
-            conn_string = "DefaultEndpointsProtocol=http;AccountName={};AccountKey={};TableEndpoint={};".format(
-                self.tables_storage_account_name, self.tables_primary_storage_account_key, custom_account_url
-            )
-
+        sas_token = self.generate_sas_token()
+        custom_account_url = f"http://local-machine:11002/custom/account/path{AzureSasCredential(sas_token).signature}"
+        conn_string = f"DefaultEndpointsProtocol=http;AccountName={self.tables_storage_account_name};AccountKey={self.tables_primary_storage_account_key};TableEndpoint={custom_account_url};"
+        for service_type in SERVICES:
             # Act
-            service = service_type[0].from_connection_string(conn_string, table_name="foo")
+            service = service_type.from_connection_string(conn_string, table_name="foo")
 
             # Assert
             assert service.account_name == self.tables_storage_account_name
@@ -815,7 +763,7 @@ class TestTableClientUnitTests(TableTestCase):
         assert service.url.startswith("http://local-machine:11002/custom/account/path")
         assert service.scheme == "http"
 
-        service = TableClient.from_table_url("http://local-machine:11002/custom/account/path/foo" + token.signature)
+        service = TableClient.from_table_url(f"http://local-machine:11002/custom/account/path/foo{AzureSasCredential(sas_token).signature}")
         assert service.account_name == "custom"
         assert service.table_name == "foo"
         assert service.credential == None
@@ -848,10 +796,10 @@ class TestTableClientUnitTests(TableTestCase):
 
     def test_error_with_malformed_conn_str(self):
         for conn_str in ["", "foobar", "foobar=baz=foo", "foo;bar;baz", "foo=;bar=;", "=", ";", "=;=="]:
-            for service_type in SERVICES.items():
+            for service_type in SERVICES:
                 # Act
                 with pytest.raises(ValueError) as e:
-                    service = service_type[0].from_connection_string(conn_str, table_name="test")
+                    service = service_type.from_connection_string(conn_str, table_name="test")
 
                 if conn_str in ("", "foobar", "foo;bar;baz", ";", "foo=;bar=;", "=", "=;=="):
                     assert str(e.value) == "Connection string is either blank or malformed."
@@ -859,11 +807,10 @@ class TestTableClientUnitTests(TableTestCase):
                     assert str(e.value) == "Connection string missing required connection details."
 
     def test_closing_pipeline_client(self):
-        for client, url in SERVICES.items():
+        url = self.account_url(self.tables_storage_account_name, "table")
+        for client in SERVICES:
             # Act
-            service = client(
-                self.account_url(self.tables_storage_account_name, url), credential=self.credential, table_name="table"
-            )
+            service = client(url, credential=self.credential, table_name="table")
 
             # Assert
             with service:
@@ -871,43 +818,32 @@ class TestTableClientUnitTests(TableTestCase):
                 service.close()
 
     def test_closing_pipeline_client_simple(self):
-        for client, url in SERVICES.items():
+        url = self.account_url(self.tables_storage_account_name, "table")
+        for client in SERVICES:
             # Act
-            service = client(
-                self.account_url(self.tables_storage_account_name, url), credential=self.credential, table_name="table"
-            )
+            service = client(url, credential=self.credential, table_name="table")
             service.close()
 
     @pytest.mark.skip("HTTP prefix does not raise an error")
     def test_create_service_with_token_and_http(self):
         for service_type in SERVICES:
-
             with pytest.raises(ValueError):
                 url = self.account_url(self.tables_storage_account_name, "table").replace("https", "http")
                 service_type(url, credential=AzureSasCredential("fake_sas_credential"), table_name="foo")
 
     def test_create_service_with_token(self):
         url = self.account_url(self.tables_storage_account_name, "table")
-        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
-        self.token_credential = AzureSasCredential("fake_sas_credential")
+        token_credential = self.get_token_credential()
 
-        service = TableClient(url, credential=self.token_credential, table_name="foo")
+        for service_type in SERVICES:
+            service = service_type(url, credential=token_credential, table_name="foo")
 
-        # Assert
-        assert service is not None
-        assert service.account_name == self.tables_storage_account_name
-        assert service.url.startswith("https://" + self.tables_storage_account_name + ".table." + endpoint_suffix)
-        assert service.credential == self.token_credential
-        assert not hasattr(service.credential, "account_key")
-
-        service = TableServiceClient(url, credential=self.token_credential, table_name="foo")
-
-        # Assert
-        assert service is not None
-        assert service.account_name == self.tables_storage_account_name
-        assert service.url.startswith("https://" + self.tables_storage_account_name + ".table." + endpoint_suffix)
-        assert service.credential == self.token_credential
-        assert not hasattr(service.credential, "account_key")
+            # Assert
+            assert service is not None
+            assert service.account_name == self.tables_storage_account_name
+            assert service.url.startswith(f"https://{self.tables_storage_account_name}.table.core.windows.net")
+            assert service.credential == token_credential
+            assert not hasattr(service.credential, "account_key")
 
     def test_create_client_with_api_version(self):
         url = self.account_url(self.tables_storage_account_name, "table")
