@@ -10,7 +10,12 @@ from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.tracing.decorator import distributed_trace
 
 from ._generated import SearchServiceClient as _SearchServiceClient
-from ._generated.models import SkillNames, SearchIndexer, SearchIndexerStatus, DocumentKeysOrIds
+from ._generated.models import (
+    SkillNames,
+    SearchIndexer,
+    SearchIndexerStatus,
+    DocumentKeysOrIds,
+)
 from ._utils import (
     get_access_conditions,
     normalize_endpoint,
@@ -41,6 +46,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
     """
 
     _ODATA_ACCEPT: str = "application/json;odata.metadata=minimal"
+    _client: _SearchServiceClient
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any) -> None:
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
@@ -49,13 +55,13 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         audience = kwargs.pop("audience", None)
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
-            self._client: _SearchServiceClient = _SearchServiceClient(
+            self._client = _SearchServiceClient(
                 endpoint=endpoint, sdk_moniker=SDK_MONIKER, api_version=self._api_version, **kwargs
             )
         else:
             self._aad = True
             authentication_policy = get_authentication_policy(credential, audience=audience)
-            self._client: _SearchServiceClient = _SearchServiceClient(
+            self._client = _SearchServiceClient(
                 endpoint=endpoint,
                 authentication_policy=authentication_policy,
                 sdk_moniker=SDK_MONIKER,
@@ -173,6 +179,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         if select:
             kwargs["select"] = ",".join(select)
         result = self._client.indexers.list(**kwargs)
+        assert result.indexers is not None  # Hint for mypy
         return result.indexers
 
     @distributed_trace
@@ -193,6 +200,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.indexers.list(**kwargs)
+        assert result.indexers is not None  # Hint for mypy
         return [x.name for x in result.indexers]
 
     @distributed_trace
@@ -432,6 +440,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         if select:
             kwargs["select"] = ",".join(select)
         result = self._client.data_sources.list(**kwargs)
+        assert result.data_sources is not None  # Hint for mypy
         # pylint:disable=protected-access
         return [SearchIndexerDataSourceConnection._from_generated(x) for x in result.data_sources]
 
@@ -445,6 +454,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.data_sources.list(**kwargs)
+        assert result.data_sources is not None  # Hint for mypy
         return [x.name for x in result.data_sources]
 
     @distributed_trace
@@ -511,6 +521,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         if select:
             kwargs["select"] = ",".join(select)
         result = self._client.skillsets.list(**kwargs)
+        assert result.skillsets is not None  # Hint for mypy
         return [SearchIndexerSkillset._from_generated(skillset) for skillset in result.skillsets]
 
     @distributed_trace
@@ -524,6 +535,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         result = self._client.skillsets.list(**kwargs)
+        assert result.skillsets is not None  # Hint for mypy
         return [x.name for x in result.skillsets]
 
     @distributed_trace
