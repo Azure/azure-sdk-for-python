@@ -7,7 +7,8 @@ from subprocess import check_call, getoutput
 import shutil
 import re
 import os
-import pytoml as toml
+import tomli as toml
+import tomli_w as tomlw
 
 from .swaggertosdk.SwaggerToSdkCore import (
     CONFIG_FILE,
@@ -71,7 +72,7 @@ def after_multiapi_combiner(sdk_code_path: str, package_name: str, folder_name: 
             content["packaging"]["exclude_folders"] = ",".join([exclude(f"{package_name}-{s}") for s in subfolders_name])
 
         with open(toml_file, "w") as file_out:
-            toml.dump(content, file_out)
+            tomlw.dump(content, file_out)
         call_build_config(package_name, folder_name)
         
         # remove .egg-info to reinstall package

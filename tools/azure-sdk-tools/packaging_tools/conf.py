@@ -2,7 +2,8 @@ import logging
 from pathlib import Path
 from typing import Dict, Any
 
-import pytoml as toml
+import tomli as toml
+import tomli_w as tomlw
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -45,4 +46,4 @@ def build_default_conf(folder: Path, package_name: str) -> None:
     conf[_SECTION]["package_nspkg"] = package_name[: package_name.rindex("-")] + "-nspkg"
 
     with open(conf_path, "w") as fd:
-        toml.dump(conf, fd)
+        tomlw.dump(conf, fd)
