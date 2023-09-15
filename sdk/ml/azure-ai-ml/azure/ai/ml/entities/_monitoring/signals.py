@@ -655,6 +655,21 @@ class ModelSignal(MonitoringSignal):
 
 @experimental
 class FADProductionData(RestTranslatableMixin):
+    """ Feature Attribution Production Data
+
+    :keyword input_data: Input data used by the monitor.
+    :paramtype input_data: ~azure.ai.ml.Input
+    :keyword data_context: The context of the input dataset. Accepted values are "model_inputs",
+        "model_outputs", "training", "test", "validation", and "ground_truth".
+    :paramtype data_context: ~azure.ai.ml.constants._monitoring
+    :keyword data_column_names: The names of the columns in the input data.
+    :paramtype data_column_names: Dict[str, str]
+    :keyword pre_processing_component : The ARM (Azure Resource Manager) resource ID of the component resource used to
+        preprocess the data.
+    :paramtype pre_processing_component: string
+    :param data_window_size: The size of the data window to use for the monitor.
+    :type data_window_size: string
+    """
     def __init__(
         self,
         *,
@@ -707,13 +722,13 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
 
     :ivar type: The type of the signal. Set to "feature_attribution_drift" for this class.
     :vartype type: str
-    :keyword baseline_dataset: The data to calculate drift against.
-    :paramtype baseline_dataset: ~azure.ai.ml.entities.MonitorInputData
+    :keyword production_data: The data for which drift will be calculated.
+    :paratype production_data: ~azure.ai.ml.entities.FADProductionData
+    :keyword reference_data: The data to calculate drift against.
+    :paramtype reference_data: ~azure.ai.ml.entities.ReferenceData
     :keyword metric_thresholds: A list of metrics to calculate and their
         associated thresholds.
     :paramtype metric_thresholds: ~azure.ai.ml.entities.FeatureAttributionDriftMetricThreshold
-    :keyword model_type: The model type.
-    :paramtype model_type: ~azure.ai.ml.constants.MonitorModelType
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
     :paramtype alert_enabled: bool
     """
@@ -721,7 +736,7 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        production_data: List[FADProductionData],
+        production_data: Optional[List[FADProductionData]] = None,
         reference_data: ReferenceData,
         metric_thresholds: FeatureAttributionDriftMetricThreshold,
         alert_enabled: bool = True,
