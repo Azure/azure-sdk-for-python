@@ -696,7 +696,7 @@ class TestCRUDAsync:
     async def test_partitioned_collection_conflict_crud_and_query_async(self):
         await self._set_up()
 
-        created_collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4), PartitionKey(path="/id"))
+        created_collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4()), PartitionKey(path="/id"))
 
         conflict_definition = {'id': 'new conflict',
                                'resourceId': 'doc1',
