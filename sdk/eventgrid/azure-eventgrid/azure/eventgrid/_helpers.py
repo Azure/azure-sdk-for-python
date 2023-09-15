@@ -203,11 +203,11 @@ def _to_json_http_request(events, **kwargs):
         if isinstance(event.data, bytes):
             data["data_base64"] = _SERIALIZER.body(base64.b64encode(event.data), "bytearray")
         else:
-            data["data"] = _SERIALIZER.body(event.data, "{object}")
+            data["data"] = _SERIALIZER.body(event.data, "[object]")
         data["time"] = _SERIALIZER.body(event.time, "iso-8601")
         data["datacontenttype"] = _SERIALIZER.body(event.datacontenttype, "str")
         if event.extensions:
-            data["additional_properties"] = _SERIALIZER.body(event.extensions, "{object}")
+            data["additional_properties"] = _SERIALIZER.body(event.extensions, "[object]")
         list_data.append(data)
     
     return json.dumps(list_data)
