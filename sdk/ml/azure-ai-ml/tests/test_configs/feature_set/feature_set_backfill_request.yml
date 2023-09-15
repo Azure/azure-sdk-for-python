@@ -15,6 +15,6 @@ spark_conf:
     spark.executor.memory: "2g"
     spark.executor.instances: "4"
 job_id: "1"
-data_availability_status: ["Pending"]
+data_status: ["Pending"]
 tags:
     foo: "bar"

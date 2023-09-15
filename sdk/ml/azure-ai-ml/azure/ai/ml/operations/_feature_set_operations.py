@@ -184,7 +184,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         tags: Optional[Dict[str, str]] = None,
         compute_resource: Optional[MaterializationComputeResource] = None,
         spark_configuration: Optional[Dict[str, str]] = None,
-        data_availability_status: Optional[List[str]] = None,
+        data_status: Optional[List[str]] = None,
         job_id: Optional[str] = None,
         **kwargs: Dict,
     ) -> LROPoller[FeatureSetBackfillMetadata]:
@@ -219,7 +219,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
             ),
             resource=compute_resource._to_rest_object() if compute_resource else None,
             spark_configuration=spark_configuration,
-            data_availability_status=data_availability_status,
+            data_availability_status=data_status,
             job_id=job_id,
             tags=tags,
         )
