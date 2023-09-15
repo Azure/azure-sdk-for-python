@@ -39,6 +39,7 @@ class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):  # pylint: disa
         credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
+        super().__init__()
         _endpoint = '{endpoint}'
         self._config = SchemaRegistryClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
