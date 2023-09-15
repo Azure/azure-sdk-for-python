@@ -44,7 +44,7 @@ def prep_if_none_match(etag: str, match_condition: MatchConditions) -> Optional[
 
 def get_access_conditions(
     model: Any, match_condition: MatchConditions = MatchConditions.Unconditionally
-) -> Tuple[Dict[int, Any], Dict[str, bool]]:
+) -> Tuple[Dict[int, Any], Dict[str, Optional[str]]]:
     error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
 
     if isinstance(model, str):
