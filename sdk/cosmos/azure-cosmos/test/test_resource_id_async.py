@@ -108,10 +108,11 @@ class TestResourceIdsAsync:
         ]
 
         # test illegal resource id's for all resources
-        error_string = illegal_chars_string
         for resource_id in illegal_strings:
             if resource_id == "ID_with_trailing_spaces   ":
                 error_string = space_chars_string
+            else:
+                error_string = illegal_chars_string
             try:
                 await self.client.create_database(resource_id)
                 pytest.fail("Database create should have failed for id {}".format(resource_id))

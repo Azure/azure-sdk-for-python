@@ -2233,7 +2233,7 @@ class TestCRUDAsync:
         # Now delete the collection.
         await db.delete_container(container=collection)
         # Reading fails.
-        await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND, collection.read_offer)
+        await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND, collection.get_throughput)
 
     @pytest.mark.asyncio
     async def test_offer_replace_async(self):
@@ -2469,8 +2469,9 @@ class TestCRUDAsync:
                                                                                             path="/pk"))
 
         # Create item to patch
+        item_id = "patch_item_" + str(uuid.uuid4())
         item = {
-            "id": "patch_item",
+            "id": item_id,
             "pk": "patch_item_pk",
             "prop": "prop1",
             "address": {
@@ -2488,7 +2489,7 @@ class TestCRUDAsync:
             {"op": "incr", "path": "/number", "value": 7},
             {"op": "move", "from": "/color", "path": "/favorite_color"}
         ]
-        patched_item = await created_container.patch_item(item="patch_item", partition_key="patch_item_pk",
+        patched_item = await created_container.patch_item(item=item_id, partition_key="patch_item_pk",
                                                           patch_operations=operations)
         # Verify results from patch operations
         assert patched_item.get("color") is None
@@ -2501,7 +2502,7 @@ class TestCRUDAsync:
         # Negative test - attempt to replace non-existent field
         operations = [{"op": "replace", "path": "/wrong_field", "value": "wrong_value"}]
         try:
-            await created_container.patch_item(item="patch_item", partition_key="patch_item_pk",
+            await created_container.patch_item(item=item_id, partition_key="patch_item_pk",
                                                patch_operations=operations)
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == StatusCodes.BAD_REQUEST
@@ -2509,7 +2510,7 @@ class TestCRUDAsync:
         # Negative test - attempt to remove non-existent field
         operations = [{"op": "remove", "path": "/wrong_field"}]
         try:
-            await created_container.patch_item(item="patch_item", partition_key="patch_item_pk",
+            await created_container.patch_item(item=item_id, partition_key="patch_item_pk",
                                                patch_operations=operations)
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == StatusCodes.BAD_REQUEST
@@ -2517,7 +2518,7 @@ class TestCRUDAsync:
         # Negative test - attempt to increment non-number field
         operations = [{"op": "incr", "path": "/company", "value": 3}]
         try:
-            await created_container.patch_item(item="patch_item", partition_key="patch_item_pk",
+            await created_container.patch_item(item=item_id, partition_key="patch_item_pk",
                                                patch_operations=operations)
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == StatusCodes.BAD_REQUEST
@@ -2525,7 +2526,7 @@ class TestCRUDAsync:
         # Negative test - attempt to move from non-existent field
         operations = [{"op": "move", "from": "/wrong_field", "path": "/other_field"}]
         try:
-            await created_container.patch_item(item="patch_item", partition_key="patch_item_pk",
+            await created_container.patch_item(item=item_id, partition_key="patch_item_pk",
                                                patch_operations=operations)
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == StatusCodes.BAD_REQUEST
@@ -2537,8 +2538,9 @@ class TestCRUDAsync:
                                                                                         partition_key=PartitionKey(
                                                                                             path="/pk"))
         # Create item to patch
+        item_id = "conditional_patch_item_" + str(uuid.uuid4())
         item = {
-            "id": "conditional_patch_item",
+            "id": item_id,
             "pk": "patch_item_pk",
             "prop": "prop1",
             "address": {
@@ -2562,14 +2564,14 @@ class TestCRUDAsync:
         num_false = item.get("number") + 1
         filter_predicate = "from root where root.number = " + str(num_false)
         try:
-            await created_container.patch_item(item="conditional_patch_item", partition_key="patch_item_pk",
+            await created_container.patch_item(item=item_id, partition_key="patch_item_pk",
                                                patch_operations=operations, filter_predicate=filter_predicate)
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == StatusCodes.PRECONDITION_FAILED
 
         # Run patch operations with correct filter
         filter_predicate = "from root where root.number = " + str(item.get("number"))
-        patched_item = await created_container.patch_item(item="conditional_patch_item", partition_key="patch_item_pk",
+        patched_item = await created_container.patch_item(item=item_id, partition_key="patch_item_pk",
                                                           patch_operations=operations,
                                                           filter_predicate=filter_predicate)
         # Verify results from patch operations
