@@ -37,7 +37,7 @@ class TestQueryAsync:
     async def test_first_and_last_slashes_trimmed_for_query_string_async(self):
         await self._set_up()
         created_collection = await self.created_db.create_container_if_not_exists(
-            "test_trimmed_slashes", PartitionKey(path="/pk"))
+            str(uuid.uuid4()), PartitionKey(path="/pk"))
         doc_id = 'myId' + str(uuid.uuid4())
         document_definition = {'pk': 'pk', 'id': doc_id}
         await created_collection.create_item(body=document_definition)
