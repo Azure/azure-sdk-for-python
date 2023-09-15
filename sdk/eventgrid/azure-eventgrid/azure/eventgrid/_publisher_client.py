@@ -102,8 +102,11 @@ class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-ver
         # type: (str, Union[AzureKeyCredential, AzureSasCredential, TokenCredential], Any) -> None
         self._endpoint = endpoint
         _endpoint = "https://{topicHostname}"
-        self._config = EventGridPublisherClientConfiguration(policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs)
-        self._client: PipelineClient = PipelineClient(base_url=_endpoint, config=self._config, policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs)
+
+        kwargs["policies"] = EventGridPublisherClient._policies(credential, **kwargs)
+
+        self._config = EventGridPublisherClientConfiguration(**kwargs)
+        self._client: PipelineClient = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
     @staticmethod
     def _policies(credential, **kwargs):

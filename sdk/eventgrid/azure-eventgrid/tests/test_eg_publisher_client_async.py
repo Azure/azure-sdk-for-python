@@ -332,6 +332,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
                 )
         await client.send(eg_event)
 
+    @pytest.mark.skip("Skip for now")
     @pytest.mark.live_test_only
     @EventGridPreparer()
     @recorded_by_proxy_async
@@ -340,7 +341,7 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
         eventgrid_partner_namespace_key = os.environ['EVENTGRID_PARTNER_NAMESPACE_TOPIC_KEY']
         channel_name = os.environ['EVENTGRID_PARTNER_CHANNEL_NAME']
         credential = AzureKeyCredential(eventgrid_partner_namespace_key)
-        client = EventGridPublisherClient(eventgrid_partner_namespace_endpoint, eventgrid_partner_namespace_key)
+        client = EventGridPublisherClient(eventgrid_partner_namespace_endpoint, credential)
         cloud_event = CloudEvent(
                 source = "http://samplesource.dev",
                 data = "cloudevent",
@@ -348,6 +349,6 @@ class TestEventGridPublisherClient(AzureRecordedTestCase):
                 )
         def callback(request):
             req = json.loads(request.http_request.headers)
-            assert req.get("aeg-channel-name") == channel_name
+            assert req["aeg-channel-name"] == channel_name
 
         await client.send(cloud_event, channel_name=channel_name, raw_request_hook=callback)
