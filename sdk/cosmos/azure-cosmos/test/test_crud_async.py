@@ -2082,7 +2082,7 @@ class TestCRUDAsync:
             """
             for trigger_i in triggers:
                 trigger = await collection.scripts.create_trigger(body=trigger_i)
-                async for property in trigger_i:
+                for property in trigger_i:
                     assert trigger[property] == trigger_i[property]
 
         # create database
