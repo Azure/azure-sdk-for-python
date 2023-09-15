@@ -4,6 +4,7 @@
 # ------------------------------------
 from typing import cast, Optional, NoReturn, Union, TYPE_CHECKING
 
+from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives.asymmetric.padding import AsymmetricPadding, OAEP, PKCS1v15, PSS, MGF1
 from cryptography.hazmat.primitives.asymmetric.rsa import (
     rsa_crt_dmp1,
@@ -45,6 +46,191 @@ PSS_MAP = {
 }
 
 
+def get_encryption_algorithm(padding: AsymmetricPadding) -> EncryptionAlgorithm:
+    """Maps an `AsymmetricPadding` to an encryption algorithm.
+
+    :param padding: The padding to use.
+    :type padding: AsymmetricPadding
+
+    :returns: The corresponding Key Vault encryption algorithm.
+    :rtype: EncryptionAlgorithm
+    """
+    if isinstance(padding, OAEP):
+        # Public algorithm property was only added in https://github.com/pyca/cryptography/pull/9582
+        # _algorithm property has been available in every version of the OAEP class, so we use it as a backup
+        try:
+            algorithm = padding.algorithm  # type: ignore[attr-defined]
+        except AttributeError:
+            algorithm = padding._algorithm  # pylint:disable=protected-access
+        mapped_algorithm = OAEP_MAP.get(type(algorithm))
+        if mapped_algorithm is None:
+            raise ValueError(f"Unsupported algorithm: {algorithm.name}")
+
+        # Public mgf property was added at the same time as algorithm
+        try:
+            mgf = padding.mgf  # type: ignore[attr-defined]
+        except AttributeError:
+            mgf = padding._mgf  # pylint:disable=protected-access
+        if not isinstance(mgf, MGF1):
+            raise ValueError(f"Unsupported MGF: {mgf}")
+
+    elif isinstance(padding, PKCS1v15):
+        mapped_algorithm = EncryptionAlgorithm.rsa1_5
+    else:
+        raise ValueError(f"Unsupported padding: {padding.name}")
+
+    return mapped_algorithm
+
+
+def get_signature_algorithm(padding: AsymmetricPadding, algorithm: HashAlgorithm) -> SignatureAlgorithm:
+    """Maps an `AsymmetricPadding` and `HashAlgorithm` to a signature algorithm.
+
+    :param padding: The padding to use.
+    :type padding: AsymmetricPadding
+    :param algorithm: The algorithm to use.
+    :type algorithm: HashAlgorithm
+
+    :returns: The corresponding Key Vault signature algorithm.
+    :rtype: SignatureAlgorithm
+    """
+    mapped_algorithm = SIGN_ALGORITHM_MAP.get(type(algorithm))
+    if mapped_algorithm is None:
+        raise ValueError(f"Unsupported algorithm: {algorithm.name}")
+
+    # If PSS padding is requested, use the PSS equivalent algorithm
+    if isinstance(padding, PSS):
+        mapped_algorithm = PSS_MAP.get(mapped_algorithm)
+
+        # Public mgf property was only added in https://github.com/pyca/cryptography/pull/9582
+        # _mgf property has been available in every version of the PSS class, so we use it as a backup
+        try:
+            mgf = padding.mgf  # type: ignore[attr-defined]
+        except AttributeError:
+            mgf = padding._mgf  # pylint:disable=protected-access
+        if not isinstance(mgf, MGF1):
+            raise ValueError(f"Unsupported MGF: {mgf}")
+
+    # The only other padding accepted is PKCS1v15
+    elif not isinstance(padding, PKCS1v15):
+        raise ValueError(f"Unsupported padding: {padding.name}")
+
+    return cast(SignatureAlgorithm, mapped_algorithm)
+
+
+class KeyVaultRSAPublicKey(RSAPublicKey):
+    """An `RSAPublicKey` implementation based on a key managed by Key Vault."""
+
+    def __init__(self, client: "CryptographyClient", key_material: JsonWebKey) -> None:
+        """Creates a `KeyVaultRSAPublicKey` from a `CryptographyClient` and key.
+
+        :param client: The client that will be used to communicate with Key Vault.
+        :type client: :class:`~azure.keyvault.keys.crypto.CryptographyClient`
+        :param key_material: They Key Vault key's material, as a `JsonWebKey`.
+        :type key_material: :class:`~azure.keyvault.keys.JsonWebKey`
+        """
+        self._client: "CryptographyClient" = client
+        self._key: JsonWebKey = key_material
+
+    def encrypt(self, plaintext: bytes, padding: AsymmetricPadding) -> bytes:
+        """Encrypts the given plaintext.
+
+        :param bytes plaintext: Plaintext to encrypt.
+        :param padding: The padding to use. Supported paddings are `OAEP` and `PKCS1v15`. For `OAEP` padding, supported
+            hash algorithms are `SHA1` and `SHA256`. The only supported mask generation function is `MGF1`. See
+            https://learn.microsoft.com/azure/key-vault/keys/about-keys-details for details.
+        :type padding: AsymmetricPadding
+
+        :returns: The encrypted ciphertext, as bytes.
+        :rtype: bytes
+        """
+        mapped_algorithm = get_encryption_algorithm(padding)
+        result = self._client.encrypt(mapped_algorithm, plaintext)
+        return result.ciphertext
+
+    @property
+    def key_size(self) -> int:
+        """The bit length of the public modulus.
+
+        :returns: The key's size.
+        :rtype: int
+        """
+        return len(self._key.n) * 8  # type: ignore[attr-defined]
+
+    def public_numbers(self) -> RSAPublicNumbers:
+        """Returns an `RSAPublicNumbers`."""
+        e = int.from_bytes(self._key.e, "big")  # type: ignore[attr-defined]
+        n = int.from_bytes(self._key.n, "big")  # type: ignore[attr-defined]
+        return RSAPublicNumbers(e, n)
+
+    def public_bytes(  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
+        self,
+        encoding: Encoding,
+        format: PublicFormat,
+    ) -> NoReturn:
+        """Not implemented."""
+        raise NotImplementedError()
+
+    def verify(
+        self,
+        signature: bytes,
+        data: bytes,
+        padding: AsymmetricPadding,
+        algorithm: Union[Prehashed, HashAlgorithm],
+    ) -> None:
+        """Verifies the signature of the data.
+
+        :param bytes signature: The signature to sign, as bytes.
+        :param bytes data: The message string that was signed., as bytes.
+        :param padding: The padding to use. Supported paddings are `PKCS1v15` and `PSS`. For `PSS`, the only supported
+            mask generation function is `MGF1`. See https://learn.microsoft.com/azure/key-vault/keys/about-keys-details
+            for details.
+        :type padding: AsymmetricPadding
+        :param algorithm: The algorithm to sign with. Only `HashAlgorithm`s are supported -- specifically, `SHA256`,
+            `SHA384`, and `SHA512`.
+        :type algorithm: Prehashed or HashAlgorithm
+
+        :raises InvalidSignature: If the signature does not validate.
+        """
+        if isinstance(algorithm, Prehashed):
+            raise ValueError("`Prehashed` algorithms are unsupported. Please provide a `HashAlgorithm` instead.")
+        mapped_algorithm = get_signature_algorithm(padding, algorithm)
+        digest = Hash(algorithm)
+        digest.update(data)
+        result = self._client.verify(mapped_algorithm, digest.finalize(), signature)
+        if not result.is_valid:
+            raise InvalidSignature(f"The provided signature '{signature.decode()}' is invalid.")
+
+    def recover_data_from_signature(  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
+        self,
+        signature: bytes,
+        padding: AsymmetricPadding,
+        algorithm: Optional[HashAlgorithm],
+    ) -> NoReturn:
+        """Not implemented."""
+        raise NotImplementedError()
+
+    def __eq__(self, other: object) -> bool:
+        """Checks equality.
+
+        :param object other: Another object to compare with this instance. Currently, only comparisons with
+            `KeyVaultRSAPrivateKey` or `JsonWebKey` instances are supported.
+
+        :returns: True if the objects are equal; False otherwise.
+        :rtype: bool
+        """
+        if isinstance(other, KeyVaultRSAPublicKey):
+            return all(getattr(self._key, field) == getattr(other._key, field) for field in self._key._FIELDS)
+        if isinstance(other, JsonWebKey):
+            return all(getattr(self._key, field) == getattr(other, field) for field in self._key._FIELDS)
+        return False
+
+    def verifier(  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
+        self, signature: bytes, padding: AsymmetricPadding, algorithm: HashAlgorithm
+    ) -> NoReturn:
+        """Not implemented. This method was deprecated in `cryptography` 2.0 and removed in 37.0.0."""
+        raise NotImplementedError()
+
+
 class KeyVaultRSAPrivateKey(RSAPrivateKey):
     """An `RSAPrivateKey` implementation based on a key managed by Key Vault."""
 
@@ -71,28 +257,7 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         :returns: The decrypted plaintext, as bytes.
         :rtype: bytes
         """
-        if isinstance(padding, OAEP):
-            # Public algorithm property was only added in https://github.com/pyca/cryptography/pull/9582
-            # _algorithm property has been available in every version of the OAEP class, so we use it as a backup
-            try:
-                algorithm = padding.algorithm  # type: ignore[attr-defined]
-            except AttributeError:
-                algorithm = padding._algorithm  # pylint:disable=protected-access
-            mapped_algorithm = OAEP_MAP.get(type(algorithm))
-            if mapped_algorithm is None:
-                raise ValueError(f"Unsupported algorithm: {algorithm.name}")
-
-            # Public mgf property was added at the same time as algorithm
-            try:
-                mgf = padding.mgf  # type: ignore[attr-defined]
-            except AttributeError:
-                mgf = padding._mgf  # pylint:disable=protected-access
-            if not isinstance(mgf, MGF1):
-                raise ValueError(f"Unsupported MGF: {mgf}")
-        elif isinstance(padding, PKCS1v15):
-            mapped_algorithm = EncryptionAlgorithm.rsa1_5
-        else:
-            raise ValueError(f"Unsupported padding: {padding.name}")
+        mapped_algorithm = get_encryption_algorithm(padding)
         result = self._client.decrypt(mapped_algorithm, ciphertext)
         return result.plaintext
 
@@ -105,16 +270,15 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         """
         return len(self._key.n) * 8  # type: ignore[attr-defined]
 
-    def public_key(self) -> RSAPublicKey:
-        """The `RSAPublicKey` associated with this private key.
+    def public_key(self) -> KeyVaultRSAPublicKey:
+        """The `RSAPublicKey` associated with this private key, as a `KeyVaultRSAPublicKey`.
 
-        :returns: The `RSAPublicKey` associated with the key.
-        :rtype: RSAPublicKey
+        The public key implementation will use the same underlying cryptography client as this private key.
+
+        :returns: The `KeyVaultRSAPublicKey` associated with the key.
+        :rtype: :class:`~azure.keyvault.keys.crypto.KeyVaultRSAPublicKey`
         """
-        e = int.from_bytes(self._key.e, "big")  # type: ignore[attr-defined]
-        n = int.from_bytes(self._key.n, "big")  # type: ignore[attr-defined]
-        public_numbers = RSAPublicNumbers(e, n)
-        return public_numbers.public_key()
+        return KeyVaultRSAPublicKey(self._client, self._key)
 
     def sign(
         self,
@@ -138,31 +302,10 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         """
         if isinstance(algorithm, Prehashed):
             raise ValueError("`Prehashed` algorithms are unsupported. Please provide a `HashAlgorithm` instead.")
-
-        mapped_algorithm = SIGN_ALGORITHM_MAP.get(type(algorithm))
-        if mapped_algorithm is None:
-            raise ValueError(f"Unsupported algorithm: {algorithm.name}")
-
-        # If PSS padding is requested, use the PSS equivalent algorithm
-        if isinstance(padding, PSS):
-            mapped_algorithm = PSS_MAP.get(mapped_algorithm)
-
-            # Public mgf property was only added in https://github.com/pyca/cryptography/pull/9582
-            # _mgf property has been available in every version of the PSS class, so we use it as a backup
-            try:
-                mgf = padding.mgf  # type: ignore[attr-defined]
-            except AttributeError:
-                mgf = padding._mgf  # pylint:disable=protected-access
-            if not isinstance(mgf, MGF1):
-                raise ValueError(f"Unsupported MGF: {mgf}")
-
-        # The only other padding accepted is PKCS1v15
-        elif not isinstance(padding, PKCS1v15):
-            raise ValueError(f"Unsupported padding: {padding.name}")
-
+        mapped_algorithm = get_signature_algorithm(padding, algorithm)
         digest = Hash(algorithm)
         digest.update(data)
-        result = self._client.sign(cast(SignatureAlgorithm, mapped_algorithm), digest.finalize())
+        result = self._client.sign(mapped_algorithm, digest.finalize())
         return result.signature
 
     def private_numbers(self) -> RSAPrivateNumbers:  # pylint:disable=docstring-missing-return,docstring-missing-rtype
@@ -203,81 +346,9 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         """Not implemented."""
         raise NotImplementedError()
 
-    def signer(
+    def signer(  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         self, padding: AsymmetricPadding, algorithm: HashAlgorithm
-    ) -> NoReturn:  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
-        """Not implemented. This method was deprecated in `cryptography` 2.0 and removed in 37.0.0."""
-        raise NotImplementedError()
-
-
-class KeyVaultRSAPublicKey(RSAPublicKey):
-    """An `RSAPublicKey` implementation based on a key managed by Key Vault."""
-
-    def __init__(self, client: "CryptographyClient", key_material: JsonWebKey) -> None:
-        """Creates a `KeyVaultRSAPublicKey` from a `CryptographyClient` and key.
-
-        :param client: The client that will be used to communicate with Key Vault.
-        :type client: :class:`~azure.keyvault.keys.crypto.CryptographyClient`
-        :param key_material: They Key Vault key's material, as a `JsonWebKey`.
-        :type key_material: :class:`~azure.keyvault.keys.JsonWebKey`
-        """
-        self._client: "CryptographyClient" = client
-        self._key: JsonWebKey = key_material
-
-    def encrypt(self, plaintext: bytes, padding: AsymmetricPadding) -> bytes:
-        """
-        Encrypts the given plaintext.
-        """
-
-    @property
-    def key_size(self) -> int:
-        """
-        The bit length of the public modulus.
-        """
-
-    def public_numbers(self) -> RSAPublicNumbers:
-        """
-        Returns an RSAPublicNumbers
-        """
-
-    def public_bytes(
-        self,
-        encoding: Encoding,
-        format: PublicFormat,
-    ) -> bytes:
-        """
-        Returns the key serialized as bytes.
-        """
-
-    def verify(
-        self,
-        signature: bytes,
-        data: bytes,
-        padding: AsymmetricPadding,
-        algorithm: Union[Prehashed, HashAlgorithm],
-    ) -> None:
-        """
-        Verifies the signature of the data.
-        """
-
-    def recover_data_from_signature(
-        self,
-        signature: bytes,
-        padding: AsymmetricPadding,
-        algorithm: Optional[HashAlgorithm],
-    ) -> bytes:
-        """
-        Recovers the original data from the signature.
-        """
-
-    def __eq__(self, other: object) -> bool:
-        """
-        Checks equality.
-        """
-
-    def verifier(
-        self, signature: bytes, padding: AsymmetricPadding, algorithm: HashAlgorithm
-    ) -> NoReturn:  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
+    ) -> NoReturn:
         """Not implemented. This method was deprecated in `cryptography` 2.0 and removed in 37.0.0."""
         raise NotImplementedError()
 
