@@ -28,13 +28,13 @@ def mock_credential() -> Mock:
 @pytest.fixture
 def mock_feature_store_operation(
     mock_workspace_scope: OperationScope,
-    mock_aml_services_2023_04_01_preview: Mock,
+    mock_aml_services_2023_06_01_preview: Mock,
     mock_machinelearning_client: Mock,
     mock_credential: Mock,
 ) -> FeatureStoreOperations:
     yield FeatureStoreOperations(
         operation_scope=mock_workspace_scope,
-        service_client=mock_aml_services_2023_04_01_preview,
+        service_client=mock_aml_services_2023_06_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         credentials=mock_credential,
     )
@@ -52,8 +52,23 @@ class TestFeatureStoreOperation:
             mock_feature_store_operation._operation.list_by_resource_group.assert_called_once()
 
     def test_get(self, mock_feature_store_operation: FeatureStoreOperations) -> None:
-        mock_feature_store_operation.get("random_name")
+        def outgoing_get_call(rg, name):
+            from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
+
+            ws = Workspace(name=name, kind="featurestore")
+            ws._feature_store_settings = FeatureStoreSettings(
+                offline_store_connection_name=OFFLINE_STORE_CONNECTION_NAME,
+                online_store_connection_name=ONLINE_STORE_CONNECTION_NAME,
+            )
+            return ws._to_rest_object()
+
+        mock_feature_store_operation._operation.get.side_effect = outgoing_get_call
+        featurestore = mock_feature_store_operation.get(name="random_name", resource_group="rg")
         mock_feature_store_operation._operation.get.assert_called_once()
+
+        assert featurestore._kind == "featurestore"
+        assert featurestore._feature_store_settings.offline_store_connection_name == OFFLINE_STORE_CONNECTION_NAME
+        assert featurestore._feature_store_settings.online_store_connection_name == ONLINE_STORE_CONNECTION_NAME
 
     def test_begin_create(
         self,
@@ -103,7 +118,7 @@ class TestFeatureStoreOperation:
             feature_store_settings = feature_store._feature_store_settings
             offline_store_connection_name = feature_store_settings.offline_store_connection_name
             online_store_connection_name = feature_store_settings.online_store_connection_name
-            assert offline_store_connection_name == None
+            assert offline_store_connection_name.startswith(OFFLINE_STORE_CONNECTION_NAME + "-")
             assert online_store_connection_name == None
 
         super(type(mock_feature_store_operation), mock_feature_store_operation).begin_create.reset_mock()
@@ -125,8 +140,8 @@ class TestFeatureStoreOperation:
             feature_store_settings = feature_store._feature_store_settings
             offline_store_connection_name = feature_store_settings.offline_store_connection_name
             online_store_connection_name = feature_store_settings.online_store_connection_name
-            assert offline_store_connection_name == None
-            assert online_store_connection_name == None
+            assert offline_store_connection_name.startswith(OFFLINE_STORE_CONNECTION_NAME + "-")
+            assert online_store_connection_name.startswith(ONLINE_STORE_CONNECTION_NAME + "-")
 
         # create, with materialization identity
         super(type(mock_feature_store_operation), mock_feature_store_operation).begin_create.reset_mock()
@@ -152,8 +167,24 @@ class TestFeatureStoreOperation:
             feature_store_settings = feature_store._feature_store_settings
             offline_store_connection_name = feature_store_settings.offline_store_connection_name
             online_store_connection_name = feature_store_settings.online_store_connection_name
-            assert offline_store_connection_name.startswith(OFFLINE_STORE_CONNECTION_NAME)
-            assert online_store_connection_name.startswith(ONLINE_STORE_CONNECTION_NAME)
+            assert offline_store_connection_name.startswith(OFFLINE_STORE_CONNECTION_NAME + "-")
+            assert online_store_connection_name.startswith(ONLINE_STORE_CONNECTION_NAME + "-")
+
+        # create, with name only
+        super(type(mock_feature_store_operation), mock_feature_store_operation).begin_create.reset_mock()
+        mock_feature_store_operation.begin_create(feature_store=FeatureStore(name="name"))
+        super(type(mock_feature_store_operation), mock_feature_store_operation).begin_create.assert_called_once()
+        call_kwargs = super(
+            type(mock_feature_store_operation), mock_feature_store_operation
+        ).begin_create.call_args.kwargs
+        # remove this condition check when test env python version >= 3.8
+        if isinstance(call_kwargs, dict):
+            feature_store = call_kwargs["workspace"]
+            feature_store_settings = feature_store._feature_store_settings
+            offline_store_connection_name = feature_store_settings.offline_store_connection_name
+            online_store_connection_name = feature_store_settings.online_store_connection_name
+            assert offline_store_connection_name.startswith(OFFLINE_STORE_CONNECTION_NAME + "-")
+            assert online_store_connection_name == None
 
         # double create call
         mock_feature_store_operation._operation.get.side_effect = outgoing_get_call
@@ -530,6 +561,9 @@ class TestFeatureStoreOperation:
 
         mock_feature_store_operation._operation.get.side_effect = outgoing_call
         mocker.patch("azure.ai.ml.operations._workspace_operations_base.delete_resource_by_arm_id", return_value=None)
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.get_generic_arm_resource_by_arm_id", return_value=None
+        )
         mock_feature_store_operation.begin_delete("randstr", delete_dependent_resources=True)
         mock_feature_store_operation._operation.begin_delete.assert_called_once()
 
