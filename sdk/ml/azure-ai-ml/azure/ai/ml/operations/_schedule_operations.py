@@ -342,10 +342,8 @@ class ScheduleOperations(_ScopeDependentOperations):
                     self._job_operations._resolve_job_input(inputs, schedule._base_path)
                 for data in signal.input_data.values():
                     data.pre_processing_component = self._orchestrators.get_asset_arm_id(
-                        asset=data.pre_processing_component
-                        if hasattr(data, "pre_processing_component")
-                        else None,
-                        azureml_type=AzureMLResourceType.COMPONENT
+                        asset=data.pre_processing_component if hasattr(data, "pre_processing_component") else None,
+                        azureml_type=AzureMLResourceType.COMPONENT,
                     )
                 continue
             if signal.type == MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT:

@@ -831,6 +831,14 @@ class ModelPerformanceSignal(ModelSignal):
 
 @experimental
 class WorkspaceConnection(RestTranslatableMixin):
+    """Monitoring Worksapce Connection
+
+    :keyword environment_variables: A dictionary of environment variables to set for the workspace.
+    :paramtype environment_variables: Optional[dict[str, str]]
+    :keyword secret_config: A dictionary of secrets to set for the workspace.
+    :paramtype secret_config: Optional[dict[str, str]]
+    """
+
     def __init__(
         self,
         *,
@@ -860,20 +868,23 @@ class CustomMonitoringSignal(RestTranslatableMixin):
 
     :ivar type: The type of the signal. Set to "custom" for this class.
     :vartype type: str
-    :keyword input_datasets: A dictionary of input datasets for monitoring.
+    :keyword input_data: A dictionary of input datasets for monitoring.
         Each key is the component input port name, and its value is the data asset.
-    :paramtype input_datasets: Optional[dict[str, ~azure.ai.ml.entities.MonitorInputData]]
+    :paramtype input_data: Optional[dict[str, ~azure.ai.ml.entities.ReferenceData]]
     :keyword metric_thresholds: A list of metrics to calculate and their
         associated thresholds.
     :paramtype metric_thresholds: list[~azure.ai.ml.entities.CustomMonitoringMetricThreshold]
+    :keyword inputs:
+    :paramtype inputs: Optional[dict[str, ~azure.ai.ml.entities.Input]]
     :keyword component_id: The ARM (Azure Resource Manager) ID of the component resource used to
         calculate the custom metrics.
     :paramtype component_id: str
+    :keyword workspace_connection: Specifiy workspace connection with environment variables and secret configs.
+    :paramtype workspace_connection: Optional[~azure.ai.ml.entities.WorkspaceConnection]
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
     :paramtype alert_enabled: bool
-    :keyword data_window_size: The number of days a single monitor looks back
-        over the target
-    :paramtype data_window_size: Optional[int]
+    :keyword properties: A dictionary of custom properties for the signal.
+    :paramtype properties: Optional[dict[str, str]]
     """
 
     def __init__(
