@@ -19,20 +19,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-
-import unittest
-
 import uuid
 import pytest
 import test_config
-import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos.partition_key import PartitionKey
+from azure.cosmos import CosmosClient, PartitionKey
 
 pytestmark = pytest.mark.cosmosEmulator
 
 
 @pytest.mark.usefixtures("teardown")
-class ResourceIdTests(unittest.TestCase):
+class TestResourceIdsAsync:
     configs = test_config._test_config
     host = configs.host
     masterKey = configs.masterKey
@@ -40,18 +36,19 @@ class ResourceIdTests(unittest.TestCase):
     last_headers = []
 
     @classmethod
-    async def setUpClass(cls):
+    async def _set_up(cls):
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, consistency_level="Session",
-                                                connection_policy=cls.connectionPolicy)
-        cls.databaseForTest = await cls.configs.create_database_if_not_exist(cls.client)
+        cls.client = CosmosClient(cls.host, cls.masterKey)
+        cls.created_database = await cls.client.create_database_if_not_exists(test_config._test_config.TEST_DATABASE_ID)
 
-    async def test_id_unicode_validation(self):
+    @pytest.mark.asyncio
+    async def test_id_unicode_validation_async(self):
+        await self._set_up()
         # unicode chars in Hindi for Id which translates to: "Hindi is the national language of India"
         resource_id1 = u'हिन्दी भारत की राष्ट्रीय भाषा है'  # cspell:disable-line
 
@@ -62,8 +59,8 @@ class ResourceIdTests(unittest.TestCase):
         created_db1 = await self.client.create_database(resource_id1)
         created_db2 = await self.client.create_database(resource_id2)
 
-        self.assertEqual(resource_id1, created_db1.id)
-        self.assertEqual(resource_id2, created_db2.id)
+        assert resource_id1 == created_db1.id
+        assert resource_id2 == created_db2.id
 
         # verify that collections are created with specified IDs
         created_collection1 = await created_db1.create_container(
@@ -73,17 +70,19 @@ class ResourceIdTests(unittest.TestCase):
             id=resource_id2,
             partition_key=PartitionKey(path='/id', kind='Hash'))
 
-        self.assertEqual(resource_id1, created_collection1.id)
-        self.assertEqual(resource_id2, created_collection2.id)
+        assert resource_id1 == created_collection1.id
+        assert resource_id2 == created_collection2.id
 
         # verify that collections are created with specified IDs
         item1 = await created_collection1.create_item({"id": resource_id1})
         item2 = await created_collection1.create_item({"id": resource_id2})
 
-        self.assertEqual(resource_id1, item1.get("id"))
-        self.assertEqual(resource_id2, item2.get("id"))
+        assert resource_id1 == item1.get("id")
+        assert resource_id2 == item2.get("id")
 
-    async def test_create_illegal_characters(self):
+    @pytest.mark.asyncio
+    async def test_create_illegal_characters_async(self):
+        await self._set_up()
         database_id = str(uuid.uuid4())
         container_id = str(uuid.uuid4())
         partition_key = PartitionKey(path="/id")
@@ -114,24 +113,24 @@ class ResourceIdTests(unittest.TestCase):
                 error_string = space_chars_string
             try:
                 await self.client.create_database(resource_id)
-                self.fail("Database create should have failed for id {}".format(resource_id))
+                pytest.fail("Database create should have failed for id {}".format(resource_id))
             except ValueError as e:
-                self.assertEquals(str(e), error_string)
+                assert str(e) == error_string
 
             try:
                 await created_database.create_container(id=resource_id, partition_key=partition_key)
-                self.fail("Container create should have failed for id {}".format(resource_id))
+                pytest.fail("Container create should have failed for id {}".format(resource_id))
             except ValueError as e:
-                self.assertEquals(str(e), error_string)
+                assert str(e) == error_string
 
             try:
                 await created_container.create_item({"id": resource_id})
-                self.fail("Item create should have failed for id {}".format(resource_id))
+                pytest.fail("Item create should have failed for id {}".format(resource_id))
             except ValueError as e:
-                self.assertEquals(str(e), error_string)
+                assert str(e) == error_string
             try:
                 await created_container.upsert_item({"id": resource_id})
-                self.fail("Item upsert should have failed for id {}".format(resource_id))
+                pytest.fail("Item upsert should have failed for id {}".format(resource_id))
             except ValueError as e:
-                self.assertEquals(str(e), error_string)
+                assert str(e) == error_string
 
