@@ -1432,7 +1432,7 @@ class TestCRUDAsync:
     async def test_udf_crud_async(self):
         await self._set_up()
         # create collection
-        collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4), PartitionKey(path="/id"))
+        collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4()), PartitionKey(path="/id"))
         # read udfs
         udfs = [udf async for udf in collection.scripts.list_user_defined_functions()]
         # create a udf
