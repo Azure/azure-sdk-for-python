@@ -24,6 +24,7 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
     AsyncBearerTokenCredentialPolicy,
 )
+from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -42,7 +43,7 @@ from .._helpers import (
     _get_authentication_policy,
     _from_cncf_events,
 )
-from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
+from .._configuration import EventGridPublisherClientConfiguration
 from .._version import VERSION
 
 if TYPE_CHECKING:
@@ -100,10 +101,13 @@ class EventGridPublisherClient: # pylint: disable=client-accepts-api-version-key
         ],
         **kwargs: Any
     ) -> None:
-        self._client = EventGridPublisherClientAsync(
-            policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
-        )
         self._endpoint = endpoint
+        _endpoint = "https://{topicHostname}"
+
+        kwargs["policies"] = EventGridPublisherClient._policies(credential, **kwargs)
+
+        self._config = EventGridPublisherClientConfiguration(**kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
     @staticmethod
     def _policies(
