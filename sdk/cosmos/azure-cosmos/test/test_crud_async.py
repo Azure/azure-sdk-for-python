@@ -441,8 +441,7 @@ class TestCRUDAsync:
     async def test_partitioned_collection_document_crud_and_query_async(self):
         await self._set_up()
 
-        created_collection = await self.database_for_test.create_container(
-            test_config._test_config.TEST_COLLECTION_MULTI_PARTITION, PartitionKey(path="/id"))
+        created_collection = await self.database_for_test.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
 
         document_definition = {'id': 'document',
                                'key': 'value'}
@@ -2305,8 +2304,7 @@ class TestCRUDAsync:
         read_db = self.client.get_database_client(await created_db.read())
         assert read_db.id == created_db.id
 
-        created_container = await self.database_for_test.create_container(
-            test_config._test_config.TEST_COLLECTION_MULTI_PARTITION, PartitionKey(path="/id"))
+        created_container = await self.database_for_test.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
 
         # read container with id
         read_container = created_db.get_container_client(created_container.id)

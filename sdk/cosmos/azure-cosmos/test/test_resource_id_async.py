@@ -57,17 +57,17 @@ class TestResourceIdsAsync:
         resource_id2 = "!@$%^&*()-~`'_[]{}|;:,.<>"
 
         # verify that databases are created with specified IDs
-        created_db1 = await self.client.create_database(resource_id1)
-        created_db2 = await self.client.create_database(resource_id2)
+        created_db1 = await self.client.create_database_if_not_exists(resource_id1)
+        created_db2 = await self.client.create_database_if_not_exists(resource_id2)
 
         assert resource_id1 == created_db1.id
         assert resource_id2 == created_db2.id
 
         # verify that collections are created with specified IDs
-        created_collection1 = await created_db1.create_container(
+        created_collection1 = await created_db1.create_container_if_not_exists(
             id=resource_id1,
             partition_key=PartitionKey(path='/id', kind='Hash'))
-        created_collection2 = await created_db2.create_container(
+        created_collection2 = await created_db2.create_container_if_not_exists(
             id=resource_id2,
             partition_key=PartitionKey(path='/id', kind='Hash'))
 

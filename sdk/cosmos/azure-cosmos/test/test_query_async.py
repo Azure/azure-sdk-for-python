@@ -326,8 +326,13 @@ class TestQueryAsync:
         self.count = 0
         self.OriginalExecuteFunction = retry_utility.ExecuteFunctionAsync
         retry_utility.ExecuteFunctionAsync = self._mock_execute_function
-        for block in query_iterable.by_page():
-            assert len([item async for item in block]) != 0
+        item_pages = query_iterable.by_page()
+        while True:
+            try:
+                page = await item_pages.__anext__()
+                assert len([item async for item in page]) > 0
+            except StopAsyncIteration:
+                break
         retry_utility.ExecuteFunctionAsync = self.OriginalExecuteFunction
         assert self.count == expected_count
         self.count = 0
@@ -341,7 +346,7 @@ class TestQueryAsync:
         await self._set_up()
         created_collection = await self.created_db.create_container_if_not_exists(
             self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
-        self._validate_query_plan(query="Select top 10 value count(c.id) from c",
+        await self._validate_query_plan(query="Select top 10 value count(c.id) from c",
                                   container_link=created_collection.container_link,
                                   top=10,
                                   order_by=[],
@@ -351,7 +356,7 @@ class TestQueryAsync:
                                   limit=None,
                                   distinct=_DistinctType.NoneType)
 
-        self._validate_query_plan(query="Select * from c order by c._ts offset 5 limit 10",
+        await self._validate_query_plan(query="Select * from c order by c._ts offset 5 limit 10",
                                   container_link=created_collection.container_link,
                                   top=None,
                                   order_by=['Ascending'],
@@ -361,7 +366,7 @@ class TestQueryAsync:
                                   limit=10,
                                   distinct=_DistinctType.NoneType)
 
-        self._validate_query_plan(query="Select distinct value c.id from c order by c.id",
+        await self._validate_query_plan(query="Select distinct value c.id from c order by c.id",
                                   container_link=created_collection.container_link,
                                   top=None,
                                   order_by=['Ascending'],
@@ -371,9 +376,9 @@ class TestQueryAsync:
                                   limit=None,
                                   distinct=_DistinctType.Ordered)
 
-    def _validate_query_plan(self, query, container_link, top, order_by, aggregate, select_value, offset, limit,
+    async def _validate_query_plan(self, query, container_link, top, order_by, aggregate, select_value, offset, limit,
                              distinct):
-        query_plan_dict = self.client.client_connection._GetQueryPlanThroughGateway(query, container_link)
+        query_plan_dict = await self.client.client_connection._GetQueryPlanThroughGateway(query, container_link)
         query_execution_info = _PartitionedQueryExecutionInfo(query_plan_dict)
         assert query_execution_info.has_rewritten_query()
         assert query_execution_info.has_distinct_type(), distinct != _DistinctType.NoneType
