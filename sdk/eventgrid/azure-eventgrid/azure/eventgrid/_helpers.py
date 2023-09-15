@@ -203,7 +203,7 @@ def _to_json_http_request(events, **kwargs):
         if isinstance(event.data, bytes):
             data["data_base64"] = _SERIALIZER.body(base64.b64encode(event.data), "bytearray")
         elif event.data:
-            data["data"] = _SERIALIZER.body(event.data, "object")
+            data["data"] = _SERIALIZER.body(event.data, "str")
 
         if event.subject:
             data["subject"] = _SERIALIZER.body(event.subject, "str")
