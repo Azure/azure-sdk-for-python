@@ -831,7 +831,7 @@ class ModelPerformanceSignal(ModelSignal):
 
 @experimental
 class WorkspaceConnection(RestTranslatableMixin):
-    """Monitoring Worksapce Connection
+    """Monitoring Workspace Connection
 
     :keyword environment_variables: A dictionary of environment variables to set for the workspace.
     :paramtype environment_variables: Optional[dict[str, str]]
@@ -879,7 +879,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
     :keyword component_id: The ARM (Azure Resource Manager) ID of the component resource used to
         calculate the custom metrics.
     :paramtype component_id: str
-    :keyword workspace_connection: Specifiy workspace connection with environment variables and secret configs.
+    :keyword workspace_connection: Specify workspace connection with environment variables and secret configs.
     :paramtype workspace_connection: Optional[~azure.ai.ml.entities.WorkspaceConnection]
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
     :paramtype alert_enabled: bool

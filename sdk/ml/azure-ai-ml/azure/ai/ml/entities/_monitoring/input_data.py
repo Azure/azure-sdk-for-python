@@ -3,8 +3,8 @@
 # ---------------------------------------------------------
 
 import datetime
-import isodate
 from typing import Dict, Optional
+import isodate
 
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (

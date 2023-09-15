@@ -25,11 +25,6 @@ from azure.ai.ml._schema.monitoring.thresholds import (
     ModelPerformanceMetricThresholdSchema,
     CustomMonitoringMetricThresholdSchema,
 )
-from azure.ai.ml._schema.monitoring.input_data import (
-    FixedInputDataSchema,
-    TrailingInputDataSchema,
-    StaticInputDataSchema,
-)
 
 
 class DataSegmentSchema(metaclass=PatchedSchemaMeta):
