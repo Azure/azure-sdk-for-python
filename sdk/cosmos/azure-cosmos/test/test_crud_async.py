@@ -1157,7 +1157,7 @@ class TestCRUDAsync:
         change_permission = permission.properties.copy()
         permission.properties['id'] = 'replaced permission'
         permission.id = permission.properties['id']
-        replaced_permission = user.replace_permission(change_permission['id'], permission.properties)
+        replaced_permission = await user.replace_permission(change_permission['id'], permission.properties)
         assert replaced_permission.id == 'replaced permission'
         assert permission.id == replaced_permission.id
         # read permission
