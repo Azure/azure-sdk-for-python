@@ -235,9 +235,13 @@ class CRUDTests(unittest.TestCase):
         try:
             created_document = await created_collection1.create_item(document_definition)
             _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-            self.assertFalse(True, 'Operation Should Fail.')
-        except ValueError as error:
-            self.assertEqual(str(error), "Undefined Value in MultiHash PartitionKey.")
+            self.fail('Operation Should Fail.')
+            del self.last_headers[:]
+        except exceptions.CosmosHttpResponseError as error:
+            self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
+            self.assertTrue("Partition key [[]] is invalid"
+                            in error.message)
+            del self.last_headers[:]
 
         await created_db.delete_container(created_collection.id)
         await created_db.delete_container(created_collection1.id)

@@ -85,6 +85,7 @@ class _Undefined(object):
     to a multi-partition container.
     """
 
+
 class _Infinity(object):
     """Represents infinity value for partitionKey."""
 

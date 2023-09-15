@@ -104,7 +104,7 @@ class CRUDTests(unittest.TestCase):
         collections = list(created_db.list_containers())
         # create a collection
         before_create_collections_count = len(collections)
-        collection_id = 'test_collection_crud ' + str(uuid.uuid4())
+        collection_id = 'test_collection_crud_MH ' + str(uuid.uuid4())
         collection_indexing_policy = {'indexingMode': 'consistent'}
         created_collection = created_db.create_container(id=collection_id,
                                                          indexing_policy=collection_indexing_policy,
@@ -156,7 +156,7 @@ class CRUDTests(unittest.TestCase):
     def test_partitioned_collection(self):
         created_db = self.databaseForTest
 
-        collection_definition = {'id': 'test_partitioned_collection ' + str(uuid.uuid4()),
+        collection_definition = {'id': 'test_partitioned_collection_MH ' + str(uuid.uuid4()),
                                  'partitionKey':
                                      {
                                          'paths': ['/id', '/pk'],
@@ -185,7 +185,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(expected_offer.offer_throughput, offer_throughput)
 
         # Negative test, check that user can't make a subpartition higher than 3 levels
-        collection_definition2 = {'id': 'test_partitioned_collection2 ' + str(uuid.uuid4()),
+        collection_definition2 = {'id': 'test_partitioned_collection2_MH ' + str(uuid.uuid4()),
                                   'partitionKey':
                                   {
                                          'paths': ['/id', '/pk', '/id2', "/pk2"],
@@ -206,7 +206,7 @@ class CRUDTests(unittest.TestCase):
     def test_partitioned_collection_partition_key_extraction(self):
         created_db = self.databaseForTest
 
-        collection_id = 'test_partitioned_collection_partition_key_extraction ' + str(uuid.uuid4())
+        collection_id = 'test_partitioned_collection_partition_key_extraction_MH ' + str(uuid.uuid4())
         created_collection = created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path=['/address/state', '/address/city'], kind=documents.PartitionKind.MultiHash)
@@ -231,7 +231,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(created_document.get('id'), document_definition.get('id'))
         self.assertEqual(created_document.get('address').get('state'), document_definition.get('address').get('state'))
 
-        collection_id = 'test_partitioned_collection_partition_key_extraction2 ' + str(uuid.uuid4())
+        collection_id = 'test_partitioned_collection_partition_key_extraction_MH_2 ' + str(uuid.uuid4())
         created_collection2 = created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path=['/address/state/city', '/address/city/state'],
@@ -244,11 +244,13 @@ class CRUDTests(unittest.TestCase):
         try:
             created_document = created_collection2.create_item(document_definition)
             _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+            del self.last_headers[:]
             self.fail('Operation Should Fail.')
         except exceptions.CosmosHttpResponseError as error:
             self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
             self.assertTrue("Partition key [[]] is invalid"
                             in error.message)
+            del self.last_headers[:]
 
         created_db.delete_container(created_collection.id)
         created_db.delete_container(created_collection2.id)
@@ -256,7 +258,7 @@ class CRUDTests(unittest.TestCase):
     def test_partitioned_collection_partition_key_extraction_special_chars(self):
         created_db = self.databaseForTest
 
-        collection_id = 'test_partitioned_collection_partition_key_extraction_special_chars1 ' + str(uuid.uuid4())
+        collection_id = 'test_partitioned_collection_partition_key_extraction_special_chars_MH_1 ' + str(uuid.uuid4())
 
         created_collection1 = created_db.create_container(
             id=collection_id,
@@ -277,7 +279,7 @@ class CRUDTests(unittest.TestCase):
         del self.last_headers[:]
 
         collection_definition2 = {
-            'id': 'test_partitioned_collection_partition_key_extraction_special_chars2 ' + str(uuid.uuid4()),
+            'id': 'test_partitioned_collection_partition_key_extraction_special_chars_MH_2 ' + str(uuid.uuid4()),
             'partitionKey':
                 {
                     'paths': ['/\'first level\" 1*()\'/\'first le/vel2\'',
@@ -286,12 +288,10 @@ class CRUDTests(unittest.TestCase):
                 }
             }
 
-        collection_id = 'test_partitioned_collection_partition_key_extraction_special_chars2 ' + str(uuid.uuid4())
-
         created_collection2 = created_db.create_container(
-            id=collection_id,
-            partition_key=PartitionKey(path=collection_definition2["partitionKey"]["paths"],
-                                       kind=collection_definition2["partitionKey"]["kind"])
+            id=collection_definition2['id'],
+            partition_key=PartitionKey(path=collection_definition2["partitionKey"]["paths"]
+                                       , kind=collection_definition2["partitionKey"]["kind"])
         )
 
         document_definition = {'id': 'document2',
@@ -313,7 +313,7 @@ class CRUDTests(unittest.TestCase):
     def test_partitioned_collection_document_crud_and_query(self):
         created_db = self.databaseForTest
 
-        collection_id = 'test_partitioned_collection_partition_document_crud_and_query ' + str(uuid.uuid4())
+        collection_id = 'test_partitioned_collection_partition_document_crud_and_query_MH ' + str(uuid.uuid4())
         created_collection = created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path=['/city', '/zipcode'], kind=documents.PartitionKind.MultiHash)
@@ -446,7 +446,7 @@ class CRUDTests(unittest.TestCase):
     def test_partitioned_collection_prefix_partition_query(self):
         created_db = self.databaseForTest
 
-        collection_id = 'test_partitioned_collection_partition_key_prefix_query ' + str(uuid.uuid4())
+        collection_id = 'test_partitioned_collection_partition_key_prefix_query_MH ' + str(uuid.uuid4())
         created_collection = created_db.create_container(
             id=collection_id,
             partition_key=PartitionKey(path=['/state', '/city', '/zipcode'], kind=documents.PartitionKind.MultiHash)
