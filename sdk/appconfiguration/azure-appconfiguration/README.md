@@ -311,7 +311,7 @@ for snapshot in client.list_snapshots():
 <!-- SNIPPET:snapshot_samples.list_snapshot_configuration_settings -->
 
 ```python
-for config_setting in client.list_snapshot_configuration_settings(name=snapshot_name):
+for config_setting in client.list_snapshot_configuration_settings(snapshot_name=snapshot_name):
     print_configuration_setting(config_setting)
 ```
 
@@ -410,7 +410,7 @@ async for snapshot in client.list_snapshots():
 <!-- SNIPPET:snapshot_samples_async.list_snapshot_configuration_settings -->
 
 ```python
-async for config_setting in client.list_snapshot_configuration_settings(name=snapshot_name):
+async for config_setting in client.list_snapshot_configuration_settings(snapshot_name=snapshot_name):
     print_configuration_setting(config_setting)
 ```
 

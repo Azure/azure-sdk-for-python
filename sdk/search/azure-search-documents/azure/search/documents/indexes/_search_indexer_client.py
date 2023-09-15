@@ -228,7 +228,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         error_map, access_condition = get_access_conditions(indexer, match_condition)
         kwargs.update(access_condition)
         try:
-            name = indexer.name
+            name = indexer.name  # type: ignore
         except AttributeError:
             name = indexer
         self._client.indexers.delete(name, error_map=error_map, **kwargs)
@@ -297,7 +297,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         kwargs["keys_or_ids"] = keys_or_ids
         try:
-            name = indexer.name
+            name = indexer.name  # type: ignore
         except AttributeError:
             name = indexer
         return self._client.indexers.reset_docs(name, **kwargs)
@@ -479,7 +479,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         error_map, access_condition = get_access_conditions(data_source_connection, match_condition)
         kwargs.update(access_condition)
         try:
-            name = data_source_connection.name
+            name = data_source_connection.name  # type: ignore
         except AttributeError:
             name = data_source_connection
         self._client.data_sources.delete(data_source_name=name, error_map=error_map, **kwargs)
@@ -581,7 +581,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         error_map, access_condition = get_access_conditions(skillset, match_condition)
         kwargs.update(access_condition)
         try:
-            name = skillset.name
+            name = skillset.name  # type: ignore
         except AttributeError:
             name = skillset
         self._client.skillsets.delete(name, error_map=error_map, **kwargs)
@@ -667,7 +667,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         try:
-            name = skillset.name
+            name = skillset.name  # type: ignore
         except AttributeError:
             name = skillset
         names = SkillNames(skill_names=skill_names)

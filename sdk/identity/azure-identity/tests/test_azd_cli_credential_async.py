@@ -122,6 +122,18 @@ async def test_not_logged_in():
                 await credential.get_token("scope")
 
 
+async def test_aadsts_error():
+    """When there is an AADSTS error, the credential should raise an error containing the CLI's output even if the
+    error also contains the 'not logged in' string."""
+
+    stderr = "ERROR: AADSTS70043: The refresh token has expired, not logged in, run `azd auth login` to login"
+    with mock.patch("shutil.which", return_value="azd"):
+        with mock.patch(SUBPROCESS_EXEC, mock_exec("", stderr, return_code=1)):
+            with pytest.raises(ClientAuthenticationError, match=stderr):
+                credential = AzureDeveloperCliCredential()
+                await credential.get_token("scope")
+
+
 async def test_unexpected_error():
     """When the CLI returns an unexpected error, the credential should raise an error containing the CLI's output"""
 
