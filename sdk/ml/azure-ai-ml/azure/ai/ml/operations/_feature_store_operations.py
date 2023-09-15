@@ -218,12 +218,10 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         random_string = uuid.uuid4().hex[:8]
         feature_store._feature_store_settings.offline_store_connection_name = (
             f"{OFFLINE_STORE_CONNECTION_NAME}-{random_string}"
-            if feature_store.materialization_identity and feature_store.offline_store
-            else None
         )
         feature_store._feature_store_settings.online_store_connection_name = (
             f"{ONLINE_STORE_CONNECTION_NAME}-{random_string}"
-            if feature_store.materialization_identity and feature_store.online_store
+            if feature_store.online_store and feature_store.online_store.target
             else None
         )
 
