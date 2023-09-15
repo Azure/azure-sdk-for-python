@@ -42,7 +42,7 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
         with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.create_table()
             client.create_entity(entity)
-        
+
         with TableClient(
             url,
             table_name,

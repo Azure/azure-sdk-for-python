@@ -250,7 +250,7 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
         with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
             client.create_table()
             client.create_entity(entity)
-        
+
         with TableClient(
             url,
             table_name,
@@ -361,4 +361,6 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
         # clean up
         with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
             client.delete_table()
+
+
 # ------------------------------------------------------------------------------
