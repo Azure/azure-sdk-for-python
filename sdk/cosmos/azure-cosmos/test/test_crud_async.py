@@ -625,8 +625,7 @@ class TestCRUDAsync:
         await self.__assert_http_failure_with_status(
             StatusCodes.BAD_REQUEST,
             created_collection.scripts.execute_stored_procedure,
-            created_sproc['id'],
-            3)
+            created_sproc['id'])
         await self._clear()
 
     @pytest.mark.asyncio
