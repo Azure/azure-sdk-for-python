@@ -2149,7 +2149,7 @@ class TestCRUDAsync:
     async def test_stored_procedure_functionality_async(self):
         await self._set_up()
         # create collection
-        collection = await self.database_for_test.create_container(str(uuid.uuid4), PartitionKey(path="/id"))
+        collection = await self.database_for_test.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
 
         sproc1 = {
             'id': 'storedProcedure1' + str(uuid.uuid4()),
