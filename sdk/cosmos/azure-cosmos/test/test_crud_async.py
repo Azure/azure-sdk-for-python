@@ -1476,7 +1476,7 @@ class TestCRUDAsync:
     async def test_sproc_crud_async(self):
         await self._set_up()
         # create collection
-        collection = await self.database_for_test.create_container(str(uuid.uuid4), PartitionKey(path="/id"))
+        collection = await self.database_for_test.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
         # read sprocs
         sprocs = [sproc async for sproc in collection.scripts.list_stored_procedures()]
         # create a sproc
