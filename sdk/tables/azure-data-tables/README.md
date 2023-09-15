@@ -79,8 +79,9 @@ service = TableServiceClient(endpoint="https://<my_account_name>.table.core.wind
 ```
 
 ##### Creating the client from a connection string
-Depending on your use case and authorization method, you may prefer to initialize a client instance with a connection string instead of providing the account URL and credential separately. To do this, pass the
-connection string to the client's `from_connection_string` class method. The connection string can be found in your storage account in the [Azure Portal][azure_portal_account_url] under the "Access Keys" section or with the following Azure CLI command:
+Depending on your use case and authorization method, you may prefer to initialize a client instance with a connection string instead of providing the account URL and credential separately. To do this, pass the connection string to the client's `from_connection_string` class method. You can pass either "EndpointSuffix=" or "TableEndpoint=" to connection string to specify which type of resource it will interacting with. Default will target to Tables Storage endpoint. 
+
+For Tables Storage, the connection string can be found in your storage account in the [Azure Portal][azure_portal_account_url] under the "Access Keys" section or with the following Azure CLI command:
 
 ```bash
 az storage account show-connection-string -g MyResourceGroup -n MyStorageAccount
@@ -89,6 +90,30 @@ az storage account show-connection-string -g MyResourceGroup -n MyStorageAccount
 ```python
 from azure.data.tables import TableServiceClient
 connection_string = "DefaultEndpointsProtocol=https;AccountName=<my_account_name>;AccountKey=<my_account_key>;EndpointSuffix=core.windows.net"
+service = TableServiceClient.from_connection_string(conn_str=connection_string)
+```
+
+```python
+from azure.data.tables import TableServiceClient
+connection_string = "DefaultEndpointsProtocol=https;AccountName=<my_account_name>;AccountKey=<my_account_key>;TableEndpoint=https://<my_account_name>.table.cosmos.azure.com"
+service = TableServiceClient.from_connection_string(conn_str=connection_string)
+```
+
+For Tables Cosmos, the connection string can be found in your cosmos account in the [Azure Portal][azure_portal_account_url] under the "Connection Strings" section or with the following Azure CLI command:
+
+```bash
+az cosmosdb list-connection-strings -g MyResourceGroup -n MyCosmosAccount
+```
+
+```python
+from azure.data.tables import TableServiceClient
+connection_string = "DefaultEndpointsProtocol=https;AccountName=<my_account_name>;AccountKey=<my_account_key>;EndpointSuffix=cosmos.azure.com"
+service = TableServiceClient.from_connection_string(conn_str=connection_string)
+```
+
+```python
+from azure.data.tables import TableServiceClient
+connection_string = "DefaultEndpointsProtocol=https;AccountName=<my_account_name>;AccountKey=<my_account_key>;TableEndpoint=https://<my_account_name>.table.cosmos.azure.com"
 service = TableServiceClient.from_connection_string(conn_str=connection_string)
 ```
 
