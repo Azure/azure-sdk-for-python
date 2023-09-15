@@ -12,7 +12,6 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._validation import MutableValidationResult
 
 from ..._schema import PathAwareSchema
-from .._job.pipeline.pipeline_job import PipelineJob
 from .._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from .._util import convert_ordered_dict_to_dict, copy_output_setting, validate_attribute_type
 from .base_node import BaseNode
@@ -141,7 +140,8 @@ class Pipeline(BaseNode):
             "component": (str, PipelineComponent),
         }
 
-    def _to_job(self) -> PipelineJob:
+    def _to_job(self):
+        from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
 
         return PipelineJob(
             name=self.name,
