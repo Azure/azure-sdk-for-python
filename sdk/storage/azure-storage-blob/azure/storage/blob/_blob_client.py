@@ -60,7 +60,7 @@ from ._download import StorageStreamDownloader
 from ._encryption import modify_user_agent_for_encryption, StorageEncryptionMixin
 from ._lease import BlobLeaseClient
 from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, QuickQueryDialect, \
-    DelimitedJsonDialect, DelimitedTextDialect, PageRangePaged, PageRange, BlobTokenAudience
+    DelimitedJsonDialect, DelimitedTextDialect, PageRangePaged, PageRange
 from ._quick_query_helper import BlobQueryReader
 from ._upload_helpers import (
     upload_block_blob,
@@ -78,7 +78,8 @@ if TYPE_CHECKING:
         ImmutabilityPolicy,
         PremiumPageBlobTier,
         StandardBlobTier,
-        SequenceNumberAction
+        SequenceNumberAction,
+        BlobTokenAudience,
     )
 
 _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (
@@ -162,7 +163,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             snapshot: Optional[Union[str, Dict[str, Any]]] = None,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             *,
-            audience: Optional[BlobTokenAudience] = None,
+            audience: Optional["BlobTokenAudience"] = None,
             **kwargs: Any
         ) -> None:
         try:
@@ -193,7 +194,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         # This parameter is used for the hierarchy traversal. Give precedence to credential.
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
-        super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
+        super(BlobClient, self).__init__(
+            parsed_url, service='blob', credential=credential, audience=audience, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._configure_encryption(kwargs)
@@ -220,6 +222,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             cls, blob_url: str,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+            *,
+            audience: Optional["BlobTokenAudience"] = None,
             **kwargs: Any
         ) -> Self:
         """Create BlobClient from a blob url. This doesn't support customized blob url with '/' in blob name.
@@ -245,6 +249,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             the snapshot in the url.
         :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
             specifies the version of the blob to operate on.
+        :keyword BlobTokenAudience audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential.
         :returns: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
         """
@@ -292,7 +298,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
         return cls(
             account_url, container_name=container_name, blob_name=blob_name,
-            snapshot=path_snapshot, credential=credential, **kwargs
+            snapshot=path_snapshot, credential=credential, audience=audience, **kwargs
         )
 
     @classmethod
@@ -302,6 +308,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             blob_name: str,
             snapshot: Optional[Union[str, Dict[str, Any]]] = None,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            *,
+            audience: Optional["BlobTokenAudience"] = None,
             **kwargs: Any
         ) -> Self:
         """Create BlobClient from a Connection String.
@@ -327,6 +335,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
         :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
             specifies the version of the blob to operate on.
+        :keyword BlobTokenAudience audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential.
         :returns: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
 
@@ -344,7 +354,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             kwargs['secondary_hostname'] = secondary
         return cls(
             account_url, container_name=container_name, blob_name=blob_name,
-            snapshot=snapshot, credential=credential, **kwargs
+            snapshot=snapshot, credential=credential, audience=audience, **kwargs
         )
 
     @distributed_trace

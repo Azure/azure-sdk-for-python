@@ -56,7 +56,8 @@ if TYPE_CHECKING:
         PublicAccess,
         AccessPolicy,
         StandardBlobTier,
-        PremiumPageBlobTier)
+        PremiumPageBlobTier,
+        BlobTokenAudience)
 
 
 def _get_blob_name(blob):
@@ -120,6 +121,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
     :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
         or 4MB.
+    :keyword BlobTokenAudience audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential.
 
     .. admonition:: Example:
 
@@ -141,6 +144,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             self, account_url: str,
             container_name: str,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            *,
+            audience: Optional["BlobTokenAudience"] = None,
             **kwargs: Any
         ) -> None:
         try:
@@ -159,7 +164,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         # This parameter is used for the hierarchy traversal. Give precedence to credential.
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
+        super(ContainerClient, self).__init__(
+            parsed_url, service='blob', credential=credential, audience=audience, **kwargs)
         self._api_version = get_api_version(kwargs)
         self._client = self._build_generated_client()
         self._configure_encryption(kwargs)
@@ -179,6 +185,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
     def from_container_url(
             cls, container_url: str,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            *,
+            audience: Optional["BlobTokenAudience"] = None,
             **kwargs: Any
         ) -> Self:
         """Create ContainerClient from a container url.
@@ -198,6 +206,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        :keyword BlobTokenAudience audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential.
         :returns: A container client.
         :rtype: ~azure.storage.blob.ContainerClient
         """
@@ -218,13 +228,15 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         container_name = unquote(container_path[-1])
         if not container_name:
             raise ValueError("Invalid URL. Please provide a URL with a valid container name")
-        return cls(account_url, container_name=container_name, credential=credential, **kwargs)
+        return cls(account_url, container_name=container_name, credential=credential, audience=audience, **kwargs)
 
     @classmethod
     def from_connection_string(
             cls, conn_str: str,
             container_name: str,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            *,
+            audience: Optional["BlobTokenAudience"] = None,
             **kwargs: Any
         ) -> Self:
         """Create ContainerClient from a Connection String.
@@ -244,6 +256,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        :keyword BlobTokenAudience audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential.
         :returns: A container client.
         :rtype: ~azure.storage.blob.ContainerClient
 
@@ -260,7 +274,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
         return cls(
-            account_url, container_name=container_name, credential=credential, **kwargs)
+            account_url, container_name=container_name, credential=credential, audience=audience, **kwargs)
 
     @distributed_trace
     def create_container(self, metadata=None, public_access=None, **kwargs):

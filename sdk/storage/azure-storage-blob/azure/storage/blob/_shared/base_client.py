@@ -56,6 +56,7 @@ from .response_handlers import process_storage_error, PartialBatchErrorException
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+    from .models import TokenAudience
 
 _LOGGER = logging.getLogger(__name__)
 _SERVICE_PARAMS = {
@@ -72,6 +73,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         parsed_url,  # type: Any
         service,  # type: str
         credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        *,
+        audience: Optional["TokenAudience"] = None,
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -106,13 +109,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip('/')
             self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
 
-        if kwargs.get("audience"):
-            kwargs["audience"] = str(kwargs["audience"])
-        else:
-            kwargs["audience"] = STORAGE_OAUTH_SCOPE
-
         self._sdk_moniker = f"storage-{service}/{VERSION}"
-        self._config, self._pipeline = self._create_pipeline(self.credential, sdk_moniker=self._sdk_moniker, **kwargs)
+        self._config, self._pipeline = self._create_pipeline(self.credential, sdk_moniker=self._sdk_moniker, audience=audience, **kwargs)
 
     def __enter__(self):
         self._client.__enter__()
@@ -226,7 +224,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
         if hasattr(credential, "get_token"):
-            self._credential_policy = StorageBearerTokenCredentialPolicy(credential=credential, audience=kwargs["audience"])
+            audience = kwargs.pop('audience', STORAGE_OAUTH_SCOPE)
+            self._credential_policy = StorageBearerTokenCredentialPolicy(credential=credential, audience=str(audience))
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):

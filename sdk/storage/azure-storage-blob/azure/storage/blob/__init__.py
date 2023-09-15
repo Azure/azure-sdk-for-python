@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import os
 
-from typing import Union, Iterable, AnyStr, IO, Any, Dict  # pylint: disable=unused-import
+from typing import Union, Iterable, AnyStr, IO, Any, Dict, Optional  # pylint: disable=unused-import
 from ._version import VERSION
 from ._blob_client import BlobClient
 from ._container_client import ContainerClient
@@ -60,7 +60,8 @@ from ._models import (
     ArrowType,
     ObjectReplicationPolicy,
     ObjectReplicationRule,
-    ImmutabilityPolicy
+    ImmutabilityPolicy,
+    BlobTokenAudience
 )
 from ._list_blobs_helper import BlobPrefix
 
@@ -71,6 +72,8 @@ def upload_blob_to_url(
         blob_url,  # type: str
         data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
         credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        *,
+        audience: Optional[BlobTokenAudience] = None,
         **kwargs):
     # type: (...) -> Dict[str, Any]
     """Upload data to a given URL
@@ -114,10 +117,12 @@ def upload_blob_to_url(
         entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
     :keyword str encoding:
         Encoding to use if text is supplied as input. Defaults to UTF-8.
+    :keyword BlobTokenAudience audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential.
     :returns: Blob-updated property dict (Etag and last modified)
     :rtype: dict(str, Any)
     """
-    with BlobClient.from_blob_url(blob_url, credential=credential) as client:
+    with BlobClient.from_blob_url(blob_url, credential=credential, audience=audience) as client:
         return client.upload_blob(data=data, blob_type=BlobType.BlockBlob, **kwargs)
 
 
@@ -136,6 +141,8 @@ def download_blob_from_url(
         blob_url,  # type: str
         output,  # type: str
         credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        *,
+        audience: Optional[BlobTokenAudience] = None,
         **kwargs):
     # type: (...) -> None
     """Download the contents of a blob to a local file or stream.
@@ -178,10 +185,12 @@ def download_blob_from_url(
         blob. Also note that if enabled, the memory-efficient upload algorithm
         will not be used, because computing the MD5 hash requires buffering
         entire blocks, and doing so defeats the purpose of the memory-efficient algorithm.
+    :keyword BlobTokenAudience audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential.
     :rtype: None
     """
     overwrite = kwargs.pop('overwrite', False)
-    with BlobClient.from_blob_url(blob_url, credential=credential) as client:
+    with BlobClient.from_blob_url(blob_url, credential=credential, audience=audience) as client:
         if hasattr(output, 'write'):
             _download_to_stream(client, output, **kwargs)
         else:
@@ -246,5 +255,6 @@ __all__ = [
     'ArrowType',
     'BlobQueryReader',
     'ObjectReplicationPolicy',
-    'ObjectReplicationRule'
+    'ObjectReplicationRule',
+    'BlobTokenAudience'
 ]
