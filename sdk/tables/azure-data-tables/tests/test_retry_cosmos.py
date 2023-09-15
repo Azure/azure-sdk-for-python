@@ -89,7 +89,7 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
 
             # clean up
             client.delete_table(failover=ServiceRequestError("Attempting to force failover"))
-    
+
     @cosmos_decorator
     @recorded_by_proxy
     def test_failover_and_retry_on_primary(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
@@ -115,7 +115,7 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             client.get_entity(
                 "foo", "bar", failover=ServiceRequestError("Attempting to force failover")
             )  # GET, retried on secondary endpoint
-            
+
             entities = client.list_entities(
                 failover=ServiceRequestError("Attempting to force failover")
             )  # GET, retried on secondary endpoint
@@ -125,27 +125,33 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
         # clean up
         with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.delete_table()
-    
+
     @cosmos_decorator
     @recorded_by_proxy
-    def test_failover_and_retry_in_second_page_while_listing(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    def test_failover_and_retry_in_second_page_while_listing(
+        self, tables_cosmos_account_name, tables_primary_cosmos_account_key
+    ):
         url = self.account_url(tables_cosmos_account_name, "cosmos")
         table_name = self.get_resource_name("mytable")
         entity1 = {"PartitionKey": "k1", "RowKey": "r1"}
         entity2 = {"PartitionKey": "k2", "RowKey": "r2"}
-        
+
         # prepare entities so that can list in more than one page
         with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.create_table()
             client.create_entity(entity1)
             client.create_entity(entity2)
-        
-        with TableClient(url, table_name, credential=tables_primary_cosmos_account_key, transport=SecondpageFailoverRetryTransport()) as client:
-            entities = client.list_entities(results_per_page=1, failover=ServiceRequestError("Attempting to force failover"))
+
+        with TableClient(
+            url, table_name, credential=tables_primary_cosmos_account_key, transport=SecondpageFailoverRetryTransport()
+        ) as client:
+            entities = client.list_entities(
+                results_per_page=1, failover=ServiceRequestError("Attempting to force failover")
+            )
             next(entities)
             with pytest.raises(AssertionError):
                 next(entities)
-        
+
         # clean up
         with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.delete_table()
