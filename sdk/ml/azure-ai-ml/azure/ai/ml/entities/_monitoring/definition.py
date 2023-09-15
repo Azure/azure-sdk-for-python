@@ -46,7 +46,8 @@ class MonitorDefinition(RestTranslatableMixin):
     :paramtype monitoring_signals: Optional[Dict[str, Union[~azure.ai.ml.entities.DataDriftSignal
         , ~azure.ai.ml.entities.DataQualitySignal, ~azure.ai.ml.entities.PredictionDriftSignal
         , ~azure.ai.ml.entities.FeatureAttributionDriftSignal
-        , ~azure.ai.ml.entities.CustomMonitoringSignal]]]
+        , ~azure.ai.ml.entities.CustomMonitoringSignal
+        , ~azure.ai.ml.entities.GenerationSafetyQualitySignal]]]
     :keyword alert_notification: The alert configuration for the monitor.
     :paramtype alert_notification: Optional[Union[Literal['azmonitoring'], ~azure.ai.ml.entities.AlertNotification]]
 

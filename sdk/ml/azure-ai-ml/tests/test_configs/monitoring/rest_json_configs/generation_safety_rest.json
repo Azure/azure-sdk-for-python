@@ -19,7 +19,7 @@
             "testSignal": {
               "signalType": "GenerationSafetyQuality",
               "mode": "Enabled",
-              "samplingRate": "0.2",
+              "samplingRate": "1",
               "workspaceConnectionId": "fake_workspace_connection_id",
               "productionData": [
                 {
@@ -49,13 +49,25 @@
                     {
                         "metric": "acceptable_groundedness_score_per_instance",
                         "threshold": {
-                        "value": 0.1
+                        "value": 3
                         }
                     },
                     {
                         "metric": "aggregated_groundedness_pass_rate",
                         "threshold": {
-                        "value": 0.2
+                        "value": 0.01
+                        }
+                    },
+                    {
+                      "metric": "acceptable_fluency_score_per_instance",
+                      "threshold": {
+                      "value": 3
+                      }
+                    },
+                    {
+                        "metric": "aggregated_fluency_pass_rate",
+                        "threshold": {
+                        "value": 0.02
                         }
                     }
                 ]

@@ -941,6 +941,17 @@ class CustomMonitoringSignal(RestTranslatableMixin):
 
 @experimental
 class LlmRequestResponseData(RestTranslatableMixin):
+    """LLM Request Response Data
+
+    :keyword input_data: Input data used by the monitor.
+    :paramtype input_data: ~azure.ai.ml.entities.Input
+    :keyword data_column_names: The names of columns in the input data.
+    :paramtype data_column_names: Dict[str, str]
+    :keyword data_window_size: The number of days a single monitor looks back
+        over the target
+    :paramtype data_window_size: Optional[int]
+    """
+
     def __init__(
         self,
         *,
@@ -954,7 +965,7 @@ class LlmRequestResponseData(RestTranslatableMixin):
 
     def _to_rest_object(self, **kwargs) -> RestMonitoringInputData:
         if self.data_window_size is None:
-            self.data_window_size = kwargs.get("default_data_window_size")
+            self.data_window_size = kwargs.get("default")
         return TrailingInputData(
             target_columns=self.data_column_names,
             job_type=self.input_data.type,
@@ -974,27 +985,29 @@ class LlmRequestResponseData(RestTranslatableMixin):
             data_window_size=isodate.duration_isoformat(obj.window_size),
         )
 
+
 @experimental
 class GenerationSafetyQualitySignal(RestTranslatableMixin):
     """Generation Safety Quality monitoring signal.
 
-    :ivar type: The type of the signal. Set to "custom" for this class.
+    :ivar type: The type of the signal. Set to "generationsafetyquality" for this class.
     :vartype type: str
-    :keyword input_datasets: A dictionary of input datasets for monitoring.
-        Each key is the component input port name, and its value is the data asset.
-    :paramtype input_datasets: Optional[dict[str, ~azure.ai.ml.entities.MonitorInputData]]
-    :keyword metric_thresholds: A list of metrics to calculate and their
-        associated thresholds.
-    :paramtype metric_thresholds: list[~azure.ai.ml.entities.CustomMonitoringMetricThreshold]
-    :keyword component_id: The ARM (Azure Resource Manager) ID of the component resource used to
-        calculate the custom metrics.
-    :paramtype component_id: str
+    :keyword production_data: A list of input datasets for monitoring.
+    :paramtype input_datasets: Optional[dict[str, ~azure.ai.ml.entities.LlmRequestResponseData]]
+    :keyword metric_thresholds: Metrics to calculate and their associated thresholds.
+    :paramtype metric_thresholds: ~azure.ai.ml.entities.GenerationSafetyQualityMonitoringMetricThreshold
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
     :paramtype alert_enabled: bool
-    :keyword data_window_size: The number of days a single monitor looks back
-        over the target
-    :paramtype data_window_size: Optional[int]
+    :keyword workspace_connection_id: Gets or sets the workspace connection ID used to connect to the
+        content generation endpoint.
+    :paramtype workspace_connection_id: str
+    :keyword properties: The properties of the signal
+    :paramtype properties: Dict[str, str]
+    :keyword sampling_rate: The sample rate of the target data, should be greater
+        than 0 and at most 1.
+    :paramtype sampling_rate: float
     """
+
     def __init__(
         self,
         *,
@@ -1014,8 +1027,9 @@ class GenerationSafetyQualitySignal(RestTranslatableMixin):
         self.sampling_rate = sampling_rate
 
     def _to_rest_object(self, **kwargs) -> RestGenerationSafetyQualityMonitoringSignal:
+        data_window_size = kwargs.get("default_data_window_size")
         return RestGenerationSafetyQualityMonitoringSignal(
-            production_data=[data._to_rest_object() for data in self.production_data],
+            production_data=[data._to_rest_object(default=data_window_size) for data in self.production_data],
             workspace_connection_id=self.workspace_connection_id,
             metric_thresholds=self.metric_thresholds._to_rest_object(),
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
@@ -1035,6 +1049,7 @@ class GenerationSafetyQualitySignal(RestTranslatableMixin):
             properties=obj.properties,
             sampling_rate=obj.sampling_rate,
         )
+
 
 def _from_rest_features(
     obj: RestMonitoringFeatureFilterBase,
