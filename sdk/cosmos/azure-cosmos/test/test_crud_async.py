@@ -1377,7 +1377,7 @@ class TestCRUDAsync:
     async def test_trigger_crud_async(self):
         await self._set_up()
         # create collection
-        collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4), PartitionKey(path="/id"))
+        collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4()), PartitionKey(path="/id"))
         # read triggers
         triggers = [trigger async for trigger in collection.scripts.list_triggers()]
         # create a trigger
