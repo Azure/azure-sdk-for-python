@@ -131,6 +131,7 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     endpoint: Optional[str] = kwargs.pop("endpoint", None)
     credential: Optional["AsyncTokenCredential"] = kwargs.pop("credential", None)
     connection_string: Optional[str] = kwargs.pop("connection_string", None)
+    key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = kwargs.pop("key_vault_options", None)
 
     # Update endpoint and credential if specified positionally.
     if len(args) > 2:
@@ -148,6 +149,15 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
 
     if (endpoint or credential) and connection_string:
         raise ValueError("Please pass either endpoint and credential, or a connection string.")
+
+    # Removing use of AzureAppConfigurationKeyVaultOptions
+    if key_vault_options:
+        if "key_vault_credentials" not in kwargs:
+            kwargs["key_vault_credentials"] = key_vault_options.credential
+        if "secret_resolver" not in kwargs:
+            kwargs["secret_resolver"] = key_vault_options.secret_resolver
+        if "key_vault_client_configs" not in kwargs:
+            kwargs["key_vault_client_configs"] = key_vault_options.client_options
 
     provider = _buildprovider(connection_string, endpoint, credential, **kwargs)
     await provider._load_all()
@@ -191,7 +201,10 @@ def _buildprovider(
     )
     return provider
 
-async def _resolve_keyvault_reference(config, provider: "AzureAppConfigurationProvider") -> str:
+
+async def _resolve_keyvault_reference(
+    config: "SecretReferenceConfigurationSetting", provider: "AzureAppConfigurationProvider", **kwargs
+) -> str:
     # pylint:disable=protected-access
     if provider._key_vault_options is None:
         raise ValueError("Key Vault options must be set to resolve Key Vault references.")
@@ -242,7 +255,6 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         self._trim_prefixes: List[str] = []
         self._client: Optional[AzureAppConfigurationClient] = None
         self._secret_clients: Dict[str, SecretClient] = {}
-        self._key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = kwargs.pop("key_vault_options", None)
         self._selects: List[SettingSelector] = kwargs.pop(
             "selects", [SettingSelector(key_filter="*", label_filter=EMPTY_LABEL)]
         )
@@ -306,7 +318,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             )
             async for config in configurations:
                 key = self._process_key_name(config)
-                value = await self._process_key_value(config)
+                value = await self._process_key_value(config, **kwargs)
 
                 if isinstance(config, FeatureFlagConfigurationSetting):
                     feature_management = configuration_settings.get(FEATURE_MANAGEMENT_KEY, {})
@@ -333,9 +345,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             return trimmed_key[len(FEATURE_FLAG_PREFIX) :]
         return trimmed_key
 
-    async def _process_key_value(self, config):
+    async def _process_key_value(self, config, **kwargs):
         if isinstance(config, SecretReferenceConfigurationSetting):
-            return await _resolve_keyvault_reference(config, self)
+            return await _resolve_keyvault_reference(config, self, **kwargs)
         if _is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
             # Feature flags are of type json, but don't treat them as such
             try:
