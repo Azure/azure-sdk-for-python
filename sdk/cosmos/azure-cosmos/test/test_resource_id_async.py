@@ -74,9 +74,9 @@ class TestResourceIdsAsync:
         assert resource_id1 == created_collection1.id
         assert resource_id2 == created_collection2.id
 
-        # verify that collections are created with specified IDs
-        item1 = await created_collection1.create_item({"id": resource_id1})
-        item2 = await created_collection1.create_item({"id": resource_id2})
+        # verify that items are created with specified IDs
+        item1 = await created_collection1.upsert_item({"id": resource_id1})
+        item2 = await created_collection1.upsert_item({"id": resource_id2})
 
         assert resource_id1 == item1.get("id")
         assert resource_id2 == item2.get("id")
