@@ -277,9 +277,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
             for e in entities:
                 pass
 
-        conn_str = (
-            f"AccountName={tables_cosmos_account_name};SharedAccessSignature={AzureSasCredential(sas_token).signature};TableEndpoint={base_url}"
-        )
+        conn_str = f"AccountName={tables_cosmos_account_name};SharedAccessSignature={AzureSasCredential(sas_token).signature};TableEndpoint={base_url}"
         with TableClient.from_connection_string(conn_str, table_name) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
@@ -324,9 +322,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
             result = client.query_tables(name_filter)
             assert len(list(result)) == 1
 
-        conn_str = (
-            f"AccountName={tables_cosmos_account_name};SharedAccessSignature={AzureSasCredential(sas_token).signature};TableEndpoint={base_url}"
-        )
+        conn_str = f"AccountName={tables_cosmos_account_name};SharedAccessSignature={AzureSasCredential(sas_token).signature};TableEndpoint={base_url}"
         with TableServiceClient.from_connection_string(conn_str) as client:
             result = client.query_tables(name_filter)
             for table in result:
@@ -685,7 +681,7 @@ class TestTableClientCosmosUnitTests(TableTestCase):
             assert service.credential.named_key.name == self.tables_cosmos_account_name
             assert service.credential.named_key.key == self.tables_primary_cosmos_account_key
             assert service._primary_endpoint.startswith("https://www.mydomain.com")
-    
+
     def test_create_service_with_conn_str_fails_if_sec_without_primary(self):
         # Arrange
         conn_string = f"AccountName={self.tables_cosmos_account_name};AccountKey={self.tables_primary_cosmos_account_key};TableSecondaryEndpoint=www.mydomain.com;"
@@ -695,7 +691,7 @@ class TestTableClientCosmosUnitTests(TableTestCase):
             with pytest.raises(ValueError) as ex:
                 service = client.from_connection_string(conn_string, table_name="foo")
             assert str(ex.value) == "Connection string specifies only secondary endpoint."
-    
+
     def test_create_service_with_conn_str_succeeds_if_sec_with_primary(self):
         # Arrange
         conn_string = f"AccountName={self.tables_cosmos_account_name};AccountKey={self.tables_primary_cosmos_account_key};TableEndpoint=www.mydomain.com;TableSecondaryEndpoint=www-sec.mydomain.com;"
@@ -739,7 +735,9 @@ class TestTableClientCosmosUnitTests(TableTestCase):
         assert service.url.startswith("http://local-machine:11002/custom/account/path")
         assert service.scheme == "http"
 
-        service = TableClient.from_table_url(f"http://local-machine:11002/custom/account/path/foo{AzureSasCredential(sas_token).signature}")
+        service = TableClient.from_table_url(
+            f"http://local-machine:11002/custom/account/path/foo{AzureSasCredential(sas_token).signature}"
+        )
         assert service.account_name == "custom"
         assert service.table_name == "foo"
         assert service.credential == None

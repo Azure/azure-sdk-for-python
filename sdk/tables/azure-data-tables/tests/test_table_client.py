@@ -555,7 +555,9 @@ class TestTableClientUnitTests(TableTestCase):
             assert service.scheme == "https"
 
     def test_create_service_with_connection_string(self):
-        conn_string = f"AccountName={self.tables_storage_account_name};AccountKey={self.tables_primary_storage_account_key};"
+        conn_string = (
+            f"AccountName={self.tables_storage_account_name};AccountKey={self.tables_primary_storage_account_key};"
+        )
         for service_type in SERVICES:
             # Act
             service = service_type.from_connection_string(conn_string, table_name="test")
@@ -572,9 +574,7 @@ class TestTableClientUnitTests(TableTestCase):
         url = self.account_url(self.tables_storage_account_name, "table")
         for service_type in SERVICES:
             # Act
-            service = service_type(
-                url, credential=AzureSasCredential(sas_token), table_name="foo"
-            )
+            service = service_type(url, credential=AzureSasCredential(sas_token), table_name="foo")
 
             # Assert
             assert service is not None
@@ -586,7 +586,7 @@ class TestTableClientUnitTests(TableTestCase):
         url = self.account_url(self.tables_storage_account_name, "table").replace("https", "http")
         for service_type in SERVICES:
             # Act
-            
+
             service = service_type(url, credential=self.credential, table_name="foo")
 
             # Assert
@@ -634,7 +634,9 @@ class TestTableClientUnitTests(TableTestCase):
     # --Connection String Test Cases --------------------------------------------
     def test_create_service_with_connection_string_key(self):
         # Arrange
-        conn_string = f"AccountName={self.tables_storage_account_name};AccountKey={self.tables_primary_storage_account_key};"
+        conn_string = (
+            f"AccountName={self.tables_storage_account_name};AccountKey={self.tables_primary_storage_account_key};"
+        )
 
         for service_type in SERVICES:
             # Act
@@ -649,7 +651,9 @@ class TestTableClientUnitTests(TableTestCase):
     def test_create_service_with_connection_string_sas(self):
         # Arrange
         sas_token = self.generate_sas_token()
-        conn_string = f"AccountName={self.tables_storage_account_name};SharedAccessSignature={AzureSasCredential(sas_token)}"
+        conn_string = (
+            f"AccountName={self.tables_storage_account_name};SharedAccessSignature={AzureSasCredential(sas_token)}"
+        )
 
         for service_type in SERVICES:
             # Act
@@ -763,7 +767,9 @@ class TestTableClientUnitTests(TableTestCase):
         assert service.url.startswith("http://local-machine:11002/custom/account/path")
         assert service.scheme == "http"
 
-        service = TableClient.from_table_url(f"http://local-machine:11002/custom/account/path/foo{AzureSasCredential(sas_token).signature}")
+        service = TableClient.from_table_url(
+            f"http://local-machine:11002/custom/account/path/foo{AzureSasCredential(sas_token).signature}"
+        )
         assert service.account_name == "custom"
         assert service.table_name == "foo"
         assert service.credential == None

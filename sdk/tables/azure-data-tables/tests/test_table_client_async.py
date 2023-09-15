@@ -576,7 +576,9 @@ class TestTableClientAsyncUnitTests(AsyncTableTestCase):
 
     @pytest.mark.asyncio
     async def test_create_service_with_connection_string_async(self):
-        conn_string = f"AccountName={self.tables_storage_account_name};AccountKey={self.tables_primary_storage_account_key};"
+        conn_string = (
+            f"AccountName={self.tables_storage_account_name};AccountKey={self.tables_primary_storage_account_key};"
+        )
         for service_type in SERVICES:
             # Act
             service = service_type.from_connection_string(conn_string, table_name="test")
@@ -679,7 +681,9 @@ class TestTableClientAsyncUnitTests(AsyncTableTestCase):
     @pytest.mark.asyncio
     async def test_create_service_with_connection_string_key_async(self):
         # Arrange
-        conn_string = f"AccountName={self.tables_storage_account_name};AccountKey={self.tables_primary_storage_account_key};"
+        conn_string = (
+            f"AccountName={self.tables_storage_account_name};AccountKey={self.tables_primary_storage_account_key};"
+        )
 
         for service_type in SERVICES:
             # Act
@@ -695,7 +699,9 @@ class TestTableClientAsyncUnitTests(AsyncTableTestCase):
     async def test_create_service_with_connection_string_sas_async(self):
         # Arrange
         sas_token = self.generate_sas_token()
-        conn_string = f"AccountName={self.tables_storage_account_name};SharedAccessSignature={AzureSasCredential(sas_token)}"
+        conn_string = (
+            f"AccountName={self.tables_storage_account_name};SharedAccessSignature={AzureSasCredential(sas_token)}"
+        )
 
         for service_type in SERVICES:
             # Act
@@ -720,7 +726,7 @@ class TestTableClientAsyncUnitTests(AsyncTableTestCase):
         # Arrange
         conn_string = f"AccountName={self.tables_storage_account_name};AccountKey={self.tables_primary_storage_account_key};TableEndpoint=www.mydomain.com;"
 
-        for service_type in SERVICES: 
+        for service_type in SERVICES:
             # Act
             service = service_type.from_connection_string(conn_string, table_name="foo")
 
@@ -816,7 +822,9 @@ class TestTableClientAsyncUnitTests(AsyncTableTestCase):
         assert service.url.startswith("http://local-machine:11002/custom/account/path")
         assert service.scheme == "http"
 
-        service = TableClient.from_table_url(f"http://local-machine:11002/custom/account/path/foo{AzureSasCredential(sas_token).signature}")
+        service = TableClient.from_table_url(
+            f"http://local-machine:11002/custom/account/path/foo{AzureSasCredential(sas_token).signature}"
+        )
         assert service.account_name == "custom"
         assert service.table_name == "foo"
         assert service.credential == None

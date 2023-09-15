@@ -284,9 +284,7 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             async for e in entities:
                 pass
 
-        conn_str = (
-            f"AccountName={tables_cosmos_account_name};SharedAccessSignature={AzureSasCredential(sas_token).signature};TableEndpoint={base_url}"
-        )
+        conn_str = f"AccountName={tables_cosmos_account_name};SharedAccessSignature={AzureSasCredential(sas_token).signature};TableEndpoint={base_url}"
         async with TableClient.from_connection_string(conn_str, table_name) as client:
             entities = client.query_entities(
                 query_filter="PartitionKey eq @pk",
@@ -336,9 +334,7 @@ class TestTableClientCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 count += 1
             assert count == 1
 
-        conn_str = (
-            f"AccountName={tables_cosmos_account_name};SharedAccessSignature={AzureSasCredential(sas_token).signature};TableEndpoint={base_url}"
-        )
+        conn_str = f"AccountName={tables_cosmos_account_name};SharedAccessSignature={AzureSasCredential(sas_token).signature};TableEndpoint={base_url}"
         async with TableServiceClient.from_connection_string(conn_str) as client:
             result = client.query_tables(name_filter)
             async for table in result:
@@ -533,7 +529,9 @@ class TestTableClientCosmosAsyncUnitTests(AsyncTableTestCase):
         for service_type in SERVICES:
             # Act
             service = service_type(
-                self.account_url(self.tables_cosmos_account_name, "cosmos"), credential=AzureSasCredential(sas_token), table_name="foo"
+                self.account_url(self.tables_cosmos_account_name, "cosmos"),
+                credential=AzureSasCredential(sas_token),
+                table_name="foo",
             )
 
             # Assert
@@ -658,7 +656,7 @@ class TestTableClientCosmosAsyncUnitTests(AsyncTableTestCase):
     async def test_create_service_with_connection_string_emulated_async(self):
         # Arrange
         conn_string = f"UseDevelopmentStorage=true;"
-        
+
         for client in SERVICES:
             # Act
             with pytest.raises(ValueError):
@@ -707,7 +705,7 @@ class TestTableClientCosmosAsyncUnitTests(AsyncTableTestCase):
             assert service.credential.named_key.name == self.tables_cosmos_account_name
             assert service.credential.named_key.key == self.tables_primary_cosmos_account_key
             assert service._primary_endpoint.startswith("https://www.mydomain.com")
-    
+
     @pytest.mark.asyncio
     async def test_create_service_with_conn_str_fails_if_sec_without_primary_async(self):
         # Arrange
@@ -717,7 +715,7 @@ class TestTableClientCosmosAsyncUnitTests(AsyncTableTestCase):
             with pytest.raises(ValueError) as ex:
                 service = client.from_connection_string(conn_string, table_name="foo")
             assert str(ex.value) == "Connection string specifies only secondary endpoint."
-    
+
     @pytest.mark.asyncio
     async def test_create_service_with_conn_str_succeeds_if_sec_with_primary_async(self):
         # Arrange
