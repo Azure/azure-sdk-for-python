@@ -1,19 +1,28 @@
 # Release History
 
-## 1.15.0b1 (Unreleased)
+## 1.15.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.15.0b1 (2023-09-12)
 
 ### Features Added
 
 - Added Windows Web Account Manager (WAM) Brokered Authentication support.
 - Added `enable_msa_passthrough` suppport for `InteractiveBrowserCredential`. By default `InteractiveBrowserCredential` only lists AAD accounts. If you set `enable_msa_passthrough` to `True`, it lists both AAD accounts and MSA outlook.com accounts that are logged in to Windows.
 
-### Breaking Changes
-
 ### Bugs Fixed
 
 - Ensure `AzurePowershellCredential` calls PowerShell with the `-NoProfile` flag to avoid loading user profiles for more consistent behavior.  ([#31682](https://github.com/Azure/azure-sdk-for-python/pull/31682))
 - Fixed an issue with subprocess-based developer credentials (such as AzureCliCredential) where the process would sometimes hang waiting for user input.  ([#31534](https://github.com/Azure/azure-sdk-for-python/pull/31534))
 - Fixed an issue with `ClientAssertionCredential` not properly checking if CAE should be enabled.  ([#31544](https://github.com/Azure/azure-sdk-for-python/pull/31544))
+- `ManagedIdentityCredential` will fall through to the next credential in the chain in the case that Docker Desktop returns a 403 response when attempting to access the IMDS endpoint.  ([#31824](https://github.com/Azure/azure-sdk-for-python/pull/31824))
 
 ### Other Changes
 

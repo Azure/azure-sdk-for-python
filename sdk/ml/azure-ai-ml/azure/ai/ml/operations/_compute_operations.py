@@ -253,7 +253,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../../../../samples/ml_samples_compute.py
                 :start-after: [START compute_operations_delete]
                 :end-before: [END compute_operations_delete]
                 :language: python
