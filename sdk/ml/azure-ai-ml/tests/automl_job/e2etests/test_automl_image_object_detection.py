@@ -155,6 +155,12 @@ class TestAutoMLImageObjectDetection(AzureRecordedTestCase):
                 sampling_algorithm="Grid",
                 early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
             )
+
+            image_object_detection_job_individual = copy.deepcopy(image_object_detection_job)
+            image_object_detection_job_individual.set_training_parameters(
+                model_name="atss_r50_fpn_1x_coco", number_of_epochs=1
+            )
+            image_object_detection_job_reuse = copy.deepcopy(image_object_detection_job_individual)
         else:
             # Configure runtime sweep job search space
             image_object_detection_job_sweep.extend_search_space(
@@ -185,7 +191,10 @@ class TestAutoMLImageObjectDetection(AzureRecordedTestCase):
 
         # Trigger sweep and then AutoMode job
         submitted_job_sweep = client.jobs.create_or_update(image_object_detection_job_sweep)
-        if not components:
+        if components:
+            submitted_job_individual_components = client.jobs.create_or_update(image_object_detection_job_individual)
+            submitted_job_components_reuse = client.jobs.create_or_update(image_object_detection_job_reuse)
+        else:
             submitted_job_automode = client.jobs.create_or_update(image_object_detection_job_automode)
 
         # Assert completion of sweep job
@@ -193,7 +202,14 @@ class TestAutoMLImageObjectDetection(AzureRecordedTestCase):
             submitted_job_sweep, client, ImageObjectDetectionJob, JobStatus.COMPLETED, deadline=3600
         )
 
-        if not components:
+        if components:
+            assert_final_job_status(
+                submitted_job_individual_components, client, ImageObjectDetectionJob, JobStatus.COMPLETED, deadline=3600
+            )
+            assert_final_job_status(
+                submitted_job_components_reuse, client, ImageObjectDetectionJob, JobStatus.COMPLETED, deadline=3600
+            )
+        else:
             # Assert completion of Automode job
             assert_final_job_status(
                 submitted_job_automode, client, ImageObjectDetectionJob, JobStatus.COMPLETED, deadline=3600

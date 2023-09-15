@@ -191,11 +191,17 @@ class TestWorkspaceOperation:
 
     def test_delete_no_wait(self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture) -> None:
         mocker.patch("azure.ai.ml.operations._workspace_operations_base.delete_resource_by_arm_id", return_value=None)
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.get_generic_arm_resource_by_arm_id", return_value=None
+        )
         mock_workspace_operation_base.begin_delete("randstr", delete_dependent_resources=True)
         mock_workspace_operation_base._operation.begin_delete.assert_called_once()
 
     def test_delete_wait(self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture) -> None:
         mocker.patch("azure.ai.ml.operations._workspace_operations_base.delete_resource_by_arm_id", return_value=None)
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.get_generic_arm_resource_by_arm_id", return_value=None
+        )
         mocker.patch("azure.ai.ml._utils._azureml_polling.polling_wait", return_value=LROPoller)
         mock_workspace_operation_base.begin_delete("randstr", delete_dependent_resources=True)
         mock_workspace_operation_base._operation.begin_delete.assert_called_once()

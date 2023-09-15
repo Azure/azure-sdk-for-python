@@ -224,7 +224,7 @@ class TablesBaseClient(AccountHostsMixin):
             ~azure.core.credentials.TokenCredential or None
         :keyword api_version: Specifies the version of the operation to use for this request. Default value
             is "2019-02-02".
-        :paramtype api_version: str
+        :paramtype api_version: str or None
         """
         super(TablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)  # type: ignore
         self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), **kwargs)

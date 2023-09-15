@@ -29,13 +29,12 @@ def main():
         subscription_id="21a9967a-e8a9-4656-a70b-96ff1c4d05a0",
     )
 
-    response = client.accounts.delete(
+    client.accounts.delete(
         resource_group_name="myResourceGroup",
         account_name="myMapsAccount",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/maps/resource-manager/Microsoft.Maps/preview/2021-12-01-preview/examples/DeleteAccount.json
+# x-ms-original-file: specification/maps/resource-manager/Microsoft.Maps/stable/2023-06-01/examples/DeleteAccount.json
 if __name__ == "__main__":
     main()

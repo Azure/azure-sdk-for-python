@@ -17,7 +17,6 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._workspace_utils import delete_resource_by_arm_id
 
 from azure.ai.ml.constants._common import Scope, ArmConstants
@@ -28,7 +27,6 @@ ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-@experimental
 class WorkspaceHubOperations(WorkspaceOperationsBase):
     """_HubOperations.
 
@@ -191,8 +189,10 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
             rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND
         ):
             raise ValidationError("{0} is not a WorkspaceHub".format(name))
-        if hasattr(rest_workspace_obj, "workspace_hub_config") and hasattr(
-            rest_workspace_obj.workspace_hub_config, "additional_workspace_storage_accounts"
+        if (
+            hasattr(rest_workspace_obj, "workspace_hub_config")
+            and hasattr(rest_workspace_obj.workspace_hub_config, "additional_workspace_storage_accounts")
+            and rest_workspace_obj.workspace_hub_config.additional_workspace_storage_accounts
         ):
             for storageaccount in rest_workspace_obj.workspace_hub_config.additional_workspace_storage_accounts:
                 delete_resource_by_arm_id(
