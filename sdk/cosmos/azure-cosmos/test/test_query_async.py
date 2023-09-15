@@ -724,7 +724,7 @@ class TestQueryAsync:
     async def test_cross_partition_query_with_continuation_token_async(self):
         await self._set_up()
         created_collection = await self.created_db.create_container_if_not_exists(
-            self.config.TEST_COLLECTION_MULTI_PARTITION_ID,
+            str(uuid.uuid4()),
             PartitionKey(path="/id"))
         document_definition = {'pk': 'pk1', 'id': '1'}
         await created_collection.create_item(body=document_definition)
