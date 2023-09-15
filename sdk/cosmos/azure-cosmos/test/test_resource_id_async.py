@@ -22,7 +22,8 @@
 import uuid
 import pytest
 import test_config
-from azure.cosmos import CosmosClient, PartitionKey
+from azure.cosmos import PartitionKey
+from azure.cosmos.aio import CosmosClient
 
 pytestmark = pytest.mark.cosmosEmulator
 

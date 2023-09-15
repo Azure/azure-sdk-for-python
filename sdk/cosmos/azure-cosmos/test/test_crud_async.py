@@ -78,7 +78,10 @@ class TimeoutTransport(RequestsTransport):
 class TestCRUDAsync:
     """Python CRUD Tests.
     """
-
+    configs = test_config._test_config
+    host = configs.host
+    masterKey = configs.masterKey
+    connectionPolicy = configs.connectionPolicy
     last_headers = []
 
     async def __assert_http_failure_with_status(self, status_code, func, *args, **kwargs):
