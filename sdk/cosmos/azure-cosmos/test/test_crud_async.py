@@ -746,7 +746,7 @@ class TestCRUDAsync:
     async def test_document_crud_async(self):
         await self._set_up()
         # create collection
-        created_collection = await self.database_for_test.create_container(str(uuid.uuid4), PartitionKey(path="/id"))
+        created_collection = await self.database_for_test.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
         # read documents
         document_list = [document async for document in created_collection.read_all_items()]
         # create a document
