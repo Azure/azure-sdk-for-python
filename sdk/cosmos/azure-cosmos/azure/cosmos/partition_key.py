@@ -25,6 +25,7 @@ from ._cosmos_integers import UInt64, UInt128
 from ._cosmos_murmurhash3 import murmurhash3_128
 import binascii
 from ._routing.routing_range import Range
+from typing import Literal, overload
 
 _MaximumExclusiveEffectivePartitionKey = 0xFF
 _MinimumInclusiveEffectivePartitionKey = 0x00
@@ -95,11 +96,22 @@ class PartitionKey(dict):
     :ivar version: The version of the partition key (default: 2)
     """
 
-    def __init__(self, path, kind="Hash", version=2):  # pylint: disable=super-init-not-called
-        # (str, str) -> None
+    @overload
+    def __init__(self, path: list, *, kind: Literal["MultiHash"] = "MultiHash", version: int = 2) -> None:
         self.path = path
         self.kind = kind
         self.version = version
+
+    @overload
+    def __init__(self, path: str, *, kind: Literal["Hash"] = "Hash", version: int = 2) -> None:
+        self.path = path
+        self.kind = kind
+        self.version = version
+
+    def __init__(self, *args, **kwargs):  # pylint: disable=super-init-not-called
+        self.path = args[0] if args else kwargs['path']
+        self.kind = args[1] if len(args) > 1 else kwargs.get('kind', 'Hash')
+        self.version = args[2] if len(args) > 2 else kwargs.get('version', 2)
 
     def __repr__(self):
         # type () -> str
