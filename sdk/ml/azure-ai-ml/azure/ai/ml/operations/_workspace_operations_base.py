@@ -21,6 +21,7 @@ from azure.ai.ml._utils._appinsights_utils import get_log_analytics_arm_id
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._workspace_utils import (
+    get_generic_arm_resource_by_arm_id,
     delete_resource_by_arm_id,
     get_deployment_name,
     get_name_for_dependent_resource,
@@ -161,13 +162,21 @@ class WorkspaceOperationsBase:
         def callback():
             return get_callback() if get_callback else self.get(workspace.name, resource_group=resource_group)
 
+        real_callback = callback
+        injected_callback = kwargs.get("cls", None)
+        if injected_callback:
+            # pylint: disable=function-redefined
+            def real_callback():
+                return injected_callback(callback())
+
         return LROPoller(
             self._operation._client,
             None,
             lambda *x, **y: None,
-            CustomArmTemplateDeploymentPollingMethod(poller, arm_submit, callback),
+            CustomArmTemplateDeploymentPollingMethod(poller, arm_submit, real_callback),
         )
 
+    # pylint: disable=too-many-statements
     def begin_update(
         self,
         workspace: Workspace,
@@ -320,7 +329,16 @@ class WorkspaceOperationsBase:
                 else Workspace._from_rest_object(deserialized)
             )
 
-        poller = self._operation.begin_update(resource_group, workspace_name, update_param, polling=True, cls=callback)
+        real_callback = callback
+        injected_callback = kwargs.get("cls", None)
+        if injected_callback:
+            # pylint: disable=function-redefined
+            def real_callback(_, deserialized, args):
+                return injected_callback(callback(_, deserialized, args))
+
+        poller = self._operation.begin_update(
+            resource_group, workspace_name, update_param, polling=True, cls=real_callback
+        )
         return poller
 
     def begin_delete(
@@ -329,8 +347,21 @@ class WorkspaceOperationsBase:
         workspace = self.get(name, **kwargs)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
-        # prevent dependent resource delete for lean workspace, only delete appinsight
+        # prevent dependent resource delete for lean workspace, only delete appinsight and associated log analytics
         if workspace._kind == PROJECT_WORKSPACE_KIND and delete_dependent_resources:
+            app_insights = get_generic_arm_resource_by_arm_id(
+                self._credentials,
+                self._subscription_id,
+                workspace.application_insights,
+                ArmConstants.AZURE_MGMT_APPINSIGHT_API_VERSION,
+            )
+            if app_insights is not None and "WorkspaceResourceId" in app_insights.properties:
+                delete_resource_by_arm_id(
+                    self._credentials,
+                    self._subscription_id,
+                    app_insights.properties["WorkspaceResourceId"],
+                    ArmConstants.AZURE_MGMT_LOGANALYTICS_API_VERSION,
+                )
             delete_resource_by_arm_id(
                 self._credentials,
                 self._subscription_id,
@@ -338,6 +369,19 @@ class WorkspaceOperationsBase:
                 ArmConstants.AZURE_MGMT_APPINSIGHT_API_VERSION,
             )
         elif delete_dependent_resources:
+            app_insights = get_generic_arm_resource_by_arm_id(
+                self._credentials,
+                self._subscription_id,
+                workspace.application_insights,
+                ArmConstants.AZURE_MGMT_APPINSIGHT_API_VERSION,
+            )
+            if app_insights is not None and "WorkspaceResourceId" in app_insights.properties:
+                delete_resource_by_arm_id(
+                    self._credentials,
+                    self._subscription_id,
+                    app_insights.properties["WorkspaceResourceId"],
+                    ArmConstants.AZURE_MGMT_LOGANALYTICS_API_VERSION,
+                )
             delete_resource_by_arm_id(
                 self._credentials,
                 self._subscription_id,

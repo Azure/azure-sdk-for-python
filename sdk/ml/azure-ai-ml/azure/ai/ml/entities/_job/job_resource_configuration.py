@@ -109,7 +109,6 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
 
     .. admonition:: Example:
 
-
         .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
             :start-after: [START command_job_resource_configuration]
             :end-before: [END command_job_resource_configuration]

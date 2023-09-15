@@ -129,8 +129,8 @@ class MLClient:
             :dedent: 8
             :caption: Creating the MLClient with Azure Identity credentials.
 
-    .. admonition:: Additional Note
-       :class: note
+    .. note:: Additional Note
+
        When using sovereign domains (i.e. any cloud other than AZURE_PUBLIC_CLOUD), you must pass in the cloud name in
        kwargs and you must use an authority with DefaultAzureCredential.
 
