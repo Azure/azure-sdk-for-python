@@ -198,13 +198,15 @@ def _to_json_http_request(events, **kwargs):
         data["type"] =  _SERIALIZER.body(event.type, "str")
         data["specversion"] = _SERIALIZER.body(event.specversion, "str")
         data["source"] = _SERIALIZER.body(event.source, "str")
-        if data.subject:
-            data["subject"] = _SERIALIZER.body(event.subject, "str")
         data["id"] = _SERIALIZER.body(event.id, "str")
+
         if isinstance(event.data, bytes):
             data["data_base64"] = _SERIALIZER.body(base64.b64encode(event.data), "bytearray")
         elif event.data:
             data["data"] = _SERIALIZER.body(event.data, "object")
+
+        if event.subject:
+            data["subject"] = _SERIALIZER.body(event.subject, "str")
         if event.time:
             data["time"] = _SERIALIZER.body(event.time, "iso-8601")
         if event.datacontenttype:
