@@ -12,7 +12,6 @@ import os
 import time
 
 connection_string = os.environ.get("APPCONFIGURATION_CONNECTION_STRING")
-print(connection_string)
 
 # Setting up a configuration setting with a known value
 client = AzureAppConfigurationClient.from_connection_string(connection_string)
