@@ -1,9 +1,12 @@
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for license information.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+
+
+from typing import TYPE_CHECKING, Any, Callable, Union
 
 from azure.core.credentials import AccessToken, AzureKeyCredential
 from azure.core.paging import ItemPaged
@@ -11,7 +14,7 @@ from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
-from ._api_version import RemoteRenderingApiVersion, validate_api_version
+from ._api_version import validate_api_version, DEFAULT_VERSION
 from ._generated import RemoteRenderingRestClient
 
 from ._generated.models import (AssetConversion, AssetConversionInputSettings,
@@ -30,13 +33,12 @@ from ._shared.static_access_token_credential import StaticAccessTokenCredential
 from ._version import SDK_MONIKER
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Union
-
     from azure.core.credentials import TokenCredential
 
+# pylint: disable=unsubscriptable-object
 
-class RemoteRenderingClient(object):
+
+class RemoteRenderingClient:
     """A client for the Azure Remote Rendering Service.
 
     This client offers functionality to convert assets to the format expected by the runtime, and also to manage the
@@ -52,17 +54,29 @@ class RemoteRenderingClient(object):
     :param credential: Authentication for the Azure Remote
         Rendering account. Can be of the form of an AzureKeyCredential, TokenCredential or an AccessToken acquired
         from the Mixed Reality Secure Token Service (STS).
-    :type credential: Union[TokenCredential, AzureKeyCredential, AccessToken]
+    :type credential: Union[AzureKeyCredential, TokenCredential, AccessToken]
     :keyword api_version:
         The API version of the service to use for requests. It defaults to the latest service version.
         Setting to an older version may result in reduced feature compatibility.
-    :paramtype api_version: str or ~azure.mixedreality.remoterenderings.RemoteRenderingApiVersion
+    :type api_version: str or ~azure.mixedreality.remoterenderings.RemoteRenderingApiVersion
+    :keyword polling_interval:
+        Seconds to wait between each check, whether the session is ready yet.
+    :type polling_interval: int
+    :keyword authentication_endpoint_url:
+        Overwrite for the authentication endpoint. Usually using account_domain for the authentication domain is enough.
+        If used, specify the whole authentication url including the schema.
+    :type authentication_endpoint_url: str
     """
 
-    def __init__(self, endpoint, account_id, account_domain, credential, **kwargs):
-        # type: (str, str, str, Union[TokenCredential, AccessToken], Any) -> None
+    def __init__(self,
+                 endpoint: str,
+                 account_id: str,
+                 account_domain: str,
+                 credential: Union[AzureKeyCredential, 'TokenCredential', AccessToken],
+                 **kwargs) -> None:
+
         self._api_version = kwargs.pop(
-            "api_version", RemoteRenderingApiVersion.V2021_01_01
+            "api_version", DEFAULT_VERSION
         )
         validate_api_version(self._api_version)
 
@@ -78,20 +92,23 @@ class RemoteRenderingClient(object):
         if not credential:
             raise ValueError("credential cannot be None")
 
+        self.polling_interval = kwargs.pop("polling_interval", 5)
+        endpoint_url = kwargs.pop('authentication_endpoint_url', construct_endpoint_url(account_domain))
+
+        cred: Any
+
         if isinstance(credential, AccessToken):
-            cred = StaticAccessTokenCredential(credential)  # type: TokenCredential
+            cred = StaticAccessTokenCredential(credential)
         elif isinstance(credential, AzureKeyCredential):
-            cred = MixedRealityAccountKeyCredential(
-                account_id=account_id, account_key=credential)
+            cred = MixedRealityAccountKeyCredential(account_id=account_id, account_key=credential)
         else:
             cred = credential
 
-        self.polling_interval = kwargs.pop("polling_interval", 5)
-        endpoint_url = kwargs.pop(
-            'authentication_endpoint_url', construct_endpoint_url(account_domain))
-        # otherwise assume it is a TokenCredential and simply pass it through
         pipeline_credential = get_mixedreality_credential(
-            account_id=account_id, account_domain=account_domain, credential=cred, endpoint_url=endpoint_url)
+                                account_id=account_id,
+                                account_domain=account_domain,
+                                credential=cred,
+                                endpoint_url=endpoint_url)
 
         if pipeline_credential is None:
             raise ValueError("credential is not of type TokenCredential, AzureKeyCredential or AccessToken")
@@ -136,9 +153,11 @@ class RemoteRenderingClient(object):
             **kwargs)
 
         polling_method = ConversionPolling(account_id=self._account_id, polling_interval=polling_interval)
+        deserialization_method: Callable[[Any], Any] = lambda _: None
+
         return LROPoller(client=self._client,
                          initial_response=initial_state,
-                         deserialization_callback=lambda: None,
+                         deserialization_callback=deserialization_method,
                          polling_method=polling_method)
 
     @distributed_trace
@@ -195,17 +214,20 @@ class RemoteRenderingClient(object):
                 conversion_id=conversion_id,
                 **kwargs)
 
+        deserialization_method: Callable[[Any], Any] = lambda _: None
+
         return LROPoller(client=self._client,
                          initial_response=initial_state,
-                         deserialization_callback=lambda: None,
+                         deserialization_callback=deserialization_method,
                          polling_method=polling_method)
 
     @distributed_trace
     def list_asset_conversions(self, **kwargs):
         # type: (...) -> ItemPaged[AssetConversion]
-        """ Gets conversions for the remote rendering account.
+        """ Returns list of conversions for the remote rendering account.
         :rtype: ItemPaged[AssetConversion]
         :raises ~azure.core.exceptions.HttpResponseError:
+        :return: List of conversion for the remote rendering account.
         """
         return self._client.remote_rendering.list_conversions(account_id=self._account_id, **kwargs)  # type: ignore
 
@@ -234,9 +256,10 @@ class RemoteRenderingClient(object):
             **kwargs)
         polling_interval = kwargs.pop("polling_interval", self.polling_interval)
         polling_method = SessionPolling(account_id=self._account_id, polling_interval=polling_interval)
+        deserialization_method: Callable[[Any], Any] = lambda _: None
         return LROPoller(client=self._client,
                          initial_response=initial_state,
-                         deserialization_callback=lambda: None,
+                         deserialization_callback=deserialization_method,
                          polling_method=polling_method)
 
     @distributed_trace
@@ -254,6 +277,7 @@ class RemoteRenderingClient(object):
             session_id=session_id,
             **kwargs)
 
+    @distributed_trace
     def get_rendering_session_poller(self, **kwargs):
         # type: (Any) -> LROPoller[RenderingSession]
         """
@@ -292,9 +316,10 @@ class RemoteRenderingClient(object):
                 **kwargs)
 
         polling_method = SessionPolling(account_id=self._account_id, polling_interval=polling_interval)
+        deserialization_method: Callable[[Any], Any] = lambda _: None
         return LROPoller(client=self._client,
                          initial_response=initial_state,
-                         deserialization_callback=lambda: None,
+                         deserialization_callback=deserialization_method,
                          polling_method=polling_method)
 
     @distributed_trace
@@ -340,10 +365,11 @@ class RemoteRenderingClient(object):
     def list_rendering_sessions(self, **kwargs):
         # type: (...) -> ItemPaged[RenderingSession]
         """
-        List rendering sessions in the 'Ready' or 'Starting' state. Does not return stopped or failed rendering
-            sessions.
+        Returns list of rendering sessions in the 'Ready' or 'Starting' state.
+        Does not return stopped or failed rendering sessions.
         :rtype: ItemPaged[RenderingSession]
         :raises ~azure.core.exceptions.HttpResponseError:
+        :return: List of rendering sessions in the 'Ready' or 'Starting' state.
         """
         return self._client.remote_rendering.list_sessions(account_id=self._account_id, **kwargs)  # type: ignore
 

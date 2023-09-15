@@ -98,6 +98,23 @@ async def test_unexpected_error():
         assert error_message in ex.value.message
 
 
+async def test_imds_request_failure_docker_desktop():
+    """The credential should raise CredentialUnavailableError when a 403 with a specific message is received"""
+
+    error_message = (
+        "connecting to 169.254.169.254:80: connecting to 169.254.169.254:80: dial tcp 169.254.169.254:80: "
+        "connectex: A socket operation was attempted to an unreachable network."  # cspell:disable-line
+    )
+    probe = mock_response(status_code=403, json_payload={"error": error_message})
+    transport = mock.Mock(send=mock.Mock(return_value=get_completed_future(probe)))
+    credential = ImdsCredential(transport=transport)
+
+    with pytest.raises(CredentialUnavailableError) as ex:
+        await credential.get_token("scope")
+
+    assert error_message in ex.value.message
+
+
 async def test_cache():
     scope = "https://foo.bar"
     expired = "this token's expired"

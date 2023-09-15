@@ -71,7 +71,6 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
 
     .. admonition:: Example:
 
-
         .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
             :start-after: [START command_job_definition]
             :end-before: [END command_job_definition]
