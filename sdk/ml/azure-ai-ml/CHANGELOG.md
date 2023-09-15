@@ -1,5 +1,11 @@
 # Release History
 
+## 1.10.1 (2023-09-17)
+
+### Bugs Fixed
+- Feature sets can now be registers after being dumped and reloaded.
+- SDK can now assign materialization identities to offline stores and cross RG online stores.
+
 ## 1.10.0 (2023-09-07)
 ### Features Added
 - Added support of features that are known into the future/at forecast time for dnn in AutoML Forecasting jobs.
