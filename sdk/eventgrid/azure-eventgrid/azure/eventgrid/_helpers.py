@@ -125,6 +125,10 @@ def _eventgrid_data_typecheck(event):
 def _check_cloud_event(cloud_event, **kwargs):
     # Check if it is a CloudEvent or a dict
     try:
+        return CloudEvent.from_dict(
+            cloud_event
+        )
+    except TypeError:
         return CloudEvent(
             id=cloud_event.id,
             source=cloud_event.source,
@@ -137,20 +141,7 @@ def _check_cloud_event(cloud_event, **kwargs):
             subject=cloud_event.subject,
             extensions=cloud_event.extensions,
         )
-    except TypeError:
-        return CloudEvent.from_dict(
-            id=cloud_event.id,
-            source=cloud_event.source,
-            type=cloud_event.type,
-            specversion=cloud_event.specversion,
-            data=cloud_event.data,
-            time=cloud_event.time,
-            dataschema=cloud_event.dataschema,
-            datacontenttype=cloud_event.datacontenttype,
-            subject=cloud_event.subject,
-            extensions=cloud_event.extensions,
-            **kwargs
-        )
+
 
 def _from_cncf_events(event): # pylint: disable=inconsistent-return-statements
     """This takes in a CNCF cloudevent and returns a dictionary.
@@ -185,7 +176,7 @@ def _build_request(endpoint, content_type, events, *, channel_name=None):
     query_parameters['api-version'] = serialize.query("api_version", "2018-01-01", 'str')
 
     if isinstance(events[0], CloudEvent):
-        data = _to_json_http_request(endpoint, content_type, events, query_parameters=query_parameters, channel_name=None)
+        data = _to_json_http_request(events, query_parameters=query_parameters, channel_name=None)
         header_parameters['Content-Length'] = str(len(data))
     else:
         body = serialize.body(events, '[object]')
@@ -204,7 +195,7 @@ def _build_request(endpoint, content_type, events, *, channel_name=None):
     request.format_parameters(query_parameters)
     return request
 
-def _to_json_http_request(endpoint, content_type, events, **kwargs):
+def _to_json_http_request(events, **kwargs):
     # serialize the events
     data = {}
     list_data = []
@@ -217,11 +208,11 @@ def _to_json_http_request(endpoint, content_type, events, **kwargs):
         if isinstance(event.data, bytes):
             data["data_base64"] = _SERIALIZER.body(base64.b64encode(event.data), "bytearray")
         else:
-            data["data"] = _SERIALIZER.body(event.data, "object")
+            data["data"] = _SERIALIZER.body(event.data, "{object}")
         data["time"] = _SERIALIZER.body(event.time, "iso-8601")
         data["datacontenttype"] = _SERIALIZER.body(event.datacontenttype, "str")
         if event.extensions:
-            data["additional_properties"] = _SERIALIZER.body(event.extensions, "object")
+            data["additional_properties"] = _SERIALIZER.body(event.extensions, "{object}")
         list_data.append(data)
     
     return json.dumps(list_data)
