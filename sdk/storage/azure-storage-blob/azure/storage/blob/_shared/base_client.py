@@ -35,7 +35,7 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
 )
 
-from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, SERVICE_HOST_BASE
+from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, SERVICE_HOST_BASE, STORAGE_OAUTH_SCOPE
 from .models import LocationMode
 from .authentication import SharedKeyCredentialPolicy
 from .shared_access_signature import QueryStringConstants
@@ -108,6 +108,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
 
         if kwargs.get("audience"):
             kwargs["audience"] = str(kwargs["audience"])
+        else:
+            kwargs["audience"] = STORAGE_OAUTH_SCOPE
 
         self._sdk_moniker = f"storage-{service}/{VERSION}"
         self._config, self._pipeline = self._create_pipeline(self.credential, sdk_moniker=self._sdk_moniker, **kwargs)

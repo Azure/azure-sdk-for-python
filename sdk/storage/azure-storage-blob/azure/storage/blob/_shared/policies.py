@@ -40,7 +40,7 @@ from azure.core.pipeline.policies import (
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
 
 from .authentication import StorageHttpChallenge
-from .constants import DEFAULT_OAUTH_SCOPE, STORAGE_OAUTH_SCOPE
+from .constants import DEFAULT_OAUTH_SCOPE
 from .models import LocationMode
 
 try:
@@ -647,8 +647,7 @@ class LinearRetry(StorageRetryPolicy):
 class StorageBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
     """ Custom Bearer token credential policy for following Storage Bearer challenges """
 
-    def __init__(self, credential, *, audience: str = STORAGE_OAUTH_SCOPE, **kwargs):
-        # type: (TokenCredential, **Any) -> None
+    def __init__(self, credential: "TokenCredential", audience: str, **kwargs: Any) -> None:
         super(StorageBearerTokenCredentialPolicy, self).__init__(credential, audience, **kwargs)
 
     def on_challenge(self, request, response):

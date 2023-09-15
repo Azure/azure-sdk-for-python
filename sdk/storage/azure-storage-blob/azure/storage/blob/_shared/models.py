@@ -491,17 +491,15 @@ class UserDelegationKey(object):
         self.signed_version = None
         self.value = None
 
-class TokenAudience(Protocol):
+class TokenAudience(object):
     """
-    Protocol that defines what calling functions and attributes should be defined for an Azure Active
+    Base class that defines what calling functions and attributes should be defined for an Azure Active
     Directory audience token.
 
-    :param str value: The Azure Active Directory audience to use when forming authorization scopes.
-        For the Language service, this value corresponds to a URL that identifies the Azure cloud
-        where the resource is located. For more information please take a look at:
-        https://learn.microsoft.com/azure/storage/blobs/authorize-access-azure-active-directory
-        Please use one of the static constant members over creating a custom value unless you have
-        a specific scenario for doing so.
+    :param str value: The audience to use when requesting tokens for Azure Active Directory authentication.
+        For more information please take a look at:
+        https://learn.microsoft.com/azure/storage/blobs/authorize-access-azure-active-directory. Please use one
+        of the provided classmethods over creating a custom value unless you have a specific scenario for doing so.
     """
     _value: str
 
@@ -519,18 +517,6 @@ class TokenAudience(Protocol):
         :rtype: TokenAudience
         """
         return cls(STORAGE_OAUTH_SCOPE)
-
-    @classmethod
-    def get_service_account_audience(cls, storageAccountName: str) -> Self:
-        """The service endpoint for a given Storage account. Use this method
-        to acquire a token for authorizing requests to that specific Azure Storage account and
-        service only.
-
-        :param str storageAccountName: The storage account name used to populate the service endpoint.
-        :returns: The Audience for the given Storage account and respective service endpoint.
-        :rtype: TokenAudience
-        """
-        ...
 
     def __eq__(self, other: object) -> bool:
         return self._value == other._value

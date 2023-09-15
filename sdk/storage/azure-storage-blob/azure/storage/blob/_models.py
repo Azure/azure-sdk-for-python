@@ -1308,13 +1308,13 @@ class BlobTokenAudience(TokenAudience):
     """Audiences available for Blobs."""
 
     @classmethod
-    def get_service_account_audience(cls, storageAccountName: str) -> Self:
-        """The service endpoint for a given Storage account. Use this method
+    def get_blob_account_audience(cls, account_name: str) -> Self:
+        """The Blob service endpoint for a given Storage account. Use this method
         to acquire a token for authorizing requests to that specific Azure Storage account and
         service only.
 
-        :param str storageAccountName: The storage account name used to populate the service endpoint.
+        :param str account_name: The storage account name used to populate the service endpoint.
         :returns: The Audience for the given Storage account and respective service endpoint.
         :rtype: BlobTokenAudience
         """
-        return cls(f'https://{storageAccountName}.blob.core.windows.net/')
+        return cls(f'https://{account_name}.blob.core.windows.net/')
