@@ -125,8 +125,6 @@ def get_case_insensitive_format(
     return format.capitalize()
 
 
-###### Wrapper Class ######
-
 def build_schema_registry_get_schema_id_by_content_request(  # pylint: disable=name-too-long
     group_name: str,
     name: str,
@@ -137,6 +135,8 @@ def build_schema_registry_get_schema_id_by_content_request(  # pylint: disable=n
 
     content_type: str = kwargs.pop('content_type')
     api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2022-10"))
+    accept = _headers.pop('Accept', "application/json")
+
     # Construct URL
     _url = "/$schemaGroups/{groupName}/schemas/{name}:get-id"
     path_format_arguments = {
@@ -151,6 +151,7 @@ def build_schema_registry_get_schema_id_by_content_request(  # pylint: disable=n
 
     # Construct headers
     _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="POST",
@@ -171,6 +172,8 @@ def build_schema_registry_register_schema_request(  # pylint: disable=name-too-l
 
     content_type: str = kwargs.pop('content_type')
     api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2022-10"))
+    accept = _headers.pop('Accept', "application/json")
+
     # Construct URL
     _url = "/$schemaGroups/{groupName}/schemas/{name}"
     path_format_arguments = {
@@ -185,6 +188,7 @@ def build_schema_registry_register_schema_request(  # pylint: disable=name-too-l
 
     # Construct headers
     _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
 
     return HttpRequest(
         method="PUT",
@@ -375,6 +379,7 @@ class GeneratedClient(ServiceClientGenerated):
             return cls(pipeline_response, None, response_headers)
 
 
+###### Wrapper Class ######
 class SchemaRegistryClient(object):
     """
     SchemaRegistryClient is a client for registering and retrieving schemas from the Azure Schema Registry service.
@@ -470,9 +475,6 @@ class SchemaRegistryClient(object):
             content=cast(IO[Any], definition),
             content_type=kwargs.pop("content_type", get_content_type(format)),
             cls=partial(prepare_schema_properties_result, format),
-            headers={  # TODO: fix - currently `Accept: "*/*""`
-                "Accept": "application/json"
-            },
             **http_request_kwargs,
         )
         return SchemaProperties(**schema_properties)
@@ -539,7 +541,7 @@ class SchemaRegistryClient(object):
             http_response, schema_properties = self._generated_client.get_schema_by_id(  # type: ignore
                 id=schema_id,
                 cls=prepare_schema_result,
-                headers={  # TODO: remove when multiple content types are supported
+                headers={  # TODO: remove when multiple content types in response are supported
                     "Accept": """application/json; serialization=Avro, application/json; \
                         serialization=json, text/plain; charset=utf-8"""
                 },
@@ -563,7 +565,7 @@ class SchemaRegistryClient(object):
                 name=name,
                 schema_version=version,
                 cls=prepare_schema_result,
-                headers={  # TODO: remove when multiple content types are supported
+                headers={  # TODO: remove when multiple content types in response are supported
                     "Accept": """application/json; serialization=Avro, application/json; \
                         serialization=json, text/plain; charset=utf-8"""
                 },
@@ -619,9 +621,6 @@ class SchemaRegistryClient(object):
             schema_content=cast(IO[Any], definition),
             content_type=kwargs.pop("content_type", get_content_type(format)),
             cls=partial(prepare_schema_properties_result, format),
-            headers={  # TODO: fix - currently `Accept: "*/*""`
-                "Accept": "application/json"
-            },
             **http_request_kwargs,
         )
         return SchemaProperties(**schema_properties)

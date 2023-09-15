@@ -26,6 +26,11 @@ from typing_extensions import Protocol  # type: ignore
 
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, ResourceNotModifiedError, map_error
+from azure.core.rest import HttpRequest
+from azure.core.utils import case_insensitive_dict
+from .._operations._operations import ClsType
+
 from .._patch import (
     get_http_request_kwargs,
     get_case_insensitive_format,
@@ -36,18 +41,196 @@ from .._patch import (
     SchemaProperties,
     prepare_schema_result,
     prepare_schema_properties_result,
+    build_schema_registry_get_schema_id_by_content_request,
+    build_schema_registry_register_schema_request
 )
 from ._client import SchemaRegistryClient as ServiceClientGenerated
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.pipeline import PipelineResponse
     from azure.core.rest import AsyncHttpResponse
     from .._patch import MessageType, MessageContent
 
 
+class GeneratedClient(ServiceClientGenerated):
+    """
+    Generated client to add custom methods.
+    """
+
+    @distributed_trace_async
+    async def get_schema_id_by_content(  # pylint: disable=inconsistent-return-statements
+        self,
+        group_name: str,
+        name: str,
+        schema_content: bytes,
+        **kwargs: Any
+    ) -> None:
+        """Get ID for existing schema.
+
+        Gets the ID referencing an existing schema within the specified schema group, as matched by
+        schema content comparison.
+
+        :param group_name: Name of schema group. Required.
+        :type group_name: str
+        :param name: Name of schema. Required.
+        :type name: str
+        :param schema_content: String representation (UTF-8) of the registered schema. Required.
+        :type schema_content: bytes
+        :keyword content_type: The content type for given schema. Default value is "text/plain;
+         charset=utf-8".
+        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: str = kwargs.pop('content_type', _headers.pop('Content-Type', "text/plain; charset=utf-8"))
+        cls: ClsType[None] = kwargs.pop(
+            'cls', None
+        )
+
+        _content = schema_content
+
+        request = build_schema_registry_get_schema_id_by_content_request(
+            group_name=group_name,
+            name=name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            if _stream:
+                await  response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+        response_headers['Schema-Id']=self._deserialize('str', response.headers.get('Schema-Id'))
+        response_headers['Schema-Id-Location']=self._deserialize('str', response.headers.get('Schema-Id-Location'))
+        response_headers['Schema-Group-Name']=self._deserialize('str', response.headers.get('Schema-Group-Name'))
+        response_headers['Schema-Name']=self._deserialize('str', response.headers.get('Schema-Name'))
+        response_headers['Schema-Version']=self._deserialize('int', response.headers.get('Schema-Version'))
+
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+
+
+    @distributed_trace_async
+    async def register_schema(  # pylint: disable=inconsistent-return-statements
+        self,
+        group_name: str,
+        name: str,
+        content: bytes,
+        **kwargs: Any
+    ) -> None:
+        """Register new schema.
+
+        Register new schema. If schema of specified name does not exist in specified group, schema is
+        created at version 1. If schema of specified name exists already in specified group, schema is
+        created at latest version + 1.
+
+        :param group_name: Name of schema group. Required.
+        :type group_name: str
+        :param name: Name of schema. Required.
+        :type name: str
+        :param content: String representation (UTF-8) of the schema. Required.
+        :type content: bytes
+        :keyword content_type: The content type for given schema. Default value is "text/plain;
+         charset=utf-8".
+        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: str = kwargs.pop('content_type', _headers.pop('Content-Type', "text/plain; charset=utf-8"))
+        cls: ClsType[None] = kwargs.pop(
+            'cls', None
+        )
+
+        _content = content
+
+        request = build_schema_registry_register_schema_request(
+            group_name=group_name,
+            name=name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            if _stream:
+                await  response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+        response_headers['Schema-Id']=self._deserialize('str', response.headers.get('Schema-Id'))
+        response_headers['Schema-Id-Location']=self._deserialize('str', response.headers.get('Schema-Id-Location'))
+        response_headers['Schema-Group-Name']=self._deserialize('str', response.headers.get('Schema-Group-Name'))
+        response_headers['Schema-Name']=self._deserialize('str', response.headers.get('Schema-Name'))
+        response_headers['Schema-Version']=self._deserialize('int', response.headers.get('Schema-Version'))
+
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+
 ###### Wrapper Class ######
-
-
 class SchemaRegistryClient(object):
     """
     SchemaRegistryClient is a client for registering and retrieving schemas from the Azure Schema Registry service.
@@ -81,7 +264,7 @@ class SchemaRegistryClient(object):
         if "https://" not in fully_qualified_namespace:
             fully_qualified_namespace = f"https://{fully_qualified_namespace}"
         api_version = kwargs.pop("api_version", DEFAULT_VERSION)
-        self._generated_client = ServiceClientGenerated(
+        self._generated_client = GeneratedClient(
             endpoint=fully_qualified_namespace,
             credential=credential,
             api_version=api_version,
@@ -146,9 +329,6 @@ class SchemaRegistryClient(object):
             content=cast(IO[Any], definition),
             content_type=kwargs.pop("content_type", get_content_type(format)),
             cls=partial(prepare_schema_properties_result, format),
-            headers={  # TODO: fix - currently `Accept: "*/*""`
-                "Accept": "application/json"
-            },
             **http_request_kwargs,
         )
 
@@ -298,9 +478,6 @@ class SchemaRegistryClient(object):
             schema_content=cast(IO[Any], definition),
             content_type=kwargs.pop("content_type", get_content_type(format)),
             cls=partial(prepare_schema_properties_result, format),
-            headers={  # TODO: fix - currently `Accept: "*/*""`
-                "Accept": "application/json"
-            },
             **http_request_kwargs,
         )
         return SchemaProperties(**schema_properties)
