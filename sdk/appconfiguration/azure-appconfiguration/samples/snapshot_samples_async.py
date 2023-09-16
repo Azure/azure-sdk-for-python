@@ -68,7 +68,7 @@ async def main():
         print("")
 
         # [START list_snapshot_configuration_settings]
-        async for config_setting in client.list_snapshot_configuration_settings(name=snapshot_name):
+        async for config_setting in client.list_snapshot_configuration_settings(snapshot_name=snapshot_name):
             print_configuration_setting(config_setting)
         # [END list_snapshot_configuration_settings]
 

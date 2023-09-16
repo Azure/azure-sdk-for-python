@@ -19,6 +19,7 @@ from azure.ai.ml.constants._monitoring import (
 )
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._monitoring.alert_notification import AlertNotification
+from azure.ai.ml.entities._monitoring.compute import ServerlessSparkCompute
 from azure.ai.ml.entities._monitoring.signals import (
     CustomMonitoringSignal,
     DataDriftSignal,
@@ -29,7 +30,6 @@ from azure.ai.ml.entities._monitoring.signals import (
     GenerationSafetyQualitySignal,
 )
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
-from azure.ai.ml.entities._monitoring.compute import ServerlessSparkCompute
 
 
 @experimental
@@ -52,7 +52,6 @@ class MonitorDefinition(RestTranslatableMixin):
     :paramtype alert_notification: Optional[Union[Literal['azmonitoring'], ~azure.ai.ml.entities.AlertNotification]]
 
     .. admonition:: Example:
-
 
         .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_monitor_definition]

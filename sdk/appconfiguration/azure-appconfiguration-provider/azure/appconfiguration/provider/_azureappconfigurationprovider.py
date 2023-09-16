@@ -191,11 +191,12 @@ def _buildprovider(
     headers = _get_headers(key_vault_options, **kwargs)
     retry_total = kwargs.pop("retry_total", 2)
     retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
+    user_agent = kwargs.pop("user_agent", "") + " " + USER_AGENT
 
     if connection_string:
         provider._client = AzureAppConfigurationClient.from_connection_string(
             connection_string,
-            user_agent=USER_AGENT,
+            user_agent=user_agent,
             headers=headers,
             retry_total=retry_total,
             retry_backoff_max=retry_backoff_max,
@@ -205,7 +206,7 @@ def _buildprovider(
     provider._client = AzureAppConfigurationClient(
         endpoint,
         credential,
-        user_agent=USER_AGENT,
+        user_agent=user_agent,
         headers=headers,
         retry_total=retry_total,
         retry_backoff_max=retry_backoff_max,

@@ -1,5 +1,22 @@
 # Release History
 
+## 1.0.0b18 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b17 (2023-09-12)
+
+### Bugs Fixed
+
+- Handle missing or empty message data
+    ([#31944](https://github.com/Azure/azure-sdk-for-python/pull/31944))
+
 ## 1.0.0b16 (2023-08-30)
 
 ### Features Added
