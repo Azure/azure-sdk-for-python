@@ -142,7 +142,7 @@ class CustomMonitoringMetricThresholdSchema(MetricThresholdSchema):
         return CustomMonitoringMetricThreshold(**data)
 
 
-class GenerationSafetyQualityMetricThresholdSchema(metaclass=PatchedSchemaMeta):
+class GenerationSafetyQualityMetricThresholdSchema(metaclass=PatchedSchemaMeta):  # pylint: disable=name-too-long
     groundedness = fields.Dict(
         keys=StringTransformedEnum(allowed_values=["aggregated_groundedness_pass_rate"]), values=fields.Number()
     )

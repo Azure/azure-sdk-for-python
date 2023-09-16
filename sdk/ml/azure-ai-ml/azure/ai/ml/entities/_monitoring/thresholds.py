@@ -667,13 +667,13 @@ class CustomMonitoringMetricThreshold(MetricThreshold):
 
 
 @experimental
-class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):
+class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):  # pylint: disable=name-too-long
     """Generation safety quality metric threshold
 
     :keyword groundedness: The groundedness metric threshold
     :paramtype groundedness: Dict[str, float]
-    :keyword relevence: The relevence metric threshold
-    :paramtype relevence: Dict[str, float]
+    :keyword relevance: The relevance metric threshold
+    :paramtype relevance: Dict[str, float]
     :keyword coherence: The coherence metric threshold
     :paramtype coherence: Dict[str, float]
     :keyword fluency: The fluency metric threshold
@@ -686,13 +686,13 @@ class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):
         self,
         *,
         groundedness: Dict[str, float] = None,
-        relevence: Dict[str, float] = None,
+        relevance: Dict[str, float] = None,
         coherence: Dict[str, float] = None,
         fluency: Dict[str, float] = None,
         similarity: Dict[str, float] = None,
     ):
         self.groundedness = groundedness
-        self.relevence = relevence
+        self.relevance = relevance
         self.coherence = coherence
         self.fluency = fluency
         self.similarity = similarity
@@ -712,14 +712,14 @@ class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):
                     metric="aggregated_groundedness_pass_rate", threshold=aggregated_threshold
                 )
             )
-        if self.relevence:
+        if self.relevance:
             acceptable_threshold = MonitoringThreshold(value=3)
             metric_thresholds.append(
                 GenerationSafetyQualityMetricThreshold(
                     metric="acceptable_relevance_score_per_instance", threshold=acceptable_threshold
                 )
             )
-            aggregated_threshold = MonitoringThreshold(value=self.relevence["aggregated_relevance_pass_rate"])
+            aggregated_threshold = MonitoringThreshold(value=self.relevance["aggregated_relevance_pass_rate"])
             metric_thresholds.append(
                 GenerationSafetyQualityMetricThreshold(
                     metric="aggregated_relevance_pass_rate", threshold=aggregated_threshold
@@ -771,7 +771,7 @@ class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):
         cls, obj: GenerationSafetyQualityMetricThreshold
     ) -> "GenerationSafetyQualityMonitoringMetricThreshold":
         groundedness = {}
-        relevence = {}
+        relevance = {}
         coherence = {}
         fluency = {}
         similarity = {}
@@ -780,7 +780,7 @@ class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):
             if threshold.metric == "aggregated_groundedness_pass_rate":
                 groundedness["aggregated_groundedness_pass_rate"] = threshold.threshold.value
             if threshold.metric == "aggregated_relevance_pass_rate":
-                relevence["aggregated_relevance_pass_rate"] = threshold.threshold.value
+                relevance["aggregated_relevance_pass_rate"] = threshold.threshold.value
             if threshold.metric == "aggregated_coherence_pass_rate":
                 coherence["aggregated_coherence_pass_rate"] = threshold.threshold.value
             if threshold.metric == "aggregated_fluency_pass_rate":
@@ -790,7 +790,7 @@ class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):
 
         return cls(
             groundedness=groundedness if groundedness else None,
-            relevence=relevence if relevence else None,
+            relevance=relevance if relevance else None,
             coherence=coherence if coherence else None,
             fluency=fluency if fluency else None,
             similarity=similarity if similarity else None,
