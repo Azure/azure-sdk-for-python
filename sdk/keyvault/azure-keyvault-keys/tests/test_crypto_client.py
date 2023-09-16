@@ -11,8 +11,8 @@ from unittest import mock
 
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 
-from cryptography.hazmat.primitives.hashes import SHA1
-from cryptography.hazmat.primitives.asymmetric.padding import MGF1, OAEP
+from cryptography.hazmat.primitives.hashes import SHA1, SHA256
+from cryptography.hazmat.primitives.asymmetric.padding import MGF1, OAEP, PSS
 import pytest
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -21,7 +21,6 @@ from azure.keyvault.keys import JsonWebKey, KeyCurveName, KeyOperation, KeyVault
 from azure.keyvault.keys.crypto import (
     CryptographyClient,
     EncryptionAlgorithm,
-    KeyVaultRSAPrivateKey,
     KeyWrapAlgorithm,
     SignatureAlgorithm,
 )
@@ -203,16 +202,16 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         imported_key = self._import_test_key(key_client, key_name)
         crypto_client = self.create_crypto_client(imported_key.id, api_version=key_client.api_version)
 
-        result = crypto_client.encrypt(EncryptionAlgorithm.rsa_oaep, self.plaintext)
-        assert result.key_id == imported_key.id
-
-        # Create a KeyVaultRSAPrivateKey that can perform decryption with `cryptography`'s interface
-        managed_key = crypto_client.create_rsa_private_key()
-        # We used RSA-OAEP to encrypt, so we use MGF1 and SHA1 as inputs to OAEP to match during decryption
+        # Create a KeyVaultRSAPublicKey that can perform encryption with `cryptography`'s interface
+        public_key = crypto_client.create_rsa_public_key()
         algorithm = SHA1()
         mgf = MGF1(algorithm)
         padding = OAEP(mgf, algorithm, None)
-        plaintext = managed_key.decrypt(ciphertext=result.ciphertext, padding=padding)
+        ciphertext = public_key.encrypt(self.plaintext, padding)
+
+        # Create a KeyVaultRSAPrivateKey that can perform decryption with `cryptography`'s interface
+        private_key = crypto_client.create_rsa_private_key()
+        plaintext = private_key.decrypt(ciphertext=ciphertext, padding=padding)
         assert self.plaintext == plaintext
 
     @pytest.mark.parametrize("api_version,is_hsm", no_get)
@@ -235,6 +234,26 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         assert result.key_id == imported_key.id
         assert result.algorithm == SignatureAlgorithm.rs256
         assert verified.is_valid
+
+    @pytest.mark.parametrize("api_version,is_hsm", only_vault_latest)
+    @KeysClientPreparer(permissions=NO_GET)
+    @recorded_by_proxy
+    def test_sign_and_verify_with_managed_key(self, key_client, is_hsm, **kwargs):
+        key_name = self.get_resource_name("keysign")
+
+        imported_key = self._import_test_key(key_client, key_name, hardware_protected=is_hsm)
+        crypto_client = self.create_crypto_client(imported_key.id, api_version=key_client.api_version)
+
+        # Create a KeyVaultRSAPrivateKey that can perform signing with `cryptography`'s interface
+        private_key = crypto_client.create_rsa_private_key()
+        algorithm = SHA256()
+        mgf = MGF1(algorithm)
+        padding = PSS(mgf, PSS.MAX_LENGTH)
+        signature = private_key.sign(self.plaintext, padding, algorithm)
+
+        # Create a KeyVaultRSAPublicKey that can perform verifying with `cryptography`'s interface
+        public_key = crypto_client.create_rsa_public_key()
+        public_key.verify(signature, self.plaintext, padding, algorithm)
 
     @pytest.mark.parametrize("api_version,is_hsm", no_get)
     @KeysClientPreparer(permissions=NO_GET)

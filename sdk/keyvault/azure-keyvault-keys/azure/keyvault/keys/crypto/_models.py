@@ -198,7 +198,7 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         digest.update(data)
         result = self._client.verify(mapped_algorithm, digest.finalize(), signature)
         if not result.is_valid:
-            raise InvalidSignature(f"The provided signature '{signature.decode()}' is invalid.")
+            raise InvalidSignature(f"The provided signature '{signature!r}' is invalid.")
 
     def recover_data_from_signature(  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         self,
