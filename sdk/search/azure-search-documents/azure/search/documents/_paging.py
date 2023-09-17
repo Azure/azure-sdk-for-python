@@ -3,15 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, cast
 
 import base64
 import itertools
 import json
 
 from azure.core.paging import ItemPaged, PageIterator, ReturnType
-from ._generated.models import SearchRequest
-from ..documents.models import AnswerResult
+from ._generated.models import SearchRequest, SearchDocumentsResult, AnswerResult
 
 
 def convert_search_result(result):
@@ -45,7 +44,7 @@ def unpack_continuation_token(token):
 class SearchItemPaged(ItemPaged[ReturnType]):
     def __init__(self, *args, **kwargs) -> None:
         super(SearchItemPaged, self).__init__(*args, **kwargs)
-        self._first_page_iterator_instance = None
+        self._first_page_iterator_instance: Optional[SearchPageIterator] = None
 
     def __next__(self) -> ReturnType:
         if self._page_iterator is None:
@@ -53,9 +52,9 @@ class SearchItemPaged(ItemPaged[ReturnType]):
             self._page_iterator = itertools.chain.from_iterable(first_iterator)
         return next(self._page_iterator)
 
-    def _first_iterator_instance(self):
+    def _first_iterator_instance(self) -> "SearchPageIterator":
         if self._first_page_iterator_instance is None:
-            self._first_page_iterator_instance = self.by_page()
+            self._first_page_iterator_instance = cast(SearchPageIterator, self.by_page())
         return self._first_page_iterator_instance
 
     def get_facets(self) -> Optional[Dict]:
@@ -64,7 +63,7 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         :return: facet results
         :rtype: dict or None
         """
-        return self._first_iterator_instance().get_facets()
+        return cast(Dict, self._first_iterator_instance().get_facets())
 
     def get_coverage(self) -> float:
         """Return the coverage percentage, if `minimum_coverage` was
@@ -73,7 +72,7 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         :return: coverage percentage
         :rtype: float
         """
-        return self._first_iterator_instance().get_coverage()
+        return cast(float, self._first_iterator_instance().get_coverage())
 
     def get_count(self) -> int:
         """Return the count of results if `include_total_count` was
@@ -82,7 +81,7 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         :return: count of results
         :rtype: int
         """
-        return self._first_iterator_instance().get_count()
+        return cast(int, self._first_iterator_instance().get_count())
 
     def get_answers(self) -> Optional[List[AnswerResult]]:
         """Return answers.
@@ -90,7 +89,7 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         :return: answers
         :rtype: list[~azure.search.documents.models.AnswerResult] or None
         """
-        return self._first_iterator_instance().get_answers()
+        return cast(List[AnswerResult], self._first_iterator_instance().get_answers())
 
 
 # The pylint error silenced below seems spurious, as the inner wrapper does, in
@@ -133,24 +132,29 @@ class SearchPageIterator(PageIterator):
         return continuation_token, results
 
     @_ensure_response
-    def get_facets(self):
+    def get_facets(self) -> Optional[Dict]:
         self.continuation_token = None
-        facets = self._response.facets
+        response = cast(SearchDocumentsResult, self._response)
+        facets = response.facets
         if facets is not None and self._facets is None:
+            assert facets.items() is not None  # Hint for mypy
             self._facets = {k: [x.as_dict() for x in v] for k, v in facets.items()}
         return self._facets
 
     @_ensure_response
-    def get_coverage(self):
+    def get_coverage(self) -> float:
         self.continuation_token = None
-        return self._response.coverage
+        response = cast(SearchDocumentsResult, self._response)
+        return cast(float, response.coverage)
 
     @_ensure_response
-    def get_count(self):
+    def get_count(self) -> int:
         self.continuation_token = None
-        return self._response.count
+        response = cast(SearchDocumentsResult, self._response)
+        return cast(int, response.count)
 
     @_ensure_response
-    def get_answers(self):
+    def get_answers(self) -> Optional[List[AnswerResult]]:
         self.continuation_token = None
-        return self._response.answers
+        response = cast(SearchDocumentsResult, self._response)
+        return response.answers
