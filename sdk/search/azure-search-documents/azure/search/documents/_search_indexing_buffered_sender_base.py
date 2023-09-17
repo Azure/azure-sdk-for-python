@@ -4,9 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
-from typing import Any, Union
+from typing import Any, Union, Dict
 
 from azure.core.credentials import AzureKeyCredential, TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from ._api_versions import DEFAULT_VERSION
 from ._headers_mixin import HeadersMixin
 
@@ -23,7 +24,7 @@ class SearchIndexingBufferedSenderBase(HeadersMixin):
         self,
         endpoint: str,
         index_name: str,
-        credential: Union[AzureKeyCredential, TokenCredential],
+        credential: Union[AzureKeyCredential, TokenCredential, AsyncTokenCredential],
         *,
         auto_flush: bool = True,
         initial_batch_action_count: int = _DEFAULT_INITIAL_BATCH_ACTION_COUNT,
@@ -47,4 +48,4 @@ class SearchIndexingBufferedSenderBase(HeadersMixin):
         self._on_progress = kwargs.pop("on_progress", None)
         self._on_error = kwargs.pop("on_error", None)
         self._on_remove = kwargs.pop("on_remove", None)
-        self._retry_counter = {}
+        self._retry_counter: Dict[str, int] = {}

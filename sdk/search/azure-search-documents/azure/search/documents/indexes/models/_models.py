@@ -83,7 +83,7 @@ class SearchIndexerSkillset(_SearchIndexerSkillset):
         )
 
     @classmethod
-    def _from_generated(cls, skillset):
+    def _from_generated(cls, skillset) -> "SearchIndexerSkillset":
         custom_skills = []
         for skill in skillset.skills:
             skill_cls = type(skill)
@@ -185,7 +185,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
 
         super(EntityRecognitionSkill, self).__init__(**kwargs)
         self.skill_version = skill_version
-        self.odata_type = self.skill_version  # type: str
+        self.odata_type = self.skill_version
         self.categories = kwargs.get("categories", None)
         self.default_language_code = kwargs.get("default_language_code", None)
         self.minimum_precision = kwargs.get("minimum_precision", None)
@@ -193,7 +193,10 @@ class EntityRecognitionSkill(SearchIndexerSkill):
         self.model_version = kwargs.get("model_version", None)
 
     def _to_generated(self):
-        if self.skill_version in [EntityRecognitionSkillVersion.V3, EntityRecognitionSkillVersion.LATEST]:
+        if self.skill_version in [
+            EntityRecognitionSkillVersion.V3,
+            EntityRecognitionSkillVersion.LATEST,
+        ]:
             return _EntityRecognitionSkillV3(
                 inputs=self.inputs,
                 outputs=self.outputs,
@@ -296,13 +299,16 @@ class SentimentSkill(SearchIndexerSkill):
 
         super(SentimentSkill, self).__init__(**kwargs)
         self.skill_version = skill_version
-        self.odata_type = self.skill_version  # type: str
+        self.odata_type = self.skill_version
         self.default_language_code = kwargs.get("default_language_code", None)
         self.include_opinion_mining = kwargs.get("include_opinion_mining", None)
         self.model_version = kwargs.get("model_version", None)
 
     def _to_generated(self):
-        if self.skill_version in [SentimentSkillVersion.V3, SentimentSkillVersion.LATEST]:
+        if self.skill_version in [
+            SentimentSkillVersion.V3,
+            SentimentSkillVersion.LATEST,
+        ]:
             return _SentimentSkillV3(
                 inputs=self.inputs,
                 outputs=self.outputs,
@@ -759,9 +765,7 @@ class SynonymMap(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, synonym_map):
-        if not synonym_map:
-            return None
+    def _from_generated(cls, synonym_map) -> "SynonymMap":
         return cls(
             name=synonym_map.name,
             synonyms=synonym_map.synonyms.split("\n"),
@@ -832,7 +836,10 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
             "key": "dataDeletionDetectionPolicy",
             "type": "DataDeletionDetectionPolicy",
         },
-        "encryption_key": {"key": "encryptionKey", "type": "SearchResourceEncryptionKey"},
+        "encryption_key": {
+            "key": "encryptionKey",
+            "type": "SearchResourceEncryptionKey",
+        },
         "e_tag": {"key": "@odata\\.etag", "type": "str"},
         "identity": {"key": "identity", "type": "SearchIndexerDataIdentity"},
     }
@@ -870,9 +877,7 @@ class SearchIndexerDataSourceConnection(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, search_indexer_data_source):
-        if not search_indexer_data_source:
-            return None
+    def _from_generated(cls, search_indexer_data_source) -> "SearchIndexerDataSourceConnection":
         connection_string = (
             search_indexer_data_source.credentials.connection_string if search_indexer_data_source.credentials else None
         )
