@@ -70,6 +70,14 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
         cls._record_method_events(cls)
 
     @staticmethod
+    def in_ci() -> int:
+        if os.getenv("TF_BUILD", None):
+            return 1
+        if os.getenv("CI", None):
+            return 2
+        return 0
+
+    @staticmethod
     def _format_string(s) -> str:
         s1 = f"{s[:12]}-{s[12:16]}-{s[16:20]}-{s[20:24]}-{s[24:36]}"
         s2 = f"{s[36:44]}-{s[44:48]}-{s[48:52]}-{s[52:56]}-{s[56:]}"
@@ -107,19 +115,22 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
 
     @staticmethod
     def _get_recording_location():
-        repo_root = ascend_to_root(os.path.dirname(__file__))
-        root = os.getenv("BUILD_SOURCESDIRECTORY", repo_root)
-        tool_name = prepare_local_tool(root)
-        command = f"{tool_name} config locate -a {repo_root}/sdk/communication/azure-communication-callautomation"
-        result = subprocess.run(
-            command,
-            capture_output=True,
-            encoding="utf-8",
-            check=False,
-        )
-        output = result.stdout
-        parsed = output.split("--version")[-1].strip()
-        return parsed
+        if CallAutomationRecordedTestCase.in_ci():
+            return os.environ["PROXY_ASSETS_FOLDER"]
+        else:
+            repo_root = ascend_to_root(os.path.dirname(__file__))
+            root = os.getenv("BUILD_SOURCESDIRECTORY", repo_root)
+            tool_name = prepare_local_tool(root)
+            command = f"{tool_name} config locate -a {repo_root}/sdk/communication/azure-communication-callautomation"
+            result = subprocess.run(
+                command,
+                capture_output=True,
+                encoding="utf-8",
+                check=False,
+            )
+            output = result.stdout
+            parsed = output.split("--version")[-1].strip()
+            return parsed
 
     def _message_awaiter(self, unique_id) -> None:
         service_bus_receiver = self.service_bus_client.get_queue_receiver(queue_name=unique_id)
