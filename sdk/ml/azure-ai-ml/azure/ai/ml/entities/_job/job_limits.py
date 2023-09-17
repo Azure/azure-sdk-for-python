@@ -40,7 +40,6 @@ class CommandJobLimits(JobLimits):
 
     .. admonition:: Example:
 
-
         .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
             :start-after: [START command_job_definition]
             :end-before: [END command_job_definition]
@@ -86,7 +85,6 @@ class SweepJobLimits(JobLimits):
     :paramtype trial_timeout: Optional[int]
 
     .. admonition:: Example:
-
 
         .. literalinclude:: ../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_bayesian_sampling_algorithm]

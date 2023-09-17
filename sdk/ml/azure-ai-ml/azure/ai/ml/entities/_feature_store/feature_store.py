@@ -20,12 +20,7 @@ from azure.ai.ml.entities._workspace.compute_runtime import ComputeRuntime
 from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 
-from ._constants import (
-    DEFAULT_SPARK_RUNTIME_VERSION,
-    FEATURE_STORE_KIND,
-    OFFLINE_STORE_CONNECTION_NAME,
-    ONLINE_STORE_CONNECTION_NAME,
-)
+from ._constants import DEFAULT_SPARK_RUNTIME_VERSION, FEATURE_STORE_KIND
 from .materialization_store import MaterializationStore
 
 
@@ -116,15 +111,12 @@ class FeatureStore(Workspace):
         :type kwargs: dict
         """
 
-        feature_store_settings = FeatureStoreSettings(
-            compute_runtime=compute_runtime
-            if compute_runtime
-            else ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION),
-            offline_store_connection_name=(
-                OFFLINE_STORE_CONNECTION_NAME if materialization_identity and offline_store else None
-            ),
-            online_store_connection_name=(
-                ONLINE_STORE_CONNECTION_NAME if materialization_identity and online_store else None
+        feature_store_settings = kwargs.pop(
+            "feature_store_settings",
+            FeatureStoreSettings(
+                compute_runtime=compute_runtime
+                if compute_runtime
+                else ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION),
             ),
         )
         self._workspace_id = kwargs.pop("workspace_id", "")
@@ -188,6 +180,7 @@ class FeatureStore(Workspace):
             primary_user_assigned_identity=workspace_object.primary_user_assigned_identity,
             managed_network=workspace_object.managed_network,
             workspace_id=rest_obj.workspace_id,
+            feature_store_settings=workspace_object._feature_store_settings,
         )
 
     @classmethod
