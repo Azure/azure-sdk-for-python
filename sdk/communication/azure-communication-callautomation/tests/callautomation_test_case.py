@@ -34,6 +34,7 @@ from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.phonenumbers import PhoneNumbersClient
 
 class CallAutomationRecordedTestCase(AzureRecordedTestCase):
+    recording_location = None
     @classmethod
     def setup_class(cls):
         if is_live():
@@ -58,6 +59,7 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
         cls.event_store: Dict[str, Dict[str, Any]] = {}
         cls.event_to_save: Dict[str, Dict[str, Any]] = {}
         cls.open_call_connections: Dict[str, CallConnectionClient] = {}
+        CallAutomationRecordedTestCase.recording_location = cls._get_recording_location()
         cls._prepare_events_recording(cls)
 
     @classmethod
@@ -93,21 +95,22 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
         return  event_type + call_connection_id
 
     @staticmethod
-    def _unique_key_gen(caller_identifier: CommunicationIdentifier, reciever_identifier: CommunicationIdentifier) -> str:
-        return CallAutomationRecordedTestCase._parse_ids_from_identifier(caller_identifier) + CallAutomationRecordedTestCase._parse_ids_from_identifier(reciever_identifier)
+    def _unique_key_gen(caller_identifier: CommunicationIdentifier, receiver_identifier: CommunicationIdentifier) -> str:
+        return CallAutomationRecordedTestCase._parse_ids_from_identifier(caller_identifier) + CallAutomationRecordedTestCase._parse_ids_from_identifier(receiver_identifier)
 
     @staticmethod
     def _get_test_event_file_name():
         test_id = get_test_id()
         event_file_name = "sdk/communication/azure-communication-callautomation/tests/recordings/" + test_id.split("/")[-1].split(".")[0] + ".event.json"
-        full_path = os.path.join(CallAutomationRecordedTestCase._get_recording_location(), event_file_name)
+        full_path = os.path.join(CallAutomationRecordedTestCase.recording_location, event_file_name)
         return full_path
 
     @staticmethod
     def _get_recording_location():
-        root_path = ascend_to_root(os.path.dirname(__file__))
-        tool_name = prepare_local_tool(root_path)
-        command = f"{tool_name} config locate -a {root_path}/sdk/communication/azure-communication-callautomation"
+        repo_root = ascend_to_root(os.path.dirname(__file__))
+        root = os.getenv("BUILD_SOURCESDIRECTORY", repo_root)
+        tool_name = prepare_local_tool(root)
+        command = f"{tool_name} config locate -a {repo_root}/sdk/communication/azure-communication-callautomation"
         result = subprocess.run(
             command,
             capture_output=True,
@@ -128,8 +131,8 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
                 mapper = json.loads(body_str)
                 if "incomingCallContext" in mapper:
                     caller = identifier_from_raw_id(mapper["from"]["rawId"])
-                    reciever = identifier_from_raw_id(mapper["to"]["rawId"])
-                    unique_id = self._unique_key_gen(caller, reciever)
+                    receiver = identifier_from_raw_id(mapper["to"]["rawId"])
+                    unique_id = self._unique_key_gen(caller, receiver)
                     key = self._event_key_gen("IncomingCall", unique_id)
                     print("EventRegistration(IncomingCall):" + key)
                     self.event_store[key] = mapper
