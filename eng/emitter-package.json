@@ -3,6 +3,7 @@
   "dependencies": {
     "@azure-tools/typespec-python": "0.13.5",
     "@azure-tools/typespec-autorest": "0.34.0",
+    "@azure-tools/typespec-providerhub": "0.34.0",
     "@azure-tools/typespec-azure-resource-manager": "0.34.0"
   }
 }
