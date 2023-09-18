@@ -19,8 +19,9 @@ DEPENDENCIES = [
     "python-dotenv",
     "PyYAML",
     "urllib3",
+    "tomli-w==1.0.0",
     # gh tools
-    "PyGithub>=1.59.0"
+    "PyGithub>=1.59.0",
 ]
 
 setup(
@@ -53,7 +54,7 @@ setup(
     },
     extras_require={
         ":python_version>='3.5'": ["pytest-asyncio>=0.9.0"],
-        ":python_version<'3.11'": ["tomli==2.0.1", "tomli-w==1.0.0"],
+        ":python_version<'3.11'": ["tomli==2.0.1"],
         "build": ["six", "setuptools", "pyparsing", "certifi"],
         "conda": ["beautifulsoup4"]
     },

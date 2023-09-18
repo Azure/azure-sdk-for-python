@@ -7,7 +7,12 @@ from subprocess import check_call, getoutput
 import shutil
 import re
 import os
-import tomli as toml
+try:
+    # py 311 adds this library natively
+    import tomllib as toml
+except:
+    # otherwise fall back to pypi package tomli
+    import tomli as toml
 import tomli_w as tomlw
 
 from .swaggertosdk.SwaggerToSdkCore import (
