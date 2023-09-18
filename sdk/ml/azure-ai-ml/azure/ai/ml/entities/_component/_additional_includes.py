@@ -91,9 +91,9 @@ class AdditionalIncludes:
         return len(self.origin_configs) != 0
 
     @classmethod
-    def _get_artifacts_by_config(cls, artifact_config: Dict[str, str]) -> Union[str, os.PathLike[str]]:
+    def _get_artifacts_by_config(cls, artifact_config: Dict[str, str]) -> Optional[Path]:
         # config key existence has been validated in _validate_additional_include_config
-        res: Union[str, os.PathLike[str]] = ArtifactCache().get(
+        res: Optional[Path] = ArtifactCache().get(
             organization=artifact_config.get("organization", None),
             project=artifact_config.get("project", None),
             feed=artifact_config["feed"],
