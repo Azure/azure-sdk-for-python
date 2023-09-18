@@ -7,22 +7,17 @@ import json
 import threading
 import time
 import os
-import shlex
-import subprocess
-import sys
+import inspect
 from datetime import datetime, timedelta
 from typing import Dict, Any, List
 
 import requests
 from azure.servicebus import ServiceBusClient
 from devtools_testutils import AzureRecordedTestCase, is_live
-from devtools_testutils.proxy_startup import (
-    ascend_to_root,
-    prepare_local_tool
-)
 from devtools_testutils.helpers import (
     get_test_id
 )
+
 from azure.communication.callautomation import (
     CommunicationIdentifierKind,
     CallAutomationClient,
@@ -34,7 +29,6 @@ from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.phonenumbers import PhoneNumbersClient
 
 class CallAutomationRecordedTestCase(AzureRecordedTestCase):
-    recording_location = None
     @classmethod
     def setup_class(cls):
         if is_live():
@@ -59,23 +53,25 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
         cls.event_store: Dict[str, Dict[str, Any]] = {}
         cls.event_to_save: Dict[str, Dict[str, Any]] = {}
         cls.open_call_connections: Dict[str, CallConnectionClient] = {}
-        CallAutomationRecordedTestCase.recording_location = cls._get_recording_location()
-        cls._prepare_events_recording(cls)
 
     @classmethod
     def teardown_class(cls):
         cls.wait_for_event_flags.clear()
         for cc in cls.open_call_connections.values():
             cc.hang_up(is_for_everyone=True)
-        cls._record_method_events(cls)
 
-    @staticmethod
-    def in_ci() -> int:
-        if os.getenv("TF_BUILD", None):
-            return 1
-        if os.getenv("CI", None):
-            return 2
-        return 0
+    def setup_method(self, method):
+        self.test_name = get_test_id().split("/")[-1]
+        self.event_store: Dict[str, Dict[str, Any]] = {}
+        self.event_to_save: Dict[str, Dict[str, Any]] = {}
+        self._prepare_events_recording()
+        pass
+
+    def teardown_method(self, method):
+        self._record_method_events()
+        self.event_store: Dict[str, Dict[str, Any]] = {}
+        self.event_to_save: Dict[str, Dict[str, Any]] = {}
+        pass
 
     @staticmethod
     def _format_string(s) -> str:
@@ -106,31 +102,10 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
     def _unique_key_gen(caller_identifier: CommunicationIdentifier, receiver_identifier: CommunicationIdentifier) -> str:
         return CallAutomationRecordedTestCase._parse_ids_from_identifier(caller_identifier) + CallAutomationRecordedTestCase._parse_ids_from_identifier(receiver_identifier)
 
-    @staticmethod
-    def _get_test_event_file_name():
-        test_id = get_test_id()
-        event_file_name = "sdk/communication/azure-communication-callautomation/tests/recordings/" + test_id.split("/")[-1].split(".")[0] + ".event.json"
-        full_path = os.path.join(CallAutomationRecordedTestCase.recording_location, event_file_name)
-        return full_path
-
-    @staticmethod
-    def _get_recording_location():
-        if CallAutomationRecordedTestCase.in_ci():
-            return os.environ["PROXY_ASSETS_FOLDER"]
-        else:
-            repo_root = ascend_to_root(os.path.dirname(__file__))
-            root = os.getenv("BUILD_SOURCESDIRECTORY", repo_root)
-            tool_name = prepare_local_tool(root)
-            command = f"{tool_name} config locate -a {repo_root}/sdk/communication/azure-communication-callautomation"
-            result = subprocess.run(
-                command,
-                capture_output=True,
-                encoding="utf-8",
-                check=False,
-            )
-            output = result.stdout
-            parsed = output.split("--version")[-1].strip()
-            return parsed
+    def _get_test_event_file_name(self):
+        script_dir = os.path.dirname(os.path.realpath(__file__))
+        file_path = os.path.join(script_dir, 'events', f'{self.test_name}.event.json')
+        return file_path
 
     def _message_awaiter(self, unique_id) -> None:
         service_bus_receiver = self.service_bus_client.get_queue_receiver(queue_name=unique_id)
