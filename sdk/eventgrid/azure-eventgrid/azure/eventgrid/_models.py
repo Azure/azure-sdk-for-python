@@ -68,6 +68,16 @@ class EventGridEvent(object):
 
         self._internal_event = InternalEventGridEvent(**kwargs)
 
+        self.id = self._internal_event.id
+        self.subject = self._internal_event.subject
+        self.event_type = self._internal_event.event_type
+        self.event_time = self._internal_event.event_time
+        self.data = self._internal_event.data
+        self.data_version = self._internal_event.data_version
+        self.topic = self._internal_event.topic
+        self.metadata_version = self._internal_event.metadata_version
+        
+
     def __setattr__(self, name, value):
         return setattr(InternalEventGridEvent, name, value)
     
