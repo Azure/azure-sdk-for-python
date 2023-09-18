@@ -26,24 +26,7 @@ class WorkspaceConnectionSchema(PathAwareSchema):
     name = fields.Str()
     id = ArmStr(azureml_type=AzureMLResourceType.WORKSPACE_CONNECTION, dump_only=True)
     creation_context = NestedField(CreationContextSchema, dump_only=True)
-    type = StringTransformedEnum(
-        allowed_values=[
-            ConnectionCategory.GIT,
-            ConnectionCategory.CONTAINER_REGISTRY,
-            ConnectionCategory.PYTHON_FEED,
-            ConnectionCategory.S3,
-            ConnectionCategory.SNOWFLAKE,
-            ConnectionCategory.AZURE_SQL_DB,
-            ConnectionCategory.AZURE_SYNAPSE_ANALYTICS,
-            ConnectionCategory.AZURE_MY_SQL_DB,
-            ConnectionCategory.AZURE_POSTGRES_DB,
-            ConnectionCategory.AZURE_OPEN_AI,
-            ConnectionCategory.COGNITIVE_SERVICE,
-            ConnectionCategory.COGNITIVE_SEARCH,
-        ],
-        casing_transform=camel_to_snake,
-        required=True,
-    )
+    type = fields.Str(required=True)
     target = fields.Str()
     credentials = UnionField(
         [
