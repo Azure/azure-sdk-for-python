@@ -150,7 +150,7 @@ def _from_cncf_events(event): # pylint: disable=inconsistent-return-statements
     try:
         from cloudevents.http import to_json
         return json.loads(to_json(event))
-    except (AttributeError, ImportError):
+    except (AttributeError, TypeError, ImportError):
         # means this is not a CNCF event
         return event
     except Exception as err: # pylint: disable=broad-except
