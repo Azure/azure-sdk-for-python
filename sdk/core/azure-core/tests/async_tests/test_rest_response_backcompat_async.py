@@ -180,16 +180,25 @@ async def test_response_internal_response_trio(get_old_response_trio, get_new_re
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("transport", TRANSPORTS)
-async def test_response_stream_download(get_old_response, get_new_response, transport):
+async def test_old_response_stream_download(get_old_response, get_new_response, transport):
     old_response = await get_old_response(transport, stream=True)
-    new_response = await get_new_response(transport, stream=True)
     pipeline = Pipeline(transport())
     old_string = b"".join([part async for part in old_response.stream_download(pipeline=pipeline)])
-    new_string = b"".join([part async for part in new_response.stream_download(pipeline=pipeline)])
 
     # aiohttp can be flaky for both old and new responses, so since we're just checking backcompat here
     # using in instead of equals
     assert old_string in b"Hello, world!"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("transport", TRANSPORTS)
+async def test_new_response_stream_download(get_old_response, get_new_response, transport):
+    new_response = await get_new_response(transport, stream=True)
+    pipeline = Pipeline(transport())
+    new_string = b"".join([part async for part in new_response.stream_download(pipeline=pipeline)])
+
+    # aiohttp can be flaky for both old and new responses, so since we're just checking backcompat here
+    # using in instead of equals
     assert new_string in b"Hello, world!"
 
 
