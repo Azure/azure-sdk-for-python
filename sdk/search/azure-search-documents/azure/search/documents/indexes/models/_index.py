@@ -20,7 +20,7 @@ from ._models import (
 )
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, List
+    from typing import Any, Dict
 
 __all__ = ("ComplexField", "SearchableField", "SimpleField")
 
@@ -192,7 +192,10 @@ class SearchField(_serialization.Model):
         "synonym_map_names": {"key": "synonymMapNames", "type": "[str]"},
         "fields": {"key": "fields", "type": "[SearchField]"},
         "vector_search_dimensions": {"key": "vectorSearchDimensions", "type": "int"},
-        "vector_search_configuration": {"key": "vectorSearchConfiguration", "type": "str"},
+        "vector_search_configuration": {
+            "key": "vectorSearchConfiguration",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -214,7 +217,7 @@ class SearchField(_serialization.Model):
         self.vector_search_dimensions = kwargs.get("vector_search_dimensions", None)
         self.vector_search_configuration = kwargs.get("vector_search_configuration", None)
 
-    def _to_generated(self):
+    def _to_generated(self) -> _SearchField:
         fields = [pack_search_field(x) for x in self.fields] if self.fields else None
         retrievable = not self.hidden if self.hidden is not None else None
         return _SearchField(
@@ -579,7 +582,7 @@ class SearchIndex(_serialization.Model):
         self.vector_search = kwargs.get("vector_search", None)
         self.e_tag = kwargs.get("e_tag", None)
 
-    def _to_generated(self):
+    def _to_generated(self) -> _SearchIndex:
         if self.analyzers:
             analyzers = [pack_analyzer(x) for x in self.analyzers]  # type: ignore  # mypy: ignore
         else:
@@ -594,7 +597,7 @@ class SearchIndex(_serialization.Model):
         if self.fields:
             fields = [pack_search_field(x) for x in self.fields]
         else:
-            fields = None
+            fields = []
         return _SearchIndex(
             name=self.name,
             fields=fields,
@@ -616,9 +619,7 @@ class SearchIndex(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, search_index):
-        if not search_index:
-            return None
+    def _from_generated(cls, search_index) -> "SearchIndex":
         if search_index.analyzers:
             analyzers = [unpack_analyzer(x) for x in search_index.analyzers]  # type: ignore
         else:
@@ -661,13 +662,12 @@ class SearchIndex(_serialization.Model):
         )
 
 
-def pack_search_field(search_field):
-    # type: (SearchField) -> _SearchField
-    if not search_field:
-        return None
+def pack_search_field(search_field: SearchField) -> _SearchField:
     if isinstance(search_field, dict):
         name = search_field.get("name")
+        assert name is not None  # Hint for mypy
         field_type = search_field.get("type")
+        assert field_type is not None  # Hint for mypy
         key = search_field.get("key")
         hidden = search_field.get("hidden")
         searchable = search_field.get("searchable")

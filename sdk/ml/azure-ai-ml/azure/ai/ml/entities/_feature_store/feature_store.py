@@ -110,10 +110,13 @@ class FeatureStore(Workspace):
         :type kwargs: dict
         """
 
-        feature_store_settings = FeatureStoreSettings(
-            compute_runtime=compute_runtime
-            if compute_runtime
-            else ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION),
+        feature_store_settings = kwargs.pop(
+            "feature_store_settings",
+            FeatureStoreSettings(
+                compute_runtime=compute_runtime
+                if compute_runtime
+                else ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION),
+            ),
         )
         self._workspace_id = kwargs.pop("workspace_id", "")
         super().__init__(
@@ -176,6 +179,7 @@ class FeatureStore(Workspace):
             primary_user_assigned_identity=workspace_object.primary_user_assigned_identity,
             managed_network=workspace_object.managed_network,
             workspace_id=rest_obj.workspace_id,
+            feature_store_settings=workspace_object._feature_store_settings,
         )
 
     @classmethod

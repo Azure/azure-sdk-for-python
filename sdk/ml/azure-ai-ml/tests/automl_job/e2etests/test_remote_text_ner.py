@@ -5,6 +5,7 @@
 from typing import Tuple
 
 import pytest
+import copy
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import assert_final_job_status, get_automl_job_properties
 
@@ -34,9 +35,13 @@ class TestTextNer(AzureRecordedTestCase):
         # use component specific model name so that the test fails if components are not run
         if components:
             job.set_training_parameters(model_name="microsoft/deberta-base")
+            job_reuse = copy.deepcopy(job)
 
         job.set_limits(timeout_minutes=60, max_concurrent_trials=1)
 
         created_job = client.jobs.create_or_update(job)
+        if components:
+            created_job_reuse = client.jobs.create_or_update(job_reuse)
+            assert_final_job_status(created_job_reuse, client, TextNerJob, JobStatus.COMPLETED)
 
         assert_final_job_status(created_job, client, TextNerJob, JobStatus.COMPLETED)
