@@ -23,6 +23,7 @@ def validate_to_from_rest_translation(json_path: str, yaml_path: str) -> None:
         yaml_dict = yaml.safe_load(f)
 
     yaml_dict.pop("name", None)
+
     assert json.loads(json.dumps(yaml_dict)) == json.loads(
         json.dumps(Schedule._from_rest_object(deserialized_schedule)._to_dict())
     )
