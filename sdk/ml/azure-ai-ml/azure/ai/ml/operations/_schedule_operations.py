@@ -17,7 +17,12 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import Job, JobSchedule, Schedule
 from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
-from azure.ai.ml.entities._monitoring.signals import ProductionData, ReferenceData, BaselineDataRange
+from azure.ai.ml.entities._monitoring.signals import (
+    ProductionData,
+    ReferenceData,
+    BaselineDataRange,
+    FADProductionData,
+)
 from azure.ai.ml.entities._inputs_outputs.input import Input
 from azure.ai.ml.exceptions import ScheduleException, ErrorCategory, ErrorTarget
 from azure.core.credentials import TokenCredential
@@ -345,17 +350,6 @@ class ScheduleOperations(_ScopeDependentOperations):
                         asset=prod_data.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
                     )
                 continue
-            if signal.type == MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT:
-                for prod_data in signal.production_data:
-                    self._job_operations._resolve_job_input(prod_data.input_data, schedule._base_path)
-                    prod_data.pre_processing_component = self._orchestrators.get_asset_arm_id(
-                        asset=prod_data.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
-                    )
-                self._job_operations._resolve_job_input(signal.reference_data.input_data, schedule._base_path)
-                signal.reference_data.pre_processing_component = self._orchestrators.get_asset_arm_id(
-                    asset=signal.reference_data.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
-                )
-                continue
             error_messages = []
             if not signal.production_data or not signal.reference_data:
                 # if there is no target dataset, we check the type of signal
@@ -421,6 +415,38 @@ class ScheduleOperations(_ScopeDependentOperations):
                             "or refers to a deployment for which data collection for model outputs is not enabled."
                         )
                         error_messages.append(msg)
+                elif signal.type == MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT:
+                    if mdc_input_enabled:
+                        if not signal.production_data:
+                            # if production dataset is absent and data collector for input is enabled,
+                            # create a default prod dataset with production model inputs and outputs as target
+                            signal.production_data = [
+                                FADProductionData(
+                                    input_data=Input(
+                                        path=f"{model_inputs_name}:{model_inputs_version}",
+                                        type=self._data_operations.get(model_inputs_name, model_inputs_version).type,
+                                    ),
+                                    data_context=MonitorDatasetContext.MODEL_INPUTS,
+                                    data_window_size="P7D",
+                                ),
+                                FADProductionData(
+                                    input_data=Input(
+                                        path=f"{model_outputs_name}:{model_outputs_version}",
+                                        type=self._data_operations.get(model_outputs_name, model_outputs_version).type,
+                                    ),
+                                    data_context=MonitorDatasetContext.MODEL_OUTPUTS,
+                                    data_window_size="P7D",
+                                ),
+                            ]
+                    elif not mdc_output_enabled and not signal.production_data:
+                        # if target dataset is absent and data collector for output is not enabled,
+                        # collect exception message
+                        msg = (
+                            f"A production data must be provided for signal with name {signal_name}"
+                            f"and type {signal.type} if the monitoring_target endpoint_deployment_id is empty"
+                            "or refers to a deployment for which data collection for model outputs is not enabled."
+                        )
+                        error_messages.append(msg)
             if error_messages:
                 # if any error messages, raise an exception with all of them so user knows which signals
                 # need to be fixed
@@ -431,6 +457,18 @@ class ScheduleOperations(_ScopeDependentOperations):
                     ErrorTarget=ErrorTarget.SCHEDULE,
                     ErrorCategory=ErrorCategory.USER_ERROR,
                 )
+            if signal.type == MonitorSignalType.FEATURE_ATTRIBUTION_DRIFT:
+                for prod_data in signal.production_data:
+                    self._job_operations._resolve_job_input(prod_data.input_data, schedule._base_path)
+                    prod_data.pre_processing_component = self._orchestrators.get_asset_arm_id(
+                        asset=prod_data.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
+                    )
+                self._job_operations._resolve_job_input(signal.reference_data.input_data, schedule._base_path)
+                signal.reference_data.pre_processing_component = self._orchestrators.get_asset_arm_id(
+                    asset=signal.reference_data.pre_processing_component, azureml_type=AzureMLResourceType.COMPONENT
+                )
+                continue
+
             self._job_operations._resolve_job_inputs(
                 [signal.production_data.input_data, signal.reference_data.input_data],
                 schedule._base_path,
