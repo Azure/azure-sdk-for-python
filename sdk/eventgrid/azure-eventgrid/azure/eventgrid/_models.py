@@ -9,7 +9,7 @@ import uuid
 from ._messaging_shared import _get_json_content
 from ._generated.models import EventGridEvent as InternalEventGridEvent
 
-class EventGridEvent(InternalEventGridEvent):
+class EventGridEvent(object):
     """Properties of an event published to an Event Grid topic using the EventGrid Schema.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -66,7 +66,22 @@ class EventGridEvent(InternalEventGridEvent):
         kwargs.setdefault("data", data)
         kwargs.setdefault("data_version", data_version)
 
-        super().__init__(**kwargs)
+        self._internal_event = InternalEventGridEvent(**kwargs)
+        self.id = self._internal_event.id
+        self.subject = self._internal_event.subject
+        self.event_type = self._internal_event.event_type
+        self.event_time = self._internal_event.event_time
+        self.data = self._internal_event.data
+        self.data_version = self._internal_event.data_version
+        self.topic = self._internal_event.topic
+        self.metadata_version = self._internal_event.metadata_version
+
+    def __setattr__(self, name, value):
+        return setattr(self._internal_event, name, value)
+    
+    def __getattr__(self, name):
+        return getattr(self._internal_event, name)
+
 
     def __repr__(self):
         return "EventGridEvent(subject={}, event_type={}, id={}, event_time={})".format(
@@ -86,4 +101,4 @@ class EventGridEvent(InternalEventGridEvent):
         :raises ValueError: If the provided JSON is invalid.
         """
         dict_event = _get_json_content(event)
-        return cast(EventGridEvent, EventGridEvent.from_dict(dict_event))
+        return cast(EventGridEvent, InternalEventGridEvent.from_dict(dict_event))
