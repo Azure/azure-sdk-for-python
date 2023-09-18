@@ -2725,8 +2725,9 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         error_map.update(kwargs.pop("error_map", {}) or {})
         content_type = content_type or "application/json"
         _json = None
+        _content = None
         if isinstance(sources, (IOBase, bytes)):
-            _json = sources
+            _content = sources
         else:
             _json = sources
 
@@ -3556,8 +3557,9 @@ class AuthoringClientOperationsMixin(AuthoringClientMixinABC):  # pylint: disabl
         error_map.update(kwargs.pop("error_map", {}) or {})
         content_type = content_type or "application/json"
         _json = None
+        _content = None
         if isinstance(qnas, (IOBase, bytes)):
-            _json = qnas
+            _content = qnas
         else:
             _json = qnas
 
