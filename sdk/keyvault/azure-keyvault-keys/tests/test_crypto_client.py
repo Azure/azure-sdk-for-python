@@ -34,8 +34,8 @@ from azure.keyvault.keys.crypto import (
 )
 from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
 from azure.keyvault.keys._generated._serialization import Deserializer, Serializer
-from azure.keyvault.keys._generated_models import KeySignParameters
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
+from azure.keyvault.keys._generated.models import KeySignParameters
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
 
 from _shared.test_case import KeyVaultTestCase

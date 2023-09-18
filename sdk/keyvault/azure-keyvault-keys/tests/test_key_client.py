@@ -23,8 +23,8 @@ from azure.keyvault.keys import (
     KeyRotationPolicyAction,
     KeyType
 )
-from azure.keyvault.keys._generated.v7_3.models import KeyRotationPolicy as _KeyRotationPolicy
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
+from azure.keyvault.keys._generated.models import KeyRotationPolicy as _KeyRotationPolicy
 from dateutil import parser as date_parse
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 
