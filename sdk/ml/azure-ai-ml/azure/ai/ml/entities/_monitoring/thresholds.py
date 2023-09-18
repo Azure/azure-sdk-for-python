@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 
 from typing_extensions import Literal
 
@@ -25,6 +25,7 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     RegressionModelPerformanceMetricThreshold,
     RegressionModelPerformanceMetric,
     CustomMetricThreshold,
+    GenerationSafetyQualityMetricThreshold,
 )
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
 from azure.ai.ml._utils._experimental import experimental
@@ -656,3 +657,134 @@ class CustomMonitoringMetricThreshold(MetricThreshold):
     @classmethod
     def _from_rest_object(cls, obj: CustomMetricThreshold) -> "CustomMonitoringMetricThreshold":
         return cls(metric_name=obj.metric, threshold=obj.threshold.value if obj.threshold else None)
+
+
+@experimental
+class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):  # pylint: disable=name-too-long
+    """Generation safety quality metric threshold
+
+    :keyword groundedness: The groundedness metric threshold
+    :paramtype groundedness: Dict[str, float]
+    :keyword relevance: The relevance metric threshold
+    :paramtype relevance: Dict[str, float]
+    :keyword coherence: The coherence metric threshold
+    :paramtype coherence: Dict[str, float]
+    :keyword fluency: The fluency metric threshold
+    :paramtype fluency: Dict[str, float]
+    :keyword similarity: The similarity metric threshold
+    :paramtype similarity: Dict[str, float]
+    """
+
+    def __init__(
+        self,
+        *,
+        groundedness: Dict[str, float] = None,
+        relevance: Dict[str, float] = None,
+        coherence: Dict[str, float] = None,
+        fluency: Dict[str, float] = None,
+        similarity: Dict[str, float] = None,
+    ):
+        self.groundedness = groundedness
+        self.relevance = relevance
+        self.coherence = coherence
+        self.fluency = fluency
+        self.similarity = similarity
+
+    def _to_rest_object(self) -> GenerationSafetyQualityMetricThreshold:
+        metric_thresholds = []
+        if self.groundedness:
+            acceptable_threshold = MonitoringThreshold(value=3)
+            metric_thresholds.append(
+                GenerationSafetyQualityMetricThreshold(
+                    metric="acceptable_groundedness_score_per_instance", threshold=acceptable_threshold
+                )
+            )
+            aggregated_threshold = MonitoringThreshold(value=self.groundedness["aggregated_groundedness_pass_rate"])
+            metric_thresholds.append(
+                GenerationSafetyQualityMetricThreshold(
+                    metric="aggregated_groundedness_pass_rate", threshold=aggregated_threshold
+                )
+            )
+        if self.relevance:
+            acceptable_threshold = MonitoringThreshold(value=3)
+            metric_thresholds.append(
+                GenerationSafetyQualityMetricThreshold(
+                    metric="acceptable_relevance_score_per_instance", threshold=acceptable_threshold
+                )
+            )
+            aggregated_threshold = MonitoringThreshold(value=self.relevance["aggregated_relevance_pass_rate"])
+            metric_thresholds.append(
+                GenerationSafetyQualityMetricThreshold(
+                    metric="aggregated_relevance_pass_rate", threshold=aggregated_threshold
+                )
+            )
+        if self.coherence:
+            acceptable_threshold = MonitoringThreshold(value=3)
+            metric_thresholds.append(
+                GenerationSafetyQualityMetricThreshold(
+                    metric="acceptable_coherence_score_per_instance", threshold=acceptable_threshold
+                )
+            )
+            aggregated_threshold = MonitoringThreshold(value=self.coherence["aggregated_coherence_pass_rate"])
+            metric_thresholds.append(
+                GenerationSafetyQualityMetricThreshold(
+                    metric="aggregated_coherence_pass_rate", threshold=aggregated_threshold
+                )
+            )
+        if self.fluency:
+            acceptable_threshold = MonitoringThreshold(value=3)
+            metric_thresholds.append(
+                GenerationSafetyQualityMetricThreshold(
+                    metric="acceptable_fluency_score_per_instance", threshold=acceptable_threshold
+                )
+            )
+            aggregated_threshold = MonitoringThreshold(value=self.fluency["aggregated_fluency_pass_rate"])
+            metric_thresholds.append(
+                GenerationSafetyQualityMetricThreshold(
+                    metric="aggregated_fluency_pass_rate", threshold=aggregated_threshold
+                )
+            )
+        if self.similarity:
+            acceptable_threshold = MonitoringThreshold(value=3)
+            metric_thresholds.append(
+                GenerationSafetyQualityMetricThreshold(
+                    metric="acceptable_similarity_score_per_instance", threshold=acceptable_threshold
+                )
+            )
+            aggregated_threshold = MonitoringThreshold(value=self.similarity["aggregated_similarity_pass_rate"])
+            metric_thresholds.append(
+                GenerationSafetyQualityMetricThreshold(
+                    metric="aggregated_similarity_pass_rate", threshold=aggregated_threshold
+                )
+            )
+        return metric_thresholds
+
+    @classmethod
+    def _from_rest_object(
+        cls, obj: GenerationSafetyQualityMetricThreshold
+    ) -> "GenerationSafetyQualityMonitoringMetricThreshold":
+        groundedness = {}
+        relevance = {}
+        coherence = {}
+        fluency = {}
+        similarity = {}
+
+        for threshold in obj:
+            if threshold.metric == "aggregated_groundedness_pass_rate":
+                groundedness["aggregated_groundedness_pass_rate"] = threshold.threshold.value
+            if threshold.metric == "aggregated_relevance_pass_rate":
+                relevance["aggregated_relevance_pass_rate"] = threshold.threshold.value
+            if threshold.metric == "aggregated_coherence_pass_rate":
+                coherence["aggregated_coherence_pass_rate"] = threshold.threshold.value
+            if threshold.metric == "aggregated_fluency_pass_rate":
+                fluency["aggregated_fluency_pass_rate"] = threshold.threshold.value
+            if threshold.metric == "aggregated_similarity_pass_rate":
+                similarity["aggregated_similarity_pass_rate"] = threshold.threshold.value
+
+        return cls(
+            groundedness=groundedness if groundedness else None,
+            relevance=relevance if relevance else None,
+            coherence=coherence if coherence else None,
+            fluency=fluency if fluency else None,
+            similarity=similarity if similarity else None,
+        )
