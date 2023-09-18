@@ -181,6 +181,12 @@ from ._monitoring.signals import (
     FADProductionData,
     ProductionData,
     ReferenceData,
+    BaselineDataRange,
+)
+from ._monitoring.input_data import (
+    FixedInputData,
+    StaticInputData,
+    TrailingInputData,
 )
 from ._monitoring.target import MonitoringTarget
 from ._monitoring.thresholds import (
@@ -191,6 +197,8 @@ from ._monitoring.thresholds import (
     CustomMonitoringMetricThreshold,
     CategoricalDriftMetrics,
     NumericalDriftMetrics,
+    DataQualityMetricsNumerical,
+    DataQualityMetricsCategorical,
 )
 
 from ._workspace_hub.workspace_hub import WorkspaceHub, WorkspaceHubConfig
@@ -421,7 +429,11 @@ __all__ = [
     "FADProductionData",
     "ProductionData",
     "ReferenceData",
+    "BaselineDataRange",
     "MonitoringTarget",
+    "FixedInputData",
+    "StaticInputData",
+    "TrailingInputData",
     "DataDriftMetricThreshold",
     "DataQualityMetricThreshold",
     "PredictionDriftMetricThreshold",
@@ -429,6 +441,8 @@ __all__ = [
     "CustomMonitoringMetricThreshold",
     "CategoricalDriftMetrics",
     "NumericalDriftMetrics",
+    "DataQualityMetricsNumerical",
+    "DataQualityMetricsCategorical",
     "DataCollector",
     "IntellectualProperty",
     "DeploymentCollection",
