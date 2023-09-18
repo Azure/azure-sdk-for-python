@@ -437,18 +437,46 @@
                 "description": "Feature store online store config"
             }
         },
-        "offline_store_connection_target": {
+        "offline_store_target": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "Feature store offline store connection target"
             }
         },
-        "online_store_connection_target": {
+        "offline_store_resource_group_name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store offline store resource group"
+            }
+        },
+        "offline_store_subscription_id": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store offline store subscription id"
+            }
+        },
+        "online_store_target": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "Feature store online store connection target"
+            }
+        },
+        "online_store_resource_group_name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store online store resource group"
+            }
+        },
+        "online_store_subscription_id": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store online store subscription id"
             }
         },
         "materialization_identity_resource_id": {
@@ -553,7 +581,7 @@
         "offlineStoreContainerName": "[concat('offlinestore', guid(variables('storageAccount')))]",
         "offlineStoreConnectionName": "[if(empty(parameters('offline_store_connection_name')), 'OfflineStoreConnectionName', parameters('offline_store_connection_name'))]",
         "onlineStoreConnectionName": "[if(empty(parameters('online_store_connection_name')), 'OnlineStoreConnectionName', parameters('online_store_connection_name'))]",
-        "offlineStoreConnectionTarget": "[if(empty(parameters('offline_store_connection_target')), resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', variables('offlineStoreContainerName')), parameters('offline_store_connection_target'))]",
+        "offlineStoreConnectionTarget": "[if(empty(parameters('offline_store_target')), resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', variables('offlineStoreContainerName')), parameters('offline_store_target'))]",
         "isWorkspaceHub": "[equals(parameters('kind'), 'hub')]"
     },
     "resources": [
@@ -637,7 +665,7 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('set_up_feature_store'), 'true'), empty(parameters('offline_store_connection_target')), equals(parameters('storageAccountOption'), 'new'))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('set_up_feature_store'), 'true'), empty(parameters('offline_store_target')), equals(parameters('storageAccountOption'), 'new'))]",
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
             "apiVersion": "2021-04-01",
             "name": "[concat(parameters('storageAccountName'), '/default/', variables('offlineStoreContainerName'))]",
@@ -820,13 +848,13 @@
                                         "SparkRuntimeVersion": "[parameters('spark_runtime_version')]"
                                     },
                                     "offlinestoreconnectionname": "[variables('offlineStoreConnectionName')]",
-                                    "onlinestoreconnectionname": "[if(not(empty(parameters('online_store_connection_target'))), variables('onlineStoreConnectionName'), '')]"
+                                    "onlinestoreconnectionname": "[if(not(empty(parameters('online_store_target'))), variables('onlineStoreConnectionName'), '')]"
                                 },
                                 "enableDataIsolation": "[parameters('enable_data_isolation')]"
                             },
                             "resources":[
                                 {
-                                    "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), not(empty(parameters('online_store_connection_target'))))]",
+                                    "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), not(empty(parameters('online_store_target'))))]",
                                     "type": "connections",
                                     "apiVersion": "2022-05-01",
                                     "name": "[variables('onlineStoreConnectionName')]",
@@ -840,7 +868,7 @@
                                     },
                                     "properties": {
                                         "category": "Redis",
-                                        "target": "[parameters('online_store_connection_target')]",
+                                        "target": "[parameters('online_store_target')]",
                                         "authType": "ManagedIdentity",
                                         "credentials": {
                                             "clientid": "[if(empty(variables('materialization_identity_resource_id')), '', reference(variables('materialization_identity_resource_id'), '2018-11-30').clientId)]",
@@ -892,33 +920,65 @@
 		},
         {
             "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), equals(parameters('grant_materialization_permissions'), 'true'))]",
-            "type": "Microsoft.Authorization/roleAssignments",
-            "apiVersion": "2022-04-01",
-            "name": "[guid(variables('materialization_identity_resource_id'), variables('offlineStoreConnectionTarget'), 'storage blob data contributor')]",
-            "scope": "[variables('offlineStoreConnectionTarget')]",
+            "type": "Microsoft.Resources/deployments",
+            "name": "offline-store-role-assignment",
+            "apiVersion": "2020-06-01",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts/blobServices/containers', parameters('storageAccountName'), 'default', variables('offlineStoreContainerName'))]",
                 "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name'))]"
             ],
+            "resourceGroup": "[If(empty(parameters('offline_store_resource_group_name')), resourceGroup().name, parameters('offline_store_resource_group_name'))]",
+            "subscriptionId": "[If(empty(parameters('offline_store_subscription_id')), subscription().subscriptionId, parameters('offline_store_subscription_id'))]",
             "properties": {
-                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
-                "principalId": "[if(empty(variables('materialization_identity_resource_id')), '', reference(variables('materialization_identity_resource_id'), '2018-11-30').principalId)]",
-                "principalType": "ServicePrincipal"
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.Authorization/roleAssignments",
+                            "apiVersion": "2022-04-01",
+                            "name": "[guid(variables('materialization_identity_resource_id'), variables('offlineStoreConnectionTarget'), 'storage blob data contributor')]",
+                            "scope": "[variables('offlineStoreConnectionTarget')]",
+                            "properties": {
+                                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
+                                "principalId": "[if(empty(variables('materialization_identity_resource_id')), '', reference(variables('materialization_identity_resource_id'), '2023-01-31').principalId)]",
+                                "principalType": "ServicePrincipal"
+                            }
+                        }
+                    ]
+                }
             }
         },
         {
-            "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), equals(parameters('grant_materialization_permissions'), 'true'), not(empty(parameters('online_store_connection_target'))))]",
-            "type": "Microsoft.Authorization/roleAssignments",
-            "apiVersion": "2022-04-01",
-            "name": "[guid(variables('materialization_identity_resource_id'), parameters('online_store_connection_target'), 'contributor')]",
-            "scope": "[parameters('online_store_connection_target')]",
+            "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), equals(parameters('grant_materialization_permissions'), 'true'), not(empty(parameters('online_store_target'))))]",
+            "type": "Microsoft.Resources/deployments",
+            "name": "online-store-role-assignment",
+            "apiVersion": "2020-06-01",
             "dependsOn": [
                 "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('materialization_identity_name'))]"
             ],
+            "resourceGroup": "[If(empty(parameters('online_store_resource_group_name')), resourceGroup().name, parameters('online_store_resource_group_name'))]",
+            "subscriptionId": "[If(empty(parameters('online_store_subscription_id')), subscription().subscriptionId, parameters('online_store_subscription_id'))]",
             "properties": {
-                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
-                "principalId": "[if(empty(variables('materialization_identity_resource_id')), '', reference(variables('materialization_identity_resource_id'), '2018-11-30').principalId)]",
-                "principalType": "ServicePrincipal"
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.Authorization/roleAssignments",
+                            "apiVersion": "2022-04-01",
+                            "name": "[guid(variables('materialization_identity_resource_id'), parameters('online_store_target'), 'contributor')]",
+                            "scope": "[parameters('online_store_target')]",
+                            "properties": {
+                                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+                                "principalId": "[if(empty(variables('materialization_identity_resource_id')), '', reference(variables('materialization_identity_resource_id'), '2023-01-31').principalId)]",
+                                "principalType": "ServicePrincipal"
+                            }
+                        }
+                    ]
+                }
             }
         },
         {
