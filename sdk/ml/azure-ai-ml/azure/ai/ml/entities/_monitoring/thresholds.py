@@ -549,15 +549,8 @@ class DataQualityMetricThreshold(MetricThreshold):
 class FeatureAttributionDriftMetricThreshold(MetricThreshold):
     """Feature attribution drift metric threshold
 
-    :ivar applicable_feature_type: The feature type of the metric threshold
-    :vartype applicable_feature_type: Literal[
-        ~azure.ai.ml.constants.MonitorFeatureType.ALL_FEATURE_TYPES]
-    :ivar metric_name: The metric to calculate
-    :vartype metric_name: Literal[
-        ~azure.ai.ml.constants.MonitorMetricName.NORMALIZED_DISCOUNTED_CUMULATIVE_GAIN]
-    :param threshold: The threshold value. If None, a default value will be set
-        depending on the selected metric.
-    :type threshold: float
+    :param normalized_discounted_cumulative_gain: The threshold value for metric.
+    :type normalized_discounted_cumulative_gain: float
     """
 
     def __init__(self, *, normalized_discounted_cumulative_gain: float = None, threshold: float = None):
