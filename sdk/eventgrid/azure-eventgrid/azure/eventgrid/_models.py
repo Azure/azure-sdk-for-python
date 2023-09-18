@@ -7,9 +7,9 @@ from typing import Any, cast
 import datetime as dt
 import uuid
 from ._messaging_shared import _get_json_content
-from ._serialization import Model
+from ._generated.models import EventGridEvent as InternalEvent
 
-class EventGridEvent(Model):
+class EventGridEvent():
     """Properties of an event published to an Event Grid topic using the EventGrid Schema.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -57,27 +57,6 @@ class EventGridEvent(Model):
     :vartype event_time: ~datetime.datetime
     """
 
-    _validation = {
-        "id": {"required": True},
-        "subject": {"required": True},
-        "data": {"required": True},
-        "event_type": {"required": True},
-        "event_time": {"required": True},
-        "metadata_version": {"readonly": True},
-        "data_version": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "topic": {"key": "topic", "type": "str"},
-        "subject": {"key": "subject", "type": "str"},
-        "data": {"key": "data", "type": "object"},
-        "event_type": {"key": "eventType", "type": "str"},
-        "event_time": {"key": "eventTime", "type": "iso-8601"},
-        "metadata_version": {"key": "metadataVersion", "type": "str"},
-        "data_version": {"key": "dataVersion", "type": "str"},
-    }
-
     def __init__(self, subject, event_type, data, data_version, **kwargs):
         # type: (str, str, object, str, Any) -> None
         kwargs.setdefault("id", uuid.uuid4())
@@ -87,14 +66,16 @@ class EventGridEvent(Model):
         kwargs.setdefault("data", data)
         kwargs.setdefault("data_version", data_version)
 
-        self.id = kwargs.pop("id", None)
-        self.topic = kwargs.pop("topic", None)
-        self.subject = subject
-        self.data = data
-        self.event_type = event_type
-        self.event_time = kwargs.pop("event_time", None)
-        self.metadata_version = None
-        self.data_version = data_version
+        self._internal_event = InternalEvent(**kwargs)
+
+        self.id = self._internal_event.id
+        self.topic = self._internal_event.topic
+        self.subject = self._internal_event.subject
+        self.data = self._internal_event.data
+        self.event_type = self._internal_event.event_type
+        self.event_time = self._internal_event.event_time
+        self.metadata_version = self._internal_event.metadata_version
+        self.data_version = self._internal_event.data_version
         super().__init__(**kwargs)
 
 
