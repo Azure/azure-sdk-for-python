@@ -7,9 +7,9 @@ from typing import Any, cast
 import datetime as dt
 import uuid
 from ._messaging_shared import _get_json_content
-from ._generated.models import EventGridEvent as InternalEvent
+from ._generated.models import EventGridEvent as InternalEventGridEvent
 
-class EventGridEvent():
+class EventGridEvent(InternalEventGridEvent):
     """Properties of an event published to an Event Grid topic using the EventGrid Schema.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -66,21 +66,7 @@ class EventGridEvent():
         kwargs.setdefault("data", data)
         kwargs.setdefault("data_version", data_version)
 
-        self._internal_event = InternalEvent(**kwargs)
-
-        self.id = self._internal_event.id
-        self.topic = self._internal_event.topic
-        self.subject = self._internal_event.subject
-        self.data = self._internal_event.data
-        self.event_type = self._internal_event.event_type
-        self.event_time = self._internal_event.event_time
-        self.metadata_version = self._internal_event.metadata_version
-        self.data_version = self._internal_event.data_version
         super().__init__(**kwargs)
-
-    def __getattr__(self):
-        return getattr(self._internal_event)
-
 
     def __repr__(self):
         return "EventGridEvent(subject={}, event_type={}, id={}, event_time={})".format(
