@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Breaking Changes
+ - [Python 3.7 reached end-of-life on June 27th 2023](https://devguide.python.org/versions/). Consequently, azure-ai-ml will end support for 3.7 starting January 1st 2024.
 
 ### Other Changes
 
