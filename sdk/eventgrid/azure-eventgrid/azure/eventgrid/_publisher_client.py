@@ -42,7 +42,6 @@ from ._helpers import (
     _from_cncf_events,
 )
 from ._configuration import EventGridPublisherClientConfiguration
-from ._serialization import Deserializer, Serializer
 from ._policies import CloudEventDistributedTracingPolicy
 from ._version import VERSION
 

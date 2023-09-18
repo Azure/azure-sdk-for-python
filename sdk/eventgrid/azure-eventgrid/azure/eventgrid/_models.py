@@ -78,6 +78,9 @@ class EventGridEvent():
         self.data_version = self._internal_event.data_version
         super().__init__(**kwargs)
 
+    def __getattr__(self):
+        return getattr(self._internal_event)
+
 
     def __repr__(self):
         return "EventGridEvent(subject={}, event_type={}, id={}, event_time={})".format(
@@ -97,4 +100,4 @@ class EventGridEvent():
         :raises ValueError: If the provided JSON is invalid.
         """
         dict_event = _get_json_content(event)
-        return cls.from_dict(dict_event)
+        return cast(EventGridEvent, EventGridEvent.from_dict(dict_event))
