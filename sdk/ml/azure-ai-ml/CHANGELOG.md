@@ -4,7 +4,7 @@
 
 ### Bugs Fixed
 - Feature sets can now be registers after being dumped and reloaded.
-- SDK can now assign materialization identities to offline stores and cross RG online stores.
+- SDK feature store create/update can now assign materialization identities to cross RG offline stores and online stores.
 
 ## 1.10.0 (2023-09-07)
 ### Features Added
