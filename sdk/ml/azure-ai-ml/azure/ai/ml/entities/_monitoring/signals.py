@@ -50,7 +50,11 @@ from azure.ai.ml.constants._monitoring import (
 )
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml.entities._monitoring.input_data import FixedInputData, StaticInputData, TrailingInputData
+from azure.ai.ml.entities._monitoring.input_data import (
+    FixedInputData,
+    StaticInputData,
+    TrailingInputData,
+)
 from azure.ai.ml.entities._monitoring.thresholds import (
     CustomMonitoringMetricThreshold,
     DataDriftMetricThreshold,
@@ -59,6 +63,10 @@ from azure.ai.ml.entities._monitoring.thresholds import (
     MetricThreshold,
     ModelPerformanceMetricThreshold,
     PredictionDriftMetricThreshold,
+)
+from azure.ai.ml.entities._job._input_output_helpers import (
+    to_rest_dataset_literal_inputs,
+    from_rest_inputs_to_dataset_literal,
 )
 
 
@@ -840,6 +848,14 @@ class ModelPerformanceSignal(ModelSignal):
 
 @experimental
 class WorkspaceConnection(RestTranslatableMixin):
+    """Monitoring Workspace Connection
+
+    :keyword environment_variables: A dictionary of environment variables to set for the workspace.
+    :paramtype environment_variables: Optional[dict[str, str]]
+    :keyword secret_config: A dictionary of secrets to set for the workspace.
+    :paramtype secret_config: Optional[dict[str, str]]
+    """
+
     def __init__(
         self,
         *,
@@ -869,39 +885,42 @@ class CustomMonitoringSignal(RestTranslatableMixin):
 
     :ivar type: The type of the signal. Set to "custom" for this class.
     :vartype type: str
-    :keyword input_datasets: A dictionary of input datasets for monitoring.
+    :keyword input_data: A dictionary of input datasets for monitoring.
         Each key is the component input port name, and its value is the data asset.
-    :paramtype input_datasets: Optional[dict[str, ~azure.ai.ml.entities.MonitorInputData]]
+    :paramtype input_data: Optional[dict[str, ~azure.ai.ml.entities.ReferenceData]]
     :keyword metric_thresholds: A list of metrics to calculate and their
         associated thresholds.
     :paramtype metric_thresholds: list[~azure.ai.ml.entities.CustomMonitoringMetricThreshold]
+    :keyword inputs:
+    :paramtype inputs: Optional[dict[str, ~azure.ai.ml.entities.Input]]
     :keyword component_id: The ARM (Azure Resource Manager) ID of the component resource used to
         calculate the custom metrics.
     :paramtype component_id: str
+    :keyword workspace_connection: Specify workspace connection with environment variables and secret configs.
+    :paramtype workspace_connection: Optional[~azure.ai.ml.entities.WorkspaceConnection]
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
     :paramtype alert_enabled: bool
-    :keyword data_window_size: The number of days a single monitor looks back
-        over the target
-    :paramtype data_window_size: Optional[int]
+    :keyword properties: A dictionary of custom properties for the signal.
+    :paramtype properties: Optional[dict[str, str]]
     """
 
     def __init__(
         self,
         *,
-        input_literals: Optional[Dict[str, Input]] = None,
+        inputs: Optional[Dict[str, Input]] = None,
         metric_thresholds: List[CustomMonitoringMetricThreshold],
         component_id: str,
         workspace_connection: Optional[WorkspaceConnection] = None,
-        input_datasets: Optional[Dict[str, ProductionData]] = None,
+        input_data: Optional[Dict[str, ReferenceData]] = None,
         alert_enabled: bool = True,
         properties: Optional[Dict[str, str]] = None,
     ):
         self.type = MonitorSignalType.CUSTOM
-        self.input_literals = input_literals
+        self.inputs = inputs
         self.metric_thresholds = metric_thresholds
         self.component_id = component_id
         self.alert_enabled = alert_enabled
-        self.input_datasets = input_datasets
+        self.input_data = input_data
         self.properties = properties
         self.workspace_connection = workspace_connection
 
@@ -911,15 +930,11 @@ class CustomMonitoringSignal(RestTranslatableMixin):
         return RestCustomMonitoringSignal(
             component_id=self.component_id,
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
-            inputs={
-                input_name: input_value._to_rest_object() for input_name, input_value in self.input_literals.items()
-            }
-            if self.input_literals
-            else None,
+            inputs=to_rest_dataset_literal_inputs(self.inputs, job_type=None) if self.inputs else None,
             input_assets={
-                asset_name: asset_value._to_rest_object() for asset_name, asset_value in self.input_datasets.items()
+                asset_name: asset_value._to_rest_object() for asset_name, asset_value in self.input_data.items()
             }
-            if self.input_datasets
+            if self.input_data
             else None,
             workspace_connection=self.workspace_connection._to_rest_object(),
             mode=MonitoringNotificationMode.ENABLED if self.alert_enabled else MonitoringNotificationMode.DISABLED,
@@ -929,15 +944,8 @@ class CustomMonitoringSignal(RestTranslatableMixin):
     @classmethod
     def _from_rest_object(cls, obj: RestCustomMonitoringSignal) -> "CustomMonitoringSignal":
         return cls(
-            input_literals={
-                input_name: Input._from_rest_object(input_value) for input_name, input_value in obj.inputs.items()
-            }
-            if obj.inputs
-            else None,
-            input_datasets={
-                input_name: ProductionData._from_rest_object(input_value)
-                for input_name, input_value in obj.input_assets.items()
-            },
+            inputs=from_rest_inputs_to_dataset_literal(obj.inputs) if obj.inputs else None,
+            input_data={key: ReferenceData._from_rest_object(data) for key, data in obj.input_assets.items()},
             metric_thresholds=[
                 CustomMonitoringMetricThreshold._from_rest_object(metric) for metric in obj.metric_thresholds
             ],
