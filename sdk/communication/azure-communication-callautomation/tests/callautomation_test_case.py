@@ -95,8 +95,8 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
             raise ValueError("Identifier type not supported")
 
     @staticmethod
-    def _event_key_gen(event_type: str, call_connection_id: str) -> str:
-        return  event_type + call_connection_id
+    def _event_key_gen(event_type: str) -> str:
+        return  event_type
 
     @staticmethod
     def _unique_key_gen(caller_identifier: CommunicationIdentifier, receiver_identifier: CommunicationIdentifier) -> str:
@@ -119,7 +119,7 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
                     caller = identifier_from_raw_id(mapper["from"]["rawId"])
                     receiver = identifier_from_raw_id(mapper["to"]["rawId"])
                     unique_id = self._unique_key_gen(caller, receiver)
-                    key = self._event_key_gen("IncomingCall", unique_id)
+                    key = self._event_key_gen("IncomingCall")
                     print("EventRegistration(IncomingCall):" + key)
                     self.event_store[key] = mapper
                     self.event_to_save[key] = mapper
@@ -127,7 +127,7 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
                     if isinstance(mapper, list):
                         mapper = mapper[0]
                     if mapper["type"]:
-                        key = self._event_key_gen(mapper["type"].split(".")[-1], mapper["data"]["callConnectionId"])
+                        key = self._event_key_gen(mapper["type"].split(".")[-1])
                         print("EventRegistration:" + key)
                         self.event_store[key] = mapper
                         self.event_to_save[key] = mapper
@@ -156,7 +156,7 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
                 raise SystemExit(f"File write operation failed: {e}")
 
     def check_for_event(self, event_type: str, call_connection_id: str, wait_time: timedelta) -> Any:
-        key = self._event_key_gen(event_type, call_connection_id)
+        key = self._event_key_gen(event_type)
         time_out_time = datetime.now() + wait_time
         while datetime.now() < time_out_time:
             popped_event = self.event_store.pop(key, None)
