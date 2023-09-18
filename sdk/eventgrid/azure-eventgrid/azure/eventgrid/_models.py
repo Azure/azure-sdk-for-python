@@ -69,10 +69,10 @@ class EventGridEvent(object):
         self._internal_event = InternalEventGridEvent(**kwargs)
 
     def __setattr__(self, name, value):
-        return setattr(self._internal_event, name, value)
+        return setattr(InternalEventGridEvent, name, value)
     
     def __getattr__(self, name):
-        return getattr(self._internal_event, name)
+        return getattr(InternalEventGridEvent, name)
 
 
     def __repr__(self):
