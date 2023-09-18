@@ -240,6 +240,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         *,
         feature_window_start_time: Optional[Union[str, datetime]] = None,
         feature_window_end_time: Optional[Union[str, datetime]] = None,
+        filters: Optional[str] = None,
         **kwargs: Dict,
     ) -> ItemPaged[FeatureSetMaterializationMetadata]:
         """List Materialization operation.
@@ -269,6 +270,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
             properties=properties,
+            tag=filters,
             cls=lambda objs: [FeatureSetMaterializationMetadata._from_rest_object(obj) for obj in objs],
             **kwargs,
         )

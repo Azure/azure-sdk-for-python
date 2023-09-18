@@ -53,7 +53,9 @@ class FeatureSetMaterializationMetadata(RestTranslatableMixin):
         feature_window_start_time = job_properties.properties.get("azureml.FeatureWindowStart", None)
         feature_window_end_time = job_properties.properties.get("azureml.FeatureWindowEnd", None)
 
-        time_format = "%Y-%m-%dT%H:%M:%SZ"
+        # Currently, the window start/end time that user set from cli is with format: "%Y-%m-%dT%H:%M:%SZ"
+        # but during the job processing flow, the time format changed to "%m/%d/%Y %H:%M:%S %z"
+        time_format = "%m/%d/%Y %H:%M:%S %z"
         feature_window_start_time = (
             datetime.strptime(feature_window_start_time, time_format) if feature_window_start_time else None
         )
