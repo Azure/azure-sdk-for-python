@@ -66,7 +66,7 @@ class Choice(SweepDistribution):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_choice_loguniform]
             :end-before: [END configure_sweep_job_choice_loguniform]
             :language: python
@@ -126,7 +126,7 @@ class Normal(SweepDistribution):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_randint_normal]
             :end-before: [END configure_sweep_job_randint_normal]
             :language: python
@@ -158,7 +158,7 @@ class LogNormal(Normal):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_lognormal_qlognormal]
             :end-before: [END configure_sweep_job_lognormal_qlognormal]
             :language: python
@@ -183,7 +183,7 @@ class QNormal(Normal):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_qloguniform_qnormal]
             :end-before: [END configure_sweep_job_qloguniform_qnormal]
             :language: python
@@ -217,7 +217,7 @@ class QLogNormal(QNormal):
     :type q: Optional[int]
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_lognormal_qlognormal]
             :end-before: [END configure_sweep_job_lognormal_qlognormal]
             :language: python
@@ -240,7 +240,7 @@ class Randint(SweepDistribution):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_randint_normal]
             :end-before: [END configure_sweep_job_randint_normal]
             :language: python
@@ -271,7 +271,7 @@ class Uniform(SweepDistribution):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_uniform]
             :end-before: [END configure_sweep_job_uniform]
             :language: python
@@ -304,7 +304,7 @@ class LogUniform(Uniform):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_choice_loguniform]
             :end-before: [END configure_sweep_job_choice_loguniform]
             :language: python
@@ -329,7 +329,7 @@ class QUniform(Uniform):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_truncation_selection_policy]
             :end-before: [END configure_sweep_job_truncation_selection_policy]
             :language: python
@@ -368,7 +368,7 @@ class QLogUniform(QUniform):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_qloguniform_qnormal]
             :end-before: [END configure_sweep_job_qloguniform_qnormal]
             :language: python

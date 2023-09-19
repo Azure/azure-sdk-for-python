@@ -181,7 +181,7 @@ def spark(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
+        .. literalinclude:: ../../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_function_configuration_1]
             :end-before: [END spark_function_configuration_1]
             :language: python
@@ -190,7 +190,7 @@ def spark(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
+        .. literalinclude:: ../../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_function_configuration_2]
             :end-before: [END spark_function_configuration_2]
             :language: python
@@ -199,7 +199,7 @@ def spark(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
+        .. literalinclude:: ../../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_dsl_pipeline]
             :end-before: [END spark_dsl_pipeline]
             :language: python
