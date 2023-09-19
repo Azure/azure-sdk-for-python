@@ -1,11 +1,9 @@
-import unittest
 import pytest
 import azure.cosmos.diagnostics as m
 
 _common = {
     'x-ms-activity-id',
     'x-ms-session-token',
-
     'x-ms-item-count',
     'x-ms-request-quota',
     'x-ms-resource-usage',
@@ -15,22 +13,24 @@ _common = {
 _headers = dict(zip(_common, _common))
 _headers['other'] = 'other'
 
-class BaseUnitTests(unittest.TestCase):
+class TestOldDiagnostics:
 
     def test_init(self):
         rh = m.RecordDiagnostics()
-        assert rh.headers == {}
+        assert rh.headers == _headers
 
     def test_headers(self):
         rh = m.RecordDiagnostics()
         rh(_headers, "body")
         assert rh.headers == _headers
+        assert rh.headers is not _headers
 
     def test_headers_case(self):
         rh = m.RecordDiagnostics()
         rh(_headers, "body")
         rh_headers = rh.headers
         for key in rh.headers.keys():
+            assert key.upper() in rh_headers
             assert key.lower() in rh_headers
 
     def test_common_attrs(self):
