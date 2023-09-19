@@ -33,7 +33,7 @@ import uuid
 import pytest
 from azure.core import MatchConditions
 from azure.core.exceptions import AzureError, ServiceResponseError
-from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
+from azure.core.pipeline.transport import AsyncioRequestsTransport, AsyncioRequestsTransportResponse
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
@@ -55,7 +55,7 @@ pytestmark = pytest.mark.cosmosEmulator
 #   associated with your Azure Cosmos account.
 
 
-class TimeoutTransport(RequestsTransport):
+class TimeoutTransport(AsyncioRequestsTransport):
 
     def __init__(self, response):
         self._response = response
@@ -70,7 +70,7 @@ class TimeoutTransport(RequestsTransport):
             raise self._response
         output = requests.Response()
         output.status_code = self._response
-        response = RequestsTransportResponse(None, output)
+        response = AsyncioRequestsTransportResponse(None, output)
         return response
 
 
@@ -697,7 +697,8 @@ class TestCRUDAsync:
     async def test_partitioned_collection_conflict_crud_and_query_async(self):
         await self._set_up()
 
-        created_collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4()), PartitionKey(path="/id"))
+        created_collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4()),
+                                                                                         PartitionKey(path="/id"))
 
         conflict_definition = {'id': 'new conflict',
                                'resourceId': 'doc1',
@@ -785,7 +786,7 @@ class TestCRUDAsync:
         assert document_list is not None
         document_list = [document async for document in created_collection.query_items(
             query='SELECT * FROM root r WHERE r.name=@name',
-            parameter=[
+            parameters=[
                 {'name': '@name', 'value': document_definition['name']}
             ],
             enable_scan_in_query=True
@@ -889,7 +890,8 @@ class TestCRUDAsync:
         await self._set_up()
 
         # create collection
-        created_collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4()), PartitionKey(path="/id"))
+        created_collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4()),
+                                                                                         PartitionKey(path="/id"))
 
         # read documents and check count
         document_list = [document async for document in created_collection.read_all_items()]
@@ -1301,7 +1303,7 @@ class TestCRUDAsync:
             async with CosmosClient(TestCRUDAsync.host, {}) as client:
                 [db async for db in client.list_databases()]
         except exceptions.CosmosHttpResponseError as e:
-                assert e.status_code == StatusCodes.UNAUTHORIZED
+            assert e.status_code == StatusCodes.UNAUTHORIZED
 
         # Client with master key.
         async with CosmosClient(TestCRUDAsync.host,
@@ -1367,7 +1369,8 @@ class TestCRUDAsync:
     async def test_trigger_crud_async(self):
         await self._set_up()
         # create collection
-        collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4()), PartitionKey(path="/id"))
+        collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4()),
+                                                                                 PartitionKey(path="/id"))
         # read triggers
         triggers = [trigger async for trigger in collection.scripts.list_triggers()]
         # create a trigger
@@ -1422,7 +1425,8 @@ class TestCRUDAsync:
     async def test_udf_crud_async(self):
         await self._set_up()
         # create collection
-        collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4()), PartitionKey(path="/id"))
+        collection = await self.database_for_test.create_container_if_not_exists(str(uuid.uuid4()),
+                                                                                 PartitionKey(path="/id"))
         # read udfs
         udfs = [udf async for udf in collection.scripts.list_user_defined_functions()]
         # create a udf
@@ -1821,17 +1825,12 @@ class TestCRUDAsync:
         connection_policy = documents.ConnectionPolicy()
         # making timeout 0 ms to make sure it will throw
         connection_policy.RequestTimeout = 0.000000000001
-        connection_policy.ConnectionRetryConfiguration = Retry(
-            total=3,
-            read=3,
-            connect=3,
-            backoff_factor=0.3,
-            status_forcelist=(500, 502, 504)
-        )
         with pytest.raises(AzureError):
             # client does a getDatabaseAccount on initialization, which will time out
             async with CosmosClient(TestCRUDAsync.host, TestCRUDAsync.masterKey,
-                                    connection_policy=connection_policy) as client:
+                                    connection_policy=connection_policy,
+                                    retry_total=3, retry_connect=3, retry_read=3, retry_backoff_max=0.3,
+                                    retry_on_status_codes=[500, 502, 504]) as client:
                 print('Async Initialization')
 
     @pytest.mark.asyncio
@@ -1930,6 +1929,7 @@ class TestCRUDAsync:
     @pytest.mark.asyncio
     async def test_query_iterable_functionality_async(self):
         await self._set_up()
+
         async def __create_resources():
             """Creates resources for this test.
 
@@ -1943,9 +1943,9 @@ class TestCRUDAsync:
             collection = await self.database_for_test.create_container(
                 test_config._test_config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_PARTITION_KEY,
                 PartitionKey(path="/pk"))
-            doc1 = await collection.create_item(body={'id': 'doc1', 'prop1': 'value1'})
-            doc2 = await collection.create_item(body={'id': 'doc2', 'prop1': 'value2'})
-            doc3 = await collection.create_item(body={'id': 'doc3', 'prop1': 'value3'})
+            doc1 = await collection.upsert_item(body={'id': 'doc1', 'prop1': 'value1'})
+            doc2 = await collection.upsert_item(body={'id': 'doc2', 'prop1': 'value2'})
+            doc3 = await collection.upsert_item(body={'id': 'doc3', 'prop1': 'value3'})
             resources = {
                 'coll': collection,
                 'doc1': doc1,
@@ -2184,7 +2184,7 @@ class TestCRUDAsync:
         retrieved_sproc3 = await collection.scripts.create_stored_procedure(body=sproc3)
         result = await collection.scripts.execute_stored_procedure(
             sproc=retrieved_sproc3['id'],
-            params=[{'temp': 'so'}],
+            parameters={'temp': 'so'},
             partition_key=1
         )
         assert result == 'aso'
@@ -2239,7 +2239,8 @@ class TestCRUDAsync:
         collection_properties = await collection.read()
         self.__validate_offer_response_body(replaced_offer, collection_properties.get('_self'), None)
         # Check if the replaced offer is what we expect.
-        assert expected_offer.properties.get('content').get('offerThroughput') + 100 == replaced_offer.properties.get('content').get('offerThroughput')
+        assert expected_offer.properties.get('content').get('offerThroughput') + 100 == replaced_offer.properties.get(
+            'content').get('offerThroughput')
         assert expected_offer.offer_throughput + 100 == replaced_offer.offer_throughput
         await self._clear()
 
@@ -2252,10 +2253,12 @@ class TestCRUDAsync:
         assert database_account.MediaLink == '/media/'
         if (HttpHeaders.MaxMediaStorageUsageInMB in
                 self.client.client_connection.last_response_headers):
-            assert database_account.MaxMediaStorageUsageInMB == self.client.client_connection.last_response_headers[HttpHeaders.MaxMediaStorageUsageInMB]
+            assert database_account.MaxMediaStorageUsageInMB == self.client.client_connection.last_response_headers[
+                HttpHeaders.MaxMediaStorageUsageInMB]
         if (HttpHeaders.CurrentMediaStorageUsageInMB in
                 self.client.client_connection.last_response_headers):
-            assert database_account.CurrentMediaStorageUsageInMB == self.client.client_connection.last_response_headers[HttpHeaders.CurrentMediaStorageUsageInMB]
+            assert database_account.CurrentMediaStorageUsageInMB == self.client.client_connection.last_response_headers[
+                HttpHeaders.CurrentMediaStorageUsageInMB]
         assert database_account.ConsistencyPolicy['defaultConsistencyLevel'] is not None
         await self._clear()
 

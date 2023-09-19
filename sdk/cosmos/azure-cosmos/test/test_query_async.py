@@ -699,9 +699,9 @@ class TestQueryAsync:
             self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
 
         document_definition = {'pk': 'pk', 'id': '1'}
-        await created_collection.create_item(body=document_definition)
+        await created_collection.upsert_item(body=document_definition)
         document_definition = {'pk': 'pk', 'id': '2'}
-        await created_collection.create_item(body=document_definition)
+        await created_collection.upsert_item(body=document_definition)
 
         query = 'SELECT * from c'
         query_iterable = created_collection.query_items(
