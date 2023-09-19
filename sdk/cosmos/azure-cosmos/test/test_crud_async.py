@@ -205,7 +205,7 @@ class TestCRUDAsync:
 
         # query with a string.
         databases = [database async for database in
-                     self.client.query_databases(query='SELECT * FROM root r WHERE r.id="database 2"')]
+                     self.client.query_databases('SELECT * FROM root r WHERE r.id="' + db2.id + '"')]
         assert 1 == len(databases)
         await self._clear()
 
@@ -1867,7 +1867,6 @@ class TestCRUDAsync:
             async with CosmosClient(
                     "https://localhost:9999",
                     TestCRUDAsync.masterKey,
-                    consistency_level="Session",
                     retry_total=retries,
                     retry_read=retries,
                     retry_connect=retries,
@@ -1938,7 +1937,7 @@ class TestCRUDAsync:
                 dict
 
             """
-            collection = await self.database_for_test.create_container(
+            collection = await self.database_for_test.create_container_if_not_exists(
                 test_config._test_config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_PARTITION_KEY,
                 PartitionKey(path="/pk"))
             doc1 = await collection.upsert_item(body={'id': 'doc1', 'prop1': 'value1'})
@@ -2087,7 +2086,7 @@ class TestCRUDAsync:
         # create document
         triggers_1 = [trigger async for trigger in collection1.scripts.list_triggers()]
         assert len(triggers_1) == 3
-        document_1_1 = collection1.create_item(
+        document_1_1 = await collection1.create_item(
             body={'id': 'doc1',
                   'key': 'value'},
             pre_trigger_include='t1'

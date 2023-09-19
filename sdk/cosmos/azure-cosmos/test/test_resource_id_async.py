@@ -92,8 +92,7 @@ class TestResourceIdsAsync:
         created_container = await created_database.create_container(id=container_id, partition_key=partition_key)
 
         # Define errors returned by checks
-        illegal_chars_string = 'Id contains illegal chars.'
-        # space_chars_string = 'Id ends with a space.'
+        error_strings = ['Id contains illegal chars.', 'Id ends with a space.']
 
         # Define illegal strings
         illegal_strings = [
@@ -109,30 +108,26 @@ class TestResourceIdsAsync:
 
         # test illegal resource id's for all resources
         for resource_id in illegal_strings:
-            # if resource_id == "ID_with_trailing_spaces   ":
-            #     error_string = space_chars_string
-            # else:
-            #     error_string = illegal_chars_string
             try:
                 await self.client.create_database(resource_id)
                 pytest.fail("Database create should have failed for id {}".format(resource_id))
             except ValueError as e:
-                assert str(e) == illegal_chars_string
+                assert str(e) in error_strings
 
             try:
                 await created_database.create_container(id=resource_id, partition_key=partition_key)
                 pytest.fail("Container create should have failed for id {}".format(resource_id))
             except ValueError as e:
-                assert str(e) == error_string
+                assert str(e) in error_strings
 
             try:
                 await created_container.create_item({"id": resource_id})
                 pytest.fail("Item create should have failed for id {}".format(resource_id))
             except ValueError as e:
-                assert str(e) == error_string
+                assert str(e) in error_strings
             try:
                 await created_container.upsert_item({"id": resource_id})
                 pytest.fail("Item upsert should have failed for id {}".format(resource_id))
             except ValueError as e:
-                assert str(e) == error_string
+                assert str(e) in error_strings
 
