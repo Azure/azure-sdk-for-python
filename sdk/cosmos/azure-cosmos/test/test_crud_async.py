@@ -69,7 +69,7 @@ class TimeoutTransport(AsyncioRequestsTransport):
         if isinstance(self._response, Exception):
             raise self._response
         output = requests.Response()
-        output.status_code = self._response
+        output.status_code = await self._response
         response = AsyncioRequestsTransportResponse(None, output)
         return response
 
@@ -1348,8 +1348,7 @@ class TestCRUDAsync:
                                    entities['permissionOnDoc'].properties['_token']}
 
         async with CosmosClient(
-                TestCRUDAsync.host, resource_tokens, consistency_level="Session",
-                connection_policy=TestCRUDAsync.connectionPolicy) as doc_client:
+                TestCRUDAsync.host, resource_tokens) as doc_client:
 
             # 6. Success-- Use Doc permission to read doc
             read_doc = await doc_client.get_database_client(db.id).get_container_client(success_coll.id).read_item(
@@ -1844,19 +1843,18 @@ class TestCRUDAsync:
         assert total_time_for_three_retries > total_time_for_two_retries
 
     async def initialize_client_with_connection_urllib_retry_config(self, retries):
-        retry_policy = Retry(
-            total=retries,
-            read=retries,
-            connect=retries,
-            backoff_factor=0.3,
-            status_forcelist=(500, 502, 504)
-        )
+        # retry_policy = Retry(
+        #     total=retries,
+        #     read=retries,
+        #     connect=retries,
+        #     backoff_factor=0.3,
+        #     status_forcelist=(500, 502, 504)
+        # )
         start_time = time.time()
         try:
-            async with CosmosClient(
-                    "https://localhost:9999",
-                    TestCRUDAsync.masterKey,
-                    connection_retry_policy=retry_policy) as client:
+            async with CosmosClient("https://localhost:9999", TestCRUDAsync.masterKey,
+                                    retry_total=3, retry_connect=3, retry_read=3, retry_backoff_max=0.3,
+                                    retry_on_status_codes=[500, 502, 504]) as client:
                 print('Async initialization')
             pytest.fail()
         except AzureError as e:
