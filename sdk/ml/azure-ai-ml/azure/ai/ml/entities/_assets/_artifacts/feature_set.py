@@ -29,6 +29,29 @@ from .artifact import ArtifactStorageInfo
 
 @experimental
 class FeatureSet(Artifact):
+    """Feature Set
+
+    :param name: The name of the Feature Set resource.
+    :type name: str
+    :param version: The version of the Feature Set resource.
+    :type version: str
+    :param entities: Specifies list of entities.
+    :type entities: list[str]
+    :param specification: Specifies the feature spec details.
+    :type specification: ~azure.ai.ml.entities.FeatureSetSpecification
+    :param stage: Feature set stage. Allowed values: Development, Production, Archived. Defatuls to Development.
+    :type stage: Optional[str]
+    :param description: The description of the Feature Set resource. Defaults to None.
+    :type description: Optional[str]
+    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
+    :type tags: Optional[dict[str, str]]
+    :param materialization_settings: Specifies the materialization settings. Defaults to None.
+    :type materialization_settings: Optional[~azure.ai.ml.entities.MaterializationSettings]
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
+
+    :raises ValidationException: Raises ValidationException if stage param is invalid.
+    """
     def __init__(
         self,
         *,
@@ -41,28 +64,7 @@ class FeatureSet(Artifact):
         materialization_settings: Optional[MaterializationSettings] = None,
         tags: Optional[Dict] = None,
         **kwargs,
-    ):
-        """FeatureSet
-
-        :param name: Name of the resource.
-        :type name: str
-        :param version: Version of the resource.
-        :type version: str
-        :param entities: Specifies list of entities.
-        :type entities: list[str]
-        :param specification: Specifies the feature spec details.
-        :type specification: ~azure.ai.ml.entities.FeatureSetSpecification
-        :param stage: Feature set stage. Allowed values: Development, Production, Archived
-        :type stage: str
-        :param description: Description of the resource.
-        :type description: str
-        :param tags: Tag dictionary. Tags can be added, removed, and updated.
-        :type tags: dict[str, str]
-        :param materialization_settings: Specifies the materialization settings.
-        :type materialization_settings: ~azure.ai.ml.entities.MaterializationSettings
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
-        """
+    ) -> None:
         super().__init__(
             name=name,
             version=version,
