@@ -56,8 +56,6 @@ from .response_handlers import process_storage_error, PartialBatchErrorException
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from .models import TokenAudience
-
 _LOGGER = logging.getLogger(__name__)
 _SERVICE_PARAMS = {
     "blob": {"primary": "BLOBENDPOINT", "secondary": "BLOBSECONDARYENDPOINT"},
@@ -73,8 +71,6 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         parsed_url,  # type: Any
         service,  # type: str
         credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-        *,
-        audience: Optional["TokenAudience"] = None,
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -110,7 +106,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
 
         self._sdk_moniker = f"storage-{service}/{VERSION}"
-        self._config, self._pipeline = self._create_pipeline(self.credential, sdk_moniker=self._sdk_moniker, audience=audience, **kwargs)
+        self._config, self._pipeline = self._create_pipeline(self.credential, sdk_moniker=self._sdk_moniker, **kwargs)
 
     def __enter__(self):
         self._client.__enter__()

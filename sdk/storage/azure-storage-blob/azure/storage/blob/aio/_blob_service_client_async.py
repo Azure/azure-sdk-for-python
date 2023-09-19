@@ -45,7 +45,7 @@ if TYPE_CHECKING:
     from datetime import datetime
     from .._shared.models import UserDelegationKey
     from ._lease_async import BlobLeaseClient
-    from .._models import (
+    from .._models import (  # pylint: disable=unused-import
         BlobProperties,
         PublicAccess,
         BlobAnalyticsLogging,
@@ -53,6 +53,7 @@ if TYPE_CHECKING:
         CorsRule,
         RetentionPolicy,
         StaticWebsite,
+        BlobTokenAudience
     )
 
 
@@ -98,6 +99,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
         the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
     :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
         or 4MB.
+    :keyword BlobTokenAudience audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential.
 
     .. admonition:: Example:
 

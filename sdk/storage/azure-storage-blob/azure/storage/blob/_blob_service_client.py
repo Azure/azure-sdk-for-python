@@ -41,7 +41,7 @@ if TYPE_CHECKING:
     from datetime import datetime
     from ._shared.models import UserDelegationKey
     from ._lease import BlobLeaseClient
-    from ._models import (
+    from ._models import (  # pylint: disable=unused-import
         ContainerProperties,
         BlobProperties,
         PublicAccess,
@@ -124,8 +124,6 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def __init__(
             self, account_url: str,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            *,
-            audience: Optional["BlobTokenAudience"] = None,
             **kwargs: Any
         ) -> None:
         try:
@@ -140,7 +138,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(BlobServiceClient, self).__init__(
-            parsed_url, service='blob', credential=credential, audience=audience, **kwargs)
+            parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._configure_encryption(kwargs)
@@ -160,8 +158,6 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def from_connection_string(
             cls, conn_str: str,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            *,
-            audience: Optional["BlobTokenAudience"] = None,
             **kwargs: Any
         ) -> Self:
         """Create BlobServiceClient from a Connection String.
@@ -195,7 +191,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         account_url, secondary, credential = parse_connection_str(conn_str, credential, 'blob')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
-        return cls(account_url, credential=credential, audience=audience, **kwargs)
+        return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace
     def get_user_delegation_key(self, key_start_time,  # type: datetime
