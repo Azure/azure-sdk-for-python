@@ -624,7 +624,7 @@ class DatabaseProxy(object):
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A `UserProxy` instance representing the new user.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be created.
-        :rtype: ~azure.cosmos.user.UserProxy
+        :rtype: ~azure.cosmos.UserProxy
 
         .. admonition:: Example:
 
