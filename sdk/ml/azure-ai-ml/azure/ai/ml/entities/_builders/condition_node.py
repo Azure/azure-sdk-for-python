@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._utils.utils import is_data_binding_expression
@@ -28,7 +28,7 @@ class ConditionNode(ControlFlowNode):
     """
 
     def __init__(
-        self, condition: Any, *, true_block: List, false_block: List, **kwargs: Any
+        self, condition: Any, *, true_block: Optional[List] = None, false_block: Optional[List] = None, **kwargs: Any
     ) -> None:  # pylint: disable=unused-argument
         kwargs.pop("type", None)
         super(ConditionNode, self).__init__(type=ControlFlowType.IF_ELSE, **kwargs)
@@ -62,7 +62,7 @@ class ConditionNode(ControlFlowNode):
         return cls(**loaded_data)
 
     @property
-    def true_block(self) -> List[BaseNode]:
+    def true_block(self) -> Optional[List]:
         """Get the list of nodes to execute when the condition is true.
 
         :return: The list of nodes to execute when the condition is true.
@@ -71,7 +71,7 @@ class ConditionNode(ControlFlowNode):
         return self._true_block
 
     @property
-    def false_block(self) -> List[BaseNode]:
+    def false_block(self) -> Optional[List]:
         """Get the list of nodes to execute when the condition is false.
 
         :return: The list of nodes to execute when the condition is false.
@@ -131,16 +131,17 @@ class ConditionNode(ControlFlowNode):
                 )
 
         # check if true/false block is valid binding
-        for name, blocks in {"true_block": self.true_block, "false_block": self.false_block}.items():
-            blocks = blocks if blocks else []
-            for block in blocks:
-                if block is None or not isinstance(block, str):
-                    continue
-                error_tail = "for example, ${{parent.jobs.xxx}}"
-                if not is_data_binding_expression(block, ["parent", "jobs"], is_singular=False):
-                    validation_result.append_error(
-                        yaml_path=name,
-                        message=f"'{name}' of dsl.condition has invalid binding expression: {block}, {error_tail}",
-                    )
+        if self.true_block is not None and self.false_block is not None:
+            for name, blocks in {"true_block": self.true_block, "false_block": self.false_block}.items():
+                blocks = blocks if blocks else []
+                for block in blocks:
+                    if block is None or not isinstance(block, str):
+                        continue
+                    error_tail = "for example, ${{parent.jobs.xxx}}"
+                    if not is_data_binding_expression(block, ["parent", "jobs"], is_singular=False):
+                        validation_result.append_error(
+                            yaml_path=name,
+                            message=f"'{name}' of dsl.condition has invalid binding expression: {block}, {error_tail}",
+                        )
 
         return validation_result
