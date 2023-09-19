@@ -39,31 +39,35 @@ module_logger = logging.getLogger(__name__)
 class OnlineEndpoint(Endpoint):
     """Online endpoint entity.
 
-    :keyword name: Name of the resource, defaults to None
+    :keyword name: The name of the resource. If not set, name defaults to None
     :paramtype name: typing.Optional[str]
-    :keyword tags: Tag dictionary. Tags can be added, removed, and updated. defaults to None
+    :keyword tags: A set of tags. Resource tags. Tags can be added, removed, and updated. If not set, tags defaults to None
     :paramtype tags: typing.Optional[typing.Dict[str, typing.Any]]
-    :keyword properties: The asset property dictionary, defaults to None
+    :keyword properties: The asset property dictionary. If not set, properties defaults to None
     :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
-    :keyword auth_mode: Possible values include: "aml_token", "key", defaults to KEY
+    :keyword auth_mode: Possible values include: "aml_token", "key". If not set, auth_mode defaults to KEY
     :type auth_mode: typing.Optional[str]
-    :keyword description: Description of the inference endpoint, defaults to None
+    :keyword description: Description of the inference endpoint. If not set, description defaults to None
     :paramtype description: typing.Optional[str]
-    :keyword location: Location of the resource, defaults to None
+    :keyword location: The geo-location of where the resource lives. If not set, location defaults to None
     :paramtype location: typing.Optional[str]
-    :keyword traffic: Traffic rules on how the traffic will be routed across deployments, defaults to None
+    :keyword traffic: Percentage of traffic from endpoint to divert to each deployment. Traffic values
+        need to sum to 100. If not set, traffic defaults to None
     :paramtype traffic: typing.Optional[typing.Dict[str, int]]
-    :keyword mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to None
+    :keyword mirror_traffic: Percentage of traffic to be mirrored to each deployment without using returned scoring.
+        Traffic values need to sum to utmost 50. If not set, mirror_traffic defaults to None
     :paramtype mirror_traffic: typing.Optional[typing.Dict[str, int]]
-    :keyword identity: Identity Configuration, defaults to SystemAssigned
+    :keyword identity: Identity Configuration. If not set, identity defaults to SystemAssigned
     :paramtype identity: typing.Optional[IdentityConfiguration]
-    :keyword scoring_uri: Scoring URI, defaults to None
+    :keyword scoring_uri: Scoring URI. if not set, scoring_uri defaults to None
     :paramtype scoring_uri: typing.Optional[str]
-    :keyword openapi_uri: OpenAPI URI, defaults to None
+    :keyword openapi_uri: OpenAPI URI. If not set, openapi_uri defaults to None
     :paramtype openapi_uri: typing.Optional[str]
-    :keyword provisioning_state: Provisioning state of an endpoint, defaults to None
+    :keyword provisioning_state: Provisioning state of an endpoint. Possible values include:
+        "creating", "deleting", "succeeded", "failed", "updating", "canceled".
+        If not set, provisioning_state defaults to None
     :paramtype provisioning_state: typing.Optional[str]
-    :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None
+    :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints. If not set, kind defaults to None
     :paramtype kind: typing.Optional[str]
     """
 
@@ -89,32 +93,36 @@ class OnlineEndpoint(Endpoint):
 
         Constructor for an Online endpoint entity.
 
-        :keyword name: Name of the resource, defaults to None
+        :keyword name: The name of the resource. If not set, name defaults to None
         :paramtype name: typing.Optional[str]
-        :keyword tags: Tag dictionary. Tags can be added, removed, and updated. defaults to None
+        :keyword tags: A set of tags. Resource tags. Tags can be added, removed, and updated. If not set, tags defaults to None
         :paramtype tags: typing.Optional[typing.Dict[str, typing.Any]]
-        :keyword properties: The asset property dictionary, defaults to None
+        :keyword properties: The asset property dictionary. If not set, properties defaults to None
         :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
-        :keyword auth_mode: Possible values include: "aml_token", "key", defaults to KEY
+        :keyword auth_mode: Possible values include: "aml_token", "key". If not set, auth_mode defaults to KEY
         :type auth_mode: typing.Optional[str]
-        :keyword description: Description of the inference endpoint, defaults to None
+        :keyword description: Description of the inference endpoint. If not set, description defaults to None
         :paramtype description: typing.Optional[str]
-        :keyword location: Location of the resource, defaults to None
+        :keyword location: The geo-location of where the resource lives. If not set, location defaults to None
         :paramtype location: typing.Optional[str]
-        :keyword traffic: Traffic rules on how the traffic will be routed across deployments, defaults to None
+        :keyword traffic: Percentage of traffic from endpoint to divert to each deployment. Traffic values
+            need to sum to 100. If not set, traffic defaults to None
         :paramtype traffic: typing.Optional[typing.Dict[str, int]]
-        :keyword mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to None
+        :keyword mirror_traffic: Percentage of traffic to be mirrored to each deployment without using returned scoring.
+            Traffic values need to sum to utmost 50. If not set, mirror_traffic defaults to None
         :paramtype mirror_traffic: typing.Optional[typing.Dict[str, int]]
-        :keyword identity: Identity Configuration, defaults to SystemAssigned
+        :keyword identity: Identity Configuration. If not set, identity defaults to SystemAssigned
         :paramtype identity: typing.Optional[IdentityConfiguration]
-        :keyword scoring_uri: Scoring URI, defaults to None
+        :keyword scoring_uri: Scoring URI. if not set, scoring_uri defaults to None
         :paramtype scoring_uri: typing.Optional[str]
-        :keyword openapi_uri: OpenAPI URI, defaults to None
+        :keyword openapi_uri: OpenAPI URI. If not set, openapi_uri defaults to None
         :paramtype openapi_uri: typing.Optional[str]
-        :keyword provisioning_state: Provisioning state of an endpoint, defaults to None
+        :keyword provisioning_state: Provisioning state of an endpoint. Possible values include:
+            "creating", "deleting", "succeeded", "failed", "updating", "canceled".
+            If not set, provisioning_state defaults to None
         :paramtype provisioning_state: typing.Optional[str]
-        :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None
-        :type kind: typing.Optional[str]
+        :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints. If not set, kind defaults to None
+        :paramtype kind: typing.Optional[str]
         """
         self._provisioning_state = kwargs.pop("provisioning_state", None)
 
@@ -296,27 +304,29 @@ class OnlineEndpoint(Endpoint):
 class KubernetesOnlineEndpoint(OnlineEndpoint):
     """K8s Online endpoint entity.
 
-    :keyword name: Name of the resource, defaults to None
+    :keyword name: The name of the resource. If not set, name defaults to None
     :paramtype name: typing.Optional[str]
-    :keyword tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+    :keyword tags: A set of tags. Resource tags. Tags can be added, removed, and updated. If not set, tags defaults to None
     :paramtype tags: typing.Optional[typing.Dict[str, typing.Any]]
-    :keyword properties: The asset property dictionary, defaults to None
+    :keyword properties: The asset property dictionary. If not set, properties defaults to None
     :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
-    :keyword auth_mode: Possible values include: "aml_token", "key", defaults to KEY
+    :keyword auth_mode: Possible values include: "aml_token", "key". If not set, auth_mode defaults to KEY
     :type auth_mode: typing.Optional[str]
-    :keyword description: Description of the inference endpoint, defaults to None
+    :keyword description: Description of the inference endpoint. If not set, description defaults to None
     :paramtype description: typing.Optional[str]
-    :keyword location: Location of the resource, defaults to None
+    :keyword location: The geo-location of where the resource lives. If not set, location defaults to None
     :paramtype location: typing.Optional[str]
-    :keyword traffic: Traffic rules on how the traffic will be routed across deployments, defaults to None
+    :keyword traffic: Percentage of traffic from endpoint to divert to each deployment. Traffic values
+        need to sum to 100. If not set, traffic defaults to None
     :paramtype traffic: typing.Optional[typing.Dict[str, int]]
-    :keyword mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to None
+    :keyword mirror_traffic: Percentage of traffic to be mirrored to each deployment without using returned scoring.
+        Traffic values need to sum to utmost 50. If not set, mirror_traffic defaults to None
     :paramtype mirror_traffic: typing.Optional[typing.Dict[str, int]]
-    :keyword compute: Compute cluster id, defaults to None
+    :keyword compute: Compute cluster id of compute if it exists. If not set, compute defaults to None
     :paramtype compute: typing.Optional[str]
-    :keyword identity: Identity Configuration, defaults to SystemAssigned
+    :keyword identity: Identity Configuration. If not set, identity defaults to SystemAssigned
     :paramtype identity: typing.Optional[IdentityConfiguration]
-    :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None
+    :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints. If not set, kind defaults to None
     :paramtype kind: typing.Optional[str]
     """
 
@@ -340,28 +350,30 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
 
         Constructor for K8s Online endpoint entity.
 
-        :keyword name: Name of the resource, defaults to None
+        :keyword name: The name of the resource. If not set, name defaults to None
         :paramtype name: typing.Optional[str]
-        :keyword tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+        :keyword tags: A set of tags. Resource tags. Tags can be added, removed, and updated. If not set, tags defaults to None
         :paramtype tags: typing.Optional[typing.Dict[str, typing.Any]]
-        :keyword properties: The asset property dictionary, defaults to None
+        :keyword properties: The asset property dictionary. If not set, properties defaults to None
         :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
-        :keyword auth_mode: Possible values include: "aml_token", "key", defaults to KEY
+        :keyword auth_mode: Possible values include: "aml_token", "key". If not set, auth_mode defaults to KEY
         :type auth_mode: typing.Optional[str]
-        :keyword description: Description of the inference endpoint, defaults to None
+        :keyword description: Description of the inference endpoint. If not set, description defaults to None
         :paramtype description: typing.Optional[str]
-        :keyword location: Location of the resource, defaults to None
+        :keyword location: The geo-location of where the resource lives. If not set, location defaults to None
         :paramtype location: typing.Optional[str]
-        :keyword traffic: Traffic rules on how the traffic will be routed across deployments, defaults to None
+        :keyword traffic: Percentage of traffic from endpoint to divert to each deployment. Traffic values
+            need to sum to 100. If not set, traffic defaults to None
         :paramtype traffic: typing.Optional[typing.Dict[str, int]]
-        :keyword mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to None
+        :keyword mirror_traffic: Percentage of traffic to be mirrored to each deployment without using returned scoring.
+            Traffic values need to sum to utmost 50. If not set, mirror_traffic defaults to None
         :paramtype mirror_traffic: typing.Optional[typing.Dict[str, int]]
-        :keyword compute: Compute cluster id, defaults to None
+        :keyword compute: Compute cluster id of compute if it exists. If not set, compute defaults to None
         :paramtype compute: typing.Optional[str]
-        :keyword identity: Identity Configuration, defaults to SystemAssigned
+        :keyword identity: Identity Configuration. If not set, identity defaults to SystemAssigned
         :paramtype identity: typing.Optional[IdentityConfiguration]
-        :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None
-        :type kind: typing.Optional[str]
+        :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints. If not set, kind defaults to None
+        :paramtype kind: typing.Optional[str]
         """
         super(KubernetesOnlineEndpoint, self).__init__(
             name=name,
@@ -418,28 +430,30 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
 class ManagedOnlineEndpoint(OnlineEndpoint):
     """Managed Online endpoint entity.
 
-    :keyword name: Name of the resource, defaults to None
+    :keyword name: The name of the resource. If not set, name defaults to None
     :paramtype name: typing.Optional[str]
-    :keyword tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+    :keyword tags: A set of tags. Resource tags. Tags can be added, removed, and updated. If not set, tags defaults to None
     :paramtype tags: typing.Optional[typing.Dict[str, typing.Any]]
-    :keyword properties: The asset property dictionary, defaults to None
+    :keyword properties: The asset property dictionary. If not set, properties defaults to None
     :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
-    :keyword auth_mode: Possible values include: "aml_token", "key", defaults to KEY
-    :type auth_mode: str
-    :keyword description: Description of the inference endpoint, defaults to None
+    :keyword auth_mode: Possible values include: "aml_token", "key". If not set, auth_mode defaults to KEY
+    :type auth_mode: typing.Optional[str]
+    :keyword description: Description of the inference endpoint. If not set, description defaults to None
     :paramtype description: typing.Optional[str]
-    :keyword location: Location of the resource, defaults to None
+    :keyword location: The geo-location of where the resource lives. If not set, location defaults to None
     :paramtype location: typing.Optional[str]
-    :keyword traffic: Traffic rules on how the traffic will be routed across deployments, defaults to None
+    :keyword traffic: Percentage of traffic from endpoint to divert to each deployment. Traffic values
+        need to sum to 100. If not set, traffic defaults to None
     :paramtype traffic: typing.Optional[typing.Dict[str, int]]
-    :keyword mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to None
+    :keyword mirror_traffic: Percentage of traffic to be mirrored to each deployment without using
+        returned scoring. Traffic values need to sum to utmost 50. If not set, mirror_traffic defaults to None
     :paramtype mirror_traffic: typing.Optional[typing.Dict[str, int]]
-    :keyword identity: Identity Configuration, defaults to SystemAssigned
+    :keyword identity: Identity Configuration. If not set, identity defaults to SystemAssigned
     :paramtype identity: typing.Optional[IdentityConfiguration]
-    :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None.
+    :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints. If not set, kind defaults to None.
     :paramtype kind: typing.Optional[str]
-    :keyword public_network_access: Whether to allow public endpoint connectivity, defaults to None
-        Allowed values are: "enabled", "disabled"
+    :keyword public_network_access: Set to "Enabled" for endpoints that should allow public access when Private Link is enabled.
+        Possible values include: "Enabled", "Disabled". If not set, public_network_access defaults to None
     :type public_network_access: typing.Optional[str]
     """
 
@@ -463,28 +477,30 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
 
         Constructor for Managed Online endpoint entity.
 
-        :keyword name: Name of the resource, defaults to None
+        :keyword name: The name of the resource. If not set, name defaults to None
         :paramtype name: typing.Optional[str]
-        :keyword tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+        :keyword tags: A set of tags. Resource tags. Tags can be added, removed, and updated. If not set, tags defaults to None
         :paramtype tags: typing.Optional[typing.Dict[str, typing.Any]]
-        :keyword properties: The asset property dictionary, defaults to None
+        :keyword properties: The asset property dictionary. If not set, properties defaults to None
         :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
-        :keyword auth_mode: Possible values include: "aml_token", "key", defaults to KEY
-        :type auth_mode: str
-        :keyword description: Description of the inference endpoint, defaults to None
+        :keyword auth_mode: Possible values include: "aml_token", "key". If not set, auth_mode defaults to KEY
+        :type auth_mode: typing.Optional[str]
+        :keyword description: Description of the inference endpoint. If not set, description defaults to None
         :paramtype description: typing.Optional[str]
-        :keyword location: Location of the resource, defaults to None
+        :keyword location: The geo-location of where the resource lives. If not set, location defaults to None
         :paramtype location: typing.Optional[str]
-        :keyword traffic: Traffic rules on how the traffic will be routed across deployments, defaults to None
+        :keyword traffic: Percentage of traffic from endpoint to divert to each deployment. Traffic values
+            need to sum to 100. If not set, traffic defaults to None
         :paramtype traffic: typing.Optional[typing.Dict[str, int]]
-        :keyword mirror_traffic: Duplicated live traffic used to inference a single deployment, defaults to None
+        :keyword mirror_traffic: Percentage of traffic to be mirrored to each deployment without using
+            returned scoring. Traffic values need to sum to utmost 50. If not set, mirror_traffic defaults to None
         :paramtype mirror_traffic: typing.Optional[typing.Dict[str, int]]
-        :keyword identity: Identity Configuration, defaults to SystemAssigned
+        :keyword identity: Identity Configuration. If not set, identity defaults to SystemAssigned
         :paramtype identity: typing.Optional[IdentityConfiguration]
-        :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints, defaults to None.
-        :type kind: typing.Optional[str]
-        :keyword public_network_access: Whether to allow public endpoint connectivity, defaults to None
-            Allowed values are: "enabled", "disabled"
+        :keyword kind: Kind of the resource, we have two kinds: K8s and Managed online endpoints. If not set, kind defaults to None.
+        :paramtype kind: typing.Optional[str]
+        :keyword public_network_access: Set to "Enabled" for endpoints that should allow public access when Private Link is enabled.
+            Possible values include: "Enabled", "Disabled". If not set, public_network_access defaults to None
         :type public_network_access: typing.Optional[str]
         """
         self.public_network_access = public_network_access
