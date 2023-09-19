@@ -17,50 +17,60 @@
           },
           "signals": {
             "testSignal": {
-              "signalType": "FeatureAttributionDrift",
+              "signalType": "GenerationSafetyQuality",
               "mode": "Enabled",
-              "modelType": "classification",
+              "samplingRate": "1",
+              "workspaceConnectionId": "fake_workspace_connection_id",
               "productionData": [
                 {
                   "inputDataType": "Trailing",
                   "uri": "my_model_inputs_data:1",
                   "jobInputType": "mltable",
-                  "dataContext": "model_inputs",
-                  "windowSize": "P7D",
-                  "windowOffset": "P7D",
                   "columns": {
                     "correlation_id": "inference_correlation_id"
-                  }
+                  },
+                  "windowSize": "P7D",
+                  "windowOffset": "P7D"
                 },
                 {
                   "inputDataType": "Trailing",
                   "uri": "my_model_outputs_data:1",
                   "jobInputType": "mltable",
-                  "dataContext": "model_outputs",
-                  "windowSize": "P7D",
-                  "windowOffset": "P7D",
                   "columns": {
                     "correlation_id": "inference_correlation_id",
                     "prediction": "is_fraud",
                     "prediction_probability": "is_fraud_probability"
-                  }
+                  },
+                  "windowSize": "P7D",
+                  "windowOffset": "P7D"
                 }
               ],
-              "referenceData": {
-                "dataContext": "training",
-                "inputDataType": "Fixed",
-                "jobInputType": "mltable",
-                "uri": "my_model_training_data:1",
-                "columns": {
-                  "target_column": "target"
-                }
-              },
-              "metricThreshold": {
-                "metric": "normalizedDiscountedCumulativeGain",
-                "threshold": {
-                  "value": 0.2
-                }
-              }
+              "metricThresholds": [
+                    {
+                        "metric": "acceptable_groundedness_score_per_instance",
+                        "threshold": {
+                        "value": 3
+                        }
+                    },
+                    {
+                        "metric": "aggregated_groundedness_pass_rate",
+                        "threshold": {
+                        "value": 0.01
+                        }
+                    },
+                    {
+                      "metric": "acceptable_fluency_score_per_instance",
+                      "threshold": {
+                      "value": 3
+                      }
+                    },
+                    {
+                        "metric": "aggregated_fluency_pass_rate",
+                        "threshold": {
+                        "value": 0.02
+                        }
+                    }
+                ]
             }
           }
         }
@@ -77,7 +87,7 @@
           ],
           "minutes": [
             0,
-            0
+            30
           ],
           "weekDays": [
             "monday",
