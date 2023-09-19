@@ -10,6 +10,7 @@ import tempfile
 from flask import (
     Response,
     Blueprint,
+    stream_with_context,
 )
 
 streams_api = Blueprint("streams_api", __name__)
@@ -56,7 +57,7 @@ def basic():
 
 @streams_api.route("/iterable", methods=["GET"])
 def iterable():
-    return Response(StreamingBody(), status=200)
+    return Response(stream_with_context(StreamingBody()), status=200)
 
 
 @streams_api.route("/error", methods=["GET"])
