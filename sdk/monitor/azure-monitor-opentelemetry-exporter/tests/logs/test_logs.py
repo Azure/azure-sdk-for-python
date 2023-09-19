@@ -5,6 +5,7 @@ import platform
 import shutil
 import unittest
 from unittest import mock
+from functools import partial
 
 # pylint: disable=import-error
 from opentelemetry.semconv.trace import SpanAttributes
@@ -38,6 +39,7 @@ def throw(exc_type, *args, **kwargs):
 # pylint: disable=protected-access
 # pylint: disable=too-many-lines
 class TestAzureLogExporter(unittest.TestCase):
+    _exporter_class = AzureMonitorLogExporter
     @classmethod
     def setUpClass(cls):
         os.environ.clear()
@@ -45,7 +47,7 @@ class TestAzureLogExporter(unittest.TestCase):
             "APPINSIGHTS_INSTRUMENTATIONKEY"
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
         os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
-        cls._exporter = AzureMonitorLogExporter()
+        cls._exporter = cls._exporter_class()
         cls._log_data = _logs.LogData(
             _logs.LogRecord(
                 timestamp = 1646865018558419456,
@@ -302,7 +304,6 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.name, record.body)
         self.assertEqual(envelope.data.base_data.properties["event_key"], "event_attribute")
 
-
     def test_log_to_envelope_timestamp(self):
         exporter = self._exporter
         old_record = self._log_data.log_record
@@ -312,6 +313,53 @@ class TestAzureLogExporter(unittest.TestCase):
         record = self._log_data.log_record
         self.assertEqual(envelope.time, ns_to_iso_str(record.observed_timestamp))
         self._log_data.log_record = old_record
+        
+
+class TestAzureLogExporterWithDisabledStorage(TestAzureLogExporter):
+    _exporter_class = partial(AzureMonitorLogExporter, disable_offline_storage=True)
+    
+    def test_constructor(self):
+        """Test the constructor."""
+        exporter = AzureMonitorLogExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
+            disable_offline_storage=True,
+        )
+        self.assertEqual(
+            exporter._instrumentation_key,
+            "4321abcd-5678-4efa-8abc-1234567890ab",
+        )
+        self.assertEqual(exporter.storage, None)
+    
+    def test_shutdown(self):
+        exporter = self._exporter
+        exporter.shutdown()
+        self.assertEqual(exporter.storage, None)
+        
+    def test_export_failure(self):
+        exporter = self._exporter
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter._transmit"
+        ) as transmit:  # noqa: E501
+            transmit.return_value = ExportResult.FAILED_NOT_RETRYABLE
+            transmit_from_storage_mock = mock.Mock()
+            exporter._handle_transmit_from_storage = transmit_from_storage_mock
+            result = exporter.export([self._log_data])
+            self.assertEqual(result, LogExportResult.FAILURE)
+            self.assertEqual(exporter.storage, None)
+            self.assertEqual(transmit_from_storage_mock.call_count, 1)
+
+    def test_export_success(self):
+        exporter = self._exporter
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter._transmit"
+        ) as transmit:  # noqa: E501
+            transmit.return_value = ExportResult.SUCCESS
+            storage_mock = mock.Mock()
+            exporter._transmit_from_storage = storage_mock
+            result = exporter.export([self._log_data])
+            self.assertEqual(result, LogExportResult.SUCCESS)
+            self.assertEqual(storage_mock.call_count, 0)
+
 
 class TestAzureLogExporterUtils(unittest.TestCase):
     def test_get_log_export_result(self):
