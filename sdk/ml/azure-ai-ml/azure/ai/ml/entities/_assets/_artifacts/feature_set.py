@@ -51,6 +51,14 @@ class FeatureSet(Artifact):
     :type kwargs: dict
 
     :raises ValidationException: Raises ValidationException if stage param is invalid.
+
+    .. admonition:: Example:
+        .. literalinclude:: ../../../../../../samples/ml_samples_featurestore.py
+            :start-after: [START configure_feature_set]
+            :end-before: [END configure_feature_set]
+            :language: Python
+            :dedent: 8
+            :caption: Instantiating a Feature Set object
     """
     def __init__(
         self,
