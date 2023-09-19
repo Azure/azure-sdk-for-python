@@ -103,7 +103,8 @@ class AzureMonitorTraceExporter(BaseExporter, SpanExporter):
 
         Called when the SDK is shut down.
         """
-        self.storage.close()
+        if self.storage:
+            self.storage.close()
 
     # pylint: disable=protected-access
     def _get_otel_resource_envelope(self, resource: Resource) -> TelemetryItem:
