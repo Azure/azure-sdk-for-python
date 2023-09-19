@@ -11,7 +11,7 @@ urlFragment: ml-samples
 # Azure Machine Learning Client Library for Python Samples
 
 These are code samples that show common scenario operations with the Azure Machine Learning Client Library for Python.
-Their main purpose is to be used in inline examples for class and methods throughout the codebase that render alongside our reference documentation on [learn.microsoft.com](https://learn.microsoft.com/en-us/python/api/azure-ai-ml/?view=azure-python).
+Their main purpose is to be used in inline examples for class and methods throughout the codebase that render alongside our reference documentation on [learn.microsoft.com](https://learn.microsoft.com/python/api/azure-ai-ml/?view=azure-python).
 
 ```markdown
 .. admonition:: Example:
