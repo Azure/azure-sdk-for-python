@@ -57,8 +57,30 @@ class EventGridEvent(object):
     :vartype event_time: ~datetime.datetime
     """
 
+    _validation = {
+        "id": {"required": True},
+        "subject": {"required": True},
+        "data": {"required": True},
+        "event_type": {"required": True},
+        "event_time": {"required": True},
+        "metadata_version": {"readonly": True},
+        "data_version": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "topic": {"key": "topic", "type": "str"},
+        "subject": {"key": "subject", "type": "str"},
+        "data": {"key": "data", "type": "object"},
+        "event_type": {"key": "eventType", "type": "str"},
+        "event_time": {"key": "eventTime", "type": "iso-8601"},
+        "metadata_version": {"key": "metadataVersion", "type": "str"},
+        "data_version": {"key": "dataVersion", "type": "str"},
+    }
+
     def __init__(self, subject, event_type, data, data_version, **kwargs):
         # type: (str, str, object, str, Any) -> None
+        
         kwargs.setdefault("id", uuid.uuid4())
         kwargs.setdefault("subject", subject)
         kwargs.setdefault("event_type", event_type)
@@ -83,6 +105,9 @@ class EventGridEvent(object):
 
     def __getattr__(self, name):
         return getattr(InternalEventGridEvent, name)
+    
+    def _to_generated_model(self) -> InternalEventGridEvent:
+        return self._internal_event
 
 
     def __repr__(self):
