@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `enable_support_logging` as a keyword argument to credentials using MSAL's `PublicClientApplication`. This allows additional support logging which may contain PII. ([#32135](https://github.com/Azure/azure-sdk-for-python/pull/32135))
+
 ### Breaking Changes
 
 ### Bugs Fixed
