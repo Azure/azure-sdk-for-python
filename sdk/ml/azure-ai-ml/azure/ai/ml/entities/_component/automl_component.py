@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Optional
+from typing import Any, Optional
 
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.component.automl_component import AutoMLComponentSchema
@@ -26,17 +26,17 @@ class AutoMLComponent(Component):
         self,
         *,
         task: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         kwargs[COMPONENT_TYPE] = NodeType.AUTOML
         super(AutoMLComponent, self).__init__(**kwargs)
         self._task = task
 
     @property
-    def task(self):
+    def task(self) -> Optional[str]:
         """Returns task of the component."""
         return self._task
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> PathAwareSchema:
+    def _create_schema_for_validation(cls, context: Any) -> PathAwareSchema:
         return AutoMLComponentSchema(context=context)

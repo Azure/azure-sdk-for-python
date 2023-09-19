@@ -131,7 +131,7 @@ class ConditionNode(ControlFlowNode):
                 )
 
         # check if true/false block is valid binding
-        for name, blocks in {"true_block": self.true_block, "false_block": self.false_block}.items():
+        for name, blocks in {"true_block": self.true_block, "false_block": self.false_block}.items():  # type: ignore
             blocks = blocks if blocks else []
             for block in blocks:
                 if block is None or not isinstance(block, str):
