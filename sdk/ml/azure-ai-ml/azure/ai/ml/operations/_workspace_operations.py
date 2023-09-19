@@ -27,7 +27,6 @@ from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from ._workspace_operations_base import WorkspaceOperationsBase
-from .._utils._experimental import experimental
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
