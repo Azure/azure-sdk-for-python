@@ -76,6 +76,7 @@ known_content_issues:
   - ['sdk/monitor/azure-monitor-query/samples/README.md', '#4554']
   - ['sdk/graphrbac/azure-graphrbac/README.md', '#4554']
   - ['sdk/loganalytics/azure-loganalytics/README.md', '#4554']
+  - ['sdk/schemaregistry/azure-schemaregistry-avroserializer/README.md', '#4554']
   - ['sdk/servicebus/azure-servicebus/README.md', '#4554']
   - ['sdk/servicebus/azure-servicebus/tests/perf_tests/README.md', '#4554']
   - ['sdk/servicebus/azure-servicebus/stress/scripts/README.md', '#4554']
@@ -105,6 +106,7 @@ known_content_issues:
   - ['sdk/media/azure-media-analytics-edge/README.md', '#4554']
   - ['sdk/remoterendering/azure-mixedreality-remoterendering/README.md', '#4554']
   - ['sdk/modelsrepository/azure-iot-modelsrepository/README.md', '#4554']
+  - ['sdk/openai/azure-openai/README.md', '#4554']
 
   # common.
   - ['sdk/appconfiguration/azure-appconfiguration/README.md', 'common']

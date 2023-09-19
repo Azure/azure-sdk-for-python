@@ -21,15 +21,14 @@ from azure.core.exceptions import (
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.polling.base_polling import LROBasePolling
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .._serialization import Serializer
-from .._vendor import ConversationAuthoringClientMixinABC, _format_url_section
+from .._vendor import ConversationAuthoringClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -43,7 +42,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_conversation_authoring_list_projects_request(
+def build_conversation_authoring_list_projects_request(  # pylint: disable=name-too-long
     *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -68,7 +67,9 @@ def build_conversation_authoring_list_projects_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_create_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_create_project_request(  # pylint: disable=name-too-long
+    project_name: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -82,7 +83,7 @@ def build_conversation_authoring_create_project_request(project_name: str, **kwa
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -95,7 +96,9 @@ def build_conversation_authoring_create_project_request(project_name: str, **kwa
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_get_project_request(  # pylint: disable=name-too-long
+    project_name: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -108,7 +111,7 @@ def build_conversation_authoring_get_project_request(project_name: str, **kwargs
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -119,7 +122,9 @@ def build_conversation_authoring_get_project_request(project_name: str, **kwargs
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_delete_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_delete_project_request(  # pylint: disable=name-too-long
+    project_name: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -132,7 +137,7 @@ def build_conversation_authoring_delete_project_request(project_name: str, **kwa
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -143,7 +148,7 @@ def build_conversation_authoring_delete_project_request(project_name: str, **kwa
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_export_project_request(
+def build_conversation_authoring_export_project_request(  # pylint: disable=name-too-long
     project_name: str,
     *,
     string_index_type: str,
@@ -164,7 +169,7 @@ def build_conversation_authoring_export_project_request(
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if exported_project_format is not None:
@@ -182,7 +187,7 @@ def build_conversation_authoring_export_project_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_import_project_request(
+def build_conversation_authoring_import_project_request(  # pylint: disable=name-too-long
     project_name: str, *, exported_project_format: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -198,7 +203,7 @@ def build_conversation_authoring_import_project_request(
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if exported_project_format is not None:
@@ -213,7 +218,9 @@ def build_conversation_authoring_import_project_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_train_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_train_request(  # pylint: disable=name-too-long
+    project_name: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -227,7 +234,7 @@ def build_conversation_authoring_train_request(project_name: str, **kwargs: Any)
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -240,7 +247,7 @@ def build_conversation_authoring_train_request(project_name: str, **kwargs: Any)
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_list_deployments_request(
+def build_conversation_authoring_list_deployments_request(  # pylint: disable=name-too-long
     project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -255,7 +262,7 @@ def build_conversation_authoring_list_deployments_request(
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if top is not None:
@@ -270,7 +277,9 @@ def build_conversation_authoring_list_deployments_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_swap_deployments_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_swap_deployments_request(  # pylint: disable=name-too-long
+    project_name: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -284,7 +293,7 @@ def build_conversation_authoring_swap_deployments_request(project_name: str, **k
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -297,7 +306,7 @@ def build_conversation_authoring_swap_deployments_request(project_name: str, **k
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_deployment_request(
+def build_conversation_authoring_get_deployment_request(  # pylint: disable=name-too-long
     project_name: str, deployment_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -313,7 +322,7 @@ def build_conversation_authoring_get_deployment_request(
         "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -324,7 +333,7 @@ def build_conversation_authoring_get_deployment_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_deploy_project_request(
+def build_conversation_authoring_deploy_project_request(  # pylint: disable=name-too-long
     project_name: str, deployment_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -341,7 +350,7 @@ def build_conversation_authoring_deploy_project_request(
         "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -354,7 +363,7 @@ def build_conversation_authoring_deploy_project_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_delete_deployment_request(
+def build_conversation_authoring_delete_deployment_request(  # pylint: disable=name-too-long
     project_name: str, deployment_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -370,7 +379,7 @@ def build_conversation_authoring_delete_deployment_request(
         "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -381,7 +390,7 @@ def build_conversation_authoring_delete_deployment_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_deployment_job_status_request(
+def build_conversation_authoring_get_deployment_job_status_request(  # pylint: disable=name-too-long
     project_name: str, deployment_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -398,7 +407,7 @@ def build_conversation_authoring_get_deployment_job_status_request(
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -409,7 +418,7 @@ def build_conversation_authoring_get_deployment_job_status_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_swap_deployments_job_status_request(
+def build_conversation_authoring_get_swap_deployments_job_status_request(  # pylint: disable=name-too-long
     project_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -425,7 +434,7 @@ def build_conversation_authoring_get_swap_deployments_job_status_request(
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -436,7 +445,7 @@ def build_conversation_authoring_get_swap_deployments_job_status_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_export_project_job_status_request(
+def build_conversation_authoring_get_export_project_job_status_request(  # pylint: disable=name-too-long
     project_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -452,7 +461,7 @@ def build_conversation_authoring_get_export_project_job_status_request(
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -463,7 +472,7 @@ def build_conversation_authoring_get_export_project_job_status_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_import_project_job_status_request(
+def build_conversation_authoring_get_import_project_job_status_request(  # pylint: disable=name-too-long
     project_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -479,7 +488,7 @@ def build_conversation_authoring_get_import_project_job_status_request(
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -490,7 +499,7 @@ def build_conversation_authoring_get_import_project_job_status_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_list_trained_models_request(
+def build_conversation_authoring_list_trained_models_request(  # pylint: disable=name-too-long
     project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -505,7 +514,7 @@ def build_conversation_authoring_list_trained_models_request(
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if top is not None:
@@ -520,7 +529,7 @@ def build_conversation_authoring_list_trained_models_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_trained_model_request(
+def build_conversation_authoring_get_trained_model_request(  # pylint: disable=name-too-long
     project_name: str, trained_model_label: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -536,7 +545,7 @@ def build_conversation_authoring_get_trained_model_request(
         "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -547,7 +556,7 @@ def build_conversation_authoring_get_trained_model_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_delete_trained_model_request(
+def build_conversation_authoring_delete_trained_model_request(  # pylint: disable=name-too-long
     project_name: str, trained_model_label: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -563,7 +572,7 @@ def build_conversation_authoring_delete_trained_model_request(
         "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -574,7 +583,7 @@ def build_conversation_authoring_delete_trained_model_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_load_snapshot_request(
+def build_conversation_authoring_load_snapshot_request(  # pylint: disable=name-too-long
     project_name: str, trained_model_label: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -590,7 +599,7 @@ def build_conversation_authoring_load_snapshot_request(
         "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -601,7 +610,7 @@ def build_conversation_authoring_load_snapshot_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_list_model_evaluation_results_request(
+def build_conversation_authoring_list_model_evaluation_results_request(  # pylint: disable=name-too-long
     project_name: str,
     trained_model_label: str,
     *,
@@ -623,7 +632,7 @@ def build_conversation_authoring_list_model_evaluation_results_request(
         "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["stringIndexType"] = _SERIALIZER.query("string_index_type", string_index_type, "str")
@@ -639,7 +648,7 @@ def build_conversation_authoring_list_model_evaluation_results_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_model_evaluation_summary_request(
+def build_conversation_authoring_get_model_evaluation_summary_request(  # pylint: disable=name-too-long
     project_name: str, trained_model_label: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -657,7 +666,7 @@ def build_conversation_authoring_get_model_evaluation_summary_request(
         "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -668,7 +677,7 @@ def build_conversation_authoring_get_model_evaluation_summary_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_load_snapshot_job_status_request(
+def build_conversation_authoring_get_load_snapshot_job_status_request(  # pylint: disable=name-too-long
     project_name: str, trained_model_label: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -687,7 +696,7 @@ def build_conversation_authoring_get_load_snapshot_job_status_request(
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -698,7 +707,7 @@ def build_conversation_authoring_get_load_snapshot_job_status_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_list_training_jobs_request(
+def build_conversation_authoring_list_training_jobs_request(  # pylint: disable=name-too-long
     project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -713,7 +722,7 @@ def build_conversation_authoring_list_training_jobs_request(
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if top is not None:
@@ -728,7 +737,7 @@ def build_conversation_authoring_list_training_jobs_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_training_job_status_request(
+def build_conversation_authoring_get_training_job_status_request(  # pylint: disable=name-too-long
     project_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -744,7 +753,7 @@ def build_conversation_authoring_get_training_job_status_request(
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -755,7 +764,7 @@ def build_conversation_authoring_get_training_job_status_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_cancel_training_job_request(
+def build_conversation_authoring_cancel_training_job_request(  # pylint: disable=name-too-long
     project_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -771,7 +780,7 @@ def build_conversation_authoring_cancel_training_job_request(
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -782,7 +791,9 @@ def build_conversation_authoring_cancel_training_job_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_get_project_deletion_job_status_request(job_id: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_get_project_deletion_job_status_request(  # pylint: disable=name-too-long
+    job_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -795,7 +806,7 @@ def build_conversation_authoring_get_project_deletion_job_status_request(job_id:
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -806,7 +817,7 @@ def build_conversation_authoring_get_project_deletion_job_status_request(job_id:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_list_supported_languages_request(
+def build_conversation_authoring_list_supported_languages_request(  # pylint: disable=name-too-long
     *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -832,7 +843,7 @@ def build_conversation_authoring_list_supported_languages_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_list_supported_prebuilt_entities_request(
+def build_conversation_authoring_list_supported_prebuilt_entities_request(  # pylint: disable=name-too-long
     *,
     language: Optional[str] = None,
     multilingual: Optional[bool] = None,
@@ -866,7 +877,7 @@ def build_conversation_authoring_list_supported_prebuilt_entities_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_authoring_list_training_config_versions_request(
+def build_conversation_authoring_list_training_config_versions_request(  # pylint: disable=name-too-long
     *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -892,9 +903,9 @@ def build_conversation_authoring_list_training_config_versions_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class ConversationAuthoringClientOperationsMixin(
+class ConversationAuthoringClientOperationsMixin(  # pylint: disable=too-many-public-methods,name-too-long
     ConversationAuthoringClientMixinABC
-):  # pylint: disable=too-many-public-methods
+):
     @distributed_trace
     def list_projects(self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any) -> Iterable[JSON]:
         """Lists the existing projects.
@@ -1012,6 +1023,8 @@ class ConversationAuthoringClientOperationsMixin(
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -1254,6 +1267,8 @@ class ConversationAuthoringClientOperationsMixin(
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1350,6 +1365,8 @@ class ConversationAuthoringClientOperationsMixin(
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1396,6 +1413,8 @@ class ConversationAuthoringClientOperationsMixin(
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1586,6 +1605,8 @@ class ConversationAuthoringClientOperationsMixin(
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1813,6 +1834,8 @@ class ConversationAuthoringClientOperationsMixin(
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -2492,6 +2515,8 @@ class ConversationAuthoringClientOperationsMixin(
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -3073,6 +3098,8 @@ class ConversationAuthoringClientOperationsMixin(
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -3127,6 +3154,8 @@ class ConversationAuthoringClientOperationsMixin(
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -3540,6 +3569,8 @@ class ConversationAuthoringClientOperationsMixin(
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -3601,6 +3632,8 @@ class ConversationAuthoringClientOperationsMixin(
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -3873,6 +3906,8 @@ class ConversationAuthoringClientOperationsMixin(
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -4134,6 +4169,8 @@ class ConversationAuthoringClientOperationsMixin(
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -4254,6 +4291,8 @@ class ConversationAuthoringClientOperationsMixin(
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -4376,6 +4415,8 @@ class ConversationAuthoringClientOperationsMixin(
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -4496,6 +4537,8 @@ class ConversationAuthoringClientOperationsMixin(
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -4619,6 +4662,8 @@ class ConversationAuthoringClientOperationsMixin(
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -4693,6 +4738,8 @@ class ConversationAuthoringClientOperationsMixin(
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -4757,6 +4804,8 @@ class ConversationAuthoringClientOperationsMixin(
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -4797,6 +4846,8 @@ class ConversationAuthoringClientOperationsMixin(
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -5094,6 +5145,8 @@ class ConversationAuthoringClientOperationsMixin(
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -5241,6 +5294,8 @@ class ConversationAuthoringClientOperationsMixin(
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -5366,6 +5421,8 @@ class ConversationAuthoringClientOperationsMixin(
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -5562,6 +5619,8 @@ class ConversationAuthoringClientOperationsMixin(
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -5709,6 +5768,8 @@ class ConversationAuthoringClientOperationsMixin(
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -5756,6 +5817,8 @@ class ConversationAuthoringClientOperationsMixin(
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -6044,6 +6107,8 @@ class ConversationAuthoringClientOperationsMixin(
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -6161,6 +6226,8 @@ class ConversationAuthoringClientOperationsMixin(
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -6282,6 +6349,8 @@ class ConversationAuthoringClientOperationsMixin(
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -6393,6 +6462,8 @@ class ConversationAuthoringClientOperationsMixin(
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 

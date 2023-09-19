@@ -6,7 +6,6 @@ from typing import Dict
 from unittest.mock import Mock
 
 import pytest
-import vcr
 from mock import mock_open, patch
 
 from azure.ai.ml._restclient.runhistory.models import RunDetails, RunDetailsWarning

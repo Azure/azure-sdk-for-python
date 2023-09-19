@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import sys
 from datetime import datetime
 from typing import (
     Any,
@@ -19,43 +20,56 @@ from azure.core.paging import ItemPaged
 from azure.core.credentials import AzureKeyCredential
 from azure.communication.jobrouter._shared.policy import HMACCredentialsPolicy
 
-from ._generated.models._patch import _convert_str_to_datetime  # pylint:disable=protected-access
-from ._generated._serialization import Serializer  # pylint:disable=protected-access
+from ._datetimeutils import _convert_str_to_datetime  # pylint:disable=protected-access
 from ._generated import AzureCommunicationJobRouterService
-from ._generated.models import (
-    QueueStatistics,
-    WorkerStateSelector,
-    JobStateSelector,
-    AcceptJobOfferResult,
+from ._enums import (
+    RouterWorkerState,
+    RouterJobStatus
+)
+from ._models import (
+    RouterQueueStatistics,
     UnassignJobResult,
-    JobPositionDetails,
+    RouterJobPositionDetails,
     CancelJobRequest,
     CompleteJobRequest,
     CloseJobRequest,
     DeclineJobOfferRequest,
-    WorkerSelector,
+    RouterWorkerSelector,
     ChannelConfiguration,
     RouterWorker,
     RouterWorkerItem,
-    DeclineJobOfferResult,
-    ReclassifyJobResult,
-    CancelJobResult,
-    CompleteJobResult,
-    CloseJobResult,
-    QueueAssignment,
     RouterJob,
     RouterJobItem,
+    JobMatchingMode,
+    UnassignJobRequest,
+    AcceptJobOfferResult
+)
+
+from ._router_serializer import (
+    _deserialize_from_json, # pylint:disable=protected-access
+    _serialize_to_json, # pylint:disable=protected-access
+    _SERIALIZER, # pylint:disable=protected-access
 )
 
 from ._shared.utils import parse_connection_str
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 
-_SERIALIZER = Serializer()
+if sys.version_info >= (3, 8):
+    from typing import Literal
+else:
+    from typing_extensions import Literal
 
 
-class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-lines
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+
+
+class JobRouterClient(object):  # pylint:disable=too-many-public-methods,too-many-lines
     """A client to interact with the AzureCommunicationService JobRouter service.
 
     This client provides operations to create and update jobs, policies and workers.
@@ -88,7 +102,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
         except AttributeError:
-            raise ValueError("Host URL must be a string")
+            raise ValueError("Host URL must be a string") # pylint:disable=raise-missing-from
 
         parsed_url = urlparse(endpoint.rstrip('/'))
         if not parsed_url.netloc:
@@ -109,13 +123,13 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             cls,
             conn_str: str,
             **kwargs: Any
-    ) -> "RouterClient":
-        """Create RouterClient from a Connection String.
+    ) -> "JobRouterClient":
+        """Create JobRouterClient from a Connection String.
 
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
-        :return: Instance of RouterClient.
-        :rtype: ~azure.communication.jobrouter.RouterClient
+        :return: Instance of JobRouterClient.
+        :rtype: ~azure.communication.jobrouter.JobRouterClient
 
         .. admonition:: Example:
 
@@ -124,7 +138,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END auth_from_connection_string]
                 :language: python
                 :dedent: 8
-                :caption: Authenticating a RouterClient from a connection_string
+                :caption: Authenticating a JobRouterClient from a connection_string
         """
         endpoint, access_key = parse_connection_str(conn_str)
 
@@ -137,13 +151,13 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             self,
             queue_id: str,
             **kwargs: Any
-    ) -> QueueStatistics:
+    ) -> RouterQueueStatistics:
         """Retrieves a queue's statistics.
 
         :param str queue_id: Id of the queue.
 
-        :return: QueueStatistics
-        :rtype: ~azure.communication.jobrouter.QueueStatistics
+        :return: Instance of RouterQueueStatistics
+        :rtype: ~azure.communication.jobrouter.RouterQueueStatistics
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -153,13 +167,15 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END get_queue_statistics]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to fetch queue statistics
+                :caption: Use a JobRouterClient to fetch queue statistics
         """
         if not queue_id:
             raise ValueError("queue_id cannot be None.")
 
         return self._client.job_router.get_queue_statistics(
             id = queue_id,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterQueueStatistics", deserialized_json_response),
             **kwargs
         )
 
@@ -178,11 +194,10 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
 
         :param str worker_id: Id of the worker.
 
-        :param router_worker: An instance of RouterWorker. This is a positional-only parameter.
-          Please provide either this or individual keyword parameters.
+        :param router_worker: An instance of RouterWorker.
         :type router_worker: ~azure.communication.jobrouter.RouterWorker
 
-        :return: RouterWorker
+        :return: Instance of RouterWorker
         :rtype: ~azure.communication.jobrouter.RouterWorker
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -193,14 +208,16 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END create_worker]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to create a worker
+                :caption: Use a JobRouterClient to create a worker
         """
         if not worker_id:
             raise ValueError("worker_id cannot be None.")
 
         return self._client.job_router.upsert_worker(
             worker_id = worker_id,
-            patch = router_worker,
+            patch = _serialize_to_json(router_worker, "RouterWorker"),  # pylint:disable=protected-access
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterWorker", deserialized_json_response),
             **kwargs
         )
 
@@ -219,7 +236,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
           Please provide either this or individual keyword parameters.
         :type router_worker: ~azure.communication.jobrouter.RouterWorker
 
-        :return: RouterWorker
+        :return: Instance of RouterWorker
         :rtype: ~azure.communication.jobrouter.RouterWorker
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -229,7 +246,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             self,
             worker_id: str,
             *,
-            queue_assignments: Optional[Dict[str, QueueAssignment]],
+            queue_assignments: Optional[Dict[str, Union[JSON, None]]],
             total_capacity: Optional[int],
             labels: Optional[Dict[str, Union[int, float, str, bool]]],
             tags: Optional[Dict[str, Union[int, float, str, bool]]],
@@ -242,7 +259,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         :param str worker_id: Id of the worker.
 
         :keyword queue_assignments: The queue(s) that this worker can receive work from.
-        :paramtype queue_assignments: Optional[Dict[str, ~azure.communication.jobrouter.QueueAssignment]]
+        :paramtype queue_assignments: Optional[Dict[str, Union[~collections.abc.MutableMapping[str, Any], None]]]
 
         :keyword total_capacity: The total capacity score this worker has to manage multiple concurrent
          jobs.
@@ -250,10 +267,10 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
 
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
-        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool]]]
+        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool, None]]]
 
         :keyword tags: A set of tags. A set of non-identifying attributes attached to this worker.
-        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool]]]
+        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool, None]]]
 
         :keyword channel_configurations: The channel(s) this worker can handle and their impact on the
          workers capacity.
@@ -262,7 +279,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
         :paramtype available_for_offers: Optional[bool]
 
-        :return: RouterWorker
+        :return: Instance of RouterWorker
         :rtype: ~azure.communication.jobrouter.RouterWorker
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -283,7 +300,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         :type router_worker: ~azure.communication.jobrouter.RouterWorker
 
         :keyword queue_assignments: The queue(s) that this worker can receive work from.
-        :paramtype queue_assignments: Optional[Dict[str, ~azure.communication.jobrouter.QueueAssignment]]
+        :paramtype queue_assignments: Optional[Dict[str, Union[~collections.abc.MutableMapping[str, Any], None]]]
 
         :keyword total_capacity: The total capacity score this worker has to manage multiple concurrent
          jobs.
@@ -291,10 +308,10 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
 
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
-        :paramtype labels: Optional[dict[str, Union[int, float, str, bool]]]
+        :paramtype labels: Optional[dict[str, Union[int, float, str, bool, None]]]
 
         :keyword tags: A set of tags. A set of non-identifying attributes attached to this worker.
-        :paramtype tags: Optional[dict[str, Union[int, float, str, bool]]]
+        :paramtype tags: Optional[dict[str, Union[int, float, str, bool, None]]]
 
         :keyword channel_configurations: The channel(s) this worker can handle and their impact on the
          workers capacity.
@@ -303,7 +320,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
         :paramtype available_for_offers: Optional[bool]
 
-        :return: RouterWorker
+        :return: Instance of RouterWorker
         :rtype: ~azure.communication.jobrouter.RouterWorker
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -314,7 +331,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END update_worker]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to update a worker
+                :caption: Use a JobRouterClient to update a worker
 
         .. admonition:: Example:
 
@@ -323,7 +340,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END register_worker]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to register a worker
+                :caption: Use a JobRouterClient to register a worker
 
         .. admonition:: Example:
 
@@ -332,7 +349,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END deregister_worker]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to de-register a worker
+                :caption: Use a JobRouterClient to de-register a worker
         """
         if not worker_id:
             raise ValueError("worker_id cannot be None.")
@@ -352,7 +369,9 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
 
         return self._client.job_router.upsert_worker(
             worker_id = worker_id,
-            patch = patch,
+            patch = _serialize_to_json(patch, "RouterWorker"),  # pylint:disable=protected-access
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterWorker", deserialized_json_response),
             **kwargs
         )
 
@@ -366,7 +385,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
 
         :param str worker_id: Id of the worker.
 
-        :return: RouterWorker
+        :return: Instance of RouterWorker
         :rtype: ~azure.communication.jobrouter.RouterWorker
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -377,13 +396,15 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END get_worker]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to get a worker
+                :caption: Use a JobRouterClient to get a worker
         """
         if not worker_id:
             raise ValueError("identifier cannot be None.")
 
         return self._client.job_router.get_worker(
             worker_id = worker_id,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterWorker", deserialized_json_response),
             **kwargs
         )
 
@@ -391,7 +412,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
     def list_workers(
             self,
             *,
-            status: Optional[Union[str, WorkerStateSelector]] = WorkerStateSelector.ALL,
+            state: Optional[Union[str, RouterWorkerState, Literal["all"]]] = "all",
             channel_id: Optional[str] = None,
             queue_id: Optional[str] = None,
             has_capacity: Optional[bool] = None,
@@ -400,9 +421,9 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
     ) -> ItemPaged[RouterWorkerItem]:
         """Retrieves existing workers.
 
-        :keyword status: If specified, select workers by worker status. Default value is "all".
+        :keyword state: If specified, select workers by worker status. Default value is "all".
           Accepted value(s): active, draining, inactive, all
-        :paramtype status: Optional[Union[str, ~azure.communication.jobrouter.WorkerStateSelector]]
+        :paramtype state: Optional[Union[str, ~azure.communication.jobrouter.RouterWorkerState, Literal["all"]]]
 
         :keyword channel_id: If specified, select workers who have a channel configuration
            with this channel. Default value is None.
@@ -429,7 +450,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END list_workers]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to retrieve workers
+                :caption: Use a JobRouterClient to retrieve workers
 
         .. admonition:: Example:
 
@@ -438,7 +459,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END list_workers_batched]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to retrieve workers in batches
+                :caption: Use a JobRouterClient to retrieve workers in batches
         """
 
         params = {}
@@ -447,10 +468,13 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
 
         return self._client.job_router.list_workers(
             params = params,
-            status = status,
+            state = state,
             channel_id = channel_id,
             queue_id = queue_id,
             has_capacity = has_capacity,
+            # pylint:disable=protected-access
+            cls = lambda deserialized_json_array: [_deserialize_from_json("RouterWorkerItem", elem) for elem in
+                                                   deserialized_json_array],
             **kwargs
         )
 
@@ -474,7 +498,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END delete_worker]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to delete an existing worker
+                :caption: Use a JobRouterClient to delete an existing worker
         """
 
         if not worker_id:
@@ -502,7 +526,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         :param router_job: An instance of RouterJob.
         :type router_job: ~azure.communication.jobrouter.RouterJob
 
-        :return: RouterJob
+        :return: Instance of RouterJob
         :rtype: ~azure.communication.jobrouter.RouterJob
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -513,14 +537,16 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END create_job]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to create a job
+                :caption: Use a JobRouterClient to create a job
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
 
         return self._client.job_router.upsert_job(
             id = job_id,
-            patch = router_job,
+            patch = _serialize_to_json(router_job, "RouterJob"),  # pylint:disable=protected-access
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterJob", deserialized_json_response),
             **kwargs
         )
 
@@ -539,7 +565,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
           Please provide either this or individual keyword parameters.
         :type router_job: ~azure.communication.jobrouter.RouterJob
 
-        :return: RouterJob
+        :return: Instance of RouterJob
         :rtype: ~azure.communication.jobrouter.RouterJob
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -555,12 +581,11 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             queue_id: Optional[str],
             priority: Optional[int],
             disposition_code: Optional[str],
-            requested_worker_selectors: Optional[List[WorkerSelector]],
-            labels: Optional[Dict[str, Union[int, float, str, bool]]],
-            tags: Optional[Dict[str, Union[int, float, str, bool]]],
+            requested_worker_selectors: Optional[List[RouterWorkerSelector]],
+            labels: Optional[Dict[str, Union[int, float, str, bool, None]]],
+            tags: Optional[Dict[str, Union[int, float, str, bool, None]]],
             notes: Optional[Dict[datetime, str]],
-            unavailable_for_matching: Optional[bool],
-            scheduled_time_utc: Optional[Union[str, datetime]],
+            matching_mode: Optional[JobMatchingMode],
             **kwargs: Any
     ) -> RouterJob:
         """ Update a job.
@@ -588,29 +613,23 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
 
         :keyword requested_worker_selectors: A collection of manually specified label selectors, which
          a worker must satisfy in order to process this job.
-        :paramtype requested_worker_selectors: Optional[List[~azure.communication.jobrouter.WorkerSelector]]
+        :paramtype requested_worker_selectors: Optional[List[~azure.communication.jobrouter.RouterWorkerSelector]]
 
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
-        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool]]]
+        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool, None]]]
 
         :keyword tags: A set of tags. A set of non-identifying attributes attached to this job.
-        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool]]]
+        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool, None]]]
 
         :keyword notes: Notes attached to a job, sorted by timestamp.
         :paramtype notes: Optional[Dict[~datetime.datetime, str]]
 
-        :keyword unavailable_for_matching: A flag indicating this job is not ready for being matched with
-         workers.
-         When set to true, job matching will not be started. If set to false, job matching will start
-         automatically.
-         :paramtype unavailable_for_matching: Optional[bool]
-
-         :keyword scheduled_time_utc: If set, job will be scheduled to be enqueued at a given time.
-         :paramtype scheduled_time_utc: Optional[Union[str, ~datetime.datetime]]
+        :keyword matching_mode: If set, determines how a job will be matched
+        :paramtype matching_mode: Optional[~azure.communication.jobrouter.JobMatchingMode]
 
 
-        :return: RouterJob
+        :return: Instance of RouterJob
         :rtype: ~azure.communication.jobrouter.RouterJob
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -651,29 +670,23 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
 
         :keyword requested_worker_selectors: A collection of manually specified label selectors, which
          a worker must satisfy in order to process this job.
-        :paramtype requested_worker_selectors: Optional[List[~azure.communication.jobrouter.WorkerSelector]]
+        :paramtype requested_worker_selectors: Optional[List[~azure.communication.jobrouter.RouterWorkerSelector]]
 
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
-        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool]]]
+        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool, None]]]
 
         :keyword tags: A set of tags. A set of non-identifying attributes attached to this job.
-        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool]]]
+        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool, None]]]
 
         :keyword notes: Notes attached to a job, sorted by timestamp.
         :paramtype notes: Optional[Dict[~datetime.datetime, str]]
 
-        :keyword unavailable_for_matching: A flag indicating this job is not ready for being matched with
-         workers.
-         When set to true, job matching will not be started. If set to false, job matching will start
-         automatically.
-         :paramtype unavailable_for_matching: Optional[bool]
-
-         :keyword scheduled_time_utc: If set, job will be scheduled to be enqueued at a given time.
-         :paramtype scheduled_time_utc: Optional[Union[str, ~datetime.datetime]]
+        :keyword matching_mode: If set, determines how a job will be matched
+        :paramtype matching_mode: Optional[~azure.communication.jobrouter.JobMatchingMode]
 
 
-        :return: RouterJob
+        :return: Instance of RouterJob
         :rtype: ~azure.communication.jobrouter.RouterJob
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -684,7 +697,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END update_job]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to update a job
+                :caption: Use a JobRouterClient to update a job
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
@@ -705,13 +718,14 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             labels = kwargs.pop('labels', router_job.labels),
             tags = kwargs.pop('tags', router_job.tags),
             notes = kwargs.pop('notes', router_job.notes),
-            unavailable_for_matching = kwargs.pop('unavailable_for_matching', router_job.unavailable_for_matching),
-            scheduled_time_utc = kwargs.pop('scheduled_time_utc', router_job.scheduled_time_utc)
+            matching_mode = kwargs.pop('matching_mode', router_job.matching_mode)
         )
 
         return self._client.job_router.upsert_job(
             id = job_id,
-            patch = patch,
+            patch = _serialize_to_json(patch, "RouterJob"),  # pylint:disable=protected-access
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("RouterJob", deserialized_json_response),
             **kwargs
         )
 
@@ -725,7 +739,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
 
         :param str job_id: Id of the job.
 
-        :return: RouterJob
+        :return: Instance of RouterJob
         :rtype: ~azure.communication.jobrouter.RouterJob
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -736,13 +750,15 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END get_job]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to get a job
+                :caption: Use a JobRouterClient to get a job
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
 
         return self._client.job_router.get_job(
             id = job_id,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("RouterJob", deserialized_json_response),
             **kwargs
         )
 
@@ -750,7 +766,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
     def list_jobs(
             self,
             *,
-            status: Optional[Union[str, JobStateSelector]] = JobStateSelector.ALL,
+            status: Optional[Union[str, RouterJobStatus, Literal["all", "active"] ]] = "all",
             channel_id: Optional[str] = None,
             queue_id: Optional[str] = None,
             classification_policy_id: Optional[str] = None,
@@ -764,7 +780,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         :keyword status: If specified, filter jobs by status. Default value is "all".
             Accepted value(s): pendingClassification, queued, assigned, completed, closed, cancelled,
             classificationFailed, active, all
-        :paramtype status: Optional[Union[str, ~azure.communication.jobrouter.JobStateSelector]]
+        :paramtype status: Optional[Union[str, ~azure.communication.jobrouter.RouterJobStatus, Literal["all","active"]]]
 
         :keyword channel_id: If specified, filter jobs by channel. Default value is None.
         :paramtype channel_id: Optional[str]
@@ -797,7 +813,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END list_jobs]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to retrieve jobs
+                :caption: Use a JobRouterClient to retrieve jobs
 
         .. admonition:: Example:
 
@@ -806,7 +822,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END list_jobs_batched]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to retrieve jobs in batches
+                :caption: Use a JobRouterClient to retrieve jobs in batches
 
         .. admonition:: Example:
 
@@ -815,7 +831,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END list_scheduled_jobs]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to retrieve scheduled jobs
+                :caption: Use a JobRouterClient to retrieve scheduled jobs
         """
 
         params = {}
@@ -836,6 +852,9 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             classification_policy_id = classification_policy_id,
             scheduled_before = scheduled_before,
             scheduled_after = scheduled_after,
+            # pylint:disable=protected-access
+            cls = lambda deserialized_json_array: [_deserialize_from_json("RouterJobItem", elem) for elem in
+                                                   deserialized_json_array],
             **kwargs
         )
 
@@ -859,7 +878,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END delete_job]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to delete a job
+                :caption: Use a JobRouterClient to delete a job
         """
 
         if not job_id:
@@ -875,13 +894,13 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             self,
             job_id: str,
             **kwargs: Any
-    ) -> JobPositionDetails:
+    ) -> RouterJobPositionDetails:
         """Gets a job's position details.
 
         :param str job_id: Id of the job.
 
-        :return: JobPositionDetails
-        :rtype: ~azure.communication.jobrouter.JobPositionDetails
+        :return: Instance of RouterJobPositionDetails
+        :rtype: ~azure.communication.jobrouter.RouterJobPositionDetails
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -891,13 +910,15 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END get_job_position]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to get a job position in queue
+                :caption: Use a JobRouterClient to get a job position in queue
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
 
         return self._client.job_router.get_in_queue_position(
             id = job_id,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, args: _deserialize_from_json("RouterJobPositionDetails", deserialized_json_response),
             **kwargs
         )
 
@@ -906,8 +927,12 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             self,
             job_id: str,
             assignment_id: str,
+            *,
+            disposition_code: Optional[str] = None,
+            close_at: Optional[datetime] = None,
+            note: Optional[str] = None,
             **kwargs: Any
-    ) -> CloseJobResult:
+    ) -> None:
         """Closes a completed job.
 
         :param str job_id: Id of the job.
@@ -918,17 +943,17 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
          custom values. Default value is None.
         :paramtype disposition_code: Optional[str]
 
-        :keyword close_time: If not provided, worker capacity is released immediately along with a
+        :keyword close_at: If not provided, worker capacity is released immediately along with a
          JobClosedEvent notification. If provided, worker capacity is released along with a JobClosedEvent notification
          at a future time. Default value is None.
-        :paramtype close_time: Optional[~datetime.datetime]
+        :paramtype close_at: Optional[~datetime.datetime]
 
         :keyword note: (Optional) A note that will be appended to the jobs' Notes collection with the
          current timestamp. Default value is None.
         :paramtype note: Optional[str]
 
-        :return: CloseJobResult
-        :rtype: ~azure.communication.jobrouter.CloseJobResult
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -938,7 +963,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END close_job]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to close a job
+                :caption: Use a JobRouterClient to close a job
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
@@ -946,22 +971,17 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         if not assignment_id:
             raise ValueError("assignment_id cannot be None.")
 
-        disposition_code = kwargs.pop('disposition_code', None)
-        close_time = kwargs.pop('close_time', None)
-        note = kwargs.pop('note', None)
-
         close_job_request = CloseJobRequest(
             assignment_id = assignment_id,
             disposition_code = disposition_code,
-            close_time = close_time,
+            close_at = close_at,
             note = note
         )
 
-        return self._client.job_router.close_job_action(
+        self._client.job_router.close_job_action(
             id = job_id,
-            close_job_request = close_job_request,
             # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_response, args: CloseJobResult(deserialized_response),
+            close_job_request = _serialize_to_json(close_job_request, "CloseJobRequest"),
             **kwargs
         )
 
@@ -970,8 +990,10 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             self,
             job_id: str,
             assignment_id: str,
+            *,
+            note: Optional[str] = None,
             **kwargs: Any
-    ) -> CompleteJobResult:
+    ) -> None:
         """Completes an assigned job.
 
         :param str job_id: Id of the job.
@@ -982,8 +1004,8 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
          current timestamp. Default value is None.
         :paramtype note: Optional[str]
 
-        :return: CompleteJobResult
-        :rtype: ~azure.communication.jobrouter.CompleteJobResult
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -993,7 +1015,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END complete_job]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to complete a job
+                :caption: Use a JobRouterClient to complete a job
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
@@ -1001,18 +1023,15 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         if not assignment_id:
             raise ValueError("assignment_id cannot be None.")
 
-        note = kwargs.pop('note', None)
-
         complete_job_request = CompleteJobRequest(
             assignment_id = assignment_id,
             note = note
         )
 
-        return self._client.job_router.complete_job_action(
+        self._client.job_router.complete_job_action(
             id = job_id,
-            complete_job_request = complete_job_request,
             # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_response, args: CompleteJobResult(deserialized_response),
+            complete_job_request = _serialize_to_json(complete_job_request, "CompleteJobRequest"),
             **kwargs
         )
 
@@ -1020,8 +1039,11 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
     def cancel_job(
             self,
             job_id: str,
+            *,
+            disposition_code: Optional[str] = None,
+            note: Optional[str] = None,
             **kwargs: Any
-    ) -> CancelJobResult:
+    ) -> None:
         """Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
         :param str job_id: Id of the job.
@@ -1035,8 +1057,8 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
          If not provided, default value of "Cancelled" is set. Default value is None.
         :paramtype disposition_code: Optional[str]
 
-        :return: CancelJobResult
-        :rtype: ~azure.communication.jobrouter.CancelJobResult
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1046,25 +1068,21 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END cancel_job]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to cancel a job
+                :caption: Use a JobRouterClient to cancel a job
         """
 
         if not job_id:
             raise ValueError("job_id cannot be None.")
-
-        note = kwargs.pop('note', None)
-        disposition_code = kwargs.pop('disposition_code', None)
 
         cancel_job_request = CancelJobRequest(
             note = note,
             disposition_code = disposition_code
         )
 
-        return self._client.job_router.cancel_job_action(
+        self._client.job_router.cancel_job_action(
             id = job_id,
-            cancel_job_request = cancel_job_request,
             # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_response, args: CancelJobResult(deserialized_response),
+            cancel_job_request = _serialize_to_json(cancel_job_request, "CancelJobRequest"),
             **kwargs
         )
 
@@ -1073,13 +1091,13 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             self,
             job_id: str,
             **kwargs: Any
-    ) -> ReclassifyJobResult:
+    ) -> None:
         """Reclassify a job.
 
         :param str job_id: Id of the job.
 
-        :return: ReclassifyJobResult
-        :rtype: ~azure.communication.jobrouter.ReclassifyJobResult
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1089,15 +1107,13 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END reclassify_job]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to re-classify a job
+                :caption: Use a JobRouterClient to re-classify a job
         """
         if not job_id:
             raise ValueError("identifier cannot be None.")
 
-        return self._client.job_router.reclassify_job_action(
+        self._client.job_router.reclassify_job_action(
             id = job_id,
-            # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_response, args: ReclassifyJobResult(deserialized_response),
             **kwargs
         )
 
@@ -1106,6 +1122,8 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             self,
             job_id: str,
             assignment_id: str,
+            *,
+            suspend_matching: Optional[bool] = None,
             **kwargs: Any
     ) -> UnassignJobResult:
         """Unassign a job.
@@ -1113,7 +1131,11 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         :param str job_id: Id of the job.
         :param str assignment_id: Id of the assignment.
 
-        :return: UnassignJobResult
+        :keyword suspend_matching: If set to true, then the job is not queued for
+         re-matching with a worker.
+        :paramtype suspend_matching: Optional[bool]
+
+        :return: Instance of UnassignJobResult
         :rtype: ~azure.communication.jobrouter.UnassignJobResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -1124,7 +1146,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END unassign_job]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to unassign a job
+                :caption: Use a JobRouterClient to unassign a job
         """
         if not job_id:
             raise ValueError("job_id cannot be None.")
@@ -1132,10 +1154,16 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         if not assignment_id:
             raise ValueError("assignment_id cannot be None.")
 
+        unassign_job_request = UnassignJobRequest(
+            suspend_matching = suspend_matching
+        )
 
         return self._client.job_router.unassign_job_action(
             id = job_id,
             assignment_id = assignment_id,
+            unassign_job_request = _serialize_to_json(unassign_job_request, "UnassignJobRequest"),  # pylint:disable=protected-access,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("UnassignJobResult", deserialized_json_response),
             **kwargs
         )
 
@@ -1158,7 +1186,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         :param offer_id: Id of the offer.
         :type offer_id: str
 
-        :return: AcceptJobOfferResult
+        :return: Instance of AcceptJobOfferResult
         :rtype: ~azure.communication.jobrouter.AcceptJobOfferResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
@@ -1169,7 +1197,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END accept_job_offer]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to accept a job offer
+                :caption: Use a JobRouterClient to accept a job offer
         """
         if not worker_id:
             raise ValueError("worker_id cannot be None.")
@@ -1180,6 +1208,8 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         return self._client.job_router.accept_job_action(
             worker_id = worker_id,
             offer_id = offer_id,
+            # pylint:disable=protected-access,line-too-long
+            cls = lambda http_response, deserialized_json_response, arg: _deserialize_from_json("AcceptJobOfferResult", deserialized_json_response),
             **kwargs
         )
 
@@ -1188,8 +1218,10 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             self,
             worker_id: str,
             offer_id: str,
+            *,
+            retry_offer_at: Optional[datetime] = None,
             **kwargs: Any
-    ) -> DeclineJobOfferResult:
+    ) -> None:
         """Declines an offer to work on a job.
 
         :param worker_id: Id of the worker.
@@ -1197,14 +1229,14 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
         :param offer_id: Id of the offer.
         :type offer_id: str
 
-        :keyword reoffer_time_utc: If the reoffer time is not provided, then this job will not be re-offered to the
-        worker who declined this job unless the worker is de-registered and re-registered.  If a reoffer time is
-        provided, then the job will be re-matched to eligible workers after the reoffer time.  The worker that declined
-        the job will also be eligible for the job at that time.
-        :paramtype reoffer_time_utc: Optional[Union[str, ~datetime.datetime]]
+        :keyword retry_offer_at: If the retry_offer_at is not provided, then this job will not be re-offered to the
+          worker who declined this job unless the worker is de-registered and re-registered.  If a retry_offer_at is
+          provided, then the job will be re-matched to eligible workers after the reoffer time. The worker that declined
+          the job will also be eligible for the job at that time.
+        :paramtype retry_offer_at: Optional[~datetime.datetime]
 
-        :return: DeclineJobOfferResult
-        :rtype: ~azure.communication.jobrouter.DeclineJobOfferResult
+        :return: None
+        :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1214,7 +1246,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
                 :end-before: [END decline_job_offer]
                 :language: python
                 :dedent: 8
-                :caption: Use a RouterClient to decline a job offer
+                :caption: Use a JobRouterClient to decline a job offer
         """
         if not worker_id:
             raise ValueError("worker_id cannot be None.")
@@ -1223,15 +1255,14 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
             raise ValueError("offer_id cannot be None.")
 
         decline_job_offer_request = DeclineJobOfferRequest(
-            reoffer_time_utc = kwargs.pop('reoffer_time_utc', None)
+            retry_offer_at = retry_offer_at
         )
 
-        return self._client.job_router.decline_job_action(
+        self._client.job_router.decline_job_action(
             worker_id = worker_id,
             offer_id = offer_id,
-            decline_job_offer_request = decline_job_offer_request,
             # pylint:disable=protected-access
-            cls = lambda http_response, deserialized_response, args: DeclineJobOfferResult(deserialized_response),
+            decline_job_offer_request = _serialize_to_json(decline_job_offer_request, "DeclineJobOfferRequest"),
             **kwargs
         )
 
@@ -1240,7 +1271,7 @@ class RouterClient(object):  # pylint:disable=too-many-public-methods,too-many-l
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "RouterClient":
+    def __enter__(self) -> "JobRouterClient":
         self._client.__enter__()  # pylint:disable=no-member
         return self
 

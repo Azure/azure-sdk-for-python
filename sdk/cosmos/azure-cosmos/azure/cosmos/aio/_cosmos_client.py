@@ -95,6 +95,12 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
     Use this client to configure and execute requests to the Azure Cosmos DB service.
 
+    Its recommended to maintain a single instance of CosmosClient per lifetime of the application which enables
+        efficient connection management and performance.
+
+    CosmosClient initialization is a heavy operation - don't use initialization CosmosClient instances as
+        credentials or network connectivity validations.
+
     :param str url: The URL of the Cosmos DB account.
     :param credential: Can be the account key, or a dictionary of resource tokens.
     :type credential: Union[str, Dict[str, str], ~azure.core.credentials_async.AsyncTokenCredential]
@@ -286,6 +292,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :returns: A DatabaseProxy instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
         """
+        offer_throughput = kwargs.pop("offerThroughput", None)
         try:
             database_proxy = self.get_database_client(id)
             await database_proxy.read(**kwargs)
@@ -293,6 +300,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         except CosmosResourceNotFoundError:
             return await self.create_database(
                 id,
+                offer_throughput=offer_throughput,
                 **kwargs
             )
 

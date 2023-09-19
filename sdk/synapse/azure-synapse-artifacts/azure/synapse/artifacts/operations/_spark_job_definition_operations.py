@@ -36,7 +36,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_get_spark_job_definitions_by_workspace_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_get_spark_job_definitions_by_workspace_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -55,7 +55,7 @@ def build_get_spark_job_definitions_by_workspace_request(**kwargs: Any) -> HttpR
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_create_or_update_spark_job_definition_request(  # pylint: disable=name-too-long
+def build_create_or_update_spark_job_definition_request(
     spark_job_definition_name: str, *, if_match: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -114,9 +114,7 @@ def build_get_spark_job_definition_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_spark_job_definition_request(  # pylint: disable=name-too-long
-    spark_job_definition_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_delete_spark_job_definition_request(spark_job_definition_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -140,9 +138,7 @@ def build_delete_spark_job_definition_request(  # pylint: disable=name-too-long
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_execute_spark_job_definition_request(  # pylint: disable=name-too-long
-    spark_job_definition_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_execute_spark_job_definition_request(spark_job_definition_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -166,9 +162,7 @@ def build_execute_spark_job_definition_request(  # pylint: disable=name-too-long
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_rename_spark_job_definition_request(  # pylint: disable=name-too-long
-    spark_job_definition_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_rename_spark_job_definition_request(spark_job_definition_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -316,7 +310,7 @@ class SparkJobDefinitionOperations:
 
     get_spark_job_definitions_by_workspace.metadata = {"url": "/sparkJobDefinitions"}
 
-    def _create_or_update_spark_job_definition_initial(  # pylint: disable=name-too-long
+    def _create_or_update_spark_job_definition_initial(
         self,
         spark_job_definition_name: str,
         properties: _models.SparkJobDefinition,
@@ -380,7 +374,7 @@ class SparkJobDefinitionOperations:
     _create_or_update_spark_job_definition_initial.metadata = {"url": "/sparkJobDefinitions/{sparkJobDefinitionName}"}
 
     @distributed_trace
-    def begin_create_or_update_spark_job_definition(  # pylint: disable=name-too-long
+    def begin_create_or_update_spark_job_definition(
         self,
         spark_job_definition_name: str,
         properties: _models.SparkJobDefinition,

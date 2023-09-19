@@ -32,18 +32,19 @@ from .._sync_token import SyncToken
 
 
 class AsyncSyncTokenPolicy(SansIOHTTPPolicy):
-    """A simple policy that enable the given callback
-    with the response.
+    """A simple policy that enable the given callback with the response.
+
     :keyword callback raw_response_hook: Callback function. Will be invoked on response.
     """
 
-    def __init__(self, **kwargs) -> None:  # pylint: disable=unused-argument
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self._sync_token_header = "Sync-Token"
         self._sync_tokens = {}  # type: Dict[str, Any]
         self._lock = Lock()
 
     async def on_request(self, request: PipelineRequest) -> None:  # type: ignore # pylint: disable=arguments-differ, invalid-overridden-method
         """This is executed before sending the request to the next policy.
+
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
         """
@@ -54,6 +55,7 @@ class AsyncSyncTokenPolicy(SansIOHTTPPolicy):
 
     async def on_response(self, request: PipelineRequest, response: PipelineResponse) -> None:  # type: ignore # pylint: disable=arguments-differ, invalid-overridden-method
         """This is executed after the request comes back from the policy.
+
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
         :param response: The PipelineResponse object.

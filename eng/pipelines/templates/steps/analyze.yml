@@ -110,10 +110,17 @@ steps:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         ValidateFormatting: ${{ parameters.ValidateFormatting }}
 
+  - task: PythonScript@0
+    displayName: 'Run Keyword Validation Check'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verify_keywords'
+    condition: and(succeededOrFailed(), ne(variables['Skip.KeywordCheck'],'true'))
+
   - task: DownloadPipelineArtifact@2
     condition: succeededOrFailed()
     inputs:
-      artifactName: 'packages'
+      artifactName: 'packages_extended'
       targetPath: $(Build.ArtifactStagingDirectory)
 
   - template: ../steps/run_bandit.yml
@@ -137,10 +144,12 @@ steps:
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
       GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
+      ArtifactName: "packages_extended"
 
   - template: /eng/common/pipelines/templates/steps/detect-api-changes.yml
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
+      ArtifactName: "packages_extended"
 
   - template: /eng/common/pipelines/templates/steps/eng-common-workflow-enforcer.yml
 

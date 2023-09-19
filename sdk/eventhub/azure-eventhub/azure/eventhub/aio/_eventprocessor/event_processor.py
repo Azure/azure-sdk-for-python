@@ -241,14 +241,18 @@ class EventProcessor(
                 partition_context._last_received_event = event[-1]  # type: ignore  #pylint:disable=protected-access
             except TypeError:
                 partition_context._last_received_event = event  # type: ignore  # pylint:disable=protected-access
+
             links = []
+            is_batch = False
             if is_tracing_enabled():
                 links = get_span_links_from_received_events(event)
+                if isinstance(event, list):
+                    is_batch = True
 
             with receive_context_manager(self._eventhub_client, links=links, start_time=self._last_received_time):
                 self._last_received_time = time.time_ns()
 
-            with process_context_manager(self._eventhub_client, links=links):
+            with process_context_manager(self._eventhub_client, links=links, is_batch=is_batch):
                 await self._event_handler(partition_context, event)
         else:
             await self._event_handler(partition_context, event)
@@ -352,8 +356,6 @@ class EventProcessor(
         The EventProcessor will try to claim and balance partition ownership with other `EventProcessor`
          and asynchronously start receiving EventData from EventHub and processing events.
 
-        :return: None
-
         """
         _LOGGER.info("EventProcessor %r is being started", self._id)
         if not self._running:
@@ -420,8 +422,6 @@ class EventProcessor(
         Other running EventProcessor will take over these released partitions.
 
         A stopped EventProcessor can be restarted by calling method `start` again.
-
-        :return: None
 
         """
         self._running = False

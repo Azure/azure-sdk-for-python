@@ -420,7 +420,7 @@ class TestComponent:
         component: InternalComponent = load_component(source=yaml_path)
         _try_resolve_code_for_component(
             component=component,
-            get_arm_id_and_fill_back=mock_get_arm_id_and_fill_back,
+            resolver=mock_get_arm_id_and_fill_back,
         )
         assert component.code.path.name != COMPONENT_PLACEHOLDER
 
@@ -854,10 +854,7 @@ class TestComponent:
                 # unknown field optional will be ignored
                 "type": "AnyDirectory",
             },
-            "primitive_is_control": {
-                "is_control": True,
-                "type": "boolean",
-            },
+            "primitive_is_control": {"type": "boolean"},
         }
         assert component._to_rest_object().properties.component_spec["outputs"] == expected_outputs
         assert component._validate().passed is True, repr(component._validate())
@@ -884,7 +881,7 @@ class TestComponent:
         loop_node = LoopNode(body=component_func())
         loop_node.body._referenced_control_flow_node_instance_id = loop_node._instance_id
         with environment_variable_overwrite(AZUREML_INTERNAL_COMPONENTS_ENV_VAR, "True"):
-            validate_result = loop_node._validate_body(raise_error=False)
+            validate_result = loop_node._validate_body()
             assert validate_result.passed
 
     @pytest.mark.parametrize(

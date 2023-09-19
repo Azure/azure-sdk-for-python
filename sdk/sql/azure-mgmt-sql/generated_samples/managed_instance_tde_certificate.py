@@ -29,12 +29,11 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000001",
     )
 
-    response = client.managed_instance_tde_certificates.begin_create(
+    client.managed_instance_tde_certificates.begin_create(
         resource_group_name="testtdecert",
         managed_instance_name="testtdecert",
         parameters={"properties": {"privateBlob": "MIIXXXXXXXX"}},
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/ManagedInstanceTdeCertificate.json

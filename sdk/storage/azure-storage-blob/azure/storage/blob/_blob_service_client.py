@@ -126,11 +126,11 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Account URL must be a string.") from exc
         parsed_url = urlparse(account_url.rstrip('/'))
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
+            raise ValueError(f"Invalid URL: {account_url}")
 
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, credential = self._format_query_string(sas_token, credential)
@@ -142,8 +142,13 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
         mode hostname.
+
+        :param str hostname:
+            The hostname of the current location mode.
+        :returns: A formatted endpoint URL including current location mode hostname.
+        :rtype: str
         """
-        return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
+        return f"{self.scheme}://{hostname}/{self._query_str}"
 
     @classmethod
     def from_connection_string(
@@ -164,6 +169,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
         :returns: A Blob service client.
         :rtype: ~azure.storage.blob.BlobServiceClient
 
@@ -201,7 +207,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
-        :return: The user delegation key.
+        :returns: The user delegation key.
         :rtype: ~azure.storage.blob.UserDelegationKey
         """
         key_info = KeyInfo(start=_to_utc_datetime(key_start_time), expiry=_to_utc_datetime(key_expiry_time))
@@ -267,7 +273,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
-        :return: The blob service stats.
+        :returns: The blob service stats.
         :rtype: Dict[str, Any]
 
         .. admonition:: Example:
@@ -677,6 +683,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_.
+        :returns: The undeleted ContainerClient.
         :rtype: ~azure.storage.blob.ContainerClient
         """
         new_name = kwargs.pop('new_name', None)
@@ -731,7 +738,9 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def get_blob_client(
             self, container,  # type: Union[ContainerProperties, str]
             blob,  # type: Union[BlobProperties, str]
-            snapshot=None  # type: Optional[Union[Dict[str, Any], str]]
+            snapshot=None,  # type: Optional[Union[Dict[str, Any], str]]
+            *,
+            version_id=None  # type: Optional[str]
         ):
         # type: (...) -> BlobClient
         """Get a client to interact with the specified blob.
@@ -750,6 +759,8 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             The optional blob snapshot on which to operate. This can either be the ID of the snapshot,
             or a dictionary output returned by :func:`~azure.storage.blob.BlobClient.create_snapshot()`.
         :type snapshot: str or dict(str, Any)
+        :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
+            specifies the version of the blob to operate on.
         :returns: A BlobClient.
         :rtype: ~azure.storage.blob.BlobClient
 
@@ -779,4 +790,5 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             credential=self.credential, api_version=self.api_version, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
             require_encryption=self.require_encryption, encryption_version=self.encryption_version,
-            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
+            key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function,
+            version_id=version_id)

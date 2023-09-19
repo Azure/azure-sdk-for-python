@@ -2,34 +2,34 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import os
 import platform
 import time
 from typing import Dict, Optional, Any
 
-from msal import PublicClientApplication
+from msal import PublicClientApplication, TokenCache
 
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._internal import resolve_tenant, validate_tenant_id
+from .._internal import resolve_tenant, validate_tenant_id, within_dac
 from .._internal.decorators import wrap_exceptions
 from .._internal.msal_client import MsalClient
 from .._internal.shared_token_cache import NO_TOKEN
 from .._persistent_cache import _load_persistent_cache, TokenCachePersistenceOptions
-from .._constants import EnvironmentVariables
 from .. import AuthenticationRecord
 
 
 class SilentAuthenticationCredential:
-    """Internal class for authenticating from the default shared cache given an AuthenticationRecord"""
+    """Internal class for authenticating from the default shared cache given an AuthenticationRecord.
+
+    :param authentication_record: an AuthenticationRecord from which to authenticate
+    :type authentication_record: ~azure.identity.AuthenticationRecord
+    :keyword str tenant_id: tenant ID of the application the credential is authenticating for. Defaults to the tenant
+    """
 
     def __init__(
-            self,
-            authentication_record: AuthenticationRecord,
-            *,
-            tenant_id: Optional[str] = None,
-            **kwargs
+        self, authentication_record: AuthenticationRecord, *, tenant_id: Optional[str] = None, **kwargs
     ) -> None:
         self._auth_record = authentication_record
 
@@ -37,11 +37,15 @@ class SilentAuthenticationCredential:
         self._tenant_id = tenant_id or self._auth_record.tenant_id
         validate_tenant_id(self._tenant_id)
         self._cache = kwargs.pop("_cache", None)
+        self._cae_cache = kwargs.pop("_cae_cache", None)
+
         self._cache_persistence_options = kwargs.pop("cache_persistence_options", None)
+
         self._client_applications: Dict[str, PublicClientApplication] = {}
+        self._cae_client_applications: Dict[str, PublicClientApplication] = {}
+
         self._additionally_allowed_tenants = kwargs.pop("additionally_allowed_tenants", [])
         self._client = MsalClient(**kwargs)
-        self._initialized = False
 
     def __enter__(self):
         self._client.__enter__()
@@ -50,54 +54,84 @@ class SilentAuthenticationCredential:
     def __exit__(self, *args):
         self._client.__exit__(*args)
 
-    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         if not scopes:
             raise ValueError('"get_token" requires at least one scope')
 
-        if not self._initialized:
-            self._initialize()
+        token_cache = self._cae_cache if kwargs.get("enable_cae") else self._cache
 
-        if not self._cache:
-            raise CredentialUnavailableError(message="Shared token cache unavailable")
+        # Try to load the cache if it is None.
+        if not token_cache:
+            token_cache = self._initialize_cache(is_cae=bool(kwargs.get("enable_cae")))
 
-        return self._acquire_token_silent(*scopes, **kwargs)
+            # If the cache is still None, raise an error.
+            if not token_cache:
+                if within_dac.get():
+                    raise CredentialUnavailableError(message="Shared token cache unavailable")
+                raise ClientAuthenticationError(message="Shared token cache unavailable")
 
-    def _initialize(self):
-        if not self._cache and platform.system() in {"Darwin", "Linux", "Windows"}:
+        return self._acquire_token_silent(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
+
+    def _initialize_cache(self, is_cae: bool = False) -> Optional[TokenCache]:
+
+        # If no cache options were provided, the default cache will be used. This credential accepts the
+        # user's default cache regardless of whether it's encrypted. It doesn't create a new cache. If the
+        # default cache exists, the user must have created it earlier. If it's unencrypted, the user must
+        # have allowed that.
+        cache_options = self._cache_persistence_options or TokenCachePersistenceOptions(allow_unencrypted_storage=True)
+
+        if platform.system() not in {"Darwin", "Linux", "Windows"}:
+            raise CredentialUnavailableError(message="Shared token cache is not supported on this platform.")
+
+        if not self._cache and not is_cae:
             try:
-                # If no cache options were provided, the default cache will be used. This credential accepts the
-                # user's default cache regardless of whether it's encrypted. It doesn't create a new cache. If the
-                # default cache exists, the user must have created it earlier. If it's unencrypted, the user must
-                # have allowed that.
-                options = self._cache_persistence_options or \
-                    TokenCachePersistenceOptions(allow_unencrypted_storage=True)
-                self._cache = _load_persistent_cache(options)
+                self._cache = _load_persistent_cache(cache_options, is_cae)
             except Exception:  # pylint:disable=broad-except
-                pass
+                return None
 
-        self._initialized = True
+        if not self._cae_cache and is_cae:
+            try:
+                self._cae_cache = _load_persistent_cache(cache_options, is_cae)
+            except Exception:  # pylint:disable=broad-except
+                return None
+
+        return self._cae_cache if is_cae else self._cache
 
     def _get_client_application(self, **kwargs: Any):
         tenant_id = resolve_tenant(
-            self._tenant_id,
-            additionally_allowed_tenants=self._additionally_allowed_tenants,
-            **kwargs
+            self._tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
         )
-        if tenant_id not in self._client_applications:
+
+        client_applications_map = self._client_applications
+        capabilities = None
+        token_cache = self._cache
+
+        if kwargs.get("enable_cae"):
+            client_applications_map = self._cae_client_applications
             # CP1 = can handle claims challenges (CAE)
-            capabilities = None if EnvironmentVariables.AZURE_IDENTITY_DISABLE_CP1 in os.environ else ["CP1"]
-            self._client_applications[tenant_id] = PublicClientApplication(
+            capabilities = ["CP1"]
+            token_cache = self._cae_cache
+
+        if tenant_id not in client_applications_map:
+            client_applications_map[tenant_id] = PublicClientApplication(
                 client_id=self._auth_record.client_id,
                 authority="https://{}/{}".format(self._auth_record.authority, tenant_id),
-                token_cache=self._cache,
+                token_cache=token_cache,
                 http_client=self._client,
-                client_capabilities=capabilities
+                client_capabilities=capabilities,
             )
-        return self._client_applications[tenant_id]
+        return client_applications_map[tenant_id]
 
     @wrap_exceptions
     def _acquire_token_silent(self, *scopes: str, **kwargs: Any) -> AccessToken:
-        """Silently acquire a token from MSAL."""
+        """Silently acquire a token from MSAL.
+
+        :param str scopes: desired scopes for the access token
+        :return: an access token
+        :rtype: ~azure.core.credentials.AccessToken
+        """
 
         result = None
 
@@ -124,7 +158,7 @@ class SilentAuthenticationCredential:
             details = result.get("error_description") or result.get("error")
             if details:
                 message += ": {}".format(details)
-            raise CredentialUnavailableError(message=message)
+            raise ClientAuthenticationError(message=message)
 
         # cache doesn't contain a matching refresh (or access) token
         raise CredentialUnavailableError(message=NO_TOKEN.format(self._auth_record.username))

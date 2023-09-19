@@ -13,7 +13,7 @@ import warnings
 from enum import Enum
 from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING, cast
 
-from .exceptions import ServiceBusError
+from .exceptions import MessageLockLostError
 from ._base_handler import BaseHandler
 from ._common.message import ServiceBusReceivedMessage
 from ._common.utils import create_authentication
@@ -464,13 +464,11 @@ class ServiceBusReceiver(
 
         # The following condition check is a hot fix for settling a message received for non-session queue after
         # lock expiration.
-        # uamqp doesn't have the ability to receive disposition result returned from the service after settlement,
-        # so there's no way we could tell whether a disposition succeeds or not and there's no error condition info.
-        # Throwing a general message error type here gives us the evolvability to have more fine-grained exception
-        # subclasses in the future after we add the missing feature support in uamqp.
-        # see issue: https://github.com/Azure/azure-uamqp-c/issues/274
+        # pyamqp doesn't currently (and uamqp doesn't have the ability to) wait to receive disposition result returned
+        # from the service after settlement, so there's no way we could tell whether a disposition succeeds or not and
+        # there's no error condition info. (for uamqp, see issue: https://github.com/Azure/azure-uamqp-c/issues/274)
         if not self._session and message._lock_expired:
-            raise ServiceBusError(
+            raise MessageLockLostError(
                 message="The lock on the message lock has expired.",
                 error=message.auto_renew_error,
             )
@@ -604,6 +602,7 @@ class ServiceBusReceiver(
          until the connection is closed. If specified, and no messages arrive for the
          timeout period, the iterator will stop.
         :type max_wait_time: Optional[float]
+        :return: An iterator of messages.
         :rtype: Iterator[ServiceBusReceivedMessage]
 
         .. admonition:: Example:
@@ -645,7 +644,7 @@ class ServiceBusReceiver(
          If no messages arrive, and no timeout is specified, this call will not return
          until the connection is closed. If specified, an no messages arrive within the
          timeout period, an empty list will be returned.
-
+        :return: A list of messages received. If no messages are available, this will be an empty list.
         :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
@@ -697,7 +696,8 @@ class ServiceBusReceiver(
          deferred.
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.
-        :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
+        :returns: A list of the requested ~azure.servicebus.ServiceBusReceivedMessage instances.
+        :rtype: list[~azure.servicebus.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
 
@@ -778,8 +778,8 @@ class ServiceBusReceiver(
         :keyword int sequence_number: A message sequence number from which to start browsing messages.
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.
-
-        :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
+        :returns: A list of ~azure.servicebus.ServiceBusReceivedMessage.
+        :rtype: list[~azure.servicebus.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
 

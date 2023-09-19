@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------
 from io import IOBase
 from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
+import urllib.parse
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -997,233 +998,6 @@ def build_policy_set_definitions_list_by_management_group_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_policy_exemptions_delete_request(scope: str, policy_exemption_name: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url", "/{scope}/providers/Microsoft.Authorization/policyExemptions/{policyExemptionName}"
-    )
-    path_format_arguments = {
-        "scope": _SERIALIZER.url("scope", scope, "str", skip_quote=True),
-        "policyExemptionName": _SERIALIZER.url("policy_exemption_name", policy_exemption_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_policy_exemptions_create_or_update_request(
-    scope: str, policy_exemption_name: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01-preview"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url", "/{scope}/providers/Microsoft.Authorization/policyExemptions/{policyExemptionName}"
-    )
-    path_format_arguments = {
-        "scope": _SERIALIZER.url("scope", scope, "str", skip_quote=True),
-        "policyExemptionName": _SERIALIZER.url("policy_exemption_name", policy_exemption_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_policy_exemptions_get_request(scope: str, policy_exemption_name: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url", "/{scope}/providers/Microsoft.Authorization/policyExemptions/{policyExemptionName}"
-    )
-    path_format_arguments = {
-        "scope": _SERIALIZER.url("scope", scope, "str", skip_quote=True),
-        "policyExemptionName": _SERIALIZER.url("policy_exemption_name", policy_exemption_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_policy_exemptions_list_request(
-    subscription_id: str, *, filter: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyExemptions"
-    )
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if filter is not None:
-        _params["$filter"] = _SERIALIZER.query("filter", filter, "str", skip_quote=True)
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_policy_exemptions_list_for_resource_group_request(
-    resource_group_name: str, subscription_id: str, *, filter: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/policyExemptions",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._\(\)]+$"
-        ),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if filter is not None:
-        _params["$filter"] = _SERIALIZER.query("filter", filter, "str", skip_quote=True)
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_policy_exemptions_list_for_resource_request(
-    resource_group_name: str,
-    resource_provider_namespace: str,
-    parent_resource_path: str,
-    resource_type: str,
-    resource_name: str,
-    subscription_id: str,
-    *,
-    filter: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/policyExemptions",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1, pattern=r"^[-\w\._\(\)]+$"
-        ),
-        "resourceProviderNamespace": _SERIALIZER.url("resource_provider_namespace", resource_provider_namespace, "str"),
-        "parentResourcePath": _SERIALIZER.url("parent_resource_path", parent_resource_path, "str", skip_quote=True),
-        "resourceType": _SERIALIZER.url("resource_type", resource_type, "str", skip_quote=True),
-        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if filter is not None:
-        _params["$filter"] = _SERIALIZER.query("filter", filter, "str", skip_quote=True)
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_policy_exemptions_list_for_management_group_request(
-    management_group_id: str, *, filter: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Authorization/policyExemptions",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "managementGroupId": _SERIALIZER.url("management_group_id", management_group_id, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if filter is not None:
-        _params["$filter"] = _SERIALIZER.query("filter", filter, "str", skip_quote=True)
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 class DataPolicyManifestsOperations:
     """
     .. warning::
@@ -1349,7 +1123,18 @@ class DataPolicyManifestsOperations:
                 request.url = self._client.format_url(request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
                 request.method = "GET"
@@ -1766,7 +1551,18 @@ class PolicyAssignmentsOperations:
                 request.url = self._client.format_url(request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
                 request.method = "GET"
@@ -1905,7 +1701,18 @@ class PolicyAssignmentsOperations:
                 request.url = self._client.format_url(request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
                 request.method = "GET"
@@ -2004,7 +1811,18 @@ class PolicyAssignmentsOperations:
                 request.url = self._client.format_url(request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
                 request.method = "GET"
@@ -2104,7 +1922,18 @@ class PolicyAssignmentsOperations:
                 request.url = self._client.format_url(request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
                 request.method = "GET"
@@ -3083,7 +2912,18 @@ class PolicyDefinitionsOperations:
                 request.url = self._client.format_url(request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
                 request.method = "GET"
@@ -3174,7 +3014,18 @@ class PolicyDefinitionsOperations:
                 request.url = self._client.format_url(request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
                 request.method = "GET"
@@ -3274,7 +3125,18 @@ class PolicyDefinitionsOperations:
                 request.url = self._client.format_url(request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
                 request.method = "GET"
@@ -3703,7 +3565,18 @@ class PolicySetDefinitionsOperations:
                 request.url = self._client.format_url(request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
                 request.method = "GET"
@@ -3792,7 +3665,18 @@ class PolicySetDefinitionsOperations:
                 request.url = self._client.format_url(request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
                 request.method = "GET"
@@ -4169,7 +4053,18 @@ class PolicySetDefinitionsOperations:
                 request.url = self._client.format_url(request.url)
 
             else:
-                request = HttpRequest("GET", next_link)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
                 request.method = "GET"
@@ -4201,741 +4096,4 @@ class PolicySetDefinitionsOperations:
 
     list_by_management_group.metadata = {
         "url": "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Authorization/policySetDefinitions"
-    }
-
-
-class PolicyExemptionsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.resource.policy.v2020_09_01.PolicyClient`'s
-        :attr:`policy_exemptions` attribute.
-    """
-
-    models = _models
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def delete(  # pylint: disable=inconsistent-return-statements
-        self, scope: str, policy_exemption_name: str, **kwargs: Any
-    ) -> None:
-        """Deletes a policy exemption.
-
-        This operation deletes a policy exemption, given its name and the scope it was created in. The
-        scope of a policy exemption is the part of its ID preceding
-        '/providers/Microsoft.Authorization/policyExemptions/{policyExemptionName}'.
-
-        :param scope: The scope of the policy exemption. Valid scopes are: management group (format:
-         '/providers/Microsoft.Management/managementGroups/{managementGroup}'), subscription (format:
-         '/subscriptions/{subscriptionId}'), resource group (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}', or resource (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/[{parentResourcePath}/]{resourceType}/{resourceName}'.
-         Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to delete. Required.
-        :type policy_exemption_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01-preview"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        request = build_policy_exemptions_delete_request(
-            scope=scope,
-            policy_exemption_name=policy_exemption_name,
-            api_version=api_version,
-            template_url=self.delete.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    delete.metadata = {"url": "/{scope}/providers/Microsoft.Authorization/policyExemptions/{policyExemptionName}"}
-
-    @overload
-    def create_or_update(
-        self,
-        scope: str,
-        policy_exemption_name: str,
-        parameters: _models.PolicyExemption,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyExemption:
-        """Creates or updates a policy exemption.
-
-        This operation creates or updates a policy exemption with the given scope and name. Policy
-        exemptions apply to all resources contained within their scope. For example, when you create a
-        policy exemption at resource group scope for a policy assignment at the same or above level,
-        the exemption exempts to all applicable resources in the resource group.
-
-        :param scope: The scope of the policy exemption. Valid scopes are: management group (format:
-         '/providers/Microsoft.Management/managementGroups/{managementGroup}'), subscription (format:
-         '/subscriptions/{subscriptionId}'), resource group (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}', or resource (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/[{parentResourcePath}/]{resourceType}/{resourceName}'.
-         Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to delete. Required.
-        :type policy_exemption_name: str
-        :param parameters: Parameters for the policy exemption. Required.
-        :type parameters: ~azure.mgmt.resource.policy.v2020_09_01.models.PolicyExemption
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PolicyExemption or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.v2020_09_01.models.PolicyExemption
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_or_update(
-        self,
-        scope: str,
-        policy_exemption_name: str,
-        parameters: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyExemption:
-        """Creates or updates a policy exemption.
-
-        This operation creates or updates a policy exemption with the given scope and name. Policy
-        exemptions apply to all resources contained within their scope. For example, when you create a
-        policy exemption at resource group scope for a policy assignment at the same or above level,
-        the exemption exempts to all applicable resources in the resource group.
-
-        :param scope: The scope of the policy exemption. Valid scopes are: management group (format:
-         '/providers/Microsoft.Management/managementGroups/{managementGroup}'), subscription (format:
-         '/subscriptions/{subscriptionId}'), resource group (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}', or resource (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/[{parentResourcePath}/]{resourceType}/{resourceName}'.
-         Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to delete. Required.
-        :type policy_exemption_name: str
-        :param parameters: Parameters for the policy exemption. Required.
-        :type parameters: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PolicyExemption or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.v2020_09_01.models.PolicyExemption
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def create_or_update(
-        self, scope: str, policy_exemption_name: str, parameters: Union[_models.PolicyExemption, IO], **kwargs: Any
-    ) -> _models.PolicyExemption:
-        """Creates or updates a policy exemption.
-
-        This operation creates or updates a policy exemption with the given scope and name. Policy
-        exemptions apply to all resources contained within their scope. For example, when you create a
-        policy exemption at resource group scope for a policy assignment at the same or above level,
-        the exemption exempts to all applicable resources in the resource group.
-
-        :param scope: The scope of the policy exemption. Valid scopes are: management group (format:
-         '/providers/Microsoft.Management/managementGroups/{managementGroup}'), subscription (format:
-         '/subscriptions/{subscriptionId}'), resource group (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}', or resource (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/[{parentResourcePath}/]{resourceType}/{resourceName}'.
-         Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to delete. Required.
-        :type policy_exemption_name: str
-        :param parameters: Parameters for the policy exemption. Is either a PolicyExemption type or a
-         IO type. Required.
-        :type parameters: ~azure.mgmt.resource.policy.v2020_09_01.models.PolicyExemption or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PolicyExemption or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.v2020_09_01.models.PolicyExemption
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01-preview"))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PolicyExemption] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _json = self._serialize.body(parameters, "PolicyExemption")
-
-        request = build_policy_exemptions_create_or_update_request(
-            scope=scope,
-            policy_exemption_name=policy_exemption_name,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            template_url=self.create_or_update.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if response.status_code == 200:
-            deserialized = self._deserialize("PolicyExemption", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("PolicyExemption", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    create_or_update.metadata = {
-        "url": "/{scope}/providers/Microsoft.Authorization/policyExemptions/{policyExemptionName}"
-    }
-
-    @distributed_trace
-    def get(self, scope: str, policy_exemption_name: str, **kwargs: Any) -> _models.PolicyExemption:
-        """Retrieves a policy exemption.
-
-        This operation retrieves a single policy exemption, given its name and the scope it was created
-        at.
-
-        :param scope: The scope of the policy exemption. Valid scopes are: management group (format:
-         '/providers/Microsoft.Management/managementGroups/{managementGroup}'), subscription (format:
-         '/subscriptions/{subscriptionId}'), resource group (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}', or resource (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/[{parentResourcePath}/]{resourceType}/{resourceName}'.
-         Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to delete. Required.
-        :type policy_exemption_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PolicyExemption or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.v2020_09_01.models.PolicyExemption
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01-preview"))
-        cls: ClsType[_models.PolicyExemption] = kwargs.pop("cls", None)
-
-        request = build_policy_exemptions_get_request(
-            scope=scope,
-            policy_exemption_name=policy_exemption_name,
-            api_version=api_version,
-            template_url=self.get.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicyExemption", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get.metadata = {"url": "/{scope}/providers/Microsoft.Authorization/policyExemptions/{policyExemptionName}"}
-
-    @distributed_trace
-    def list(self, filter: Optional[str] = None, **kwargs: Any) -> Iterable["_models.PolicyExemption"]:
-        """Retrieves all policy exemptions that apply to a subscription.
-
-        This operation retrieves the list of all policy exemptions associated with the given
-        subscription that match the optional given $filter. Valid values for $filter are: 'atScope()',
-        'atExactScope()', 'excludeExpired()' or 'policyAssignmentId eq '{value}''. If $filter is not
-        provided, the unfiltered list includes all policy exemptions associated with the subscription,
-        including those that apply directly or from management groups that contain the given
-        subscription, as well as any applied to objects contained within the subscription.
-
-        :param filter: The filter to apply on the operation. Valid values for $filter are: 'atScope()',
-         'atExactScope()', 'excludeExpired()' or 'policyAssignmentId eq '{value}''. If $filter is not
-         provided, no filtering is performed. If $filter is not provided, the unfiltered list includes
-         all policy exemptions associated with the scope, including those that apply directly or apply
-         from containing scopes. If $filter=atScope() is provided, the returned list only includes all
-         policy exemptions that apply to the scope, which is everything in the unfiltered list except
-         those applied to sub scopes contained within the given scope. If $filter=atExactScope() is
-         provided, the returned list only includes all policy exemptions that at the given scope. If
-         $filter=excludeExpired() is provided, the returned list only includes all policy exemptions
-         that either haven't expired or didn't set expiration date. If $filter=policyAssignmentId eq
-         '{value}' is provided. the returned list only includes all policy exemptions that are
-         associated with the give policyAssignmentId. Default value is None.
-        :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PolicyExemption or the result of cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.resource.policy.v2020_09_01.models.PolicyExemption]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01-preview"))
-        cls: ClsType[_models.PolicyExemptionListResult] = kwargs.pop("cls", None)
-
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                request = build_policy_exemptions_list_request(
-                    subscription_id=self._config.subscription_id,
-                    filter=filter,
-                    api_version=api_version,
-                    template_url=self.list.metadata["url"],
-                    headers=_headers,
-                    params=_params,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-
-            else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
-
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize("PolicyExemptionListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Authorization/policyExemptions"}
-
-    @distributed_trace
-    def list_for_resource_group(
-        self, resource_group_name: str, filter: Optional[str] = None, **kwargs: Any
-    ) -> Iterable["_models.PolicyExemption"]:
-        """Retrieves all policy exemptions that apply to a resource group.
-
-        This operation retrieves the list of all policy exemptions associated with the given resource
-        group in the given subscription that match the optional given $filter. Valid values for $filter
-        are: 'atScope()', 'atExactScope()', 'excludeExpired()' or 'policyAssignmentId eq '{value}''. If
-        $filter is not provided, the unfiltered list includes all policy exemptions associated with the
-        resource group, including those that apply directly or apply from containing scopes, as well as
-        any applied to resources contained within the resource group.
-
-        :param resource_group_name: The name of the resource group containing the resource. Required.
-        :type resource_group_name: str
-        :param filter: The filter to apply on the operation. Valid values for $filter are: 'atScope()',
-         'atExactScope()', 'excludeExpired()' or 'policyAssignmentId eq '{value}''. If $filter is not
-         provided, no filtering is performed. If $filter is not provided, the unfiltered list includes
-         all policy exemptions associated with the scope, including those that apply directly or apply
-         from containing scopes. If $filter=atScope() is provided, the returned list only includes all
-         policy exemptions that apply to the scope, which is everything in the unfiltered list except
-         those applied to sub scopes contained within the given scope. If $filter=atExactScope() is
-         provided, the returned list only includes all policy exemptions that at the given scope. If
-         $filter=excludeExpired() is provided, the returned list only includes all policy exemptions
-         that either haven't expired or didn't set expiration date. If $filter=policyAssignmentId eq
-         '{value}' is provided. the returned list only includes all policy exemptions that are
-         associated with the give policyAssignmentId. Default value is None.
-        :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PolicyExemption or the result of cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.resource.policy.v2020_09_01.models.PolicyExemption]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01-preview"))
-        cls: ClsType[_models.PolicyExemptionListResult] = kwargs.pop("cls", None)
-
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                request = build_policy_exemptions_list_for_resource_group_request(
-                    resource_group_name=resource_group_name,
-                    subscription_id=self._config.subscription_id,
-                    filter=filter,
-                    api_version=api_version,
-                    template_url=self.list_for_resource_group.metadata["url"],
-                    headers=_headers,
-                    params=_params,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-
-            else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
-
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize("PolicyExemptionListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    list_for_resource_group.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Authorization/policyExemptions"
-    }
-
-    @distributed_trace
-    def list_for_resource(
-        self,
-        resource_group_name: str,
-        resource_provider_namespace: str,
-        parent_resource_path: str,
-        resource_type: str,
-        resource_name: str,
-        filter: Optional[str] = None,
-        **kwargs: Any
-    ) -> Iterable["_models.PolicyExemption"]:
-        """Retrieves all policy exemptions that apply to a resource.
-
-        This operation retrieves the list of all policy exemptions associated with the specified
-        resource in the given resource group and subscription that match the optional given $filter.
-        Valid values for $filter are: 'atScope()', 'atExactScope()', 'excludeExpired()' or
-        'policyAssignmentId eq '{value}''. If $filter is not provided, the unfiltered list includes all
-        policy exemptions associated with the resource, including those that apply directly or from all
-        containing scopes, as well as any applied to resources contained within the resource. Three
-        parameters plus the resource name are used to identify a specific resource. If the resource is
-        not part of a parent resource (the more common case), the parent resource path should not be
-        provided (or provided as ''). For example a web app could be specified as
-        ({resourceProviderNamespace} == 'Microsoft.Web', {parentResourcePath} == '', {resourceType} ==
-        'sites', {resourceName} == 'MyWebApp'). If the resource is part of a parent resource, then all
-        parameters should be provided. For example a virtual machine DNS name could be specified as
-        ({resourceProviderNamespace} == 'Microsoft.Compute', {parentResourcePath} ==
-        'virtualMachines/MyVirtualMachine', {resourceType} == 'domainNames', {resourceName} ==
-        'MyComputerName'). A convenient alternative to providing the namespace and type name separately
-        is to provide both in the {resourceType} parameter, format: ({resourceProviderNamespace} == '',
-        {parentResourcePath} == '', {resourceType} == 'Microsoft.Web/sites', {resourceName} ==
-        'MyWebApp').
-
-        :param resource_group_name: The name of the resource group containing the resource. Required.
-        :type resource_group_name: str
-        :param resource_provider_namespace: The namespace of the resource provider. For example, the
-         namespace of a virtual machine is Microsoft.Compute (from Microsoft.Compute/virtualMachines).
-         Required.
-        :type resource_provider_namespace: str
-        :param parent_resource_path: The parent resource path. Use empty string if there is none.
-         Required.
-        :type parent_resource_path: str
-        :param resource_type: The resource type name. For example the type name of a web app is 'sites'
-         (from Microsoft.Web/sites). Required.
-        :type resource_type: str
-        :param resource_name: The name of the resource. Required.
-        :type resource_name: str
-        :param filter: The filter to apply on the operation. Valid values for $filter are: 'atScope()',
-         'atExactScope()', 'excludeExpired()' or 'policyAssignmentId eq '{value}''. If $filter is not
-         provided, no filtering is performed. If $filter is not provided, the unfiltered list includes
-         all policy exemptions associated with the scope, including those that apply directly or apply
-         from containing scopes. If $filter=atScope() is provided, the returned list only includes all
-         policy exemptions that apply to the scope, which is everything in the unfiltered list except
-         those applied to sub scopes contained within the given scope. If $filter=atExactScope() is
-         provided, the returned list only includes all policy exemptions that at the given scope. If
-         $filter=excludeExpired() is provided, the returned list only includes all policy exemptions
-         that either haven't expired or didn't set expiration date. If $filter=policyAssignmentId eq
-         '{value}' is provided. the returned list only includes all policy exemptions that are
-         associated with the give policyAssignmentId. Default value is None.
-        :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PolicyExemption or the result of cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.resource.policy.v2020_09_01.models.PolicyExemption]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01-preview"))
-        cls: ClsType[_models.PolicyExemptionListResult] = kwargs.pop("cls", None)
-
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                request = build_policy_exemptions_list_for_resource_request(
-                    resource_group_name=resource_group_name,
-                    resource_provider_namespace=resource_provider_namespace,
-                    parent_resource_path=parent_resource_path,
-                    resource_type=resource_type,
-                    resource_name=resource_name,
-                    subscription_id=self._config.subscription_id,
-                    filter=filter,
-                    api_version=api_version,
-                    template_url=self.list_for_resource.metadata["url"],
-                    headers=_headers,
-                    params=_params,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-
-            else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
-
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize("PolicyExemptionListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    list_for_resource.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{parentResourcePath}/{resourceType}/{resourceName}/providers/Microsoft.Authorization/policyExemptions"
-    }
-
-    @distributed_trace
-    def list_for_management_group(
-        self, management_group_id: str, filter: Optional[str] = None, **kwargs: Any
-    ) -> Iterable["_models.PolicyExemption"]:
-        """Retrieves all policy exemptions that apply to a management group.
-
-        This operation retrieves the list of all policy exemptions applicable to the management group
-        that match the given $filter. Valid values for $filter are: 'atScope()', 'atExactScope()',
-        'excludeExpired()' or 'policyAssignmentId eq '{value}''. If $filter=atScope() is provided, the
-        returned list includes all policy exemptions that are assigned to the management group or the
-        management group's ancestors.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param filter: The filter to apply on the operation. Valid values for $filter are: 'atScope()',
-         'atExactScope()', 'excludeExpired()' or 'policyAssignmentId eq '{value}''. If $filter is not
-         provided, no filtering is performed. If $filter is not provided, the unfiltered list includes
-         all policy exemptions associated with the scope, including those that apply directly or apply
-         from containing scopes. If $filter=atScope() is provided, the returned list only includes all
-         policy exemptions that apply to the scope, which is everything in the unfiltered list except
-         those applied to sub scopes contained within the given scope. If $filter=atExactScope() is
-         provided, the returned list only includes all policy exemptions that at the given scope. If
-         $filter=excludeExpired() is provided, the returned list only includes all policy exemptions
-         that either haven't expired or didn't set expiration date. If $filter=policyAssignmentId eq
-         '{value}' is provided. the returned list only includes all policy exemptions that are
-         associated with the give policyAssignmentId. Default value is None.
-        :type filter: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either PolicyExemption or the result of cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.resource.policy.v2020_09_01.models.PolicyExemption]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-07-01-preview"))
-        cls: ClsType[_models.PolicyExemptionListResult] = kwargs.pop("cls", None)
-
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                request = build_policy_exemptions_list_for_management_group_request(
-                    management_group_id=management_group_id,
-                    filter=filter,
-                    api_version=api_version,
-                    template_url=self.list_for_management_group.metadata["url"],
-                    headers=_headers,
-                    params=_params,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-
-            else:
-                request = HttpRequest("GET", next_link)
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
-
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize("PolicyExemptionListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    list_for_management_group.metadata = {
-        "url": "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Authorization/policyExemptions"
     }

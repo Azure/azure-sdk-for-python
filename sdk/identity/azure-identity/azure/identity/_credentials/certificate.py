@@ -61,27 +61,23 @@ class CertificateCredential(ClientCredentialBase):
             :caption: Create a CertificateCredential.
     """
 
-    def __init__(
-            self,
-            tenant_id: str,
-            client_id: str,
-            certificate_path: Optional[str] = None,
-            **kwargs: Any
-    ) -> None:
+    def __init__(self, tenant_id: str, client_id: str, certificate_path: Optional[str] = None, **kwargs: Any) -> None:
         validate_tenant_id(tenant_id)
 
         client_credential = get_client_credential(certificate_path, **kwargs)
 
         super(CertificateCredential, self).__init__(
-            client_id=client_id,
-            client_credential=client_credential,
-            tenant_id=tenant_id,
-            **kwargs
+            client_id=client_id, client_credential=client_credential, tenant_id=tenant_id, **kwargs
         )
 
 
 def extract_cert_chain(pem_bytes: bytes) -> bytes:
-    """Extract a certificate chain from a PEM file's bytes, removing line breaks."""
+    """Extract a certificate chain from a PEM file's bytes, removing line breaks.
+
+    :param bytes pem_bytes: The PEM file's bytes
+    :return: The certificate chain
+    :rtype: bytes
+    """
 
     # if index raises ValueError, there's no PEM-encoded cert
     start = pem_bytes.index(b"-----BEGIN CERTIFICATE-----")
@@ -95,20 +91,14 @@ def extract_cert_chain(pem_bytes: bytes) -> bytes:
 _Cert = NamedTuple("_Cert", [("pem_bytes", bytes), ("private_key", "Any"), ("fingerprint", bytes)])
 
 
-def load_pem_certificate(
-        certificate_data: bytes,
-        password: Optional[bytes] = None
-) -> _Cert:
+def load_pem_certificate(certificate_data: bytes, password: Optional[bytes] = None) -> _Cert:
     private_key = serialization.load_pem_private_key(certificate_data, password, backend=default_backend())
     cert = x509.load_pem_x509_certificate(certificate_data, default_backend())
     fingerprint = cert.fingerprint(hashes.SHA1())  # nosec
     return _Cert(certificate_data, private_key, fingerprint)
 
 
-def load_pkcs12_certificate(
-        certificate_data: bytes,
-        password: Optional[bytes] = None
-) -> _Cert:
+def load_pkcs12_certificate(certificate_data: bytes, password: Optional[bytes] = None) -> _Cert:
     from cryptography.hazmat.primitives.serialization import Encoding, NoEncryption, pkcs12, PrivateFormat
 
     try:
@@ -136,13 +126,22 @@ def load_pkcs12_certificate(
 
 
 def get_client_credential(
-        certificate_path: Optional[str] = None,
-        password: Optional[Union[bytes, str]] = None,
-        certificate_data: Optional[bytes] = None,
-        send_certificate_chain: bool = False,
-        **_: Any
+    certificate_path: Optional[str] = None,
+    password: Optional[Union[bytes, str]] = None,
+    certificate_data: Optional[bytes] = None,
+    send_certificate_chain: bool = False,
+    **_: Any
 ) -> Dict:
-    """Load a certificate from a filesystem path or bytes, return it as a dict suitable for msal.ClientApplication"""
+    """Load a certificate from a filesystem path or bytes, return it as a dict suitable for msal.ClientApplication.
+
+    :param str certificate_path: Path to a PEM or PKCS12 certificate file.
+    :param bytes password: The certificate's password, if any.
+    :param bytes certificate_data: The PEM or PKCS12 certificate's bytes.
+    :param bool send_certificate_chain: Whether to send the certificate chain. Defaults to False.
+
+    :return: The certificate as a dict
+    :rtype: dict
+    """
 
     if certificate_path:
         if certificate_data:

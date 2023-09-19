@@ -44,7 +44,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_purview_workflow_list_workflows_request(**kwargs: Any) -> HttpRequest:
+def build_purview_workflow_list_workflows_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -65,7 +65,7 @@ def build_purview_workflow_list_workflows_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_purview_workflow_get_workflow_request(workflow_id: str, **kwargs: Any) -> HttpRequest:
+def build_purview_workflow_get_workflow_request(workflow_id: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -91,7 +91,7 @@ def build_purview_workflow_get_workflow_request(workflow_id: str, **kwargs: Any)
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_purview_workflow_create_or_replace_workflow_request(workflow_id: str, **kwargs: Any) -> HttpRequest:
+def build_purview_workflow_create_or_replace_workflow_request(workflow_id: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -120,7 +120,7 @@ def build_purview_workflow_create_or_replace_workflow_request(workflow_id: str, 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_purview_workflow_delete_workflow_request(workflow_id: str, **kwargs: Any) -> HttpRequest:
+def build_purview_workflow_delete_workflow_request(workflow_id: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -146,7 +146,7 @@ def build_purview_workflow_delete_workflow_request(workflow_id: str, **kwargs: A
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_purview_workflow_submit_user_requests_request(**kwargs: Any) -> HttpRequest:
+def build_purview_workflow_submit_user_requests_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -170,7 +170,7 @@ def build_purview_workflow_submit_user_requests_request(**kwargs: Any) -> HttpRe
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_purview_workflow_list_workflow_runs_request(
+def build_purview_workflow_list_workflow_runs_request(  # pylint: disable=name-too-long
     *,
     time_window: Optional[str] = None,
     orderby: Optional[str] = None,
@@ -206,7 +206,7 @@ def build_purview_workflow_list_workflow_runs_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_purview_workflow_get_workflow_run_request(workflow_run_id: str, **kwargs: Any) -> HttpRequest:
+def build_purview_workflow_get_workflow_run_request(workflow_run_id: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -232,7 +232,7 @@ def build_purview_workflow_get_workflow_run_request(workflow_run_id: str, **kwar
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_purview_workflow_cancel_workflow_run_request(workflow_run_id: str, **kwargs: Any) -> HttpRequest:
+def build_purview_workflow_cancel_workflow_run_request(workflow_run_id: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -261,7 +261,7 @@ def build_purview_workflow_cancel_workflow_run_request(workflow_run_id: str, **k
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_purview_workflow_list_workflow_tasks_request(
+def build_purview_workflow_list_workflow_tasks_request(  # pylint: disable=name-too-long
     *,
     view_mode: Optional[str] = None,
     workflow_ids: Optional[List[str]] = None,
@@ -306,7 +306,7 @@ def build_purview_workflow_list_workflow_tasks_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_purview_workflow_get_workflow_task_request(task_id: str, **kwargs: Any) -> HttpRequest:
+def build_purview_workflow_get_workflow_task_request(task_id: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
     accept = _headers.pop("Accept", "application/json")
@@ -325,7 +325,7 @@ def build_purview_workflow_get_workflow_task_request(task_id: str, **kwargs: Any
     return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
-def build_purview_workflow_approve_approval_task_request(task_id: str, **kwargs: Any) -> HttpRequest:
+def build_purview_workflow_approve_approval_task_request(task_id: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -354,7 +354,7 @@ def build_purview_workflow_approve_approval_task_request(task_id: str, **kwargs:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_purview_workflow_reject_approval_task_request(task_id: str, **kwargs: Any) -> HttpRequest:
+def build_purview_workflow_reject_approval_task_request(task_id: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -383,7 +383,7 @@ def build_purview_workflow_reject_approval_task_request(task_id: str, **kwargs: 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_purview_workflow_reassign_workflow_task_request(task_id: str, **kwargs: Any) -> HttpRequest:
+def build_purview_workflow_reassign_workflow_task_request(task_id: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -412,7 +412,7 @@ def build_purview_workflow_reassign_workflow_task_request(task_id: str, **kwargs
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_purview_workflow_update_task_status_request(task_id: str, **kwargs: Any) -> HttpRequest:
+def build_purview_workflow_update_task_status_request(task_id: str, **kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 

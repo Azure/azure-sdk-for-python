@@ -29,13 +29,12 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.replication_links.begin_delete(
+    client.replication_links.begin_delete(
         resource_group_name="Default",
         server_name="sourcesvr",
         database_name="gamma-db",
         link_id="4891ca10-ebd0-47d7-9182-c722651780fb",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-02-01-preview/examples/ReplicationLinkDelete.json

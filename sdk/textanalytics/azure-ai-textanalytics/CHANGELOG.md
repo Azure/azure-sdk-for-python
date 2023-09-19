@@ -1,6 +1,16 @@
 # Release History
 
-## 5.3.0 (Unreleased)
+## 5.3.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 5.3.0 (2023-06-15)
 
 This version of the client library defaults to the service API version `2023-04-01`.
 
@@ -26,6 +36,10 @@ This version of the client library defaults to the service API version `2023-04-
   `ExtractKeyPhrasesResult`, `RecognizeLinkedEntitiesResult`, `AnalyzeSentimentResult`, `RecognizeCustomEntitiesResult`,
   `ClassifyDocumentResult`, `ExtractSummaryResult`, and `AbstractSummaryResult`.
 - Removed property `script` from `DetectedLanguage`.
+
+### Features Added
+
+- New enum values added for `HealthcareEntityCategory` and `HealthcareEntityRelation`.
 
 ## 5.3.0b2 (2023-03-07)
 

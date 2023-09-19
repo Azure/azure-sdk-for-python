@@ -298,7 +298,11 @@ to the library's [credential documentation][sas_docs]. Alternatively, it is poss
 <!-- SNIPPET:backup_restore_operations.begin_backup -->
 
 ```python
-client.begin_restore(backup_result.folder_url, SAS_TOKEN).wait()
+CONTAINER_URL = os.environ["CONTAINER_URL"]
+SAS_TOKEN = os.environ["SAS_TOKEN"]
+
+backup_result = client.begin_backup(CONTAINER_URL, SAS_TOKEN).result()
+print(f"Azure Storage Blob URL of the backup: {backup_result.folder_url}")
 ```
 
 <!-- END SNIPPET -->

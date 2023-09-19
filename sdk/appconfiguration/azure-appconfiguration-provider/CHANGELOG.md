@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.1.0b2 (Unreleased)
 
 ### Features Added
 
@@ -10,9 +10,19 @@
 
 ### Other Changes
 
+## 1.1.0b1 (2023-09-13)
+
+### Features Added
+
+* New API for Azure App Configuration Provider, `refresh`, which can be used to refresh the configuration from the Azure App Configuration service. `refresh` by default can check every 30 seconds for changes to specified sentinel keys. If a change is detected then all configurations are reloaded. Sentinel keys can be set by passing  a list of `SentinelKey`'s to `refresh_on`.
+* Added support for customer provided user agent prefix.
+
+### Other Changes
+
 * Updated to use AZURE_APP_CONFIGURATION_TRACING_DISABLED environment variable to disable tracing.
 * Changed the maximum number of retries to 2 from the default of 3 retries.
 * Changed the maximum back off time between retries to 1 minute from the default of 2 minutes.
+* Bumped minimum dependency on `azure-core` to `>=1.25.0`
 
 ## 1.0.0 (2023-03-09)
 

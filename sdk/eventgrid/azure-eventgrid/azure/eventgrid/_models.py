@@ -106,6 +106,7 @@ class EventGridEvent(InternalEventGridEvent):
          a storage QueueMessage, eventhub's EventData or ServiceBusMessage
         :type event: object
         :rtype: EventGridEvent
+        :return: An EventGridEvent object.
         :raises ValueError: If the provided JSON is invalid.
         """
         dict_event = _get_json_content(event)

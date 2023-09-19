@@ -6,7 +6,9 @@ azure-core
 six
 isodate
 azure-appconfiguration
+azure-core-tracing-opentelemetry
 azure-keyvault-secrets
+azure-monitor-opentelemetry-exporter
 cryptography
 msrestazure
 python-dateutil
@@ -36,6 +38,15 @@ azure-mgmt-resourcegraph
 azure-mgmt-resource
 fixedint
 opentelemetry-sdk
+opentelemetry-instrumentation
+opentelemetry-instrumentation-django
+opentelemetry-instrumentation-fastapi
+opentelemetry-instrumentation-flask
+opentelemetry-instrumentation-psycopg2
+opentelemetry-instrumentation-requests
+opentelemetry-instrumentation-urllib
+opentelemetry-instrumentation-urllib3
+opentelemetry-resource-detector-azure
 azure-nspkg
 azure-ai-nspkg
 azure-cognitiveservices-nspkg
@@ -46,6 +57,6 @@ websocket-client
 avro
 uamqp
 yarl
-importlib-metadata
 azure-identity
 openai
+wrapt

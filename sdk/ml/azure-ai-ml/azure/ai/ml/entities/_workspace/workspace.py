@@ -8,16 +8,17 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
-from azure.ai.ml._restclient.v2023_04_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Workspace as RestWorkspace
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
+from azure.ai.ml._restclient.v2023_06_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
+from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
+from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.v2023_06_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
-from azure.ai.ml._utils.utils import dump_yaml_to_file, is_private_preview_enabled
+from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.entities._workspace_hub._constants import PROJECT_WORKSPACE_KIND
 
 from .customer_managed_key import CustomerManagedKey
 from .feature_store_settings import FeatureStoreSettings
@@ -46,6 +47,7 @@ class Workspace(Resource):
         primary_user_assigned_identity: Optional[str] = None,
         managed_network: Optional[ManagedNetwork] = None,
         enable_data_isolation: bool = False,
+        workspace_hub: Optional[str] = None,
         **kwargs,
     ):
         """Azure ML workspace.
@@ -96,13 +98,16 @@ class Workspace(Resource):
         :param enable_data_isolation: A flag to determine if workspace has data isolation enabled.
             The flag can only be set at the creation phase, it can't be updated.
         :type enable_data_isolation: bool
+        :param workspace_hub: The resource ID of an existing workspace hub to help create project workspace
+        :type workspace_hub: str
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
+        self._kind = kwargs.pop("kind", "default")
         self.print_as_yaml = True
         self._discovery_url = kwargs.pop("discovery_url", None)
         self._mlflow_tracking_uri = kwargs.pop("mlflow_tracking_uri", None)
-        self._kind = kwargs.pop("kind", "default")
+        self._workspace_id = kwargs.pop("workspace_id", None)
         self._feature_store_settings: Optional[FeatureStoreSettings] = kwargs.pop("feature_store_settings", None)
         super().__init__(name=name, description=description, tags=tags, **kwargs)
 
@@ -121,6 +126,9 @@ class Workspace(Resource):
         self.primary_user_assigned_identity = primary_user_assigned_identity
         self.managed_network = managed_network
         self.enable_data_isolation = enable_data_isolation
+        self.workspace_hub = workspace_hub
+        if workspace_hub:
+            self._kind = PROJECT_WORKSPACE_KIND
 
     @property
     def discovery_url(self) -> str:
@@ -211,11 +219,7 @@ class Workspace(Resource):
                 rest_obj.identity
             )
         feature_store_settings = None
-        if (
-            is_private_preview_enabled()
-            and rest_obj.feature_store_settings
-            and isinstance(rest_obj.feature_store_settings, RestFeatureStoreSettings)
-        ):
+        if rest_obj.feature_store_settings and isinstance(rest_obj.feature_store_settings, RestFeatureStoreSettings):
             feature_store_settings = FeatureStoreSettings._from_rest_object(  # pylint: disable=protected-access
                 rest_obj.feature_store_settings
             )
@@ -243,12 +247,14 @@ class Workspace(Resource):
             managed_network=managed_network,
             feature_store_settings=feature_store_settings,
             enable_data_isolation=rest_obj.enable_data_isolation,
+            workspace_hub=rest_obj.hub_resource_id,
+            workspace_id=rest_obj.workspace_id,
         )
 
     def _to_rest_object(self) -> RestWorkspace:
-        feature_store_Settings = None
-        if is_private_preview_enabled() and self._feature_store_settings:
-            feature_store_Settings = self._feature_store_settings._to_rest_object()  # pylint: disable=protected-access
+        feature_store_settings = None
+        if self._feature_store_settings:
+            feature_store_settings = self._feature_store_settings._to_rest_object()  # pylint: disable=protected-access
 
         return RestWorkspace(
             identity=self.identity._to_workspace_rest_object()  # pylint: disable=protected-access
@@ -271,6 +277,7 @@ class Workspace(Resource):
             managed_network=self.managed_network._to_rest_object()  # pylint: disable=protected-access
             if self.managed_network
             else None,  # pylint: disable=protected-access
-            feature_store_Settings=feature_store_Settings,
+            feature_store_settings=feature_store_settings,
             enable_data_isolation=self.enable_data_isolation,
+            hub_resource_id=self.workspace_hub,
         )

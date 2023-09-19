@@ -92,29 +92,29 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.availability_sets = AvailabilitySetsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2016-03-30"
         )
         self.virtual_machine_extension_images = VirtualMachineExtensionImagesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2016-03-30"
         )
         self.virtual_machine_extensions = VirtualMachineExtensionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2016-03-30"
         )
         self.virtual_machines = VirtualMachinesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2016-03-30"
         )
         self.virtual_machine_images = VirtualMachineImagesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2016-03-30"
         )
-        self.usage = UsageOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.usage = UsageOperations(self._client, self._config, self._serialize, self._deserialize, "2016-03-30")
         self.virtual_machine_sizes = VirtualMachineSizesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2016-03-30"
         )
         self.virtual_machine_scale_sets = VirtualMachineScaleSetsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2016-03-30"
         )
         self.virtual_machine_scale_set_vms = VirtualMachineScaleSetVMsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2016-03-30"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:

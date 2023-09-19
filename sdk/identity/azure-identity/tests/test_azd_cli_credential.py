@@ -92,6 +92,17 @@ def test_not_logged_in():
                 AzureDeveloperCliCredential().get_token("scope")
 
 
+def test_aadsts_error():
+    """When there is an AADSTS error, the credential should raise an error containing the CLI's output even if the
+    error also contains the 'not logged in' string."""
+
+    stderr = "ERROR: AADSTS70043: The refresh token has expired, not logged in, run `azd auth login` to login"
+    with mock.patch("shutil.which", return_value="azd"):
+        with mock.patch(CHECK_OUTPUT, raise_called_process_error(1, stderr=stderr)):
+            with pytest.raises(ClientAuthenticationError, match=stderr):
+                AzureDeveloperCliCredential().get_token("scope")
+
+
 def test_unexpected_error():
     """When the CLI returns an unexpected error, the credential should raise an error containing the CLI's output"""
 
@@ -175,6 +186,7 @@ def test_multitenant_authentication_class():
             token = AzureDeveloperCliCredential(tenant_id=second_tenant).get_token("scope")
             assert token.token == second_token
 
+
 def test_multitenant_authentication():
     default_tenant = "first-tenant"
     first_token = "***"
@@ -211,6 +223,7 @@ def test_multitenant_authentication():
             token = credential.get_token("scope")
             assert token.token == first_token
 
+
 def test_multitenant_authentication_not_allowed():
     expected_tenant = "expected-tenant"
     expected_token = "***"
@@ -234,8 +247,6 @@ def test_multitenant_authentication_not_allowed():
             token = credential.get_token("scope")
             assert token.token == expected_token
 
-            with mock.patch.dict(
-                "os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}
-            ):
+            with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
                 token = credential.get_token("scope", tenant_id="un" + expected_tenant)
             assert token.token == expected_token

@@ -143,7 +143,7 @@ class TestLogsIngestionClientAsync(AzureRecordedTestCase):
 
         async with client:
             # No exception should be raised
-            with mock.patch("azure.monitor.ingestion.aio._operations._patch.GeneratedOps.upload",
+            with mock.patch("azure.monitor.ingestion.aio._operations._patch.GeneratedOps._upload",
                             side_effect=ConnectionError):
                 await client.upload(
                     rule_id=monitor_info['dcr_id'],
@@ -155,7 +155,7 @@ class TestLogsIngestionClientAsync(AzureRecordedTestCase):
 
             on_error.called = False
             # Exception should now be raised since error handler checked for RuntimeError.
-            with mock.patch("azure.monitor.ingestion.aio._operations._patch.GeneratedOps.upload",
+            with mock.patch("azure.monitor.ingestion.aio._operations._patch.GeneratedOps._upload",
                             side_effect=RuntimeError):
                 with pytest.raises(TestException):
                     await client.upload(

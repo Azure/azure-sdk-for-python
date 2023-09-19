@@ -85,16 +85,15 @@ async def read_items(container):
 async def query_items(container, doc_id):
     print('\n1.4 Querying for an  Item by Id\n')
 
-    # enable_cross_partition_query should be set to True as the container is partitioned
+    # The enable_cross_partition_query option is not used by the async client - this is the default behavior
     # In this case, we do have to await the asynchronous iterator object since logic
     # within the query_items() method makes network calls to verify the partition key
     # definition in the container
     query_items_response = container.query_items(
         query="SELECT * FROM r WHERE r.id=@id",
         parameters=[
-            { "name":"@id", "value": doc_id }
-        ],
-        enable_cross_partition_query=True
+            {"name": "@id", "value": doc_id}
+        ]
     )
 
     items = [item async for item in query_items_response]
@@ -102,8 +101,32 @@ async def query_items(container, doc_id):
     print('Item queried by Id {0}'.format(items[0].get("id")))
 
 
+async def query_items_with_continuation_token(container):
+    print('\n1.5 Querying for Items using Pagination and Continuation Token\n')
+
+    # When using Pagination, max_item_count will limit the number of items in each page
+    query_iterable = container.query_items(
+        query="SELECT * FROM r",
+        max_item_count=1
+    )
+
+    item_pages = query_iterable.by_page()
+    first_page = await anext(item_pages)  # cspell:disable-line
+    continuation_token = item_pages.continuation_token
+
+    # Other code logic where you only need the first page of results would go here
+
+    # Now we use the continuation token from the first page to pick up where we left off and
+    # access the second page of items
+    items_from_continuation = query_iterable.by_page(continuation_token)
+    second_page_items_with_continuation = \
+        [item async for item in await anext(items_from_continuation)]  # cspell:disable-line
+
+    print('The single items in the second page are {}'.format(second_page_items_with_continuation[0].get("id")))
+
+
 async def replace_item(container, doc_id):
-    print('\n1.5 Replace an Item\n')
+    print('\n1.6 Replace an Item\n')
 
     read_item = await container.read_item(item=doc_id, partition_key=doc_id)
     read_item['subtotal'] = read_item['subtotal'] + 1
@@ -113,7 +136,7 @@ async def replace_item(container, doc_id):
 
 
 async def upsert_item(container, doc_id):
-    print('\n1.6 Upserting an item\n')
+    print('\n1.7 Upserting an item\n')
 
     read_item = await container.read_item(item=doc_id, partition_key=doc_id)
     read_item['subtotal'] = read_item['subtotal'] + 1
@@ -121,8 +144,9 @@ async def upsert_item(container, doc_id):
 
     print('Upserted Item\'s Id is {0}, new subtotal={1}'.format(response['id'], response['subtotal']))
 
+
 async def conditional_patch_item(container, doc_id):
-    print('\n1.7 Patching Item by Id based on filter\n')
+    print('\n1.8 Patching Item by Id based on filter\n')
     operations = [
         {"op": "add", "path": "/favorite_color", "value": "red"},
         {"op": "remove", "path": "/ttl"},
@@ -136,12 +160,14 @@ async def conditional_patch_item(container, doc_id):
     print("Filter predicate match failure will result in BadRequestException.")
     try:
         await container.patch_item(item=doc_id, partition_key=doc_id,
-                                    patch_operations=operations, filter_predicate=filter_predicate)
+                                   patch_operations=operations, filter_predicate=filter_predicate)
     except exceptions.CosmosHttpResponseError as e:
-        assert(e.status_code == StatusCodes.PRECONDITION_FAILED)
+        assert (e.status_code == StatusCodes.PRECONDITION_FAILED)
         print("Failed as expected.")
+
+
 async def patch_item(container, doc_id):
-    print('\n1.8 Patching Item by Id\n')
+    print('\n1.9 Patching Item by Id\n')
 
     operations = [
         {"op": "add", "path": "/favorite_color", "value": "red"},
@@ -156,11 +182,15 @@ async def patch_item(container, doc_id):
     print('Patched Item\'s Id is {0}, new path favorite color={1}, removed path ttl={2}, replaced path tax_amount={3},'
           ' set path for item at index 0 of discount={4}, increase in path total_due, new total_due={5}, '
           'move from path freight={6} to path service_addition={7}'.format(response["id"], response["favorite_color"],
-                                response.get("ttl"), response["tax_amount"], response["items"][0].get("discount"),
-                                response["total_due"], response.get("freight"), response["service_addition"]))
+                                                                           response.get("ttl"), response["tax_amount"],
+                                                                           response["items"][0].get("discount"),
+                                                                           response["total_due"],
+                                                                           response.get("freight"),
+                                                                           response["service_addition"]))
+
 
 async def delete_item(container, doc_id):
-    print('\n1.9 Deleting Item by Id\n')
+    print('\n1.10 Deleting Item by Id\n')
 
     await container.delete_item(item=doc_id, partition_key=doc_id)
 
@@ -168,11 +198,11 @@ async def delete_item(container, doc_id):
 
 
 async def delete_all_items_by_partition_key(db, partitionkey):
-    print('\n1.10 Deleting all Items by Partition Key\n')
+    print('\n1.11 Deleting all Items by Partition Key\n')
 
     # A container with a partition key that is different from id is needed
     container = await db.create_container_if_not_exists(id="Partition Key Delete Container",
-                                                  partition_key=PartitionKey(path='/company'))
+                                                        partition_key=PartitionKey(path='/company'))
     sales_order_company_A1 = get_sales_order("SalesOrderCompanyA1")
     sales_order_company_A1["company"] = partitionkey
     await container.upsert_item(sales_order_company_A1)
@@ -208,55 +238,74 @@ async def delete_all_items_by_partition_key(db, partitionkey):
     for doc in item_list:
         print('Item Id: {0}; Partition Key: {1}'.format(doc.get('id'), doc.get("company")))
 
+
+async def query_items_with_continuation_token_size_limit(container, doc_id):
+    print('\n1.12 Query Items With Continuation Token Size Limit.\n')
+
+    size_limit_in_kb = 8
+    sales_order = get_sales_order(doc_id)
+    await container.create_item(body=sales_order)
+
+    # set continuation_token_limit to 8 to limit size to 8KB
+    items = container.query_items(
+        query="SELECT * FROM r",
+        partition_key=doc_id,
+        continuation_token_limit=size_limit_in_kb
+    )
+
+    print('Continuation Token size has been limited to {}KB.'.format(size_limit_in_kb))
+
+
 def get_sales_order(item_id):
-    order1 = {'id' : item_id,
-            'account_number' : 'Account1',
-            'purchase_order_number' : 'PO18009186470',
-            'order_date' : datetime.date(2005,1,10).strftime('%c'),
-            'subtotal' : 419.4589,
-            'tax_amount' : 12.5838,
-            'freight' : 472.3108,
-            'total_due' : 985.018,
-            'items' : [
-                {'order_qty' : 1,
-                    'product_id' : 100,
-                    'unit_price' : 418.4589,
-                    'line_price' : 418.4589
-                }
-                ],
-            'ttl' : 60 * 60 * 24 * 30
-            }
+    order1 = {'id': item_id,
+              'account_number': 'Account1',
+              'purchase_order_number': 'PO18009186470',
+              'order_date': datetime.date(2005, 1, 10).strftime('%c'),
+              'subtotal': 419.4589,
+              'tax_amount': 12.5838,
+              'freight': 472.3108,
+              'total_due': 985.018,
+              'items': [
+                  {'order_qty': 1,
+                   'product_id': 100,
+                   'unit_price': 418.4589,
+                   'line_price': 418.4589
+                   }
+              ],
+              'ttl': 60 * 60 * 24 * 30
+              }
 
     return order1
 
 
 def get_sales_order_v2(item_id):
     # notice new fields have been added to the sales order
-    order2 = {'id' : item_id,
-            'account_number' : 'Account2',
-            'purchase_order_number' : 'PO15428132599',
-            'order_date' : datetime.date(2005,7,11).strftime('%c'),
-            'due_date' : datetime.date(2005,7,21).strftime('%c'),
-            'shipped_date' : datetime.date(2005,7,15).strftime('%c'),
-            'subtotal' : 6107.0820,
-            'tax_amount' : 586.1203,
-            'freight' : 183.1626,
-            'discount_amt' : 1982.872,
-            'total_due' : 4893.3929,
-            'items' : [
-                {'order_qty' : 3,
-                    'product_code' : 'A-123',      # notice how in item details we no longer reference a ProductId
-                    'product_name' : 'Product 1',  # instead we have decided to denormalise our schema and include
-                    'currency_symbol' : '$',       # the Product details relevant to the Order on to the Order directly
-                    'currency_code' : 'USD',       # this is a typical refactor that happens in the course of an application
-                    'unit_price' : 17.1,           # that would have previously required schema changes and data migrations etc.
-                    'line_price' : 5.7
-                }
-                ],
-            'ttl' : 60 * 60 * 24 * 30
-            }
+    order2 = {'id': item_id,
+              'account_number': 'Account2',
+              'purchase_order_number': 'PO15428132599',
+              'order_date': datetime.date(2005, 7, 11).strftime('%c'),
+              'due_date': datetime.date(2005, 7, 21).strftime('%c'),
+              'shipped_date': datetime.date(2005, 7, 15).strftime('%c'),
+              'subtotal': 6107.0820,
+              'tax_amount': 586.1203,
+              'freight': 183.1626,
+              'discount_amt': 1982.872,
+              'total_due': 4893.3929,
+              'items': [
+                  {'order_qty': 3,
+                   'product_code': 'A-123',  # notice how in item details we no longer reference a ProductId
+                   'product_name': 'Product 1',  # instead we have decided to denormalise our schema and include
+                   'currency_symbol': '$',  # the Product details relevant to the Order on to the Order directly
+                   'currency_code': 'USD',  # this is a typical refactor that happens in the course of an application
+                   'unit_price': 17.1,  # that would have previously required schema changes and data migrations etc.
+                   'line_price': 5.7
+                   }
+              ],
+              'ttl': 60 * 60 * 24 * 30
+              }
 
     return order2
+
 
 async def run_sample():
     async with CosmosClient(HOST, {'masterKey': MASTER_KEY}) as client:
@@ -265,19 +314,22 @@ async def run_sample():
             db = await client.create_database_if_not_exists(id=DATABASE_ID)
 
             # setup container for this sample
-            container = await db.create_container_if_not_exists(id=CONTAINER_ID, partition_key=PartitionKey(path='/id', kind='Hash'))
+            container = await db.create_container_if_not_exists(id=CONTAINER_ID,
+                                                                partition_key=PartitionKey(path='/id', kind='Hash'))
             print('Container with id \'{0}\' created'.format(CONTAINER_ID))
 
             await create_items(container)
             await read_item(container, 'SalesOrder1')
             await read_items(container)
             await query_items(container, 'SalesOrder1')
+            await query_items_with_continuation_token(container)
             await replace_item(container, 'SalesOrder1')
             await upsert_item(container, 'SalesOrder1')
             await conditional_patch_item(container, 'SalesOrder1')
             await patch_item(container, 'SalesOrder1')
             await delete_item(container, 'SalesOrder1')
             await delete_all_items_by_partition_key(db, "CompanyA")
+            await query_items_with_continuation_token_size_limit(container, 'SalesOrder1')
 
             # cleanup database after sample
             try:
@@ -290,7 +342,7 @@ async def run_sample():
             print('\nrun_sample has caught an error. {0}'.format(e.message))
 
         finally:
-                print("\nrun_sample done")
+            print("\nrun_sample done")
 
 
 if __name__ == '__main__':

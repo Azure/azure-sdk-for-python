@@ -1,17 +1,51 @@
 # Release History
 
-## 1.0.0b14 (Unreleased)
+## 1.0.0b18 (Unreleased)
 
 ### Features Added
-
-- Upgrading to OpenTelemetry SDK/API 1.18.
-    ([#30611](https://github.com/Azure/azure-sdk-for-python/pull/30611))
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0b17 (2023-09-12)
+
+### Bugs Fixed
+
+- Handle missing or empty message data
+    ([#31944](https://github.com/Azure/azure-sdk-for-python/pull/31944))
+
+## 1.0.0b16 (2023-08-30)
+
+### Features Added
+
+- Export OTel Resource
+    ([#31355](https://github.com/Azure/azure-sdk-for-python/pull/31355))
+- Use observed timestamp for log record if timetamp is None
+    ([#31660](https://github.com/Azure/azure-sdk-for-python/pull/31660))
+- Support custom events
+    ([#31883](https://github.com/Azure/azure-sdk-for-python/pull/31883))
+
+### Other Changes
+
+- Unpin Opentelemetry SDK/API.
+    ([#31253](https://github.com/Azure/azure-sdk-for-python/pull/31253))
+
+## 1.0.0b15 (2023-07-17)
+
+### Features Added
+
+- Upgrading to OpenTelemetry SDK/API 1.19.
+    ([#31170](https://github.com/Azure/azure-sdk-for-python/pull/31170))
+
+## 1.0.0b14 (2023-06-09)
+
+### Features Added
+
+- Upgrading to OpenTelemetry SDK/API 1.18.
+    ([#30611](https://github.com/Azure/azure-sdk-for-python/pull/30611))
 
 ## 1.0.0b13 (2023-04-11)
 

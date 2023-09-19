@@ -20,11 +20,11 @@ class DataCollector:
     :param collections: Mapping dictionary of strings mapped to DeploymentCollection entities.
     :type collections: Mapping[str, DeploymentCollection]
     :param rolling_rate: The rolling rate of mdc files, possible values: ["minute", "hour", "day"].
-    :type rolling_rate: str, optional
+    :type rolling_rate: str
     :param sampling_rate: The sampling rate of mdc files, possible values: [0.0, 1.0].
-    :type sampling_rate: float, optional
+    :type sampling_rate: float
     :param request_logging: Logging of request payload parameters.
-    :type request_logging: RequestLogging, optional
+    :type request_logging: RequestLogging
     """
 
     def __init__(
@@ -52,6 +52,7 @@ class DataCollector:
     @classmethod
     def _from_rest_object(cls, rest_obj: RestDataCollector) -> "DataCollector":
         collections = {}
+        sampling_rate = None
         for k, v in rest_obj.collections.items():
             sampling_rate = v.sampling_rate
             collections[k] = DeploymentCollection._from_rest_object(v)
@@ -71,6 +72,7 @@ class DataCollector:
         return DataCollectorSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     def _to_rest_object(self) -> RestDataCollector:
+        rest_collections = {}
         for collection in self.collections.values():
             collection.sampling_rate = self.sampling_rate
         delattr(self, "sampling_rate")

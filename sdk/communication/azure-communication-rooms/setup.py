@@ -42,6 +42,7 @@ setup(
     author="Microsoft Corporation",
     author_email="azpysdkhelp@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/communication/azure-communication-rooms",
+    keywords="azure, azure sdk",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
@@ -65,7 +66,6 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.24.0",
         "msrest>=0.7.1",
-        'six>=1.11.0',
     ],
     python_requires=">=3.7",
     include_package_data=True,

@@ -11,9 +11,10 @@ import pytest
 import time
 from datetime import datetime, timedelta
 
+from azure.servicebus._common.utils import utc_now
 from azure.servicebus import ServiceBusClient, ServiceBusMessage, ServiceBusReceiveMode
 from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
-from azure.servicebus.exceptions import ServiceBusError
+from azure.servicebus.exceptions import ServiceBusError, MessageLockLostError
 from azure.servicebus._common.constants import ServiceBusSubQueue
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
@@ -207,3 +208,48 @@ class TestServiceBusSubscription(AzureMgmtRecordedTestCase):
                     assert message.application_properties[b'DeadLetterReason'] == b'Testing reason'
                     assert message.application_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                 assert count == 10
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusTopicPreparer(name_prefix='servicebustest')
+    @ServiceBusSubscriptionPreparer(name_prefix='servicebustest', lock_duration='PT5S')
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasser()
+    def test_subscription_message_expiry(self, uamqp_transport, *, servicebus_namespace=None, servicebus_namespace_key_name=None, servicebus_namespace_primary_key=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        with ServiceBusClient(
+            fully_qualified_namespace=fully_qualified_namespace,
+            credential=ServiceBusSharedKeyCredential(
+                policy=servicebus_namespace_key_name,
+                key=servicebus_namespace_primary_key
+            ),
+            logging_enable=False,
+            uamqp_transport=uamqp_transport
+        ) as sb_client:
+
+            with sb_client.get_topic_sender(topic_name=servicebus_topic.name) as sender:
+                message = ServiceBusMessage(b"Testing topic message expiry")
+                sender.send_messages(message)
+
+            with sb_client.get_subscription_receiver(
+                    topic_name=servicebus_topic.name,
+                    subscription_name=servicebus_subscription.name
+            ) as receiver:
+                messages = receiver.receive_messages(max_wait_time=10)
+                assert len(messages) == 1
+                time.sleep((messages[0].locked_until_utc - utc_now()).total_seconds()+1)
+                assert messages[0]._lock_expired
+                with pytest.raises(MessageLockLostError):
+                    receiver.complete_message(messages[0])
+                with pytest.raises(MessageLockLostError):
+                    receiver.renew_message_lock(messages[0])
+            with sb_client.get_subscription_receiver(
+                    topic_name=servicebus_topic.name,
+                    subscription_name=servicebus_subscription.name
+            ) as receiver:
+                messages = receiver.receive_messages(max_wait_time=10)
+                assert len(messages) == 1
+                assert messages[0].delivery_count > 0
+                receiver.complete_message(messages[0])

@@ -1,5 +1,4 @@
 pip==20.2
-cryptography<4
 
 # requirements leveraged by ci for testing
 pytest==7.3.1
@@ -12,11 +11,11 @@ bandit==1.6.2
 protobuf==3.17.3; python_version == '2.7'
 chardet>=2.0,<5.0
 cmarkgfm<0.7.0
+typing-extensions<=4.6.3
 
 # locking packages defined as deps from azure-sdk-tools or azure-devtools
 pytoml==0.1.21
 readme-renderer[md]==25.0
-pyOpenSSL==21.0.0
 json-delta==2.0
 ConfigArgParse==1.2.3
 six==1.14.0

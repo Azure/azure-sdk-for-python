@@ -171,7 +171,7 @@ from .._generated.models import (
     WebApiSkill,
     VisualFeature,
     VectorSearch,
-    VectorSearchAlgorithmConfiguration,
+    HnswVectorSearchAlgorithmConfiguration,
     WordDelimiterTokenFilter,
 )
 from ._models import (
@@ -191,19 +191,21 @@ from ._models import (
 
 SearchFieldDataType = _edm
 
+
 class KeywordTokenizer(KeywordTokenizerV2):
     pass
+
 
 class PathHierarchyTokenizer(PathHierarchyTokenizerV2):
     pass
 
+
 class SimilarityAlgorithm(Similarity):
     pass
 
+
 class SearchSuggester(Suggester):
     pass
-
-
 
 
 __all__ = (
@@ -361,7 +363,7 @@ __all__ = (
     "UniqueTokenFilter",
     "VisualFeature",
     "VectorSearch",
-    "VectorSearchAlgorithmConfiguration",
+    "HnswVectorSearchAlgorithmConfiguration",
     "WebApiSkill",
     "WordDelimiterTokenFilter",
     "SearchFieldDataType",

@@ -13,15 +13,26 @@ from typing import ( # pylint: disable=unused-import
 from urllib.parse import urlparse, quote
 
 from azure.core.exceptions import AzureError, HttpResponseError
+from azure.core.tracing.decorator import distributed_trace
 from azure.storage.blob import BlobClient
 from ._data_lake_lease import DataLakeLeaseClient
 from ._deserialize import process_storage_error
 from ._generated import AzureDataLakeStorageRESTAPI
 from ._models import LocationMode, DirectoryProperties, AccessControlChangeResult, AccessControlChanges, \
     AccessControlChangeCounters, AccessControlChangeFailure
-from ._serialize import convert_dfs_url_to_blob_url, get_mod_conditions, \
-    get_path_http_headers, add_metadata_headers, get_lease_id, get_source_mod_conditions, get_access_conditions, \
-    get_api_version, get_cpk_info, convert_datetime_to_rfc1123
+from ._serialize import (
+    add_metadata_headers,
+    compare_api_versions,
+    convert_datetime_to_rfc1123,
+    convert_dfs_url_to_blob_url,
+    get_access_conditions,
+    get_api_version,
+    get_cpk_info,
+    get_lease_id,
+    get_mod_conditions,
+    get_path_http_headers,
+    get_source_mod_conditions,
+)
 from ._shared.base_client import StorageAccountHostsMixin, parse_query
 from ._shared.response_handlers import return_response_headers, return_headers_and_deserialized
 
@@ -64,8 +75,8 @@ class PathClient(StorageAccountHostsMixin):
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Account URL must be a string.") from exc
         parsed_url = urlparse(account_url.rstrip('/'))
 
         # remove the preceding/trailing delimiter from the path components
@@ -78,7 +89,7 @@ class PathClient(StorageAccountHostsMixin):
         if not (file_system_name and path_name):
             raise ValueError("Please specify a file system name and file path.")
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
+            raise ValueError(f"Invalid URL: {account_url}")
 
         blob_account_url = convert_dfs_url_to_blob_url(account_url)
         self._blob_account_url = blob_account_url
@@ -131,12 +142,8 @@ class PathClient(StorageAccountHostsMixin):
         file_system_name = self.file_system_name
         if isinstance(file_system_name, str):
             file_system_name = file_system_name.encode('UTF-8')
-        return "{}://{}/{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(file_system_name),
-            quote(self.path_name, safe='~'),
-            self._query_str)
+        return (f"{self.scheme}://{hostname}/{quote(file_system_name)}/"
+                f"{quote(self.path_name, safe='~')}{self._query_str}")
 
     def _create_path_options(self, resource_type,
                              content_settings=None,  # type: Optional[ContentSettings]
@@ -291,13 +298,12 @@ class PathClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @staticmethod
-    def _delete_path_options(**kwargs):
-        # type: (**Any) -> Dict[str, Any]
-
+    def _delete_path_options(paginated: Optional[bool], **kwargs) -> Dict[str, Any]:
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_mod_conditions(kwargs)
 
         options = {
+            'paginated': paginated,
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
             'cls': return_response_headers,
@@ -314,13 +320,13 @@ class PathClient(StorageAccountHostsMixin):
             Required if the file/directory has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
-        :param ~datetime.datetime if_modified_since:
+        :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
-        :param ~datetime.datetime if_unmodified_since:
+        :keyword ~datetime.datetime if_unmodified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
             If a date is passed in without timezone info, it is assumed to be UTC.
@@ -331,17 +337,33 @@ class PathClient(StorageAccountHostsMixin):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
-        :param int timeout:
+        :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :return: None
+        :returns: A dictionary containing information about the deleted path.
+        :rtype: Dict[str, Any]
         """
-        options = self._delete_path_options(**kwargs)
+        # Perform paginated delete only if using OAuth, deleting a directory, and api version is 2023-08-03 or later
+        # The pagination is only for ACL checks, the final request remains the atomic delete operation
+        paginated = None
+        if (compare_api_versions(self.api_version, '2023-08-03') >= 0 and
+            hasattr(self.credential, 'get_token') and
+            kwargs.get('recursive')):  # Directory delete will always specify recursive
+            paginated = True
+
+        options = self._delete_path_options(paginated, **kwargs)
         try:
-            return self._client.path.delete(**options)
+            response_headers = self._client.path.delete(**options)
+            # Loop until continuation token is None for paginated delete
+            while response_headers['continuation']:
+                response_headers = self._client.path.delete(
+                    continuation=response_headers['continuation'],
+                    **options)
+
+            return response_headers
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -364,6 +386,7 @@ class PathClient(StorageAccountHostsMixin):
         options.update(kwargs)
         return options
 
+    @distributed_trace
     def set_access_control(self, owner=None,  # type: Optional[str]
                            group=None,  # type: Optional[str]
                            permissions=None,  # type: Optional[str]
@@ -451,6 +474,7 @@ class PathClient(StorageAccountHostsMixin):
         options.update(kwargs)
         return options
 
+    @distributed_trace
     def get_access_control(self, upn=None,  # type: Optional[bool]
                            **kwargs):
         # type: (...) -> Dict[str, Any]
@@ -515,9 +539,8 @@ class PathClient(StorageAccountHostsMixin):
         options.update(kwargs)
         return options
 
-    def set_access_control_recursive(self,
-                                     acl,
-                                     **kwargs):
+    @distributed_trace
+    def set_access_control_recursive(self, acl, **kwargs):
         # type: (str, **Any) -> AccessControlChangeResult
         """
         Sets the Access Control on a path and sub-paths.
@@ -570,9 +593,8 @@ class PathClient(StorageAccountHostsMixin):
         return self._set_access_control_internal(options=options, progress_hook=progress_hook,
                                                  max_batches=max_batches)
 
-    def update_access_control_recursive(self,
-                                        acl,
-                                        **kwargs):
+    @distributed_trace
+    def update_access_control_recursive(self, acl, **kwargs):
         # type: (str, **Any) -> AccessControlChangeResult
         """
         Modifies the Access Control on a path and sub-paths.
@@ -625,9 +647,8 @@ class PathClient(StorageAccountHostsMixin):
         return self._set_access_control_internal(options=options, progress_hook=progress_hook,
                                                  max_batches=max_batches)
 
-    def remove_access_control_recursive(self,
-                                        acl,
-                                        **kwargs):
+    @distributed_trace
+    def remove_access_control_recursive(self, acl, **kwargs):
         # type: (str, **Any) -> AccessControlChangeResult
         """
         Removes the Access Control on a path and sub-paths.
@@ -765,7 +786,7 @@ class PathClient(StorageAccountHostsMixin):
 
         return new_file_system, new_path, new_sas
 
-    def _rename_path_options(self,  # pylint: disable=no-self-use
+    def _rename_path_options(self,
                              rename_source,  # type: str
                              content_settings=None,  # type: Optional[ContentSettings]
                              metadata=None,  # type: Optional[Dict[str, str]]
@@ -925,10 +946,12 @@ class PathClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :returns: boolean
+        :returns: True if a path exists, False otherwise.
+        :rtype: bool
         """
         return self._blob_client.exists(**kwargs)
 
+    @distributed_trace
     def set_metadata(self, metadata,  # type: Dict[str, str]
                      **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime]]
@@ -975,8 +998,8 @@ class PathClient(StorageAccountHostsMixin):
         """
         return self._blob_client.set_blob_metadata(metadata=metadata, **kwargs)
 
-    def set_http_headers(self, content_settings=None,  # type: Optional[ContentSettings]
-                         **kwargs):
+    @distributed_trace
+    def set_http_headers(self, content_settings: Optional["ContentSettings"] = None, **kwargs):
         # type: (...) -> Dict[str, Any]
         """Sets system properties on the file or directory.
 
@@ -1016,6 +1039,7 @@ class PathClient(StorageAccountHostsMixin):
         """
         return self._blob_client.set_http_headers(content_settings=content_settings, **kwargs)
 
+    @distributed_trace
     def acquire_lease(self, lease_duration=-1,  # type: Optional[int]
                       lease_id=None,  # type: Optional[str]
                       **kwargs):

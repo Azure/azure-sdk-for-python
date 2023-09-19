@@ -8,7 +8,7 @@ import functools
 from collections import OrderedDict
 from copy import deepcopy
 from datetime import datetime, timedelta
-from typing import Type, Dict, Any, Union, Optional, List
+from typing import Type, Dict, Any, Union, Optional, List, Tuple
 from ._generated._serialization import Model
 
 from ._generated.models import (
@@ -37,7 +37,7 @@ adjust_attribute_map()
 # These helpers are to ensure that the Properties objects can't be constructed without all args present,
 # as a compromise between our use of kwargs to flatten arg-lists and trying to de-incentivise manual instantiation
 # while still trying to provide some guardrails.
-def extract_kwarg_template(kwargs, extraction_missing_args, name):
+def extract_kwarg_template(kwargs, extraction_missing_args, name): # pylint: disable=inconsistent-return-statements
     try:
         return kwargs[name]
     except KeyError:
@@ -56,11 +56,11 @@ def validate_extraction_missing_args(extraction_missing_args):
 
 class DictMixin(object):
     def __setitem__(self, key, item):
-        # type: (Any, Any) -> None
+        # type: (str, Any) -> None
         self.__dict__[key] = item
 
     def __getitem__(self, key):
-        # type: (Any) -> Any
+        # type: (str) -> Any
         return self.__dict__[key]
 
     def __repr__(self):
@@ -72,27 +72,38 @@ class DictMixin(object):
         return len(self.keys())
 
     def __delitem__(self, key):
-        # type: (Any) -> None
+        # type: (str) -> None
         self.__dict__[key] = None
 
     def __eq__(self, other):
         # type: (Any) -> bool
-        """Compare objects by comparing all attributes."""
+        """Compare objects by comparing all attributes.
+        :param any other: The object to compare with
+        :return: `True` if `self` and `other` are equal, `False` otherwise.
+        :rtype: bool
+        """
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__
         return False
 
     def __ne__(self, other):
         # type: (Any) -> bool
-        """Compare objects by comparing all attributes."""
+        """Compare objects by comparing all attributes.
+        :param any other: The object to compare with
+        :return: `True` if `self` and `other` are not equal, `False` otherwise.
+        :rtype: bool
+        """
         return not self.__eq__(other)
 
     def __str__(self):
         # type: () -> str
         return str({k: v for k, v in self.__dict__.items() if not k.startswith("_")})
 
+    def __contains__(self, key: str) -> bool:
+        return key in self.__dict__
+
     def has_key(self, k):
-        # type: (Any) -> bool
+        # type: (str) -> bool
         return k in self.__dict__
 
     def update(self, *args, **kwargs):
@@ -100,19 +111,19 @@ class DictMixin(object):
         return self.__dict__.update(*args, **kwargs)
 
     def keys(self):
-        # type: () -> list
+        # type: () -> List[str]
         return [k for k in self.__dict__ if not k.startswith("_")]
 
     def values(self):
-        # type: () -> list
+        # type: () -> List
         return [v for k, v in self.__dict__.items() if not k.startswith("_")]
 
     def items(self):
-        # type: () -> list
+        # type: () -> List[Tuple[str, Any]]
         return [(k, v) for k, v in self.__dict__.items() if not k.startswith("_")]
 
     def get(self, key, default=None):
-        # type: (Any, Optional[Any]) -> Any
+        # type: (str, Optional[Any]) -> Any
         if key in self.__dict__:
             return self.__dict__[key]
         return default
@@ -844,7 +855,7 @@ class SubscriptionProperties(DictMixin):  # pylint:disable=too-many-instance-att
         self.dead_lettering_on_message_expiration = extract_kwarg(
             "dead_lettering_on_message_expiration"
         )
-        self.dead_lettering_on_filter_evaluation_exceptions = extract_kwarg(
+        self.dead_lettering_on_filter_evaluation_exceptions = extract_kwarg( # pylint:disable=name-too-long
             "dead_lettering_on_filter_evaluation_exceptions"
         )
         self.max_delivery_count = extract_kwarg("max_delivery_count")

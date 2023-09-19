@@ -35,7 +35,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Azure/azure-sdk-for-python",
-    keywords="azure, personalizer, cognitive services, reinforcement learning, contextual bandit",
+    keywords="azure, personalizer, cognitive services, reinforcement learning, contextual bandit, azure sdk",
     author="Microsoft Corporation",
     author_email="azuresdkengsysadmins@microsoft.com",
     license="MIT License",

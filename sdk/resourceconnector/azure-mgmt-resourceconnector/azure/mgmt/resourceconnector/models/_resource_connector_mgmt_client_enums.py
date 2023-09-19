@@ -44,8 +44,6 @@ class Provider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     VM_WARE = "VMWare"
     HCI = "HCI"
     SCVMM = "SCVMM"
-    KUBE_VIRT = "KubeVirt"
-    OPEN_STACK = "OpenStack"
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -73,7 +71,12 @@ class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CONNECTED = "Connected"
     RUNNING = "Running"
     PREPARING_FOR_UPGRADE = "PreparingForUpgrade"
+    ETCD_SNAPSHOT_FAILED = "ETCDSnapshotFailed"
     UPGRADE_PREREQUISITES_COMPLETED = "UpgradePrerequisitesCompleted"
+    VALIDATING_SFS_CONNECTIVITY = "ValidatingSFSConnectivity"
+    VALIDATING_IMAGE_DOWNLOAD = "ValidatingImageDownload"
+    VALIDATING_IMAGE_UPLOAD = "ValidatingImageUpload"
+    VALIDATING_ETCD_HEALTH = "ValidatingETCDHealth"
     PRE_UPGRADE = "PreUpgrade"
     UPGRADING_KVAIO = "UpgradingKVAIO"
     WAITING_FOR_KVAIO = "WaitingForKVAIO"

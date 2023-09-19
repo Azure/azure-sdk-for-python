@@ -46,6 +46,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     Class which defines uamqp-based methods used by the producer and consumer.
     """
 
+    KIND = "pyamqp"
+
     # define constants
     MAX_FRAME_SIZE_BYTES = constants.MAX_FRAME_SIZE_BYTES
     MAX_MESSAGE_LENGTH_BYTES = (
@@ -68,16 +70,20 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def build_message(**kwargs):
         """
-        Creates a pyamqp.Message with given arguments.
-        :rtype: pyamqp.Message
+        Creates a Message with given arguments.
+        :return: Message with given arguments.
+        :rtype: ~pyamqp.message.Message
+
         """
         return Message(**kwargs)
 
     @staticmethod
     def build_batch_message(**kwargs):
         """
-        Creates a pyamqp.BatchMessage with given arguments.
-        :rtype: pyamqp.BatchMessage
+        Creates a BatchMessage with given arguments.
+        :return: BatchMessage with given arguments.
+        :rtype: ~pyamqp.message.BatchMessage
+
         """
         return BatchMessage(**kwargs)
 
@@ -85,8 +91,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def to_outgoing_amqp_message(annotated_message):
         """
         Converts an AmqpAnnotatedMessage into an Amqp Message.
-        :param AmqpAnnotatedMessage annotated_message: AmqpAnnotatedMessage to convert.
-        :rtype: pyamqp.Message
+        :param ~azure.eventhub.amqp.AmqpAnnotatedMessage annotated_message: AmqpAnnotatedMessage to convert.
+        :return: Amqp Message.
+        :rtype: ~pyamqp.message.Message
         """
         message_header = None
         header_vals = annotated_message.header.values() if annotated_message.header else None
@@ -144,10 +151,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def update_message_app_properties(message, key, value):
         """
         Adds the given key/value to the application properties of the message.
-        :param pyamqp.Message message: Message.
+        :param ~pyamqp.message.Message message: Message.
         :param str key: Key to set in application properties.
-        :param str Value: Value to set for key in application properties.
-        :rtype: pyamqp.Message
+        :param str value: Value to set for key in application properties.
+        :return: Message with updated application properties.
+        :rtype: ~pyamqp.message.Message
+
         """
         if not message.application_properties:
             message = message._replace(application_properties={})
@@ -158,7 +167,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def get_batch_message_encoded_size(message):
         """
         Gets the batch message encoded size given an underlying Message.
-        :param pyamqp.BatchMessage message: Message to get encoded size of.
+        :param ~pyamqp.message.BatchMessage message: Message to get encoded size of.
+        :return: The encoded size of the batch message.
         :rtype: int
         """
         return utils.get_message_encoded_size(message)
@@ -167,8 +177,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def get_message_encoded_size(message):
         """
         Gets the message encoded size given an underlying Message.
-        :param pyamqp.Message: Message to get encoded size of.
+        :param message: Message to get encoded size of.
+        :type message: ~pyamqp.message.Message
+        :return: The encoded size of the message.
         :rtype: int
+
         """
         return utils.get_message_encoded_size(message)
 
@@ -176,8 +189,10 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def get_remote_max_message_size(handler):
         """
         Returns max peer message size.
-        :param AMQPClient handler: Client to get remote max message size on link from.
+        :param ~pyamqp.AMQPClient handler: Client to get remote max message size on link from.
+        :return: The max peer message size.
         :rtype: int
+
         """
         return handler._link.remote_max_message_size  # pylint: disable=protected-access
 
@@ -186,6 +201,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         Creates the error retry policy.
         :param ~azure.eventhub._configuration.Configuration config: Configuration.
+        :return: The retry policy.
+        :rtype: ~pyamqp.error.RetryPolicy
+
         """
         return errors.RetryPolicy(
             retry_total=config.max_retries,  # pylint:disable=protected-access
@@ -201,7 +219,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         Creates and returns the link properties.
         :param dict[bytes, int] link_properties: The dict of symbols and corresponding values.
+        :return: The link properties.
         :rtype: dict
+
         """
         return {
             symbol: utils.amqp_long_value(value)
@@ -213,7 +233,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         Creates and returns the uamqp Connection object.
         :keyword str host: The hostname, used by uamqp.
-        :keyword JWTTokenAuth auth: The auth, used by uamqp.
+        :keyword ~pyamqp.authentication.JWTTokenAuth auth: The auth, used by uamqp.
         :keyword str endpoint: The endpoint, used by pyamqp.
         :keyword str container_id: Required.
         :keyword int max_frame_size: Required.
@@ -224,6 +244,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :keyword error_policy: Required.
         :keyword bool debug: Required.
         :keyword str encoding: Required.
+
+        :return: The connection object.
+        :rtype: ~pyamqp.Connection
         """
         endpoint = kwargs.pop("endpoint")
         host = kwargs.pop("host")  # pylint:disable=unused-variable
@@ -235,7 +258,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def close_connection(connection):
         """
         Closes existing connection.
-        :param connection: uamqp or pyamqp Connection.
+        :param connection: pyamqp Connection.
+        :type connection: ~pyamqp.Connection
         """
         connection.close()
 
@@ -243,18 +267,21 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def get_connection_state(connection):
         """
         Gets connection state.
-        :param connection: uamqp or pyamqp Connection.
+        :param connection: pyamqp Connection.
+        :type connection: ~pyamqp.Connection
+        :return: Connection state.
+        :rtype: ~pyamqp.constants.ConnectionState
         """
         return connection.state
 
     @staticmethod
     def create_send_client(*, config, **kwargs):  # pylint:disable=unused-argument
         """
-        Creates and returns the uamqp SendClient.
-        :param ~azure.eventhub._configuration.Configuration config: The configuration.
+        Creates and returns the pyamqp SendClient.
+        :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
         :keyword str target: Required. The target.
-        :keyword JWTTokenAuth auth: Required.
+        :keyword ~pyamqp.authentication.JWTTokenAuth auth: Required.
         :keyword int idle_timeout: Required.
         :keyword network_trace: Required.
         :keyword retry_policy: Required.
@@ -262,6 +289,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :keyword str client_name: Required.
         :keyword dict link_properties: Required.
         :keyword properties: Required.
+
+        :return: The SendClient.
+        :rtype: ~pyamqp.SendClient
         """
 
         target = kwargs.pop("target")
@@ -277,6 +307,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             connection_verify=config.connection_verify,
             transport_type=config.transport_type,
             http_proxy=config.http_proxy,
+            socket_timeout=config.socket_timeout,
             **kwargs,
         )
 
@@ -286,8 +317,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         Handles sending of event data messages.
         :param ~azure.eventhub._producer.EventHubProducer producer: The producer with handler to send messages.
         :param int timeout_time: Timeout time.
-        :param last_exception: Exception to raise if message timed out. Only used by uamqp transport.
-        :param logger: Logger.
+        :param Exception last_exception: Exception to raise if message timed out. Only used by uamqp transport.
+        :param logging.Logger logger: Logger.
         """
         # pylint: disable=protected-access
         try:
@@ -301,15 +332,16 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             # May want to refactor in the future so that this isn't a list.
             producer._unsent_events = None
         except TimeoutError as exc:
-            raise OperationTimeoutError(message=str(exc), details=exc)
+            raise OperationTimeoutError(message=str(exc), details=exc) from exc
 
     @staticmethod
     def set_message_partition_key(message, partition_key, **kwargs):
         # type: (Message, Optional[Union[bytes, str]], Any) -> Message
         """Set the partition key as an annotation on a uamqp message.
-        :param Message message: The message to update.
+        :param ~pyamqp.message.Message message: The message to update.
         :param str partition_key: The partition key value.
-        :rtype: Message
+        :return: The message with the partition key annotation.
+        :rtype: ~pyamqp.message.Message
         """
         encoding = kwargs.pop("encoding", "utf-8")
         if partition_key:
@@ -333,9 +365,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ):  # pylint: disable=unused-argument
         """
         Add EventData to the data body of the BatchMessage.
-        :param event_data_batch: EventDataBatch to add data to.
-        :param outgoing_event_data: Transformed EventData for sending.
-        :param event_data: EventData to add to internal batch events. uamqp use only.
+        :param ~azure.eventhub.EventDataBatch event_data_batch: EventDataBatch to add data to.
+        :param ~azure.eventhub.EventData outgoing_event_data: EventData with outgoing Messages set for sending.
+        :param ~azure.eventhub.EventData event_data: EventData to add to internal batch events. uamqp use only.
         :rtype: None
         """
         event_data_batch._internal_events.append(  # pylint: disable=protected-access
@@ -354,6 +386,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param str source: Required.
         :param int offset: Required.
         :param bytes selector: Required.
+
+        :return: The created Source.
+        :rtype: ~pyamqp.endpoints.Source
         """
         source = Source(address=source, filters={})
         if offset is not None:
@@ -365,12 +400,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def create_receive_client(*, config, **kwargs):
         """
         Creates and returns the receive client.
-        :param ~azure.eventhub._configuration.Configuration config: The configuration.
+        :keyword ~azure.eventhub._configuration.Configuration config: The configuration.
 
         :keyword str source: Required. The source.
         :keyword str offset: Required.
         :keyword str offset_inclusive: Required.
-        :keyword JWTTokenAuth auth: Required.
+        :keyword ~pyamqp.authentication.JWTTokenAuth auth: Required.
         :keyword int idle_timeout: Required.
         :keyword network_trace: Required.
         :keyword retry_policy: Required.
@@ -383,6 +418,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :keyword streaming_receive: Required.
         :keyword message_received_callback: Required.
         :keyword timeout: Required.
+
+        :return: The receive client.
+        :rtype: ~pyamqp.ReceiveClient
         """
 
         source = kwargs.pop("source")
@@ -394,6 +432,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             transport_type=config.transport_type,
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
+            socket_timeout=config.socket_timeout,
             **kwargs,
         )
 
@@ -401,10 +440,10 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def open_receive_client(*, handler, client, auth):
         """
         Opens the receive client and returns ready status.
-        :param ReceiveClient handler: The receive client.
-        :param ~azure.eventhub.EventHubConsumerClient client: The consumer client.
-        :param auth: Auth.
-        :rtype: bool
+        :keyword ~pyamqp.ReceiveClient handler: The receive client.
+        :keyword ~azure.eventhub.EventHubConsumerClient client: The consumer client.
+        :keyword auth: Auth.
+        :paramtype auth: ~pyamqp.authentication.JWTTokenAuth
         """
         # pylint:disable=protected-access
         handler.open(
@@ -417,8 +456,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def check_link_stolen(consumer, exception):
         """
         Checks if link stolen and handles exception.
-        :param consumer: The EventHubConsumer.
-        :param exception: Exception to check.
+        :param ~azure.eventhub._consumer.EventHubConsumer consumer: The EventHubConsumer.
+        :param Exception exception: Exception to check.
         """
 
         if (
@@ -434,12 +473,15 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.
-        :param get_token: The callback function used for getting and refreshing
+        :param callable get_token: The callback function used for getting and refreshing
          tokens. It should return a valid jwt token each time it is called.
         :param bytes token_type: Token type.
         :param ~azure.eventhub._configuration.Configuration config: EH config.
 
         :keyword bool update_token: Whether to update token. If not updating token, then pass 300 to refresh_window.
+
+        :return: The JWTTokenAuth.
+        :rtype: ~pyamqp.authentication.JWTTokenAuth
         """
         # TODO: figure out why we're passing all these args to pyamqp JWTTokenAuth, which aren't being used
         update_token = kwargs.pop("update_token")  # pylint: disable=unused-variable
@@ -467,8 +509,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         Creates and returns the mgmt AMQP client.
         :param _Address address: Required. The Address.
-        :param JWTTokenAuth mgmt_auth: Auth for client.
+        :param ~pyamqp.authentication.JWTTokenAuth mgmt_auth: Auth for client.
         :param ~azure.eventhub._configuration.Configuration config: The configuration.
+
+        :return: The mgmt AMQP client.
+        :rtype: ~pyamqp.AMQPClient
         """
 
         return AMQPClient(
@@ -486,6 +531,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         Return updated auth token.
         :param mgmt_auth: Auth.
+        :type mgmt_auth: ~pyamqp.authentication.JWTTokenAuth
+        :return: The mgmt AMQP client.
+        :rtype: str
         """
         return mgmt_auth.get_token().token
 
@@ -493,12 +541,16 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def mgmt_client_request(mgmt_client, mgmt_msg, **kwargs):
         """
         Send mgmt request.
-        :param AMQPClient mgmt_client: Client to send request with.
+        :param ~pyamqp.AMQPClient mgmt_client: Client to send request with.
         :param str mgmt_msg: Message.
         :keyword bytes operation: Operation.
-        :keyword operation_type: Op type.
-        :keyword status_code_field: mgmt status code.
-        :keyword description_fields: mgmt status desc.
+        :keyword bytes operation_type: Op type.
+        :keyword bytes status_code_field: mgmt status code.
+        :keyword bytes description_fields: mgmt status desc.
+
+        :return: Message.
+        :rtype: ~pyamqp.message.Message
+
         """
         operation_type = kwargs.pop("operation_type")
         operation = kwargs.pop("operation")
@@ -513,9 +565,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def get_error(status_code, description):
         """
         Gets error and passes in error message, and, if applicable, condition.
-        :param error: The error to raise.
-        :param str message: Error message.
-        :param condition: Optional error condition. Will not be used by uamqp.
+        :param int status_code: The status code.
+        :param str description: Error description message.
+        :return: Error.
+        :rtype: ~pyamqp.error.AMQPException
+
         """
         if status_code in [401]:
             return errors.AuthenticationException(
@@ -537,8 +591,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def check_timeout_exception(base, exception):
         """
         Checks if timeout exception.
-        :param base: ClientBase.
-        :param exception: Exception to check.
+        :param ~azure.eventhub._client_base.ClientBase base: ClientBase.
+        :param Exception exception: Exception to check.
+        :return: Exception.
+        :rtype: Exception
+
         """
         if not base.running and isinstance(exception, TimeoutError):
             exception = errors.AuthenticationException(

@@ -23,36 +23,58 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+from __future__ import annotations
+from typing import TYPE_CHECKING, Union, Callable, TypeVar
+from typing_extensions import TypeGuard, ParamSpec
 
 if TYPE_CHECKING:
-    from typing import Any
-    from azure.core.rest import HttpResponse as RestHttpResponse
+    from azure.core.rest import HttpResponse, HttpRequest, AsyncHttpResponse
 
 
-def await_result(func, *args, **kwargs):
-    """If func returns an awaitable, raise that this runner can't handle it."""
+P = ParamSpec("P")
+T = TypeVar("T")
+
+
+def await_result(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:
+    """If func returns an awaitable, raise that this runner can't handle it.
+
+    :param func: The function to run.
+    :type func: callable
+    :param args: The positional arguments to pass to the function.
+    :type args: list
+    :rtype: any
+    :return: The result of the function
+    :raises: TypeError
+    """
     result = func(*args, **kwargs)
     if hasattr(result, "__await__"):
         raise TypeError("Policy {} returned awaitable object in non-async pipeline.".format(func))
     return result
 
 
-def is_rest(obj) -> bool:
+def is_rest(obj: object) -> TypeGuard[Union[HttpRequest, HttpResponse, AsyncHttpResponse]]:
     """Return whether a request or a response is a rest request / response.
 
     Checking whether the response has the object content can sometimes result
     in a ResponseNotRead error if you're checking the value on a response
     that has not been read in yet. To get around this, we also have added
     a check for is_stream_consumed, which is an exclusive property on our new responses.
+
+    :param obj: The object to check.
+    :type obj: any
+    :rtype: bool
+    :return: Whether the object is a rest request / response.
     """
     return hasattr(obj, "is_stream_consumed") or hasattr(obj, "content")
 
 
-def handle_non_stream_rest_response(response: "RestHttpResponse") -> None:
+def handle_non_stream_rest_response(response: HttpResponse) -> None:
     """Handle reading and closing of non stream rest responses.
     For our new rest responses, we have to call .read() and .close() for our non-stream
     responses. This way, we load in the body for users to access.
+
+    :param response: The response to read and close.
+    :type response: ~azure.core.rest.HttpResponse
     """
     try:
         response.read()

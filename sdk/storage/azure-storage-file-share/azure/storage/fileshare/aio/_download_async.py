@@ -24,7 +24,7 @@ async def process_content(data):
     try:
         return data.response.body()
     except Exception as error:
-        raise HttpResponseError(message="Download stream interrupted.", response=data.response, error=error)
+        raise HttpResponseError(message="Download stream interrupted.", response=data.response, error=error) from error
 
 
 class _AsyncChunkDownloader(_ChunkDownloader):
@@ -108,7 +108,6 @@ class _AsyncChunkIterator(object):
         return self
 
     async def __anext__(self):
-        """Iterate through responses."""
         if self._complete:
             raise StopAsyncIteration("Download complete")
         if not self._iter_downloader:
@@ -128,12 +127,12 @@ class _AsyncChunkIterator(object):
         try:
             chunk = next(self._iter_chunks)
             self._current_content += await self._iter_downloader.yield_chunk(chunk)
-        except StopIteration:
+        except StopIteration as exc:
             self._complete = True
             # it's likely that there some data left in self._current_content
             if self._current_content:
                 return self._current_content
-            raise StopAsyncIteration("Download complete")
+            raise StopAsyncIteration("Download complete") from exc
 
         return self._get_chunk_data()
 
@@ -224,11 +223,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self.properties.size = self.size
 
         # Overwrite the content range to the user requested range
-        self.properties.content_range = 'bytes {0}-{1}/{2}'.format(
-            self._start_range,
-            self._end_range,
-            self._file_size
-        )
+        self.properties.content_range = f'bytes {self._start_range}-{self._end_range}/{self._file_size}'
 
         # Overwrite the content MD5 as it is the MD5 for the last range instead
         # of the stored MD5
@@ -286,8 +281,8 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                         data_stream_total=0,
                         download_stream_current=0,
                         **self._request_options)
-                except HttpResponseError as error:
-                    process_storage_error(error)
+                except HttpResponseError as e:
+                    process_storage_error(e)
 
                 # Set the download size to empty
                 self.size = 0
@@ -304,8 +299,10 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
     def chunks(self):
         # type: () -> AsyncIterator[bytes]
-        """Iterate over chunks in the download stream.
+        """
+        Iterate over chunks in the download stream.
 
+        :return: An iterator of the chunks in the download stream.
         :rtype: AsyncIterator[bytes]
         """
         if self.size == 0 or self._download_complete:
@@ -340,6 +337,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         """Download the contents of this file.
 
         This operation is blocking until all data is downloaded.
+        :return: The entire blob content as bytes
         :rtype: bytes
         """
         stream = BytesIO()
@@ -356,8 +354,9 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         This method is deprecated, use func:`readall` instead.
 
-        :keyword int max_concurrency:
+        :param int max_concurrency:
             The number of parallel connections with which to download.
+        :return: The contents of the file as bytes.
         :rtype: bytes
         """
         warnings.warn(
@@ -374,10 +373,11 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         This method is deprecated, use func:`readall` instead.
 
-        :keyword int max_concurrency:
+        :param int max_concurrency:
             The number of parallel connections with which to download.
         :param str encoding:
             Test encoding to decode the downloaded bytes. Default is UTF-8.
+        :return: The contents of the file as a str.
         :rtype: str
         """
         warnings.warn(
@@ -391,7 +391,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
     async def readinto(self, stream):
         """Download the contents of this file to a stream.
 
-        :param stream:
+        :param IO stream:
             The stream to download to. This can be an open file-handle,
             or any writable stream. The stream must be seekable if the download
             uses more than one parallel connection.
@@ -407,8 +407,8 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
             try:
                 stream.seek(stream.tell())
-            except (NotImplementedError, AttributeError):
-                raise ValueError(error_message)
+            except (NotImplementedError, AttributeError) as exc:
+                raise ValueError(error_message) from exc
 
         # Write the content to the user stream
         stream.write(self._current_content)
@@ -464,10 +464,12 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         This method is deprecated, use func:`readinto` instead.
 
-        :param stream:
+        :param IO stream:
             The stream to download to. This can be an open file-handle,
             or any writable stream. The stream must be seekable if the download
             uses more than one parallel connection.
+        :param int max_concurrency:
+            The number of parallel connections with which to download.
         :returns: The properties of the downloaded file.
         :rtype: Any
         """

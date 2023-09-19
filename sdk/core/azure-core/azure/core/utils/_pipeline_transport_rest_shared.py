@@ -22,6 +22,7 @@ from typing import (
     Type,
     Iterator,
     List,
+    Sequence,
 )
 from http.client import HTTPConnection
 from urllib.parse import urlparse
@@ -42,7 +43,7 @@ if TYPE_CHECKING:
 
     HTTPRequestType = Union[RestHttpRequestPy3, PipelineTransportHttpRequest]
     from ..pipeline.policies import SansIOHTTPPolicy
-    from azure.core.pipeline.transport import (
+    from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import
         HttpResponse as PipelineTransportHttpResponse,
         AioHttpTransportResponse as PipelineTransportAioHttpTransportResponse,
     )
@@ -57,6 +58,8 @@ class BytesIOSocket:
     """Mocking the "makefile" of socket for HTTPResponse.
     This can be used to create a http.client.HTTPResponse object
     based on bytes and not a real socket.
+
+    :param bytes bytes_data: The bytes to use to mock the socket.
     """
 
     def __init__(self, bytes_data):
@@ -75,6 +78,7 @@ def _format_parameters_helper(http_request, params):
 
     :param http_request: The http request whose parameters
      we are trying to format
+    :type http_request: any
     :param dict params: A dictionary of parameters.
     """
     query = urlparse(http_request.url).query
@@ -97,7 +101,7 @@ def _format_parameters_helper(http_request, params):
     http_request.url = http_request.url + query
 
 
-def _pad_attr_name(attr: str, backcompat_attrs: List[str]) -> str:
+def _pad_attr_name(attr: str, backcompat_attrs: Sequence[str]) -> str:
     """Pad hidden attributes so users can access them.
 
     Currently, for our backcompat attributes, we define them
@@ -106,6 +110,11 @@ def _pad_attr_name(attr: str, backcompat_attrs: List[str]) -> str:
     for backcompat purposes. This function is called so if
     users access publicly call a private backcompat attribute,
     we can return them the private variable in getattr
+
+    :param str attr: The attribute name
+    :param list[str] backcompat_attrs: The list of backcompat attributes
+    :rtype: str
+    :return: The padded attribute name
     """
     return "_{}".format(attr) if attr in backcompat_attrs else attr
 
@@ -121,6 +130,7 @@ def _prepare_multipart_body_helper(http_request: "HTTPRequestType", content_inde
     Does nothing if "set_multipart_mixed" was never called.
     :param http_request: The http request whose multipart body we are trying
      to prepare
+    :type http_request: any
     :param int content_index: The current index of parts within the batch message.
     :returns: The updated index after all parts in this request have been added.
     :rtype: int
@@ -128,7 +138,7 @@ def _prepare_multipart_body_helper(http_request: "HTTPRequestType", content_inde
     if not http_request.multipart_mixed_info:
         return 0
 
-    requests: List["HTTPRequestType"] = http_request.multipart_mixed_info[0]
+    requests: Sequence["HTTPRequestType"] = http_request.multipart_mixed_info[0]
     boundary: Optional[str] = http_request.multipart_mixed_info[2]
 
     # Update the main request with the body
@@ -155,10 +165,15 @@ def _prepare_multipart_body_helper(http_request: "HTTPRequestType", content_inde
         main_message.attach(part_message)
 
     full_message = main_message.as_bytes(policy=HTTP)
+    # From "as_bytes" doc:
+    #  Flattening the message may trigger changes to the EmailMessage if defaults need to be filled in to complete
+    #  the transformation to a string (for example, MIME boundaries may be generated or modified).
+    # After this call, we know `get_boundary` will return a valid boundary and not None. Mypy doesn't know that.
+    final_boundary: str = cast(str, main_message.get_boundary())
     eol = b"\r\n"
     _, _, body = full_message.split(eol, 2)
     http_request.set_bytes_body(body)
-    http_request.headers["Content-Type"] = "multipart/mixed; boundary=" + main_message.get_boundary()
+    http_request.headers["Content-Type"] = "multipart/mixed; boundary=" + final_boundary
     return content_index
 
 
@@ -186,7 +201,9 @@ def _serialize_request(http_request: "HTTPRequestType") -> bytes:
 
     :param http_request: The http request which we are trying
      to serialize.
+    :type http_request: any
     :rtype: bytes
+    :return: The serialized request
     """
     if isinstance(http_request.body, dict):
         raise TypeError("Cannot serialize an HTTPRequest with dict body.")
@@ -204,21 +221,41 @@ def _decode_parts_helper(
     response: "PipelineTransportHttpResponseBase",
     message: Message,
     http_response_type: Type["PipelineTransportHttpResponseBase"],
-    requests: List["PipelineTransportHttpRequest"],
+    requests: Sequence["PipelineTransportHttpRequest"],
     deserialize_response: Callable,
 ) -> List["PipelineTransportHttpResponse"]:
     """Helper for _decode_parts.
 
     Rebuild an HTTP response from pure string.
+
+    :param response: The response to decode
+    :type response: ~azure.core.pipeline.transport.HttpResponse
+    :param message: The message to decode
+    :type message: ~email.message.Message
+    :param http_response_type: The type of response to return
+    :type http_response_type: ~azure.core.pipeline.transport.HttpResponse
+    :param requests: The requests that were batched together
+    :type requests: list[~azure.core.pipeline.transport.HttpRequest]
+    :param deserialize_response: The function to deserialize the response
+    :type deserialize_response: callable
+    :rtype: list[~azure.core.pipeline.transport.HttpResponse]
+    :return: The list of responses
     """
     responses = []
     for index, raw_response in enumerate(message.get_payload()):
         content_type = raw_response.get_content_type()
         if content_type == "application/http":
+            try:
+                matching_request = requests[index]
+            except IndexError:
+                # If we have no matching request, this could mean that we had an empty batch.
+                # The request object is only needed to get the HTTP METHOD and to store in the response object,
+                # so let's just use the parent request so allow the rest of the deserialization to continue.
+                matching_request = response.request
             responses.append(
                 deserialize_response(
                     raw_response.get_payload(decode=True),
-                    requests[index],
+                    matching_request,
                     http_response_type=http_response_type,
                 )
             )
@@ -234,13 +271,20 @@ def _decode_parts_helper(
     return responses
 
 
-def _get_raw_parts_helper(response, http_response_type):
+def _get_raw_parts_helper(response, http_response_type: Type):
     """Helper for _get_raw_parts
 
     Assuming this body is multipart, return the iterator or parts.
 
     If parts are application/http use http_response_type or HttpClientTransportResponse
     as envelope.
+
+    :param response: The response to decode
+    :type response: ~azure.core.pipeline.transport.HttpResponse
+    :param http_response_type: The type of response to return
+    :type http_response_type: any
+    :rtype: iterator[~azure.core.pipeline.transport.HttpResponse]
+    :return: The parts of the response
     """
     body_as_bytes = response.body()
     # In order to use email.message parser, I need full HTTP bytes. Faking something to make the parser happy
@@ -255,7 +299,10 @@ def _parts_helper(
 ) -> Iterator["PipelineTransportHttpResponse"]:
     """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
 
+    :param response: The response to decode
+    :type response: ~azure.core.pipeline.transport.HttpResponse
     :rtype: iterator[HttpResponse]
+    :return: The parts of the response
     :raises ValueError: If the content is not multipart/mixed
     """
     if not response.content_type or not response.content_type.startswith("multipart/mixed"):
@@ -263,7 +310,7 @@ def _parts_helper(
 
     responses = response._get_raw_parts()  # pylint: disable=protected-access
     if response.request.multipart_mixed_info:
-        policies: List["SansIOHTTPPolicy"] = response.request.multipart_mixed_info[1]
+        policies: Sequence["SansIOHTTPPolicy"] = response.request.multipart_mixed_info[1]
 
         # Apply on_response concurrently to all requests
         import concurrent.futures
@@ -294,6 +341,8 @@ def _format_data_helper(data: Union[str, IO]) -> Union[Tuple[None, str], Tuple[O
 
     :param data: The request field data.
     :type data: str or file-like object.
+    :rtype: tuple[str, IO, str] or tuple[None, str]
+    :return: A tuple of (data name, data IO, "application/octet-stream") or (None, data str)
     """
     if hasattr(data, "read"):
         data = cast(IO, data)
@@ -317,7 +366,10 @@ def _aiohttp_body_helper(
     need to share this code across old and new aiohttp transport responses
     for backcompat.
 
+    :param response: The response to decode
+    :type response: ~azure.core.pipeline.transport.AioHttpTransportResponse
     :rtype: bytes
+    :return: The response's bytes
     """
     if response._content is None:
         raise ValueError("Body is not available. Call async method load_body, or do your call with stream=False.")

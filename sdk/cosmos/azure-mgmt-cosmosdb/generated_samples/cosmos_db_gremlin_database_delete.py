@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.gremlin_resources.begin_delete_gremlin_database(
+    client.gremlin_resources.begin_delete_gremlin_database(
         resource_group_name="rg1",
         account_name="ddb1",
         database_name="databaseName",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-04-15/examples/CosmosDBGremlinDatabaseDelete.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-03-15-preview/examples/CosmosDBGremlinDatabaseDelete.json
 if __name__ == "__main__":
     main()
