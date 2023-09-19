@@ -1,6 +1,6 @@
 # requirements leveraged by ci tools
 setuptools==67.6.0; python_version >= '3.5'
-virtualenv==20.23.0
+virtualenv==20.24.1
 wheel==0.37.0
 Jinja2==2.11.2
 packaging==23.1
