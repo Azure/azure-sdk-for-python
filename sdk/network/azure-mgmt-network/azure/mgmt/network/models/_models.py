@@ -5924,6 +5924,10 @@ class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
      network resource.
     :vartype application_gateway_ip_configurations:
      list[~azure.mgmt.network.models.ApplicationGatewayIPConfiguration]
+    :ivar default_outbound_access: Set this property to false to disable default outbound
+     connectivity for all VMs in the subnet. This property can only be set at the time of subnet
+     creation and cannot be updated for an existing subnet.
+    :vartype default_outbound_access: bool
     """
 
     _validation = {
@@ -5964,9 +5968,10 @@ class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
             "key": "properties.applicationGatewayIPConfigurations",
             "type": "[ApplicationGatewayIPConfiguration]",
         },
+        "default_outbound_access": {"key": "properties.defaultOutboundAccess", "type": "bool"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
@@ -5988,6 +5993,7 @@ class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
             str, "_models.VirtualNetworkPrivateLinkServiceNetworkPolicies"
         ] = "Enabled",
         application_gateway_ip_configurations: Optional[List["_models.ApplicationGatewayIPConfiguration"]] = None,
+        default_outbound_access: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6030,6 +6036,10 @@ class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
          virtual network resource.
         :paramtype application_gateway_ip_configurations:
          list[~azure.mgmt.network.models.ApplicationGatewayIPConfiguration]
+        :keyword default_outbound_access: Set this property to false to disable default outbound
+         connectivity for all VMs in the subnet. This property can only be set at the time of subnet
+         creation and cannot be updated for an existing subnet.
+        :paramtype default_outbound_access: bool
         """
         super().__init__(id=id, **kwargs)
         self.name = name
@@ -6054,6 +6064,7 @@ class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
         self.private_endpoint_network_policies = private_endpoint_network_policies
         self.private_link_service_network_policies = private_link_service_network_policies
         self.application_gateway_ip_configurations = application_gateway_ip_configurations
+        self.default_outbound_access = default_outbound_access
 
 class SubnetListResult(_serialization.Model):
     """Response for ListSubnets API service callRetrieves all subnet that belongs to a virtual
@@ -6384,6 +6395,9 @@ class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attr
     :vartype extended_location: ~azure.mgmt.network.models.ExtendedLocation
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
+    :ivar auto_scale_configuration: Autoscale configuration for virutal network gateway.
+    :vartype auto_scale_configuration:
+     ~azure.mgmt.network.models.VirtualNetworkGatewayAutoScaleConfiguration
     :ivar ip_configurations: IP configurations for virtual network gateway.
     :vartype ip_configurations:
      list[~azure.mgmt.network.models.VirtualNetworkGatewayIPConfiguration]
@@ -6472,6 +6486,10 @@ class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attr
         "tags": {"key": "tags", "type": "{str}"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
         "etag": {"key": "etag", "type": "str"},
+        "auto_scale_configuration": {
+            "key": "properties.autoScaleConfiguration",
+            "type": "VirtualNetworkGatewayAutoScaleConfiguration",
+        },
         "ip_configurations": {"key": "properties.ipConfigurations", "type": "[VirtualNetworkGatewayIPConfiguration]"},
         "gateway_type": {"key": "properties.gatewayType", "type": "str"},
         "vpn_type": {"key": "properties.vpnType", "type": "str"},
@@ -6508,6 +6526,7 @@ class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attr
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
+        auto_scale_configuration: Optional["_models.VirtualNetworkGatewayAutoScaleConfiguration"] = None,
         ip_configurations: Optional[List["_models.VirtualNetworkGatewayIPConfiguration"]] = None,
         gateway_type: Optional[Union[str, "_models.VirtualNetworkGatewayType"]] = None,
         vpn_type: Optional[Union[str, "_models.VpnType"]] = None,
@@ -6540,6 +6559,9 @@ class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attr
         :paramtype tags: dict[str, str]
         :keyword extended_location: The extended location of type local virtual network gateway.
         :paramtype extended_location: ~azure.mgmt.network.models.ExtendedLocation
+        :keyword auto_scale_configuration: Autoscale configuration for virutal network gateway.
+        :paramtype auto_scale_configuration:
+         ~azure.mgmt.network.models.VirtualNetworkGatewayAutoScaleConfiguration
         :keyword ip_configurations: IP configurations for virtual network gateway.
         :paramtype ip_configurations:
          list[~azure.mgmt.network.models.VirtualNetworkGatewayIPConfiguration]
@@ -6607,6 +6629,7 @@ class VirtualNetworkGateway(Resource):  # pylint: disable=too-many-instance-attr
         super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.extended_location = extended_location
         self.etag = None
+        self.auto_scale_configuration = auto_scale_configuration
         self.ip_configurations = ip_configurations
         self.gateway_type = gateway_type
         self.vpn_type = vpn_type
@@ -22913,6 +22936,12 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
      list[~azure.mgmt.network.models.BastionHostIPConfiguration]
     :ivar dns_name: FQDN for the endpoint on which bastion host is accessible.
     :vartype dns_name: str
+    :ivar virtual_network: Reference to an existing virtual network required for Developer Bastion
+     Host only.
+    :vartype virtual_network: ~azure.mgmt.network.models.SubResource
+    :ivar network_acls:
+    :vartype network_acls:
+     ~azure.mgmt.network.models.BastionHostPropertiesFormatNetworkAcls
     :ivar provisioning_state: The provisioning state of the bastion host resource. Known values
      are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
@@ -22950,6 +22979,8 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
         "sku": {"key": "sku", "type": "Sku"},
         "ip_configurations": {"key": "properties.ipConfigurations", "type": "[BastionHostIPConfiguration]"},
         "dns_name": {"key": "properties.dnsName", "type": "str"},
+        "virtual_network": {"key": "properties.virtualNetwork", "type": "SubResource"},
+        "network_acls": {"key": "properties.networkAcls", "type": "BastionHostPropertiesFormatNetworkAcls"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "scale_units": {"key": "properties.scaleUnits", "type": "int"},
         "disable_copy_paste": {"key": "properties.disableCopyPaste", "type": "bool"},
@@ -22969,6 +23000,8 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
         sku: Optional["_models.Sku"] = None,
         ip_configurations: Optional[List["_models.BastionHostIPConfiguration"]] = None,
         dns_name: Optional[str] = None,
+        virtual_network: Optional["_models.SubResource"] = None,
+        network_acls: Optional["_models.BastionHostPropertiesFormatNetworkAcls"] = None,
         scale_units: Optional[int] = None,
         disable_copy_paste: bool = False,
         enable_file_copy: bool = False,
@@ -22992,6 +23025,12 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
          list[~azure.mgmt.network.models.BastionHostIPConfiguration]
         :keyword dns_name: FQDN for the endpoint on which bastion host is accessible.
         :paramtype dns_name: str
+        :keyword virtual_network: Reference to an existing virtual network required for Developer
+         Bastion Host only.
+        :paramtype virtual_network: ~azure.mgmt.network.models.SubResource
+        :keyword network_acls:
+        :paramtype network_acls:
+         ~azure.mgmt.network.models.BastionHostPropertiesFormatNetworkAcls
         :keyword scale_units: The scale units for the Bastion Host resource.
         :paramtype scale_units: int
         :keyword disable_copy_paste: Enable/Disable Copy/Paste feature of the Bastion Host resource.
@@ -23012,6 +23051,8 @@ class BastionHost(Resource):  # pylint: disable=too-many-instance-attributes
         self.sku = sku
         self.ip_configurations = ip_configurations
         self.dns_name = dns_name
+        self.virtual_network = virtual_network
+        self.network_acls = network_acls
         self.provisioning_state = None
         self.scale_units = scale_units
         self.disable_copy_paste = disable_copy_paste
@@ -24282,6 +24323,9 @@ class FirewallPolicy(Resource):  # pylint: disable=too-many-instance-attributes
     :vartype etag: str
     :ivar identity: The identity of the firewall policy.
     :vartype identity: ~azure.mgmt.network.models.ManagedServiceIdentity
+    :ivar size: A read-only string that represents the size of the FirewallPolicyPropertiesFormat
+     in MB. (ex 0.5MB).
+    :vartype size: str
     :ivar rule_collection_groups: List of references to FirewallPolicyRuleCollectionGroups.
     :vartype rule_collection_groups: list[~azure.mgmt.network.models.SubResource]
     :ivar provisioning_state: The provisioning state of the firewall policy resource. Known values
@@ -24325,6 +24369,7 @@ class FirewallPolicy(Resource):  # pylint: disable=too-many-instance-attributes
         "name": {"readonly": True},
         "type": {"readonly": True},
         "etag": {"readonly": True},
+        "size": {"readonly": True},
         "rule_collection_groups": {"readonly": True},
         "provisioning_state": {"readonly": True},
         "firewalls": {"readonly": True},
@@ -24339,6 +24384,7 @@ class FirewallPolicy(Resource):  # pylint: disable=too-many-instance-attributes
         "tags": {"key": "tags", "type": "{str}"},
         "etag": {"key": "etag", "type": "str"},
         "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "size": {"key": "properties.size", "type": "str"},
         "rule_collection_groups": {"key": "properties.ruleCollectionGroups", "type": "[SubResource]"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "base_policy": {"key": "properties.basePolicy", "type": "SubResource"},
@@ -24419,6 +24465,7 @@ class FirewallPolicy(Resource):  # pylint: disable=too-many-instance-attributes
         super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.etag = None
         self.identity = identity
+        self.size = None
         self.rule_collection_groups = None
         self.provisioning_state = None
         self.base_policy = base_policy
@@ -30337,6 +30384,9 @@ class FirewallPolicyRuleCollectionGroup(SubResource):
     :vartype etag: str
     :ivar type: Rule Group type.
     :vartype type: str
+    :ivar size: A read-only string that represents the size of the
+     FirewallPolicyRuleCollectionGroupProperties in MB. (ex 1.2MB).
+    :vartype size: str
     :ivar priority: Priority of the Firewall Policy Rule Collection Group resource.
     :vartype priority: int
     :ivar rule_collections: Group of Firewall Policy rule collections.
@@ -30350,6 +30400,7 @@ class FirewallPolicyRuleCollectionGroup(SubResource):
     _validation = {
         "etag": {"readonly": True},
         "type": {"readonly": True},
+        "size": {"readonly": True},
         "priority": {"maximum": 65000, "minimum": 100},
         "provisioning_state": {"readonly": True},
     }
@@ -30359,6 +30410,7 @@ class FirewallPolicyRuleCollectionGroup(SubResource):
         "name": {"key": "name", "type": "str"},
         "etag": {"key": "etag", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "size": {"key": "properties.size", "type": "str"},
         "priority": {"key": "properties.priority", "type": "int"},
         "rule_collections": {"key": "properties.ruleCollections", "type": "[FirewallPolicyRuleCollection]"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
@@ -30389,6 +30441,7 @@ class FirewallPolicyRuleCollectionGroup(SubResource):
         self.name = name
         self.etag = None
         self.type = None
+        self.size = None
         self.priority = priority
         self.rule_collections = rule_collections
         self.provisioning_state = None
@@ -41721,4 +41774,96 @@ class MigratedPools(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.migrated_pools = migrated_pools
+
+class BastionHostPropertiesFormatNetworkAcls(_serialization.Model):
+    """BastionHostPropertiesFormatNetworkAcls.
+
+    :ivar ip_rules: Sets the IP ACL rules for Developer Bastion Host.
+    :vartype ip_rules: list[~azure.mgmt.network.models.IPRule]
+    """
+
+    _attribute_map = {
+        "ip_rules": {"key": "ipRules", "type": "[IPRule]"},
+    }
+
+    def __init__(self, *, ip_rules: Optional[List["_models.IPRule"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword ip_rules: Sets the IP ACL rules for Developer Bastion Host.
+        :paramtype ip_rules: list[~azure.mgmt.network.models.IPRule]
+        """
+        super().__init__(**kwargs)
+        self.ip_rules = ip_rules
+
+class IPRule(_serialization.Model):
+    """IPRule.
+
+    :ivar address_prefix: Specifies the IP or IP range in CIDR format. Only IPV4 address is
+     allowed.
+    :vartype address_prefix: str
+    """
+
+    _attribute_map = {
+        "address_prefix": {"key": "addressPrefix", "type": "str"},
+    }
+
+    def __init__(self, *, address_prefix: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword address_prefix: Specifies the IP or IP range in CIDR format. Only IPV4 address is
+         allowed.
+        :paramtype address_prefix: str
+        """
+        super().__init__(**kwargs)
+        self.address_prefix = address_prefix
+
+class VirtualNetworkGatewayAutoScaleBounds(_serialization.Model):
+    """VirtualNetworkGatewayAutoScaleBounds.
+
+    :ivar min: Minimum scale Units for Autoscale configuration.
+    :vartype min: int
+    :ivar max: Maximum Scale Units for Autoscale configuration.
+    :vartype max: int
+    """
+
+    _attribute_map = {
+        "min": {"key": "min", "type": "int"},
+        "max": {"key": "max", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        min: Optional[int] = None,  # pylint: disable=redefined-builtin
+        max: Optional[int] = None,  # pylint: disable=redefined-builtin
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword min: Minimum scale Units for Autoscale configuration.
+        :paramtype min: int
+        :keyword max: Maximum Scale Units for Autoscale configuration.
+        :paramtype max: int
+        """
+        super().__init__(**kwargs)
+        self.min = min
+        self.max = max
+
+class VirtualNetworkGatewayAutoScaleConfiguration(_serialization.Model):
+    """Virtual Network Gateway Autoscale Configuration details.
+
+    :ivar bounds: The bounds of the autoscale configuration.
+    :vartype bounds: ~azure.mgmt.network.models.VirtualNetworkGatewayAutoScaleBounds
+    """
+
+    _attribute_map = {
+        "bounds": {"key": "bounds", "type": "VirtualNetworkGatewayAutoScaleBounds"},
+    }
+
+    def __init__(
+        self, *, bounds: Optional["_models.VirtualNetworkGatewayAutoScaleBounds"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword bounds: The bounds of the autoscale configuration.
+        :paramtype bounds: ~azure.mgmt.network.models.VirtualNetworkGatewayAutoScaleBounds
+        """
+        super().__init__(**kwargs)
+        self.bounds = bounds
 

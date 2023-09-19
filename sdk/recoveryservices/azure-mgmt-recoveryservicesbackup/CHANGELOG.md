@@ -1,5 +1,30 @@
 # Release History
 
+## 7.0.0 (2023-09-18)
+
+### Features Added
+
+  - Added operation RecoveryPointsCrrOperations.get
+  - Model AzureVmWorkloadProtectableItem has a new parameter is_protectable
+  - Model AzureVmWorkloadSAPAseSystemProtectableItem has a new parameter is_protectable
+  - Model AzureVmWorkloadSAPHanaDBInstance has a new parameter is_protectable
+  - Model AzureVmWorkloadSAPHanaDBInstanceProtectedItem has a new parameter nodes_list
+  - Model AzureVmWorkloadSAPHanaDBInstanceProtectedItem has a new parameter soft_delete_retention_period_in_days
+  - Model AzureVmWorkloadSAPHanaDatabaseProtectableItem has a new parameter is_protectable
+  - Model AzureVmWorkloadSAPHanaHSRProtectableItem has a new parameter is_protectable
+  - Model AzureVmWorkloadSAPHanaSystemProtectableItem has a new parameter is_protectable
+  - Model AzureVmWorkloadSQLAvailabilityGroupProtectableItem has a new parameter is_protectable
+  - Model AzureVmWorkloadSQLAvailabilityGroupProtectableItem has a new parameter nodes_list
+  - Model AzureVmWorkloadSQLDatabaseProtectableItem has a new parameter is_protectable
+  - Model AzureVmWorkloadSQLInstanceProtectableItem has a new parameter is_protectable
+  - Model BackupResourceVaultConfig has a new parameter soft_delete_retention_period_in_days
+  - Model DistributedNodesInfo has a new parameter source_resource_id
+  - Model InquiryValidation has a new parameter protectable_item_count
+
+### Breaking Changes
+
+  - Model AzureVmWorkloadSAPHanaDBInstanceProtectedItem no longer has parameter soft_delete_retention_period
+
 ## 6.0.0 (2023-05-04)
 
 ### Features Added
