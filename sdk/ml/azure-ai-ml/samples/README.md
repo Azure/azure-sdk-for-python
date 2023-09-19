@@ -25,13 +25,9 @@ Their main purpose is to be used in inline examples for class and methods throug
             in directory "src".
 ```
 
-If adding or updating a public class or method, please add or update the example. Double-check that you have the correct path for `literalinclude::`. Due to how Sphinx builds documentation, the path needs to be relative from the file's module to the samples folder in the Sphinx build, *not* relative from the file you are adding the admonition to.
+If adding or updating a public class or method, please add or update the example as well. Double-check that you have the correct path for `literalinclude::`. In the Sphinx build, each module is only one directory level away from azure-ai-ml, so the `literalinclude` path should always be `../samples/<sample file name>`.
 
-In the Sphinx build, each module is only one directory level away from azure-ai-ml.
-
-![Sphinx Documentation Structure](sphinx_docs_structure.PNG)
-
-As an example, MLClient is in the azure-ai-ml root module so the path to the samples folder has to be `../samples/ml_samples_authentication.py` since `doc/azure.ai.ml.rst` is one directory level down from `samples`. The Environment class, on the other hand, is in the entities module, so the path to the samples folder in its admonitions should be `../../samples` since entities is in `doc/azure-ai-ml/azure.ai.ml.entities.rst` which is two directory levels down from `samples`. Each samples file is run during the azure-sdk-for-python Build CI to ensure that examples are up-to-date and functioning.
+Each samples file is run during the azure-sdk-for-python Build CI to ensure that examples are up-to-date and functioning.
 
 
 ## Prerequisites
