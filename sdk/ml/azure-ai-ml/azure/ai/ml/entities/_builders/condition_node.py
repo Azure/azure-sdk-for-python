@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict, List
+from typing import Any, Dict, List
 
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._utils.utils import is_data_binding_expression
@@ -28,7 +28,7 @@ class ConditionNode(ControlFlowNode):
     """
 
     def __init__(
-        self, condition, *, true_block=None, false_block=None, **kwargs
+        self, condition: Any, *, true_block: List, false_block: List, **kwargs: Any
     ) -> None:  # pylint: disable=unused-argument
         kwargs.pop("type", None)
         super(ConditionNode, self).__init__(type=ControlFlowType.IF_ELSE, **kwargs)
@@ -41,7 +41,7 @@ class ConditionNode(ControlFlowNode):
         self._false_block = false_block
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> PathAwareSchema:  # pylint: disable=unused-argument
+    def _create_schema_for_validation(cls, context: Any) -> PathAwareSchema:  # pylint: disable=unused-argument
         from azure.ai.ml._schema.pipeline.condition_node import ConditionNodeSchema
 
         return ConditionNodeSchema(context=context)
