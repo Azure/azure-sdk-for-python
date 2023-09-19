@@ -115,6 +115,8 @@ class EventGridEvent(object):
             kwargs["event_time"] = event.event_time
             kwargs["data"] = event.data
             kwargs["data_version"] = event.data_version
+            kwargs["topic"] = event.topic
+            kwargs["metadata_version"] = event.metadata_version
             return InternalEventGridEvent(**kwargs)
         except AttributeError:
             return InternalEventGridEvent.from_dict(event)
