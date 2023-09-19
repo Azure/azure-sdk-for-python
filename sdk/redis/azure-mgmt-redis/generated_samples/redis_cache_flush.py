@@ -14,7 +14,7 @@ from azure.mgmt.redis import RedisManagementClient
     pip install azure-identity
     pip install azure-mgmt-redis
 # USAGE
-    python redis_cache_patch_schedules_delete.py
+    python redis_cache_flush.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,16 +26,16 @@ from azure.mgmt.redis import RedisManagementClient
 def main():
     client = RedisManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="subid",
+        subscription_id="subcription-id",
     )
 
-    client.patch_schedules.delete(
-        resource_group_name="rg1",
-        name="cache1",
-        default="default",
-    )
+    response = client.redis.begin_flush_cache(
+        resource_group_name="resource-group-name",
+        cache_name="cache-name",
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/redis/resource-manager/Microsoft.Cache/stable/2023-08-01/examples/RedisCachePatchSchedulesDelete.json
+# x-ms-original-file: specification/redis/resource-manager/Microsoft.Cache/stable/2023-08-01/examples/RedisCacheFlush.json
 if __name__ == "__main__":
     main()
