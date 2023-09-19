@@ -76,11 +76,11 @@ class EventGridEvent(object):
         self.data_version = self._internal_event.data_version
         self.topic = self._internal_event.topic
         self.metadata_version = self._internal_event.metadata_version
-        
+
 
     def __setattr__(self, name, value):
         return setattr(InternalEventGridEvent, name, value)
-    
+
     def __getattr__(self, name):
         return getattr(InternalEventGridEvent, name)
 

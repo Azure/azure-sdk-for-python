@@ -13,15 +13,13 @@ try:
 except ImportError:
     from urllib2 import quote  # type: ignore
 
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.rest import HttpRequest
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from azure.core.messaging import CloudEvent
 from ._generated._serialization import Serializer
 from ._signature_credential_policy import EventGridSasCredentialPolicy
 from . import _constants as constants
-
-from azure.core.rest import HttpRequest
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -122,7 +120,7 @@ def _eventgrid_data_typecheck(event):
             "https://docs.microsoft.com/en-us/azure/event-grid/event-schema"
         )
 
-def _check_cloud_event(cloud_event, **kwargs):
+def _check_cloud_event(cloud_event):
     # Check if it is a CloudEvent or a dict
     return CloudEvent(
         id=cloud_event.id,
@@ -171,7 +169,7 @@ def _build_request(endpoint, content_type, events, *, channel_name=None):
     query_parameters['api-version'] = serialize.query("api_version", "2018-01-01", 'str')
 
     if isinstance(events[0], CloudEvent):
-        data = _to_json_http_request(events, query_parameters=query_parameters, channel_name=None)
+        data = _to_json_http_request(events)
         header_parameters['Content-Length'] = str(len(data))
     else:
         body = serialize.body(events, '[object]')
@@ -190,7 +188,7 @@ def _build_request(endpoint, content_type, events, *, channel_name=None):
     request.format_parameters(query_parameters)
     return request
 
-def _to_json_http_request(events, **kwargs):
+def _to_json_http_request(events):
     # serialize the events
     data = {}
     list_data = []
@@ -214,5 +212,5 @@ def _to_json_http_request(events, **kwargs):
         if event.extensions:
             data["additional_properties"] = _SERIALIZER.body(event.extensions, "object")
         list_data.append(data)
-    
+
     return json.dumps(list_data)
