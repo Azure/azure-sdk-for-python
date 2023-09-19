@@ -14,7 +14,7 @@ from azure.mgmt.signalr import SignalRManagementClient
     pip install azure-identity
     pip install azure-mgmt-signalr
 # USAGE
-    python signal_r_get.py
+    python signal_rreplicas_create_or_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,20 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.signal_r.get(
+    response = client.signal_rreplicas.begin_create_or_update(
         resource_group_name="myResourceGroup",
         resource_name="mySignalRService",
-    )
+        replica_name="mySignalRService-eastus",
+        parameters={
+            "location": "eastus",
+            "properties": {},
+            "sku": {"capacity": 1, "name": "Premium_P1", "tier": "Premium"},
+            "tags": {"key1": "value1"},
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/signalr/resource-manager/Microsoft.SignalRService/preview/2023-06-01-preview/examples/SignalR_Get.json
+# x-ms-original-file: specification/signalr/resource-manager/Microsoft.SignalRService/preview/2023-06-01-preview/examples/SignalRReplicas_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
