@@ -44,7 +44,6 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpRequest
     from azure.core.credentials import TokenCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.configuration import Configuration
 _LOGGER = logging.getLogger(__name__)
 
 

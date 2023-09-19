@@ -433,11 +433,11 @@ def parse_connection_str(
 
 
 def create_configuration(**kwargs):
-    # type: (**Any) -> Configuration
+    # type: (**Any) -> StorageConfiguration
      # Backwards compatibility if someone is not passing sdk_moniker
     if not kwargs.get("sdk_moniker"):
         kwargs["sdk_moniker"] = f"storage-{kwargs.pop('storage_sdk')}/{VERSION}"
-    config = Configuration(**kwargs)
+    config = StorageConfiguration(**kwargs)
     config.headers_policy = StorageHeadersPolicy(**kwargs)
     config.user_agent_policy = UserAgentPolicy(**kwargs)
     config.retry_policy = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
