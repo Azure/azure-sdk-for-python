@@ -24,6 +24,24 @@ from azure.ai.ml._schema._feature_set.feature_set_backfill_schema import (
 
 @experimental
 class FeatureSetBackfillRequest(RestTranslatableMixin):
+    """Feature Set Backfill Request
+
+    :param name: _description_
+    :type name: str
+    :param version: _description_
+    :type version: str
+    :param feature_window: _description_
+    :type feature_window: FeatureWindow
+    :param description: _description_, defaults to None
+    :type description: Optional[str], optional
+    :param tags: _description_, defaults to None
+    :type tags: Optional[Dict[str, str]], optional
+    :param resource: _description_, defaults to None
+    :type resource: Optional[MaterializationComputeResource], optional
+    :param spark_conf: _description_, defaults to None
+    :type spark_conf: Optional[Dict[str, str]], optional
+    """
+
     def __init__(
         self,
         *,
@@ -35,7 +53,7 @@ class FeatureSetBackfillRequest(RestTranslatableMixin):
         resource: Optional[MaterializationComputeResource] = None,
         spark_conf: Optional[Dict[str, str]] = None,
         **kwargs,
-    ):
+    ) -> None:
         self.name = name
         self.version = version
         self.feature_window = feature_window

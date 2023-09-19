@@ -15,6 +15,22 @@ from azure.ai.ml._utils._experimental import experimental
 
 @experimental
 class Feature(RestTranslatableMixin):
+    """Feature
+
+    :param name: The name of the feature resource.
+    :type name: str
+    :param data_type: The data type of the feature resource.
+    :type data_type: ~azure.ai.ml.entities._feature_store_entity.data_column_type
+    :param description: The description of the feature resource. Defaults to None.
+    :type description: Optional[str]
+    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
+    :type tags: Optional[dict[str, str]]
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
+
+    TODO: Include an example
+    """
+
     def __init__(
         self,
         *,
@@ -23,7 +39,7 @@ class Feature(RestTranslatableMixin):
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
-    ):
+    ) -> None:
         self.name = name
         self.data_type = data_type
         self.description = description

@@ -20,6 +20,27 @@ FeaturestoreJobTypeMap: Dict[str, MaterializationType] = {
 
 @experimental
 class FeatureSetMaterializationMetadata(RestTranslatableMixin):
+    """Feature Set Materialization Metadata
+
+    :param type: _description_
+    :type type: MaterializationType
+    :param feature_window_end_time: _description_
+    :type feature_window_end_time: Optional[datetime]
+    :param name: _description_
+    :type name: Optional[str]
+    :param display_name: _description_
+    :type display_name: Optional[str]
+    :param creation_context: _description_
+    :type creation_context: Optional[SystemData]
+    :param duration: _description_
+    :type duration: Optional[timedelta]
+    :param status: _description_
+    :type status: Optional[str]
+    :param tags: _description_
+    :type tags: Optional[Dict[str, str]]
+
+    TODO: FInish this docstring
+    """
     def __init__(
         self,
         *,
@@ -33,7 +54,7 @@ class FeatureSetMaterializationMetadata(RestTranslatableMixin):
         status: Optional[str],
         tags: Optional[Dict[str, str]],
         **kwargs  # pylint: disable=unused-argument
-    ):
+    ) -> None:
         self.type = type
         self.feature_window_start_time = feature_window_start_time
         self.feature_window_end_time = feature_window_end_time

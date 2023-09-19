@@ -11,6 +11,11 @@ from azure.ai.ml._utils._experimental import experimental
 
 @experimental
 class DataColumnType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Dataframe Column Type Enum
+
+    TODO: Include an example
+    """
+
     STRING = "string"
     INTEGER = "integer"
     LONG = "long"

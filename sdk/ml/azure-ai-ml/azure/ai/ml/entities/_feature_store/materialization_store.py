@@ -8,14 +8,14 @@ from azure.ai.ml._utils._experimental import experimental
 
 @experimental
 class MaterializationStore:
-    def __init__(self, type: str, target: str):  # pylint: disable=redefined-builtin
-        """MaterializationStore.
-        :param type: store type.
-        :type type: str
-        :param target: store target.
-        :type target: str
-        """
+    """MaterializationStore.
 
+    :param type: store type.
+    :type type: str
+    :param target: store target.
+    :type target: str
+    """
+    def __init__(self, type: str, target: str) -> None:  # pylint: disable=redefined-builtin
         self.type = type
         _ = AzureResourceId(target)
         self.__target = target

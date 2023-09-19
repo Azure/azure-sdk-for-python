@@ -20,15 +20,12 @@ import os
 
 class FeatureStoreConfigurationOptions(object):
     def feature_store(self):
-        featurestore_name = "my-featurestore"
-        featurestore_location = "eastus"
+        from azure.ai.ml import MLClient
+        from azure.identity import DefaultAzureCredential
+
         featurestore_subscription_id = os.environ["AZUREML_ARM_SUBSCRIPTION"]
         featurestore_resource_group_name = os.environ["AZUREML_ARM_RESOURCEGROUP"]
         credential = DefaultAzureCredential()
-
-        from azure.ai.ml import MLClient
-        from azure.identity import DefaultAzureCredential
-        from azure.ai.ml.entities import FeatureStore
 
         ml_client = MLClient(
             credential=credential,
@@ -36,12 +33,41 @@ class FeatureStoreConfigurationOptions(object):
             resource_group_name=featurestore_resource_group_name,
         )
 
+        # [START create_feature_store]
+        from azure.ai.ml.entities import FeatureStore
+
+        featurestore_name = "my-featurestore"
+        featurestore_location = "eastus"
         featurestore = FeatureStore(name=featurestore_name, location=featurestore_location)
-        
+
         # wait for featurestore creation
-        # ml_client.feature_stores.begin_create(featurestore, update_dependent_resources=True)
+        fs_poller = ml_client.feature_stores.begin_create(fs, update_dependent_resources=True)
+        print(fs_poller.result())
+        # [END create_feature_store]
 
+        featurestore_client = MLClient(
+            credential=credential,
+            subscription_id=featurestore_subscription_id,
+            resource_group_name=featurestore_resource_group_name,
+            workspace_name=featurestore_name,
+        )
 
+        # [START configure_feature_store_entity]
+        from azure.ai.ml.entities import DataColumn, DataColumnType, FeatureStoreEntity
+
+        account_entity_config = FeatureStoreEntity(
+            name="account",
+            version="1",
+            index_columns=[DataColumn(name="accountID", type=DataColumnType.STRING)],
+            stage="Development",
+            description="This entity represents user account index key accountID.",
+            tags={"data_type": "nonPII"},
+        )
+
+        # wait for featurestore entity creation
+        fs_entity_poller = featurestore_client.feature_store_entities.begin_create_or_update(account_entity_config)
+        print(fs_entity_poller.result())
+        # [END configure_feature_store_entity]
 
         # [START configure_feature_set]
         from azure.ai.ml.entities import FeatureSetSpecification
@@ -56,6 +82,8 @@ class FeatureStoreConfigurationOptions(object):
             specification=FeatureSetSpecification(path="<path-to-feature-set-spec-yaml>"),
             tags={"data_type": "nonPII"},
         )
+        feature_set_poller = featurestore_client.feature_sets.begin_create_or_update(transaction_fset_config)
+        print(feature_set_poller.result())
         # [END configure_feature_set]
         
 

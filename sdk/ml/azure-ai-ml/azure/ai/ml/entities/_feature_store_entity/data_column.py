@@ -39,13 +39,19 @@ FeatureDataTypeMap: Dict[str, DataColumnType] = {
 @experimental
 class DataColumn(RestTranslatableMixin):
     """A dataframe column
+    
     :param name: The column name
-    :type name: str, required
-    :param type: Column data type
-    :type type: str, one of [string, integer, long, float, double, binary, datetime, boolean] or
-    ~azure.ai.ml.entities.DataColumnType, optional"""
+    :type name: str
+    :param type: The column data type. Defaults to None.
+    :type type: Optional[Union[str, ~azure.ai.ml.entities.DataColumnType]]
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
+    :raises ValidationException: Raised if type is specified and is not a valid DataColumnType or str.
 
-    def __init__(self, *, name: str, type: Optional[Union[str, DataColumnType]] = None, **kwargs):
+    TODO: Include an example
+    """
+
+    def __init__(self, *, name: str, type: Optional[Union[str, DataColumnType]] = None, **kwargs) -> None:
         if isinstance(type, str):
             type = DataColumnType[type]
         elif not isinstance(type, DataColumnType):

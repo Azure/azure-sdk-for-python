@@ -49,7 +49,6 @@ class FeatureSet(Artifact):
     :type materialization_settings: Optional[~azure.ai.ml.entities.MaterializationSettings]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
-
     :raises ValidationException: Raised if stage is specified and is not valid.
 
     .. admonition:: Example:
@@ -60,6 +59,7 @@ class FeatureSet(Artifact):
             :dedent: 8
             :caption: Instantiating a Feature Set object
     """
+
     def __init__(
         self,
         *,
@@ -189,15 +189,14 @@ class FeatureSet(Artifact):
         """Dump the asset content into a file in YAML format.
 
         :param dest: The local path or file stream to write the YAML content to.
-            If dest is a file path, a new file will be created. If dest is an open file, the file will be written to directly.
+            If dest is a file path, a new file will be created.
+            If dest is an open file, the file will be written to directly.
         :type dest: Union[PathLike, str, IO[AnyStr]]
         :keyword kwargs: Additional arguments to pass to the YAML serializer.
         :paramtype kwargs: dict
-        
         :raises FileExistsError: Raised if dest is a file path and the file already exists.
         :raises IOError: Raised if dest is an open file and the file is not writable.
         """
-
         import os
         import shutil
         from azure.ai.ml._utils.utils import is_url
