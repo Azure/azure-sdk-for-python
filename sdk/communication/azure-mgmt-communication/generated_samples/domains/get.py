@@ -14,7 +14,7 @@ from azure.mgmt.communication import CommunicationServiceManagementClient
     pip install azure-identity
     pip install azure-mgmt-communication
 # USAGE
-    python update.py
+    python get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,14 @@ def main():
         subscription_id="11112222-3333-4444-5555-666677778888",
     )
 
-    response = client.communication_services.update(
+    response = client.domains.get(
         resource_group_name="MyResourceGroup",
-        communication_service_name="MyCommunicationResource",
-        parameters={"tags": {"newTag": "newVal"}},
+        email_service_name="MyEmailServiceResource",
+        domain_name="mydomain.com",
     )
     print(response)
 
 
-# x-ms-original-file: specification/communication/resource-manager/Microsoft.Communication/stable/2023-03-31/examples/communicationServices/update.json
+# x-ms-original-file: specification/communication/resource-manager/Microsoft.Communication/preview/2023-04-01-preview/examples/domains/get.json
 if __name__ == "__main__":
     main()
