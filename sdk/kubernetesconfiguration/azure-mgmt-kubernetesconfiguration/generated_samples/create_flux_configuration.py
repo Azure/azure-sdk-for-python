@@ -48,28 +48,42 @@ def main():
                     "srs-kustomization1": {
                         "dependsOn": [],
                         "path": "./test/path",
+                        "postBuild": {
+                            "substitute": {"cluster_env": "prod", "replica_count": "2"},
+                            "substituteFrom": [{"kind": "ConfigMap", "name": "cluster-test", "optional": True}],
+                        },
                         "syncIntervalInSeconds": 600,
                         "timeoutInSeconds": 600,
+                        "wait": True,
                     },
                     "srs-kustomization2": {
                         "dependsOn": ["srs-kustomization1"],
                         "path": "./other/test/path",
+                        "postBuild": {
+                            "substituteFrom": [
+                                {"kind": "ConfigMap", "name": "cluster-values", "optional": True},
+                                {"kind": "Secret", "name": "secret-name", "optional": False},
+                            ]
+                        },
                         "prune": False,
                         "retryIntervalInSeconds": 600,
                         "syncIntervalInSeconds": 600,
                         "timeoutInSeconds": 600,
+                        "wait": False,
                     },
                 },
                 "namespace": "srs-namespace",
+                "reconciliationWaitDuration": "PT30M",
                 "scope": "cluster",
                 "sourceKind": "GitRepository",
                 "suspend": False,
+                "waitForReconciliation": True,
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/kubernetesconfiguration/resource-manager/Microsoft.KubernetesConfiguration/stable/2022-11-01/examples/CreateFluxConfiguration.json
+# x-ms-original-file: specification/kubernetesconfiguration/resource-manager/Microsoft.KubernetesConfiguration/stable/2023-05-01/examples/CreateFluxConfiguration.json
 if __name__ == "__main__":
     main()
