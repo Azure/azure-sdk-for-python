@@ -596,7 +596,9 @@ of 220kb or 100 operations per batch, the smaller the documents, the greater the
 (the bigger the documents, the more batches need to be used).
 
 If your operations get throttled during a Bulk request, it means that now the bottleneck of your application is on the 
-provisioned throughput of your container. Currently, the SDK does *not* retry individual throttled requests within a bulk operation.
+provisioned throughput of your container.
+
+The SDK only retries bulk on throttling errors - any other errors will show up as part of your bulk responses.
 
 Available Bulk operation types are:
 - Create

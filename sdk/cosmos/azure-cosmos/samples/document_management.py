@@ -207,9 +207,8 @@ def bulk_items(database):
 
     # Run that list of operations
     bulk_response = container.bulk(bulk_operations)
-    # Bulk results are returned as a list, each index representing the result of one batch of requests
-    # Batch results are returned as a tuple, where index 0 is the result and index 1 is the response headers
-    # In this case all our results will be in the first batch index since we had less than 100 operations
+    # Bulk results are returned as a tuple, where index 0 is a list of tuples mapping (operation, response), and index 1
+    # contains a list of the response headers for each of the batches that executed.
     print("\nResult for the bulk operations: {}\n".format(bulk_response[0]))
 
 
