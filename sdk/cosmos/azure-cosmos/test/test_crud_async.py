@@ -154,7 +154,8 @@ class TestCRUDAsync:
 
         database_proxy = await self.client.create_database_if_not_exists(id=database_id, offer_throughput=9000)
         assert database_id == database_proxy.id
-        assert 10000 == await database_proxy.get_throughput().offer_throughput
+        db_throughput = await database_proxy.get_throughput()
+        assert 10000 == db_throughput.offer_throughput
         await self._clear()
 
     # @pytest.mark.skip("skipping as the TestResources subscription doesn't support this offer")
@@ -204,7 +205,7 @@ class TestCRUDAsync:
 
         # query with a string.
         databases = [database async for database in
-                     self.client.query_databases('SELECT * FROM root r WHERE r.id="' + db2.id + '"')]  # nosec
+                     self.client.query_databases(query='SELECT * FROM root r WHERE r.id="database 2"')]
         assert 1 == len(databases)
         await self._clear()
 
@@ -707,7 +708,7 @@ class TestCRUDAsync:
         # read conflict here will return resource not found(404) since there is no conflict here
         await self.__assert_http_failure_with_status(
             StatusCodes.NOT_FOUND,
-            created_collection.read_conflict,
+            created_collection.get_conflict,
             conflict_definition['id'],
             conflict_definition['id']
         )
@@ -781,10 +782,7 @@ class TestCRUDAsync:
         # query documents
         document_list = [document async for document in created_collection.query_items(
             query='SELECT * FROM root r WHERE r.name=@name',
-            parameter=[
-                {'name': '@name', 'value': document_definition['name']}
-            ]
-            , enable_cross_partition_query=True
+            parameters=[{'name': '@name', 'value': document_definition['name']}]
         )]
         assert document_list is not None
         document_list = [document async for document in created_collection.query_items(
