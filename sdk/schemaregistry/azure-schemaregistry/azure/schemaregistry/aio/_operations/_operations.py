@@ -39,7 +39,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
     def list_schema_groups(
         self,
         **kwargs: Any
-    ) -> AsyncIterable["_models.SchemaGroup"]:
+    ) -> AsyncIterable["_models._models.SchemaGroup"]:
         """Get list of schema groups.
 
         Gets the list of schema groups user is authorized to access.
@@ -51,7 +51,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.SchemaGroup]] = kwargs.pop(
+        cls: ClsType[List[_models._models.SchemaGroup]] = kwargs.pop(  # pylint: disable=protected-access
             'cls', None
         )
 
@@ -88,7 +88,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SchemaGroup], deserialized["value"])
+            list_of_elem = _deserialize(List[_models._models.SchemaGroup], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -206,7 +206,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         group_name: str,
         name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.Version"]:
+    ) -> AsyncIterable["_models._models.Version"]:
         """List schema versions.
 
         Gets the list of all versions of one schema.
@@ -222,7 +222,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Version]] = kwargs.pop(
+        cls: ClsType[List[_models._models.Version]] = kwargs.pop(  # pylint: disable=protected-access
             'cls', None
         )
 
@@ -261,7 +261,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Version], deserialized["value"])
+            list_of_elem = _deserialize(List[_models._models.Version], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
