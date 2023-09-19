@@ -84,7 +84,7 @@ class TestFeatureStoreOperation:
 
         mocker.patch("azure.ai.ml.operations._feature_store_operations.FeatureStoreOperations.get", return_value=None)
         mocker.patch(
-            "azure.ai.ml.operations._feature_store_operations.FeatureStoreOperations._populate_arm_paramaters",
+            "azure.ai.ml.operations._feature_store_operations.FeatureStoreOperations._populate_arm_parameters",
             return_value=({}, {}, {}),
         )
         mocker.patch(

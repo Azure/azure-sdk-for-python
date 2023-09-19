@@ -48,7 +48,6 @@ class WorkspaceHub(Workspace):
         workspace_hub_config: Optional[WorkspaceHubConfig] = None,
         **kwargs,
     ):
-
         """WorkspaceHub.
 
         :param name: Name of the WorkspaceHub.

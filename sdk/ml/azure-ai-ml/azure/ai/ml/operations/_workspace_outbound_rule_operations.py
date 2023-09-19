@@ -21,8 +21,8 @@ logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 class WorkspaceOutboundRuleOperations:
     """WorkspaceOutboundRuleOperations.
 
-    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
-    for you and attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should create
+    an MLClient instance that instantiates it for you and attaches it as an attribute.
     """
 
     def __init__(
@@ -51,7 +51,7 @@ class WorkspaceOutboundRuleOperations:
         :param outbound_rule_name: Name of the outbound rule.
         :type outbound_rule_name: str
         :return: The OutboundRule with the provided name for the workspace.
-        :rtype: OutboundRule
+        :rtype: ~azure.ai.ml.entities.OutboundRule
         """
 
         workspace_name = self._check_workspace_name(workspace_name)
@@ -67,7 +67,7 @@ class WorkspaceOutboundRuleOperations:
         :param workspace_name: Name of the workspace.
         :type workspace_name: str
         :param rule: OutboundRule definition (FqdnDestination, PrivateEndpointDestination, or ServiceTagDestination).
-        :type rule: OutboundRule
+        :type rule: ~azure.ai.ml.entities.OutboundRule
         :return: An instance of LROPoller that returns an OutboundRule.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.OutboundRule]
         """
@@ -79,6 +79,7 @@ class WorkspaceOutboundRuleOperations:
 
         # pylint: disable=unused-argument
         def callback(_, deserialized, args):
+            """callback to called after completion"""
             properties = deserialized.properties
             name = deserialized.name
             return OutboundRule._from_rest_object(properties, name=name)  # pylint: disable=protected-access
@@ -96,7 +97,7 @@ class WorkspaceOutboundRuleOperations:
         :param workspace_name: Name of the workspace.
         :type workspace_name: str
         :param rule: OutboundRule definition (FqdnDestination, PrivateEndpointDestination, or ServiceTagDestination).
-        :type rule: OutboundRule
+        :type rule: ~azure.ai.ml.entities.OutboundRule
         :return: An instance of LROPoller that returns an OutboundRule.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.OutboundRule]
         """
@@ -108,6 +109,7 @@ class WorkspaceOutboundRuleOperations:
 
         # pylint: disable=unused-argument
         def callback(_, deserialized, args):
+            """callback to called after completion"""
             properties = deserialized.properties
             name = deserialized.name
             return OutboundRule._from_rest_object(properties, name=name)  # pylint: disable=protected-access
@@ -163,6 +165,13 @@ class WorkspaceOutboundRuleOperations:
         return poller
 
     def _check_workspace_name(self, name) -> str:
+        """Validates that a workspace name exists.
+
+        :param name: Name for a workspace resource.
+        :type name: str
+        :raises ~azure.ai.ml.ValidationException: Raised if updating nothing is specified for name and
+        MLClient does not have workspace name set.
+        """
         workspace_name = name or self._default_workspace_name
         if not workspace_name:
             msg = "Please provide a workspace name or use a MLClient with a workspace name set."

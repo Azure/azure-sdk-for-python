@@ -56,7 +56,7 @@ class TestWorkspaceHubOperation:
     ):
         mocker.patch("azure.ai.ml.operations.WorkspaceHubOperations.get", return_value=None)
         mocker.patch(
-            "azure.ai.ml.operations.WorkspaceHubOperations._populate_arm_paramaters", return_value=({}, {}, {})
+            "azure.ai.ml.operations.WorkspaceHubOperations._populate_arm_parameters", return_value=({}, {}, {})
         )
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
         mock_workspace_hub_operation.begin_create(workspace_hub=WorkspaceHub(name="name"))

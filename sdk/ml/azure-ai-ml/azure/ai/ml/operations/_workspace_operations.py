@@ -8,9 +8,7 @@ from typing import Dict, Iterable, Optional
 
 from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedNetworkProvisionOptions
-
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
-
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.constants._common import Scope
@@ -36,8 +34,8 @@ logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 class WorkspaceOperations(WorkspaceOperationsBase):
     """WorkspaceOperations.
 
-    You should not instantiate this class directly. Instead, you should create an MLClient instance that instantiates it
-    for you and attaches it as an attribute.
+    You should not instantiate this class directly. Instead, you should create
+    an MLClient instance that instantiates it for you and attaches it as an attribute.
     """
 
     def __init__(
@@ -60,12 +58,12 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
     @monitor_with_activity(logger, "Workspace.List", ActivityType.PUBLICAPI)
     def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[Workspace]:
-        """List all workspaces that the user has access to in the current resource group or subscription.
+        """List all Workspaces that the user has access to in the current resource group or subscription.
 
         :keyword scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
         :paramtype scope: str
         :return: An iterator like instance of Workspace objects
-        :rtype: ~azure.core.paging.ItemPaged[Workspace]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Workspace]
         """
 
         if scope == Scope.SUBSCRIPTION:
@@ -81,12 +79,12 @@ class WorkspaceOperations(WorkspaceOperationsBase):
     @distributed_trace
     # pylint: disable=arguments-renamed
     def get(self, name: Optional[str] = None, **kwargs: Dict) -> Workspace:
-        """Get a workspace by name.
+        """Get a Workspace by name.
 
         :param name: Name of the workspace.
         :type name: str
         :return: The workspace with the provided name.
-        :rtype: Workspace
+        :rtype: ~azure.ai.ml.entities.Workspace
         """
 
         return super().get(workspace_name=name, **kwargs)
@@ -95,12 +93,12 @@ class WorkspaceOperations(WorkspaceOperationsBase):
     @distributed_trace
     # pylint: disable=arguments-differ
     def get_keys(self, name: Optional[str] = None) -> WorkspaceKeys:
-        """Get keys for the workspace.
+        """Get WorkspaceKeys by workspace name.
 
         :param name: Name of the workspace.
         :type name: str
         :return: Keys of workspace dependent resources.
-        :rtype: WorkspaceKeys
+        :rtype: ~azure.ai.ml.entities.WorkspaceKeys
         """
         workspace_name = self._check_workspace_name(name)
         obj = self._operation.list_keys(self._resource_group_name, workspace_name)
@@ -108,7 +106,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
     @monitor_with_activity(logger, "Workspace.BeginSyncKeys", ActivityType.PUBLICAPI)
     @distributed_trace
-    def begin_sync_keys(self, name: Optional[str] = None) -> LROPoller:
+    def begin_sync_keys(self, name: Optional[str] = None) -> LROPoller[None]:
         """Triggers the workspace to immediately synchronize keys. If keys for any resource in the workspace are
         changed, it can take around an hour for them to automatically be updated. This function enables keys to be
         updated upon request. An example scenario is needing immediate access to storage after regenerating storage
@@ -167,8 +165,8 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         Returns the workspace if already exists.
 
         :param workspace: Workspace definition.
-        :type workspace: Workspace
-        :param update_dependent_resources: Whether to update dependent resources
+        :type workspace: ~azure.ai.ml.entities.Workspace
+        :param update_dependent_resources: Whether to update dependent resources, defaults to False.
         :type update_dependent_resources: boolean
         :return: An instance of LROPoller that returns a Workspace.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
@@ -184,6 +182,15 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         update_dependent_resources: bool = False,
         **kwargs: Dict,
     ) -> LROPoller[Workspace]:
+        """Updates a Azure Machine Learning Workspace.
+
+        :param workspace: Workspace definition.
+        :type workspace: ~azure.ai.ml.entities.Workspace
+        :keyword update_dependent_resources: Whether to update dependent resources, defaults to False.
+        :paramtype update_dependent_resources: boolean
+        :return: An instance of LROPoller that returns a Workspace.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
+        """
         return super().begin_update(workspace, update_dependent_resources=update_dependent_resources, **kwargs)
 
     @monitor_with_activity(logger, "Workspace.BeginDelete", ActivityType.PUBLICAPI)
@@ -196,7 +203,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :param name: Name of the workspace
         :type name: str
         :keyword delete_dependent_resources: Whether to delete resources associated with the workspace,
-            i.e., container registry, storage account, key vault, and application insights.
+            i.e., container registry, storage account, key vault, application insights, log analytics.
             The default is False. Set to True to delete these resources.
         :paramtype delete_dependent_resources: bool
         :keyword permanently_delete: Workspaces are soft-deleted by default to allow recovery of workspace data.
@@ -216,8 +223,8 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
         If your workspace is not working as expected, you can run this diagnosis to
         check if the workspace has been broken.
-        For private endpoint workspace, it will also help check out if the network
-        setup to this workspace and its dependent resource as problem or not.
+        For private endpoint workspace, it will also help check if the network
+        setup to this workspace and its dependent resource has problems or not.
 
         :param name: Name of the workspace
         :type name: str
@@ -229,6 +236,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
         # pylint: disable=unused-argument
         def callback(_, deserialized, args):
+            """callback to called after completion"""
             diagnose_response_result = DiagnoseResponseResult._from_rest_object(deserialized)
             res = None
             if diagnose_response_result:
