@@ -154,7 +154,7 @@ class DatabaseProxy(object):
     def create_container(
         self,
         id,  # type: str  # pylint: disable=redefined-builtin
-        partition_key,  # type: ~azure.cosmos.partition_key.PartitionKey
+        partition_key,  # type: ~azure.cosmos.PartitionKey
         indexing_policy=None,  # type: Optional[Dict[str, Any]]
         default_ttl=None,  # type: Optional[int]
         populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
@@ -477,7 +477,7 @@ class DatabaseProxy(object):
         :param container: The ID (name), dict representing the properties or
             :class:`ContainerProxy` instance of the container to be replaced.
         :type container: Union[str, ContainerProxy, Dict[str, Any]]
-        :param ~azure.cosmos.partition_key.PartitionKey partition_key: The partition key to use for the container.
+        :param ~azure.cosmos.PartitionKey partition_key: The partition key to use for the container.
         :param Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
         :param int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -624,7 +624,7 @@ class DatabaseProxy(object):
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A `UserProxy` instance representing the new user.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be created.
-        :rtype: ~azure.cosmos.user.UserProxy
+        :rtype: ~azure.cosmos.UserProxy
 
         .. admonition:: Example:
 
@@ -661,7 +661,7 @@ class DatabaseProxy(object):
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A `UserProxy` instance representing the upserted user.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user could not be upserted.
-        :rtype: ~azure.cosmos.user.UserProxy
+        :rtype: ~azure.cosmos.UserProxy
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -695,7 +695,7 @@ class DatabaseProxy(object):
         :returns: A `UserProxy` instance representing the user after replace went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
             If the replace operation failed or the user with given ID does not exist.
-        :rtype: ~azure.cosmos.user.UserProxy
+        :rtype: ~azure.cosmos.UserProxy
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
