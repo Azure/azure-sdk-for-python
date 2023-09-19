@@ -153,8 +153,8 @@ class ComputeInstance(Compute):
     :type idle_time_before_shutdown_minutes: Optional[int]
     :param enable_node_public_ip: Enable or disable node public IP address provisioning. Defaults to True.
         Possible values are:
-        * True - Indicates that the compute nodes will have public IPs provisioned.
-        * False - Indicates that the compute nodes will have a private endpoint and no public IPs.
+            * True - Indicates that the compute nodes will have public IPs provisioned.
+            * False - Indicates that the compute nodes will have a private endpoint and no public IPs.
     :type enable_node_public_ip: Optional[bool]
     :param setup_scripts: Details of customized scripts to execute for setting up the cluster.
     :type setup_scripts: Optional[~azure.ai.ml.entities.SetupScripts]
