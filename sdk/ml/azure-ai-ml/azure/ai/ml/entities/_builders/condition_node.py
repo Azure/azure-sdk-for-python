@@ -131,17 +131,16 @@ class ConditionNode(ControlFlowNode):
                 )
 
         # check if true/false block is valid binding
-        if self.true_block is not None and self.false_block is not None:
-            for name, blocks in {"true_block": self.true_block, "false_block": self.false_block}.items():
-                blocks = blocks if blocks else []
-                for block in blocks:
-                    if block is None or not isinstance(block, str):
-                        continue
-                    error_tail = "for example, ${{parent.jobs.xxx}}"
-                    if not is_data_binding_expression(block, ["parent", "jobs"], is_singular=False):
-                        validation_result.append_error(
-                            yaml_path=name,
-                            message=f"'{name}' of dsl.condition has invalid binding expression: {block}, {error_tail}",
-                        )
+        for name, blocks in {"true_block": self.true_block, "false_block": self.false_block}.items():
+            blocks = blocks if blocks else []
+            for block in blocks:
+                if block is None or not isinstance(block, str):
+                    continue
+                error_tail = "for example, ${{parent.jobs.xxx}}"
+                if not is_data_binding_expression(block, ["parent", "jobs"], is_singular=False):
+                    validation_result.append_error(
+                        yaml_path=name,
+                        message=f"'{name}' of dsl.condition has invalid binding expression: {block}, {error_tail}",
+                    )
 
         return validation_result
