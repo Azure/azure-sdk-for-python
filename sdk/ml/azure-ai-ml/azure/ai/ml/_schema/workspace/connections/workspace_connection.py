@@ -6,8 +6,7 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionCategory
-from azure.ai.ml._schema.core.fields import ArmStr, NestedField, StringTransformedEnum, UnionField
+from azure.ai.ml._schema.core.fields import ArmStr, NestedField, UnionField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.job import CreationContextSchema
 from azure.ai.ml._schema.workspace.connections.credentials import (
@@ -18,7 +17,6 @@ from azure.ai.ml._schema.workspace.connections.credentials import (
     UsernamePasswordConfigurationSchema,
     AccessKeyConfigurationSchema,
 )
-from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants._common import AzureMLResourceType
 
 
