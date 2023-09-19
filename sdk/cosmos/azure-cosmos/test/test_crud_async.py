@@ -726,9 +726,7 @@ class TestCRUDAsync:
         )
 
         conflict_list = [conflict async for conflict in created_collection.query_conflicts(
-            query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\'',
-            enable_cross_partition_query=True
-        )]
+            query='SELECT * FROM root r WHERE r.resourceType=\'' + conflict_definition.get('resourceType') + '\'')]
 
         assert len(conflict_list) == 0
 
@@ -789,8 +787,7 @@ class TestCRUDAsync:
             query='SELECT * FROM root r WHERE r.name=@name',
             parameter=[
                 {'name': '@name', 'value': document_definition['name']}
-            ]
-            , enable_cross_partition_query=True,
+            ],
             enable_scan_in_query=True
         )]
         assert document_list is not None
@@ -1011,9 +1008,7 @@ class TestCRUDAsync:
             }
         )
         results = [result async for result in collection.query_items(
-            query="SELECT * FROM root WHERE (ST_DISTANCE(root.Location, {type: 'Point', coordinates: [20.1, 20]}) < 20000)",
-            enable_cross_partition_query=True
-        )]
+            query="SELECT * FROM root WHERE (ST_DISTANCE(root.Location, {type: 'Point', coordinates: [20.1, 20]}) < 20000)")]
         assert len(results) == 1
         assert 'loc1' == results[0]['id']
 
@@ -1310,17 +1305,14 @@ class TestCRUDAsync:
 
         # Client with master key.
         async with CosmosClient(TestCRUDAsync.host,
-                                TestCRUDAsync.masterKey,
-                                consistency_level="Session",
-                                connection_policy=TestCRUDAsync.connectionPolicy) as client:
+                                TestCRUDAsync.masterKey) as client:
             # setup entities
             entities = await __setup_entities()
             resource_tokens = {"dbs/" + entities['db'].id + "/colls/" + entities['coll'].id:
                                    entities['permissionOnColl'].properties['_token']}
 
         async with CosmosClient(
-                TestCRUDAsync.host, resource_tokens, consistency_level="Session",
-                connection_policy=TestCRUDAsync.connectionPolicy) as col_client:
+                TestCRUDAsync.host, resource_tokens) as col_client:
             db = entities['db']
 
             old_client_connection = db.client_connection
@@ -1895,7 +1887,6 @@ class TestCRUDAsync:
             async with CosmosClient(
                     "https://localhost:9999",
                     TestCRUDAsync.masterKey,
-                    consistency_level="Session",
                     retry_total=3,
                     timeout=1) as client:
                 print('Async initialization')
@@ -1903,7 +1894,7 @@ class TestCRUDAsync:
         error_response = ServiceResponseError("Read timeout")
         timeout_transport = TimeoutTransport(error_response)
         async with CosmosClient(
-                self.host, self.masterKey, consistency_level="Session", transport=timeout_transport,
+                self.host, self.masterKey, transport=timeout_transport,
                 passthrough=True) as client:
             print('Async initialization')
 
@@ -1913,7 +1904,7 @@ class TestCRUDAsync:
         status_response = 500  # Users connection level retry
         timeout_transport = TimeoutTransport(status_response)
         async with CosmosClient(
-                self.host, self.masterKey, consistency_level="Session", transport=timeout_transport,
+                self.host, self.masterKey, transport=timeout_transport,
                 passthrough=True) as client:
             print('Async initialization')
             with pytest.raises(exceptions.CosmosClientTimeoutError):
@@ -1926,7 +1917,7 @@ class TestCRUDAsync:
         status_response = 429  # Uses Cosmos custom retry
         timeout_transport = TimeoutTransport(status_response)
         async with CosmosClient(
-                self.host, self.masterKey, consistency_level="Session", transport=timeout_transport,
+                self.host, self.masterKey, transport=timeout_transport,
                 passthrough=True) as client:
             print('Async initialization')
             with pytest.raises(exceptions.CosmosClientTimeoutError):
@@ -2193,7 +2184,7 @@ class TestCRUDAsync:
         retrieved_sproc3 = await collection.scripts.create_stored_procedure(body=sproc3)
         result = await collection.scripts.execute_stored_procedure(
             sproc=retrieved_sproc3['id'],
-            params={'temp': 'so'},
+            params=[{'temp': 'so'}],
             partition_key=1
         )
         assert result == 'aso'
