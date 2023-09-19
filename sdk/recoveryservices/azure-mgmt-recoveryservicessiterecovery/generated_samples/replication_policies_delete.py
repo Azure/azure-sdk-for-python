@@ -31,12 +31,11 @@ def main():
         resource_name="vault1",
     )
 
-    response = client.replication_policies.begin_delete(
+    client.replication_policies.begin_delete(
         policy_name="protectionprofile1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2022-10-01/examples/ReplicationPolicies_Delete.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2023-06-01/examples/ReplicationPolicies_Delete.json
 if __name__ == "__main__":
     main()
