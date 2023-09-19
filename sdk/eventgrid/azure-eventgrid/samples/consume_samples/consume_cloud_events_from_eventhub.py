@@ -19,6 +19,7 @@ USAGE:
 
 import os
 import json
+from typing import Any
 from azure.core.messaging import CloudEvent
 from azure.eventhub import EventHubConsumerClient
 
