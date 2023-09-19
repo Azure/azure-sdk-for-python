@@ -19,8 +19,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-
-import unittest
 import uuid
 import pytest
 import test_config
@@ -29,9 +27,10 @@ from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 from azure.cosmos.aio._cosmos_client import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
 
+pytestmark = pytest.mark.cosmosEmulator
 
 @pytest.mark.usefixtures("teardown")
-class BulkTests(unittest.TestCase):
+class TestBulk:
     """Python Bulk Tests.
     """
 
@@ -42,17 +41,19 @@ class BulkTests(unittest.TestCase):
     last_headers = []
 
     @classmethod
-    async def setUpClass(cls):
+    async def _set_up(cls):
         if (cls.masterKey == '[YOUR_KEY_HERE]' or
                 cls.host == '[YOUR_ENDPOINT_HERE]'):
             raise Exception(
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = CosmosClient(cls.host, cls.masterKey, connection_policy=cls.connectionPolicy)
-        cls.test_database = await cls.configs.create_database_if_not_exist(cls.client)
+        cls.client = CosmosClient(cls.host, cls.masterKey)
+        cls.test_database = await cls.client.create_database_if_not_exists(cls.configs.TEST_DATABASE_ID)
 
-    async def test_bulk_batch_creation(self):
+    @pytest.mark.asyncio
+    async def test_bulk_batch_creation_async(self):
+        await self._set_up()
         container = await self.test_database.create_container_if_not_exists(id="default_bulk_container",
                                                                             partition_key=PartitionKey(path="/id"))
         # Verify there is one batch/ 100 operations
@@ -62,14 +63,16 @@ class BulkTests(unittest.TestCase):
                                "resourceBody": {"id": "item-" + str(i), "name": str(uuid.uuid4())},
                                "partitionKey": "item-" + str(i)})
         bulk_result = await container.bulk(operations=operations)
-        self.assertEqual(len(bulk_result), 3)
+        assert len(bulk_result[1]) == 3
 
         # Remove one operation and try request again - check there's only 2 batches
         operations.pop()
         bulk_result = await container.bulk(operations=operations)
-        self.assertEqual(len(bulk_result), 2)
+        assert len(bulk_result[1]) == 2
 
-    async def test_bulk_throttle(self):
+    @pytest.mark.asyncio
+    async def test_bulk_throttle_async(self):
+        await self._set_up()
         # Try with default container (400 RUs)
         container = await self.test_database.create_container_if_not_exists(id="default_bulk_container",
                                                                             partition_key=PartitionKey(path="/id"))
@@ -81,20 +84,22 @@ class BulkTests(unittest.TestCase):
 
         # check requests were throttled due to lack of RUs on default container
         bulk_result = await container.bulk(operations=operations)
-        self.assertEqual(len(bulk_result[0][0]), 100)
-        batch_response_headers = bulk_result[0][1]
-        self.assertTrue(batch_response_headers.get(HttpHeaders.ThrottleRetryCount) > 0)
+        assert len(bulk_result[0][1]) == 100
+        batch_response_headers = bulk_result[1][0]
+        assert batch_response_headers.get(HttpHeaders.ThrottleRetryCount) > 0
 
         # create all 100 items with more RUs
         bulk_container = await self.test_database.create_container_if_not_exists(id="throughput_bulk_container",
                                                                                  partition_key=PartitionKey(path="/id"),
                                                                                  offer_throughput=1000)
         bulk_result = await bulk_container.bulk(operations=operations)
-        self.assertEqual(len(bulk_result[0][0]), 100)
-        batch_response_headers = bulk_result[0][1]
-        self.assertTrue(batch_response_headers.get(HttpHeaders.ThrottleRetryCount) is None)
+        assert len(bulk_result[0][1]) == 100
+        batch_response_headers = bulk_result[1][0]
+        assert batch_response_headers.get(HttpHeaders.ThrottleRetryCount) is None
 
-    async def test_bulk_lsn(self):
+    @pytest.mark.asyncio
+    async def test_bulk_lsn_async(self):
+        await self._set_up()
         container = await self.test_database.create_container_if_not_exists(id="lsn_bulk_container",
                                                                             partition_key=PartitionKey(path="/id"))
         # Create test items
@@ -127,15 +132,17 @@ class BulkTests(unittest.TestCase):
         bulk_result = await container.bulk(operations=operations)
         batch_result = bulk_result[0]
 
-        self.assertEqual(int(lsn), int(batch_result[1].get(HttpHeaders.LSN)) - 1)
-        self.assertEqual(batch_result[1].get(HttpHeaders.ItemCount), "5")
-        self.assertEqual(batch_result[0][0].get("statusCode"), StatusCodes.CREATED)
-        self.assertEqual(batch_result[0][1].get("statusCode"), StatusCodes.OK)
-        self.assertEqual(batch_result[0][2].get("statusCode"), StatusCodes.CREATED)
-        self.assertEqual(batch_result[0][3].get("statusCode"), StatusCodes.OK)
-        self.assertEqual(batch_result[0][4].get("statusCode"), StatusCodes.NO_CONTENT)
+        assert int(lsn) == int(batch_result[1][0].get(HttpHeaders.LSN)) - 1
+        assert batch_result[1][0].get(HttpHeaders.ItemCount) == "5"
+        assert batch_result[0][1][0].get("statusCode") == StatusCodes.CREATED
+        assert batch_result[0][1][1].get("statusCode") == StatusCodes.OK
+        assert batch_result[0][1][2].get("statusCode") == StatusCodes.CREATED
+        assert batch_result[0][1][3].get("statusCode") == StatusCodes.OK
+        assert batch_result[0][1][4].get("statusCode") == StatusCodes.NO_CONTENT
 
-    async def test_bulk_invalid_create(self):
+    @pytest.mark.asyncio
+    async def test_bulk_invalid_create_async(self):
+        await self._set_up()
         container = await self.test_database.create_container_if_not_exists(id="errors_bulk_container",
                                                                             partition_key=PartitionKey(path="/pk"))
         operations = [{"operationType": "Create",
@@ -143,9 +150,11 @@ class BulkTests(unittest.TestCase):
                        "partitionKey": "create_item"}]
 
         bulk_result = await container.bulk(operations=operations)
-        self.assertEqual(bulk_result[0][0][0].get("statusCode"), StatusCodes.BAD_REQUEST)
+        assert bulk_result[0][1][0].get("statusCode") == StatusCodes.BAD_REQUEST
 
-    async def test_bulk_read_non_existent(self):
+    @pytest.mark.asyncio
+    async def test_bulk_read_non_existent_async(self):
+        await self._set_up()
         container = await self.test_database.create_container_if_not_exists(id="errors_bulk_container",
                                                                             partition_key=PartitionKey(path="/pk"))
         operations = [{"operationType": "Read",
@@ -153,9 +162,11 @@ class BulkTests(unittest.TestCase):
                        "partitionKey": "read_item"}]
 
         bulk_result = await container.bulk(operations=operations)
-        self.assertEqual(bulk_result[0][0][0].get("statusCode"), StatusCodes.NOT_FOUND)
+        assert bulk_result[0][1][0].get("statusCode") == StatusCodes.NOT_FOUND
 
-    async def test_bulk_delete_non_existent(self):
+    @pytest.mark.asyncio
+    async def test_bulk_delete_non_existent_async(self):
+        await self._set_up()
         container = await self.test_database.create_container_if_not_exists(id="errors_bulk_container",
                                                                             partition_key=PartitionKey(path="/pk"))
         operations = [{"operationType": "Delete",
@@ -163,9 +174,11 @@ class BulkTests(unittest.TestCase):
                        "partitionKey": "delete_item"}]
 
         bulk_result = await container.bulk(operations=operations)
-        self.assertEqual(bulk_result[0][0][0].get("statusCode"), StatusCodes.NOT_FOUND)
+        assert bulk_result[0][1][0].get("statusCode") == StatusCodes.NOT_FOUND
 
-    async def test_bulk_create_conflict(self):
+    @pytest.mark.asyncio
+    async def test_bulk_create_conflict_async(self):
+        await self._set_up()
         container = await self.test_database.create_container_if_not_exists(id="errors_bulk_container",
                                                                             partition_key=PartitionKey(path="/pk"))
         operations = [{"operationType": "Create",
@@ -173,7 +186,12 @@ class BulkTests(unittest.TestCase):
                        "partitionKey": "create_item"},
                       {"operationType": "Create",
                        "resourceBody": {"id": "create_item", "name": str(uuid.uuid4())},
+                       "partitionKey": "create_item"},
+                      {"operationType": "Create",
+                       "resourceBody": {"id": "create_item2", "name": str(uuid.uuid4())},
                        "partitionKey": "create_item"}]
 
         bulk_result = await container.bulk(operations=operations)
-        self.assertEqual(bulk_result[0][0][1].get("statusCode"), StatusCodes.CONFLICT)
+        assert bulk_result[0][1][0].get("statusCode") == StatusCodes.CREATED
+        assert bulk_result[0][1][1].get("statusCode") == StatusCodes.CONFLICT
+        assert bulk_result[0][1][2].get("statusCode") == StatusCodes.CREATED

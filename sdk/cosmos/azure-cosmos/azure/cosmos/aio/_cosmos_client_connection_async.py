@@ -1229,6 +1229,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             }
             batches.append(batch)
         micro_batches = []
+        index = 0
         for operation in operations:
             partition_key_value = operation.get("partitionKey", None)
             if partition_key_value is None:
@@ -1245,11 +1246,13 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             for batch in batches:
                 if partition_key.is_key_in_range(batch.get("min"), batch.get("max"), hashed_key):
                     batch.get("operations").append(operation)
+                    batch.get("indexes").append(index)
+                    index += 1
                     batch["size"] = batch.get("size") + getsizeof(operation)
                     # Split batch into micro batches if at 100 operations or if total request size > 220Kb
                     if len(batch.get("operations")) == 100 or batch.get("size") > 220000:
                         micro_batches.append(batch.copy())
-                        batch.update({"operations": [], "size": 0})
+                        batch.update({"operations": [], "indexes": [], "size": 0})
                     break
         # Append whatever leftover batches to the final list of micro batches
         micro_batches.extend(batches)
@@ -1268,8 +1271,21 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                     options,
                     **kwargs)
                 response.append(result)
-
-        return response
+        # result ordering logic
+        all_indexes = []
+        all_responses = []
+        response_headers = []
+        for i in range(len(micro_batches)):
+            if len(micro_batches[i].get("operations")) > 0:
+                all_indexes.extend(micro_batches[i].get("indexes"))
+                all_responses.extend(response[i][0])
+                response_headers.append(response[i][1])
+        zipped_list = list(zip(all_responses, all_indexes))
+        sorted_results = sorted(zipped_list, key=lambda x: x[1])
+        ordered_responses = [item[0] for item in sorted_results]
+        operation_to_response_tuple = list(zip(operations, ordered_responses))
+        final_response = (operation_to_response_tuple, response_headers)
+        return final_response
 
     async def _Bulk(self, operations, pk_range_id, path, collection_id, options, **kwargs):
         if options is None:
