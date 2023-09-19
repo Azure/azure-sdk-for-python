@@ -550,7 +550,7 @@ class AzureAppConfigurationClient:
         name: str,
         filters: List[ConfigurationSettingsFilter],
         *,
-        snapshot_composition: Optional[Literal["key", "key_label"]] = None,
+        composition_type: Optional[Literal["key", "key_label"]] = None,
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
@@ -580,7 +580,7 @@ class AzureAppConfigurationClient:
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         snapshot = Snapshot(
-            filters=filters, composition_type=snapshot_composition, retention_period=retention_period, tags=tags
+            filters=filters, composition_type=composition_type, retention_period=retention_period, tags=tags
         )
         try:
             return cast(
