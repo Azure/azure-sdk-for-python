@@ -154,6 +154,7 @@ class TestAzureLogExporter(unittest.TestCase):
             exporter._instrumentation_key,
             "4321abcd-5678-4efa-8abc-1234567890ab",
         )
+        self.assertIsNotNone(exporter.storage)
 
     def test_from_connection_string(self):
         exporter = AzureMonitorLogExporter.from_connection_string(
@@ -317,6 +318,10 @@ class TestAzureLogExporter(unittest.TestCase):
 
 class TestAzureLogExporterWithDisabledStorage(TestAzureLogExporter):
     _exporter_class = partial(AzureMonitorLogExporter, disable_offline_storage=True)
+    
+    @classmethod
+    def tearDownClass(cls):
+        pass
     
     def test_constructor(self):
         """Test the constructor."""
