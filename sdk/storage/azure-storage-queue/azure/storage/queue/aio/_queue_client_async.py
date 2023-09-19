@@ -65,6 +65,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
     :keyword message_decode_policy: The decoding policy to use on incoming messages.
         Default value is not to decode messages. Other options include :class:`TextBase64DecodePolicy`,
         :class:`BinaryBase64DecodePolicy` or `None`.
+    :keyword QueueTokenAudience audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential.
 
     .. admonition:: Example:
 

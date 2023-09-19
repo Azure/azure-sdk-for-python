@@ -24,7 +24,8 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.transport import AsyncHttpTransport
 
-from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, STORAGE_OAUTH_SCOPE
+from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT
+from .models import TokenAudience
 from .authentication import SharedKeyCredentialPolicy
 from .base_client import create_configuration
 from .policies import (
@@ -70,7 +71,8 @@ class AsyncStorageAccountHostsMixin(object):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
         if hasattr(credential, 'get_token'):
-            self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
+            audience = kwargs.pop('audience', TokenAudience.public_audience())
+            self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, str(audience))
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):

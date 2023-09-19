@@ -30,6 +30,7 @@ from ._models import (
     Metrics,
     CorsRule,
     RetentionPolicy,
+    QueueTokenAudience
 )
 
 __version__ = VERSION
@@ -56,5 +57,6 @@ __all__ = [
     'CorsRule',
     'RetentionPolicy',
     'generate_account_sas',
-    'generate_queue_sas'
+    'generate_queue_sas',
+    'QueueTokenAudience'
 ]

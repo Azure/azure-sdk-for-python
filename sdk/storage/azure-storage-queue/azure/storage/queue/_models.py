@@ -7,10 +7,11 @@
 # pylint: disable=super-init-not-called
 
 from typing import List # pylint: disable=unused-import
+from typing_extensions import Self
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
-from ._shared.models import DictMixin
+from ._shared.models import DictMixin, TokenAudience
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
@@ -442,3 +443,18 @@ def service_properties_deserialize(generated):
         'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
         'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
     }
+
+class QueueTokenAudience(TokenAudience):
+    """Audiences available for Queues."""
+
+    @classmethod
+    def get_queue_account_audience(cls, account_name: str) -> Self:
+        """The Queue service endpoint for a given Storage account. Use this method
+        to acquire a token for authorizing requests to that specific Azure Storage account and
+        service only.
+
+        :param str account_name: The storage account name used to populate the service endpoint.
+        :returns: The Audience for the given Storage account and respective service endpoint.
+        :rtype: QueueTokenAudience
+        """
+        return cls(f'https://{account_name}.queue.core.windows.net/')

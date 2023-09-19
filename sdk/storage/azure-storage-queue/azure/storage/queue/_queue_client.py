@@ -67,6 +67,8 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     :keyword message_decode_policy: The decoding policy to use on incoming messages.
         Default value is not to decode messages. Other options include :class:`TextBase64DecodePolicy`,
         :class:`BinaryBase64DecodePolicy` or `None`.
+    :keyword QueueTokenAudience audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential.
 
     .. admonition:: Example:
 
@@ -135,6 +137,8 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        :keyword QueueTokenAudience audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential.
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
         """
@@ -183,6 +187,8 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        :keyword QueueTokenAudience audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential.
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
 

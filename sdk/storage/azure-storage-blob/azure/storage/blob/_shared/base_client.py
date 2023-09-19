@@ -35,8 +35,8 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
 )
 
-from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, SERVICE_HOST_BASE, STORAGE_OAUTH_SCOPE
-from .models import LocationMode
+from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, SERVICE_HOST_BASE
+from .models import LocationMode, TokenAudience
 from .authentication import SharedKeyCredentialPolicy
 from .shared_access_signature import QueryStringConstants
 from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
@@ -220,7 +220,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
         if hasattr(credential, "get_token"):
-            audience = kwargs.pop('audience', STORAGE_OAUTH_SCOPE)
+            audience = kwargs.pop('audience', TokenAudience.public_audience())
             self._credential_policy = StorageBearerTokenCredentialPolicy(credential=credential, audience=str(audience))
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential

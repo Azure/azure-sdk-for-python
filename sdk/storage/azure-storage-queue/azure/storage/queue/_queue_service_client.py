@@ -70,6 +70,8 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
+    :keyword QueueTokenAudience audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential.
 
     .. admonition:: Example:
 
@@ -134,6 +136,8 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        :keyword QueueTokenAudience audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential.
         :returns: A Queue service client.
         :rtype: ~azure.storage.queue.QueueClient
 
