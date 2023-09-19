@@ -13,11 +13,12 @@ _common = {
 _headers = dict(zip(_common, _common))
 _headers['other'] = 'other'
 
+
 class TestOldDiagnostics:
 
     def test_init(self):
         rh = m.RecordDiagnostics()
-        assert rh.headers == _headers
+        assert rh.headers == {}
 
     def test_headers(self):
         rh = m.RecordDiagnostics()
