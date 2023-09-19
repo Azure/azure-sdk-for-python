@@ -26,7 +26,6 @@ pyyaml==5.3.1
 pytest==7.3.1
 pytest-cov==4.0.0
 coverage==7.2.5
-pyproject-api<1.6.0
 
 # local dev packages
 ./tools/azure-devtools
