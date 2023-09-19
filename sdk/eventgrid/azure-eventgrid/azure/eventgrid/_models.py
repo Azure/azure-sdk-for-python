@@ -106,8 +106,18 @@ class EventGridEvent(object):
     def __getattr__(self, name):
         return getattr(InternalEventGridEvent, name)
     
-    def _to_generated_model(self) -> InternalEventGridEvent:
-        return self._internal_event
+    @classmethod
+    def _to_generated_model(cls, event, **kwargs) -> InternalEventGridEvent:
+        try:
+            kwargs["id"] = event.id
+            kwargs["subject"] = event.subject
+            kwargs["event_type"] = event.event_type
+            kwargs["event_time"] = event.event_time
+            kwargs["data"] = event.data
+            kwargs["data_version"] = event.data_version
+            return InternalEventGridEvent(**kwargs)
+        except AttributeError:
+            return InternalEventGridEvent.from_dict(event)
 
 
     def __repr__(self):

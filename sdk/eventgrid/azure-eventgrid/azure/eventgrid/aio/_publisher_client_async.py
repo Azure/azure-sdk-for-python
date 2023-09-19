@@ -222,6 +222,7 @@ class EventGridPublisherClient: # pylint: disable=client-accepts-api-version-key
         elif isinstance(events[0], EventGridEvent) or _is_eventgrid_event(events[0]):
             for event in events:
                 _eventgrid_data_typecheck(event)
+            events = [EventGridEvent._to_generated_model(e) for e in events]  # pylint: disable=protected-access
         request = _build_request(self._endpoint, content_type, events, channel_name=channel_name)
         request.url = self._client.format_url(request.url)
         response = await self._client.send_request(  # pylint: disable=protected-access
