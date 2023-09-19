@@ -154,7 +154,7 @@ class DatabaseProxy(object):
     def create_container(
         self,
         id,  # type: str  # pylint: disable=redefined-builtin
-        partition_key,  # type: ~azure.cosmos.partition_key.PartitionKey
+        partition_key,  # type: ~azure.cosmos.PartitionKey
         indexing_policy=None,  # type: Optional[Dict[str, Any]]
         default_ttl=None,  # type: Optional[int]
         populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
