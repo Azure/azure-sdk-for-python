@@ -11,7 +11,7 @@ urlFragment: ml-samples
 # Azure Machine Learning Client Library for Python Samples
 
 These are code samples that show common scenario operations with the Azure Machine Learning Client Library for Python.
-Their main purpose is to be used in inline examples for class and methods throughout the codebase like below:
+Their main purpose is to be used in inline examples for class and methods throughout the codebase that render alongside our reference documentation on [learn.microsoft.com](https://learn.microsoft.com/en-us/python/api/azure-ai-ml/?view=azure-python).
 
 ```markdown
 .. admonition:: Example:
@@ -25,15 +25,14 @@ Their main purpose is to be used in inline examples for class and methods throug
             in directory "src".
 ```
 
-If adding or updating
-a public class or method, please add or update the example. Double-check that you have the correct path for literalinclude::. It needs to be relative to the file you are adding the admonition to (e.g. in this case, the MLClient code is in sdk\ml\azure-ai-ml\ so the path to the samples folder has to be ../samples/ml_samples_authentication.py). Each samples file is run during the azure-sdk-for-python Build CI to ensure that examples are up-to-date and functioning.
+If adding or updating a public class or method, please add or update the example. Double-check that you have the correct path for `literalinclude::`. Due to how Sphinx builds documentation, the path needs to be relative from the file's module to the samples folder in the Sphinx build, *not* relative from the file you are adding the admonition to.
 
+In the Sphinx build, each module is only one directory level away from azure-ai-ml.
 
-* [ml_samples_authentication.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/samples/ml_samples_authentication.py)
-* [ml_samples_cloud_configurations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/samples/ml_samples_cloud_configurations.py)
-* [ml_samples_misc](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/samples/ml_samples_misc.py)
-* [ml_samples_spark_configurations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/samples/ml_samples_spark_configurations.py)
-* [ml_samples_sweep_configurations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/samples/ml_samples_sweep_configurations.py)
+![Sphinx Documentation Structure](sphinx_docs_structure.PNG)
+
+As an example, MLClient is in the azure-ai-ml root module so the path to the samples folder has to be `../samples/ml_samples_authentication.py` since `doc/azure.ai.ml.rst` is one directory level down from `samples`. The Environment class, on the other hand, is in the entities module, so the path to the samples folder in its admonitions should be `../../samples` since entities is in `doc/azure-ai-ml/azure.ai.ml.entities.rst` which is two directory levels down from `samples`. Each samples file is run during the azure-sdk-for-python Build CI to ensure that examples are up-to-date and functioning.
+
 
 ## Prerequisites
 
