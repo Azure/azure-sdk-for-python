@@ -16,8 +16,6 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
 )
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory, OutboundRuleType
 
-from azure.ai.ml._utils._experimental import experimental
-
 
 class OutboundRule(ABC):
     """Base class for Outbound Rules, cannot be instantiated directly.
