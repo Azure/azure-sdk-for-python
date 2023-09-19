@@ -9,6 +9,8 @@
 #### Bugs Fixed
 
 #### Other Changes
+* Marked the outdated `diagnostics.py` file for deprecation since we now recommend the use of our `CosmosHttpLoggingPolicy` for diagnostics.
+For more on the `CosmosHttpLoggingPolicy` see our [README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos#logging-diagnostics).
 
 ### 4.5.1 (2023-09-12)
 
@@ -17,8 +19,6 @@
 
 #### Other Changes
 * Added additional checks for resource creation using specific characters that cause issues. See [PR 31861](https://github.com/Azure/azure-sdk-for-python/pull/31861).
-* Marked the outdated `diagnostics.py` file for deprecation since we now recommend the use of our `CosmosHttpLoggingPolicy` for diagnostics.
-For more on the `CosmosHttpLoggingPolicy` see our [README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos#logging-diagnostics).
 
 ### 4.5.0 (2023-08-09)
 
