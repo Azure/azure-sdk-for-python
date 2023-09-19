@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from marshmallow import Schema
 
@@ -114,7 +114,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         is_deterministic: bool = True,
         additional_includes: Optional[List] = None,
         properties: Optional[Dict] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
@@ -166,14 +166,14 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         :rtype: Dict
         """
 
-        obj = super()._to_ordered_dict_for_yaml_dump()
+        obj: dict = super()._to_ordered_dict_for_yaml_dump()
         # dict dumped base on schema will transfer code to an absolute path, while we want to keep its original value
         if self.code and isinstance(self.code, str):
             obj["code"] = self.code
         return obj
 
     @property
-    def instance_count(self) -> int:
+    def instance_count(self) -> Optional[int]:
         """The number of instances or nodes to be used by the compute target.
 
         :return: The number of instances or nodes.
@@ -205,13 +205,14 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         }
 
     def _to_dict(self) -> Dict:
-        return convert_ordered_dict_to_dict({**self._other_parameter, **super(CommandComponent, self)._to_dict()})
+        res: dict = convert_ordered_dict_to_dict({**self._other_parameter, **super(CommandComponent, self)._to_dict()})
+        return res
 
     @classmethod
     def _from_rest_object_to_init_params(cls, obj: ComponentVersion) -> Dict:
         # put it here as distribution is shared by some components, e.g. command
         distribution = obj.properties.component_spec.pop("distribution", None)
-        init_kwargs = super()._from_rest_object_to_init_params(obj)
+        init_kwargs: dict = super()._from_rest_object_to_init_params(obj)
         if distribution:
             init_kwargs["distribution"] = DistributionConfiguration._from_rest_object(distribution)
         return init_kwargs
@@ -220,15 +221,16 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
         # Return environment id of environment
         # handle case when environment is defined inline
         if isinstance(self.environment, Environment):
-            return self.environment.id
+            _id: str = self.environment.id
+            return _id
         return self.environment
 
     # region SchemaValidatableMixin
     @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context: Any) -> Union[PathAwareSchema, Schema]:
         return CommandComponentSchema(context=context)
 
-    def _customized_validate(self):
+    def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(CommandComponent, self)._customized_validate()
         self._append_diagnostics_and_check_if_origin_code_reliable_for_local_path_validation(validation_result)
         validation_result.merge_with(self._validate_command())
@@ -277,11 +279,14 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
     # endregion
 
     @classmethod
-    def _parse_args_description_from_docstring(cls, docstring):
-        return parse_args_description_from_docstring(docstring)
+    def _parse_args_description_from_docstring(cls, docstring: str) -> Dict:
+        res: dict = parse_args_description_from_docstring(docstring)
+        return res
 
-    def __str__(self):
+    def __str__(self) -> str:
         try:
-            return self._to_yaml()
+            _res_1: str = self._to_yaml()
+            return _res_1
         except BaseException:  # pylint: disable=broad-except
-            return super(CommandComponent, self).__str__()
+            _res_2: str = super(CommandComponent, self).__str__()
+            return _res_2
