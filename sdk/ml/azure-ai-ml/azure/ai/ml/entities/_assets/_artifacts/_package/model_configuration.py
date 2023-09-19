@@ -19,7 +19,7 @@ class ModelConfiguration:
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START model_configuration_entity_create]
             :end-before: [END model_configuration_entity_create]
             :language: python

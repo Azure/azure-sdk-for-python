@@ -101,7 +101,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START env_operations_create_or_update]
                 :end-before: [END env_operations_create_or_update]
                 :language: python
@@ -256,7 +256,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START env_operations_get]
                 :end-before: [END env_operations_get]
                 :language: python
@@ -309,7 +309,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START env_operations_list]
                 :end-before: [END env_operations_list]
                 :language: python
@@ -371,7 +371,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START env_operations_archive]
                 :end-before: [END env_operations_archive]
                 :language: python
@@ -408,7 +408,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START env_operations_restore]
                 :end-before: [END env_operations_restore]
                 :language: python

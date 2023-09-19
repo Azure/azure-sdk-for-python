@@ -84,7 +84,7 @@ class MpiDistribution(DistributionConfiguration):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START mpi_distribution_configuration]
             :end-before: [END mpi_distribution_configuration]
             :language: python
@@ -111,7 +111,7 @@ class PyTorchDistribution(DistributionConfiguration):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START pytorch_distribution_configuration]
             :end-before: [END pytorch_distribution_configuration]
             :language: python
@@ -145,7 +145,7 @@ class TensorFlowDistribution(DistributionConfiguration):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START tensorflow_distribution_configuration]
             :end-before: [END tensorflow_distribution_configuration]
             :language: python

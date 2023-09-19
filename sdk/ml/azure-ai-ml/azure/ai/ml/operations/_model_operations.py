@@ -137,7 +137,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_create_or_update]
                 :end-before: [END model_operations_create_or_update]
                 :language: python
@@ -304,7 +304,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_get]
                 :end-before: [END model_operations_get]
                 :language: python
@@ -353,7 +353,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_download]
                 :end-before: [END model_operations_download]
                 :language: python
@@ -436,7 +436,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_archive]
                 :end-before: [END model_operations_archive]
                 :language: python
@@ -472,7 +472,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_restore]
                 :end-before: [END model_operations_restore]
                 :language: python
@@ -511,7 +511,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_list]
                 :end-before: [END model_operations_list]
                 :language: python
@@ -573,7 +573,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_share]
                 :end-before: [END model_operations_share]
                 :language: python
@@ -665,7 +665,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_package]
                 :end-before: [END model_operations_package]
                 :language: python

@@ -46,7 +46,7 @@ class ComputeInstanceSshSettings:
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../samples/ml_samples_compute.py
+        .. literalinclude:: ../samples/ml_samples_compute.py
             :start-after: [START compute_instance_ssh_settings]
             :end-before: [END compute_instance_ssh_settings]
             :language: python
@@ -93,7 +93,7 @@ class AssignedUserConfiguration(DictMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../samples/ml_samples_compute.py
+        .. literalinclude:: ../samples/ml_samples_compute.py
             :start-after: [START assigned_user_configuration]
             :end-before: [END assigned_user_configuration]
             :language: python
@@ -163,7 +163,7 @@ class ComputeInstance(Compute):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../samples/ml_samples_compute.py
+        .. literalinclude:: ../samples/ml_samples_compute.py
             :start-after: [START compute_instance]
             :end-before: [END compute_instance]
             :language: python

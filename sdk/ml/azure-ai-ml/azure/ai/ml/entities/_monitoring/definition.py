@@ -25,9 +25,9 @@ from azure.ai.ml.entities._monitoring.signals import (
     DataDriftSignal,
     DataQualitySignal,
     FeatureAttributionDriftSignal,
+    GenerationSafetyQualitySignal,
     MonitoringSignal,
     PredictionDriftSignal,
-    GenerationSafetyQualitySignal,
 )
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
 
@@ -53,7 +53,7 @@ class MonitorDefinition(RestTranslatableMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../samples/ml_samples_spark_configurations.py
+        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_monitor_definition]
             :end-before: [END spark_monitor_definition]
             :language: python

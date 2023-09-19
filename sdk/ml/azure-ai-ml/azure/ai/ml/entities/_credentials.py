@@ -139,7 +139,7 @@ class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START personal_access_token_configuration]
             :end-before: [END personal_access_token_configuration]
             :language: python
@@ -519,7 +519,7 @@ class UserIdentityConfiguration(_BaseIdentityConfiguration):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../samples/ml_samples_authentication.py
+        .. literalinclude:: ../samples/ml_samples_authentication.py
             :start-after: [START user_identity_configuration]
             :end-before: [END user_identity_configuration]
             :language: python
@@ -563,7 +563,7 @@ class AmlTokenConfiguration(_BaseIdentityConfiguration):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../samples/ml_samples_authentication.py
+        .. literalinclude:: ../samples/ml_samples_authentication.py
             :start-after: [START aml_token_configuration]
             :end-before: [END aml_token_configuration]
             :language: python

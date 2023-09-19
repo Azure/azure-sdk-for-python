@@ -147,7 +147,7 @@ class ModelPackageInput:
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START model_package_input_entity_create]
             :end-before: [END model_package_input_entity_create]
             :language: python
@@ -210,7 +210,7 @@ class ModelPackage(Resource, PackageRequest):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START model_package_entity_create]
             :end-before: [END model_package_entity_create]
             :language: python
