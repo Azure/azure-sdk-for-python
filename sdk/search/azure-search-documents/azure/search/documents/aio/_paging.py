@@ -3,10 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, cast
 
-from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator, ReturnType
-from .._generated.models import AnswerResult
+from azure.core.paging import ReturnType
+from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator
+from .._generated.models import AnswerResult, SearchDocumentsResult
 from .._paging import (
     convert_search_result,
     pack_continuation_token,
@@ -17,12 +18,12 @@ from .._paging import (
 class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
     def __init__(self, *args, **kwargs) -> None:
         super(AsyncSearchItemPaged, self).__init__(*args, **kwargs)
-        self._first_page_iterator_instance = None
+        self._first_page_iterator_instance: Optional[AsyncSearchPageIterator] = None
 
     async def __anext__(self) -> ReturnType:
         if self._page_iterator is None:
             self._page_iterator = self.by_page()
-            self._first_page_iterator_instance = self._page_iterator
+            self._first_page_iterator_instance = cast(AsyncSearchPageIterator, self._page_iterator)
             return await self.__anext__()
         if self._page is None:
             # Let it raise StopAsyncIteration
@@ -34,9 +35,9 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
             self._page = None
             return await self.__anext__()
 
-    def _first_iterator_instance(self):
+    def _first_iterator_instance(self) -> "AsyncSearchPageIterator":
         if self._first_page_iterator_instance is None:
-            self._page_iterator = self.by_page()
+            self._page_iterator = cast(AsyncSearchPageIterator, self.by_page())
             self._first_page_iterator_instance = self._page_iterator
         return self._first_page_iterator_instance
 
@@ -46,7 +47,7 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         :return: Facet results.
         :rtype: dict
         """
-        return await self._first_iterator_instance().get_facets()
+        return cast(Dict, await self._first_iterator_instance().get_facets())
 
     async def get_coverage(self) -> float:
         """Return the coverage percentage, if `minimum_coverage` was
@@ -55,7 +56,7 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         :return: Coverage percentage.
         :rtype: float
         """
-        return await self._first_iterator_instance().get_coverage()
+        return cast(float, await self._first_iterator_instance().get_coverage())
 
     async def get_count(self) -> int:
         """Return the count of results if `include_total_count` was
@@ -64,7 +65,7 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         :return: Count of results.
         :rtype: int
         """
-        return await self._first_iterator_instance().get_count()
+        return cast(int, await self._first_iterator_instance().get_count())
 
     async def get_answers(self) -> Optional[List[AnswerResult]]:
         """Return answers.
@@ -72,7 +73,7 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         :return: Answers.
         :rtype: list[~azure.search.documents.AnswerResult]
         """
-        return await self._first_iterator_instance().get_answers()
+        return cast(List[AnswerResult], await self._first_iterator_instance().get_answers())
 
 
 # The pylint error silenced below seems spurious, as the inner wrapper does, in
@@ -115,24 +116,29 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
         return continuation_token, results
 
     @_ensure_response
-    async def get_facets(self):
+    async def get_facets(self) -> Optional[Dict]:
         self.continuation_token = None
-        facets = self._response.facets
+        response = cast(SearchDocumentsResult, self._response)
+        facets = response.facets
         if facets is not None and self._facets is None:
+            assert facets.items() is not None  # Hint for mypy
             self._facets = {k: [x.as_dict() for x in v] for k, v in facets.items()}
         return self._facets
 
     @_ensure_response
-    async def get_coverage(self):
+    async def get_coverage(self) -> float:
         self.continuation_token = None
-        return self._response.coverage
+        response = cast(SearchDocumentsResult, self._response)
+        return cast(float, response.coverage)
 
     @_ensure_response
-    async def get_count(self):
+    async def get_count(self) -> int:
         self.continuation_token = None
-        return self._response.count
+        response = cast(SearchDocumentsResult, self._response)
+        return cast(int, response.count)
 
     @_ensure_response
-    async def get_answers(self):
+    async def get_answers(self) -> Optional[List[AnswerResult]]:
         self.continuation_token = None
-        return self._response.answers
+        response = cast(SearchDocumentsResult, self._response)
+        return response.answers
