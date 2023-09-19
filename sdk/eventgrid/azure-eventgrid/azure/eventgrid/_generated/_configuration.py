@@ -6,21 +6,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import sys
 from typing import Any
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
-
 VERSION = "unknown"
 
 
-class EventGridPublisherClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class EventGridPublisherClientConfiguration(  # pylint: disable=too-many-instance-attributes,name-too-long
+    Configuration
+):
     """Configuration for EventGridPublisherClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -33,7 +29,7 @@ class EventGridPublisherClientConfiguration(Configuration):  # pylint: disable=t
 
     def __init__(self, **kwargs: Any) -> None:
         super(EventGridPublisherClientConfiguration, self).__init__(**kwargs)
-        api_version: Literal["2018-01-01"] = kwargs.pop("api_version", "2018-01-01")
+        api_version: str = kwargs.pop("api_version", "2018-01-01")
 
         self.api_version = api_version
         kwargs.setdefault("sdk_moniker", "eventgridpublisherclient/{}".format(VERSION))
