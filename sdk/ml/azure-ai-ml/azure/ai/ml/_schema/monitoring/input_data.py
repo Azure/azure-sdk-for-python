@@ -29,9 +29,9 @@ class FixedInputDataSchema(MonitorInputDataSchema):
 
 
 class TrailingInputDataSchema(MonitorInputDataSchema):
-    trailing_window_size = fields.Str()
-    trailing_window_offset = fields.Str()
-    pre_processing_component = fields.Str()
+    window_size = fields.Str()
+    window_offset = fields.Str()
+    pre_processing_component_id = fields.Str()
 
     @post_load
     def make(self, data, **kwargs):
@@ -41,9 +41,9 @@ class TrailingInputDataSchema(MonitorInputDataSchema):
 
 
 class StaticInputDataSchema(MonitorInputDataSchema):
-    pre_processing_component = fields.Str()
-    window_start = fields.Date("%Y-%m-%d")
-    window_end = fields.Date("%Y-%m-%d")
+    pre_processing_component_id = fields.Str()
+    window_start = fields.String()
+    window_end = fields.String()
 
     @post_load
     def make(self, data, **kwargs):

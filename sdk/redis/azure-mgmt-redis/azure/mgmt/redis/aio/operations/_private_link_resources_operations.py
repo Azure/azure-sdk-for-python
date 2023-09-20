@@ -58,7 +58,8 @@ class PrivateLinkResourcesOperations:
     ) -> AsyncIterable["_models.PrivateLinkResource"]:
         """Gets the private link resources that need to be created for a redis cache.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param cache_name: The name of the Redis cache. Required.
         :type cache_name: str

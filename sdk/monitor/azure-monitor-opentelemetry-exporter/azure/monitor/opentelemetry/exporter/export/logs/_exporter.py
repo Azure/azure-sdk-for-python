@@ -62,7 +62,8 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
 
         Called when the SDK is shut down.
         """
-        self.storage.close()
+        if self.storage:
+            self.storage.close()
 
     def _log_to_envelope(self, log_data: LogData) -> TelemetryItem:
         if not log_data:

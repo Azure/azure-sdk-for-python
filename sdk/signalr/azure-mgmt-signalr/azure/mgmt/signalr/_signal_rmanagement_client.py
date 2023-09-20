@@ -22,6 +22,7 @@ from .operations import (
     SignalROperations,
     SignalRPrivateEndpointConnectionsOperations,
     SignalRPrivateLinkResourcesOperations,
+    SignalRReplicasOperations,
     SignalRSharedPrivateLinkResourcesOperations,
     UsagesOperations,
 )
@@ -52,19 +53,20 @@ class SignalRManagementClient:  # pylint: disable=client-accepts-api-version-key
     :ivar signal_rprivate_link_resources: SignalRPrivateLinkResourcesOperations operations
     :vartype signal_rprivate_link_resources:
      azure.mgmt.signalr.operations.SignalRPrivateLinkResourcesOperations
+    :ivar signal_rreplicas: SignalRReplicasOperations operations
+    :vartype signal_rreplicas: azure.mgmt.signalr.operations.SignalRReplicasOperations
     :ivar signal_rshared_private_link_resources: SignalRSharedPrivateLinkResourcesOperations
      operations
     :vartype signal_rshared_private_link_resources:
      azure.mgmt.signalr.operations.SignalRSharedPrivateLinkResourcesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Gets subscription Id which uniquely identify the Microsoft Azure
-     subscription. The subscription ID forms part of the URI for every service call. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-02-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-06-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -80,7 +82,7 @@ class SignalRManagementClient:  # pylint: disable=client-accepts-api-version-key
         self._config = SignalRManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -99,6 +101,9 @@ class SignalRManagementClient:  # pylint: disable=client-accepts-api-version-key
             self._client, self._config, self._serialize, self._deserialize
         )
         self.signal_rprivate_link_resources = SignalRPrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.signal_rreplicas = SignalRReplicasOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.signal_rshared_private_link_resources = SignalRSharedPrivateLinkResourcesOperations(

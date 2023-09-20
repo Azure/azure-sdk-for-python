@@ -181,7 +181,6 @@ def spark(
 
     .. admonition:: Example:
 
-
         .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_function_configuration_1]
             :end-before: [END spark_function_configuration_1]
@@ -191,7 +190,6 @@ def spark(
 
     .. admonition:: Example:
 
-
         .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_function_configuration_2]
             :end-before: [END spark_function_configuration_2]
@@ -200,7 +198,6 @@ def spark(
             :caption: Configuring a SparkJob.
 
     .. admonition:: Example:
-
 
         .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_dsl_pipeline]

@@ -257,7 +257,7 @@ class ServicePrincipalConfiguration(BaseTenantCredentials):
         secrets = RestServicePrincipalDatastoreSecrets(client_secret=self.client_secret)
         return RestServicePrincipalDatastoreCredentials(
             authority_url=self.authority_url,
-            resource_uri=self.resource_url,
+            resource_url=self.resource_url,
             tenant_id=self.tenant_id,
             client_id=self.client_id,
             secrets=secrets,
