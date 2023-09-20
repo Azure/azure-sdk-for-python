@@ -70,8 +70,8 @@ class WorkspaceOperationsBase(ABC):
     def get(self, workspace_name: Optional[str] = None, **kwargs: Dict) -> Workspace:
         """Get a Workspace by name.
 
-        :param name: Name of the workspace.
-        :type name: str
+        :param workspace_name: Name of the workspace.
+        :type workspace_name: str
         :return: The workspace with the provided name.
         :rtype: ~azure.ai.ml.entities.Workspace
         """
@@ -96,7 +96,7 @@ class WorkspaceOperationsBase(ABC):
         :param update_dependent_resources: Whether to update dependent resources, defaults to False.
         :type update_dependent_resources: boolean
         :param get_callback: A callable function to call at the end of operation.
-        :type get_callbakc: Optional[Callable[[], ~azure.ai.ml.entities.Workspace]]
+        :type get_callback: Optional[Callable[[], ~azure.ai.ml.entities.Workspace]]
         :return: An instance of LROPoller that returns a Workspace.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
         :raises ~azure.ai.ml.ValidationException: Raised if workspace is Project workspace and user
@@ -184,7 +184,12 @@ class WorkspaceOperationsBase(ABC):
         )
 
         def callback():
-            """callback to called after completion"""
+            """
+            callback to be called after completion
+
+            :return: Result of calling appropriate callback.
+            :rtype: Any
+            """
             return get_callback() if get_callback else self.get(workspace.name, resource_group=resource_group)
 
         real_callback = callback
@@ -192,7 +197,12 @@ class WorkspaceOperationsBase(ABC):
         if injected_callback:
             # pylint: disable=function-redefined
             def real_callback():
-                """callback to called after completion"""
+                """
+                callback to be called after completion
+
+                :return: Result of calling appropriate callback.
+                :rtype: Any
+                """
                 return injected_callback(callback())
 
         return LROPoller(
@@ -337,7 +347,12 @@ class WorkspaceOperationsBase(ABC):
 
         # pylint: disable=unused-argument
         def callback(_, deserialized, args):
-            """callback to called after completion"""
+            """
+            callback to be called after completion
+
+            :return: Workspace deserialized.
+            :rtype: ~azure.ai.ml.entities.Workspace
+            """
             if (
                 workspace._kind
                 and workspace._kind.lower() == "featurestore"
@@ -376,7 +391,12 @@ class WorkspaceOperationsBase(ABC):
         if injected_callback:
             # pylint: disable=function-redefined
             def real_callback(_, deserialized, args):
-                """callback to called after completion"""
+                """
+                callback to be called after completion
+
+                :return: Result of calling appropriate callback.
+                :rtype: Any
+                """
                 return injected_callback(callback(_, deserialized, args))
 
         poller = self._operation.begin_update(
@@ -741,6 +761,8 @@ class WorkspaceOperationsBase(ABC):
 
         :param name: Name for a workspace resource.
         :type name: str
+        :return: No Return.
+        :rtype: None
         :raises ~azure.ai.ml.ValidationException: Raised if updating nothing is specified for name and
         MLClient does not have workspace name set.
         """
@@ -763,6 +785,7 @@ def _set_val(dict: dict, val: str) -> None:
     :type dict: dict
     :param val: The value to set for "value" in the passed in dict.
     :type val: str
+    :return: No Return.
     :rtype: None
     """
     dict["value"] = val
@@ -776,6 +799,7 @@ def _generate_key_vault(name: str, resources_being_deployed: dict) -> str:
     :type name: str
     :param resources_being_deployed: Dict for resources being deployed.
     :type resources_being_deployed: dict
+    :return: String for name of key vault.
     :rtype: str
     """
     # Vault name must only contain alphanumeric characters and dashes and cannot start with a number.
@@ -794,6 +818,7 @@ def _generate_storage(name: str, resources_being_deployed: dict) -> str:
     :type name: str
     :param resources_being_deployed: Dict for resources being deployed.
     :type resources_being_deployed: dict
+    :return: String for name of storage account.
     :rtype: str
     """
     storage = get_name_for_dependent_resource(name, "storage")
@@ -809,6 +834,7 @@ def _generate_log_analytics(name: str, resources_being_deployed: dict) -> str:
     :type name: str
     :param resources_being_deployed: Dict for resources being deployed.
     :type resources_being_deployed: dict
+    :return: String for name of log analytics.
     :rtype: str
     """
     log_analytics = get_name_for_dependent_resource(name, "logalytics")  # cspell:disable-line
@@ -827,6 +853,7 @@ def _generate_app_insights(name: str, resources_being_deployed: dict) -> str:
     :type name: str
     :param resources_being_deployed: Dict for resources being deployed.
     :type resources_being_deployed: dict
+    :return: String for name of app insights.
     :rtype: str
     """
     # Application name only allows alphanumeric characters, periods, underscores,
@@ -849,8 +876,13 @@ class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
         super().__init__()
 
     def resource(self):
-        """Polls for the resource creation completing every so often with ability to cancel deployment and outputs
-        either error or executes function to "deserialize" result."""
+        """
+        Polls for the resource creation completing every so often with ability to cancel deployment and outputs
+        either error or executes function to "deserialize" result.
+
+        :return: The response from polling result and calling func from CustomArmTemplateDeploymentPollingMethod
+        :rtype: Any
+        """
         error = None
         try:
             while not self.poller.done():
@@ -880,17 +912,33 @@ class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
         return self.func()
 
     def initialize(self, *args, **kwargs):
-        """unused stub overridden from ABC"""
-        pass
+        """
+        unused stub overridden from ABC
+
+        :return: No return.
+        :rtype: ~azure.ai.ml.entities.OutboundRule
+        """
 
     def finished(self):
-        """unused stub overridden from ABC"""
-        pass
+        """
+        unused stub overridden from ABC
+
+        :return: No return.
+        :rtype: ~azure.ai.ml.entities.OutboundRule
+        """
 
     def run(self):
-        """unused stub overridden from ABC"""
-        pass
+        """
+        unused stub overridden from ABC
+
+        :return: No return.
+        :rtype: ~azure.ai.ml.entities.OutboundRule
+        """
 
     def status(self):
-        """unused stub overridden from ABC"""
-        pass
+        """
+        unused stub overridden from ABC
+
+        :return: No return.
+        :rtype: ~azure.ai.ml.entities.OutboundRule
+        """

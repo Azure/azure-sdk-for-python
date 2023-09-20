@@ -6,7 +6,6 @@
 
 from typing import Dict, Iterable, Optional
 
-from ._workspace_operations_base import WorkspaceOperationsBase
 from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -19,6 +18,8 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
+
+from ._workspace_operations_base import WorkspaceOperationsBase
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
@@ -157,7 +158,14 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
             )
 
         def deserialize_callback(rest_obj):
-            """callback to called after completion"""
+            """
+            callback to be called after completion
+
+            :param rest_obj: A rest representation of the Workspace.
+            :type: Any
+            :return: WorkspaceHub deserialized.
+            :rtype: ~azure.ai.ml.entities.WorkspaceHub
+            """
             return WorkspaceHub._from_rest_object(rest_obj=rest_obj)
 
         return super().begin_update(

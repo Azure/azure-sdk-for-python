@@ -77,9 +77,14 @@ class WorkspaceOutboundRuleOperations:
 
         rule_params = OutboundRuleBasicResource(properties=rule._to_rest_object())  # pylint: disable=protected-access
 
-        # pylint: disable=unused-argument
+        # pylint: disable=unused-argument, docstring-missing-param
         def callback(_, deserialized, args):
-            """callback to called after completion"""
+            """
+            callback to be called after completion
+
+            :return: Outbound rule deserialized.
+            :rtype: ~azure.ai.ml.entities.OutboundRule
+            """
             properties = deserialized.properties
             name = deserialized.name
             return OutboundRule._from_rest_object(properties, name=name)  # pylint: disable=protected-access
@@ -107,9 +112,14 @@ class WorkspaceOutboundRuleOperations:
 
         rule_params = OutboundRuleBasicResource(properties=rule._to_rest_object())  # pylint: disable=protected-access
 
-        # pylint: disable=unused-argument
+        # pylint: disable=unused-argument, docstring-missing-param
         def callback(_, deserialized, args):
-            """callback to called after completion"""
+            """
+            callback to be called after completion
+
+            :return: Outbound rule deserialized.
+            :rtype: ~azure.ai.ml.entities.OutboundRule
+            """
             properties = deserialized.properties
             name = deserialized.name
             return OutboundRule._from_rest_object(properties, name=name)  # pylint: disable=protected-access
@@ -171,6 +181,8 @@ class WorkspaceOutboundRuleOperations:
         :type name: str
         :raises ~azure.ai.ml.ValidationException: Raised if updating nothing is specified for name and
         MLClient does not have workspace name set.
+        :return: No return
+        :rtype: None
         """
         workspace_name = name or self._default_workspace_name
         if not workspace_name:

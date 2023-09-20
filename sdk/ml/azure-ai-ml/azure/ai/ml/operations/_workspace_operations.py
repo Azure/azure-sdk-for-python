@@ -234,9 +234,14 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         parameters = DiagnoseWorkspaceParameters(value=DiagnoseRequestProperties())._to_rest_object()
 
-        # pylint: disable=unused-argument
+        # pylint: disable=unused-argument, docstring-missing-param
         def callback(_, deserialized, args):
-            """callback to called after completion"""
+            """
+            callback to be called after completion
+
+            :return: DiagnoseResponseResult deserialized.
+            :rtype: ~azure.ai.ml.entities.DiagnoseResponseResult
+            """
             diagnose_response_result = DiagnoseResponseResult._from_rest_object(deserialized)
             res = None
             if diagnose_response_result:
