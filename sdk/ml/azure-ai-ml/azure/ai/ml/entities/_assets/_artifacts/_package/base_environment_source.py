@@ -25,7 +25,7 @@ class BaseEnvironment:
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START base_env_entity_create]
             :end-before: [END base_env_entity_create]
             :language: python
