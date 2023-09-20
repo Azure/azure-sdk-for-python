@@ -27,6 +27,7 @@ from email.utils import formatdate
 import json
 import uuid
 import binascii
+from sys import getsizeof
 from typing import Dict, Any, Union
 
 from urllib.parse import quote as urllib_quote
@@ -760,3 +761,27 @@ def _populate_bulk_headers(current_headers, pk_range_id):
     current_headers.update({http_constants.HttpHeaders.PartitionKeyRangeID: pk_range_id})
     current_headers.update({http_constants.HttpHeaders.IsBatchAtomic: False})
     current_headers.update({http_constants.HttpHeaders.ShouldBatchContinueOnError: True})
+
+
+def _get_nested_dict_byte_size(d, seen=None):
+    if seen is None:
+        seen = set()
+
+    obj_id = id(d)
+    if obj_id in seen:
+        return 0
+    seen.add(obj_id)
+
+    size = 0
+
+    if isinstance(d, dict):
+        for key, value in d.items():
+            size += getsizeof(key)
+            size += get_nested_dict_byte_size(value, seen)
+    elif isinstance(d, (list, tuple, set)):
+        for item in d:
+            size += get_nested_dict_byte_size(item, seen)
+    else:
+        size += getsizeof(d)
+
+    return size
