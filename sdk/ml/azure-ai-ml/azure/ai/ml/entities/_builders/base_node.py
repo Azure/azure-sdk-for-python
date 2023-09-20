@@ -566,8 +566,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         :param kwargs: The kwargs
         :type kwargs: dict
         """
-        inputs: Dict[str, Any]
-        inputs = node.inputs
+        inputs: Dict[str, Any] = node.inputs
 
         for key, value in inputs.items():
             meta = value._data
