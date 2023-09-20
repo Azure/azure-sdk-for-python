@@ -1,6 +1,6 @@
 # Release History
 
-## 0.0.0 (it should be stable) (2023-09-15)
+## 1.0.0 (2023-09-15)
 
 
 
