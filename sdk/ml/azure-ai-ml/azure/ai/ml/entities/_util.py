@@ -251,15 +251,16 @@ def is_empty_target(obj: Optional[Dict]) -> bool:
 
 
 def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty: bool = True) -> Union[Dict, List]:
-    """Convert ordered dict to dict. Remove keys with None value.
-    This is a workaround for rest request must be in dict instead of
-    ordered dict.
+    """Convert ordered dict to dict or nested list to list.
+
+    This is a workaround for REST requests since objects must be in dictionaries instead of
+    ordered dictionaries.
 
     :param target_object: The object to convert
     :type target_object: Union[Dict, List]
     :param remove_empty: Whether to omit values that are None or empty dictionaries. Defaults to True.
     :type remove_empty: bool
-    :return: Converted ordered dict with removed None values
+    :return: Converted ordered dictionary or list
     :rtype: Union[Dict, List]
     """
     # OrderedDict can appear nested in a list
