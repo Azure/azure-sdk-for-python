@@ -235,7 +235,7 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             client.create_table()
         time.sleep(10)
 
-        # test get_entity() without the entity ready
+        # test get_entity() without the entity
         with TableClient(
             url,
             table_name,
@@ -244,8 +244,19 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             retry_to_secondary=True,
             transport=FailoverRetryTransport(),
         ) as client:
+            # test passing three different error types(ServiceRequestError, ServiceResponseError, HttpResponseError) on get_entity()
             with pytest.raises(ResourceNotFoundError) as ex:
                 client.get_entity("foo", "bar", failover=ServiceRequestError("Attempting to force failover"))
+            assert "The specified resource does not exist." in str(ex.value)
+
+            with pytest.raises(ResourceNotFoundError) as ex:
+                client.get_entity("foo", "bar", failover=ServiceResponseError("Attempting to force failover"))
+            assert "The specified resource does not exist." in str(ex.value)
+
+            http_response_err = HttpResponseError("Attempting to force failover")
+            http_response_err.status_code = 500  # 500 is in RETRY_CODES that will definitely retry on
+            with pytest.raises(ResourceNotFoundError) as ex:
+                client.get_entity("foo", "bar", failover=http_response_err)
             assert "The specified resource does not exist." in str(ex.value)
 
         # prepare an entity
@@ -253,6 +264,7 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             client.create_entity(entity)
         time.sleep(10)
 
+        # test get_entity() when the entity is ready
         with TableClient(
             url,
             table_name,
@@ -261,9 +273,16 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             retry_to_secondary=True,
             transport=FailoverRetryTransport(),
         ) as client:
+            # test passing three different error types(ServiceRequestError, ServiceResponseError, HttpResponseError) on get_entity()
             client.get_entity(
                 "foo", "bar", failover=ServiceRequestError("Attempting to force failover")
             )  # GET, succeed when retry
+            client.get_entity(
+                "foo", "bar", failover=ServiceResponseError("Attempting to force failover")
+            )  # GET, succeed when retry
+            http_response_err = HttpResponseError("Attempting to force failover")
+            http_response_err.status_code = 500  # 500 is in RETRY_CODES that will definitely retry on
+            client.get_entity("foo", "bar", failover=http_response_err)  # GET, succeed when retry
 
             with pytest.raises(ServiceRequestError) as ex:
                 client.upsert_entity(
@@ -312,7 +331,7 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             client.create_table()
         time.sleep(10)
 
-        # test get_entity() without the entity ready
+        # test get_entity() without the entity
         with TableClient(
             url,
             table_name,
@@ -321,8 +340,19 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             location_mode=LocationMode.SECONDARY,
             transport=FailoverRetryTransport(location_mode=LocationMode.SECONDARY),
         ) as client:
+            # test passing three different error types(ServiceRequestError, ServiceResponseError, HttpResponseError) on get_entity()
             with pytest.raises(ResourceNotFoundError) as ex:
                 client.get_entity("foo", "bar", failover=ServiceRequestError("Attempting to force failover"))
+            assert "The specified resource does not exist." in str(ex.value)
+
+            with pytest.raises(ResourceNotFoundError) as ex:
+                client.get_entity("foo", "bar", failover=ServiceResponseError("Attempting to force failover"))
+            assert "The specified resource does not exist." in str(ex.value)
+
+            http_response_err = HttpResponseError("Attempting to force failover")
+            http_response_err.status_code = 500  # 500 is in RETRY_CODES that will definitely retry on
+            with pytest.raises(ResourceNotFoundError) as ex:
+                client.get_entity("foo", "bar", failover=http_response_err)
             assert "The specified resource does not exist." in str(ex.value)
 
         # prepare an entity
@@ -330,6 +360,7 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             client.create_entity(entity)
         time.sleep(10)
 
+        # test get_entity() when the entity is ready
         with TableClient(
             url,
             table_name,
@@ -338,9 +369,16 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             location_mode=LocationMode.SECONDARY,
             transport=FailoverRetryTransport(location_mode=LocationMode.SECONDARY),
         ) as client:
+            # test passing three different error types(ServiceRequestError, ServiceResponseError, HttpResponseError) on get_entity()
             client.get_entity(
                 "foo", "bar", failover=ServiceRequestError("Attempting to force failover")
             )  # GET, retried on secondary endpoint
+            client.get_entity(
+                "foo", "bar", failover=ServiceResponseError("Attempting to force failover")
+            )  # GET, succeed when retry
+            http_response_err = HttpResponseError("Attempting to force failover")
+            http_response_err.status_code = 500  # 500 is in RETRY_CODES that will definitely retry on
+            client.get_entity("foo", "bar", failover=http_response_err)  # GET, succeed when retry
 
             entities = client.list_entities(
                 failover=ServiceRequestError("Attempting to force failover")
