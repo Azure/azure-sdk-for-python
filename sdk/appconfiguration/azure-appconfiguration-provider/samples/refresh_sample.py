@@ -8,9 +8,11 @@ from azure.appconfiguration import (
     AzureAppConfigurationClient,
     ConfigurationSetting,
 )
+from sample_utilities import get_client_modifications
 import os
 import time
 
+kwargs = get_client_modifications()
 connection_string = os.environ.get("APPCONFIGURATION_CONNECTION_STRING")
 
 # Setting up a configuration setting with a known value
@@ -31,6 +33,7 @@ config = load(
     refresh_on=[SentinelKey("message")],
     refresh_interval=1,
     on_refresh_error=my_callback_on_fail,
+    **kwargs,
 )
 
 print(config["message"])

@@ -61,7 +61,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_compute.py
+            .. literalinclude:: ../samples/ml_samples_compute.py
                 :start-after: [START compute_operations_list]
                 :end-before: [END compute_operations_list]
                 :language: python
@@ -91,7 +91,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_compute.py
+            .. literalinclude:: ../samples/ml_samples_compute.py
                 :start-after: [START compute_operations_get]
                 :end-before: [END compute_operations_get]
                 :language: python
@@ -118,7 +118,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_compute.py
+            .. literalinclude:: ../samples/ml_samples_compute.py
                 :start-after: [START compute_operations_list_nodes]
                 :end-before: [END compute_operations_list_nodes]
                 :language: python
@@ -145,7 +145,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_compute.py
+            .. literalinclude:: ../samples/ml_samples_compute.py
                 :start-after: [START compute_operations_create_update]
                 :end-before: [END compute_operations_create_update]
                 :language: python
@@ -194,7 +194,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_compute.py
+            .. literalinclude:: ../samples/ml_samples_compute.py
                 :start-after: [START compute_operations_attach]
                 :end-before: [END compute_operations_attach]
                 :language: python
@@ -216,7 +216,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_compute.py
+            .. literalinclude:: ../samples/ml_samples_compute.py
                 :start-after: [START compute_operations_update]
                 :end-before: [END compute_operations_update]
                 :language: python
@@ -253,7 +253,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_compute.py
+            .. literalinclude:: ../samples/ml_samples_compute.py
                 :start-after: [START compute_operations_delete]
                 :end-before: [END compute_operations_delete]
                 :language: python
@@ -280,7 +280,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_compute.py
+            .. literalinclude:: ../samples/ml_samples_compute.py
                 :start-after: [START compute_operations_start]
                 :end-before: [END compute_operations_start]
                 :language: python
@@ -306,7 +306,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_compute.py
+            .. literalinclude:: ../samples/ml_samples_compute.py
                 :start-after: [START compute_operations_stop]
                 :end-before: [END compute_operations_stop]
                 :language: python
@@ -331,7 +331,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_compute.py
+            .. literalinclude:: ../samples/ml_samples_compute.py
                 :start-after: [START compute_operations_restart]
                 :end-before: [END compute_operations_restart]
                 :language: python
@@ -358,7 +358,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_compute.py
+            .. literalinclude:: ../samples/ml_samples_compute.py
                 :start-after: [START compute_operations_list_usage]
                 :end-before: [END compute_operations_list_usage]
                 :language: python
@@ -387,7 +387,7 @@ class ComputeOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_compute.py
+            .. literalinclude:: ../samples/ml_samples_compute.py
                 :start-after: [START compute_operations_list_sizes]
                 :end-before: [END compute_operations_list_sizes]
                 :language: python

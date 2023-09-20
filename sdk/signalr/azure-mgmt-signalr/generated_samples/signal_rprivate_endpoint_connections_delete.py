@@ -29,14 +29,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.signal_rprivate_endpoint_connections.begin_delete(
+    client.signal_rprivate_endpoint_connections.begin_delete(
         private_endpoint_connection_name="mysignalrservice.1fa229cd-bf3f-47f0-8c49-afb36723997e",
         resource_group_name="myResourceGroup",
         resource_name="mySignalRService",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/signalr/resource-manager/Microsoft.SignalRService/stable/2023-02-01/examples/SignalRPrivateEndpointConnections_Delete.json
+# x-ms-original-file: specification/signalr/resource-manager/Microsoft.SignalRService/preview/2023-06-01-preview/examples/SignalRPrivateEndpointConnections_Delete.json
 if __name__ == "__main__":
     main()

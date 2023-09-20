@@ -42,7 +42,7 @@ class ModelBatchDeploymentSettings:
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START model_batch_deployment_settings_entity_create]
             :end-before: [END model_batch_deployment_settings_entity_create]
             :language: python
