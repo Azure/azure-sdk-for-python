@@ -19,7 +19,6 @@ from azure.ai.ml.constants._common import (
     SchemaUrl,
 )
 from azure.ai.ml.constants._component import ComponentParameterTypes, NodeType
-from azure.ai.ml.entities._builders.parallel import Parallel
 
 from ..._restclient.v2022_10_01.models import ComponentVersion
 from ..._schema import PathAwareSchema
