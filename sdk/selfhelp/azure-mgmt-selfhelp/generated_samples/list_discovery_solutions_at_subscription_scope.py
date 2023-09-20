@@ -14,7 +14,7 @@ from azure.mgmt.selfhelp import SelfHelpMgmtClient
     pip install azure-identity
     pip install azure-mgmt-selfhelp
 # USAGE
-    python check_name_availability_for_diagnostic_when_name_is_not_available.py
+    python list_discovery_solutions_at_subscription_scope.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,12 +28,13 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.check_name_availability.post(
+    response = client.discovery_solution.list(
         scope="subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/help/resource-manager/Microsoft.Help/preview/2023-09-01-preview/examples/CheckNameAvailabilityForDiagnosticWhenNameIsNotAvailable.json
+# x-ms-original-file: specification/help/resource-manager/Microsoft.Help/preview/2023-09-01-preview/examples/ListDiscoverySolutionsAtSubscriptionScope.json
 if __name__ == "__main__":
     main()

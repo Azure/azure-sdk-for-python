@@ -6,8 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import AutomatedCheckResult
 from ._models_py3 import CheckNameAvailabilityRequest
 from ._models_py3 import CheckNameAvailabilityResponse
+from ._models_py3 import ContinueRequestBody
 from ._models_py3 import Diagnostic
 from ._models_py3 import DiagnosticInvocation
 from ._models_py3 import DiagnosticResource
@@ -16,28 +18,66 @@ from ._models_py3 import Error
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
+from ._models_py3 import Filter
+from ._models_py3 import FilterGroup
 from ._models_py3 import Insight
+from ._models_py3 import MetricsBasedChart
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
 from ._models_py3 import ProxyResource
+from ._models_py3 import ReplacementMaps
 from ._models_py3 import Resource
+from ._models_py3 import ResponseOption
+from ._models_py3 import ResponseValidationProperties
+from ._models_py3 import RestartTroubleshooterResponse
+from ._models_py3 import SearchResult
+from ._models_py3 import Section
+from ._models_py3 import SolutionMetadataProperties
 from ._models_py3 import SolutionMetadataResource
+from ._models_py3 import SolutionPatchRequestBody
+from ._models_py3 import SolutionResource
+from ._models_py3 import SolutionResourceProperties
+from ._models_py3 import SolutionsDiagnostic
+from ._models_py3 import SolutionsTroubleshooters
+from ._models_py3 import Step
+from ._models_py3 import StepInput
 from ._models_py3 import SystemData
+from ._models_py3 import TriggerCriterion
+from ._models_py3 import TroubleshooterResource
+from ._models_py3 import TroubleshooterResponse
+from ._models_py3 import Video
+from ._models_py3 import VideoGroup
+from ._models_py3 import VideoGroupVideo
+from ._models_py3 import WebResult
 
 from ._self_help_mgmt_client_enums import ActionType
+from ._self_help_mgmt_client_enums import AggregationType
+from ._self_help_mgmt_client_enums import AutomatedCheckResultType
+from ._self_help_mgmt_client_enums import Confidence
 from ._self_help_mgmt_client_enums import CreatedByType
+from ._self_help_mgmt_client_enums import DiagnosticProvisioningState
+from ._self_help_mgmt_client_enums import ExecutionStatus
 from ._self_help_mgmt_client_enums import ImportanceLevel
+from ._self_help_mgmt_client_enums import Name
 from ._self_help_mgmt_client_enums import Origin
-from ._self_help_mgmt_client_enums import ProvisioningState
+from ._self_help_mgmt_client_enums import QuestionContentType
+from ._self_help_mgmt_client_enums import QuestionType
+from ._self_help_mgmt_client_enums import ResultType
+from ._self_help_mgmt_client_enums import SolutionProvisioningState
+from ._self_help_mgmt_client_enums import SolutionType
 from ._self_help_mgmt_client_enums import Status
+from ._self_help_mgmt_client_enums import TroubleshooterProvisioningState
+from ._self_help_mgmt_client_enums import Type
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "AutomatedCheckResult",
     "CheckNameAvailabilityRequest",
     "CheckNameAvailabilityResponse",
+    "ContinueRequestBody",
     "Diagnostic",
     "DiagnosticInvocation",
     "DiagnosticResource",
@@ -46,20 +86,56 @@ __all__ = [
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
+    "Filter",
+    "FilterGroup",
     "Insight",
+    "MetricsBasedChart",
     "Operation",
     "OperationDisplay",
     "OperationListResult",
     "ProxyResource",
+    "ReplacementMaps",
     "Resource",
+    "ResponseOption",
+    "ResponseValidationProperties",
+    "RestartTroubleshooterResponse",
+    "SearchResult",
+    "Section",
+    "SolutionMetadataProperties",
     "SolutionMetadataResource",
+    "SolutionPatchRequestBody",
+    "SolutionResource",
+    "SolutionResourceProperties",
+    "SolutionsDiagnostic",
+    "SolutionsTroubleshooters",
+    "Step",
+    "StepInput",
     "SystemData",
+    "TriggerCriterion",
+    "TroubleshooterResource",
+    "TroubleshooterResponse",
+    "Video",
+    "VideoGroup",
+    "VideoGroupVideo",
+    "WebResult",
     "ActionType",
+    "AggregationType",
+    "AutomatedCheckResultType",
+    "Confidence",
     "CreatedByType",
+    "DiagnosticProvisioningState",
+    "ExecutionStatus",
     "ImportanceLevel",
+    "Name",
     "Origin",
-    "ProvisioningState",
+    "QuestionContentType",
+    "QuestionType",
+    "ResultType",
+    "SolutionProvisioningState",
+    "SolutionType",
     "Status",
+    "TroubleshooterProvisioningState",
+    "Type",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

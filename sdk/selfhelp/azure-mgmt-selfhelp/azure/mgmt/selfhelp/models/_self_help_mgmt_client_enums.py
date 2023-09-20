@@ -16,6 +16,33 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INTERNAL = "Internal"
 
 
+class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allowed values are Sum, Avg, Count, Min, Max. Default is Sum."""
+
+    SUM = "Sum"
+    AVG = "Avg"
+    COUNT = "Count"
+    MIN = "Min"
+    MAX = "Max"
+
+
+class AutomatedCheckResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of Result."""
+
+    SUCCESS = "Success"
+    WARNING = "Warning"
+    ERROR = "Error"
+    INFORMATION = "Information"
+
+
+class Confidence(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Confidence of the search result."""
+
+    LOW = "Low"
+    MEDIUM = "Medium"
+    HIGH = "High"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -23,6 +50,28 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
+
+
+class DiagnosticProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of diagnostic provisioning."""
+
+    SUCCEEDED = "Succeeded"
+    """All Diagnostics in the Batch succeeded."""
+    PARTIAL_COMPLETE = "PartialComplete"
+    """Some Diagnostics are still running or failed."""
+    FAILED = "Failed"
+    """All Diagnostics failed to run."""
+    CANCELED = "Canceled"
+    """When Diagnostic request gets canceled."""
+
+
+class ExecutionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of Troubleshooter Step execution."""
+
+    SUCCESS = "Success"
+    RUNNING = "Running"
+    FAILED = "Failed"
+    WARNING = "Warning"
 
 
 class ImportanceLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -36,6 +85,14 @@ class ImportanceLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """An information insight has been found after running the diagnostic."""
 
 
+class Name(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Trigger criterion name."""
+
+    SOLUTION_ID = "SolutionId"
+    PROBLEM_CLASSIFICATION_ID = "ProblemClassificationId"
+    REPLACEMENT_KEY = "ReplacementKey"
+
+
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
     logs UX. Default value is "user,system".
@@ -46,17 +103,49 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER_SYSTEM = "user,system"
 
 
-class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of diagnostic provisioning."""
+class QuestionContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Default is Text."""
+
+    TEXT = "Text"
+    HTML = "Html"
+    MARKDOWN = "Markdown"
+
+
+class QuestionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Text Input. Will be a single line input."""
+
+    RADIO_BUTTON = "RadioButton"
+    """SingleChoice radio button"""
+    DROPDOWN = "Dropdown"
+    """SingleChoice dropdown."""
+    TEXT_INPUT = "TextInput"
+    """Text Input"""
+    MULTI_LINE_INFO_BOX = "MultiLineInfoBox"
+    """MultiLineInfoBox"""
+
+
+class ResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Result type of the search result."""
+
+    COMMUNITY = "Community"
+    DOCUMENTATION = "Documentation"
+
+
+class SolutionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of solution provisioning."""
 
     SUCCEEDED = "Succeeded"
-    """All Diagnostics in the Batch succeeded."""
-    PARTIAL_COMPLETE = "PartialComplete"
-    """Some Diagnostics are still running or failed."""
     FAILED = "Failed"
-    """All Diagnostics failed to run."""
     CANCELED = "Canceled"
-    """When Diagnostic request gets canceled."""
+
+
+class SolutionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Solution Type."""
+
+    DIAGNOSTICS = "Diagnostics"
+    """Diagnostics resource type."""
+    SOLUTIONS = "Solutions"
+    """Solutions resource type."""
 
 
 class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -72,3 +161,22 @@ class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Diagnostic creation succeeded."""
     TIMEOUT = "Timeout"
     """Diagnostic was timed out."""
+
+
+class TroubleshooterProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of troubleshooter provisioning."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    RUNNING = "Running"
+    AUTO_CONTINUE = "AutoContinue"
+
+
+class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of Troubleshooting step."""
+
+    DECISION = "Decision"
+    SOLUTION = "Solution"
+    INSIGHT = "Insight"
+    AUTOMATED_CHECK = "AutomatedCheck"
