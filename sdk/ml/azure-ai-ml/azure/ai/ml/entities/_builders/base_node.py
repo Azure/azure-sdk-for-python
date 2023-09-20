@@ -9,7 +9,7 @@ import uuid
 from abc import abstractmethod
 from enum import Enum
 from functools import wraps
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
 from azure.ai.ml.constants import JobType
@@ -566,7 +566,10 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         :param kwargs: The kwargs
         :type kwargs: dict
         """
-        for key, value in node.inputs.items():
+        inputs: Dict[str, Any]
+        inputs = node.inputs
+
+        for key, value in inputs.items():
             meta = value._data
             if (
                 isinstance(meta, Input)
