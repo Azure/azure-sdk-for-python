@@ -6,6 +6,7 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
 from enum import Enum
+from typing_extensions import Self
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.storage.blob import LeaseProperties as BlobLeaseProperties
@@ -23,7 +24,7 @@ from azure.storage.blob._models import ContainerPropertiesPaged
 from azure.storage.blob._generated.models import Logging as GenLogging, Metrics as GenMetrics, \
     RetentionPolicy as GenRetentionPolicy, StaticWebsite as GenStaticWebsite, CorsRule as GenCorsRule
 
-from ._shared.models import DictMixin
+from ._shared.models import DictMixin, TokenAudience
 from ._shared.parser import _filetime_to_datetime, _rfc_1123_to_datetime
 
 
@@ -1153,3 +1154,17 @@ class CorsRule(GenCorsRule):
             exposed_headers=[generated.exposed_headers],
             max_age_in_seconds=generated.max_age_in_seconds,
         )
+
+class DataLakeTokenAudience(TokenAudience):
+    """Audiences available for Datalakes."""
+
+    @classmethod
+    def get_datalake_account_audience(cls, account_name: str) -> Self:
+        """The Datalake service endpoint for a given Storage account. Use this method
+        to acquire a token for authorizing requests to that specific Azure Storage account and
+        service only.
+        :param str account_name: The storage account name used to populate the service endpoint.
+        :returns: The Audience for the given Storage account and respective service endpoint.
+        :rtype: DataLakeTokenAudience
+        """
+        return cls(f'https://{account_name}.dfs.core.windows.net/')

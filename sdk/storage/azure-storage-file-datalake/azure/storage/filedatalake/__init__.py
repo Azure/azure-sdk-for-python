@@ -44,7 +44,8 @@ from ._models import (
     ResourceTypes,
     RetentionPolicy,
     StaticWebsite,
-    UserDelegationKey
+    UserDelegationKey,
+    DataLakeTokenAudience
 )
 
 from ._shared_access_signature import generate_account_sas, generate_file_system_sas, generate_directory_sas, \
@@ -105,5 +106,6 @@ __all__ = [
     'StorageErrorCode',
     'StorageStreamDownloader',
     'UserDelegationKey',
-    'VERSION'
+    'VERSION',
+    'DataLakeTokenAudience'
 ]

@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-instance-attributes
 from enum import Enum
+from typing_extensions import Self
 
 from azure.core import CaseInsensitiveEnumMeta
 
@@ -487,3 +488,37 @@ class UserDelegationKey(object):
         self.signed_service = None
         self.signed_version = None
         self.value = None
+
+class TokenAudience():
+    """
+    Base class that defines what calling functions and attributes should be defined for an Azure Active
+    Directory audience token.
+    :param str value: The audience to use when requesting tokens for Azure Active Directory authentication.
+        For more information please take a look at:
+        https://learn.microsoft.com/azure/storage/blobs/authorize-access-azure-active-directory. Please use one
+        of the provided classmethods over creating a custom value unless you have a specific scenario for doing so.
+    """
+    STORAGE_OAUTH_SCOPE = "https://storage.azure.com/.default"
+    _value: str
+
+    def __init__(self, value: str) -> None:
+        self._value = value
+
+    @classmethod
+    def public_audience(cls) -> Self:
+        """Default Audience. Use to acquire a token for authorizing requests to any Azure Storage account.
+        Resource ID: 'https://storage.azure.com/'
+        If no audience is specified, this is the default value.
+        :returns: The Default Audience.
+        :rtype: TokenAudience
+        """
+        return cls(TokenAudience.STORAGE_OAUTH_SCOPE)
+
+    def __eq__(self, other: object) -> bool:
+        return self._value == other._value
+
+    def __ne__(self, other: object) -> bool:
+        return self._value != other._value
+
+    def __str__(self) -> str:
+        return self._value
