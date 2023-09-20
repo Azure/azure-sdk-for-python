@@ -11,7 +11,8 @@ Example to show usage of AutoLockRenewer:
     2. Automatically renew locks on the session of sessionful entity
 
 We do not guarantee that this SDK is thread-safe. We do not recommend reusing the ServiceBusClient,
- ServiceBusSender, ServiceBusReceiver or EventDataBatch model across threads.
+ ServiceBusSender, ServiceBusReceiver or EventDataBatch model across threads. It is up to the running 
+ application to use these classes in a thread-safe manner.
 """
 
 import os
