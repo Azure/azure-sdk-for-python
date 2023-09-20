@@ -357,7 +357,7 @@ class AutoMLImageClassificationBase(AutoMLImage):
         """Add Search space for AutoML Image Classification and Image Classification Multilabel tasks.
 
         :param value: specify either an instance of ImageClassificationSearchSpace or list of
-        ImageClassificationSearchSpace for searching through the parameter space
+            ImageClassificationSearchSpace for searching through the parameter space
         :type value: Union[ImageClassificationSearchSpace, List[ImageClassificationSearchSpace]]
         """
         self._search_space = self._search_space or []
