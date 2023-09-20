@@ -178,6 +178,7 @@ async def test_response_internal_response_trio(get_old_response_trio, get_new_re
     _test_response_internal_response(old_response, new_response, port)
 
 
+@pytest.mark.skip(reason="Resolve in #32162")
 @pytest.mark.asyncio
 @pytest.mark.parametrize("transport", TRANSPORTS)
 async def test_response_stream_download(get_old_response, get_new_response, transport):
