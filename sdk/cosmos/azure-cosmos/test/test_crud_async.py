@@ -222,7 +222,7 @@ class TestCRUDAsync:
         created_collection = await created_db.create_container(id=collection_id,
                                                                indexing_policy=collection_indexing_policy,
                                                                partition_key=PartitionKey(path="/pk", kind="Hash"))
-        self.assertEqual(collection_id, created_collection.id)
+        assert collection_id == created_collection.id
 
         created_properties = await created_collection.read()
         assert 'consistent' == created_properties['indexingPolicy']['indexingMode']
