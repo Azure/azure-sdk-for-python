@@ -9,7 +9,7 @@ import logging
 import os
 from enum import Enum
 from os import PathLike
-from typing import Dict, List, Optional, Union, overload
+from typing import Any, Dict, List, Optional, Union, overload
 
 from marshmallow import INCLUDE, Schema
 
@@ -715,7 +715,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
         return ["resources", "distribution", "limits", "environment_variables", "queue_settings"]
 
-    def _to_rest_object(self, **kwargs) -> dict:
+    def _to_rest_object(self, **kwargs: Any) -> Union[Dict, List]:
         rest_obj = super()._to_rest_object(**kwargs)
         for key, value in {
             "componentId": self._get_component_id(),
@@ -728,7 +728,8 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         }.items():
             if value is not None:
                 rest_obj[key] = value
-        return convert_ordered_dict_to_dict(rest_obj)
+        converted_rest_object: Union[Dict, List] = convert_ordered_dict_to_dict(rest_obj)
+        return converted_rest_object
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Command":
