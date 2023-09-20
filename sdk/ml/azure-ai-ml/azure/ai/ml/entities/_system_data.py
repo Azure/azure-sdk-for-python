@@ -9,20 +9,34 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class SystemData(RestTranslatableMixin):
     """Metadata related to the creation and most recent modification of a resource.
 
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Possible values include:
+        "User", "Application", "ManagedIdentity", "Key".
+    :vartype created_by_type: str or ~azure.ai.ml.entities.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
+        values include: "User", "Application", "ManagedIdentity", "Key".
+    :vartype last_modified_by_type: str or ~azure.ai.ml.entities.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     :keyword created_by: The identity that created the resource.
-    :type created_by: str
+    :paramtype created_by: str
     :keyword created_by_type: The type of identity that created the resource. Accepted values are
         "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: Union[str, ~azure.ai.ml.entities.CreatedByType]
+    :paramtype created_by_type: Union[str, ~azure.ai.ml.entities.CreatedByType]
     :keyword created_at: The timestamp of resource creation (UTC).
-    :type created_at: datetime
+    :paramtype created_at: datetime
     :keyword last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
+    :paramtype last_modified_by: str
     :keyword last_modified_by_type: The type of identity that last modified the resource. Accepted values are
         "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: Union[str, ~azure.ai.ml.entities.CreatedByType]
+    :paramtype last_modified_by_type: Union[str, ~azure.ai.ml.entities.CreatedByType]
     :keyword last_modified_at: The timestamp of resource last modification in UTC.
-    :type last_modified_at: datetime
+    :paramtype last_modified_at: datetime
     """
 
     def __init__(self, **kwargs) -> None:

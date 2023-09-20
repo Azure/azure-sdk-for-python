@@ -9,10 +9,6 @@ import re
 import subprocess
 from typing import Dict, Optional
 
-from azure.core.credentials import TokenCredential
-from azure.core.paging import ItemPaged
-from azure.core.polling import LROPoller
-from azure.core.tracing.decorator import distributed_trace
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
@@ -42,6 +38,10 @@ from azure.ai.ml.exceptions import (
     ValidationErrorType,
     ValidationException,
 )
+from azure.core.credentials import TokenCredential
+from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
 
 from ._local_deployment_helper import _LocalDeploymentHelper
 from ._operation_orchestrator import OperationOrchestrator
@@ -93,11 +93,11 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :param deployment: the deployment entity
         :type deployment: ~azure.ai.ml.entities.OnlineDeployment
         :keyword local: Whether deployment should be created locally, defaults to False
-        :type local: bool, optional
+        :paramtype local: bool
         :keyword vscode_debug: Whether to open VSCode instance to debug local deployment, defaults to False
-        :type vscode_debug: bool, optional
+        :paramtype vscode_debug: bool
         :keyword local_enable_gpu: enable local container to access gpu
-        :type local_enable_gpu: bool, optional
+        :paramtype local_enable_gpu: bool
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineDeployment cannot
             be successfully validated. Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.AssetException: Raised if OnlineDeployment assets
@@ -185,7 +185,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             try:
                 location = self._get_workspace_location()
                 if kwargs.pop("package_model", False):
-                    deployment = package_deployment(deployment, self._all_operations.all_operations)
+                    deployment = package_deployment(deployment, self._all_operations.all_operations["models"])
                     module_logger.info("\nStarting deployment")
 
                 deployment_rest = deployment._to_rest_object(location=location)
@@ -224,7 +224,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :param endpoint_name: The name of the endpoint
         :type endpoint_name: str
         :keyword local: Whether deployment should be retrieved from local docker environment, defaults to False
-        :type local: Optional[bool]
+        :paramtype local: Optional[bool]
         :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :return: a deployment entity
         :rtype: ~azure.ai.ml.entities.OnlineDeployment
@@ -255,7 +255,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :param endpoint_name: The name of the endpoint
         :type endpoint_name: str
         :keyword local: Whether deployment should be retrieved from local docker environment, defaults to False
-        :type local: Optional[bool]
+        :paramtype local: Optional[bool]
         :raises ~azure.ai.ml.exceptions.LocalEndpointNotFoundError: Raised if local endpoint resource does not exist.
         :return: A poller to track the operation status
         :rtype: ~azure.core.polling.LROPoller[None]
@@ -291,9 +291,9 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :type lines: int
         :keyword container_type: The type of container to retrieve logs from. Possible values include:
             "StorageInitializer", "InferenceServer", defaults to None
-        :type container_type: Optional[str], optional
+        :type container_type: Optional[str]
         :keyword local: [description], defaults to False
-        :type local: bool, optional
+        :paramtype local: bool
         :return: the logs
         :rtype: str
         """
@@ -321,7 +321,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :param endpoint_name: The name of the endpoint
         :type endpoint_name: str
         :keyword local: Whether deployment should be retrieved from local docker environment, defaults to False
-        :type local: bool, optional
+        :paramtype local: bool
         :return: an iterator of deployment entities
         :rtype: Iterable[~azure.ai.ml.entities.OnlineDeployment]
         """
@@ -361,8 +361,13 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         return f"{self._workspace_name}-{name}-{random.randint(1, 10000000)}"
 
     def _get_workspace_location(self) -> str:
-        """Get the workspace location TODO[TASK 1260265]: can we cache this information and only refresh when the
-        operation_scope is changed?"""
+        """Get the workspace location
+
+        TODO[TASK 1260265]: can we cache this information and only refresh when the operation_scope is changed?
+
+        :return: The workspace location
+        :rtype: str
+        """
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
 
     def _get_local_endpoint_mode(self, vscode_debug):

@@ -9,7 +9,7 @@ import logging
 import os
 from enum import Enum
 from os import PathLike
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, overload
 
 from marshmallow import INCLUDE, Schema
 
@@ -95,40 +95,40 @@ class Command(BaseNode, NodeWithGroupInputMixin):
     You should not instantiate this class directly. Instead, you should create it using the builder function: command().
 
     :keyword component: The ID or instance of the command component or job to be run for the step.
-    :type component: Union[str, ~azure.ai.ml.entities.CommandComponent]
+    :paramtype component: Union[str, ~azure.ai.ml.entities.CommandComponent]
     :keyword compute: The compute target the job will run on.
-    :type compute: Optional[str]
+    :paramtype compute: Optional[str]
     :keyword inputs: A mapping of input names to input data sources used in the job.
-    :type inputs: Optional[dict[str, Union[
+    :paramtype inputs: Optional[dict[str, Union[
         ~azure.ai.ml.Input, str, bool, int, float, Enum]]]
     :keyword outputs: A mapping of output names to output data sources used in the job.
-    :type outputs: Optional[dict[str, Union[str, ~azure.ai.ml.Output]]]
+    :paramtype outputs: Optional[dict[str, Union[str, ~azure.ai.ml.Output]]]
     :keyword limits: The limits for the command component or job.
-    :type limits: ~azure.ai.ml.entities.CommandJobLimits
+    :paramtype limits: ~azure.ai.ml.entities.CommandJobLimits
     :keyword identity: The identity that the command job will use while running on compute.
-    :type identity: Optional[Union[
+    :paramtype identity: Optional[Union[
         dict[str, str],
         ~azure.ai.ml.entities.ManagedIdentityConfiguration,
         ~azure.ai.ml.entities.AmlTokenConfiguration,
         ~azure.ai.ml.entities.UserIdentityConfiguration]]
     :keyword distribution: The configuration for distributed jobs.
-    :type distribution: Optional[Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
+    :paramtype distribution: Optional[Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
         ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]]
     :keyword environment: The environment that the job will run in.
-    :type environment: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
+    :paramtype environment: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
     :keyword environment_variables:  A dictionary of environment variable names and values.
         These environment variables are set on the process where the user script is being executed.
-    :type environment_variables: Optional[dict[str, str]]
+    :paramtype environment_variables: Optional[dict[str, str]]
     :keyword resources: The compute resource configuration for the command.
-    :type resources: Optional[~azure.ai.ml.entities.JobResourceConfiguration]
+    :paramtype resources: Optional[~azure.ai.ml.entities.JobResourceConfiguration]
     :keyword services: The interactive services for the node. This is an experimental parameter, and may change at any
         time. Please see https://aka.ms/azuremlexperimental for more information.
-    :type services: Optional[dict[str, Union[~azure.ai.ml.entities.JobService,
+    :paramtype services: Optional[dict[str, Union[~azure.ai.ml.entities.JobService,
         ~azure.ai.ml.entities.JupyterLabJobService,
         ~azure.ai.ml.entities.SshJobService, ~azure.ai.ml.entities.TensorBoardJobService,
         ~azure.ai.ml.entities.VsCodeJobService]]]
     :keyword queue_settings: Queue settings for the job.
-    :type queue_settings: Optional[~azure.ai.ml.entities.QueueSettings]
+    :paramtype queue_settings: Optional[~azure.ai.ml.entities.QueueSettings]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Command cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -462,26 +462,25 @@ class Command(BaseNode, NodeWithGroupInputMixin):
 
         :keyword instance_type: The type of compute instance to run the job on. If not specified, the job will run on
             the default compute target.
-        :type instance_type: Optional[Union[str, list[str]]]
+        :paramtype instance_type: Optional[Union[str, list[str]]]
         :keyword instance_count: The number of instances to run the job on. If not specified, the job will run on a
             single instance.
-        :type instance_count: Optional[int]
+        :paramtype instance_count: Optional[int]
         :keyword locations: The list of locations where the job will run. If not specified, the job will run on the
             default compute target.
-        :type locations: Optional[list[str]]
+        :paramtype locations: Optional[list[str]]
         :keyword properties: The properties of the job.
-        :type properties: Optional[dict]
+        :paramtype properties: Optional[dict]
         :keyword docker_args: The Docker arguments for the job.
-        :type docker_args: Optional[str]
+        :paramtype docker_args: Optional[str]
         :keyword shm_size: The size of the docker container's shared memory block. This should be in the
             format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
             b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
-        :type shm_size: Optional[str]
+        :paramtype shm_size: Optional[str]
 
         .. admonition:: Example:
 
-
-            .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
+            .. literalinclude:: ../samples/ml_samples_command_configurations.py
                 :start-after: [START command_set_resources]
                 :end-before: [END command_set_resources]
                 :language: python
@@ -512,12 +511,11 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         """Set limits for Command.
 
         :keyword timeout: The timeout for the job in seconds.
-        :type timeout: int
+        :paramtype timeout: int
 
         .. admonition:: Example:
 
-
-            .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
+            .. literalinclude:: ../samples/ml_samples_command_configurations.py
                 :start-after: [START command_set_limits]
                 :end-before: [END command_set_limits]
                 :language: python
@@ -533,14 +531,13 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         """Set QueueSettings for the job.
 
         :keyword job_tier: The job tier. Accepted values are "Spot", "Basic", "Standard", or "Premium".
-        :type job_tier: Optional[str]
+        :paramtype job_tier: Optional[str]
         :keyword priority:  The priority of the job on the compute. Defaults to "Medium".
-        :type priority: Optional[str]
+        :paramtype priority: Optional[str]
 
         .. admonition:: Example:
 
-
-            .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
+            .. literalinclude:: ../samples/ml_samples_command_configurations.py
                 :start-after: [START command_set_queue_settings]
                 :end-before: [END command_set_queue_settings]
                 :language: python
@@ -586,48 +583,47 @@ class Command(BaseNode, NodeWithGroupInputMixin):
 
         :keyword primary_metric: The primary metric of the sweep objective - e.g. AUC (Area Under the Curve).
             The metric must be logged while running the trial component.
-        :type primary_metric: str
+        :paramtype primary_metric: str
         :keyword goal: The goal of the Sweep objective. Accepted values are "minimize" or "maximize".
-        :type goal: str
+        :paramtype goal: str
         :keyword sampling_algorithm: The sampling algorithm to use inside the search space.
             Acceptable values are "random", "grid", or "bayesian". Defaults to "random".
-        :type sampling_algorithm: str
+        :paramtype sampling_algorithm: str
         :keyword compute: The target compute to run the node on. If not specified, the current node's compute
             will be used.
-        :type compute: Optional[str]
+        :paramtype compute: Optional[str]
         :keyword max_total_trials: The maximum number of total trials to run. This value will overwrite the value in
             CommandJob.limits if specified.
-        :type max_total_trials: Optional[int]
+        :paramtype max_total_trials: Optional[int]
         :keyword max_concurrent_trials: The maximum number of concurrent trials for the Sweep job.
-        :type max_concurrent_trials: Optional[int]
+        :paramtype max_concurrent_trials: Optional[int]
         :keyword timeout: The maximum run duration in seconds, after which the job will be cancelled.
-        :type timeout: Optional[int]
+        :paramtype timeout: Optional[int]
         :keyword trial_timeout: The Sweep Job trial timeout value, in seconds.
-        :type trial_timeout: Optional[int]
+        :paramtype trial_timeout: Optional[int]
         :keyword early_termination_policy: The early termination policy of the sweep node. Acceptable
             values are "bandit", "median_stopping", or "truncation_selection". Defaults to None.
-        :type early_termination_policy: Optional[Union[~azure.ai.ml.sweep.BanditPolicy,
+        :paramtype early_termination_policy: Optional[Union[~azure.ai.ml.sweep.BanditPolicy,
             ~azure.ai.ml.sweep.TruncationSelectionPolicy, ~azure.ai.ml.sweep.MedianStoppingPolicy, str]]
         :keyword identity: The identity that the job will use while running on compute.
-        :type identity: Optional[Union[
+        :paramtype identity: Optional[Union[
             ~azure.ai.ml.ManagedIdentityConfiguration,
             ~azure.ai.ml.AmlTokenConfiguration,
             ~azure.ai.ml.UserIdentityConfiguration]]
         :keyword queue_settings: The queue settings for the job.
-        :type queue_settings: Optional[~azure.ai.ml.entities.QueueSettings]
+        :paramtype queue_settings: Optional[~azure.ai.ml.entities.QueueSettings]
         :keyword job_tier: **Experimental** The job tier. Accepted values are "Spot", "Basic",
             "Standard", or "Premium".
-        :type job_tier: Optional[str]
+        :paramtype job_tier: Optional[str]
         :keyword priority: **Experimental** The compute priority. Accepted values are "low",
             "medium", and "high".
-        :type priority: Optional[str]
+        :paramtype priority: Optional[str]
         :return: A Sweep node with the component from current Command node as its trial component.
         :rtype: ~azure.ai.ml.entities.Sweep
 
         .. admonition:: Example:
 
-
-            .. literalinclude:: ../../../../../samples/ml_samples_sweep_configurations.py
+            .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
                 :start-after: [START configure_sweep_job_bandit_policy]
                 :end-before: [END configure_sweep_job_bandit_policy]
                 :language: python
@@ -844,8 +840,13 @@ class Command(BaseNode, NodeWithGroupInputMixin):
 
         return CommandSchema(context=context)
 
+    # pylint: disable-next=docstring-missing-param
     def __call__(self, *args, **kwargs) -> "Command":
-        """Call Command as a function will return a new instance each time."""
+        """Call Command as a function will return a new instance each time.
+
+        :return: A Command node
+        :rtype: Command
+        """
         if isinstance(self._component, CommandComponent):
             # call this to validate inputs
             node = self._component(*args, **kwargs)
@@ -887,10 +888,34 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         )
 
 
+@overload
+def _resolve_job_services(services: None) -> None:
+    ...
+
+
+@overload
 def _resolve_job_services(
-    services: dict,
+    services: Dict[str, Union[JobServiceBase, Dict]],
 ) -> Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]:
-    """Resolve normal dict to dict[str, JobService]"""
+    ...
+
+
+def _resolve_job_services(
+    services: Optional[Dict[str, Union[JobServiceBase, Dict]]],
+) -> Optional[
+    Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+]:
+    """Resolve normal dict to dict[str, JobService]
+
+    :param services: A dict that maps service names to either a JobServiceBase object, or a Dict used to build one
+    :type services: Optional[Dict[str, Union[JobServiceBase, Dict]]]
+    :return:
+        * None if `services` is None
+        * A map of job service names to job services
+    :rtype: Optional[
+            Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+        ]
+    """
     if services is None:
         return None
 

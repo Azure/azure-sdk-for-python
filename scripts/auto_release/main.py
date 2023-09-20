@@ -121,7 +121,7 @@ class CodegenTestPR:
     def __init__(self):
         self.issue_link = os.getenv('ISSUE_LINK', '')
         self.pipeline_link = os.getenv('PIPELINE_LINK', '')
-        self.bot_token = os.getenv('GIT_TOKEN')
+        self.bot_token = os.getenv('BOT_TOKEN')
         self.spec_readme = os.getenv('SPEC_README', '')
         self.spec_repo = os.getenv('SPEC_REPO', '')
         self.conn_str = os.getenv('STORAGE_CONN_STR')
@@ -146,7 +146,7 @@ class CodegenTestPR:
     def target_release_date(self) -> str:
         try:
             if self.target_date:
-                return (datetime.fromisoformat(self.target_date) + timedelta(days=-7)).strftime("%Y-%m-%d")
+                return (datetime.fromisoformat(self.target_date) + timedelta(days=-4)).strftime("%Y-%m-%d")
         except:
             log(f'Invalid target date: {self.target_date}')
         return current_time()
@@ -440,10 +440,14 @@ class CodegenTestPR:
         try:
             print_check(f'pytest  --collect-only')
         except:
-            log(f'{test_mode} run done, do not find any test !!!')
-            self.test_result = succeeded_result
+            try:
+                assert "error" not in print_exec_output(f'pytest  --collect-only')[-1]
+                log(f'{test_mode} run done, do not find any test !!!')
+                self.test_result = succeeded_result
+            except:
+                log('some test collected failed, please fix it locally')
+                self.test_result = failed_result
             return
-
         try:
             print_check(f'pytest -s')
         except:

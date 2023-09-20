@@ -47,15 +47,14 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
     :keyword rule: The specific type of random algorithm. Accepted values are: "random" and "sobol".
     :type rule: str
     :keyword seed: The seed for random number generation.
-    :type seed: int
+    :paramtype seed: int
     :keyword logbase: A positive number or the number "e" in string format to be used as the base for log
         based random sampling.
-    :type logbase: Union[float, str]
+    :paramtype logbase: Union[float, str]
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_random_sampling_algorithm]
             :end-before: [END configure_sweep_job_random_sampling_algorithm]
             :language: python
@@ -97,8 +96,7 @@ class GridSamplingAlgorithm(SamplingAlgorithm):
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_grid_sampling_algorithm]
             :end-before: [END configure_sweep_job_grid_sampling_algorithm]
             :language: python
@@ -124,8 +122,7 @@ class BayesianSamplingAlgorithm(SamplingAlgorithm):
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_bayesian_sampling_algorithm]
             :end-before: [END configure_sweep_job_bayesian_sampling_algorithm]
             :language: python

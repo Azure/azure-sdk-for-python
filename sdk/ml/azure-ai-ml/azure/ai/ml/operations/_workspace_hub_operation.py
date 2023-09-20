@@ -57,8 +57,8 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         """List all WorkspaceHubs that the user has access to in the current
         resource group or subscription.
 
-        :param scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
-        :type scope: str, optional
+        :keyword scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
+        :paramtype scope: str
         :return: An iterator like instance of WorkspaceHub objects
         :rtype: ~azure.core.paging.ItemPaged[WorkspaceHub]
         """
@@ -80,7 +80,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
 
     # @monitor_with_activity(logger, "Hub.Get", ActivityType.PUBLICAPI)
     @distributed_trace
-    # pylint: disable=arguments-renamed
+    # pylint: disable=arguments-renamed, arguments-differ
     def get(self, name: str, **kwargs: Dict) -> WorkspaceHub:
         """Get a Workspace WorkspaceHub by name.
 
@@ -103,6 +103,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
     # pylint: disable=arguments-differ
     def begin_create(
         self,
+        *,
         workspace_hub: WorkspaceHub,
         update_dependent_resources: bool = False,
         **kwargs: Dict,
@@ -111,15 +112,16 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
 
         Returns the WorkspaceHub if already exists.
 
-        :param workspace_hub: WorkspaceHub definition.
-        :type workspace_hub: WorkspaceHub
-        :type update_dependent_resources: boolean
+        :keyword workspace_hub: WorkspaceHub definition.
+        :paramtype workspace_hub: WorkspaceHub
+        :keyword update_dependent_resources: Whether to update dependent resources. Defaults to False.
+        :paramtype update_dependent_resources: boolean
         :return: An instance of LROPoller that returns a WorkspaceHub.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.WorkspaceHub]
         """
 
         def get_callback():
-            return self.get(workspace_hub.name)
+            return self.get(name=workspace_hub.name)
 
         return super().begin_create(
             workspace=workspace_hub,
@@ -166,18 +168,18 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
     @distributed_trace
     def begin_delete(
         self, name: str, *, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs: Dict
-    ) -> LROPoller:
+    ) -> LROPoller[None]:
         """Delete a WorkspaceHub.
 
         :param name: Name of the WorkspaceHub
         :type name: str
-        :param delete_dependent_resources: Whether to delete resources associated with the WorkspaceHub,
+        :keyword delete_dependent_resources: Whether to delete resources associated with the WorkspaceHub,
             i.e., container registry, storage account, key vault.
             The default is False. Set to True to delete these resources.
-        :type delete_dependent_resources: bool
-        :param permanently_delete: Workspaces are soft-deleted by default to allow recovery of workspace data.
+        :paramtype delete_dependent_resources: bool
+        :keyword permanently_delete: Workspaces are soft-deleted by default to allow recovery of workspace data.
             Set this flag to true to override the soft-delete behavior and permanently delete your workspace.
-        :type permanently_delete: bool
+        :paramtype permanently_delete: bool
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
@@ -187,8 +189,10 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
             rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND
         ):
             raise ValidationError("{0} is not a WorkspaceHub".format(name))
-        if hasattr(rest_workspace_obj, "workspace_hub_config") and hasattr(
-            rest_workspace_obj.workspace_hub_config, "additional_workspace_storage_accounts"
+        if (
+            hasattr(rest_workspace_obj, "workspace_hub_config")
+            and hasattr(rest_workspace_obj.workspace_hub_config, "additional_workspace_storage_accounts")
+            and rest_workspace_obj.workspace_hub_config.additional_workspace_storage_accounts
         ):
             for storageaccount in rest_workspace_obj.workspace_hub_config.additional_workspace_storage_accounts:
                 delete_resource_by_arm_id(

@@ -37,15 +37,13 @@ def main():
             "location": "West US",
             "properties": {
                 "asyncExecution": False,
-                "errorBlobUri": "https://mystorageaccount.blob.core.windows.net/mycontainer/MyScriptError.txt?sp=racw&st=2022-10-07T19:40:21Z&se=2022-10-08T03:40:21Z&spr=https&sv=2021-06-08&sr=b&sig=Yh7B%2Fy83olbYBdfsfbUREvd7ol8Dq5EVP3lAO4Kj4xDcN8%3D",
+                "errorBlobUri": "https://mystorageaccount.blob.core.windows.net/scriptcontainer/scriptURI",
                 "outputBlobManagedIdentity": {"clientId": "22d35efb-0c99-4041-8c5b-6d24db33a69a"},
                 "outputBlobUri": "https://mystorageaccount.blob.core.windows.net/myscriptoutputcontainer/MyScriptoutput.txt",
                 "parameters": [{"name": "param1", "value": "value1"}, {"name": "param2", "value": "value2"}],
                 "runAsPassword": "<runAsPassword>",
                 "runAsUser": "user1",
-                "source": {
-                    "scriptUri": "https://mystorageaccount.blob.core.windows.net/scriptcontainer/MyScript.ps1?sp=r&st=2022-10-07T19:52:54Z&se=2022-10-08T03:52:54Z&spr=https&sv=2021-06-08&sr=b&sig=zfYFYCgea1PqVERZuwJiewrte5gjTnKGtVJngcw5oc828%3D"
-                },
+                "source": {"scriptUri": "https://mystorageaccount.blob.core.windows.net/scriptcontainer/scriptURI"},
                 "timeoutInSeconds": 3600,
                 "treatFailureAsDeploymentFailure": False,
             },
@@ -54,6 +52,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2023-03-01/examples/runCommandExamples/VirtualMachineRunCommand_CreateOrUpdate.json
+# x-ms-original-file: specification/compute/resource-manager/Microsoft.Compute/ComputeRP/stable/2023-07-01/examples/runCommandExamples/VirtualMachineRunCommand_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

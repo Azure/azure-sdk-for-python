@@ -13,29 +13,21 @@ class ImageLimitSettings(RestTranslatableMixin):
     r"""Limit settings for AutoML Image Verticals.
 
     ImageLimitSettings is a class that contains the following parameters:  max_concurrent_trials, max_trials, and \
-    timeout_minutes. It is used to configure the limits for the AutoML job.
+    timeout_minutes.
 
-    .. remarks::
-
-        ImageLimitSettings is an optional configuration method to configure limits parameters such as timeouts etc.
-
-            .. note::
-
-                The number of concurrent runs is gated on the resources available in the specified compute target.
-                Ensure that the compute target has the available resources for the desired concurrency.
-
-    :keyword max_concurrent_trials: Maximum number of concurrent AutoML iterations, defaults to None.
+    This is an optional configuration method to configure limits parameters such as timeouts etc.
 
         .. note::
 
-            Do not set the value of max_trials as a negative integer.
+            The number of concurrent runs is gated on the resources available in the specified compute target.
+            Ensure that the compute target has the available resources for the desired concurrency.
 
+    :keyword max_concurrent_trials: Maximum number of concurrent AutoML iterations, defaults to None.
     :paramtype  max_concurrent_trials: typing.Optional[int]
     :keyword max_trials: Represents the maximum number of trials (children jobs) that would be executed in parallel.
     :paramtype  max_trials: typing.Optional[int]
-    :keyword timeout_minutes: AutoML job timeout, defaults to None
+    :keyword timeout_minutes: AutoML job timeout. Defaults to None
     :paramtype  timeout_minutes: typing.Optional[int]
-
     :raises ValueError: If max_concurrent_trials is not None and is not a positive integer.
     :raises ValueError: If max_trials is not None and is not a positive integer.
     :raises ValueError: If timeout_minutes is not None and is not a positive integer.

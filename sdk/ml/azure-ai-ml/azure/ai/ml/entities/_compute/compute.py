@@ -21,19 +21,21 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 
 class Compute(Resource, RestTranslatableMixin):
-    """Compute resource.
+    """Base class for compute resources.
 
-    :param type: The type of the compute, possible values are
-        ["amlcompute", "computeinstance", "virtualmachine", "kubernetes", "synapsespark"]
+    This class should not be instantiated directly. Instead, use one of its subclasses.
+
+    :param type: The compute type. Accepted values are "amlcompute", "computeinstance",
+        "virtualmachine", "kubernetes", and "synapsespark".
     :type type: str
-    :param name: Name of the compute
+    :param name: Name of the compute resource.
     :type name: str
-    :param location: The resource location, defaults to workspace location.
-    :type location: Optional[str], optional
-    :param description: Description of the resource.
-    :type description: Optional[str], optional
-    :param resource_id: ARM resource id of the underlying compute.
-    :type resource_id: str, optional
+    :param location: The resource location. Defaults to workspace location.
+    :type location: Optional[str]
+    :param description: Description of the resource. Defaults to None.
+    :type description: Optional[str]
+    :param resource_id: ARM resource id of the underlying compute. Defaults to None.
+    :type resource_id: Optional[str]
     :param tags: A set of tags. Contains resource tags defined as key/value pairs.
     :type tags: Optional[dict[str, str]]
     """
@@ -46,7 +48,7 @@ class Compute(Resource, RestTranslatableMixin):
         resource_id: Optional[str] = None,
         tags: Optional[dict] = None,
         **kwargs,
-    ):
+    ) -> None:
         self._type = kwargs.pop("type", None)
         if self._type:
             self._type = self._type.lower()
@@ -62,37 +64,36 @@ class Compute(Resource, RestTranslatableMixin):
 
     @property
     def type(self) -> Optional[str]:
-        """The type of the compute, possible values are ["amlcompute", "computeinstance", "virtualmachine",
-        "kubernetes", "synapsespark"]
+        """The compute type.
 
-        :return: The type of the compute
+        :return: The compute type.
         :rtype: Optional[str]
         """
         return self._type
 
     @property
     def created_on(self) -> Optional[str]:
-        """Creation timestamp.
+        """The compute resource creation timestamp.
 
-        :return: [description]
+        :return: The compute resource creation timestamp.
         :rtype: Optional[str]
         """
         return self._created_on
 
     @property
     def provisioning_state(self) -> Optional[str]:
-        """Provisioning state.
+        """The compute resource's provisioning state.
 
-        :return: [description]
+        :return: The compute resource's provisioning state.
         :rtype: Optional[str]
         """
         return self._provisioning_state
 
     @property
     def provisioning_errors(self) -> Optional[str]:
-        """Provisioning errors.
+        """The compute resource provisioning errors.
 
-        :return: [description]
+        :return: The compute resource provisioning errors.
         :rtype: Optional[str]
         """
         return self._provisioning_errors
@@ -202,20 +203,30 @@ class Compute(Resource, RestTranslatableMixin):
 
 
 class NetworkSettings:
+    """Network settings for a compute resource.
+
+    :param vnet_name: The virtual network name.
+    :type vnet_name: str
+    :param subnet: The subnet name.
+    :type subnet: str
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_compute.py
+            :start-after: [START network_settings]
+            :end-before: [END network_settings]
+            :language: python
+            :dedent: 8
+            :caption: Configuring NetworkSettings for an AmlCompute object.
+    """
+
     def __init__(
         self,
         *,
         vnet_name: Optional[str] = None,
         subnet: Optional[str] = None,
         **kwargs,
-    ):
-        """Network settings for a compute.
-
-        :param vnet_name: The virtual network name, defaults to None
-        :type vnet_name: str, optional
-        :param subnet: The subnet name, defaults to None
-        :type subnet: str, optional
-        """
+    ) -> None:
         self.vnet_name = vnet_name
         self.subnet = subnet
         self._public_ip_address = kwargs.pop("public_ip_address", None)
@@ -225,8 +236,8 @@ class NetworkSettings:
     def public_ip_address(self) -> str:
         """Public IP address of the compute instance.
 
-        return: Public IP address.
-        rtype: str
+        :return: Public IP address.
+        :rtype: str
         """
         return self._public_ip_address
 
@@ -234,7 +245,7 @@ class NetworkSettings:
     def private_ip_address(self) -> str:
         """Private IP address of the compute instance.
 
-        return: Private IP address.
-        rtype: str
+        :return: Private IP address.
+        :rtype: str
         """
         return self._private_ip_address

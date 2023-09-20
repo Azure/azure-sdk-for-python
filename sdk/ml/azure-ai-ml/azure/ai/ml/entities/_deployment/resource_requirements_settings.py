@@ -24,8 +24,7 @@ class ResourceRequirementsSettings(RestTranslatableMixin):
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START resource_requirements_configuration]
             :end-before: [END resource_requirements_configuration]
             :language: python

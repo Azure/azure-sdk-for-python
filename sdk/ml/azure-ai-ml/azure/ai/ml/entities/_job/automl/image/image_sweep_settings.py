@@ -23,12 +23,12 @@ class ImageSweepSettings(RestTranslatableMixin):
     :param sampling_algorithm: Required. [Required] Type of the hyperparameter sampling
         algorithms. Possible values include: "Grid", "Random", "Bayesian".
     :type sampling_algorithm: Union[str, ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.GRID,
-    ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.BAYESIAN,
-    ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.RANDOM]
+        ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.BAYESIAN,
+        ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.RANDOM]
     :param early_termination: Type of early termination policy.
     :type early_termination: Union[~azure.mgmt.machinelearningservices.models.BanditPolicy,
-    ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
-    ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
+        ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
+        ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
     """
 
     def __init__(

@@ -50,6 +50,8 @@ from ._credentials import (
     UserIdentityConfiguration,
     UsernamePasswordConfiguration,
     AccessKeyConfiguration,
+    ApiKeyConfiguration,
+    NoneCredentialConfiguration,
 )
 from ._datastore.adls_gen1 import AzureDataLakeGen1Datastore
 from ._datastore.azure_storage import AzureBlobDatastore, AzureDataLakeGen2Datastore, AzureFileDatastore
@@ -164,6 +166,7 @@ from ._assets._artifacts._package.model_package import (
     PackageInputPathVersion,
 )
 from ._monitoring.alert_notification import AlertNotification
+from ._monitoring.compute import ServerlessSparkCompute
 from ._monitoring.definition import MonitorDefinition
 from ._monitoring.input_data import MonitorInputData
 from ._monitoring.schedule import MonitorSchedule
@@ -173,9 +176,19 @@ from ._monitoring.signals import (
     PredictionDriftSignal,
     FeatureAttributionDriftSignal,
     CustomMonitoringSignal,
-    TargetDataset,
+    GenerationSafetyQualitySignal,
     MonitorFeatureFilter,
     DataSegment,
+    FADProductionData,
+    LlmRequestResponseData,
+    ProductionData,
+    ReferenceData,
+    BaselineDataRange,
+)
+from ._monitoring.input_data import (
+    FixedInputData,
+    StaticInputData,
+    TrailingInputData,
 )
 from ._monitoring.target import MonitoringTarget
 from ._monitoring.thresholds import (
@@ -184,6 +197,11 @@ from ._monitoring.thresholds import (
     PredictionDriftMetricThreshold,
     FeatureAttributionDriftMetricThreshold,
     CustomMonitoringMetricThreshold,
+    CategoricalDriftMetrics,
+    NumericalDriftMetrics,
+    DataQualityMetricsNumerical,
+    DataQualityMetricsCategorical,
+    GenerationSafetyQualityMonitoringMetricThreshold,
 )
 
 from ._workspace_hub.workspace_hub import WorkspaceHub, WorkspaceHubConfig
@@ -195,6 +213,7 @@ from ._feature_store_entity.feature_store_entity import FeatureStoreEntity
 from ._feature_store_entity.data_column import DataColumn
 from ._feature_store_entity.data_column_type import DataColumnType
 from ._feature_set.feature import Feature
+from ._feature_set.feature_set_backfill_request import FeatureSetBackfillRequest
 from ._feature_set.feature_set_specification import FeatureSetSpecification
 from ._feature_set.materialization_compute_resource import MaterializationComputeResource
 from ._feature_set.materialization_settings import MaterializationSettings
@@ -349,6 +368,7 @@ __all__ = [
     "WorkspaceHubConfig",
     "Feature",
     "FeatureSet",
+    "FeatureSetBackfillRequest",
     "ComputeRuntime",
     "FeatureStoreSettings",
     "FeatureStoreEntity",
@@ -397,6 +417,8 @@ __all__ = [
     "Route",
     "AccessKeyConfiguration",
     "AlertNotification",
+    "ServerlessSparkCompute",
+    "ApiKeyConfiguration",
     "MonitorDefinition",
     "MonitorInputData",
     "MonitorSchedule",
@@ -405,17 +427,31 @@ __all__ = [
     "PredictionDriftSignal",
     "FeatureAttributionDriftSignal",
     "CustomMonitoringSignal",
-    "TargetDataset",
+    "GenerationSafetyQualitySignal",
     "MonitorFeatureFilter",
     "DataSegment",
+    "FADProductionData",
+    "LlmRequestResponseData",
+    "ProductionData",
+    "ReferenceData",
+    "BaselineDataRange",
     "MonitoringTarget",
+    "FixedInputData",
+    "StaticInputData",
+    "TrailingInputData",
     "DataDriftMetricThreshold",
     "DataQualityMetricThreshold",
     "PredictionDriftMetricThreshold",
     "FeatureAttributionDriftMetricThreshold",
     "CustomMonitoringMetricThreshold",
+    "GenerationSafetyQualityMonitoringMetricThreshold",
+    "CategoricalDriftMetrics",
+    "NumericalDriftMetrics",
+    "DataQualityMetricsNumerical",
+    "DataQualityMetricsCategorical",
     "DataCollector",
     "IntellectualProperty",
     "DeploymentCollection",
     "RequestLogging",
+    "NoneCredentialConfiguration",
 ]

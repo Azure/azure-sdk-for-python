@@ -4,7 +4,7 @@
 
 from typing import List
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     EmailMonitoringAlertNotificationSettings,
     EmailNotificationEnableType,
     NotificationSetting,
@@ -19,11 +19,11 @@ class AlertNotification(RestTranslatableMixin):
 
     :keyword emails: A list of email addresses that will receive notifications for monitoring alerts.
         Defaults to None.
-    :type emails: Optional[list[str]]
+    :paramtype emails: Optional[list[str]]
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
+        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_monitor_definition]
             :end-before: [END spark_monitor_definition]
             :language: python

@@ -988,6 +988,31 @@ class TestFile(StorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy
+    def test_delete_file_oauth(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        
+        file_name = self._get_file_reference()
+        token_credential = self.generate_oauth_token()
+
+        file_client = DataLakeFileClient(
+            self.dsc.url,
+            self.file_system_name,
+            file_name,
+            credential=token_credential)
+        file_client.create_file()
+
+        # Act
+        response = file_client.delete_file()
+
+        # Assert
+        assert response is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy
     def test_delete_file_with_if_unmodified_since(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")

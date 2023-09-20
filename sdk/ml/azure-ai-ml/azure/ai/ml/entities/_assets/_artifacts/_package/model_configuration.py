@@ -16,6 +16,15 @@ class ModelConfiguration:
     :type mode: str
     :param mount_path: The mount path of the model.
     :type mount_path: str
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_misc.py
+            :start-after: [START model_configuration_entity_create]
+            :end-before: [END model_configuration_entity_create]
+            :language: python
+            :dedent: 8
+            :caption: Creating a Model Configuration object.
     """
 
     def __init__(self, *, mode: str = None, mount_path: str = None):

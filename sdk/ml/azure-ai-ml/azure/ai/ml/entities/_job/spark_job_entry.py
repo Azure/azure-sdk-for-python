@@ -21,15 +21,14 @@ class SparkJobEntry(RestTranslatableMixin):
     """Entry for Spark job.
 
     :keyword entry: The file or class entry point.
-    :type entry: str
+    :paramtype entry: str
     :keyword type: The entry type. Accepted values are SparkJobEntryType.SPARK_JOB_FILE_ENTRY or
         SparkJobEntryType.SPARK_JOB_CLASS_ENTRY. Defaults to SparkJobEntryType.SPARK_JOB_FILE_ENTRY.
-    :type type: ~azure.ai.ml.entities.SparkJobEntryType, optional
+    :paramtype type: ~azure.ai.ml.entities.SparkJobEntryType
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
+        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_component_definition]
             :end-before: [END spark_component_definition]
             :language: python

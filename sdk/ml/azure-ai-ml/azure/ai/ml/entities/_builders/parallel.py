@@ -17,6 +17,7 @@ from ..._schema import PathAwareSchema
 from ...constants._common import ARM_ID_PREFIX
 from ...constants._component import NodeType
 from .._component.component import Component
+from .._component.flow import FlowComponent
 from .._component.parallel_component import ParallelComponent
 from .._inputs_outputs import Input, Output
 from .._job.job_resource_configuration import JobResourceConfiguration
@@ -39,27 +40,27 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
     :param component: Id or instance of the parallel component/job to be run for the step
     :type component: ~azure.ai.ml.entities._component.parallel_component.parallelComponent
     :param name: Name of the parallel
-    :type name: str, optional
+    :type name: str
     :param description: Description of the commad
-    :type description: str, optional
+    :type description: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated
-    :type tags: dict[str, str], optional
+    :type tags: dict[str, str]
     :param properties: The job property dictionary
-    :type properties: dict[str, str], optional
+    :type properties: dict[str, str]
     :param display_name: Display name of the job
-    :type display_name: str, optional
+    :type display_name: str
     :param retry_settings: Parallel job run failed retry
-    :type retry_settings: BatchRetrySettings, optional
+    :type retry_settings: BatchRetrySettings
     :param logging_level: A string of the logging level name
-    :type logging_level: str, optional
+    :type logging_level: str
     :param max_concurrency_per_instance: The max parallellism that each compute instance has
-    :type max_concurrency_per_instance: int, optional
+    :type max_concurrency_per_instance: int
     :param error_threshold: The number of item processing failures should be ignored
-    :type error_threshold: int, optional
+    :type error_threshold: int
     :param mini_batch_error_threshold: The number of mini batch processing failures should be ignored
-    :type mini_batch_error_threshold: int, optional
+    :type mini_batch_error_threshold: int
     :param task: The parallel task
-    :type task: ParallelTask, optional
+    :type task: ParallelTask
     :param mini_batch_size: For FileDataset input, this field is the number of files
                             a user script can process in one run() call.
                             For TabularDataset input, this field is the approximate size of data
@@ -67,20 +68,20 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
                             Example values are 1024, 1024KB, 10MB, and 1GB. (optional, default value is 10 files
                             for FileDataset and 1MB for TabularDataset.)
                             This value could be set through PipelineParameter
-    :type mini_batch_size: str, optional
+    :type mini_batch_size: str
     :param partition_keys: The keys used to partition dataset into mini-batches. If specified,
                            the data with the same key will be partitioned into the same mini-batch.
                            If both partition_keys and mini_batch_size are specified,
                            the partition keys will take effect.
                            The input(s) must be partitioned dataset(s),
                            and the partition_keys must be a subset of the keys of every input dataset for this to work.
-    :type partition_keys: List, optional
+    :type partition_keys: List
     :param input_data: The input data
-    :type input_data: str, optional
+    :type input_data: str
     :param inputs: Inputs of the component/job
-    :type inputs: dict, optional
+    :type inputs: dict
     :param outputs: Outputs of the component/job
-    :type outputs: dict, optional
+    :type outputs: dict
     """
 
     # pylint: disable=too-many-instance-attributes
@@ -122,15 +123,28 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
         kwargs.pop("type", None)
 
-        BaseNode.__init__(
-            self,
-            type=NodeType.PARALLEL,
-            component=component,
-            inputs=inputs,
-            outputs=outputs,
-            compute=compute,
-            **kwargs,
-        )
+        if isinstance(component, FlowComponent):
+            # make input definition fit actual inputs for flow component
+            with component._inputs._fit_inputs(inputs):  # pylint: disable=protected-access
+                BaseNode.__init__(
+                    self,
+                    type=NodeType.PARALLEL,
+                    component=component,
+                    inputs=inputs,
+                    outputs=outputs,
+                    compute=compute,
+                    **kwargs,
+                )
+        else:
+            BaseNode.__init__(
+                self,
+                type=NodeType.PARALLEL,
+                component=component,
+                inputs=inputs,
+                outputs=outputs,
+                compute=compute,
+                **kwargs,
+            )
         # init mark for _AttrDict
         self._init = True
 
@@ -277,17 +291,16 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
     ):
         """Set the resources for the parallel job.
 
-        :param instance_type: The instance type or a list of instance types used as supported by the compute target.
-        :type instance_type: str or list[str], optional
-        :param instance_count: The number of instances or nodes used by the compute target.
-        :type instance_count: int, optional
-        :param properties: The property dictionary for the resources.
-        :type properties: dict, optional
-        :param docker_args: Extra arguments to pass to the Docker run command.
-        :type docker_args: str, optional
-        :param shm_size: Size of the Docker container's shared memory block.
-        :type shm_size: str, optional
-        :param kwargs: Additional keyword arguments.
+        :keyword instance_type: The instance type or a list of instance types used as supported by the compute target.
+        :paramtype instance_type: str or list[str]
+        :keyword instance_count: The number of instances or nodes used by the compute target.
+        :paramtype instance_count: int
+        :keyword properties: The property dictionary for the resources.
+        :paramtype properties: dict
+        :keyword docker_args: Extra arguments to pass to the Docker run command.
+        :paramtype docker_args: str
+        :keyword shm_size: Size of the Docker container's shared memory block.
+        :paramtype shm_size: str
         """
         if self.resources is None:
             self.resources = JobResourceConfiguration()
@@ -310,7 +323,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
     @classmethod
     def _attr_type_map(cls) -> dict:
         return {
-            "component": (str, ParallelComponent),
+            "component": (str, ParallelComponent, FlowComponent),
             "retry_settings": (dict, RetrySettings),
             "resources": (dict, JobResourceConfiguration),
             "task": (dict, ParallelTask),
@@ -427,8 +440,13 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
 
         return ParallelSchema(context=context)
 
+    # pylint: disable-next=docstring-missing-param
     def __call__(self, *args, **kwargs) -> "Parallel":
-        """Call Parallel as a function will return a new instance each time."""
+        """Call Parallel as a function will return a new instance each time.
+
+        :return: A Parallel node
+        :rtype: Parallel
+        """
         if isinstance(self._component, Component):
             # call this to validate inputs
             node = self._component(*args, **kwargs)

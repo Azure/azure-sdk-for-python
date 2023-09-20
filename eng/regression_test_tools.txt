@@ -1,5 +1,4 @@
 pip==20.2
-cryptography<4
 
 # requirements leveraged by ci for testing
 pytest==7.3.1
@@ -17,7 +16,6 @@ typing-extensions<=4.6.3
 # locking packages defined as deps from azure-sdk-tools or azure-devtools
 pytoml==0.1.21
 readme-renderer[md]==25.0
-pyOpenSSL==21.0.0
 json-delta==2.0
 ConfigArgParse==1.2.3
 six==1.14.0

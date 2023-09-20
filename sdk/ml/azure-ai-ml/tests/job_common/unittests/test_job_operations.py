@@ -5,7 +5,6 @@ from unittest.mock import Mock, patch
 
 import jwt
 import pytest
-import vcr
 import yaml
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
@@ -35,12 +34,14 @@ from .test_vcr_utils import before_record_cb, vcr_header_filters
 
 @pytest.fixture
 def mock_datastore_operation(
-    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01: Mock
+    mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
+    mock_aml_services_2023_04_01_preview: Mock,
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        serviceclient_2022_10_01=mock_aml_services_2022_10_01,
+        serviceclient_2023_04_01_preview=mock_aml_services_2023_04_01_preview,
     )
 
 

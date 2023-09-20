@@ -12,9 +12,7 @@ from typing import Dict, List, Optional
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AssignedUser
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstance as CIRest
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstanceProperties
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    ComputeInstanceSshSettings as CiSShSettings,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstanceSshSettings as CiSShSettings
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ComputeResource,
     PersonalComputeInstanceSettings,
@@ -29,10 +27,10 @@ from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._mixins import DictMixin
 from azure.ai.ml.entities._util import load_from_dict
 
+from ._custom_applications import CustomApplications, validate_custom_applications
 from ._image_metadata import ImageMetadata
 from ._schedule import ComputeSchedules
 from ._setup_scripts import SetupScripts
-from ._custom_applications import CustomApplications, validate_custom_applications
 
 module_logger = logging.getLogger(__name__)
 
@@ -40,7 +38,20 @@ module_logger = logging.getLogger(__name__)
 class ComputeInstanceSshSettings:
     """Credentials for an administrator user account to SSH into the compute node.
 
-    Can only be configured if ssh_public_access_enabled is set to true.
+    Can only be configured if `ssh_public_access_enabled` is set to true on compute
+    resource.
+
+    :param ssh_key_value: The SSH public key of the administrator user account.
+    :type ssh_key_value: Optional[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_compute.py
+            :start-after: [START compute_instance_ssh_settings]
+            :end-before: [END compute_instance_ssh_settings]
+            :language: python
+            :dedent: 8
+            :caption: Configuring ComputeInstanceSshSettings object.
     """
 
     def __init__(
@@ -48,12 +59,7 @@ class ComputeInstanceSshSettings:
         *,
         ssh_key_value: Optional[str] = None,
         **kwargs,
-    ):
-        """[summary]
-
-        :param ssh_key_value:  The SSH public key of the administrator user account.
-        :type ssh_key_value: str
-        """
+    ) -> None:
         self.ssh_key_value = ssh_key_value
         self._ssh_port = kwargs.pop("ssh_port", None)
         self._admin_username = kwargs.pop("admin_username", None)
@@ -62,8 +68,8 @@ class ComputeInstanceSshSettings:
     def admin_username(self) -> str:
         """The name of the administrator user account which can be used to SSH into nodes.
 
-        return: The name of the administrator user account.
-        rtype: str
+        :return: The name of the administrator user account.
+        :rtype: str
         """
         return self._admin_username
 
@@ -71,23 +77,31 @@ class ComputeInstanceSshSettings:
     def ssh_port(self) -> str:
         """SSH port.
 
-        return: SSH port.
-        rtype: str
+        :return: SSH port.
+        :rtype: str
         """
         return self._ssh_port
 
 
 class AssignedUserConfiguration(DictMixin):
-    """Settings to create a compute on behalf of another user."""
+    """Settings to create a compute resource on behalf of another user.
 
-    def __init__(self, *, user_tenant_id: str, user_object_id: str):
-        """[summary]
+    :param user_tenant_id: Tenant ID of the user to assign the compute target to.
+    :type user_tenant_id: str
+    :param user_object_id: Object ID of the user to assign the compute target to.
+    :type user_object_id: str
 
-        :param user_tenant_id: Tenant ID of the user to assign the compute target to.
-        :type user_tenant_id: str
-        :param user_object_id: Object ID of the user to assign the compute target to.
-        :type user_object_id: str
-        """
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_compute.py
+            :start-after: [START assigned_user_configuration]
+            :end-before: [END assigned_user_configuration]
+            :language: python
+            :dedent: 8
+            :caption: Creating an AssignedUserConfiguration.
+    """
+
+    def __init__(self, *, user_tenant_id: str, user_object_id: str) -> None:
         self.user_tenant_id = user_tenant_id
         self.user_object_id = user_object_id
 
@@ -95,58 +109,66 @@ class AssignedUserConfiguration(DictMixin):
 class ComputeInstance(Compute):
     """Compute Instance resource.
 
-    :param name: Name of the compute
+    :param name: Name of the compute.
     :type name: str
-    :param location: The resource location, defaults to None
-    :type location: Optional[str], optional
+    :param location: The resource location.
+    :type location: Optional[str]
     :param description: Description of the resource.
-    :type description: Optional[str], optional
-    :param size: Compute Size, defaults to None
-    :type size: Optional[str], optional
+    :type description: Optional[str]
+    :param size: Compute size.
+    :type size: Optional[str]
     :param tags: A set of tags. Contains resource tags defined as key/value pairs.
     :type tags: Optional[dict[str, str]]
-    :param create_on_behalf_of: defaults to None
-    :type create_on_behalf_of: Optional[AssignedUserConfiguration], optional
-    :ivar state: defaults to None
-    :type state: Optional[str], optional
-    :ivar last_operation: defaults to None
-    :type last_operation: Optional[Dict[str, str]], optional
-    :ivar applications: defaults to None
-    :type applications: Optional[List[Dict[str, str]]], optional
-    :param network_settings: defaults to None
-    :type network_settings: Optional[NetworkSettings], optional
-    :param ssh_settings: defaults to None
-    :type ssh_settings: Optional[ComputeInstanceSshSettings], optional
-    :param ssh_public_access_enabled: State of the public SSH port. Possible values are: ["False", "True", "None"]
-        False - Indicates that the public ssh port is closed on all nodes of the cluster.
-        True - Indicates that the public ssh port is open on all nodes of the cluster.
-        None -Indicates that the public ssh port is closed on all nodes of the cluster if VNet is defined,
-        else is open all public nodes. It can be default only during cluster creation time, after
-        creation it will be either True or False. Possible values include: True, False, None.
-        Default value: None.
+    :param create_on_behalf_of: Configuration to create resource on behalf of another user. Defaults to None.
+    :type create_on_behalf_of: Optional[~azure.ai.ml.entities.AssignedUserConfiguration]
+    :ivar state: State of the resource.
+    :type state: Optional[str]
+    :ivar last_operation: The last operation.
+    :type last_operation: Optional[Dict[str, str]]
+    :ivar applications: Applications associated with the compute instance.
+    :type applications: Optional[List[Dict[str, str]]]
+    :param network_settings: Network settings for the compute instance.
+    :type network_settings: Optional[~azure.ai.ml.entities.NetworkSettings]
+    :param ssh_settings: SSH settings for the compute instance.
+    :type ssh_settings: Optional[~azure.ai.ml.entities.ComputeInstanceSshSettings]
+    :param ssh_public_access_enabled: State of the public SSH port. Defaults to None. Possible values are:
 
-    :type ssh_public_access_enabled: Optional[bool], optional
-    :param schedules: Compute instance schedules, defaults to None
-    :type schedules: Optional[ComputeSchedules], optional
-    :param identity:  The identity configuration, identities that are associated with the compute cluster.
-    :type identity: IdentityConfiguration, optional
+        * False - Indicates that the public ssh port is closed on all nodes of the cluster.
+        * True - Indicates that the public ssh port is open on all nodes of the cluster.
+        * None -Indicates that the public ssh port is closed on all nodes of the cluster if VNet is defined,
+            else is open all public nodes. It can be default only during cluster creation time, after
+            creation it will be either True or False.
+
+    :type ssh_public_access_enabled: Optional[bool]
+    :param schedules: Compute instance schedules. Defaults to None.
+    :type schedules: Optional[~azure.ai.ml.entities.ComputeSchedules]
+    :param identity: The identities that are associated with the compute cluster.
+    :type identity: ~azure.ai.ml.entities.IdentityConfiguration
     :param idle_time_before_shutdown: Deprecated. Use the `idle_time_before_shutdown_minutes` parameter instead.
         Stops compute instance after user defined period of inactivity.
         Time is defined in ISO8601 format. Minimum is 15 minutes, maximum is 3 days.
-    :type idle_time_before_shutdown: Optional[str], optional
+    :type idle_time_before_shutdown: Optional[str]
     :param idle_time_before_shutdown_minutes: Stops compute instance after a user defined period of
         inactivity in minutes. Minimum is 15 minutes, maximum is 3 days.
-    :type idle_time_before_shutdown_minutes: Optional[int], optional
-    :param enable_node_public_ip: Enable or disable node public IP address provisioning. Possible values are:
-        True - Indicates that the compute nodes will have public IPs provisioned.
-        False - Indicates that the compute nodes will have a private endpoint and no public IPs.
-        Default Value: True.
-    :type enable_node_public_ip: Optional[bool], optional
+    :type idle_time_before_shutdown_minutes: Optional[int]
+    :param enable_node_public_ip: Enable or disable node public IP address provisioning. Defaults to True.
+        Possible values are:
+            * True - Indicates that the compute nodes will have public IPs provisioned.
+            * False - Indicates that the compute nodes will have a private endpoint and no public IPs.
+    :type enable_node_public_ip: Optional[bool]
     :param setup_scripts: Details of customized scripts to execute for setting up the cluster.
-    :type setup_scripts: Optional[SetupScripts], optional
-    :param custom_applications: List of custom applications and their endpoints
-        for the compute instance.
-    :type custom_applications: Optional[List[CustomApplications]], optional
+    :type setup_scripts: Optional[~azure.ai.ml.entities.SetupScripts]
+    :param custom_applications: List of custom applications and their endpoints for the compute instance.
+    :type custom_applications: Optional[List[~azure.ai.ml.entities.CustomApplications]]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_compute.py
+            :start-after: [START compute_instance]
+            :end-before: [END compute_instance]
+            :language: python
+            :dedent: 8
+            :caption: Creating a ComputeInstance object.
     """
 
     def __init__(
@@ -168,7 +190,7 @@ class ComputeInstance(Compute):
         enable_node_public_ip: bool = True,
         custom_applications: Optional[List[CustomApplications]] = None,
         **kwargs,
-    ):
+    ) -> None:
         kwargs[TYPE] = ComputeType.COMPUTEINSTANCE
         self._state = kwargs.pop("state", None)
         self._last_operation = kwargs.pop("last_operation", None)
@@ -198,10 +220,10 @@ class ComputeInstance(Compute):
 
     @property
     def services(self) -> List[Dict[str, str]]:
-        """
+        """The compute instance's services.
 
-        return: The services for the compute instance.
-        rtype: List[Dict[str, str]]
+        :return: The compute instance's services.
+        :rtype: List[Dict[str, str]]
         """
         return self._services
 
@@ -209,8 +231,8 @@ class ComputeInstance(Compute):
     def last_operation(self) -> Dict[str, str]:
         """The last operation.
 
-        return: The last operation.
-        rtype: str
+        :return: The last operation.
+        :rtype: str
         """
         return self._last_operation
 
@@ -218,8 +240,8 @@ class ComputeInstance(Compute):
     def state(self) -> str:
         """The state of the compute.
 
-        return: The state of the compute.
-        rtype: str
+        :return: The state of the compute.
+        :rtype: str
         """
         return self._state
 
@@ -227,8 +249,8 @@ class ComputeInstance(Compute):
     def os_image_metadata(self) -> ImageMetadata:
         """Metadata about the operating system image for this compute instance.
 
-        return: Operating system image metadata.
-        rtype: ImageMetadata
+        :return: Operating system image metadata.
+        :rtype: ~azure.ai.ml.entities.ImageMetadata
         """
         return self._os_image_metadata
 

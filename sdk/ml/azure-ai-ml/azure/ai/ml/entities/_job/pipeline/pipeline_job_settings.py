@@ -11,17 +11,17 @@ class PipelineJobSettings(_AttrDict):
     """Settings of PipelineJob, include default_datastore, default_compute, continue_on_step_failure and force_rerun.
 
     :param default_datastore: The default datastore of the pipeline.
-    :type default_datastore: str, optional
+    :type default_datastore: str
     :param default_compute: The default compute target of the pipeline.
-    :type default_compute: str, optional
+    :type default_compute: str
     :param continue_on_step_failure: Flag indicating whether to continue pipeline execution if a step fails.
-    :type continue_on_step_failure: bool, optional
+    :type continue_on_step_failure: bool
     :param force_rerun: Flag indicating whether to force rerun pipeline execution.
-    :type force_rerun: bool, optional
+    :type force_rerun: bool
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../../samples/ml_samples_pipeline_job_configurations.py
+        .. literalinclude:: ../samples/ml_samples_pipeline_job_configurations.py
             :start-after: [START configure_PipelineJob_and_PipelineJobSettings]
             :end-before: [END configure_PipelineJob_and_PipelineJobSettings]
             :language: python
