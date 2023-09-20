@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import IO, TYPE_CHECKING, Any, AnyStr, Callable, Dict, Iterable, Optional, Tuple, Union
 
 from marshmallow import INCLUDE
+from typing_extensions import Literal
 
 from ..._restclient.v2022_10_01.models import (
     ComponentContainer,
@@ -266,9 +267,8 @@ class Component(
     @staticmethod
     def _resolve_component_source_from_id(
         id: Optional[str],
-    ) -> Union[ComponentSource.CLASS, ComponentSource.REMOTE_REGISTRY, ComponentSource.REMOTE_WORKSPACE_COMPONENT]:
+    ) -> Literal[ComponentSource.CLASS, ComponentSource.REMOTE_REGISTRY, ComponentSource.REMOTE_WORKSPACE_COMPONENT]:
         """Resolve the component source from id.
-
         :param id: The component ID
         :type id: Optional[str]
         :return: The component source
