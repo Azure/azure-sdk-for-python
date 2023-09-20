@@ -345,7 +345,7 @@ class WorkspaceOperationsBase(ABC):
         )
         grant_materialization_permissions = kwargs.get("grant_materialization_permissions", None)
 
-        # pylint: disable=unused-argument
+        # pylint: disable=unused-argument, docstring-missing-param
         def callback(_, deserialized, args):
             """
             callback to be called after completion
@@ -389,7 +389,7 @@ class WorkspaceOperationsBase(ABC):
         real_callback = callback
         injected_callback = kwargs.get("cls", None)
         if injected_callback:
-            # pylint: disable=function-redefined
+            # pylint: disable=function-redefined, docstring-missing-param
             def real_callback(_, deserialized, args):
                 """
                 callback to be called after completion
@@ -911,6 +911,7 @@ class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
         module_logger.info("Total time : %s\n", from_iso_duration_format_min_sec(total_duration))
         return self.func()
 
+    # pylint: disable=docstring-missing-param
     def initialize(self, *args, **kwargs):
         """
         unused stub overridden from ABC
