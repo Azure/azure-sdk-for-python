@@ -61,26 +61,31 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.rdbms.mysql_flexibleservers.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -89,6 +94,7 @@ class Resource(_serialization.Model):
         self.id = None
         self.name = None
         self.type = None
+        self.system_data = None
 
 
 class ProxyResource(Resource):
@@ -97,26 +103,31 @@ class ProxyResource(Resource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.rdbms.mysql_flexibleservers.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -129,15 +140,16 @@ class AzureADAdministrator(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: The system metadata relating to this resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.rdbms.mysql_flexibleservers.models.SystemData
     :ivar administrator_type: Type of the sever administrator. "ActiveDirectory"
     :vartype administrator_type: str or
@@ -195,7 +207,6 @@ class AzureADAdministrator(ProxyResource):
         :paramtype identity_resource_id: str
         """
         super().__init__(**kwargs)
-        self.system_data = None
         self.administrator_type = administrator_type
         self.login = login
         self.sid = sid
@@ -309,19 +320,45 @@ class BackupAndExportRequest(BackupRequestBase):
         self.target_details = target_details
 
 
-class BackupAndExportResponse(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.rdbms.mysql_flexibleservers.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.rdbms.mysql_flexibleservers.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
+class BackupAndExportResponse(ProxyResource, ErrorResponse):  # pylint: disable=too-many-instance-attributes
     """Represents BackupAndExport API Response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.rdbms.mysql_flexibleservers.models.ErrorDetail
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.rdbms.mysql_flexibleservers.models.SystemData
     :ivar status: The operation status. Known values are: "Pending", "InProgress", "Succeeded",
      "Failed", "CancelInProgress", and "Canceled".
     :vartype status: str or ~azure.mgmt.rdbms.mysql_flexibleservers.models.OperationStatus
@@ -331,8 +368,6 @@ class BackupAndExportResponse(ProxyResource):  # pylint: disable=too-many-instan
     :vartype end_time: ~datetime.datetime
     :ivar percent_complete: Operation progress (0-100).
     :vartype percent_complete: float
-    :ivar error: The BackupAndExport operation error response.
-    :vartype error: ~azure.mgmt.rdbms.mysql_flexibleservers.models.ErrorResponse
     :ivar datasource_size_in_bytes: Size of datasource in bytes.
     :vartype datasource_size_in_bytes: int
     :ivar data_transferred_in_bytes: Data transferred in bytes.
@@ -346,18 +381,20 @@ class BackupAndExportResponse(ProxyResource):  # pylint: disable=too-many-instan
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "percent_complete": {"maximum": 100, "minimum": 0},
     }
 
     _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "status": {"key": "status", "type": "str"},
         "start_time": {"key": "startTime", "type": "iso-8601"},
         "end_time": {"key": "endTime", "type": "iso-8601"},
         "percent_complete": {"key": "percentComplete", "type": "float"},
-        "error": {"key": "error", "type": "ErrorResponse"},
         "datasource_size_in_bytes": {"key": "properties.datasourceSizeInBytes", "type": "int"},
         "data_transferred_in_bytes": {"key": "properties.dataTransferredInBytes", "type": "int"},
         "backup_metadata": {"key": "properties.backupMetadata", "type": "str"},
@@ -366,17 +403,19 @@ class BackupAndExportResponse(ProxyResource):  # pylint: disable=too-many-instan
     def __init__(
         self,
         *,
+        error: Optional["_models.ErrorDetail"] = None,
         status: Optional[Union[str, "_models.OperationStatus"]] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         percent_complete: Optional[float] = None,
-        error: Optional["_models.ErrorResponse"] = None,
         datasource_size_in_bytes: Optional[int] = None,
         data_transferred_in_bytes: Optional[int] = None,
         backup_metadata: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.rdbms.mysql_flexibleservers.models.ErrorDetail
         :keyword status: The operation status. Known values are: "Pending", "InProgress", "Succeeded",
          "Failed", "CancelInProgress", and "Canceled".
         :paramtype status: str or ~azure.mgmt.rdbms.mysql_flexibleservers.models.OperationStatus
@@ -386,8 +425,6 @@ class BackupAndExportResponse(ProxyResource):  # pylint: disable=too-many-instan
         :paramtype end_time: ~datetime.datetime
         :keyword percent_complete: Operation progress (0-100).
         :paramtype percent_complete: float
-        :keyword error: The BackupAndExport operation error response.
-        :paramtype error: ~azure.mgmt.rdbms.mysql_flexibleservers.models.ErrorResponse
         :keyword datasource_size_in_bytes: Size of datasource in bytes.
         :paramtype datasource_size_in_bytes: int
         :keyword data_transferred_in_bytes: Data transferred in bytes.
@@ -396,15 +433,19 @@ class BackupAndExportResponse(ProxyResource):  # pylint: disable=too-many-instan
          key-value pairs.
         :paramtype backup_metadata: str
         """
-        super().__init__(**kwargs)
+        super().__init__(error=error, **kwargs)
+        self.error = error
         self.status = status
         self.start_time = start_time
         self.end_time = end_time
         self.percent_complete = percent_complete
-        self.error = error
         self.datasource_size_in_bytes = datasource_size_in_bytes
         self.data_transferred_in_bytes = data_transferred_in_bytes
         self.backup_metadata = backup_metadata
+        self.id = None
+        self.name = None
+        self.type = None
+        self.system_data = None
 
 
 class BackupSettings(_serialization.Model):
@@ -415,7 +456,7 @@ class BackupSettings(_serialization.Model):
     :ivar backup_name: The name of the backup. Required.
     :vartype backup_name: str
     :ivar backup_format: Backup Format for the current backup. (CollatedFormat is INTERNAL – DO NOT
-     USE). Known values are: "None" and "CollatedFormat".
+     USE). Known values are: "CollatedFormat" and "Raw".
     :vartype backup_format: str or ~azure.mgmt.rdbms.mysql_flexibleservers.models.BackupFormat
     """
 
@@ -435,7 +476,7 @@ class BackupSettings(_serialization.Model):
         :keyword backup_name: The name of the backup. Required.
         :paramtype backup_name: str
         :keyword backup_format: Backup Format for the current backup. (CollatedFormat is INTERNAL – DO
-         NOT USE). Known values are: "None" and "CollatedFormat".
+         NOT USE). Known values are: "CollatedFormat" and "Raw".
         :paramtype backup_format: str or ~azure.mgmt.rdbms.mysql_flexibleservers.models.BackupFormat
         """
         super().__init__(**kwargs)
@@ -499,6 +540,66 @@ class CapabilitiesListResult(_serialization.Model):
         self.next_link = None
 
 
+class Capability(ProxyResource):
+    """Represents a location capability set.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.rdbms.mysql_flexibleservers.models.SystemData
+    :ivar supported_geo_backup_regions: supported geo backup regions.
+    :vartype supported_geo_backup_regions: list[str]
+    :ivar supported_flexible_server_editions: A list of supported flexible server editions.
+    :vartype supported_flexible_server_editions:
+     list[~azure.mgmt.rdbms.mysql_flexibleservers.models.ServerEditionCapabilityV2]
+    :ivar supported_server_versions: A list of supported server versions.
+    :vartype supported_server_versions:
+     list[~azure.mgmt.rdbms.mysql_flexibleservers.models.ServerVersionCapabilityV2]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "supported_geo_backup_regions": {"readonly": True},
+        "supported_flexible_server_editions": {"readonly": True},
+        "supported_server_versions": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "supported_geo_backup_regions": {"key": "properties.supportedGeoBackupRegions", "type": "[str]"},
+        "supported_flexible_server_editions": {
+            "key": "properties.supportedFlexibleServerEditions",
+            "type": "[ServerEditionCapabilityV2]",
+        },
+        "supported_server_versions": {
+            "key": "properties.supportedServerVersions",
+            "type": "[ServerVersionCapabilityV2]",
+        },
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.supported_geo_backup_regions = None
+        self.supported_flexible_server_editions = None
+        self.supported_server_versions = None
+
+
 class CapabilityProperties(_serialization.Model):
     """Location capabilities.
 
@@ -541,20 +642,49 @@ class CapabilityProperties(_serialization.Model):
         self.supported_flexible_server_editions = None
 
 
+class CapabilitySetsList(_serialization.Model):
+    """location capability set.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: A list of supported capability sets.
+    :vartype value: list[~azure.mgmt.rdbms.mysql_flexibleservers.models.Capability]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Capability]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
 class Configuration(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Represents a Configuration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: The system metadata relating to this resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.rdbms.mysql_flexibleservers.models.SystemData
     :ivar value: Value of the configuration.
     :vartype value: str
@@ -635,7 +765,6 @@ class Configuration(ProxyResource):  # pylint: disable=too-many-instance-attribu
         :paramtype source: str or ~azure.mgmt.rdbms.mysql_flexibleservers.models.ConfigurationSource
         """
         super().__init__(**kwargs)
-        self.system_data = None
         self.value = value
         self.current_value = current_value
         self.description = None
@@ -754,15 +883,16 @@ class Database(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: The system metadata relating to this resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.rdbms.mysql_flexibleservers.models.SystemData
     :ivar charset: The charset of the database.
     :vartype charset: str
@@ -794,7 +924,6 @@ class Database(ProxyResource):
         :paramtype collation: str
         """
         super().__init__(**kwargs)
-        self.system_data = None
         self.charset = charset
         self.collation = collation
 
@@ -942,9 +1071,8 @@ class ErrorAdditionalInfo(_serialization.Model):
         self.info = None
 
 
-class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations. (This also follows the OData error response format.).
+class ErrorDetail(_serialization.Model):
+    """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -955,7 +1083,7 @@ class ErrorResponse(_serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.rdbms.mysql_flexibleservers.models.ErrorResponse]
+    :vartype details: list[~azure.mgmt.rdbms.mysql_flexibleservers.models.ErrorDetail]
     :ivar additional_info: The error additional info.
     :vartype additional_info:
      list[~azure.mgmt.rdbms.mysql_flexibleservers.models.ErrorAdditionalInfo]
@@ -973,7 +1101,7 @@ class ErrorResponse(_serialization.Model):
         "code": {"key": "code", "type": "str"},
         "message": {"key": "message", "type": "str"},
         "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[ErrorResponse]"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
@@ -994,15 +1122,16 @@ class FirewallRule(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: The system metadata relating to this resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.rdbms.mysql_flexibleservers.models.SystemData
     :ivar start_ip_address: The start IP address of the server firewall rule. Must be IPv4 format.
      Required.
@@ -1046,7 +1175,6 @@ class FirewallRule(ProxyResource):
         :paramtype end_ip_address: str
         """
         super().__init__(**kwargs)
-        self.system_data = None
         self.start_ip_address = start_ip_address
         self.end_ip_address = end_ip_address
 
@@ -1178,52 +1306,54 @@ class HighAvailability(_serialization.Model):
         self.standby_availability_zone = standby_availability_zone
 
 
-class Identity(_serialization.Model):
-    """Properties to configure Identity for Bring your Own Keys.
+class ImportSourceProperties(_serialization.Model):
+    """Import source related properties.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar principal_id: ObjectId from the KeyVault.
-    :vartype principal_id: str
-    :ivar tenant_id: TenantId from the KeyVault.
-    :vartype tenant_id: str
-    :ivar type: Type of managed service identity. "UserAssigned"
-    :vartype type: str or ~azure.mgmt.rdbms.mysql_flexibleservers.models.ManagedServiceIdentityType
-    :ivar user_assigned_identities: Metadata of user assigned identity.
-    :vartype user_assigned_identities: dict[str, JSON]
+    :ivar storage_type: Storage type of import source. "AzureBlob"
+    :vartype storage_type: str or
+     ~azure.mgmt.rdbms.mysql_flexibleservers.models.ImportSourceStorageType
+    :ivar storage_url: Uri of the import source storage.
+    :vartype storage_url: str
+    :ivar sas_token: Sas token for accessing source storage. Read and list permissions are required
+     for sas token.
+    :vartype sas_token: str
+    :ivar data_dir_path: Relative path of data directory in storage.
+    :vartype data_dir_path: str
     """
 
-    _validation = {
-        "principal_id": {"readonly": True},
-        "tenant_id": {"readonly": True},
-    }
-
     _attribute_map = {
-        "principal_id": {"key": "principalId", "type": "str"},
-        "tenant_id": {"key": "tenantId", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{object}"},
+        "storage_type": {"key": "storageType", "type": "str"},
+        "storage_url": {"key": "storageUrl", "type": "str"},
+        "sas_token": {"key": "sasToken", "type": "str"},
+        "data_dir_path": {"key": "dataDirPath", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "_models.ManagedServiceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, JSON]] = None,
+        storage_type: Optional[Union[str, "_models.ImportSourceStorageType"]] = None,
+        storage_url: Optional[str] = None,
+        sas_token: Optional[str] = None,
+        data_dir_path: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword type: Type of managed service identity. "UserAssigned"
-        :paramtype type: str or
-         ~azure.mgmt.rdbms.mysql_flexibleservers.models.ManagedServiceIdentityType
-        :keyword user_assigned_identities: Metadata of user assigned identity.
-        :paramtype user_assigned_identities: dict[str, JSON]
+        :keyword storage_type: Storage type of import source. "AzureBlob"
+        :paramtype storage_type: str or
+         ~azure.mgmt.rdbms.mysql_flexibleservers.models.ImportSourceStorageType
+        :keyword storage_url: Uri of the import source storage.
+        :paramtype storage_url: str
+        :keyword sas_token: Sas token for accessing source storage. Read and list permissions are
+         required for sas token.
+        :paramtype sas_token: str
+        :keyword data_dir_path: Relative path of data directory in storage.
+        :paramtype data_dir_path: str
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
-        self.type = type
-        self.user_assigned_identities = user_assigned_identities
+        self.storage_type = storage_type
+        self.storage_url = storage_url
+        self.sas_token = sas_token
+        self.data_dir_path = data_dir_path
 
 
 class LogFile(ProxyResource):
@@ -1231,15 +1361,16 @@ class LogFile(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: The system metadata relating to this resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.rdbms.mysql_flexibleservers.models.SystemData
     :ivar size_in_kb: The size in kb of the logFile.
     :vartype size_in_kb: int
@@ -1295,7 +1426,6 @@ class LogFile(ProxyResource):
         :paramtype url: str
         """
         super().__init__(**kwargs)
-        self.system_data = None
         self.size_in_kb = size_in_kb
         self.created_time = created_time
         self.type_properties_type = type_properties_type
@@ -1375,6 +1505,89 @@ class MaintenanceWindow(_serialization.Model):
         self.start_hour = start_hour
         self.start_minute = start_minute
         self.day_of_week = day_of_week
+
+
+class MySQLServerIdentity(_serialization.Model):
+    """Properties to configure Identity for Bring your Own Keys.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: ObjectId from the KeyVault.
+    :vartype principal_id: str
+    :ivar tenant_id: TenantId from the KeyVault.
+    :vartype tenant_id: str
+    :ivar type: Type of managed service identity. "UserAssigned"
+    :vartype type: str or ~azure.mgmt.rdbms.mysql_flexibleservers.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: Metadata of user assigned identity.
+    :vartype user_assigned_identities: dict[str, JSON]
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{object}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.ManagedServiceIdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, JSON]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: Type of managed service identity. "UserAssigned"
+        :paramtype type: str or
+         ~azure.mgmt.rdbms.mysql_flexibleservers.models.ManagedServiceIdentityType
+        :keyword user_assigned_identities: Metadata of user assigned identity.
+        :paramtype user_assigned_identities: dict[str, JSON]
+        """
+        super().__init__(**kwargs)
+        self.principal_id = None
+        self.tenant_id = None
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
+
+
+class MySQLServerSku(_serialization.Model):
+    """Billing information related properties of a server.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: The name of the sku, e.g. Standard_D32s_v3. Required.
+    :vartype name: str
+    :ivar tier: The tier of the particular SKU, e.g. GeneralPurpose. Required. Known values are:
+     "Burstable", "GeneralPurpose", and "MemoryOptimized".
+    :vartype tier: str or ~azure.mgmt.rdbms.mysql_flexibleservers.models.ServerSkuTier
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "tier": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+    }
+
+    def __init__(self, *, name: str, tier: Union[str, "_models.ServerSkuTier"], **kwargs: Any) -> None:
+        """
+        :keyword name: The name of the sku, e.g. Standard_D32s_v3. Required.
+        :paramtype name: str
+        :keyword tier: The tier of the particular SKU, e.g. GeneralPurpose. Required. Known values are:
+         "Burstable", "GeneralPurpose", and "MemoryOptimized".
+        :paramtype tier: str or ~azure.mgmt.rdbms.mysql_flexibleservers.models.ServerSkuTier
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.tier = tier
 
 
 class NameAvailability(_serialization.Model):
@@ -1615,6 +1828,338 @@ class OperationListResult(_serialization.Model):
         self.next_link = next_link
 
 
+class OperationStatusResult(_serialization.Model):
+    """The current status of an async operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified ID for the async operation.
+    :vartype id: str
+    :ivar resource_id: Fully qualified ID of the resource against which the original async
+     operation was started.
+    :vartype resource_id: str
+    :ivar name: Name of the async operation.
+    :vartype name: str
+    :ivar status: Operation status. Required.
+    :vartype status: str
+    :ivar percent_complete: Percent of the operation that is complete.
+    :vartype percent_complete: float
+    :ivar start_time: The start time of the operation.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the operation.
+    :vartype end_time: ~datetime.datetime
+    :ivar operations: The operations list.
+    :vartype operations: list[~azure.mgmt.rdbms.mysql_flexibleservers.models.OperationStatusResult]
+    :ivar error: If present, details of the operation error.
+    :vartype error: ~azure.mgmt.rdbms.mysql_flexibleservers.models.ErrorDetail
+    """
+
+    _validation = {
+        "resource_id": {"readonly": True},
+        "status": {"required": True},
+        "percent_complete": {"maximum": 100, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "percent_complete": {"key": "percentComplete", "type": "float"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "operations": {"key": "operations", "type": "[OperationStatusResult]"},
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        percent_complete: Optional[float] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        operations: Optional[List["_models.OperationStatusResult"]] = None,
+        error: Optional["_models.ErrorDetail"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: Fully qualified ID for the async operation.
+        :paramtype id: str
+        :keyword name: Name of the async operation.
+        :paramtype name: str
+        :keyword status: Operation status. Required.
+        :paramtype status: str
+        :keyword percent_complete: Percent of the operation that is complete.
+        :paramtype percent_complete: float
+        :keyword start_time: The start time of the operation.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: The end time of the operation.
+        :paramtype end_time: ~datetime.datetime
+        :keyword operations: The operations list.
+        :paramtype operations:
+         list[~azure.mgmt.rdbms.mysql_flexibleservers.models.OperationStatusResult]
+        :keyword error: If present, details of the operation error.
+        :paramtype error: ~azure.mgmt.rdbms.mysql_flexibleservers.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.resource_id = None
+        self.name = name
+        self.status = status
+        self.percent_complete = percent_complete
+        self.start_time = start_time
+        self.end_time = end_time
+        self.operations = operations
+        self.error = error
+
+
+class OperationStatusExtendedResult(OperationStatusResult):
+    """Represents Operation Results API Response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified ID for the async operation.
+    :vartype id: str
+    :ivar resource_id: Fully qualified ID of the resource against which the original async
+     operation was started.
+    :vartype resource_id: str
+    :ivar name: Name of the async operation.
+    :vartype name: str
+    :ivar status: Operation status. Required.
+    :vartype status: str
+    :ivar percent_complete: Percent of the operation that is complete.
+    :vartype percent_complete: float
+    :ivar start_time: The start time of the operation.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the operation.
+    :vartype end_time: ~datetime.datetime
+    :ivar operations: The operations list.
+    :vartype operations: list[~azure.mgmt.rdbms.mysql_flexibleservers.models.OperationStatusResult]
+    :ivar error: If present, details of the operation error.
+    :vartype error: ~azure.mgmt.rdbms.mysql_flexibleservers.models.ErrorDetail
+    :ivar properties: The extended properties of Operation Results.
+    :vartype properties: dict[str, any]
+    """
+
+    _validation = {
+        "resource_id": {"readonly": True},
+        "status": {"required": True},
+        "percent_complete": {"maximum": 100, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "percent_complete": {"key": "percentComplete", "type": "float"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "operations": {"key": "operations", "type": "[OperationStatusResult]"},
+        "error": {"key": "error", "type": "ErrorDetail"},
+        "properties": {"key": "properties", "type": "{object}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        percent_complete: Optional[float] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        operations: Optional[List["_models.OperationStatusResult"]] = None,
+        error: Optional["_models.ErrorDetail"] = None,
+        properties: Optional[Dict[str, Any]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: Fully qualified ID for the async operation.
+        :paramtype id: str
+        :keyword name: Name of the async operation.
+        :paramtype name: str
+        :keyword status: Operation status. Required.
+        :paramtype status: str
+        :keyword percent_complete: Percent of the operation that is complete.
+        :paramtype percent_complete: float
+        :keyword start_time: The start time of the operation.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: The end time of the operation.
+        :paramtype end_time: ~datetime.datetime
+        :keyword operations: The operations list.
+        :paramtype operations:
+         list[~azure.mgmt.rdbms.mysql_flexibleservers.models.OperationStatusResult]
+        :keyword error: If present, details of the operation error.
+        :paramtype error: ~azure.mgmt.rdbms.mysql_flexibleservers.models.ErrorDetail
+        :keyword properties: The extended properties of Operation Results.
+        :paramtype properties: dict[str, any]
+        """
+        super().__init__(
+            id=id,
+            name=name,
+            status=status,
+            percent_complete=percent_complete,
+            start_time=start_time,
+            end_time=end_time,
+            operations=operations,
+            error=error,
+            **kwargs
+        )
+        self.properties = properties
+
+
+class PrivateEndpoint(_serialization.Model):
+    """The private endpoint resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The ARM identifier for private endpoint.
+    :vartype id: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id = None
+
+
+class PrivateEndpointConnection(Resource):
+    """The private endpoint connection resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.rdbms.mysql_flexibleservers.models.SystemData
+    :ivar group_ids: The group ids for the private endpoint resource.
+    :vartype group_ids: list[str]
+    :ivar private_endpoint: The private endpoint resource.
+    :vartype private_endpoint: ~azure.mgmt.rdbms.mysql_flexibleservers.models.PrivateEndpoint
+    :ivar private_link_service_connection_state: A collection of information about the state of the
+     connection between service consumer and provider.
+    :vartype private_link_service_connection_state:
+     ~azure.mgmt.rdbms.mysql_flexibleservers.models.PrivateLinkServiceConnectionState
+    :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
+     Known values are: "Succeeded", "Creating", "Deleting", and "Failed".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.rdbms.mysql_flexibleservers.models.PrivateEndpointConnectionProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "group_ids": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "group_ids": {"key": "properties.groupIds", "type": "[str]"},
+        "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
+        "private_link_service_connection_state": {
+            "key": "properties.privateLinkServiceConnectionState",
+            "type": "PrivateLinkServiceConnectionState",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        private_endpoint: Optional["_models.PrivateEndpoint"] = None,
+        private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword private_endpoint: The private endpoint resource.
+        :paramtype private_endpoint: ~azure.mgmt.rdbms.mysql_flexibleservers.models.PrivateEndpoint
+        :keyword private_link_service_connection_state: A collection of information about the state of
+         the connection between service consumer and provider.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.rdbms.mysql_flexibleservers.models.PrivateLinkServiceConnectionState
+        """
+        super().__init__(**kwargs)
+        self.group_ids = None
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
+        self.provisioning_state = None
+
+
+class PrivateLinkServiceConnectionState(_serialization.Model):
+    """A collection of information about the state of the connection between service consumer and
+    provider.
+
+    :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
+     of the service. Known values are: "Pending", "Approved", and "Rejected".
+    :vartype status: str or
+     ~azure.mgmt.rdbms.mysql_flexibleservers.models.PrivateEndpointServiceConnectionStatus
+    :ivar description: The reason for approval/rejection of the connection.
+    :vartype description: str
+    :ivar actions_required: A message indicating if changes on the service provider require any
+     updates on the consumer.
+    :vartype actions_required: str
+    """
+
+    _attribute_map = {
+        "status": {"key": "status", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "_models.PrivateEndpointServiceConnectionStatus"]] = None,
+        description: Optional[str] = None,
+        actions_required: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
+         owner of the service. Known values are: "Pending", "Approved", and "Rejected".
+        :paramtype status: str or
+         ~azure.mgmt.rdbms.mysql_flexibleservers.models.PrivateEndpointServiceConnectionStatus
+        :keyword description: The reason for approval/rejection of the connection.
+        :paramtype description: str
+        :keyword actions_required: A message indicating if changes on the service provider require any
+         updates on the consumer.
+        :paramtype actions_required: str
+        """
+        super().__init__(**kwargs)
+        self.status = status
+        self.description = description
+        self.actions_required = actions_required
+
+
 class TrackedResource(Resource):
     """The resource model definition for an Azure Resource Manager tracked top level resource which
     has 'tags' and a 'location'.
@@ -1623,14 +2168,17 @@ class TrackedResource(Resource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.rdbms.mysql_flexibleservers.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -1641,6 +2189,7 @@ class TrackedResource(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
     }
 
@@ -1648,6 +2197,7 @@ class TrackedResource(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
     }
@@ -1671,24 +2221,25 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.rdbms.mysql_flexibleservers.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar identity: The cmk identity for the server.
-    :vartype identity: ~azure.mgmt.rdbms.mysql_flexibleservers.models.Identity
+    :vartype identity: ~azure.mgmt.rdbms.mysql_flexibleservers.models.MySQLServerIdentity
     :ivar sku: The SKU (pricing tier) of the server.
-    :vartype sku: ~azure.mgmt.rdbms.mysql_flexibleservers.models.Sku
-    :ivar system_data: The system metadata relating to this resource.
-    :vartype system_data: ~azure.mgmt.rdbms.mysql_flexibleservers.models.SystemData
+    :vartype sku: ~azure.mgmt.rdbms.mysql_flexibleservers.models.MySQLServerSku
     :ivar administrator_login: The administrator's login name of a server. Can only be specified
      when the server is being created (and is required for creation).
     :vartype administrator_login: str
@@ -1728,30 +2279,37 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype high_availability: ~azure.mgmt.rdbms.mysql_flexibleservers.models.HighAvailability
     :ivar network: Network related properties of a server.
     :vartype network: ~azure.mgmt.rdbms.mysql_flexibleservers.models.Network
+    :ivar private_endpoint_connections: PrivateEndpointConnections related properties of a server.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.rdbms.mysql_flexibleservers.models.PrivateEndpointConnection]
     :ivar maintenance_window: Maintenance window of a server.
     :vartype maintenance_window: ~azure.mgmt.rdbms.mysql_flexibleservers.models.MaintenanceWindow
+    :ivar import_source_properties: Source properties for import from storage.
+    :vartype import_source_properties:
+     ~azure.mgmt.rdbms.mysql_flexibleservers.models.ImportSourceProperties
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "location": {"required": True},
         "system_data": {"readonly": True},
+        "location": {"required": True},
         "replica_capacity": {"readonly": True, "minimum": 0},
         "state": {"readonly": True},
         "fully_qualified_domain_name": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
-        "identity": {"key": "identity", "type": "Identity"},
-        "sku": {"key": "sku", "type": "Sku"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
+        "identity": {"key": "identity", "type": "MySQLServerIdentity"},
+        "sku": {"key": "sku", "type": "MySQLServerSku"},
         "administrator_login": {"key": "properties.administratorLogin", "type": "str"},
         "administrator_login_password": {"key": "properties.administratorLoginPassword", "type": "str"},
         "version": {"key": "properties.version", "type": "str"},
@@ -1768,7 +2326,12 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "backup": {"key": "properties.backup", "type": "Backup"},
         "high_availability": {"key": "properties.highAvailability", "type": "HighAvailability"},
         "network": {"key": "properties.network", "type": "Network"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
         "maintenance_window": {"key": "properties.maintenanceWindow", "type": "MaintenanceWindow"},
+        "import_source_properties": {"key": "properties.importSourceProperties", "type": "ImportSourceProperties"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -1776,8 +2339,8 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["_models.Identity"] = None,
-        sku: Optional["_models.Sku"] = None,
+        identity: Optional["_models.MySQLServerIdentity"] = None,
+        sku: Optional["_models.MySQLServerSku"] = None,
         administrator_login: Optional[str] = None,
         administrator_login_password: Optional[str] = None,
         version: Optional[Union[str, "_models.ServerVersion"]] = None,
@@ -1792,6 +2355,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         high_availability: Optional["_models.HighAvailability"] = None,
         network: Optional["_models.Network"] = None,
         maintenance_window: Optional["_models.MaintenanceWindow"] = None,
+        import_source_properties: Optional["_models.ImportSourceProperties"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1800,9 +2364,9 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword identity: The cmk identity for the server.
-        :paramtype identity: ~azure.mgmt.rdbms.mysql_flexibleservers.models.Identity
+        :paramtype identity: ~azure.mgmt.rdbms.mysql_flexibleservers.models.MySQLServerIdentity
         :keyword sku: The SKU (pricing tier) of the server.
-        :paramtype sku: ~azure.mgmt.rdbms.mysql_flexibleservers.models.Sku
+        :paramtype sku: ~azure.mgmt.rdbms.mysql_flexibleservers.models.MySQLServerSku
         :keyword administrator_login: The administrator's login name of a server. Can only be specified
          when the server is being created (and is required for creation).
         :paramtype administrator_login: str
@@ -1837,11 +2401,13 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype network: ~azure.mgmt.rdbms.mysql_flexibleservers.models.Network
         :keyword maintenance_window: Maintenance window of a server.
         :paramtype maintenance_window: ~azure.mgmt.rdbms.mysql_flexibleservers.models.MaintenanceWindow
+        :keyword import_source_properties: Source properties for import from storage.
+        :paramtype import_source_properties:
+         ~azure.mgmt.rdbms.mysql_flexibleservers.models.ImportSourceProperties
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.sku = sku
-        self.system_data = None
         self.administrator_login = administrator_login
         self.administrator_login_password = administrator_login_password
         self.version = version
@@ -1858,7 +2424,9 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.backup = backup
         self.high_availability = high_availability
         self.network = network
+        self.private_endpoint_connections = None
         self.maintenance_window = maintenance_window
+        self.import_source_properties = import_source_properties
 
 
 class ServerBackup(ProxyResource):
@@ -1866,15 +2434,16 @@ class ServerBackup(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: The system metadata relating to this resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.rdbms.mysql_flexibleservers.models.SystemData
     :ivar backup_type: Backup type.
     :vartype backup_type: str
@@ -1918,7 +2487,6 @@ class ServerBackup(ProxyResource):
         :paramtype source: str
         """
         super().__init__(**kwargs)
-        self.system_data = None
         self.backup_type = backup_type
         self.completed_time = completed_time
         self.source = source
@@ -1987,13 +2555,57 @@ class ServerEditionCapability(_serialization.Model):
         self.supported_server_versions = None
 
 
+class ServerEditionCapabilityV2(_serialization.Model):
+    """Server edition capabilities.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: Server edition name.
+    :vartype name: str
+    :ivar default_sku: Default Sku name.
+    :vartype default_sku: str
+    :ivar default_storage_size: Default storage size.
+    :vartype default_storage_size: int
+    :ivar supported_storage_editions: A list of supported storage editions.
+    :vartype supported_storage_editions:
+     list[~azure.mgmt.rdbms.mysql_flexibleservers.models.StorageEditionCapability]
+    :ivar supported_skus: A list of supported Skus.
+    :vartype supported_skus: list[~azure.mgmt.rdbms.mysql_flexibleservers.models.SkuCapabilityV2]
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+        "default_sku": {"readonly": True},
+        "default_storage_size": {"readonly": True},
+        "supported_storage_editions": {"readonly": True},
+        "supported_skus": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "default_sku": {"key": "defaultSku", "type": "str"},
+        "default_storage_size": {"key": "defaultStorageSize", "type": "int"},
+        "supported_storage_editions": {"key": "supportedStorageEditions", "type": "[StorageEditionCapability]"},
+        "supported_skus": {"key": "supportedSkus", "type": "[SkuCapabilityV2]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.name = None
+        self.default_sku = None
+        self.default_storage_size = None
+        self.supported_storage_editions = None
+        self.supported_skus = None
+
+
 class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Parameters allowed to update for a server.
 
     :ivar identity: The cmk identity for the server.
-    :vartype identity: ~azure.mgmt.rdbms.mysql_flexibleservers.models.Identity
+    :vartype identity: ~azure.mgmt.rdbms.mysql_flexibleservers.models.MySQLServerIdentity
     :ivar sku: The SKU (pricing tier) of the server.
-    :vartype sku: ~azure.mgmt.rdbms.mysql_flexibleservers.models.Sku
+    :vartype sku: ~azure.mgmt.rdbms.mysql_flexibleservers.models.MySQLServerSku
     :ivar tags: Application-specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar administrator_login_password: The password of the administrator login.
@@ -2019,8 +2631,8 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
     """
 
     _attribute_map = {
-        "identity": {"key": "identity", "type": "Identity"},
-        "sku": {"key": "sku", "type": "Sku"},
+        "identity": {"key": "identity", "type": "MySQLServerIdentity"},
+        "sku": {"key": "sku", "type": "MySQLServerSku"},
         "tags": {"key": "tags", "type": "{str}"},
         "administrator_login_password": {"key": "properties.administratorLoginPassword", "type": "str"},
         "version": {"key": "properties.version", "type": "str"},
@@ -2036,8 +2648,8 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
     def __init__(
         self,
         *,
-        identity: Optional["_models.Identity"] = None,
-        sku: Optional["_models.Sku"] = None,
+        identity: Optional["_models.MySQLServerIdentity"] = None,
+        sku: Optional["_models.MySQLServerSku"] = None,
         tags: Optional[Dict[str, str]] = None,
         administrator_login_password: Optional[str] = None,
         version: Optional[Union[str, "_models.ServerVersion"]] = None,
@@ -2052,9 +2664,9 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
     ) -> None:
         """
         :keyword identity: The cmk identity for the server.
-        :paramtype identity: ~azure.mgmt.rdbms.mysql_flexibleservers.models.Identity
+        :paramtype identity: ~azure.mgmt.rdbms.mysql_flexibleservers.models.MySQLServerIdentity
         :keyword sku: The SKU (pricing tier) of the server.
-        :paramtype sku: ~azure.mgmt.rdbms.mysql_flexibleservers.models.Sku
+        :paramtype sku: ~azure.mgmt.rdbms.mysql_flexibleservers.models.MySQLServerSku
         :keyword tags: Application-specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :keyword administrator_login_password: The password of the administrator login.
@@ -2094,9 +2706,9 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
 
 
 class ServerGtidSetParameter(_serialization.Model):
-    """Server gtid set parameters.
+    """Server Gtid set parameters.
 
-    :ivar gtid_set: The gtid set of server.
+    :ivar gtid_set: The Gtid set of server.
     :vartype gtid_set: str
     """
 
@@ -2106,7 +2718,7 @@ class ServerGtidSetParameter(_serialization.Model):
 
     def __init__(self, *, gtid_set: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword gtid_set: The gtid set of server.
+        :keyword gtid_set: The Gtid set of server.
         :paramtype gtid_set: str
         """
         super().__init__(**kwargs)
@@ -2205,39 +2817,27 @@ class ServerVersionCapability(_serialization.Model):
         self.supported_skus = None
 
 
-class Sku(_serialization.Model):
-    """Billing information related properties of a server.
+class ServerVersionCapabilityV2(_serialization.Model):
+    """Server version capabilities.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar name: The name of the sku, e.g. Standard_D32s_v3. Required.
+    :ivar name: server version.
     :vartype name: str
-    :ivar tier: The tier of the particular SKU, e.g. GeneralPurpose. Required. Known values are:
-     "Burstable", "GeneralPurpose", and "MemoryOptimized".
-    :vartype tier: str or ~azure.mgmt.rdbms.mysql_flexibleservers.models.SkuTier
     """
 
     _validation = {
-        "name": {"required": True},
-        "tier": {"required": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
-        "tier": {"key": "tier", "type": "str"},
     }
 
-    def __init__(self, *, name: str, tier: Union[str, "_models.SkuTier"], **kwargs: Any) -> None:
-        """
-        :keyword name: The name of the sku, e.g. Standard_D32s_v3. Required.
-        :paramtype name: str
-        :keyword tier: The tier of the particular SKU, e.g. GeneralPurpose. Required. Known values are:
-         "Burstable", "GeneralPurpose", and "MemoryOptimized".
-        :paramtype tier: str or ~azure.mgmt.rdbms.mysql_flexibleservers.models.SkuTier
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.name = name
-        self.tier = tier
+        self.name = None
 
 
 class SkuCapability(_serialization.Model):
@@ -2276,6 +2876,54 @@ class SkuCapability(_serialization.Model):
         self.v_cores = None
         self.supported_iops = None
         self.supported_memory_per_v_core_mb = None
+
+
+class SkuCapabilityV2(_serialization.Model):
+    """Sku capability.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: vCore name.
+    :vartype name: str
+    :ivar v_cores: supported vCores.
+    :vartype v_cores: int
+    :ivar supported_iops: supported IOPS.
+    :vartype supported_iops: int
+    :ivar supported_memory_per_v_core_mb: supported memory per vCore in MB.
+    :vartype supported_memory_per_v_core_mb: int
+    :ivar supported_zones: Supported zones.
+    :vartype supported_zones: list[str]
+    :ivar supported_ha_mode: Supported high availability mode.
+    :vartype supported_ha_mode: list[str]
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+        "v_cores": {"readonly": True},
+        "supported_iops": {"readonly": True},
+        "supported_memory_per_v_core_mb": {"readonly": True},
+        "supported_zones": {"readonly": True},
+        "supported_ha_mode": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "v_cores": {"key": "vCores", "type": "int"},
+        "supported_iops": {"key": "supportedIops", "type": "int"},
+        "supported_memory_per_v_core_mb": {"key": "supportedMemoryPerVCoreMB", "type": "int"},
+        "supported_zones": {"key": "supportedZones", "type": "[str]"},
+        "supported_ha_mode": {"key": "supportedHAMode", "type": "[str]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.name = None
+        self.v_cores = None
+        self.supported_iops = None
+        self.supported_memory_per_v_core_mb = None
+        self.supported_zones = None
+        self.supported_ha_mode = None
 
 
 class Storage(_serialization.Model):

@@ -15,7 +15,9 @@ from ._models_py3 import BackupRequestBase
 from ._models_py3 import BackupSettings
 from ._models_py3 import BackupStoreDetails
 from ._models_py3 import CapabilitiesListResult
+from ._models_py3 import Capability
 from ._models_py3 import CapabilityProperties
+from ._models_py3 import CapabilitySetsList
 from ._models_py3 import Configuration
 from ._models_py3 import ConfigurationForBatchUpdate
 from ._models_py3 import ConfigurationListForBatchUpdate
@@ -25,35 +27,45 @@ from ._models_py3 import Database
 from ._models_py3 import DatabaseListResult
 from ._models_py3 import DelegatedSubnetUsage
 from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import FirewallRule
 from ._models_py3 import FirewallRuleListResult
 from ._models_py3 import FullBackupStoreDetails
 from ._models_py3 import GetPrivateDnsZoneSuffixResponse
 from ._models_py3 import HighAvailability
-from ._models_py3 import Identity
+from ._models_py3 import ImportSourceProperties
 from ._models_py3 import LogFile
 from ._models_py3 import LogFileListResult
 from ._models_py3 import MaintenanceWindow
+from ._models_py3 import MySQLServerIdentity
+from ._models_py3 import MySQLServerSku
 from ._models_py3 import NameAvailability
 from ._models_py3 import NameAvailabilityRequest
 from ._models_py3 import Network
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
+from ._models_py3 import OperationStatusExtendedResult
+from ._models_py3 import OperationStatusResult
+from ._models_py3 import PrivateEndpoint
+from ._models_py3 import PrivateEndpointConnection
+from ._models_py3 import PrivateLinkServiceConnectionState
 from ._models_py3 import ProxyResource
 from ._models_py3 import Resource
 from ._models_py3 import Server
 from ._models_py3 import ServerBackup
 from ._models_py3 import ServerBackupListResult
 from ._models_py3 import ServerEditionCapability
+from ._models_py3 import ServerEditionCapabilityV2
 from ._models_py3 import ServerForUpdate
 from ._models_py3 import ServerGtidSetParameter
 from ._models_py3 import ServerListResult
 from ._models_py3 import ServerRestartParameter
 from ._models_py3 import ServerVersionCapability
-from ._models_py3 import Sku
+from ._models_py3 import ServerVersionCapabilityV2
 from ._models_py3 import SkuCapability
+from ._models_py3 import SkuCapabilityV2
 from ._models_py3 import Storage
 from ._models_py3 import StorageEditionCapability
 from ._models_py3 import SystemData
@@ -73,16 +85,19 @@ from ._my_sql_management_client_enums import DataEncryptionType
 from ._my_sql_management_client_enums import EnableStatusEnum
 from ._my_sql_management_client_enums import HighAvailabilityMode
 from ._my_sql_management_client_enums import HighAvailabilityState
+from ._my_sql_management_client_enums import ImportSourceStorageType
 from ._my_sql_management_client_enums import IsConfigPendingRestart
 from ._my_sql_management_client_enums import IsDynamicConfig
 from ._my_sql_management_client_enums import IsReadOnly
 from ._my_sql_management_client_enums import ManagedServiceIdentityType
 from ._my_sql_management_client_enums import OperationStatus
+from ._my_sql_management_client_enums import PrivateEndpointConnectionProvisioningState
+from ._my_sql_management_client_enums import PrivateEndpointServiceConnectionStatus
 from ._my_sql_management_client_enums import ReplicationRole
 from ._my_sql_management_client_enums import ResetAllToDefault
+from ._my_sql_management_client_enums import ServerSkuTier
 from ._my_sql_management_client_enums import ServerState
 from ._my_sql_management_client_enums import ServerVersion
-from ._my_sql_management_client_enums import SkuTier
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -97,7 +112,9 @@ __all__ = [
     "BackupSettings",
     "BackupStoreDetails",
     "CapabilitiesListResult",
+    "Capability",
     "CapabilityProperties",
+    "CapabilitySetsList",
     "Configuration",
     "ConfigurationForBatchUpdate",
     "ConfigurationListForBatchUpdate",
@@ -107,35 +124,45 @@ __all__ = [
     "DatabaseListResult",
     "DelegatedSubnetUsage",
     "ErrorAdditionalInfo",
+    "ErrorDetail",
     "ErrorResponse",
     "FirewallRule",
     "FirewallRuleListResult",
     "FullBackupStoreDetails",
     "GetPrivateDnsZoneSuffixResponse",
     "HighAvailability",
-    "Identity",
+    "ImportSourceProperties",
     "LogFile",
     "LogFileListResult",
     "MaintenanceWindow",
+    "MySQLServerIdentity",
+    "MySQLServerSku",
     "NameAvailability",
     "NameAvailabilityRequest",
     "Network",
     "Operation",
     "OperationDisplay",
     "OperationListResult",
+    "OperationStatusExtendedResult",
+    "OperationStatusResult",
+    "PrivateEndpoint",
+    "PrivateEndpointConnection",
+    "PrivateLinkServiceConnectionState",
     "ProxyResource",
     "Resource",
     "Server",
     "ServerBackup",
     "ServerBackupListResult",
     "ServerEditionCapability",
+    "ServerEditionCapabilityV2",
     "ServerForUpdate",
     "ServerGtidSetParameter",
     "ServerListResult",
     "ServerRestartParameter",
     "ServerVersionCapability",
-    "Sku",
+    "ServerVersionCapabilityV2",
     "SkuCapability",
+    "SkuCapabilityV2",
     "Storage",
     "StorageEditionCapability",
     "SystemData",
@@ -154,16 +181,19 @@ __all__ = [
     "EnableStatusEnum",
     "HighAvailabilityMode",
     "HighAvailabilityState",
+    "ImportSourceStorageType",
     "IsConfigPendingRestart",
     "IsDynamicConfig",
     "IsReadOnly",
     "ManagedServiceIdentityType",
     "OperationStatus",
+    "PrivateEndpointConnectionProvisioningState",
+    "PrivateEndpointServiceConnectionStatus",
     "ReplicationRole",
     "ResetAllToDefault",
+    "ServerSkuTier",
     "ServerState",
     "ServerVersion",
-    "SkuTier",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
