@@ -27,13 +27,18 @@ import platform
 import sys
 import pytest
 from devtools_testutils import test_proxy
-from devtools_testutils.sanitizers import add_remove_header_sanitizer, add_general_regex_sanitizer, set_custom_default_matcher
+from devtools_testutils.sanitizers import (
+    add_remove_header_sanitizer,
+    add_general_regex_sanitizer,
+    set_custom_default_matcher,
+)
 
 # Ignore async tests for Python < 3.5
 collect_ignore_glob = []
 if sys.version_info < (3, 5):
     collect_ignore_glob.append("*_async.py")
     collect_ignore_glob.append("test_cncf*")
+
 
 @pytest.fixture(scope="session", autouse=True)
 def add_aeg_sanitizer(test_proxy):
@@ -43,6 +48,5 @@ def add_aeg_sanitizer(test_proxy):
     )
     add_remove_header_sanitizer(headers="aeg-sas-key, aeg-sas-token")
     add_general_regex_sanitizer(
-        value="fakeresource",
-        regex="(?<=\\/\\/)[a-z-]+(?=\\.westus2-1\\.eventgrid\\.azure\\.net/api/events)"
+        value="fakeresource", regex="(?<=\\/\\/)[a-z-]+(?=\\.westus2-1\\.eventgrid\\.azure\\.net/api/events)"
     )

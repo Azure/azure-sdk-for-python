@@ -2,7 +2,6 @@
 ####These files are used to extract the enums - update this list as necessary
 #############################################################################
 files = [
-
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.Communication/stable/2018-01-01/AzureCommunicationServices.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.ApiManagement/stable/2018-01-01/APIManagement.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.AppConfiguration/stable/2018-01-01/AppConfiguration.json",
@@ -25,40 +24,46 @@ files = [
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.Storage/stable/2018-01-01/Storage.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.Web/stable/2018-01-01/Web.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.HealthcareApis/stable/2018-01-01/HealthcareApis.json",
-    ]
+]
 
 
 #######################################################
 ### Used for backward compatibility. Don't change this
 #######################################################
 backward_compat = {
-    'AcsChatMemberAddedToThreadWithUserEventName': "Microsoft.Communication.ChatMemberAddedToThreadWithUser",
-    'ResourceWriteFailureEventName': "Microsoft.Resources.ResourceWriteFailure",
-    'IoTHubDeviceDeletedEventName': "Microsoft.Devices.DeviceDeleted",
-    'IoTHubDeviceDisconnectedEventName': "Microsoft.Devices.DeviceDisconnected",
-    'ResourceDeleteFailureEventName': "Microsoft.Resources.ResourceDeleteFailure",
-    'ResourceDeleteCancelEventName': "Microsoft.Resources.ResourceDeleteCancel",
-    'AcsChatThreadParticipantAddedEventName': "Microsoft.Communication.ChatThreadParticipantAdded",
-    'ResourceDeleteSuccessEventName': "Microsoft.Resources.ResourceDeleteSuccess",
-    'EventGridSubscriptionValidationEventName': "Microsoft.EventGrid.SubscriptionValidationEvent",
-    'ResourceWriteSuccessEventName': "Microsoft.Resources.ResourceWriteSuccess",
-    'ResourceActionSuccessEventName': "Microsoft.Resources.ResourceActionSuccess",
-    'ResourceWriteCancelEventName': "Microsoft.Resources.ResourceWriteCancel",
-    'ResourceActionFailureEventName': "Microsoft.Resources.ResourceActionFailure",
-    'AcsChatMemberRemovedFromThreadWithUserEventName': "Microsoft.Communication.ChatMemberRemovedFromThreadWithUser",
-    'IoTHubDeviceConnectedEventName': "Microsoft.Devices.DeviceConnected",
-    'EventGridSubscriptionDeletedEventName': "Microsoft.EventGrid.SubscriptionDeletedEvent",
-    'AcsChatThreadParticipantRemovedEventName': "Microsoft.Communication.ChatThreadParticipantRemoved",
-    'ResourceActionCancelEventName': "Microsoft.Resources.ResourceActionCancel",
-    'IoTHubDeviceCreatedEventName': "Microsoft.Devices.DeviceCreated",
+    "AcsChatMemberAddedToThreadWithUserEventName": "Microsoft.Communication.ChatMemberAddedToThreadWithUser",
+    "ResourceWriteFailureEventName": "Microsoft.Resources.ResourceWriteFailure",
+    "IoTHubDeviceDeletedEventName": "Microsoft.Devices.DeviceDeleted",
+    "IoTHubDeviceDisconnectedEventName": "Microsoft.Devices.DeviceDisconnected",
+    "ResourceDeleteFailureEventName": "Microsoft.Resources.ResourceDeleteFailure",
+    "ResourceDeleteCancelEventName": "Microsoft.Resources.ResourceDeleteCancel",
+    "AcsChatThreadParticipantAddedEventName": "Microsoft.Communication.ChatThreadParticipantAdded",
+    "ResourceDeleteSuccessEventName": "Microsoft.Resources.ResourceDeleteSuccess",
+    "EventGridSubscriptionValidationEventName": "Microsoft.EventGrid.SubscriptionValidationEvent",
+    "ResourceWriteSuccessEventName": "Microsoft.Resources.ResourceWriteSuccess",
+    "ResourceActionSuccessEventName": "Microsoft.Resources.ResourceActionSuccess",
+    "ResourceWriteCancelEventName": "Microsoft.Resources.ResourceWriteCancel",
+    "ResourceActionFailureEventName": "Microsoft.Resources.ResourceActionFailure",
+    "AcsChatMemberRemovedFromThreadWithUserEventName": "Microsoft.Communication.ChatMemberRemovedFromThreadWithUser",
+    "IoTHubDeviceConnectedEventName": "Microsoft.Devices.DeviceConnected",
+    "EventGridSubscriptionDeletedEventName": "Microsoft.EventGrid.SubscriptionDeletedEvent",
+    "AcsChatThreadParticipantRemovedEventName": "Microsoft.Communication.ChatThreadParticipantRemoved",
+    "ResourceActionCancelEventName": "Microsoft.Resources.ResourceActionCancel",
+    "IoTHubDeviceCreatedEventName": "Microsoft.Devices.DeviceCreated",
 }
 
 additional_events = {
-    'ContainerRegistryArtifactEventName': 'Microsoft.AppConfiguration.KeyValueModified',
-    'KeyVaultAccessPolicyChangedEventName': 'Microsoft.KeyVault.VaultAccessPolicyChanged',
-    'ContainerRegistryEventName': 'Microsoft.ContainerRegistry.ChartPushed',
-    'ServiceBusDeadletterMessagesAvailableWithNoListenerEventName': 'Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners'
+    "ContainerRegistryArtifactEventName": "Microsoft.AppConfiguration.KeyValueModified",
+    "KeyVaultAccessPolicyChangedEventName": "Microsoft.KeyVault.VaultAccessPolicyChanged",
+    "ContainerRegistryEventName": "Microsoft.ContainerRegistry.ChartPushed",
+    "ServiceBusDeadletterMessagesAvailableWithNoListenerEventName": "Microsoft.ServiceBus.DeadletterMessagesAvailableWithNoListeners",
 }
 
-EXCEPTIONS = ['ContainerRegistryArtifactEventData', 'ContainerRegistryEventData', 'ContainerServiceClusterSupportEventData', 'ContainerServiceNodePoolRollingEventData',
-              'EventGridMQTTClientEventData', 'AppConfigurationSnapshotEventData']
+EXCEPTIONS = [
+    "ContainerRegistryArtifactEventData",
+    "ContainerRegistryEventData",
+    "ContainerServiceClusterSupportEventData",
+    "ContainerServiceNodePoolRollingEventData",
+    "EventGridMQTTClientEventData",
+    "AppConfigurationSnapshotEventData",
+]

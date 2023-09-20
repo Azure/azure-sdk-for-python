@@ -7,8 +7,18 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List
+from azure.eventgrid._client import EventGridPublisherClient as InternalEventGridPublisherClient
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+
+class EventGridPublisherClient(InternalEventGridPublisherClient):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+__all__: List[str] = [
+    "EventGridPublisherClient"
+]  # Add all objects you want publicly available to users at this package level
+
 
 def patch_sdk():
     """Do not remove from this file.

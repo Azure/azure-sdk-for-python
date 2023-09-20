@@ -17,7 +17,10 @@ from .._serialization import Deserializer, Serializer
 from ._configuration import EventGridPublisherClientConfiguration
 from ._operations import EventGridPublisherClientOperationsMixin
 
-class EventGridPublisherClient(EventGridPublisherClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+
+class EventGridPublisherClient(
+    EventGridPublisherClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword
     """Azure EventGrid Client.
 
     :param endpoint: The host name of the topic, e.g. topic1.westus2-1.eventgrid.azure.net.
@@ -30,13 +33,8 @@ class EventGridPublisherClient(EventGridPublisherClientOperationsMixin):  # pyli
     :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        endpoint: str,
-        credential: AzureKeyCredential,
-        **kwargs: Any
-    ) -> None:
-        _endpoint = '{endpoint}'
+    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
+        _endpoint = "{endpoint}"
         self._config = EventGridPublisherClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
@@ -44,12 +42,7 @@ class EventGridPublisherClient(EventGridPublisherClientOperationsMixin):  # pyli
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-
-    def send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -69,7 +62,7 @@ class EventGridPublisherClient(EventGridPublisherClientOperationsMixin):  # pyli
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

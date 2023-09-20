@@ -70,13 +70,8 @@ class CloudEventEvent(_model_base.Model):
      source)."""
 
 
-
 class CustomEventEvent(_model_base.Model):
-    """Properties of an event published to an Event Grid topic using a custom schema.
-
-    """
-
-
+    """Properties of an event published to an Event Grid topic using a custom schema."""
 
 
 class EventGridEvent(_model_base.Model):
@@ -120,4 +115,3 @@ class EventGridEvent(_model_base.Model):
     """The schema version of the event metadata."""
     data_version: str = rest_field(name="dataVersion")
     """The schema version of the data object. Required."""
-
