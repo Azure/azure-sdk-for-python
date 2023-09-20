@@ -1,8 +1,10 @@
 # Release History
 
-## 10.2.0b11 (2023-10-23)
+## 10.2.0b11 (2023-09-20)
 
-change log generation failed!!!
+### Features Added
+
+  - private_endpoint_connections of Model Server changes to readonly
 
 ## 10.2.0b10 (2023-06-08)
 
