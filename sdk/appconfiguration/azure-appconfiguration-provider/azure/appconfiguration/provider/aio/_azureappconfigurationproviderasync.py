@@ -175,8 +175,7 @@ def _buildprovider(
 ) -> "AzureAppConfigurationProvider":
     # pylint:disable=protected-access
     provider = AzureAppConfigurationProvider(**kwargs)
-    key_vault_options = kwargs.pop("key_vault_options", provider._key_vault_options)
-    headers = _get_headers(key_vault_options, **kwargs)
+    headers = _get_headers(**kwargs)
     retry_total = kwargs.pop("retry_total", 2)
     retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
 
@@ -210,8 +209,7 @@ def _buildprovider(
 async def _resolve_keyvault_reference(
     config: "SecretReferenceConfigurationSetting", provider: "AzureAppConfigurationProvider", **kwargs
 ) -> str:
-    # pylint:disable=protected-access
-    if provider._key_vault_options is None:
+    if not ("key_vault_credential" in kwargs or "key_vault_client_configs" in kwargs or "secret_resolver" in kwargs):
         raise ValueError("Key Vault options must be set to resolve Key Vault references.")
 
     if config.secret_id is None:
