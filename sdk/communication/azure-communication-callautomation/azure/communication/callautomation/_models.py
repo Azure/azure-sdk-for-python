@@ -649,7 +649,7 @@ class MuteParticipantsResult:
         return cls(operation_context=mute_participants_result_generated.operation_context)
 
 class CancelAddParticipantResult:
-    """ The result payload for cancelling add participant requst for a participant.
+    """ The result payload for cancelling add participant request for a participant.
 
     :keyword invitation_id: Invitation ID that was used to add the participant to the call.
     :paramtype participant: str
