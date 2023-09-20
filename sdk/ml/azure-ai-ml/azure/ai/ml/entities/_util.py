@@ -334,6 +334,9 @@ def get_rest_dict_for_node_attrs(
     # pylint: disable=too-many-return-statements
     from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 
+    if target_obj is None:
+        return None
+
     # defining type here to avoid mypy errors
     result: Optional[Union[Dict, List[Union[List[Any], Dict[Any, Any], None]]]]
 
@@ -348,6 +351,7 @@ def get_rest_dict_for_node_attrs(
         return result
     if isinstance(target_obj, list):
         result = [get_rest_dict_for_node_attrs(item, clear_empty_value) for item in target_obj]
+        return result
     if isinstance(target_obj, RestTranslatableMixin):
         # note that the rest object may be invalid as data binding expression may not fit
         # rest object structure
