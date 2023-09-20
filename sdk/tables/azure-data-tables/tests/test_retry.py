@@ -49,36 +49,18 @@ class FailoverRetryTransport(RequestsTransport):
     client.get_entity("foo", "bar", failover=ServiceRequestError("Attempting to force failover"))
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, location_mode="primary", *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.location_mode = location_mode
         self._already_raised = False
 
     def send(self, request, **kwargs):
-        # secondary endpoint is not allowed on DELETE operations
+        # DELETE operation is not allowed on secondary endpoint
         if request.method != "DELETE":
-            if self._already_raised:
+            if self._already_raised or self.location_mode == "secondary":
                 assert "-secondary" in request.url
             else:
                 assert "-secondary" not in request.url
-        failover_on_error = kwargs.pop("failover", None)
-        if failover_on_error and not self._already_raised:
-            self._already_raised = True
-            raise failover_on_error
-
-        self._already_raised = False
-        return super().send(request, **kwargs)
-
-
-class SecondaryFailoverRetryTransport(RequestsTransport):
-    """Transport to attempt to raise on first request on secondary endpoint."""
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._already_raised = False
-
-    def send(self, request, **kwargs):
-        # doesn't retry on primary
-        assert "-secondary" in request.url
         failover_on_error = kwargs.pop("failover", None)
         if failover_on_error and not self._already_raised:
             self._already_raised = True
@@ -337,7 +319,7 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             credential=tables_primary_storage_account_key,
             retry_total=5,
             location_mode=LocationMode.SECONDARY,
-            transport=SecondaryFailoverRetryTransport(),
+            transport=FailoverRetryTransport(location_mode=LocationMode.SECONDARY),
         ) as client:
             with pytest.raises(ResourceNotFoundError) as ex:
                 client.get_entity("foo", "bar", failover=ServiceRequestError("Attempting to force failover"))
@@ -354,7 +336,7 @@ class TestStorageRetry(AzureRecordedTestCase, TableTestCase):
             credential=tables_primary_storage_account_key,
             retry_total=5,
             location_mode=LocationMode.SECONDARY,
-            transport=SecondaryFailoverRetryTransport(),
+            transport=FailoverRetryTransport(location_mode=LocationMode.SECONDARY),
         ) as client:
             client.get_entity(
                 "foo", "bar", failover=ServiceRequestError("Attempting to force failover")
