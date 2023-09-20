@@ -1,8 +1,8 @@
 # Release History
 
-## 1.0.0 (2023-09-15)
+## 1.0.0 (2023-09-20)
 
-* Stable Release
+* First GA
 
 ## 1.0.0b1 (2023-06-16)
 
