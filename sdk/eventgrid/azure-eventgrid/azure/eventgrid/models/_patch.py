@@ -7,8 +7,15 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List
+from ._models import EventGridEvent as InternalEventGridEvent
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+
+class EventGridEvent(InternalEventGridEvent):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+__all__: List[str] = ["EventGridEvent"]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
