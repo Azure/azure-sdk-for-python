@@ -8,7 +8,6 @@ from enum import Enum
 from typing_extensions import Self
 
 from azure.core import CaseInsensitiveEnumMeta
-from .constants import STORAGE_OAUTH_SCOPE
 
 
 def get_enum_value(value):
@@ -500,6 +499,7 @@ class TokenAudience():
         https://learn.microsoft.com/azure/storage/blobs/authorize-access-azure-active-directory. Please use one
         of the provided classmethods over creating a custom value unless you have a specific scenario for doing so.
     """
+    STORAGE_OAUTH_SCOPE = "https://storage.azure.com/.default"
     _value: str
 
     def __init__(self, value: str) -> None:
@@ -515,7 +515,7 @@ class TokenAudience():
         :returns: The Default Audience.
         :rtype: TokenAudience
         """
-        return cls(STORAGE_OAUTH_SCOPE)
+        return cls(TokenAudience.STORAGE_OAUTH_SCOPE)
 
     def __eq__(self, other: object) -> bool:
         return self._value == other._value
