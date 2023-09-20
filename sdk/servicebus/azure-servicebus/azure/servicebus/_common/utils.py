@@ -24,10 +24,7 @@ from typing import (
 )
 from datetime import timezone
 
-try:
-    from urlparse import urlparse
-except ImportError:
-    from urllib.parse import urlparse
+from urllib.parse import urlparse
 
 from .._version import VERSION
 from .constants import (

@@ -11,10 +11,7 @@ from typing import cast, Optional, Tuple, TYPE_CHECKING, Dict, Any, Callable, Un
 from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 from azure.core.pipeline.policies import RetryMode
 
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse # type: ignore[no-redef]
+from urllib.parse import urlparse
 
 from ._pyamqp.utils import generate_sas_token
 from ._transport._pyamqp_transport import PyamqpTransport
