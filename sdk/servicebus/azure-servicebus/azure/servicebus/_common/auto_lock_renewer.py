@@ -10,7 +10,7 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 import queue
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union, Optional
 
 from .._servicebus_receiver import ServiceBusReceiver
 from .._servicebus_session import ServiceBusSession
@@ -19,7 +19,7 @@ from ..exceptions import AutoLockRenewFailed, AutoLockRenewTimeout, ServiceBusEr
 from .utils import get_renewable_start_time, utc_now, get_renewable_lock_duration
 
 if TYPE_CHECKING:
-    from typing import Callable, Union, Optional
+    from typing import Callable
 
     Renewable = Union[ServiceBusSession, ServiceBusReceivedMessage]
     LockRenewFailureCallback = Callable[[Renewable, Optional[Exception]], None]
@@ -69,12 +69,11 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
 
     def __init__(
         self,
-        max_lock_renewal_duration=300,
-        on_lock_renew_failure=None,
-        executor=None,
-        max_workers=None,
-    ):
-        # type: (float, Optional[LockRenewFailureCallback], Optional[ThreadPoolExecutor], Optional[int]) -> None
+        max_lock_renewal_duration: float = 300,
+        on_lock_renew_failure: Optional["LockRenewFailureCallback"] = None,
+        executor: Optional[ThreadPoolExecutor] = None,
+        max_workers: Optional[int] = None,
+    ) -> None:
         """Auto renew locks for messages and sessions using a background thread pool. It is recommended
         setting max_worker to a large number or passing ThreadPoolExecutor of large max_workers number when
         AutoLockRenewer is supposed to deal with multiple messages or sessions simultaneously.
@@ -241,12 +240,11 @@ class AutoLockRenewer(object):  # pylint:disable=too-many-instance-attributes
 
     def register(
         self,
-        receiver,
-        renewable,
-        max_lock_renewal_duration=None,
-        on_lock_renew_failure=None,
-    ):
-        # type: (ServiceBusReceiver, Renewable, Optional[float], Optional[LockRenewFailureCallback]) -> None
+        receiver: ServiceBusReceiver,
+        renewable: Union[ServiceBusReceivedMessage, ServiceBusSession],
+        max_lock_renewal_duration: Optional[float] = None,
+        on_lock_renew_failure: Optional["LockRenewFailureCallback"] = None,
+    ) -> None:
         """Register a renewable entity for automatic lock renewal.
 
         :param receiver: The ServiceBusReceiver instance that is associated with the message or the session to
