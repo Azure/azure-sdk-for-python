@@ -21,7 +21,13 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._base_client import parse_connection_str, TablesBaseClient
 from ._entity import TableEntity
-from ._error import _decode_error, _process_table_error, _reprocess_error, _reraise_error, _validate_tablename_error
+from ._error import (
+    _decode_error,
+    _process_table_error,
+    _reprocess_error,
+    _validate_tablename_error,
+    _validate_key_values,
+)
 from ._generated.models import SignedIdentifier, TableProperties
 from ._serialize import (
     serialize_iso,
@@ -366,13 +372,10 @@ class TableClient(TablesBaseClient):
             )
         except HttpResponseError as error:
             decoded = _decode_error(error.response, error.message)
-            if decoded.error_code == "PropertiesNeedValue":
-                if entity.get("PartitionKey") is None:
-                    raise ValueError("PartitionKey must be present in an entity") from error
-                if entity.get("RowKey") is None:
-                    raise ValueError("RowKey must be present in an entity") from error
+            _validate_key_values(decoded, entity.get("PartitionKey"), entity.get("RowKey"))
             _validate_tablename_error(decoded, self.table_name)
-            _reraise_error(error)
+            # We probably should have been raising decoded error before removing _reraise_error()
+            raise error
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace
@@ -655,4 +658,10 @@ class TableClient(TablesBaseClient):
                 "The value of 'operations' must be an iterator "
                 "of Tuples. Please check documentation for correct Tuple format."
             ) from exc
-        return self._batch_send(self.table_name, *batched_requests.requests, **kwargs)  # type: ignore
+
+        try:
+            return self._batch_send(self.table_name, *batched_requests.requests, **kwargs)  # type: ignore
+        except HttpResponseError as ex:
+            if ex.status_code == 400 and not batched_requests.requests:
+                return []
+            raise

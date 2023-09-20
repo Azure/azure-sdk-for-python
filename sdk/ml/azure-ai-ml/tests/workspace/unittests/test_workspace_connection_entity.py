@@ -4,7 +4,7 @@ import pytest
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_workspace_connection
-from azure.ai.ml._restclient.v2022_12_01_preview.models import ConnectionAuthType, ConnectionCategory
+from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthType, ConnectionCategory
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import WorkspaceConnection
 from azure.ai.ml.entities._credentials import PatTokenConfiguration
@@ -66,23 +66,6 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.name == "test_ws_conn_python_pat"
         assert ws_connection.target == "https://test-feed.com"
         assert ws_connection.metadata is None
-
-        ws_connection = load_workspace_connection(
-            source="./tests/test_configs/workspace_connection/fs_service_principal.yaml"
-        )
-
-        assert ws_connection.name == "test_ws_conn_fs_sp"
-        assert ws_connection.target == "azureml://featurestores/featurestore"
-        assert ws_connection.type == camel_to_snake(ConnectionCategory.FEATURE_STORE)
-        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.SERVICE_PRINCIPAL)
-        assert ws_connection.credentials.client_id == "client_id"
-        assert ws_connection.credentials.client_secret == "PasswordPlaceHolder"
-        assert ws_connection.credentials.tenant_id == "tenant_id"
-        assert ws_connection.metadata["name"] == "featurestore"
-        assert ws_connection.metadata["description"] == "my featurestore"
-        assert ws_connection.metadata["type"] == "feast"
-        assert ws_connection.metadata["featurestore_config"]
-        assert ws_connection.metadata["connection_config"]
 
         ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/s3_access_key.yaml")
 
@@ -153,3 +136,38 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.name == "test_ws_conn_azure_postgres_db"
         assert ws_connection.target == "dummy"
         assert ws_connection.metadata is None
+
+        ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/open_ai.yaml")
+
+        assert ws_connection.type == camel_to_snake(ConnectionCategory.AZURE_OPEN_AI)
+        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
+        assert ws_connection.credentials.username == "dummy"
+        assert ws_connection.credentials.password == "dummy"
+        assert ws_connection.name == "test_ws_conn_open_ai"
+        assert ws_connection.target == "dummy"
+        assert ws_connection.metadata is not None
+        assert ws_connection.metadata["ApiType"] == "dummy"
+        assert ws_connection.metadata["ApiVersion"] == "dummy"
+
+        ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/cog_search.yaml")
+
+        assert ws_connection.type == camel_to_snake(ConnectionCategory.COGNITIVE_SEARCH)
+        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
+        assert ws_connection.credentials.username == "dummy"
+        assert ws_connection.credentials.password == "dummy"
+        assert ws_connection.name == "test_ws_conn_cog_search"
+        assert ws_connection.target == "dummy"
+        assert ws_connection.metadata is not None
+        assert ws_connection.metadata["ApiVersion"] == "dummy"
+
+        ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/cog_service.yaml")
+
+        assert ws_connection.type == camel_to_snake(ConnectionCategory.COGNITIVE_SERVICE)
+        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
+        assert ws_connection.credentials.username == "dummy"
+        assert ws_connection.credentials.password == "dummy"
+        assert ws_connection.name == "test_ws_conn_cog_service"
+        assert ws_connection.target == "dummy"
+        assert ws_connection.metadata is not None
+        assert ws_connection.metadata["ApiVersion"] == "dummy"
+        assert ws_connection.metadata["Kind"] == "dummy"

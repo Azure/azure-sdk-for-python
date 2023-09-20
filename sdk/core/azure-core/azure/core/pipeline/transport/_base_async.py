@@ -27,17 +27,29 @@ from __future__ import annotations
 import asyncio
 import abc
 from collections.abc import AsyncIterator
-from typing import AsyncIterator as AsyncIteratorType, TypeVar, Generic, Any, TYPE_CHECKING, AsyncContextManager
+from typing import (
+    AsyncIterator as AsyncIteratorType,
+    TypeVar,
+    Generic,
+    Any,
+    AsyncContextManager,
+    Optional,
+    Type,
+    TYPE_CHECKING,
+)
+from types import TracebackType
 
 from ._base import _HttpResponseBase, _HttpClientTransportResponse, HttpRequest
 from ...utils._pipeline_transport_rest_shared_async import _PartGenerator
 
-if TYPE_CHECKING:
-    from ..._pipeline_client_async import AsyncPipelineClient
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
+
+if TYPE_CHECKING:
+    # We need a transport to define a pipeline, this "if" avoid a circular import
+    from .._base_async import AsyncPipeline
 
 
 class _ResponseStopIteration(Exception):
@@ -66,7 +78,7 @@ class AsyncHttpResponse(_HttpResponseBase, AsyncContextManager["AsyncHttpRespons
     """
 
     def stream_download(
-        self, pipeline: AsyncPipelineClient[HttpRequest, "AsyncHttpResponse"], **kwargs: Any
+        self, pipeline: AsyncPipeline[HttpRequest, "AsyncHttpResponse"], **kwargs: Any
     ) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
 
@@ -94,7 +106,12 @@ class AsyncHttpResponse(_HttpResponseBase, AsyncContextManager["AsyncHttpRespons
 
         return _PartGenerator(self, default_http_response_type=AsyncHttpClientTransportResponse)
 
-    async def __aexit__(self, exc_type: Any, exc_value: Any, traceback: Any) -> None:
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
         return None
 
 

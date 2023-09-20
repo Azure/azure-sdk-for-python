@@ -18,92 +18,72 @@ from .utils import _remove_empty_values
 
 
 class Output(_InputOutputBase):
-    """Define an output.
-
-    :keyword type: The type of the data output. Accepted values are 'uri_folder', 'uri_file', 'mltable', 'mlflow_model',
-        'custom_model', and user-defined types.
-    :type type: str, optional
-    :keyword path: The remote path where the output should be stored.
-    :type path: Optional[str]
-    :keyword mode: The access mode of the data output. Accepted values are
-        * 'rw_mount': Read-write mount the data
-        * 'upload': Upload the data from the compute target
-        * 'direct': Pass in the URI as a string
-    :type mode: Optional[str]
-    :keyword description: The description of the output.
-    :type description: Optional[str]
-    :keyword name: The name to be used to register the output as a Data or Model asset. A name can be set without
-        setting a version.
-    :type name: str
-    :keyword version: The version used to register the output as a Data or Model asset. A version can be set only
-        when name is set.
-    :type version: str
-    :keyword is_control: Determine if the output is a control output.
-    :type is_control: bool, optional
-    :keyword early_available: Mark the output for early node orchestration.
-    :type early_available: bool, optional
-    :keyword intellectual_property: Intellectual property associated with the output.
-        It can be an instance of `IntellectualProperty` or a dictionary that will be used to create an instance.
-    :type intellectual_property: Union[
-        ~azure.ai.ml.entities._assets.intellectual_property.IntellectualProperty,
-        dict], optional
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
-            :start-after: [START create_inputs_outputs]
-            :end-before: [END create_inputs_outputs]
-            :language: python
-            :dedent: 8
-            :caption: Creating a CommandJob with a folder output.
-    """
-
-    _IO_KEYS = ["name", "version", "path", "type", "mode", "description", "is_control", "early_available"]
+    _IO_KEYS = ["name", "version", "path", "type", "mode", "description", "early_available"]
 
     @overload
     def __init__(self, type: Literal["uri_folder"] = "uri_folder", path=None, mode=None, description=None) -> None:
-        """Define a URI folder output.
+        # pylint: disable=line-too-long
+        """Define an output.
 
-        :param type: The type of the data output. Can only be set to "uri_folder".
-        :type type: str
-        :param path: The remote path where the output should be stored.
-        :type path: str
-        :param mode: The access mode of the data output. Accepted values are
+        :keyword type: The type of the data output. Accepted values are 'uri_folder', 'uri_file', 'mltable',
+            'mlflow_model', 'custom_model', and user-defined types. Defaults to 'uri_folder'.
+        :paramtype type: str
+        :keyword path: The remote path where the output should be stored.
+        :paramtype path: Optional[str]
+        :keyword mode: The access mode of the data output. Accepted values are
             * 'rw_mount': Read-write mount the data
             * 'upload': Upload the data from the compute target
             * 'direct': Pass in the URI as a string
-        :type mode: str
-        :param description: The description of the output.
-        :type description: str
-        :param name: The name to be used to register the output as a Data or Model asset. A name can be set without
+        :paramtype mode: Optional[str]
+        :keyword description: The description of the output.
+        :paramtype description: Optional[str]
+        :keyword name: The name to be used to register the output as a Data or Model asset. A name can be set without
             setting a version.
-        :type name: str
-        :param version: The version used to register the output as a Data or Model asset. A version can be set only
+        :paramtype name: str
+        :keyword version: The version used to register the output as a Data or Model asset. A version can be set only
             when name is set.
-        :type version: str
+        :paramtype version: str
+        :keyword is_control: Determine if the output is a control output.
+        :paramtype is_control: bool
+        :keyword early_available: Mark the output for early node orchestration.
+        :paramtype early_available: bool
+        :keyword intellectual_property: Intellectual property associated with the output.
+            It can be an instance of `IntellectualProperty` or a dictionary that will be used to create an instance.
+        :paramtype intellectual_property: Union[~azure.ai.ml.entities._assets.intellectual_property.IntellectualProperty,
+
+            dict]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+                :start-after: [START create_inputs_outputs]
+                :end-before: [END create_inputs_outputs]
+                :language: python
+                :dedent: 8
+                :caption: Creating a CommandJob with a folder output.
         """
 
     @overload
     def __init__(self, type: Literal["uri_file"] = "uri_file", path=None, mode=None, description=None):
-        """Define a URI file outputs.
+        """Define a URI file output.
 
-        :param type: The type of the data output. Can only be set to 'uri_file'.
-        :type type: str
-        :param path: The remote path where the output should be stored.
-        :type path: str
-        :param mode: The access mode of the data output. Accepted values are
+        :keyword type: The type of the data output. Can only be set to 'uri_file'.
+        :paramtype type: str
+        :keyword path: The remote path where the output should be stored.
+        :paramtype path: str
+        :keyword mode: The access mode of the data output. Accepted values are
             * 'rw_mount': Read-write mount the data,
             * 'upload': Upload the data from the compute target,
             * 'direct': Pass in the URI as a string
-        :type mode: str
-        :param description: The description of the output.
-        :type description: str
-        :param name: The name to be used to register the output as a Data or Model asset. A name can be set without
+        :paramtype mode: str
+        :keyword description: The description of the output.
+        :paramtype description: str
+        :keyword name: The name to be used to register the output as a Data or Model asset. A name can be set without
             setting a version.
-        :type name: str
-        :param version: The version used to register the output as a Data or Model asset. A version can be set only
+        :paramtype name: str
+        :keyword version: The version used to register the output as a Data or Model asset. A version can be set only
             when name is set.
-        :type version: str
+        :paramtype version: str
         """
 
     def __init__(self, *, type=AssetTypes.URI_FOLDER, path=None, mode=None, description=None, **kwargs) -> None:
@@ -116,8 +96,6 @@ class Output(_InputOutputBase):
         self.description = description
         self.path = path
         self.mode = mode
-        # use this field to determine the Output is control or not, currently hide in kwargs
-        self.is_control = kwargs.pop("is_control", None)
         # use this field to mark Output for early node orchestrate, currently hide in kwargs
         self.early_available = kwargs.pop("early_available", None)
         self._intellectual_property = None
@@ -129,15 +107,19 @@ class Output(_InputOutputBase):
                 else IntellectualProperty(**intellectual_property)
             )
         self._assert_name_and_version()
-        # normalize properties like ["is_control"]
+        # normalize properties
         self._normalize_self_properties()
 
     def _get_hint(self, new_line_style=False):
         comment_str = self.description.replace('"', '\\"') if self.description else self.type
         return '"""%s"""' % comment_str if comment_str and new_line_style else comment_str
 
-    def _to_dict(self):
-        """Convert the Output object to a dict."""
+    def _to_dict(self) -> Dict:
+        """Convert the Output object to a dict.
+
+        :return: The dictionary representation of Output
+        :rtype: Dict
+        """
         keys = self._IO_KEYS
         result = {key: getattr(self, key) for key in keys}
         return _remove_empty_values(result)
@@ -156,8 +138,6 @@ class Output(_InputOutputBase):
 
     def _normalize_self_properties(self):
         # parse value from string to its original type. eg: "false" -> False
-        if self.is_control:
-            self.is_control = self._simple_parse(getattr(self, "is_control", "false"), _type="boolean")
         if self.early_available:
             self.early_available = self._simple_parse(getattr(self, "early_available", "false"), _type="boolean")
 

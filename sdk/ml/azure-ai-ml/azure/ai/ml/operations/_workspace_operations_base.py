@@ -15,28 +15,27 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     EncryptionUpdateProperties,
     WorkspaceUpdateParameters,
 )
-from azure.ai.ml.entities._workspace.networking import ManagedNetwork
-from azure.ai.ml.constants._workspace import IsolationMode
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
+from azure.ai.ml._utils._appinsights_utils import get_log_analytics_arm_id
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._workspace_utils import (
+    get_generic_arm_resource_by_arm_id,
     delete_resource_by_arm_id,
     get_deployment_name,
     get_name_for_dependent_resource,
     get_resource_and_group_name,
     get_resource_group_location,
 )
-from azure.ai.ml._utils._appinsights_utils import get_log_analytics_arm_id
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_min_sec
 from azure.ai.ml._version import VERSION
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceResourceConstants
-from azure.ai.ml.entities import (
-    Workspace,
-)
+from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
+from azure.ai.ml.entities import Workspace
 from azure.ai.ml.entities._credentials import IdentityConfiguration
+from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 from azure.ai.ml.entities._workspace_hub._constants import PROJECT_WORKSPACE_KIND, WORKSPACE_HUB_KIND
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
@@ -82,6 +81,8 @@ class WorkspaceOperationsBase:
     ) -> LROPoller[Workspace]:
         existing_workspace = None
         resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
+        byo_open_ai_resource_id = kwargs.pop("byo_open_ai_resource_id", "")
+
         try:
             existing_workspace = self.get(workspace.name, resource_group=resource_group)
         except Exception:  # pylint: disable=broad-except
@@ -114,7 +115,11 @@ class WorkspaceOperationsBase:
             workspace.tags["createdByToolkit"] = "sdk-v2-{}".format(VERSION)
 
         workspace.resource_group = resource_group
-        template, param, resources_being_deployed = self._populate_arm_paramaters(workspace, **kwargs)
+        (
+            template,
+            param,
+            resources_being_deployed,
+        ) = self._populate_arm_paramaters(workspace, byo_open_ai_resource_id=byo_open_ai_resource_id, **kwargs)
         # check if create with workspace hub request is valid
         if workspace._kind == PROJECT_WORKSPACE_KIND:
             if not all(
@@ -128,7 +133,10 @@ class WorkspaceOperationsBase:
                     workspace.customer_managed_key,
                 ]
             ):
-                msg = "To create a project workspace with a workspace hub, please only specify name, description, display_name, location, application insight and identity"
+                msg = (
+                    "To create a project workspace with a workspace hub, please only specify name, description, "
+                    + "display_name, location, application insight and identity"
+                )
                 raise ValidationException(
                     message=msg,
                     target=ErrorTarget.WORKSPACE,
@@ -154,13 +162,21 @@ class WorkspaceOperationsBase:
         def callback():
             return get_callback() if get_callback else self.get(workspace.name, resource_group=resource_group)
 
+        real_callback = callback
+        injected_callback = kwargs.get("cls", None)
+        if injected_callback:
+            # pylint: disable=function-redefined
+            def real_callback():
+                return injected_callback(callback())
+
         return LROPoller(
             self._operation._client,
             None,
             lambda *x, **y: None,
-            CustomArmTemplateDeploymentPollingMethod(poller, arm_submit, callback),
+            CustomArmTemplateDeploymentPollingMethod(poller, arm_submit, real_callback),
         )
 
+    # pylint: disable=too-many-statements
     def begin_update(
         self,
         workspace: Workspace,
@@ -171,6 +187,7 @@ class WorkspaceOperationsBase:
     ) -> LROPoller[Workspace]:
         identity = kwargs.get("identity", workspace.identity)
         workspace_name = kwargs.get("workspace_name", workspace.name)
+        resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
         existing_workspace = self.get(workspace_name, **kwargs)
         if identity:
             identity = identity._to_workspace_rest_object()
@@ -262,17 +279,66 @@ class WorkspaceOperationsBase:
                 )
             )
 
-        resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
+        if workspace.managed_network is not None and workspace.managed_network.outbound_rules is not None:
+            # drop recommended and required rules from the update request since it would result in bad request
+            workspace.managed_network.outbound_rules = [
+                rule
+                for rule in workspace.managed_network.outbound_rules
+                if rule.category not in (OutboundRuleCategory.REQUIRED, OutboundRuleCategory.RECOMMENDED)
+            ]
+
+        update_role_assignment = (
+            kwargs.get("update_workspace_role_assignment", None)
+            or kwargs.get("update_offline_store_role_assignment", None)
+            or kwargs.get("update_online_store_role_assignment", None)
+        )
+        grant_materialization_permissions = kwargs.get("grant_materialization_permissions", None)
 
         # pylint: disable=unused-argument
         def callback(_, deserialized, args):
+            if (
+                workspace._kind
+                and workspace._kind.lower() == "featurestore"
+                and update_role_assignment
+                and grant_materialization_permissions
+            ):
+                module_logger.info("updating feature store materialization identity role assignments..")
+                template, param, resources_being_deployed = self._populate_feature_store_role_assignment_parameters(
+                    workspace, resource_group=resource_group, **kwargs
+                )
+
+                arm_submit = ArmDeploymentExecutor(
+                    credentials=self._credentials,
+                    resource_group_name=resource_group,
+                    subscription_id=self._subscription_id,
+                    deployment_name=get_deployment_name(workspace.name),
+                )
+
+                # deploy_resource() blocks for the poller to succeed if wait is True
+                poller = arm_submit.deploy_resource(
+                    template=template,
+                    resources_being_deployed=resources_being_deployed,
+                    parameters=param,
+                    wait=False,
+                )
+
+                poller.result()
             return (
                 deserialize_callback(deserialized)
                 if deserialize_callback
                 else Workspace._from_rest_object(deserialized)
             )
 
-        poller = self._operation.begin_update(resource_group, workspace_name, update_param, polling=True, cls=callback)
+        real_callback = callback
+        injected_callback = kwargs.get("cls", None)
+        if injected_callback:
+            # pylint: disable=function-redefined
+            def real_callback(_, deserialized, args):
+                return injected_callback(callback(_, deserialized, args))
+
+        poller = self._operation.begin_update(
+            resource_group, workspace_name, update_param, polling=True, cls=real_callback
+        )
         return poller
 
     def begin_delete(
@@ -281,8 +347,21 @@ class WorkspaceOperationsBase:
         workspace = self.get(name, **kwargs)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
-        # prevent dependent resource delete for lean workspace, only delete appinsight
+        # prevent dependent resource delete for lean workspace, only delete appinsight and associated log analytics
         if workspace._kind == PROJECT_WORKSPACE_KIND and delete_dependent_resources:
+            app_insights = get_generic_arm_resource_by_arm_id(
+                self._credentials,
+                self._subscription_id,
+                workspace.application_insights,
+                ArmConstants.AZURE_MGMT_APPINSIGHT_API_VERSION,
+            )
+            if app_insights is not None and "WorkspaceResourceId" in app_insights.properties:
+                delete_resource_by_arm_id(
+                    self._credentials,
+                    self._subscription_id,
+                    app_insights.properties["WorkspaceResourceId"],
+                    ArmConstants.AZURE_MGMT_LOGANALYTICS_API_VERSION,
+                )
             delete_resource_by_arm_id(
                 self._credentials,
                 self._subscription_id,
@@ -290,6 +369,19 @@ class WorkspaceOperationsBase:
                 ArmConstants.AZURE_MGMT_APPINSIGHT_API_VERSION,
             )
         elif delete_dependent_resources:
+            app_insights = get_generic_arm_resource_by_arm_id(
+                self._credentials,
+                self._subscription_id,
+                workspace.application_insights,
+                ArmConstants.AZURE_MGMT_APPINSIGHT_API_VERSION,
+            )
+            if app_insights is not None and "WorkspaceResourceId" in app_insights.properties:
+                delete_resource_by_arm_id(
+                    self._credentials,
+                    self._subscription_id,
+                    app_insights.properties["WorkspaceResourceId"],
+                    ArmConstants.AZURE_MGMT_LOGANALYTICS_API_VERSION,
+                )
             delete_resource_by_arm_id(
                 self._credentials,
                 self._subscription_id,
@@ -335,6 +427,8 @@ class WorkspaceOperationsBase:
         param = get_template(resource_type=ArmConstants.WORKSPACE_PARAM)
         if workspace._kind == PROJECT_WORKSPACE_KIND:
             template = get_template(resource_type=ArmConstants.WORKSPACE_PROJECT)
+        byo_open_ai_resource_id = kwargs.get("byo_open_ai_resource_id") or ""
+        _set_val(param["byo_open_ai_resource_id"], byo_open_ai_resource_id)
         _set_val(param["workspaceName"], workspace.name)
         if not workspace.display_name:
             _set_val(param["friendlyName"], workspace.name)
@@ -472,22 +566,36 @@ class WorkspaceOperationsBase:
                 else "",
             )
 
-        setup_materialization_store = False
         if workspace._kind and workspace._kind.lower() == "featurestore":
             materialization_identity = kwargs.get("materialization_identity", None)
             offline_store_target = kwargs.get("offline_store_target", None)
             online_store_target = kwargs.get("online_store_target", None)
 
-            setup_materialization_store = (offline_store_target or online_store_target) and materialization_identity
+            _set_val(param["set_up_feature_store"], "true")
 
-        _set_val(param["setup_materialization_store"], "true" if setup_materialization_store else "false")
-        if setup_materialization_store:
+            from azure.ai.ml._utils._arm_id_utils import AzureResourceId
+
             if offline_store_target is not None:
-                _set_val(param["offline_store_connection_target"], offline_store_target)
+                arm_id = AzureResourceId(offline_store_target)
+                _set_val(param["offline_store_target"], offline_store_target)
+                _set_val(param["offline_store_resource_group_name"], arm_id.resource_group_name)
+                _set_val(param["offline_store_subscription_id"], arm_id.subscription_id)
             if online_store_target is not None:
-                _set_val(param["online_store_connection_target"], online_store_target)
-            _set_val(param["materialization_identity_client_id"], materialization_identity.client_id)
-            _set_val(param["materialization_identity_resource_id"], materialization_identity.resource_id)
+                arm_id = AzureResourceId(online_store_target)
+                _set_val(param["online_store_target"], online_store_target)
+                _set_val(param["online_store_resource_group_name"], arm_id.resource_group_name)
+                _set_val(param["online_store_subscription_id"], arm_id.subscription_id)
+
+            if materialization_identity:
+                _set_val(param["materialization_identity_resource_id"], materialization_identity.resource_id)
+            else:
+                _set_val(
+                    param["materialization_identity_name"],
+                    f"materialization-uai-{workspace.resource_group}-{workspace.name}",
+                )
+
+            if not kwargs.get("grant_materialization_permissions", None):
+                _set_val(param["grant_materialization_permissions"], "false")
 
         managed_network = None
         if workspace.managed_network:
@@ -511,6 +619,50 @@ class WorkspaceOperationsBase:
                 _set_val(param["workspace_hub"], workspace.workspace_hub)
 
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)
+        return template, param, resources_being_deployed
+
+    def _populate_feature_store_role_assignment_parameters(
+        self, workspace: Workspace, **kwargs: Dict
+    ) -> Tuple[dict, dict, dict]:
+        resources_being_deployed = {}
+        template = get_template(resource_type=ArmConstants.FEATURE_STORE_ROLE_ASSIGNMENTS)
+        param = get_template(resource_type=ArmConstants.FEATURE_STORE_ROLE_ASSIGNMENTS_PARAM)
+
+        materialization_identity_id = kwargs.get("materialization_identity_id", None)
+        _set_val(param["materialization_identity_resource_id"], materialization_identity_id)
+
+        _set_val(param["workspace_name"], workspace.name)
+        resource_group = kwargs.get("resource_group", workspace.resource_group)
+        _set_val(param["resource_group_name"], resource_group)
+
+        update_workspace_role_assignment = kwargs.get("update_workspace_role_assignment", None)
+        if update_workspace_role_assignment:
+            _set_val(param["update_workspace_role_assignment"], "true")
+        update_offline_store_role_assignment = kwargs.get("update_offline_store_role_assignment", None)
+        if update_offline_store_role_assignment:
+            _set_val(param["update_offline_store_role_assignment"], "true")
+        update_online_store_role_assignment = kwargs.get("update_online_store_role_assignment", None)
+        if update_online_store_role_assignment:
+            _set_val(param["update_online_store_role_assignment"], "true")
+
+        offline_store_target = kwargs.get("offline_store_target", None)
+        online_store_target = kwargs.get("online_store_target", None)
+
+        from azure.ai.ml._utils._arm_id_utils import AzureResourceId
+
+        if offline_store_target:
+            arm_id = AzureResourceId(offline_store_target)
+            _set_val(param["offline_store_target"], offline_store_target)
+            _set_val(param["offline_store_resource_group_name"], arm_id.resource_group_name)
+            _set_val(param["offline_store_subscription_id"], arm_id.subscription_id)
+
+        if online_store_target:
+            arm_id = AzureResourceId(online_store_target)
+            _set_val(param["online_store_target"], online_store_target)
+            _set_val(param["online_store_resource_group_name"], arm_id.resource_group_name)
+            _set_val(param["online_store_subscription_id"], arm_id.subscription_id)
+
+        resources_being_deployed[materialization_identity_id] = (ArmConstants.USER_ASSIGNED_IDENTITIES, None)
         return template, param, resources_being_deployed
 
     def _check_workspace_name(self, name) -> str:

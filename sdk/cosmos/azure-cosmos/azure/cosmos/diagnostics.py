@@ -20,13 +20,19 @@
 # SOFTWARE.
 
 """Diagnostic tools for Azure Cosmos database service operations.
+IMPORTANT: This file has been marked for deprecation and will be removed in the future. For diagnostics logging in our
+SDK, please use our CosmosHttpLoggingPolicy outlined in our README.
 """
 
-from requests.structures import CaseInsensitiveDict
+from azure.core.utils import CaseInsensitiveDict
+import warnings
 
 
-class RecordDiagnostics(object):
-    """Record Response headers from Cosmos read operations.
+class _RecordDiagnostics(object):
+    """This file is currently deprecated and will be removed in the future. Please use our CosmosHttpLoggingPolicy
+    for logging SDK diagnostics moving forward. More information on this can be found in our README.
+
+    Record Response headers from Cosmos read operations.
 
     The full response headers are stored in the ``headers`` property.
 
@@ -84,3 +90,16 @@ class RecordDiagnostics(object):
         if key in self._common:
             return self._headers[key]
         raise AttributeError(name)
+
+
+def __getattr__(name):
+    if name == 'RecordDiagnostics':
+        warnings.warn(
+            "RecordDiagnostics is deprecated and should not be used. " +
+            "For logging diagnostics information for the SDK, please use our CosmosHttpLoggingPolicy. " +
+            "For more information on this, please see our README.",
+            DeprecationWarning
+        )
+        return _RecordDiagnostics
+
+    raise AttributeError(f"module 'azure.cosmos.diagnostics' has no attribute {name}")

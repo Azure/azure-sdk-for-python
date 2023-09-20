@@ -1023,8 +1023,8 @@ class ProtectedItem(_serialization.Model):  # pylint: disable=too-many-instance-
     :vartype is_archive_enabled: bool
     :ivar policy_name: Name of the policy used for protection.
     :vartype policy_name: str
-    :ivar soft_delete_retention_period: Soft delete retention period in days.
-    :vartype soft_delete_retention_period: int
+    :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
+    :vartype soft_delete_retention_period_in_days: int
     """
 
     _validation = {
@@ -1051,7 +1051,7 @@ class ProtectedItem(_serialization.Model):  # pylint: disable=too-many-instance-
         "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
-        "soft_delete_retention_period": {"key": "softDeleteRetentionPeriod", "type": "int"},
+        "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
     }
 
     _subtype_map = {
@@ -1083,7 +1083,7 @@ class ProtectedItem(_serialization.Model):  # pylint: disable=too-many-instance-
         resource_guard_operation_requests: Optional[List[str]] = None,
         is_archive_enabled: Optional[bool] = None,
         policy_name: Optional[str] = None,
-        soft_delete_retention_period: Optional[int] = None,
+        soft_delete_retention_period_in_days: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1122,8 +1122,8 @@ class ProtectedItem(_serialization.Model):  # pylint: disable=too-many-instance-
         :paramtype is_archive_enabled: bool
         :keyword policy_name: Name of the policy used for protection.
         :paramtype policy_name: str
-        :keyword soft_delete_retention_period: Soft delete retention period in days.
-        :paramtype soft_delete_retention_period: int
+        :keyword soft_delete_retention_period_in_days: Soft delete retention period in days.
+        :paramtype soft_delete_retention_period_in_days: int
         """
         super().__init__(**kwargs)
         self.protected_item_type: Optional[str] = None
@@ -1143,7 +1143,7 @@ class ProtectedItem(_serialization.Model):  # pylint: disable=too-many-instance-
         self.resource_guard_operation_requests = resource_guard_operation_requests
         self.is_archive_enabled = is_archive_enabled
         self.policy_name = policy_name
-        self.soft_delete_retention_period = soft_delete_retention_period
+        self.soft_delete_retention_period_in_days = soft_delete_retention_period_in_days
 
 
 class AzureFileshareProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
@@ -1200,8 +1200,8 @@ class AzureFileshareProtectedItem(ProtectedItem):  # pylint: disable=too-many-in
     :vartype is_archive_enabled: bool
     :ivar policy_name: Name of the policy used for protection.
     :vartype policy_name: str
-    :ivar soft_delete_retention_period: Soft delete retention period in days.
-    :vartype soft_delete_retention_period: int
+    :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
+    :vartype soft_delete_retention_period_in_days: int
     :ivar friendly_name: Friendly name of the fileshare represented by this backup item.
     :vartype friendly_name: str
     :ivar protection_status: Backup status of this backup item.
@@ -1247,7 +1247,7 @@ class AzureFileshareProtectedItem(ProtectedItem):  # pylint: disable=too-many-in
         "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
-        "soft_delete_retention_period": {"key": "softDeleteRetentionPeriod", "type": "int"},
+        "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "protection_status": {"key": "protectionStatus", "type": "str"},
         "protection_state": {"key": "protectionState", "type": "str"},
@@ -1274,7 +1274,7 @@ class AzureFileshareProtectedItem(ProtectedItem):  # pylint: disable=too-many-in
         resource_guard_operation_requests: Optional[List[str]] = None,
         is_archive_enabled: Optional[bool] = None,
         policy_name: Optional[str] = None,
-        soft_delete_retention_period: Optional[int] = None,
+        soft_delete_retention_period_in_days: Optional[int] = None,
         friendly_name: Optional[str] = None,
         protection_status: Optional[str] = None,
         protection_state: Optional[Union[str, "_models.ProtectionState"]] = None,
@@ -1320,8 +1320,8 @@ class AzureFileshareProtectedItem(ProtectedItem):  # pylint: disable=too-many-in
         :paramtype is_archive_enabled: bool
         :keyword policy_name: Name of the policy used for protection.
         :paramtype policy_name: str
-        :keyword soft_delete_retention_period: Soft delete retention period in days.
-        :paramtype soft_delete_retention_period: int
+        :keyword soft_delete_retention_period_in_days: Soft delete retention period in days.
+        :paramtype soft_delete_retention_period_in_days: int
         :keyword friendly_name: Friendly name of the fileshare represented by this backup item.
         :paramtype friendly_name: str
         :keyword protection_status: Backup status of this backup item.
@@ -1357,7 +1357,7 @@ class AzureFileshareProtectedItem(ProtectedItem):  # pylint: disable=too-many-in
             resource_guard_operation_requests=resource_guard_operation_requests,
             is_archive_enabled=is_archive_enabled,
             policy_name=policy_name,
-            soft_delete_retention_period=soft_delete_retention_period,
+            soft_delete_retention_period_in_days=soft_delete_retention_period_in_days,
             **kwargs
         )
         self.protected_item_type: str = "AzureFileShareProtectedItem"
@@ -2342,8 +2342,8 @@ class AzureIaaSVMProtectedItem(ProtectedItem):  # pylint: disable=too-many-insta
     :vartype is_archive_enabled: bool
     :ivar policy_name: Name of the policy used for protection.
     :vartype policy_name: str
-    :ivar soft_delete_retention_period: Soft delete retention period in days.
-    :vartype soft_delete_retention_period: int
+    :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
+    :vartype soft_delete_retention_period_in_days: int
     :ivar friendly_name: Friendly name of the VM represented by this backup item.
     :vartype friendly_name: str
     :ivar virtual_machine_id: Fully qualified ARM ID of the virtual machine represented by this
@@ -2409,7 +2409,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):  # pylint: disable=too-many-insta
         "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
-        "soft_delete_retention_period": {"key": "softDeleteRetentionPeriod", "type": "int"},
+        "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "virtual_machine_id": {"key": "virtualMachineId", "type": "str"},
         "protection_status": {"key": "protectionStatus", "type": "str"},
@@ -2448,7 +2448,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):  # pylint: disable=too-many-insta
         resource_guard_operation_requests: Optional[List[str]] = None,
         is_archive_enabled: Optional[bool] = None,
         policy_name: Optional[str] = None,
-        soft_delete_retention_period: Optional[int] = None,
+        soft_delete_retention_period_in_days: Optional[int] = None,
         protection_status: Optional[str] = None,
         protection_state: Optional[Union[str, "_models.ProtectionState"]] = None,
         health_details: Optional[List["_models.AzureIaaSVMHealthDetails"]] = None,
@@ -2494,8 +2494,8 @@ class AzureIaaSVMProtectedItem(ProtectedItem):  # pylint: disable=too-many-insta
         :paramtype is_archive_enabled: bool
         :keyword policy_name: Name of the policy used for protection.
         :paramtype policy_name: str
-        :keyword soft_delete_retention_period: Soft delete retention period in days.
-        :paramtype soft_delete_retention_period: int
+        :keyword soft_delete_retention_period_in_days: Soft delete retention period in days.
+        :paramtype soft_delete_retention_period_in_days: int
         :keyword protection_status: Backup status of this backup item.
         :paramtype protection_status: str
         :keyword protection_state: Backup state of this backup item. Known values are: "Invalid",
@@ -2533,7 +2533,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):  # pylint: disable=too-many-insta
             resource_guard_operation_requests=resource_guard_operation_requests,
             is_archive_enabled=is_archive_enabled,
             policy_name=policy_name,
-            soft_delete_retention_period=soft_delete_retention_period,
+            soft_delete_retention_period_in_days=soft_delete_retention_period_in_days,
             **kwargs
         )
         self.protected_item_type: str = "AzureIaaSVMProtectedItem"
@@ -2605,8 +2605,8 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylin
     :vartype is_archive_enabled: bool
     :ivar policy_name: Name of the policy used for protection.
     :vartype policy_name: str
-    :ivar soft_delete_retention_period: Soft delete retention period in days.
-    :vartype soft_delete_retention_period: int
+    :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
+    :vartype soft_delete_retention_period_in_days: int
     :ivar friendly_name: Friendly name of the VM represented by this backup item.
     :vartype friendly_name: str
     :ivar virtual_machine_id: Fully qualified ARM ID of the virtual machine represented by this
@@ -2672,7 +2672,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylin
         "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
-        "soft_delete_retention_period": {"key": "softDeleteRetentionPeriod", "type": "int"},
+        "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "virtual_machine_id": {"key": "virtualMachineId", "type": "str"},
         "protection_status": {"key": "protectionStatus", "type": "str"},
@@ -2704,7 +2704,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylin
         resource_guard_operation_requests: Optional[List[str]] = None,
         is_archive_enabled: Optional[bool] = None,
         policy_name: Optional[str] = None,
-        soft_delete_retention_period: Optional[int] = None,
+        soft_delete_retention_period_in_days: Optional[int] = None,
         protection_status: Optional[str] = None,
         protection_state: Optional[Union[str, "_models.ProtectionState"]] = None,
         health_details: Optional[List["_models.AzureIaaSVMHealthDetails"]] = None,
@@ -2750,8 +2750,8 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylin
         :paramtype is_archive_enabled: bool
         :keyword policy_name: Name of the policy used for protection.
         :paramtype policy_name: str
-        :keyword soft_delete_retention_period: Soft delete retention period in days.
-        :paramtype soft_delete_retention_period: int
+        :keyword soft_delete_retention_period_in_days: Soft delete retention period in days.
+        :paramtype soft_delete_retention_period_in_days: int
         :keyword protection_status: Backup status of this backup item.
         :paramtype protection_status: str
         :keyword protection_state: Backup state of this backup item. Known values are: "Invalid",
@@ -2789,7 +2789,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylin
             resource_guard_operation_requests=resource_guard_operation_requests,
             is_archive_enabled=is_archive_enabled,
             policy_name=policy_name,
-            soft_delete_retention_period=soft_delete_retention_period,
+            soft_delete_retention_period_in_days=soft_delete_retention_period_in_days,
             protection_status=protection_status,
             protection_state=protection_state,
             health_details=health_details,
@@ -3052,8 +3052,8 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disa
     :vartype is_archive_enabled: bool
     :ivar policy_name: Name of the policy used for protection.
     :vartype policy_name: str
-    :ivar soft_delete_retention_period: Soft delete retention period in days.
-    :vartype soft_delete_retention_period: int
+    :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
+    :vartype soft_delete_retention_period_in_days: int
     :ivar friendly_name: Friendly name of the VM represented by this backup item.
     :vartype friendly_name: str
     :ivar virtual_machine_id: Fully qualified ARM ID of the virtual machine represented by this
@@ -3119,7 +3119,7 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disa
         "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
-        "soft_delete_retention_period": {"key": "softDeleteRetentionPeriod", "type": "int"},
+        "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "virtual_machine_id": {"key": "virtualMachineId", "type": "str"},
         "protection_status": {"key": "protectionStatus", "type": "str"},
@@ -3151,7 +3151,7 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disa
         resource_guard_operation_requests: Optional[List[str]] = None,
         is_archive_enabled: Optional[bool] = None,
         policy_name: Optional[str] = None,
-        soft_delete_retention_period: Optional[int] = None,
+        soft_delete_retention_period_in_days: Optional[int] = None,
         protection_status: Optional[str] = None,
         protection_state: Optional[Union[str, "_models.ProtectionState"]] = None,
         health_details: Optional[List["_models.AzureIaaSVMHealthDetails"]] = None,
@@ -3197,8 +3197,8 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disa
         :paramtype is_archive_enabled: bool
         :keyword policy_name: Name of the policy used for protection.
         :paramtype policy_name: str
-        :keyword soft_delete_retention_period: Soft delete retention period in days.
-        :paramtype soft_delete_retention_period: int
+        :keyword soft_delete_retention_period_in_days: Soft delete retention period in days.
+        :paramtype soft_delete_retention_period_in_days: int
         :keyword protection_status: Backup status of this backup item.
         :paramtype protection_status: str
         :keyword protection_state: Backup state of this backup item. Known values are: "Invalid",
@@ -3236,7 +3236,7 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):  # pylint: disa
             resource_guard_operation_requests=resource_guard_operation_requests,
             is_archive_enabled=is_archive_enabled,
             policy_name=policy_name,
-            soft_delete_retention_period=soft_delete_retention_period,
+            soft_delete_retention_period_in_days=soft_delete_retention_period_in_days,
             protection_status=protection_status,
             protection_state=protection_state,
             health_details=health_details,
@@ -4752,8 +4752,8 @@ class AzureSqlProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance
     :vartype is_archive_enabled: bool
     :ivar policy_name: Name of the policy used for protection.
     :vartype policy_name: str
-    :ivar soft_delete_retention_period: Soft delete retention period in days.
-    :vartype soft_delete_retention_period: int
+    :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
+    :vartype soft_delete_retention_period_in_days: int
     :ivar protected_item_data_id: Internal ID of a backup item. Used by Azure SQL Backup engine to
      contact Recovery Services.
     :vartype protected_item_data_id: str
@@ -4791,7 +4791,7 @@ class AzureSqlProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance
         "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
-        "soft_delete_retention_period": {"key": "softDeleteRetentionPeriod", "type": "int"},
+        "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
         "protected_item_data_id": {"key": "protectedItemDataId", "type": "str"},
         "protection_state": {"key": "protectionState", "type": "str"},
         "extended_info": {"key": "extendedInfo", "type": "AzureSqlProtectedItemExtendedInfo"},
@@ -4814,7 +4814,7 @@ class AzureSqlProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance
         resource_guard_operation_requests: Optional[List[str]] = None,
         is_archive_enabled: Optional[bool] = None,
         policy_name: Optional[str] = None,
-        soft_delete_retention_period: Optional[int] = None,
+        soft_delete_retention_period_in_days: Optional[int] = None,
         protected_item_data_id: Optional[str] = None,
         protection_state: Optional[Union[str, "_models.ProtectedItemState"]] = None,
         extended_info: Optional["_models.AzureSqlProtectedItemExtendedInfo"] = None,
@@ -4856,8 +4856,8 @@ class AzureSqlProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance
         :paramtype is_archive_enabled: bool
         :keyword policy_name: Name of the policy used for protection.
         :paramtype policy_name: str
-        :keyword soft_delete_retention_period: Soft delete retention period in days.
-        :paramtype soft_delete_retention_period: int
+        :keyword soft_delete_retention_period_in_days: Soft delete retention period in days.
+        :paramtype soft_delete_retention_period_in_days: int
         :keyword protected_item_data_id: Internal ID of a backup item. Used by Azure SQL Backup engine
          to contact Recovery Services.
         :paramtype protected_item_data_id: str
@@ -4885,7 +4885,7 @@ class AzureSqlProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance
             resource_guard_operation_requests=resource_guard_operation_requests,
             is_archive_enabled=is_archive_enabled,
             policy_name=policy_name,
-            soft_delete_retention_period=soft_delete_retention_period,
+            soft_delete_retention_period_in_days=soft_delete_retention_period_in_days,
             **kwargs
         )
         self.protected_item_type: str = "Microsoft.Sql/servers/databases"
@@ -6011,6 +6011,8 @@ class AzureVmWorkloadProtectableItem(WorkloadProtectableItem):  # pylint: disabl
     :ivar prebackupvalidation: Pre-backup validation for protectable objects.
     :vartype prebackupvalidation:
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreBackupValidation
+    :ivar is_protectable: Indicates if item is protectable.
+    :vartype is_protectable: bool
     """
 
     _validation = {
@@ -6031,6 +6033,7 @@ class AzureVmWorkloadProtectableItem(WorkloadProtectableItem):  # pylint: disabl
         "subinquireditemcount": {"key": "subinquireditemcount", "type": "int"},
         "subprotectableitemcount": {"key": "subprotectableitemcount", "type": "int"},
         "prebackupvalidation": {"key": "prebackupvalidation", "type": "PreBackupValidation"},
+        "is_protectable": {"key": "isProtectable", "type": "bool"},
     }
 
     _subtype_map = {
@@ -6061,6 +6064,7 @@ class AzureVmWorkloadProtectableItem(WorkloadProtectableItem):  # pylint: disabl
         subinquireditemcount: Optional[int] = None,
         subprotectableitemcount: Optional[int] = None,
         prebackupvalidation: Optional["_models.PreBackupValidation"] = None,
+        is_protectable: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6093,6 +6097,8 @@ class AzureVmWorkloadProtectableItem(WorkloadProtectableItem):  # pylint: disabl
         :keyword prebackupvalidation: Pre-backup validation for protectable objects.
         :paramtype prebackupvalidation:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreBackupValidation
+        :keyword is_protectable: Indicates if item is protectable.
+        :paramtype is_protectable: bool
         """
         super().__init__(
             backup_management_type=backup_management_type,
@@ -6110,6 +6116,7 @@ class AzureVmWorkloadProtectableItem(WorkloadProtectableItem):  # pylint: disabl
         self.subinquireditemcount = subinquireditemcount
         self.subprotectableitemcount = subprotectableitemcount
         self.prebackupvalidation = prebackupvalidation
+        self.is_protectable = is_protectable
 
 
 class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attributes
@@ -6170,8 +6177,8 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-i
     :vartype is_archive_enabled: bool
     :ivar policy_name: Name of the policy used for protection.
     :vartype policy_name: str
-    :ivar soft_delete_retention_period: Soft delete retention period in days.
-    :vartype soft_delete_retention_period: int
+    :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
+    :vartype soft_delete_retention_period_in_days: int
     :ivar friendly_name: Friendly name of the DB represented by this backup item.
     :vartype friendly_name: str
     :ivar server_name: Host/Cluster Name for instance or AG.
@@ -6210,6 +6217,9 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-i
     :ivar kpis_healths: Health details of different KPIs.
     :vartype kpis_healths: dict[str,
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.KPIResourceHealthDetails]
+    :ivar nodes_list: List of the nodes in case of distributed container.
+    :vartype nodes_list:
+     list[~azure.mgmt.recoveryservicesbackup.activestamp.models.DistributedNodesInfo]
     """
 
     _validation = {
@@ -6238,7 +6248,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-i
         "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
-        "soft_delete_retention_period": {"key": "softDeleteRetentionPeriod", "type": "int"},
+        "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "server_name": {"key": "serverName", "type": "str"},
         "parent_name": {"key": "parentName", "type": "str"},
@@ -6252,6 +6262,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-i
         "protected_item_health_status": {"key": "protectedItemHealthStatus", "type": "str"},
         "extended_info": {"key": "extendedInfo", "type": "AzureVmWorkloadProtectedItemExtendedInfo"},
         "kpis_healths": {"key": "kpisHealths", "type": "{KPIResourceHealthDetails}"},
+        "nodes_list": {"key": "nodesList", "type": "[DistributedNodesInfo]"},
     }
 
     _subtype_map = {
@@ -6280,7 +6291,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-i
         resource_guard_operation_requests: Optional[List[str]] = None,
         is_archive_enabled: Optional[bool] = None,
         policy_name: Optional[str] = None,
-        soft_delete_retention_period: Optional[int] = None,
+        soft_delete_retention_period_in_days: Optional[int] = None,
         server_name: Optional[str] = None,
         parent_name: Optional[str] = None,
         parent_type: Optional[str] = None,
@@ -6292,6 +6303,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-i
         protected_item_health_status: Optional[Union[str, "_models.ProtectedItemHealthStatus"]] = None,
         extended_info: Optional["_models.AzureVmWorkloadProtectedItemExtendedInfo"] = None,
         kpis_healths: Optional[Dict[str, "_models.KPIResourceHealthDetails"]] = None,
+        nodes_list: Optional[List["_models.DistributedNodesInfo"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6330,8 +6342,8 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-i
         :paramtype is_archive_enabled: bool
         :keyword policy_name: Name of the policy used for protection.
         :paramtype policy_name: str
-        :keyword soft_delete_retention_period: Soft delete retention period in days.
-        :paramtype soft_delete_retention_period: int
+        :keyword soft_delete_retention_period_in_days: Soft delete retention period in days.
+        :paramtype soft_delete_retention_period_in_days: int
         :keyword server_name: Host/Cluster Name for instance or AG.
         :paramtype server_name: str
         :keyword parent_name: Parent name of the DB such as Instance or Availability Group.
@@ -6366,6 +6378,9 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-i
         :keyword kpis_healths: Health details of different KPIs.
         :paramtype kpis_healths: dict[str,
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.KPIResourceHealthDetails]
+        :keyword nodes_list: List of the nodes in case of distributed container.
+        :paramtype nodes_list:
+         list[~azure.mgmt.recoveryservicesbackup.activestamp.models.DistributedNodesInfo]
         """
         super().__init__(
             container_name=container_name,
@@ -6382,7 +6397,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-i
             resource_guard_operation_requests=resource_guard_operation_requests,
             is_archive_enabled=is_archive_enabled,
             policy_name=policy_name,
-            soft_delete_retention_period=soft_delete_retention_period,
+            soft_delete_retention_period_in_days=soft_delete_retention_period_in_days,
             **kwargs
         )
         self.protected_item_type: str = "AzureVmWorkloadProtectedItem"
@@ -6399,6 +6414,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):  # pylint: disable=too-many-i
         self.protected_item_health_status = protected_item_health_status
         self.extended_info = extended_info
         self.kpis_healths = kpis_healths
+        self.nodes_list = nodes_list
 
 
 class AzureVmWorkloadProtectedItemExtendedInfo(_serialization.Model):
@@ -6621,8 +6637,8 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
     :vartype is_archive_enabled: bool
     :ivar policy_name: Name of the policy used for protection.
     :vartype policy_name: str
-    :ivar soft_delete_retention_period: Soft delete retention period in days.
-    :vartype soft_delete_retention_period: int
+    :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
+    :vartype soft_delete_retention_period_in_days: int
     :ivar friendly_name: Friendly name of the DB represented by this backup item.
     :vartype friendly_name: str
     :ivar server_name: Host/Cluster Name for instance or AG.
@@ -6661,6 +6677,9 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
     :ivar kpis_healths: Health details of different KPIs.
     :vartype kpis_healths: dict[str,
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.KPIResourceHealthDetails]
+    :ivar nodes_list: List of the nodes in case of distributed container.
+    :vartype nodes_list:
+     list[~azure.mgmt.recoveryservicesbackup.activestamp.models.DistributedNodesInfo]
     """
 
     _validation = {
@@ -6689,7 +6708,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
         "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
-        "soft_delete_retention_period": {"key": "softDeleteRetentionPeriod", "type": "int"},
+        "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "server_name": {"key": "serverName", "type": "str"},
         "parent_name": {"key": "parentName", "type": "str"},
@@ -6703,6 +6722,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
         "protected_item_health_status": {"key": "protectedItemHealthStatus", "type": "str"},
         "extended_info": {"key": "extendedInfo", "type": "AzureVmWorkloadProtectedItemExtendedInfo"},
         "kpis_healths": {"key": "kpisHealths", "type": "{KPIResourceHealthDetails}"},
+        "nodes_list": {"key": "nodesList", "type": "[DistributedNodesInfo]"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -6722,7 +6742,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
         resource_guard_operation_requests: Optional[List[str]] = None,
         is_archive_enabled: Optional[bool] = None,
         policy_name: Optional[str] = None,
-        soft_delete_retention_period: Optional[int] = None,
+        soft_delete_retention_period_in_days: Optional[int] = None,
         server_name: Optional[str] = None,
         parent_name: Optional[str] = None,
         parent_type: Optional[str] = None,
@@ -6734,6 +6754,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
         protected_item_health_status: Optional[Union[str, "_models.ProtectedItemHealthStatus"]] = None,
         extended_info: Optional["_models.AzureVmWorkloadProtectedItemExtendedInfo"] = None,
         kpis_healths: Optional[Dict[str, "_models.KPIResourceHealthDetails"]] = None,
+        nodes_list: Optional[List["_models.DistributedNodesInfo"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6772,8 +6793,8 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
         :paramtype is_archive_enabled: bool
         :keyword policy_name: Name of the policy used for protection.
         :paramtype policy_name: str
-        :keyword soft_delete_retention_period: Soft delete retention period in days.
-        :paramtype soft_delete_retention_period: int
+        :keyword soft_delete_retention_period_in_days: Soft delete retention period in days.
+        :paramtype soft_delete_retention_period_in_days: int
         :keyword server_name: Host/Cluster Name for instance or AG.
         :paramtype server_name: str
         :keyword parent_name: Parent name of the DB such as Instance or Availability Group.
@@ -6808,6 +6829,9 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
         :keyword kpis_healths: Health details of different KPIs.
         :paramtype kpis_healths: dict[str,
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.KPIResourceHealthDetails]
+        :keyword nodes_list: List of the nodes in case of distributed container.
+        :paramtype nodes_list:
+         list[~azure.mgmt.recoveryservicesbackup.activestamp.models.DistributedNodesInfo]
         """
         super().__init__(
             container_name=container_name,
@@ -6824,7 +6848,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
             resource_guard_operation_requests=resource_guard_operation_requests,
             is_archive_enabled=is_archive_enabled,
             policy_name=policy_name,
-            soft_delete_retention_period=soft_delete_retention_period,
+            soft_delete_retention_period_in_days=soft_delete_retention_period_in_days,
             server_name=server_name,
             parent_name=parent_name,
             parent_type=parent_type,
@@ -6836,6 +6860,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(
             protected_item_health_status=protected_item_health_status,
             extended_info=extended_info,
             kpis_healths=kpis_healths,
+            nodes_list=nodes_list,
             **kwargs
         )
         self.protected_item_type: str = "AzureVmWorkloadSAPAseDatabase"
@@ -6976,6 +7001,8 @@ class AzureVmWorkloadSAPAseSystemProtectableItem(
     :ivar prebackupvalidation: Pre-backup validation for protectable objects.
     :vartype prebackupvalidation:
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreBackupValidation
+    :ivar is_protectable: Indicates if item is protectable.
+    :vartype is_protectable: bool
     """
 
     _validation = {
@@ -6996,6 +7023,7 @@ class AzureVmWorkloadSAPAseSystemProtectableItem(
         "subinquireditemcount": {"key": "subinquireditemcount", "type": "int"},
         "subprotectableitemcount": {"key": "subprotectableitemcount", "type": "int"},
         "prebackupvalidation": {"key": "prebackupvalidation", "type": "PreBackupValidation"},
+        "is_protectable": {"key": "isProtectable", "type": "bool"},
     }
 
     def __init__(
@@ -7013,6 +7041,7 @@ class AzureVmWorkloadSAPAseSystemProtectableItem(
         subinquireditemcount: Optional[int] = None,
         subprotectableitemcount: Optional[int] = None,
         prebackupvalidation: Optional["_models.PreBackupValidation"] = None,
+        is_protectable: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7045,6 +7074,8 @@ class AzureVmWorkloadSAPAseSystemProtectableItem(
         :keyword prebackupvalidation: Pre-backup validation for protectable objects.
         :paramtype prebackupvalidation:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreBackupValidation
+        :keyword is_protectable: Indicates if item is protectable.
+        :paramtype is_protectable: bool
         """
         super().__init__(
             backup_management_type=backup_management_type,
@@ -7059,6 +7090,7 @@ class AzureVmWorkloadSAPAseSystemProtectableItem(
             subinquireditemcount=subinquireditemcount,
             subprotectableitemcount=subprotectableitemcount,
             prebackupvalidation=prebackupvalidation,
+            is_protectable=is_protectable,
             **kwargs
         )
         self.protectable_item_type: str = "SAPAseSystem"
@@ -7199,6 +7231,8 @@ class AzureVmWorkloadSAPHanaDatabaseProtectableItem(
     :ivar prebackupvalidation: Pre-backup validation for protectable objects.
     :vartype prebackupvalidation:
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreBackupValidation
+    :ivar is_protectable: Indicates if item is protectable.
+    :vartype is_protectable: bool
     """
 
     _validation = {
@@ -7219,6 +7253,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectableItem(
         "subinquireditemcount": {"key": "subinquireditemcount", "type": "int"},
         "subprotectableitemcount": {"key": "subprotectableitemcount", "type": "int"},
         "prebackupvalidation": {"key": "prebackupvalidation", "type": "PreBackupValidation"},
+        "is_protectable": {"key": "isProtectable", "type": "bool"},
     }
 
     def __init__(
@@ -7236,6 +7271,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectableItem(
         subinquireditemcount: Optional[int] = None,
         subprotectableitemcount: Optional[int] = None,
         prebackupvalidation: Optional["_models.PreBackupValidation"] = None,
+        is_protectable: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7268,6 +7304,8 @@ class AzureVmWorkloadSAPHanaDatabaseProtectableItem(
         :keyword prebackupvalidation: Pre-backup validation for protectable objects.
         :paramtype prebackupvalidation:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreBackupValidation
+        :keyword is_protectable: Indicates if item is protectable.
+        :paramtype is_protectable: bool
         """
         super().__init__(
             backup_management_type=backup_management_type,
@@ -7282,6 +7320,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectableItem(
             subinquireditemcount=subinquireditemcount,
             subprotectableitemcount=subprotectableitemcount,
             prebackupvalidation=prebackupvalidation,
+            is_protectable=is_protectable,
             **kwargs
         )
         self.protectable_item_type: str = "SAPHanaDatabase"
@@ -7343,8 +7382,8 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
     :vartype is_archive_enabled: bool
     :ivar policy_name: Name of the policy used for protection.
     :vartype policy_name: str
-    :ivar soft_delete_retention_period: Soft delete retention period in days.
-    :vartype soft_delete_retention_period: int
+    :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
+    :vartype soft_delete_retention_period_in_days: int
     :ivar friendly_name: Friendly name of the DB represented by this backup item.
     :vartype friendly_name: str
     :ivar server_name: Host/Cluster Name for instance or AG.
@@ -7383,6 +7422,9 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
     :ivar kpis_healths: Health details of different KPIs.
     :vartype kpis_healths: dict[str,
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.KPIResourceHealthDetails]
+    :ivar nodes_list: List of the nodes in case of distributed container.
+    :vartype nodes_list:
+     list[~azure.mgmt.recoveryservicesbackup.activestamp.models.DistributedNodesInfo]
     """
 
     _validation = {
@@ -7411,7 +7453,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
         "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
-        "soft_delete_retention_period": {"key": "softDeleteRetentionPeriod", "type": "int"},
+        "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "server_name": {"key": "serverName", "type": "str"},
         "parent_name": {"key": "parentName", "type": "str"},
@@ -7425,6 +7467,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
         "protected_item_health_status": {"key": "protectedItemHealthStatus", "type": "str"},
         "extended_info": {"key": "extendedInfo", "type": "AzureVmWorkloadProtectedItemExtendedInfo"},
         "kpis_healths": {"key": "kpisHealths", "type": "{KPIResourceHealthDetails}"},
+        "nodes_list": {"key": "nodesList", "type": "[DistributedNodesInfo]"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -7444,7 +7487,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
         resource_guard_operation_requests: Optional[List[str]] = None,
         is_archive_enabled: Optional[bool] = None,
         policy_name: Optional[str] = None,
-        soft_delete_retention_period: Optional[int] = None,
+        soft_delete_retention_period_in_days: Optional[int] = None,
         server_name: Optional[str] = None,
         parent_name: Optional[str] = None,
         parent_type: Optional[str] = None,
@@ -7456,6 +7499,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
         protected_item_health_status: Optional[Union[str, "_models.ProtectedItemHealthStatus"]] = None,
         extended_info: Optional["_models.AzureVmWorkloadProtectedItemExtendedInfo"] = None,
         kpis_healths: Optional[Dict[str, "_models.KPIResourceHealthDetails"]] = None,
+        nodes_list: Optional[List["_models.DistributedNodesInfo"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7494,8 +7538,8 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
         :paramtype is_archive_enabled: bool
         :keyword policy_name: Name of the policy used for protection.
         :paramtype policy_name: str
-        :keyword soft_delete_retention_period: Soft delete retention period in days.
-        :paramtype soft_delete_retention_period: int
+        :keyword soft_delete_retention_period_in_days: Soft delete retention period in days.
+        :paramtype soft_delete_retention_period_in_days: int
         :keyword server_name: Host/Cluster Name for instance or AG.
         :paramtype server_name: str
         :keyword parent_name: Parent name of the DB such as Instance or Availability Group.
@@ -7530,6 +7574,9 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
         :keyword kpis_healths: Health details of different KPIs.
         :paramtype kpis_healths: dict[str,
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.KPIResourceHealthDetails]
+        :keyword nodes_list: List of the nodes in case of distributed container.
+        :paramtype nodes_list:
+         list[~azure.mgmt.recoveryservicesbackup.activestamp.models.DistributedNodesInfo]
         """
         super().__init__(
             container_name=container_name,
@@ -7546,7 +7593,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
             resource_guard_operation_requests=resource_guard_operation_requests,
             is_archive_enabled=is_archive_enabled,
             policy_name=policy_name,
-            soft_delete_retention_period=soft_delete_retention_period,
+            soft_delete_retention_period_in_days=soft_delete_retention_period_in_days,
             server_name=server_name,
             parent_name=parent_name,
             parent_type=parent_type,
@@ -7558,6 +7605,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(
             protected_item_health_status=protected_item_health_status,
             extended_info=extended_info,
             kpis_healths=kpis_healths,
+            nodes_list=nodes_list,
             **kwargs
         )
         self.protected_item_type: str = "AzureVmWorkloadSAPHanaDatabase"
@@ -7696,6 +7744,8 @@ class AzureVmWorkloadSAPHanaDBInstance(AzureVmWorkloadProtectableItem):  # pylin
     :ivar prebackupvalidation: Pre-backup validation for protectable objects.
     :vartype prebackupvalidation:
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreBackupValidation
+    :ivar is_protectable: Indicates if item is protectable.
+    :vartype is_protectable: bool
     """
 
     _validation = {
@@ -7716,6 +7766,7 @@ class AzureVmWorkloadSAPHanaDBInstance(AzureVmWorkloadProtectableItem):  # pylin
         "subinquireditemcount": {"key": "subinquireditemcount", "type": "int"},
         "subprotectableitemcount": {"key": "subprotectableitemcount", "type": "int"},
         "prebackupvalidation": {"key": "prebackupvalidation", "type": "PreBackupValidation"},
+        "is_protectable": {"key": "isProtectable", "type": "bool"},
     }
 
     def __init__(
@@ -7733,6 +7784,7 @@ class AzureVmWorkloadSAPHanaDBInstance(AzureVmWorkloadProtectableItem):  # pylin
         subinquireditemcount: Optional[int] = None,
         subprotectableitemcount: Optional[int] = None,
         prebackupvalidation: Optional["_models.PreBackupValidation"] = None,
+        is_protectable: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7765,6 +7817,8 @@ class AzureVmWorkloadSAPHanaDBInstance(AzureVmWorkloadProtectableItem):  # pylin
         :keyword prebackupvalidation: Pre-backup validation for protectable objects.
         :paramtype prebackupvalidation:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreBackupValidation
+        :keyword is_protectable: Indicates if item is protectable.
+        :paramtype is_protectable: bool
         """
         super().__init__(
             backup_management_type=backup_management_type,
@@ -7779,6 +7833,7 @@ class AzureVmWorkloadSAPHanaDBInstance(AzureVmWorkloadProtectableItem):  # pylin
             subinquireditemcount=subinquireditemcount,
             subprotectableitemcount=subprotectableitemcount,
             prebackupvalidation=prebackupvalidation,
+            is_protectable=is_protectable,
             **kwargs
         )
         self.protectable_item_type: str = "SAPHanaDBInstance"
@@ -7840,8 +7895,8 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
     :vartype is_archive_enabled: bool
     :ivar policy_name: Name of the policy used for protection.
     :vartype policy_name: str
-    :ivar soft_delete_retention_period: Soft delete retention period in days.
-    :vartype soft_delete_retention_period: int
+    :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
+    :vartype soft_delete_retention_period_in_days: int
     :ivar friendly_name: Friendly name of the DB represented by this backup item.
     :vartype friendly_name: str
     :ivar server_name: Host/Cluster Name for instance or AG.
@@ -7880,6 +7935,9 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
     :ivar kpis_healths: Health details of different KPIs.
     :vartype kpis_healths: dict[str,
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.KPIResourceHealthDetails]
+    :ivar nodes_list: List of the nodes in case of distributed container.
+    :vartype nodes_list:
+     list[~azure.mgmt.recoveryservicesbackup.activestamp.models.DistributedNodesInfo]
     """
 
     _validation = {
@@ -7908,7 +7966,7 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
         "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
-        "soft_delete_retention_period": {"key": "softDeleteRetentionPeriod", "type": "int"},
+        "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "server_name": {"key": "serverName", "type": "str"},
         "parent_name": {"key": "parentName", "type": "str"},
@@ -7922,6 +7980,7 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
         "protected_item_health_status": {"key": "protectedItemHealthStatus", "type": "str"},
         "extended_info": {"key": "extendedInfo", "type": "AzureVmWorkloadProtectedItemExtendedInfo"},
         "kpis_healths": {"key": "kpisHealths", "type": "{KPIResourceHealthDetails}"},
+        "nodes_list": {"key": "nodesList", "type": "[DistributedNodesInfo]"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -7941,7 +8000,7 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
         resource_guard_operation_requests: Optional[List[str]] = None,
         is_archive_enabled: Optional[bool] = None,
         policy_name: Optional[str] = None,
-        soft_delete_retention_period: Optional[int] = None,
+        soft_delete_retention_period_in_days: Optional[int] = None,
         server_name: Optional[str] = None,
         parent_name: Optional[str] = None,
         parent_type: Optional[str] = None,
@@ -7953,6 +8012,7 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
         protected_item_health_status: Optional[Union[str, "_models.ProtectedItemHealthStatus"]] = None,
         extended_info: Optional["_models.AzureVmWorkloadProtectedItemExtendedInfo"] = None,
         kpis_healths: Optional[Dict[str, "_models.KPIResourceHealthDetails"]] = None,
+        nodes_list: Optional[List["_models.DistributedNodesInfo"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7991,8 +8051,8 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
         :paramtype is_archive_enabled: bool
         :keyword policy_name: Name of the policy used for protection.
         :paramtype policy_name: str
-        :keyword soft_delete_retention_period: Soft delete retention period in days.
-        :paramtype soft_delete_retention_period: int
+        :keyword soft_delete_retention_period_in_days: Soft delete retention period in days.
+        :paramtype soft_delete_retention_period_in_days: int
         :keyword server_name: Host/Cluster Name for instance or AG.
         :paramtype server_name: str
         :keyword parent_name: Parent name of the DB such as Instance or Availability Group.
@@ -8027,6 +8087,9 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
         :keyword kpis_healths: Health details of different KPIs.
         :paramtype kpis_healths: dict[str,
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.KPIResourceHealthDetails]
+        :keyword nodes_list: List of the nodes in case of distributed container.
+        :paramtype nodes_list:
+         list[~azure.mgmt.recoveryservicesbackup.activestamp.models.DistributedNodesInfo]
         """
         super().__init__(
             container_name=container_name,
@@ -8043,7 +8106,7 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
             resource_guard_operation_requests=resource_guard_operation_requests,
             is_archive_enabled=is_archive_enabled,
             policy_name=policy_name,
-            soft_delete_retention_period=soft_delete_retention_period,
+            soft_delete_retention_period_in_days=soft_delete_retention_period_in_days,
             server_name=server_name,
             parent_name=parent_name,
             parent_type=parent_type,
@@ -8055,6 +8118,7 @@ class AzureVmWorkloadSAPHanaDBInstanceProtectedItem(
             protected_item_health_status=protected_item_health_status,
             extended_info=extended_info,
             kpis_healths=kpis_healths,
+            nodes_list=nodes_list,
             **kwargs
         )
         self.protected_item_type: str = "AzureVmWorkloadSAPHanaDBInstance"
@@ -8098,6 +8162,8 @@ class AzureVmWorkloadSAPHanaHSRProtectableItem(
     :ivar prebackupvalidation: Pre-backup validation for protectable objects.
     :vartype prebackupvalidation:
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreBackupValidation
+    :ivar is_protectable: Indicates if item is protectable.
+    :vartype is_protectable: bool
     """
 
     _validation = {
@@ -8118,6 +8184,7 @@ class AzureVmWorkloadSAPHanaHSRProtectableItem(
         "subinquireditemcount": {"key": "subinquireditemcount", "type": "int"},
         "subprotectableitemcount": {"key": "subprotectableitemcount", "type": "int"},
         "prebackupvalidation": {"key": "prebackupvalidation", "type": "PreBackupValidation"},
+        "is_protectable": {"key": "isProtectable", "type": "bool"},
     }
 
     def __init__(
@@ -8135,6 +8202,7 @@ class AzureVmWorkloadSAPHanaHSRProtectableItem(
         subinquireditemcount: Optional[int] = None,
         subprotectableitemcount: Optional[int] = None,
         prebackupvalidation: Optional["_models.PreBackupValidation"] = None,
+        is_protectable: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8167,6 +8235,8 @@ class AzureVmWorkloadSAPHanaHSRProtectableItem(
         :keyword prebackupvalidation: Pre-backup validation for protectable objects.
         :paramtype prebackupvalidation:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreBackupValidation
+        :keyword is_protectable: Indicates if item is protectable.
+        :paramtype is_protectable: bool
         """
         super().__init__(
             backup_management_type=backup_management_type,
@@ -8181,6 +8251,7 @@ class AzureVmWorkloadSAPHanaHSRProtectableItem(
             subinquireditemcount=subinquireditemcount,
             subprotectableitemcount=subprotectableitemcount,
             prebackupvalidation=prebackupvalidation,
+            is_protectable=is_protectable,
             **kwargs
         )
         self.protectable_item_type: str = "HanaHSRContainer"
@@ -8224,6 +8295,8 @@ class AzureVmWorkloadSAPHanaSystemProtectableItem(
     :ivar prebackupvalidation: Pre-backup validation for protectable objects.
     :vartype prebackupvalidation:
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreBackupValidation
+    :ivar is_protectable: Indicates if item is protectable.
+    :vartype is_protectable: bool
     """
 
     _validation = {
@@ -8244,6 +8317,7 @@ class AzureVmWorkloadSAPHanaSystemProtectableItem(
         "subinquireditemcount": {"key": "subinquireditemcount", "type": "int"},
         "subprotectableitemcount": {"key": "subprotectableitemcount", "type": "int"},
         "prebackupvalidation": {"key": "prebackupvalidation", "type": "PreBackupValidation"},
+        "is_protectable": {"key": "isProtectable", "type": "bool"},
     }
 
     def __init__(
@@ -8261,6 +8335,7 @@ class AzureVmWorkloadSAPHanaSystemProtectableItem(
         subinquireditemcount: Optional[int] = None,
         subprotectableitemcount: Optional[int] = None,
         prebackupvalidation: Optional["_models.PreBackupValidation"] = None,
+        is_protectable: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8293,6 +8368,8 @@ class AzureVmWorkloadSAPHanaSystemProtectableItem(
         :keyword prebackupvalidation: Pre-backup validation for protectable objects.
         :paramtype prebackupvalidation:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreBackupValidation
+        :keyword is_protectable: Indicates if item is protectable.
+        :paramtype is_protectable: bool
         """
         super().__init__(
             backup_management_type=backup_management_type,
@@ -8307,6 +8384,7 @@ class AzureVmWorkloadSAPHanaSystemProtectableItem(
             subinquireditemcount=subinquireditemcount,
             subprotectableitemcount=subprotectableitemcount,
             prebackupvalidation=prebackupvalidation,
+            is_protectable=is_protectable,
             **kwargs
         )
         self.protectable_item_type: str = "SAPHanaSystem"
@@ -8447,6 +8525,11 @@ class AzureVmWorkloadSQLAvailabilityGroupProtectableItem(
     :ivar prebackupvalidation: Pre-backup validation for protectable objects.
     :vartype prebackupvalidation:
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreBackupValidation
+    :ivar is_protectable: Indicates if item is protectable.
+    :vartype is_protectable: bool
+    :ivar nodes_list: List of the nodes in case of distributed container.
+    :vartype nodes_list:
+     list[~azure.mgmt.recoveryservicesbackup.activestamp.models.DistributedNodesInfo]
     """
 
     _validation = {
@@ -8467,6 +8550,8 @@ class AzureVmWorkloadSQLAvailabilityGroupProtectableItem(
         "subinquireditemcount": {"key": "subinquireditemcount", "type": "int"},
         "subprotectableitemcount": {"key": "subprotectableitemcount", "type": "int"},
         "prebackupvalidation": {"key": "prebackupvalidation", "type": "PreBackupValidation"},
+        "is_protectable": {"key": "isProtectable", "type": "bool"},
+        "nodes_list": {"key": "nodesList", "type": "[DistributedNodesInfo]"},
     }
 
     def __init__(
@@ -8484,6 +8569,8 @@ class AzureVmWorkloadSQLAvailabilityGroupProtectableItem(
         subinquireditemcount: Optional[int] = None,
         subprotectableitemcount: Optional[int] = None,
         prebackupvalidation: Optional["_models.PreBackupValidation"] = None,
+        is_protectable: Optional[bool] = None,
+        nodes_list: Optional[List["_models.DistributedNodesInfo"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8516,6 +8603,11 @@ class AzureVmWorkloadSQLAvailabilityGroupProtectableItem(
         :keyword prebackupvalidation: Pre-backup validation for protectable objects.
         :paramtype prebackupvalidation:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreBackupValidation
+        :keyword is_protectable: Indicates if item is protectable.
+        :paramtype is_protectable: bool
+        :keyword nodes_list: List of the nodes in case of distributed container.
+        :paramtype nodes_list:
+         list[~azure.mgmt.recoveryservicesbackup.activestamp.models.DistributedNodesInfo]
         """
         super().__init__(
             backup_management_type=backup_management_type,
@@ -8530,9 +8622,11 @@ class AzureVmWorkloadSQLAvailabilityGroupProtectableItem(
             subinquireditemcount=subinquireditemcount,
             subprotectableitemcount=subprotectableitemcount,
             prebackupvalidation=prebackupvalidation,
+            is_protectable=is_protectable,
             **kwargs
         )
         self.protectable_item_type: str = "SQLAvailabilityGroupContainer"
+        self.nodes_list = nodes_list
 
 
 class AzureVmWorkloadSQLDatabaseProtectableItem(
@@ -8573,6 +8667,8 @@ class AzureVmWorkloadSQLDatabaseProtectableItem(
     :ivar prebackupvalidation: Pre-backup validation for protectable objects.
     :vartype prebackupvalidation:
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreBackupValidation
+    :ivar is_protectable: Indicates if item is protectable.
+    :vartype is_protectable: bool
     """
 
     _validation = {
@@ -8593,6 +8689,7 @@ class AzureVmWorkloadSQLDatabaseProtectableItem(
         "subinquireditemcount": {"key": "subinquireditemcount", "type": "int"},
         "subprotectableitemcount": {"key": "subprotectableitemcount", "type": "int"},
         "prebackupvalidation": {"key": "prebackupvalidation", "type": "PreBackupValidation"},
+        "is_protectable": {"key": "isProtectable", "type": "bool"},
     }
 
     def __init__(
@@ -8610,6 +8707,7 @@ class AzureVmWorkloadSQLDatabaseProtectableItem(
         subinquireditemcount: Optional[int] = None,
         subprotectableitemcount: Optional[int] = None,
         prebackupvalidation: Optional["_models.PreBackupValidation"] = None,
+        is_protectable: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8642,6 +8740,8 @@ class AzureVmWorkloadSQLDatabaseProtectableItem(
         :keyword prebackupvalidation: Pre-backup validation for protectable objects.
         :paramtype prebackupvalidation:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreBackupValidation
+        :keyword is_protectable: Indicates if item is protectable.
+        :paramtype is_protectable: bool
         """
         super().__init__(
             backup_management_type=backup_management_type,
@@ -8656,6 +8756,7 @@ class AzureVmWorkloadSQLDatabaseProtectableItem(
             subinquireditemcount=subinquireditemcount,
             subprotectableitemcount=subprotectableitemcount,
             prebackupvalidation=prebackupvalidation,
+            is_protectable=is_protectable,
             **kwargs
         )
         self.protectable_item_type: str = "SQLDataBase"
@@ -8717,8 +8818,8 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
     :vartype is_archive_enabled: bool
     :ivar policy_name: Name of the policy used for protection.
     :vartype policy_name: str
-    :ivar soft_delete_retention_period: Soft delete retention period in days.
-    :vartype soft_delete_retention_period: int
+    :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
+    :vartype soft_delete_retention_period_in_days: int
     :ivar friendly_name: Friendly name of the DB represented by this backup item.
     :vartype friendly_name: str
     :ivar server_name: Host/Cluster Name for instance or AG.
@@ -8757,6 +8858,9 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
     :ivar kpis_healths: Health details of different KPIs.
     :vartype kpis_healths: dict[str,
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.KPIResourceHealthDetails]
+    :ivar nodes_list: List of the nodes in case of distributed container.
+    :vartype nodes_list:
+     list[~azure.mgmt.recoveryservicesbackup.activestamp.models.DistributedNodesInfo]
     """
 
     _validation = {
@@ -8785,7 +8889,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
         "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
-        "soft_delete_retention_period": {"key": "softDeleteRetentionPeriod", "type": "int"},
+        "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "server_name": {"key": "serverName", "type": "str"},
         "parent_name": {"key": "parentName", "type": "str"},
@@ -8799,6 +8903,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
         "protected_item_health_status": {"key": "protectedItemHealthStatus", "type": "str"},
         "extended_info": {"key": "extendedInfo", "type": "AzureVmWorkloadProtectedItemExtendedInfo"},
         "kpis_healths": {"key": "kpisHealths", "type": "{KPIResourceHealthDetails}"},
+        "nodes_list": {"key": "nodesList", "type": "[DistributedNodesInfo]"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -8818,7 +8923,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
         resource_guard_operation_requests: Optional[List[str]] = None,
         is_archive_enabled: Optional[bool] = None,
         policy_name: Optional[str] = None,
-        soft_delete_retention_period: Optional[int] = None,
+        soft_delete_retention_period_in_days: Optional[int] = None,
         server_name: Optional[str] = None,
         parent_name: Optional[str] = None,
         parent_type: Optional[str] = None,
@@ -8830,6 +8935,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
         protected_item_health_status: Optional[Union[str, "_models.ProtectedItemHealthStatus"]] = None,
         extended_info: Optional["_models.AzureVmWorkloadProtectedItemExtendedInfo"] = None,
         kpis_healths: Optional[Dict[str, "_models.KPIResourceHealthDetails"]] = None,
+        nodes_list: Optional[List["_models.DistributedNodesInfo"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8868,8 +8974,8 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
         :paramtype is_archive_enabled: bool
         :keyword policy_name: Name of the policy used for protection.
         :paramtype policy_name: str
-        :keyword soft_delete_retention_period: Soft delete retention period in days.
-        :paramtype soft_delete_retention_period: int
+        :keyword soft_delete_retention_period_in_days: Soft delete retention period in days.
+        :paramtype soft_delete_retention_period_in_days: int
         :keyword server_name: Host/Cluster Name for instance or AG.
         :paramtype server_name: str
         :keyword parent_name: Parent name of the DB such as Instance or Availability Group.
@@ -8904,6 +9010,9 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
         :keyword kpis_healths: Health details of different KPIs.
         :paramtype kpis_healths: dict[str,
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.KPIResourceHealthDetails]
+        :keyword nodes_list: List of the nodes in case of distributed container.
+        :paramtype nodes_list:
+         list[~azure.mgmt.recoveryservicesbackup.activestamp.models.DistributedNodesInfo]
         """
         super().__init__(
             container_name=container_name,
@@ -8920,7 +9029,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
             resource_guard_operation_requests=resource_guard_operation_requests,
             is_archive_enabled=is_archive_enabled,
             policy_name=policy_name,
-            soft_delete_retention_period=soft_delete_retention_period,
+            soft_delete_retention_period_in_days=soft_delete_retention_period_in_days,
             server_name=server_name,
             parent_name=parent_name,
             parent_type=parent_type,
@@ -8932,6 +9041,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(
             protected_item_health_status=protected_item_health_status,
             extended_info=extended_info,
             kpis_healths=kpis_healths,
+            nodes_list=nodes_list,
             **kwargs
         )
         self.protected_item_type: str = "AzureVmWorkloadSQLDatabase"
@@ -9072,6 +9182,8 @@ class AzureVmWorkloadSQLInstanceProtectableItem(
     :ivar prebackupvalidation: Pre-backup validation for protectable objects.
     :vartype prebackupvalidation:
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreBackupValidation
+    :ivar is_protectable: Indicates if item is protectable.
+    :vartype is_protectable: bool
     """
 
     _validation = {
@@ -9092,6 +9204,7 @@ class AzureVmWorkloadSQLInstanceProtectableItem(
         "subinquireditemcount": {"key": "subinquireditemcount", "type": "int"},
         "subprotectableitemcount": {"key": "subprotectableitemcount", "type": "int"},
         "prebackupvalidation": {"key": "prebackupvalidation", "type": "PreBackupValidation"},
+        "is_protectable": {"key": "isProtectable", "type": "bool"},
     }
 
     def __init__(
@@ -9109,6 +9222,7 @@ class AzureVmWorkloadSQLInstanceProtectableItem(
         subinquireditemcount: Optional[int] = None,
         subprotectableitemcount: Optional[int] = None,
         prebackupvalidation: Optional["_models.PreBackupValidation"] = None,
+        is_protectable: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9141,6 +9255,8 @@ class AzureVmWorkloadSQLInstanceProtectableItem(
         :keyword prebackupvalidation: Pre-backup validation for protectable objects.
         :paramtype prebackupvalidation:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreBackupValidation
+        :keyword is_protectable: Indicates if item is protectable.
+        :paramtype is_protectable: bool
         """
         super().__init__(
             backup_management_type=backup_management_type,
@@ -9155,6 +9271,7 @@ class AzureVmWorkloadSQLInstanceProtectableItem(
             subinquireditemcount=subinquireditemcount,
             subprotectableitemcount=subprotectableitemcount,
             prebackupvalidation=prebackupvalidation,
+            is_protectable=is_protectable,
             **kwargs
         )
         self.protectable_item_type: str = "SQLInstance"
@@ -12393,12 +12510,15 @@ class BackupResourceVaultConfig(_serialization.Model):
     :vartype enhanced_security_state: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.EnhancedSecurityState
     :ivar soft_delete_feature_state: Soft Delete feature state. Known values are: "Invalid",
-     "Enabled", and "Disabled".
+     "Enabled", "Disabled", and "AlwaysON".
     :vartype soft_delete_feature_state: str or
      ~azure.mgmt.recoveryservicesbackup.activestamp.models.SoftDeleteFeatureState
+    :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
+    :vartype soft_delete_retention_period_in_days: int
     :ivar resource_guard_operation_requests: ResourceGuard Operation Requests.
     :vartype resource_guard_operation_requests: list[str]
-    :ivar is_soft_delete_feature_state_editable: Is soft delete feature state editable.
+    :ivar is_soft_delete_feature_state_editable: This flag is no longer in use. Please use
+     'softDeleteFeatureState' to set the soft delete state for the vault.
     :vartype is_soft_delete_feature_state_editable: bool
     """
 
@@ -12408,6 +12528,7 @@ class BackupResourceVaultConfig(_serialization.Model):
         "storage_type_state": {"key": "storageTypeState", "type": "str"},
         "enhanced_security_state": {"key": "enhancedSecurityState", "type": "str"},
         "soft_delete_feature_state": {"key": "softDeleteFeatureState", "type": "str"},
+        "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
         "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "is_soft_delete_feature_state_editable": {"key": "isSoftDeleteFeatureStateEditable", "type": "bool"},
     }
@@ -12420,6 +12541,7 @@ class BackupResourceVaultConfig(_serialization.Model):
         storage_type_state: Optional[Union[str, "_models.StorageTypeState"]] = None,
         enhanced_security_state: Optional[Union[str, "_models.EnhancedSecurityState"]] = None,
         soft_delete_feature_state: Optional[Union[str, "_models.SoftDeleteFeatureState"]] = None,
+        soft_delete_retention_period_in_days: Optional[int] = None,
         resource_guard_operation_requests: Optional[List[str]] = None,
         is_soft_delete_feature_state_editable: Optional[bool] = None,
         **kwargs: Any
@@ -12443,12 +12565,15 @@ class BackupResourceVaultConfig(_serialization.Model):
         :paramtype enhanced_security_state: str or
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.EnhancedSecurityState
         :keyword soft_delete_feature_state: Soft Delete feature state. Known values are: "Invalid",
-         "Enabled", and "Disabled".
+         "Enabled", "Disabled", and "AlwaysON".
         :paramtype soft_delete_feature_state: str or
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.SoftDeleteFeatureState
+        :keyword soft_delete_retention_period_in_days: Soft delete retention period in days.
+        :paramtype soft_delete_retention_period_in_days: int
         :keyword resource_guard_operation_requests: ResourceGuard Operation Requests.
         :paramtype resource_guard_operation_requests: list[str]
-        :keyword is_soft_delete_feature_state_editable: Is soft delete feature state editable.
+        :keyword is_soft_delete_feature_state_editable: This flag is no longer in use. Please use
+         'softDeleteFeatureState' to set the soft delete state for the vault.
         :paramtype is_soft_delete_feature_state_editable: bool
         """
         super().__init__(**kwargs)
@@ -12457,6 +12582,7 @@ class BackupResourceVaultConfig(_serialization.Model):
         self.storage_type_state = storage_type_state
         self.enhanced_security_state = enhanced_security_state
         self.soft_delete_feature_state = soft_delete_feature_state
+        self.soft_delete_retention_period_in_days = soft_delete_retention_period_in_days
         self.resource_guard_operation_requests = resource_guard_operation_requests
         self.is_soft_delete_feature_state_editable = is_soft_delete_feature_state_editable
 
@@ -13690,12 +13816,15 @@ class DistributedNodesInfo(_serialization.Model):
     :vartype status: str
     :ivar error_detail: Error Details if the Status is non-success.
     :vartype error_detail: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ErrorDetail
+    :ivar source_resource_id: ARM resource id of the node.
+    :vartype source_resource_id: str
     """
 
     _attribute_map = {
         "node_name": {"key": "nodeName", "type": "str"},
         "status": {"key": "status", "type": "str"},
         "error_detail": {"key": "errorDetail", "type": "ErrorDetail"},
+        "source_resource_id": {"key": "sourceResourceId", "type": "str"},
     }
 
     def __init__(
@@ -13704,6 +13833,7 @@ class DistributedNodesInfo(_serialization.Model):
         node_name: Optional[str] = None,
         status: Optional[str] = None,
         error_detail: Optional["_models.ErrorDetail"] = None,
+        source_resource_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -13714,11 +13844,14 @@ class DistributedNodesInfo(_serialization.Model):
         :paramtype status: str
         :keyword error_detail: Error Details if the Status is non-success.
         :paramtype error_detail: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ErrorDetail
+        :keyword source_resource_id: ARM resource id of the node.
+        :paramtype source_resource_id: str
         """
         super().__init__(**kwargs)
         self.node_name = node_name
         self.status = status
         self.error_detail = error_detail
+        self.source_resource_id = source_resource_id
 
 
 class DpmBackupEngine(BackupEngineBase):  # pylint: disable=too-many-instance-attributes
@@ -14196,8 +14329,8 @@ class DPMProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attr
     :vartype is_archive_enabled: bool
     :ivar policy_name: Name of the policy used for protection.
     :vartype policy_name: str
-    :ivar soft_delete_retention_period: Soft delete retention period in days.
-    :vartype soft_delete_retention_period: int
+    :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
+    :vartype soft_delete_retention_period_in_days: int
     :ivar friendly_name: Friendly name of the managed item.
     :vartype friendly_name: str
     :ivar backup_engine_name: Backup Management server protecting this backup item.
@@ -14236,7 +14369,7 @@ class DPMProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attr
         "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
-        "soft_delete_retention_period": {"key": "softDeleteRetentionPeriod", "type": "int"},
+        "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "backup_engine_name": {"key": "backupEngineName", "type": "str"},
         "protection_state": {"key": "protectionState", "type": "str"},
@@ -14260,7 +14393,7 @@ class DPMProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attr
         resource_guard_operation_requests: Optional[List[str]] = None,
         is_archive_enabled: Optional[bool] = None,
         policy_name: Optional[str] = None,
-        soft_delete_retention_period: Optional[int] = None,
+        soft_delete_retention_period_in_days: Optional[int] = None,
         friendly_name: Optional[str] = None,
         backup_engine_name: Optional[str] = None,
         protection_state: Optional[Union[str, "_models.ProtectedItemState"]] = None,
@@ -14303,8 +14436,8 @@ class DPMProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attr
         :paramtype is_archive_enabled: bool
         :keyword policy_name: Name of the policy used for protection.
         :paramtype policy_name: str
-        :keyword soft_delete_retention_period: Soft delete retention period in days.
-        :paramtype soft_delete_retention_period: int
+        :keyword soft_delete_retention_period_in_days: Soft delete retention period in days.
+        :paramtype soft_delete_retention_period_in_days: int
         :keyword friendly_name: Friendly name of the managed item.
         :paramtype friendly_name: str
         :keyword backup_engine_name: Backup Management server protecting this backup item.
@@ -14333,7 +14466,7 @@ class DPMProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-attr
             resource_guard_operation_requests=resource_guard_operation_requests,
             is_archive_enabled=is_archive_enabled,
             policy_name=policy_name,
-            soft_delete_retention_period=soft_delete_retention_period,
+            soft_delete_retention_period_in_days=soft_delete_retention_period_in_days,
             **kwargs
         )
         self.protected_item_type: str = "DPMProtectedItem"
@@ -14924,8 +15057,8 @@ class GenericProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-
     :vartype is_archive_enabled: bool
     :ivar policy_name: Name of the policy used for protection.
     :vartype policy_name: str
-    :ivar soft_delete_retention_period: Soft delete retention period in days.
-    :vartype soft_delete_retention_period: int
+    :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
+    :vartype soft_delete_retention_period_in_days: int
     :ivar friendly_name: Friendly name of the container.
     :vartype friendly_name: str
     :ivar policy_state: Indicates consistency of policy object and policy applied to this backup
@@ -14969,7 +15102,7 @@ class GenericProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-
         "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
-        "soft_delete_retention_period": {"key": "softDeleteRetentionPeriod", "type": "int"},
+        "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "policy_state": {"key": "policyState", "type": "str"},
         "protection_state": {"key": "protectionState", "type": "str"},
@@ -14995,7 +15128,7 @@ class GenericProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-
         resource_guard_operation_requests: Optional[List[str]] = None,
         is_archive_enabled: Optional[bool] = None,
         policy_name: Optional[str] = None,
-        soft_delete_retention_period: Optional[int] = None,
+        soft_delete_retention_period_in_days: Optional[int] = None,
         friendly_name: Optional[str] = None,
         policy_state: Optional[str] = None,
         protection_state: Optional[Union[str, "_models.ProtectionState"]] = None,
@@ -15040,8 +15173,8 @@ class GenericProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-
         :paramtype is_archive_enabled: bool
         :keyword policy_name: Name of the policy used for protection.
         :paramtype policy_name: str
-        :keyword soft_delete_retention_period: Soft delete retention period in days.
-        :paramtype soft_delete_retention_period: int
+        :keyword soft_delete_retention_period_in_days: Soft delete retention period in days.
+        :paramtype soft_delete_retention_period_in_days: int
         :keyword friendly_name: Friendly name of the container.
         :paramtype friendly_name: str
         :keyword policy_state: Indicates consistency of policy object and policy applied to this backup
@@ -15075,7 +15208,7 @@ class GenericProtectedItem(ProtectedItem):  # pylint: disable=too-many-instance-
             resource_guard_operation_requests=resource_guard_operation_requests,
             is_archive_enabled=is_archive_enabled,
             policy_name=policy_name,
-            soft_delete_retention_period=soft_delete_retention_period,
+            soft_delete_retention_period_in_days=soft_delete_retention_period_in_days,
             **kwargs
         )
         self.protected_item_type: str = "GenericProtectedItem"
@@ -16265,16 +16398,21 @@ class InquiryValidation(_serialization.Model):
     :vartype error_detail: ~azure.mgmt.recoveryservicesbackup.activestamp.models.ErrorDetail
     :ivar additional_detail: Error Additional Detail in case the status is non-success.
     :vartype additional_detail: str
+    :ivar protectable_item_count: Dictionary to store the count of ProtectableItems with key
+     POType.
+    :vartype protectable_item_count: JSON
     """
 
     _validation = {
         "additional_detail": {"readonly": True},
+        "protectable_item_count": {"readonly": True},
     }
 
     _attribute_map = {
         "status": {"key": "status", "type": "str"},
         "error_detail": {"key": "errorDetail", "type": "ErrorDetail"},
         "additional_detail": {"key": "additionalDetail", "type": "str"},
+        "protectable_item_count": {"key": "protectableItemCount", "type": "object"},
     }
 
     def __init__(
@@ -16290,6 +16428,7 @@ class InquiryValidation(_serialization.Model):
         self.status = status
         self.error_detail = error_detail
         self.additional_detail = None
+        self.protectable_item_count = None
 
 
 class InstantItemRecoveryTarget(_serialization.Model):
@@ -17186,8 +17325,8 @@ class MabFileFolderProtectedItem(ProtectedItem):  # pylint: disable=too-many-ins
     :vartype is_archive_enabled: bool
     :ivar policy_name: Name of the policy used for protection.
     :vartype policy_name: str
-    :ivar soft_delete_retention_period: Soft delete retention period in days.
-    :vartype soft_delete_retention_period: int
+    :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
+    :vartype soft_delete_retention_period_in_days: int
     :ivar friendly_name: Friendly name of this backup item.
     :vartype friendly_name: str
     :ivar computer_name: Name of the computer associated with this backup item.
@@ -17229,7 +17368,7 @@ class MabFileFolderProtectedItem(ProtectedItem):  # pylint: disable=too-many-ins
         "resource_guard_operation_requests": {"key": "resourceGuardOperationRequests", "type": "[str]"},
         "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
         "policy_name": {"key": "policyName", "type": "str"},
-        "soft_delete_retention_period": {"key": "softDeleteRetentionPeriod", "type": "int"},
+        "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
         "friendly_name": {"key": "friendlyName", "type": "str"},
         "computer_name": {"key": "computerName", "type": "str"},
         "last_backup_status": {"key": "lastBackupStatus", "type": "str"},
@@ -17256,7 +17395,7 @@ class MabFileFolderProtectedItem(ProtectedItem):  # pylint: disable=too-many-ins
         resource_guard_operation_requests: Optional[List[str]] = None,
         is_archive_enabled: Optional[bool] = None,
         policy_name: Optional[str] = None,
-        soft_delete_retention_period: Optional[int] = None,
+        soft_delete_retention_period_in_days: Optional[int] = None,
         friendly_name: Optional[str] = None,
         computer_name: Optional[str] = None,
         last_backup_status: Optional[str] = None,
@@ -17302,8 +17441,8 @@ class MabFileFolderProtectedItem(ProtectedItem):  # pylint: disable=too-many-ins
         :paramtype is_archive_enabled: bool
         :keyword policy_name: Name of the policy used for protection.
         :paramtype policy_name: str
-        :keyword soft_delete_retention_period: Soft delete retention period in days.
-        :paramtype soft_delete_retention_period: int
+        :keyword soft_delete_retention_period_in_days: Soft delete retention period in days.
+        :paramtype soft_delete_retention_period_in_days: int
         :keyword friendly_name: Friendly name of this backup item.
         :paramtype friendly_name: str
         :keyword computer_name: Name of the computer associated with this backup item.
@@ -17335,7 +17474,7 @@ class MabFileFolderProtectedItem(ProtectedItem):  # pylint: disable=too-many-ins
             resource_guard_operation_requests=resource_guard_operation_requests,
             is_archive_enabled=is_archive_enabled,
             policy_name=policy_name,
-            soft_delete_retention_period=soft_delete_retention_period,
+            soft_delete_retention_period_in_days=soft_delete_retention_period_in_days,
             **kwargs
         )
         self.protected_item_type: str = "MabFileFolderProtectedItem"

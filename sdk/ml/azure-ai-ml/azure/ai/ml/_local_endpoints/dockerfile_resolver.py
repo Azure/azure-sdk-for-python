@@ -71,7 +71,8 @@ class DockerfileResolver(object):
     def __str__(self) -> str:
         """Override DockerfileResolver str() built-in func to return the Dockerfile contents as a string.
 
-        :return: str
+        :return: Dockerfile Contents
+        :rtype: str
         """
         return "" if len(self._instructions) == 0 else "\n".join([str(instr) for instr in self._instructions])
 
@@ -79,6 +80,9 @@ class DockerfileResolver(object):
         """Internal use only.
 
         Constructs the Dockerfile instructions based on properties.
+
+        :param install_debugpy: Whether to install debugpy. Defaults to False.
+        :type install_debugpy: bool
         """
         self._instructions = []
         if self._docker_base_image:

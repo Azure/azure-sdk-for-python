@@ -148,56 +148,56 @@ def command(
     """Creates a Command object which can be used inside a dsl.pipeline function or used as a standalone Command job.
 
     :keyword name: The name of the Command job or component.
-    :type name: Optional[str]
+    :paramtype name: Optional[str]
     :keyword description: The description of the Command. Defaults to None.
-    :type description: Optional[str]
+    :paramtype description: Optional[str]
     :keyword tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
-    :type tags: Optional[dict[str, str]]
+    :paramtype tags: Optional[dict[str, str]]
     :keyword properties: The job property dictionary. Defaults to None.
-    :type properties: Optional[dict[str, str]]
+    :paramtype properties: Optional[dict[str, str]]
     :keyword display_name: The display name of the job. Defaults to a randomly generated name.
-    :type display_name: Optional[str]
+    :paramtype display_name: Optional[str]
     :keyword command: The command to be executed. Defaults to None.
-    :type command: Optional[str]
+    :paramtype command: Optional[str]
     :keyword experiment_name: The name of the experiment that the job will be created under. Defaults to current
         directory name.
-    :type experiment_name: Optional[str]
+    :paramtype experiment_name: Optional[str]
     :keyword environment: The environment that the job will run in.
-    :type environment: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
+    :paramtype environment: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
     :keyword environment_variables: A dictionary of environment variable names and values.
         These environment variables are set on the process where user script is being executed.
         Defaults to None.
-    :type environment_variables: Optional[dict[str, str]]
+    :paramtype environment_variables: Optional[dict[str, str]]
     :keyword distribution: The configuration for distributed jobs. Defaults to None.
-    :type distribution: Optional[Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
+    :paramtype distribution: Optional[Union[dict, ~azure.ai.ml.PyTorchDistribution, ~azure.ai.ml.MpiDistribution,
         ~azure.ai.ml.TensorFlowDistribution, ~azure.ai.ml.RayDistribution]]
     :keyword compute: The compute target the job will run on. Defaults to default compute.
-    :type compute: Optional[str]
+    :paramtype compute: Optional[str]
     :keyword inputs: A mapping of input names to input data sources used in the job. Defaults to None.
-    :type inputs: Optional[dict[str, Union[~azure.ai.ml.Input, str, bool, int, float, Enum]]]
+    :paramtype inputs: Optional[dict[str, Union[~azure.ai.ml.Input, str, bool, int, float, Enum]]]
     :keyword outputs: A mapping of output names to output data sources used in the job. Defaults to None.
-    :type outputs: Optional[dict[str, Union[str, ~azure.ai.ml.Output]]]
+    :paramtype outputs: Optional[dict[str, Union[str, ~azure.ai.ml.Output]]]
     :keyword instance_count: The number of instances or nodes to be used by the compute target. Defaults to 1.
-    :type instance_count: Optional[int]
+    :paramtype instance_count: Optional[int]
     :keyword instance_type: The type of VM to be used by the compute target.
-    :type instance_type: Optional[str]
+    :paramtype instance_type: Optional[str]
     :keyword locations: The list of locations where the job will run.
-    :type locations: Optional[list[str]]
+    :paramtype locations: Optional[list[str]]
     :keyword docker_args: Extra arguments to pass to the Docker run command. This would override any
         parameters that have already been set by the system, or in this section. This parameter is only
         supported for Azure ML compute types. Defaults to None.
-    :type docker_args: Optional[str]
+    :paramtype docker_args: Optional[str]
     :keyword shm_size: The size of the Docker container's shared memory block. This should be in the
         format of (number)(unit) where the number has to be greater than 0 and the unit can be one of
         b(bytes), k(kilobytes), m(megabytes), or g(gigabytes).
-    :type shm_size: Optional[str]
+    :paramtype shm_size: Optional[str]
     :keyword timeout: The number, in seconds, after which the job will be cancelled.
-    :type timeout: Optional[int]
+    :paramtype timeout: Optional[int]
     :keyword code: The source code to run the job. Can be a local path or "http:", "https:", or "azureml:" url
         pointing to a remote location.
-    :type code: Optional[Union[str, os.PathLike]]
+    :paramtype code: Optional[Union[str, os.PathLike]]
     :keyword identity: The identity that the command job will use while running on compute.
-    :type identity: Optional[Union[
+    :paramtype identity: Optional[Union[
         ~azure.ai.ml.entities.ManagedIdentityConfiguration,
         ~azure.ai.ml.entities.AmlTokenConfiguration,
         ~azure.ai.ml.entities.UserIdentityConfiguration]]
@@ -205,22 +205,21 @@ def command(
         Defaults to True. When True, if a Command Component is deterministic and has been run before in the
         current workspace with the same input and settings, it will reuse results from a previously submitted
         job when used as a node or step in a pipeline. In that scenario, no compute resources will be used.
-    :type is_deterministic: bool
+    :paramtype is_deterministic: bool
     :keyword services: The interactive services for the node. Defaults to None. This is an experimental parameter,
         and may change at any time. Please see https://aka.ms/azuremlexperimental for more information.
-    :type services: Optional[dict[str, Union[~azure.ai.ml.entities.JobService,
+    :paramtype services: Optional[dict[str, Union[~azure.ai.ml.entities.JobService,
         ~azure.ai.ml.entities.JupyterLabJobService, ~azure.ai.ml.entities.SshJobService,
         ~azure.ai.ml.entities.TensorBoardJobService, ~azure.ai.ml.entities.VsCodeJobService]]]
     :keyword job_tier: The job tier. Accepted values are "Spot", "Basic", "Standard", or "Premium".
-    :type job_tier: Optional[str]
+    :paramtype job_tier: Optional[str]
     :keyword priority: The priority of the job on the compute. Accepted values are "low", "medium", and "high".
         Defaults to "medium".
-    :type priority: Optional[str]
+    :paramtype priority: Optional[str]
     :return: A Command object.
     :rtype: ~azure.ai.ml.entities.Command
 
     .. admonition:: Example:
-
 
         .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
             :start-after: [START command_function]

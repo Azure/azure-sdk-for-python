@@ -1,6 +1,6 @@
 # Live Test For Python SDK
 
-name: $(BASE_BRANCH)
+name: AUTO RELEASE
 
 trigger:
   branches:
@@ -36,7 +36,7 @@ jobs:
         python scripts/dev_setup.py -p azure-core
         cd ..
         git config --global user.email "PythonSdkPipelines"
-        git config --global user.name "PythonSdkPipelines"
+        git config --global user.name "$(USR_NAME)"
 
         # clone(REPO: https://github.com/Azure/azure-sdk-for-python.git, USR_NAME: Azure, USR_TOKEN: xxxxxxxxxxxxx)
         mkdir azure-sdk-for-python
@@ -90,14 +90,15 @@ jobs:
         export AZURE_CLIENT_SECRET=$(ENV-CLIENT-SECRET)
         export AZURE_SUBSCRIPTION_ID=$(ENV-SUBSCRIPTION-ID)
         export ISSUE_LINK=$(ISSUE_LINK)
-        export BASE_BRANCH=$(BASE_BRANCH)
         export SCRIPT_PATH=$script_path
-        export AZURESDK_BOT_TOKEN=$(azuresdk-github-pat)
+        export BOT_TOKEN=$(azuresdk-github-pat)
+        export GIT_TOKEN=$(Yuchao-GitToken)
         export STORAGE_CONN_STR=$(storage-conn-str)
         export STORAGE_ENDPOINT=$(storage-endpoint)
         export PYTHON_TAG=$(PYTHON_TAG)
         export DEBUG_SDK_BRANCH=$(DEBUG_SDK_BRANCH)
         export TARGET_DATE=$(TARGET_DATE)
+        export TEST_FOLDER=$(TEST_FOLDER)
 
         # run
         cd azure-sdk-for-python

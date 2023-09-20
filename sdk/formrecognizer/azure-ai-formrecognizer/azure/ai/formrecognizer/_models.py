@@ -2712,7 +2712,7 @@ class DocumentWord:
     """
     content: str
     """Text content of the word."""
-    polygon: Optional[Sequence[Point]]
+    polygon: Sequence[Point]
     """Bounding polygon of the word."""
     span: DocumentSpan
     """Location of the word in the reading order concatenated content."""
@@ -2781,7 +2781,7 @@ class DocumentSelectionMark:
     state: str
     """State of the selection mark. Possible values include: "selected",
      "unselected"."""
-    polygon: Optional[Sequence[Point]]
+    polygon: Sequence[Point]
     """Bounding polygon of the selection mark."""
     span: DocumentSpan
     """Location of the selection mark in the reading order concatenated
@@ -2850,7 +2850,7 @@ class DocumentLine:
 
     content: str
     """Concatenated content of the contained elements in reading order."""
-    polygon: Optional[Sequence[Point]]
+    polygon: Sequence[Point]
     """Bounding polygon of the line."""
     spans: List[DocumentSpan]
     """Location of the line in the reading order concatenated content."""
@@ -3180,11 +3180,11 @@ class DocumentPage:  # pylint: disable=too-many-instance-attributes
      "inch"."""
     spans: List[DocumentSpan]
     """Location of the page in the reading order concatenated content."""
-    words: Optional[List[DocumentWord]]
+    words: List[DocumentWord]
     """Extracted words from the page."""
-    selection_marks: Optional[List[DocumentSelectionMark]]
+    selection_marks: List[DocumentSelectionMark]
     """Extracted selection marks from the page."""
-    lines: Optional[List[DocumentLine]]
+    lines: List[DocumentLine]
     """Extracted lines from the page, potentially containing both textual and
      visual elements."""
     barcodes: List[DocumentBarcode]
@@ -3811,7 +3811,7 @@ class BlobFileListSource:
     def from_dict(cls, data: Dict[str, Any]) -> "BlobFileListSource":
         """Converts a dict in the shape of a BlobFileListSource to the model itself.
 
-        :param Dict[str, Any] data: A dictionary in the shape of BlobFileListSource.
+        :param dict data: A dictionary in the shape of BlobFileListSource.
         :return: BlobFileListSource
         :rtype: BlobFileListSource
         """
@@ -3869,7 +3869,7 @@ class BlobSource:
     def from_dict(cls, data: Dict[str, Any]) -> "BlobSource":
         """Converts a dict in the shape of a BlobSource to the model itself.
 
-        :param Dict[str, Any] data: A dictionary in the shape of BlobSource.
+        :param dict data: A dictionary in the shape of BlobSource.
         :return: BlobSource
         :rtype: BlobSource
         """
@@ -3932,7 +3932,7 @@ class ClassifierDocumentTypeDetails:
     def from_dict(cls, data: Dict[str, Any]) -> "ClassifierDocumentTypeDetails":
         """Converts a dict in the shape of a ClassifierDocumentTypeDetails to the model itself.
 
-        :param Dict[str, Any] data: A dictionary in the shape of ClassifierDocumentTypeDetails.
+        :param dict data: A dictionary in the shape of ClassifierDocumentTypeDetails.
         :return: ClassifierDocumentTypeDetails
         :rtype: ClassifierDocumentTypeDetails
         """
@@ -4748,7 +4748,7 @@ class ResourceDetails:
 
     custom_document_models: CustomDocumentModelsDetails
     """Details regarding the custom models under the Form Recognizer resource."""
-    neural_document_model_quota: QuotaDetails
+    neural_document_model_quota: Optional[QuotaDetails]
     """Quota details regarding the custom neural document model builds under the Form Recognizer resource."""
 
     def __init__(

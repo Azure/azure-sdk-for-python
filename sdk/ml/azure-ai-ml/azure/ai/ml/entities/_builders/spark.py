@@ -508,11 +508,11 @@ class Spark(BaseNode, SparkJobEntryMixin):
                 yaml_path="environment.image",
                 message=SPARK_ENVIRONMENT_WARNING_MESSAGE,
             )
-        result.merge_with(self._validate_entry_exist(raise_error=False))
+        result.merge_with(self._validate_entry_exist())
         result.merge_with(self._validate_fields())
         return result
 
-    def _validate_entry_exist(self, raise_error=False) -> MutableValidationResult:
+    def _validate_entry_exist(self) -> MutableValidationResult:
         is_remote_code = isinstance(self.code, str) and (
             self.code.startswith("git+")
             or self.code.startswith(REGISTRY_URI_FORMAT)
@@ -546,7 +546,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
                     validation_result.append_error(
                         message=f"Entry {entry_path} doesn't exist.", yaml_path="component.entry"
                     )
-        return validation_result.try_raise(error_target=self._get_validation_error_target(), raise_error=raise_error)
+        return validation_result
 
     def _validate_fields(self) -> MutableValidationResult:
         validation_result = self._create_empty_validation_result()
@@ -585,8 +585,13 @@ class Spark(BaseNode, SparkJobEntryMixin):
                 validation_result.append_error(message=str(e), yaml_path="args")
         return validation_result
 
+    # pylint: disable-next=docstring-missing-param
     def __call__(self, *args, **kwargs) -> "Spark":
-        """Call Spark as a function will return a new instance each time."""
+        """Call Spark as a function will return a new instance each time.
+
+        :return: A Spark object
+        :rtype: Spark
+        """
         if isinstance(self._component, Component):
             # call this to validate inputs
             node = self._component(*args, **kwargs)

@@ -8,3 +8,5 @@ extends:
       Public:
         SubscriptionConfiguration: $(python-ml-automl-sub-scope)
         Location: eastus
+        MatrixReplace:
+          - TestSamples=.*/true

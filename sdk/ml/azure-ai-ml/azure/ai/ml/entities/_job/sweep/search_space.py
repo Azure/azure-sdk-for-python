@@ -19,7 +19,7 @@ class SweepDistribution(ABC, RestTranslatableMixin):
     This class should not be instantiated directly. Instead, use one of its subclasses.
 
     :keyword type: Type of distribution.
-    :type type: str
+    :paramtype type: str
     """
 
     def __init__(self, *, type: Optional[str] = None) -> None:  # pylint: disable=redefined-builtin
@@ -65,7 +65,6 @@ class Choice(SweepDistribution):
     :type values: list[Union[float, str, dict]]
 
     .. admonition:: Example:
-
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_choice_loguniform]
@@ -127,7 +126,6 @@ class Normal(SweepDistribution):
 
     .. admonition:: Example:
 
-
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_randint_normal]
             :end-before: [END configure_sweep_job_randint_normal]
@@ -160,7 +158,6 @@ class LogNormal(Normal):
 
     .. admonition:: Example:
 
-
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_lognormal_qlognormal]
             :end-before: [END configure_sweep_job_lognormal_qlognormal]
@@ -185,7 +182,6 @@ class QNormal(Normal):
     :type q: int
 
     .. admonition:: Example:
-
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_qloguniform_qnormal]
@@ -221,7 +217,6 @@ class QLogNormal(QNormal):
     :type q: Optional[int]
     .. admonition:: Example:
 
-
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_lognormal_qlognormal]
             :end-before: [END configure_sweep_job_lognormal_qlognormal]
@@ -244,7 +239,6 @@ class Randint(SweepDistribution):
     :type upper: int
 
     .. admonition:: Example:
-
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_randint_normal]
@@ -277,14 +271,13 @@ class Uniform(SweepDistribution):
 
     .. admonition:: Example:
 
-
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_uniform]
             :end-before: [END configure_sweep_job_uniform]
             :language: python
             :dedent: 8
             :caption: Configuring Uniform distributions for learning rates and momentum
-            during a hyperparameter sweep on a Command job.
+                during a hyperparameter sweep on a Command job.
     """
 
     def __init__(self, min_value: Optional[float] = None, max_value: Optional[float] = None, **kwargs) -> None:
@@ -336,7 +329,6 @@ class QUniform(Uniform):
 
     .. admonition:: Example:
 
-
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_truncation_selection_policy]
             :end-before: [END configure_sweep_job_truncation_selection_policy]
@@ -375,7 +367,6 @@ class QLogUniform(QUniform):
     :type q: Optional[int]
 
     .. admonition:: Example:
-
 
         .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_qloguniform_qnormal]

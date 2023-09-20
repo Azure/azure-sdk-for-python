@@ -37,6 +37,8 @@ class TestFeatureStore(AzureRecordedTestCase):
 
         create_fs = fs_poller.result()
         assert isinstance(create_fs, FeatureStore)
+        assert create_fs.offline_store.target is not None
+        assert create_fs.materialization_identity.resource_id is not None
 
         fs_result = client.feature_stores.get(fs_name)
         assert isinstance(fs_result, FeatureStore)
@@ -52,6 +54,37 @@ class TestFeatureStore(AzureRecordedTestCase):
         updated_fs = fs_poller.result()
         assert isinstance(updated_fs, FeatureStore)
         assert updated_fs.description == fs_updated_description
+
+        from azure.ai.ml.entities import ManagedIdentityConfiguration
+
+        new_materialization_identity_resource_id = "/subscriptions/1aefdc5e-3a7c-4d71-a9f9-f5d3b03be19a/resourceGroups/rg-runhliml/providers/Microsoft.ManagedIdentity/userAssignedIdentities/materialization-uai-update"
+        fs = FeatureStore(
+            name=fs_name,
+            materialization_identity=ManagedIdentityConfiguration(resource_id=new_materialization_identity_resource_id),
+        )
+        fs_poller = client.feature_stores.begin_update(feature_store=fs)
+        assert isinstance(fs_poller, LROPoller)
+
+        updated_fs = fs_poller.result()
+        assert isinstance(updated_fs, FeatureStore)
+        assert updated_fs.materialization_identity.resource_id == new_materialization_identity_resource_id
+
+        new_materialization_identity_resource_id = "/subscriptions/1aefdc5e-3a7c-4d71-a9f9-f5d3b03be19a/resourceGroups/rg-runhliml/providers/Microsoft.ManagedIdentity/userAssignedIdentities/materialization-uai-update1"
+        fs = FeatureStore(
+            name=fs_name,
+            materialization_identity=ManagedIdentityConfiguration(
+                resource_id=new_materialization_identity_resource_id,
+            ),
+        )
+        fs_poller = client.feature_stores.begin_update(feature_store=fs, grant_materialization_permissions=False)
+        assert isinstance(fs_poller, LROPoller)
+
+        updated_fs = fs_poller.result()
+        assert isinstance(updated_fs, FeatureStore)
+
+        fs_poller = client.feature_stores.begin_provision_network(name=fs_name)
+        assert isinstance(fs_poller, LROPoller)
+        fs_poller.result()
 
         fs_poller = client.feature_stores.begin_delete(name=fs_name, delete_dependent_resources=True)
         assert isinstance(fs_poller, LROPoller)

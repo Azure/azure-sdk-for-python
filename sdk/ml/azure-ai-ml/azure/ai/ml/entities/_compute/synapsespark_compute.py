@@ -22,17 +22,15 @@ class AutoScaleSettings:
     """Auto-scale settings for Synapse Spark compute.
 
     :keyword min_node_count: The minimum compute node count.
-    :type min_node_count: Optional[int]
+    :paramtype min_node_count: Optional[int]
     :keyword max_node_count: The maximum compute node count.
-    :type max_node_count: Optional[int]
+    :paramtype max_node_count: Optional[int]
     :keyword enabled: Specifies if auto-scale is enabled.
-    :type enabled: Optional[bool]
+    :paramtype enabled: Optional[bool]
 
     .. admonition:: Example:
 
-
         .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
-
             :start-after: [START synapse_spark_compute_configuration]
             :end-before: [END synapse_spark_compute_configuration]
             :language: python
@@ -71,12 +69,11 @@ class AutoPauseSettings:
     """Auto pause settings for Synapse Spark compute.
 
     :keyword delay_in_minutes: The time delay in minutes before pausing cluster.
-    :type delay_in_minutes: Optional[int]
+    :paramtype delay_in_minutes: Optional[int]
     :keyword enabled: Specifies if auto-pause is enabled.
-    :type enabled: Optional[bool]
+    :paramtype enabled: Optional[bool]
 
     .. admonition:: Example:
-
 
         .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START synapse_spark_compute_configuration]
@@ -109,30 +106,29 @@ class SynapseSparkCompute(Compute):
     """SynapseSpark Compute resource.
 
     :keyword name: The name of the compute.
-    :type name: str
+    :paramtype name: str
     :keyword description: The description of the resource. Defaults to None.
-    :type description: Optional[str]
+    :paramtype description: Optional[str]
     :keyword tags: The set of resource tags defined as key/value pairs. Defaults to None.
-    :type tags: Optional[[dict[str, str]]
+    :paramtype tags: Optional[[dict[str, str]]
     :keyword node_count: The number of nodes in the compute.
-    :type node_count: Optional[int]
+    :paramtype node_count: Optional[int]
     :keyword node_family: The node family of the compute.
-    :type node_family: Optional[str]
+    :paramtype node_family: Optional[str]
     :keyword node_size: The size of the node.
-    :type node_size: Optional[str]
+    :paramtype node_size: Optional[str]
     :keyword spark_version: The version of Spark to use.
-    :type spark_version: Optional[str]
+    :paramtype spark_version: Optional[str]
     :keyword identity: The configuration of identities that are associated with the compute cluster.
-    :type identity: Optional[~azure.ai.ml.entities.IdentityConfiguration]
+    :paramtype identity: Optional[~azure.ai.ml.entities.IdentityConfiguration]
     :keyword scale_settings: The scale settings for the compute.
-    :type scale_settings: Optional[~azure.ai.ml.entities.AutoScaleSettings]
+    :paramtype scale_settings: Optional[~azure.ai.ml.entities.AutoScaleSettings]
     :keyword auto_pause_settings: The auto pause settings for the compute.
-    :type auto_pause_settings: Optional[~azure.ai.ml.entities.AutoPauseSettings]
+    :paramtype auto_pause_settings: Optional[~azure.ai.ml.entities.AutoPauseSettings]
     :keyword kwargs: Additional keyword arguments passed to the parent class.
-    :type kwargs: Optional[dict]
+    :paramtype kwargs: Optional[dict]
 
     .. admonition:: Example:
-
 
         .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
             :start-after: [START synapse_spark_compute_configuration]

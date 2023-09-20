@@ -32,7 +32,13 @@ from .._serialize import (
     _get_match_headers,
 )
 from .._deserialize import deserialize_iso, _return_headers_and_deserialized, _convert_to_entity, _trim_service_metadata
-from .._error import _decode_error, _process_table_error, _reprocess_error, _reraise_error, _validate_tablename_error
+from .._error import (
+    _decode_error,
+    _process_table_error,
+    _reprocess_error,
+    _validate_tablename_error,
+    _validate_key_values,
+)
 from .._table_client import EntityType, TransactionOperationType
 from ._base_client_async import AsyncTablesBaseClient
 from ._models import TableEntityPropertiesPaged
@@ -373,13 +379,10 @@ class TableClient(AsyncTablesBaseClient):
             )
         except HttpResponseError as error:
             decoded = _decode_error(error.response, error.message)
-            if decoded.error_code == "PropertiesNeedValue":
-                if entity.get("PartitionKey") is None:
-                    raise ValueError("PartitionKey must be present in an entity") from error
-                if entity.get("RowKey") is None:
-                    raise ValueError("RowKey must be present in an entity") from error
+            _validate_key_values(decoded, entity.get("PartitionKey"), entity.get("RowKey"))
             _validate_tablename_error(decoded, self.table_name)
-            _reraise_error(error)
+            # We probably should have been raising decoded error before removing _reraise_error()
+            raise error
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace_async
@@ -679,4 +682,9 @@ class TableClient(AsyncTablesBaseClient):
                     "of Tuples. Please check documentation for correct Tuple format."
                 ) from exc
 
-        return await self._batch_send(self.table_name, *batched_requests.requests, **kwargs)
+        try:
+            return await self._batch_send(self.table_name, *batched_requests.requests, **kwargs)
+        except HttpResponseError as ex:
+            if ex.status_code == 400 and not batched_requests.requests:
+                return []
+            raise

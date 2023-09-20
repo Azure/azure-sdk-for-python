@@ -14,5 +14,5 @@ def get_running_loop() -> asyncio.AbstractEventLoop:
             asyncio._get_running_loop()  # pylint: disable=protected-access, no-member
         )
         if loop is None:
-            raise RuntimeError("No running event loop")
+            raise RuntimeError("No running event loop") from None
         return loop
