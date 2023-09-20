@@ -248,16 +248,6 @@ class EventGridPublisherClientOperationsMixin(InternalOperations):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-    def close(self):
-        """Close the :class:`~azure.eventgrid.EventGridPublisherClient` session."""
-        return self._client.close()
-
-    def __enter__(self):
-        self._client.__enter__()  # pylint:disable=no-member
-        return self
-
-    def __exit__(self, *args):
-        self._client.__exit__(*args)  # pylint:disable=no-member
 
 __all__: List[str] = [EventGridPublisherClientOperationsMixin]  # Add all objects you want publicly available to users at this package level
 
