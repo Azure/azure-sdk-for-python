@@ -302,8 +302,8 @@ class TestQueryAsync:
     @pytest.mark.asyncio
     async def test_max_item_count_honored_in_order_by_query_async(self):
         await self._set_up()
-        created_collection = await self.created_db.create_container_if_not_exists(
-            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
+        created_collection = await self.created_db.create_container_if_not_exists(str(uuid.uuid4()),
+                                                                                  PartitionKey(path="/pk"))
         docs = []
         for i in range(10):
             document_definition = {'pk': 'pk', 'id': 'myId' + str(uuid.uuid4())}
@@ -346,7 +346,7 @@ class TestQueryAsync:
     async def test_get_query_plan_through_gateway_async(self):
         await self._set_up()
         created_collection = await self.created_db.create_container_if_not_exists(
-            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
+            str(uuid.uuid4()), PartitionKey(path="/pk"))
         await self._validate_query_plan(query="Select top 10 value count(c.id) from c",
                                   container_link=created_collection.container_link,
                                   top=10,
@@ -400,7 +400,7 @@ class TestQueryAsync:
     async def test_unsupported_queries_async(self):
         await self._set_up()
         created_collection = await self.created_db.create_container_if_not_exists(
-            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
+            str(uuid.uuid4()), PartitionKey(path="/pk"))
         queries = ['SELECT COUNT(1) FROM c', 'SELECT COUNT(1) + 5 FROM c', 'SELECT COUNT(1) + SUM(c) FROM c']
         for query in queries:
             query_iterable = created_collection.query_items(query=query)
@@ -414,7 +414,7 @@ class TestQueryAsync:
     async def test_query_with_non_overlapping_pk_ranges_async(self):
         await self._set_up()
         created_collection = await self.created_db.create_container_if_not_exists(
-            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
+            str(uuid.uuid4()), PartitionKey(path="/pk"))
         query_iterable = created_collection.query_items("select * from c where c.pk='1' or c.pk='2'")
         assert [item async for item in query_iterable] == []
 
@@ -624,7 +624,7 @@ class TestQueryAsync:
     async def test_distinct_on_different_types_and_field_orders_async(self):
         await self._set_up()
         created_collection = await self.created_db.create_container_if_not_exists(
-            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
+            str(uuid.uuid4()), PartitionKey(path="/pk"))
         self.payloads = [
             {'f1': 1, 'f2': 'value', 'f3': 100000000000000000, 'f4': [1, 2, '3'], 'f5': {'f6': {'f7': 2}}},
             {'f2': '\'value', 'f4': [1.0, 2, '3'], 'f5': {'f6': {'f7': 2.0}}, 'f1': 1.0, 'f3': 100000000000000000.00},
@@ -696,7 +696,7 @@ class TestQueryAsync:
     async def test_paging_with_continuation_token_async(self):
         await self._set_up()
         created_collection = await self.created_db.create_container_if_not_exists(
-            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
+            str(uuid.uuid4()), PartitionKey(path="/pk"))
 
         document_definition = {'pk': 'pk', 'id': '1'}
         await created_collection.upsert_item(body=document_definition)
@@ -764,7 +764,7 @@ class TestQueryAsync:
     async def test_value_max_query_async(self):
         await self._set_up()
         container = await self.created_db.create_container_if_not_exists(
-            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
+            str(uuid.uuid4()), PartitionKey(path="/pk"))
         query = "Select value max(c.version) FROM c where c.isComplete = true and c.lookupVersion = @lookupVersion"
         query_results = container.query_items(query, parameters=[
             {"name": "@lookupVersion", "value": "console_csat"}  # cspell:disable-line
@@ -776,7 +776,7 @@ class TestQueryAsync:
     async def test_continuation_token_size_limit_query_async(self):
         await self._set_up()
         container = await self.created_db.create_container_if_not_exists(
-            self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
+            str(uuid.uuid4()), PartitionKey(path="/pk"))
         for i in range(1, 1000):
             await container.create_item(body=dict(pk='123', id=str(i), some_value=str(i % 3)))
         query = "Select * from c where c.some_value='2'"
