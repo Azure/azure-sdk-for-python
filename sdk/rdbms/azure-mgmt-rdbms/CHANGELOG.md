@@ -4,7 +4,24 @@
 
 ### Features Added
 
-  - private_endpoint_connections of Model Server changes to readonly
+  - Added operation group LocationBasedCapabilitySetOperations in `mysql_flexibleservers`
+  - Added operation group OperationResultsOperations in `mysql_flexibleservers`
+  - Added operation group ServersMigrationOperations in `mysql_flexibleservers`
+  - Model BackupAndExportResponse has a new parameter system_data in `mysql_flexibleservers`
+  - Model ErrorResponse has a new parameter error in `mysql_flexibleservers`
+  - Model ProxyResource has a new parameter system_data in `mysql_flexibleservers`
+  - Model Resource has a new parameter system_data in `mysql_flexibleservers`
+  - Model Server has a new parameter import_source_properties in `mysql_flexibleservers`
+  - Model Server has a new parameter private_endpoint_connections in `mysql_flexibleservers`
+  - Model TrackedResource has a new parameter system_data in `mysql_flexibleservers`
+
+### Breaking Changes
+
+  - Model ErrorResponse no longer has parameter additional_info in `mysql_flexibleservers`
+  - Model ErrorResponse no longer has parameter code in `mysql_flexibleservers`
+  - Model ErrorResponse no longer has parameter details in `mysql_flexibleservers`
+  - Model ErrorResponse no longer has parameter message in `mysql_flexibleservers`
+  - Model ErrorResponse no longer has parameter target in `mysql_flexibleservers`
 
 ## 10.2.0b10 (2023-06-08)
 
