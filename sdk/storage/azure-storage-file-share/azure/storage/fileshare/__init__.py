@@ -34,7 +34,9 @@ from ._models import (
     FileSasPermissions,
     ShareSasPermissions,
     ContentSettings,
-    NTFSAttributes)
+    NTFSAttributes,
+    ShareTokenAudience
+    )
 from ._generated.models import (
     ShareAccessTier,
     ShareRootSquash
@@ -75,7 +77,8 @@ __all__ = [
     'ShareRootSquash',
     'generate_account_sas',
     'generate_share_sas',
-    'generate_file_sas'
+    'generate_file_sas',
+    'ShareTokenAudience'
 ]
 
 

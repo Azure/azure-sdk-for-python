@@ -88,6 +88,8 @@ class ShareServiceClient(StorageAccountHostsMixin):
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
+    :keyword ShareTokenAudience audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential.
 
     .. admonition:: Example:
 
@@ -154,6 +156,8 @@ class ShareServiceClient(StorageAccountHostsMixin):
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        :keyword ShareTokenAudience audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential.
         :returns: A File Share service client.
         :rtype: ~azure.storage.fileshare.ShareServiceClient
 

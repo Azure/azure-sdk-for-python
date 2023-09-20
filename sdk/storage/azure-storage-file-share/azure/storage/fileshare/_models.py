@@ -7,6 +7,7 @@
 
 from urllib.parse import unquote
 from enum import Enum
+from typing_extensions import Self
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.paging import PageIterator
@@ -14,7 +15,7 @@ from azure.core.exceptions import HttpResponseError
 
 from ._parser import _parse_datetime_from_str
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
-from ._shared.models import DictMixin, get_enum_value
+from ._shared.models import DictMixin, get_enum_value, TokenAudience
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
@@ -1022,3 +1023,17 @@ def service_properties_deserialize(generated):
         'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
         'protocol': ShareProtocolSettings._from_generated(generated.protocol), # pylint: disable=protected-access
     }
+
+class ShareTokenAudience(TokenAudience):
+    """Audiences available for Fileshare."""
+
+    @classmethod
+    def get_fileshare_account_audience(cls, account_name: str) -> Self:
+        """The Fileshare service endpoint for a given Storage account. Use this method
+        to acquire a token for authorizing requests to that specific Azure Storage account and
+        service only.
+        :param str account_name: The storage account name used to populate the service endpoint.
+        :returns: The Audience for the given Storage account and respective service endpoint.
+        :rtype: ShareTokenAudience
+        """
+        return cls(f'https://{account_name}.file-share.core.windows.net/')

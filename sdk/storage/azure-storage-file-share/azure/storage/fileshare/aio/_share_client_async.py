@@ -87,6 +87,8 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
+    :keyword ShareTokenAudience audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential.
     """
     def __init__(
             self, account_url: str,
