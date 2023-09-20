@@ -64,6 +64,7 @@ def delete_account(client, rg, acc_name):
         raise Exception("Timeout when deleting account")
 
     wait_for_no_account(client, rg, acc_name)
+    print("\tDone deleting account {0}".format(acc_name))
 
 class TestNetAppAccount(AzureMgmtRecordedTestCase):
 

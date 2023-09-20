@@ -494,3 +494,14 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
             delete_volume(self.client, setup.TEST_RG, setup.PERMA_ACCOUNT, setup.TEST_POOL_2, volumeName1)
             delete_pool(self.client, setup.TEST_RG, setup.PERMA_ACCOUNT, setup.TEST_POOL_2)
         print("Finished with test_pool_change")
+        
+    @recorded_by_proxy
+    def test_begin_populate_availability_zone(self):
+        set_bodiless_matcher()
+        print("Starting begin_populate_availability_zone")
+        try:
+            self.client.volumes.begin_populate_availability_zone(setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL, setup.PERMA_VOLUME)
+        except Exception as e:
+            #AFEC still in 2023.5. Fix this in 2023.7 
+            assert str(e).startswith("(")
+        print("Finished with begin_populate_availability_zone")
