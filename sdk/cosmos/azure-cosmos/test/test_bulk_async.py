@@ -84,7 +84,7 @@ class TestBulk:
 
         # check requests were throttled due to lack of RUs on default container
         bulk_result = await container.bulk(operations=operations)
-        assert len(bulk_result[0][1]) == 100
+        assert len(bulk_result[0]) == 100
         batch_response_headers = bulk_result[1][0]
         assert batch_response_headers.get(HttpHeaders.ThrottleRetryCount) > 0
 
@@ -93,7 +93,7 @@ class TestBulk:
                                                                                  partition_key=PartitionKey(path="/id"),
                                                                                  offer_throughput=1000)
         bulk_result = await bulk_container.bulk(operations=operations)
-        assert len(bulk_result[0][1]) == 100
+        assert len(bulk_result[0]) == 100
         batch_response_headers = bulk_result[1][0]
         assert batch_response_headers.get(HttpHeaders.ThrottleRetryCount) is None
 

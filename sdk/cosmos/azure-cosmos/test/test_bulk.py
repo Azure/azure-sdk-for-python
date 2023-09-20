@@ -83,7 +83,7 @@ class BulkTests(unittest.TestCase):
 
         # check requests were throttled due to lack of RUs on default container
         bulk_result = container.bulk(operations=operations)
-        assert len(bulk_result[0][1]) == 100
+        assert len(bulk_result[0]) == 100
         batch_response_headers = bulk_result[1][0]
         assert batch_response_headers.get(HttpHeaders.ThrottleRetryCount) > 0
 
@@ -92,7 +92,7 @@ class BulkTests(unittest.TestCase):
                                                                            partition_key=PartitionKey(path="/id"),
                                                                            offer_throughput=1000)
         bulk_result = bulk_container.bulk(operations=operations)
-        assert len(bulk_result[0][1]) == 100
+        assert len(bulk_result[0]) == 100
         batch_response_headers = bulk_result[1][0]
         assert batch_response_headers.get(HttpHeaders.ThrottleRetryCount) is None
 
