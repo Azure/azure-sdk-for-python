@@ -40,7 +40,7 @@ class ComponentIgnoreFile(IgnoreFile):
         skip_ignore_file: bool = False,
         extra_ignore_list: Optional[List[IgnoreFile]] = None,
     ):
-        self._base_path = Path(directory_path)
+        self._base_path: Union[str, Path] = Path(directory_path)
         self._extra_ignore_list: List[IgnoreFile] = extra_ignore_list or []
         # only the additional include file in root directory is ignored
         # additional include files in subdirectories are not processed so keep them
@@ -58,7 +58,7 @@ class ComponentIgnoreFile(IgnoreFile):
         return True
 
     @property
-    def base_path(self) -> Path:
+    def base_path(self) -> Union[str, Path]:
         """Get the base path of the ignore file.
 
         :return: The base path.
@@ -91,7 +91,8 @@ class ComponentIgnoreFile(IgnoreFile):
         for ignore_file in self._extra_ignore_list:
             if ignore_file.is_file_excluded(file_path):
                 return True
-        return super(ComponentIgnoreFile, self).is_file_excluded(file_path)
+        res: bool = super(ComponentIgnoreFile, self).is_file_excluded(file_path)
+        return res
 
     def merge(self, other_path: Path) -> "ComponentIgnoreFile":
         """Merge the ignore list from another ComponentIgnoreFile object.
@@ -115,7 +116,8 @@ class ComponentIgnoreFile(IgnoreFile):
         """
         if not super(ComponentIgnoreFile, self).exists():
             return self._COMPONENT_CODE_IGNORES
-        return super(ComponentIgnoreFile, self)._get_ignore_list() + self._COMPONENT_CODE_IGNORES
+        res: list = super(ComponentIgnoreFile, self)._get_ignore_list() + self._COMPONENT_CODE_IGNORES
+        return res
 
 
 class CodeType(Enum):
@@ -128,7 +130,7 @@ class CodeType(Enum):
     UNKNOWN = "unknown"
 
 
-def _get_code_type(origin_code_value) -> CodeType:
+def _get_code_type(origin_code_value: Optional[str]) -> CodeType:
     if origin_code_value is None:
         return CodeType.NONE
     if not isinstance(origin_code_value, str):
@@ -274,7 +276,9 @@ class ComponentCodeMixin:
             yield None
         else:
             base_path = self._get_base_path_for_code()
-            absolute_path = origin_code_value if os.path.isabs(origin_code_value) else base_path / origin_code_value
+            absolute_path: Union[str, Path] = (
+                origin_code_value if os.path.isabs(origin_code_value) else base_path / origin_code_value
+            )
 
             yield Code(
                 base_path=base_path,
@@ -282,7 +286,7 @@ class ComponentCodeMixin:
                 ignore_file=ComponentIgnoreFile(absolute_path),
             )
 
-    def _with_local_code(self):
+    def _with_local_code(self) -> bool:
         # TODO: remove this method after we have a better way to do this judge in cache_utils
         origin_code_value = self._get_origin_code_in_str()
         code_type = _get_code_type(origin_code_value)
