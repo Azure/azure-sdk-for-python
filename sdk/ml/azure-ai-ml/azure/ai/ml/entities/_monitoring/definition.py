@@ -27,6 +27,7 @@ from azure.ai.ml.entities._monitoring.signals import (
     FeatureAttributionDriftSignal,
     MonitoringSignal,
     PredictionDriftSignal,
+    GenerationSafetyQualitySignal,
 )
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
 
@@ -45,7 +46,8 @@ class MonitorDefinition(RestTranslatableMixin):
     :paramtype monitoring_signals: Optional[Dict[str, Union[~azure.ai.ml.entities.DataDriftSignal
         , ~azure.ai.ml.entities.DataQualitySignal, ~azure.ai.ml.entities.PredictionDriftSignal
         , ~azure.ai.ml.entities.FeatureAttributionDriftSignal
-        , ~azure.ai.ml.entities.CustomMonitoringSignal]]]
+        , ~azure.ai.ml.entities.CustomMonitoringSignal
+        , ~azure.ai.ml.entities.GenerationSafetyQualitySignal]]]
     :keyword alert_notification: The alert configuration for the monitor.
     :paramtype alert_notification: Optional[Union[Literal['azmonitoring'], ~azure.ai.ml.entities.AlertNotification]]
 
@@ -72,6 +74,7 @@ class MonitorDefinition(RestTranslatableMixin):
                 PredictionDriftSignal,
                 FeatureAttributionDriftSignal,
                 CustomMonitoringSignal,
+                GenerationSafetyQualitySignal,
             ],
         ] = None,
         alert_notification: Optional[Union[Literal[AZMONITORING], AlertNotification]] = None,

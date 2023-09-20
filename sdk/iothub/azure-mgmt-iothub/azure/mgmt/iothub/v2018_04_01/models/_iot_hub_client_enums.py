@@ -114,6 +114,7 @@ class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REBOOT_DEVICE = "rebootDevice"
     FACTORY_RESET_DEVICE = "factoryResetDevice"
     FIRMWARE_UPDATE = "firmwareUpdate"
+    IMPORT_ENUM = "import"
 
 
 class OperationMonitoringLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):

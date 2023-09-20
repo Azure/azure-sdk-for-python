@@ -1,5 +1,21 @@
 # Release History
 
+## 14.3.0 (2023-09-19)
+
+### Features Added
+
+  - Added operation RedisOperations.begin_flush_cache
+  - Added operation group AccessPolicyAssignmentOperations
+  - Added operation group AccessPolicyOperations
+  - Model RedisCommonProperties has a new parameter update_channel
+  - Model RedisCommonPropertiesRedisConfiguration has a new parameter aad_enabled
+  - Model RedisCreateParameters has a new parameter update_channel
+  - Model RedisCreateProperties has a new parameter update_channel
+  - Model RedisProperties has a new parameter update_channel
+  - Model RedisResource has a new parameter update_channel
+  - Model RedisUpdateParameters has a new parameter update_channel
+  - Model RedisUpdateProperties has a new parameter update_channel
+
 ## 14.2.0 (2023-06-16)
 
 ### Features Added
