@@ -20,7 +20,7 @@ from azure.core.exceptions import (
 from azure.core.messaging import CloudEvent
 from azure.core.rest import HttpRequest
 
-from ..models._models import EventGridEvent
+from ..models import EventGridEvent
 from _operations import EventGridPublisherClientOperationsMixin as InternalOperations
 from .._serialization import Serializer
 
