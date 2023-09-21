@@ -39,8 +39,8 @@ def build_list_by_subscription_request(
 ):
     # type: (...) -> HttpRequest
     api_version = kwargs.pop('api_version', "2023-06-01-preview")  # type: str
-    skip = kwargs.pop('skip', None)  # type: Optional[str]
     kind = kwargs.pop('kind', None)  # type: Optional[str]
+    skip = kwargs.pop('skip', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -54,10 +54,10 @@ def build_list_by_subscription_request(
     # Construct parameters
     _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-    if skip is not None:
-        _query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'str')
     if kind is not None:
         _query_parameters['kind'] = _SERIALIZER.query("kind", kind, 'str')
+    if skip is not None:
+        _query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'str')
 
     # Construct headers
     _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -79,8 +79,8 @@ def build_list_by_resource_group_request(
 ):
     # type: (...) -> HttpRequest
     api_version = kwargs.pop('api_version', "2023-06-01-preview")  # type: str
-    skip = kwargs.pop('skip', None)  # type: Optional[str]
     kind = kwargs.pop('kind', None)  # type: Optional[str]
+    skip = kwargs.pop('skip', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -95,10 +95,10 @@ def build_list_by_resource_group_request(
     # Construct parameters
     _query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     _query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-    if skip is not None:
-        _query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'str')
     if kind is not None:
         _query_parameters['kind'] = _SERIALIZER.query("kind", kind, 'str')
+    if skip is not None:
+        _query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'str')
 
     # Construct headers
     _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -594,8 +594,8 @@ class WorkspacesOperations(object):
     @distributed_trace
     def list_by_subscription(
         self,
-        skip=None,  # type: Optional[str]
         kind=None,  # type: Optional[str]
+        skip=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.WorkspaceListResult"]
@@ -603,10 +603,10 @@ class WorkspacesOperations(object):
 
         Lists all the available machine learning workspaces under the specified subscription.
 
-        :param skip: Continuation token for pagination.
-        :type skip: str
         :param kind: Kind of workspace.
         :type kind: str
+        :param skip: Continuation token for pagination.
+        :type skip: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either WorkspaceListResult or the result of cls(response)
         :rtype:
@@ -626,8 +626,8 @@ class WorkspacesOperations(object):
                 request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    skip=skip,
                     kind=kind,
+                    skip=skip,
                     template_url=self.list_by_subscription.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -638,8 +638,8 @@ class WorkspacesOperations(object):
                 request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    skip=skip,
                     kind=kind,
+                    skip=skip,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -681,8 +681,8 @@ class WorkspacesOperations(object):
     def list_by_resource_group(
         self,
         resource_group_name,  # type: str
-        skip=None,  # type: Optional[str]
         kind=None,  # type: Optional[str]
+        skip=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.WorkspaceListResult"]
@@ -692,10 +692,10 @@ class WorkspacesOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param skip: Continuation token for pagination.
-        :type skip: str
         :param kind: Kind of workspace.
         :type kind: str
+        :param skip: Continuation token for pagination.
+        :type skip: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either WorkspaceListResult or the result of cls(response)
         :rtype:
@@ -716,8 +716,8 @@ class WorkspacesOperations(object):
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     api_version=api_version,
-                    skip=skip,
                     kind=kind,
+                    skip=skip,
                     template_url=self.list_by_resource_group.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -729,8 +729,8 @@ class WorkspacesOperations(object):
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     api_version=api_version,
-                    skip=skip,
                     kind=kind,
+                    skip=skip,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -807,8 +807,14 @@ class WorkspacesOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+            response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
+            
+
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, response_headers)
 
     _delete_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}"}  # type: ignore
 
@@ -828,7 +834,7 @@ class WorkspacesOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :param force_to_purge: Flag to indicate delete is a purge request.
         :type force_to_purge: bool
@@ -868,7 +874,7 @@ class WorkspacesOperations(object):
                 return cls(pipeline_response, None, {})
 
 
-        if polling is True: polling_method = ARMPolling(lro_delay, **kwargs)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:
@@ -896,7 +902,7 @@ class WorkspacesOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Workspace, or the result of cls(response)
@@ -1013,7 +1019,7 @@ class WorkspacesOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :param body: The parameters for updating a machine learning workspace.
         :type body: ~azure.mgmt.machinelearningservices.models.WorkspaceUpdateParameters
@@ -1147,7 +1153,7 @@ class WorkspacesOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :param body: The parameters for creating or updating a machine learning workspace.
         :type body: ~azure.mgmt.machinelearningservices.models.Workspace
@@ -1284,7 +1290,7 @@ class WorkspacesOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :param body: The parameter of diagnosing workspace health.
         :type body: ~azure.mgmt.machinelearningservices.models.DiagnoseWorkspaceParameters
@@ -1361,7 +1367,7 @@ class WorkspacesOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListWorkspaceKeysResult, or the result of cls(response)
@@ -1423,7 +1429,7 @@ class WorkspacesOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NotebookAccessTokenResult, or the result of cls(response)
@@ -1485,7 +1491,7 @@ class WorkspacesOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListNotebookKeysResult, or the result of cls(response)
@@ -1547,7 +1553,7 @@ class WorkspacesOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListStorageAccountKeysResult, or the result of cls(response)
@@ -1611,7 +1617,7 @@ class WorkspacesOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExternalFQDNResponse, or the result of cls(response)
@@ -1728,7 +1734,7 @@ class WorkspacesOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -1849,7 +1855,7 @@ class WorkspacesOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param workspace_name: Name of Azure Machine Learning workspace.
+        :param workspace_name: Azure Machine Learning Workspace Name.
         :type workspace_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.

@@ -28,6 +28,7 @@ from ._schedule_operations import ScheduleOperations
 from ._workspace_connections_operations import WorkspaceConnectionsOperations
 from ._workspace_operations import WorkspaceOperations
 from ._workspace_hub_operation import WorkspaceHubOperations
+from ._compute_policy_operations import ComputePolicyOperations
 
 __all__ = [
     "ComputeOperations",
@@ -50,4 +51,5 @@ __all__ = [
     "FeatureSetOperations",
     "FeatureStoreEntityOperations",
     "FeatureStoreOperations",
+    "ComputePolicyOperations"
 ]

@@ -48,21 +48,20 @@ class Operations:
     def list(
         self,
         **kwargs: Any
-    ) -> AsyncIterable["_models.AmlOperationListResult"]:
+    ) -> AsyncIterable["_models.OperationListResult"]:
         """Lists all of the available Azure Machine Learning Workspaces REST API operations.
 
         Lists all of the available Azure Machine Learning Workspaces REST API operations.
 
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either AmlOperationListResult or the result of
-         cls(response)
+        :return: An iterator like instance of either OperationListResult or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.AmlOperationListResult]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.OperationListResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2023-06-01-preview")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.AmlOperationListResult"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.OperationListResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -89,7 +88,7 @@ class Operations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("AmlOperationListResult", pipeline_response)
+            deserialized = self._deserialize("OperationListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)

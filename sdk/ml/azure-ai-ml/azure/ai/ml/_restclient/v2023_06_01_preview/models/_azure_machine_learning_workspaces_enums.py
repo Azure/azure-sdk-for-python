@@ -11,6 +11,12 @@ from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
+    """
+
+    INTERNAL = "Internal"
+
 class AllocationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Allocation state of the compute. Possible values are: steady - Indicates that the compute is
     not resizing. There are no changes to the number of compute nodes in the compute in progress. A
@@ -346,6 +352,7 @@ class ConnectionAuthType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ACCESS_KEY = "AccessKey"
     API_KEY = "ApiKey"
     CUSTOM_KEYS = "CustomKeys"
+    O_AUTH2 = "OAuth2"
 
 class ConnectionCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Category of the connection
@@ -367,6 +374,85 @@ class ConnectionCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     COGNITIVE_SEARCH = "CognitiveSearch"
     COGNITIVE_SERVICE = "CognitiveService"
     CUSTOM_KEYS = "CustomKeys"
+    AZURE_AI_CONTENT_SAFETY = "AzureAIContentSafety"
+    COSMOS_DB = "CosmosDb"
+    COSMOS_DB_MONGO_DB_API = "CosmosDbMongoDbApi"
+    AZURE_DATA_EXPLORER = "AzureDataExplorer"
+    AZURE_MARIA_DB = "AzureMariaDb"
+    AZURE_DATABRICKS_DELTA_LAKE = "AzureDatabricksDeltaLake"
+    AZURE_SQL_MI = "AzureSqlMi"
+    AZURE_TABLE_STORAGE = "AzureTableStorage"
+    AMAZON_RDS_FOR_ORACLE = "AmazonRdsForOracle"
+    AMAZON_RDS_FOR_SQL_SERVER = "AmazonRdsForSqlServer"
+    AMAZON_REDSHIFT = "AmazonRedshift"
+    DB2 = "Db2"
+    DRILL = "Drill"
+    GOOGLE_BIG_QUERY = "GoogleBigQuery"
+    GREENPLUM = "Greenplum"
+    HBASE = "Hbase"
+    HIVE = "Hive"
+    IMPALA = "Impala"
+    INFORMIX = "Informix"
+    MARIA_DB = "MariaDb"
+    MICROSOFT_ACCESS = "MicrosoftAccess"
+    MY_SQL = "MySql"
+    NETEZZA = "Netezza"
+    ORACLE = "Oracle"
+    PHOENIX = "Phoenix"
+    POSTGRE_SQL = "PostgreSql"
+    PRESTO = "Presto"
+    SAP_OPEN_HUB = "SapOpenHub"
+    SAP_BW = "SapBw"
+    SAP_HANA = "SapHana"
+    SAP_TABLE = "SapTable"
+    SPARK = "Spark"
+    SQL_SERVER = "SqlServer"
+    SYBASE = "Sybase"
+    TERADATA = "Teradata"
+    VERTICA = "Vertica"
+    CASSANDRA = "Cassandra"
+    COUCHBASE = "Couchbase"
+    MONGO_DB_V2 = "MongoDbV2"
+    MONGO_DB_ATLAS = "MongoDbAtlas"
+    AMAZON_S3_COMPATIBLE = "AmazonS3Compatible"
+    FILE_SERVER = "FileServer"
+    FTP_SERVER = "FtpServer"
+    GOOGLE_CLOUD_STORAGE = "GoogleCloudStorage"
+    HDFS = "Hdfs"
+    ORACLE_CLOUD_STORAGE = "OracleCloudStorage"
+    SFTP = "Sftp"
+    GENERIC_HTTP = "GenericHttp"
+    O_DATA_REST = "ODataRest"
+    ODBC = "Odbc"
+    GENERIC_REST = "GenericRest"
+    AMAZON_MWS = "AmazonMws"
+    CONCUR = "Concur"
+    DYNAMICS = "Dynamics"
+    DYNAMICS_AX = "DynamicsAx"
+    DYNAMICS_CRM = "DynamicsCrm"
+    GOOGLE_AD_WORDS = "GoogleAdWords"
+    HUBSPOT = "Hubspot"
+    JIRA = "Jira"
+    MAGENTO = "Magento"
+    MARKETO = "Marketo"
+    OFFICE365 = "Office365"
+    ELOQUA = "Eloqua"
+    RESPONSYS = "Responsys"
+    ORACLE_SERVICE_CLOUD = "OracleServiceCloud"
+    PAY_PAL = "PayPal"
+    QUICK_BOOKS = "QuickBooks"
+    SALESFORCE = "Salesforce"
+    SALESFORCE_SERVICE_CLOUD = "SalesforceServiceCloud"
+    SALESFORCE_MARKETING_CLOUD = "SalesforceMarketingCloud"
+    SAP_CLOUD_FOR_CUSTOMER = "SapCloudForCustomer"
+    SAP_ECC = "SapEcc"
+    SERVICE_NOW = "ServiceNow"
+    SHARE_POINT_ONLINE_LIST = "SharePointOnlineList"
+    SHOPIFY = "Shopify"
+    SQUARE = "Square"
+    WEB_TABLE = "WebTable"
+    XERO = "Xero"
+    ZOHO = "Zoho"
 
 class ContainerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of container to retrieve logs from.
@@ -633,8 +719,8 @@ class ForecastingModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: This method is suitable for forecasting when data is stationary/non stationary, and
     #: multivariate with any type of data pattern, i.e., level/trend /seasonality/cyclicity.
     ARIMAX = "Arimax"
-    #: TCNForecaster: Temporal Convolutional Networks Forecaster is a deep neural network model
-    #: capable of modeling correlations over long time periods.
+    #: TCNForecaster: Temporal Convolutional Networks Forecaster. //TODO: Ask forecasting team for
+    #: brief intro.
     TCN_FORECASTER = "TCNForecaster"
     #: Elastic net is a popular type of regularized linear regression that combines two popular
     #: penalties, specifically the L1 and L2 penalty functions.
@@ -1284,6 +1370,15 @@ class OrderString(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UPDATED_AT_DESC = "UpdatedAtDesc"
     UPDATED_AT_ASC = "UpdatedAtAsc"
 
+class Origin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+    logs UX. Default value is "user,system"
+    """
+
+    USER = "user"
+    SYSTEM = "system"
+    USER_SYSTEM = "user,system"
+
 class OsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Compute OS Type
     """
@@ -1334,6 +1429,20 @@ class PendingUploadType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     NONE = "None"
     TEMPORARY_BLOB_REFERENCE = "TemporaryBlobReference"
+
+class PolicyDefinition(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    MAX_JOB_INSTANCE_COUNT = "MaxJobInstanceCount"
+    MAX_JOB_EXECUTION_TIME = "MaxJobExecutionTime"
+    MAX_TOTAL_VCPU_USAGE = "MaxTotalVcpuUsage"
+    MAX_PER_USER_VCPU_USAGE = "MaxPerUserVcpuUsage"
+    CI_IDLE_SHUTDOWN = "CiIdleShutdown"
+    REQUIRE_CI_LATEST_SOFTWARE = "RequireCiLatestSoftware"
+
+class PolicyEffect(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    DENY = "Deny"
+    AUDIT = "Audit"
 
 class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The current provisioning state.

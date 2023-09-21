@@ -242,6 +242,8 @@ class AzureMLResourceType:
     """Feature store resource type."""
     WORKSPACE_HUB = "workspace_hub"
     """WorkspaceHub resource type."""
+    POLICIES = "policies"
+    """Policies resource type."""
 
     NAMED_TYPES = {
         JOB,
@@ -251,6 +253,7 @@ class AzureMLResourceType:
         ONLINE_DEPLOYMENT,
         DATASTORE,
         SCHEDULE,
+        POLICIES,
     }
     VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURE_SET, FEATURE_STORE_ENTITY}
 

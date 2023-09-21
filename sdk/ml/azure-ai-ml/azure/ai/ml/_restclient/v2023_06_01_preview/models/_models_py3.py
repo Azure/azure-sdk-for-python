@@ -19,23 +19,42 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
     """WorkspaceConnectionPropertiesV2.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AccessKeyAuthTypeWorkspaceConnectionProperties, ApiKeyAuthWorkspaceConnectionProperties, CustomKeysWorkspaceConnectionProperties, ManagedIdentityAuthTypeWorkspaceConnectionProperties, NoneAuthTypeWorkspaceConnectionProperties, PATAuthTypeWorkspaceConnectionProperties, SASAuthTypeWorkspaceConnectionProperties, ServicePrincipalAuthTypeWorkspaceConnectionProperties, UsernamePasswordAuthTypeWorkspaceConnectionProperties.
+    sub-classes are: AccessKeyAuthTypeWorkspaceConnectionProperties, ApiKeyAuthWorkspaceConnectionProperties, CustomKeysWorkspaceConnectionProperties, ManagedIdentityAuthTypeWorkspaceConnectionProperties, NoneAuthTypeWorkspaceConnectionProperties, OAuth2AuthTypeWorkspaceConnectionProperties, PATAuthTypeWorkspaceConnectionProperties, SASAuthTypeWorkspaceConnectionProperties, ServicePrincipalAuthTypeWorkspaceConnectionProperties, UsernamePasswordAuthTypeWorkspaceConnectionProperties.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar auth_type: Required. Authentication type of the connection target.Constant filled by
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
-     "ServicePrincipal", "AccessKey", "ApiKey", "CustomKeys".
+     "ServicePrincipal", "AccessKey", "ApiKey", "CustomKeys", "OAuth2".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
      "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
-     "CognitiveSearch", "CognitiveService", "CustomKeys".
+     "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureAIContentSafety", "CosmosDb",
+     "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
+     "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
+     "AmazonRedshift", "Db2", "Drill", "GoogleBigQuery", "Greenplum", "Hbase", "Hive", "Impala",
+     "Informix", "MariaDb", "MicrosoftAccess", "MySql", "Netezza", "Oracle", "Phoenix",
+     "PostgreSql", "Presto", "SapOpenHub", "SapBw", "SapHana", "SapTable", "Spark", "SqlServer",
+     "Sybase", "Teradata", "Vertica", "Cassandra", "Couchbase", "MongoDbV2", "MongoDbAtlas",
+     "AmazonS3Compatible", "FileServer", "FtpServer", "GoogleCloudStorage", "Hdfs",
+     "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc", "GenericRest", "AmazonMws",
+     "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira",
+     "Magento", "Marketo", "Office365", "Eloqua", "Responsys", "OracleServiceCloud", "PayPal",
+     "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
+     "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
+     "WebTable", "Xero", "Zoho".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+    :ivar created_by_workspace_arm_id:
+    :vartype created_by_workspace_arm_id: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
+    :ivar is_shared_to_all:
+    :vartype is_shared_to_all: bool
     :ivar metadata: Any object.
     :vartype metadata: any
+    :ivar shared_user_list:
+    :vartype shared_user_list: list[str]
     :ivar target:
     :vartype target: str
     """
@@ -47,21 +66,27 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
+        'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'metadata': {'key': 'metadata', 'type': 'object'},
+        'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
         'target': {'key': 'target', 'type': 'str'},
     }
 
     _subtype_map = {
-        'auth_type': {'AccessKey': 'AccessKeyAuthTypeWorkspaceConnectionProperties', 'ApiKey': 'ApiKeyAuthWorkspaceConnectionProperties', 'CustomKeys': 'CustomKeysWorkspaceConnectionProperties', 'ManagedIdentity': 'ManagedIdentityAuthTypeWorkspaceConnectionProperties', 'None': 'NoneAuthTypeWorkspaceConnectionProperties', 'PAT': 'PATAuthTypeWorkspaceConnectionProperties', 'SAS': 'SASAuthTypeWorkspaceConnectionProperties', 'ServicePrincipal': 'ServicePrincipalAuthTypeWorkspaceConnectionProperties', 'UsernamePassword': 'UsernamePasswordAuthTypeWorkspaceConnectionProperties'}
+        'auth_type': {'AccessKey': 'AccessKeyAuthTypeWorkspaceConnectionProperties', 'ApiKey': 'ApiKeyAuthWorkspaceConnectionProperties', 'CustomKeys': 'CustomKeysWorkspaceConnectionProperties', 'ManagedIdentity': 'ManagedIdentityAuthTypeWorkspaceConnectionProperties', 'None': 'NoneAuthTypeWorkspaceConnectionProperties', 'OAuth2': 'OAuth2AuthTypeWorkspaceConnectionProperties', 'PAT': 'PATAuthTypeWorkspaceConnectionProperties', 'SAS': 'SASAuthTypeWorkspaceConnectionProperties', 'ServicePrincipal': 'ServicePrincipalAuthTypeWorkspaceConnectionProperties', 'UsernamePassword': 'UsernamePasswordAuthTypeWorkspaceConnectionProperties'}
     }
 
     def __init__(
         self,
         *,
         category: Optional[Union[str, "ConnectionCategory"]] = None,
+        created_by_workspace_arm_id: Optional[str] = None,
         expiry_time: Optional[datetime.datetime] = None,
+        is_shared_to_all: Optional[bool] = None,
         metadata: Optional[Any] = None,
+        shared_user_list: Optional[List[str]] = None,
         target: Optional[str] = None,
         **kwargs
     ):
@@ -69,20 +94,42 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
          "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
-         "CognitiveSearch", "CognitiveService", "CustomKeys".
+         "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureAIContentSafety", "CosmosDb",
+         "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
+         "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
+         "AmazonRedshift", "Db2", "Drill", "GoogleBigQuery", "Greenplum", "Hbase", "Hive", "Impala",
+         "Informix", "MariaDb", "MicrosoftAccess", "MySql", "Netezza", "Oracle", "Phoenix",
+         "PostgreSql", "Presto", "SapOpenHub", "SapBw", "SapHana", "SapTable", "Spark", "SqlServer",
+         "Sybase", "Teradata", "Vertica", "Cassandra", "Couchbase", "MongoDbV2", "MongoDbAtlas",
+         "AmazonS3Compatible", "FileServer", "FtpServer", "GoogleCloudStorage", "Hdfs",
+         "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc", "GenericRest", "AmazonMws",
+         "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira",
+         "Magento", "Marketo", "Office365", "Eloqua", "Responsys", "OracleServiceCloud", "PayPal",
+         "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
+         "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
+         "WebTable", "Xero", "Zoho".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword created_by_workspace_arm_id:
+        :paramtype created_by_workspace_arm_id: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
+        :keyword is_shared_to_all:
+        :paramtype is_shared_to_all: bool
         :keyword metadata: Any object.
         :paramtype metadata: any
+        :keyword shared_user_list:
+        :paramtype shared_user_list: list[str]
         :keyword target:
         :paramtype target: str
         """
         super(WorkspaceConnectionPropertiesV2, self).__init__(**kwargs)
         self.auth_type = None  # type: Optional[str]
         self.category = category
+        self.created_by_workspace_arm_id = created_by_workspace_arm_id
         self.expiry_time = expiry_time
+        self.is_shared_to_all = is_shared_to_all
         self.metadata = metadata
+        self.shared_user_list = shared_user_list
         self.target = target
 
 
@@ -93,17 +140,36 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
 
     :ivar auth_type: Required. Authentication type of the connection target.Constant filled by
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
-     "ServicePrincipal", "AccessKey", "ApiKey", "CustomKeys".
+     "ServicePrincipal", "AccessKey", "ApiKey", "CustomKeys", "OAuth2".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
      "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
-     "CognitiveSearch", "CognitiveService", "CustomKeys".
+     "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureAIContentSafety", "CosmosDb",
+     "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
+     "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
+     "AmazonRedshift", "Db2", "Drill", "GoogleBigQuery", "Greenplum", "Hbase", "Hive", "Impala",
+     "Informix", "MariaDb", "MicrosoftAccess", "MySql", "Netezza", "Oracle", "Phoenix",
+     "PostgreSql", "Presto", "SapOpenHub", "SapBw", "SapHana", "SapTable", "Spark", "SqlServer",
+     "Sybase", "Teradata", "Vertica", "Cassandra", "Couchbase", "MongoDbV2", "MongoDbAtlas",
+     "AmazonS3Compatible", "FileServer", "FtpServer", "GoogleCloudStorage", "Hdfs",
+     "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc", "GenericRest", "AmazonMws",
+     "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira",
+     "Magento", "Marketo", "Office365", "Eloqua", "Responsys", "OracleServiceCloud", "PayPal",
+     "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
+     "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
+     "WebTable", "Xero", "Zoho".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+    :ivar created_by_workspace_arm_id:
+    :vartype created_by_workspace_arm_id: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
+    :ivar is_shared_to_all:
+    :vartype is_shared_to_all: bool
     :ivar metadata: Any object.
     :vartype metadata: any
+    :ivar shared_user_list:
+    :vartype shared_user_list: list[str]
     :ivar target:
     :vartype target: str
     :ivar credentials:
@@ -117,8 +183,11 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
+        'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'metadata': {'key': 'metadata', 'type': 'object'},
+        'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
         'target': {'key': 'target', 'type': 'str'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionAccessKey'},
     }
@@ -127,8 +196,11 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
         self,
         *,
         category: Optional[Union[str, "ConnectionCategory"]] = None,
+        created_by_workspace_arm_id: Optional[str] = None,
         expiry_time: Optional[datetime.datetime] = None,
+        is_shared_to_all: Optional[bool] = None,
         metadata: Optional[Any] = None,
+        shared_user_list: Optional[List[str]] = None,
         target: Optional[str] = None,
         credentials: Optional["WorkspaceConnectionAccessKey"] = None,
         **kwargs
@@ -137,18 +209,37 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
          "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
-         "CognitiveSearch", "CognitiveService", "CustomKeys".
+         "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureAIContentSafety", "CosmosDb",
+         "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
+         "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
+         "AmazonRedshift", "Db2", "Drill", "GoogleBigQuery", "Greenplum", "Hbase", "Hive", "Impala",
+         "Informix", "MariaDb", "MicrosoftAccess", "MySql", "Netezza", "Oracle", "Phoenix",
+         "PostgreSql", "Presto", "SapOpenHub", "SapBw", "SapHana", "SapTable", "Spark", "SqlServer",
+         "Sybase", "Teradata", "Vertica", "Cassandra", "Couchbase", "MongoDbV2", "MongoDbAtlas",
+         "AmazonS3Compatible", "FileServer", "FtpServer", "GoogleCloudStorage", "Hdfs",
+         "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc", "GenericRest", "AmazonMws",
+         "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira",
+         "Magento", "Marketo", "Office365", "Eloqua", "Responsys", "OracleServiceCloud", "PayPal",
+         "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
+         "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
+         "WebTable", "Xero", "Zoho".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword created_by_workspace_arm_id:
+        :paramtype created_by_workspace_arm_id: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
+        :keyword is_shared_to_all:
+        :paramtype is_shared_to_all: bool
         :keyword metadata: Any object.
         :paramtype metadata: any
+        :keyword shared_user_list:
+        :paramtype shared_user_list: list[str]
         :keyword target:
         :paramtype target: str
         :keyword credentials:
         :paramtype credentials: ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionAccessKey
         """
-        super(AccessKeyAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, metadata=metadata, target=target, **kwargs)
+        super(AccessKeyAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, created_by_workspace_arm_id=created_by_workspace_arm_id, expiry_time=expiry_time, is_shared_to_all=is_shared_to_all, metadata=metadata, shared_user_list=shared_user_list, target=target, **kwargs)
         self.auth_type = 'AccessKey'  # type: str
         self.credentials = credentials
 
@@ -1352,79 +1443,6 @@ class AmlComputeProperties(msrest.serialization.Model):
         self.property_bag = property_bag
 
 
-class AmlOperation(msrest.serialization.Model):
-    """Azure Machine Learning team account REST API operation.
-
-    :ivar display: Gets or sets display name of operation.
-    :vartype display: ~azure.mgmt.machinelearningservices.models.OperationDisplay
-    :ivar is_data_action: Indicates whether the operation applies to data-plane.
-    :vartype is_data_action: bool
-    :ivar name: Gets or sets operation name: {provider}/{resource}/{operation}.
-    :vartype name: str
-    :ivar origin: The intended executor of the operation: user/system.
-    :vartype origin: str
-    """
-
-    _attribute_map = {
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'name': {'key': 'name', 'type': 'str'},
-        'origin': {'key': 'origin', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        display: Optional["OperationDisplay"] = None,
-        is_data_action: Optional[bool] = None,
-        name: Optional[str] = None,
-        origin: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword display: Gets or sets display name of operation.
-        :paramtype display: ~azure.mgmt.machinelearningservices.models.OperationDisplay
-        :keyword is_data_action: Indicates whether the operation applies to data-plane.
-        :paramtype is_data_action: bool
-        :keyword name: Gets or sets operation name: {provider}/{resource}/{operation}.
-        :paramtype name: str
-        :keyword origin: The intended executor of the operation: user/system.
-        :paramtype origin: str
-        """
-        super(AmlOperation, self).__init__(**kwargs)
-        self.display = display
-        self.is_data_action = is_data_action
-        self.name = name
-        self.origin = origin
-
-
-class AmlOperationListResult(msrest.serialization.Model):
-    """An array of operations supported by the resource provider.
-
-    :ivar value: Gets or sets list of AML team account operations supported by the
-     AML team account resource provider.
-    :vartype value: list[~azure.mgmt.machinelearningservices.models.AmlOperation]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[AmlOperation]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["AmlOperation"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword value: Gets or sets list of AML team account operations supported by the
-         AML team account resource provider.
-        :paramtype value: list[~azure.mgmt.machinelearningservices.models.AmlOperation]
-        """
-        super(AmlOperationListResult, self).__init__(**kwargs)
-        self.value = value
-
-
 class IdentityConfiguration(msrest.serialization.Model):
     """Base definition for identity configuration.
 
@@ -1620,17 +1638,36 @@ Use Metadata property bag for ApiType, ApiVersion, Kind and other metadata field
 
     :ivar auth_type: Required. Authentication type of the connection target.Constant filled by
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
-     "ServicePrincipal", "AccessKey", "ApiKey", "CustomKeys".
+     "ServicePrincipal", "AccessKey", "ApiKey", "CustomKeys", "OAuth2".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
      "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
-     "CognitiveSearch", "CognitiveService", "CustomKeys".
+     "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureAIContentSafety", "CosmosDb",
+     "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
+     "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
+     "AmazonRedshift", "Db2", "Drill", "GoogleBigQuery", "Greenplum", "Hbase", "Hive", "Impala",
+     "Informix", "MariaDb", "MicrosoftAccess", "MySql", "Netezza", "Oracle", "Phoenix",
+     "PostgreSql", "Presto", "SapOpenHub", "SapBw", "SapHana", "SapTable", "Spark", "SqlServer",
+     "Sybase", "Teradata", "Vertica", "Cassandra", "Couchbase", "MongoDbV2", "MongoDbAtlas",
+     "AmazonS3Compatible", "FileServer", "FtpServer", "GoogleCloudStorage", "Hdfs",
+     "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc", "GenericRest", "AmazonMws",
+     "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira",
+     "Magento", "Marketo", "Office365", "Eloqua", "Responsys", "OracleServiceCloud", "PayPal",
+     "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
+     "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
+     "WebTable", "Xero", "Zoho".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+    :ivar created_by_workspace_arm_id:
+    :vartype created_by_workspace_arm_id: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
+    :ivar is_shared_to_all:
+    :vartype is_shared_to_all: bool
     :ivar metadata: Any object.
     :vartype metadata: any
+    :ivar shared_user_list:
+    :vartype shared_user_list: list[str]
     :ivar target:
     :vartype target: str
     :ivar credentials: Api key object for workspace connection credential.
@@ -1644,8 +1681,11 @@ Use Metadata property bag for ApiType, ApiVersion, Kind and other metadata field
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
+        'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'metadata': {'key': 'metadata', 'type': 'object'},
+        'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
         'target': {'key': 'target', 'type': 'str'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionApiKey'},
     }
@@ -1654,8 +1694,11 @@ Use Metadata property bag for ApiType, ApiVersion, Kind and other metadata field
         self,
         *,
         category: Optional[Union[str, "ConnectionCategory"]] = None,
+        created_by_workspace_arm_id: Optional[str] = None,
         expiry_time: Optional[datetime.datetime] = None,
+        is_shared_to_all: Optional[bool] = None,
         metadata: Optional[Any] = None,
+        shared_user_list: Optional[List[str]] = None,
         target: Optional[str] = None,
         credentials: Optional["WorkspaceConnectionApiKey"] = None,
         **kwargs
@@ -1664,18 +1707,37 @@ Use Metadata property bag for ApiType, ApiVersion, Kind and other metadata field
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
          "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
-         "CognitiveSearch", "CognitiveService", "CustomKeys".
+         "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureAIContentSafety", "CosmosDb",
+         "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
+         "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
+         "AmazonRedshift", "Db2", "Drill", "GoogleBigQuery", "Greenplum", "Hbase", "Hive", "Impala",
+         "Informix", "MariaDb", "MicrosoftAccess", "MySql", "Netezza", "Oracle", "Phoenix",
+         "PostgreSql", "Presto", "SapOpenHub", "SapBw", "SapHana", "SapTable", "Spark", "SqlServer",
+         "Sybase", "Teradata", "Vertica", "Cassandra", "Couchbase", "MongoDbV2", "MongoDbAtlas",
+         "AmazonS3Compatible", "FileServer", "FtpServer", "GoogleCloudStorage", "Hdfs",
+         "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc", "GenericRest", "AmazonMws",
+         "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira",
+         "Magento", "Marketo", "Office365", "Eloqua", "Responsys", "OracleServiceCloud", "PayPal",
+         "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
+         "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
+         "WebTable", "Xero", "Zoho".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword created_by_workspace_arm_id:
+        :paramtype created_by_workspace_arm_id: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
+        :keyword is_shared_to_all:
+        :paramtype is_shared_to_all: bool
         :keyword metadata: Any object.
         :paramtype metadata: any
+        :keyword shared_user_list:
+        :paramtype shared_user_list: list[str]
         :keyword target:
         :paramtype target: str
         :keyword credentials: Api key object for workspace connection credential.
         :paramtype credentials: ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionApiKey
         """
-        super(ApiKeyAuthWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, metadata=metadata, target=target, **kwargs)
+        super(ApiKeyAuthWorkspaceConnectionProperties, self).__init__(category=category, created_by_workspace_arm_id=created_by_workspace_arm_id, expiry_time=expiry_time, is_shared_to_all=is_shared_to_all, metadata=metadata, shared_user_list=shared_user_list, target=target, **kwargs)
         self.auth_type = 'ApiKey'  # type: str
         self.credentials = credentials
 
@@ -8022,6 +8084,125 @@ class ComputeInstanceVersion(msrest.serialization.Model):
         self.runtime = runtime
 
 
+class ComputePolicyRequest(msrest.serialization.Model):
+    """ComputePolicyRequest.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar arm_scope: Required.
+    :vartype arm_scope: str
+    :ivar definition: Possible values include: "MaxJobInstanceCount", "MaxJobExecutionTime",
+     "MaxTotalVcpuUsage", "MaxPerUserVcpuUsage", "CiIdleShutdown", "RequireCiLatestSoftware".
+    :vartype definition: str or ~azure.mgmt.machinelearningservices.models.PolicyDefinition
+    :ivar effect: Possible values include: "Deny", "Audit".
+    :vartype effect: str or ~azure.mgmt.machinelearningservices.models.PolicyEffect
+    :ivar parameters: Dictionary of :code:`<any>`.
+    :vartype parameters: dict[str, any]
+    """
+
+    _validation = {
+        'arm_scope': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
+    }
+
+    _attribute_map = {
+        'arm_scope': {'key': 'armScope', 'type': 'str'},
+        'definition': {'key': 'definition', 'type': 'str'},
+        'effect': {'key': 'effect', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{object}'},
+    }
+
+    def __init__(
+        self,
+        *,
+        arm_scope: str,
+        definition: Optional[Union[str, "PolicyDefinition"]] = None,
+        effect: Optional[Union[str, "PolicyEffect"]] = None,
+        parameters: Optional[Dict[str, Any]] = None,
+        **kwargs
+    ):
+        """
+        :keyword arm_scope: Required.
+        :paramtype arm_scope: str
+        :keyword definition: Possible values include: "MaxJobInstanceCount", "MaxJobExecutionTime",
+         "MaxTotalVcpuUsage", "MaxPerUserVcpuUsage", "CiIdleShutdown", "RequireCiLatestSoftware".
+        :paramtype definition: str or ~azure.mgmt.machinelearningservices.models.PolicyDefinition
+        :keyword effect: Possible values include: "Deny", "Audit".
+        :paramtype effect: str or ~azure.mgmt.machinelearningservices.models.PolicyEffect
+        :keyword parameters: Dictionary of :code:`<any>`.
+        :paramtype parameters: dict[str, any]
+        """
+        super(ComputePolicyRequest, self).__init__(**kwargs)
+        self.arm_scope = arm_scope
+        self.definition = definition
+        self.effect = effect
+        self.parameters = parameters
+
+
+class ComputePolicyDto(ComputePolicyRequest):
+    """ComputePolicyDto.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar arm_scope: Required.
+    :vartype arm_scope: str
+    :ivar definition: Possible values include: "MaxJobInstanceCount", "MaxJobExecutionTime",
+     "MaxTotalVcpuUsage", "MaxPerUserVcpuUsage", "CiIdleShutdown", "RequireCiLatestSoftware".
+    :vartype definition: str or ~azure.mgmt.machinelearningservices.models.PolicyDefinition
+    :ivar effect: Possible values include: "Deny", "Audit".
+    :vartype effect: str or ~azure.mgmt.machinelearningservices.models.PolicyEffect
+    :ivar parameters: Dictionary of :code:`<any>`.
+    :vartype parameters: dict[str, any]
+    :ivar id:
+    :vartype id: str
+    :ivar name: Required.
+    :vartype name: str
+    """
+
+    _validation = {
+        'arm_scope': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
+        'name': {'required': True, 'min_length': 1, 'pattern': r'[a-zA-Z0-9_]'},
+    }
+
+    _attribute_map = {
+        'arm_scope': {'key': 'armScope', 'type': 'str'},
+        'definition': {'key': 'definition', 'type': 'str'},
+        'effect': {'key': 'effect', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{object}'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        arm_scope: str,
+        name: str,
+        definition: Optional[Union[str, "PolicyDefinition"]] = None,
+        effect: Optional[Union[str, "PolicyEffect"]] = None,
+        parameters: Optional[Dict[str, Any]] = None,
+        id: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword arm_scope: Required.
+        :paramtype arm_scope: str
+        :keyword definition: Possible values include: "MaxJobInstanceCount", "MaxJobExecutionTime",
+         "MaxTotalVcpuUsage", "MaxPerUserVcpuUsage", "CiIdleShutdown", "RequireCiLatestSoftware".
+        :paramtype definition: str or ~azure.mgmt.machinelearningservices.models.PolicyDefinition
+        :keyword effect: Possible values include: "Deny", "Audit".
+        :paramtype effect: str or ~azure.mgmt.machinelearningservices.models.PolicyEffect
+        :keyword parameters: Dictionary of :code:`<any>`.
+        :paramtype parameters: dict[str, any]
+        :keyword id:
+        :paramtype id: str
+        :keyword name: Required.
+        :paramtype name: str
+        """
+        super(ComputePolicyDto, self).__init__(arm_scope=arm_scope, definition=definition, effect=effect, parameters=parameters, **kwargs)
+        self.id = id
+        self.name = name
+
+
 class ComputeResourceSchema(msrest.serialization.Model):
     """ComputeResourceSchema.
 
@@ -8791,17 +8972,36 @@ Use Metadata property bag for ApiVersion and other metadata fields.
 
     :ivar auth_type: Required. Authentication type of the connection target.Constant filled by
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
-     "ServicePrincipal", "AccessKey", "ApiKey", "CustomKeys".
+     "ServicePrincipal", "AccessKey", "ApiKey", "CustomKeys", "OAuth2".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
      "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
-     "CognitiveSearch", "CognitiveService", "CustomKeys".
+     "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureAIContentSafety", "CosmosDb",
+     "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
+     "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
+     "AmazonRedshift", "Db2", "Drill", "GoogleBigQuery", "Greenplum", "Hbase", "Hive", "Impala",
+     "Informix", "MariaDb", "MicrosoftAccess", "MySql", "Netezza", "Oracle", "Phoenix",
+     "PostgreSql", "Presto", "SapOpenHub", "SapBw", "SapHana", "SapTable", "Spark", "SqlServer",
+     "Sybase", "Teradata", "Vertica", "Cassandra", "Couchbase", "MongoDbV2", "MongoDbAtlas",
+     "AmazonS3Compatible", "FileServer", "FtpServer", "GoogleCloudStorage", "Hdfs",
+     "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc", "GenericRest", "AmazonMws",
+     "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira",
+     "Magento", "Marketo", "Office365", "Eloqua", "Responsys", "OracleServiceCloud", "PayPal",
+     "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
+     "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
+     "WebTable", "Xero", "Zoho".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+    :ivar created_by_workspace_arm_id:
+    :vartype created_by_workspace_arm_id: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
+    :ivar is_shared_to_all:
+    :vartype is_shared_to_all: bool
     :ivar metadata: Any object.
     :vartype metadata: any
+    :ivar shared_user_list:
+    :vartype shared_user_list: list[str]
     :ivar target:
     :vartype target: str
     :ivar credentials: Custom Keys credential object.
@@ -8815,8 +9015,11 @@ Use Metadata property bag for ApiVersion and other metadata fields.
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
+        'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'metadata': {'key': 'metadata', 'type': 'object'},
+        'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
         'target': {'key': 'target', 'type': 'str'},
         'credentials': {'key': 'credentials', 'type': 'CustomKeys'},
     }
@@ -8825,8 +9028,11 @@ Use Metadata property bag for ApiVersion and other metadata fields.
         self,
         *,
         category: Optional[Union[str, "ConnectionCategory"]] = None,
+        created_by_workspace_arm_id: Optional[str] = None,
         expiry_time: Optional[datetime.datetime] = None,
+        is_shared_to_all: Optional[bool] = None,
         metadata: Optional[Any] = None,
+        shared_user_list: Optional[List[str]] = None,
         target: Optional[str] = None,
         credentials: Optional["CustomKeys"] = None,
         **kwargs
@@ -8835,18 +9041,37 @@ Use Metadata property bag for ApiVersion and other metadata fields.
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
          "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
-         "CognitiveSearch", "CognitiveService", "CustomKeys".
+         "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureAIContentSafety", "CosmosDb",
+         "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
+         "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
+         "AmazonRedshift", "Db2", "Drill", "GoogleBigQuery", "Greenplum", "Hbase", "Hive", "Impala",
+         "Informix", "MariaDb", "MicrosoftAccess", "MySql", "Netezza", "Oracle", "Phoenix",
+         "PostgreSql", "Presto", "SapOpenHub", "SapBw", "SapHana", "SapTable", "Spark", "SqlServer",
+         "Sybase", "Teradata", "Vertica", "Cassandra", "Couchbase", "MongoDbV2", "MongoDbAtlas",
+         "AmazonS3Compatible", "FileServer", "FtpServer", "GoogleCloudStorage", "Hdfs",
+         "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc", "GenericRest", "AmazonMws",
+         "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira",
+         "Magento", "Marketo", "Office365", "Eloqua", "Responsys", "OracleServiceCloud", "PayPal",
+         "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
+         "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
+         "WebTable", "Xero", "Zoho".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword created_by_workspace_arm_id:
+        :paramtype created_by_workspace_arm_id: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
+        :keyword is_shared_to_all:
+        :paramtype is_shared_to_all: bool
         :keyword metadata: Any object.
         :paramtype metadata: any
+        :keyword shared_user_list:
+        :paramtype shared_user_list: list[str]
         :keyword target:
         :paramtype target: str
         :keyword credentials: Custom Keys credential object.
         :paramtype credentials: ~azure.mgmt.machinelearningservices.models.CustomKeys
         """
-        super(CustomKeysWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, metadata=metadata, target=target, **kwargs)
+        super(CustomKeysWorkspaceConnectionProperties, self).__init__(category=category, created_by_workspace_arm_id=created_by_workspace_arm_id, expiry_time=expiry_time, is_shared_to_all=is_shared_to_all, metadata=metadata, shared_user_list=shared_user_list, target=target, **kwargs)
         self.auth_type = 'CustomKeys'  # type: str
         self.credentials = credentials
 
@@ -11161,12 +11386,17 @@ class DiagnoseRequestProperties(msrest.serialization.Model):
     :vartype container_registry: dict[str, any]
     :ivar dns_resolution: Setting for diagnosing dns resolution.
     :vartype dns_resolution: dict[str, any]
+    :ivar hub: Setting for diagnosing the hub.
+    :vartype hub: dict[str, any]
     :ivar key_vault: Setting for diagnosing dependent key vault.
     :vartype key_vault: dict[str, any]
     :ivar nsg: Setting for diagnosing network security group.
     :vartype nsg: dict[str, any]
     :ivar others: Setting for diagnosing unclassified category of problems.
     :vartype others: dict[str, any]
+    :ivar required_resource_providers: Setting for diagnosing the presence of required resource
+     providers in the workspace.
+    :vartype required_resource_providers: dict[str, any]
     :ivar resource_lock: Setting for diagnosing resource lock.
     :vartype resource_lock: dict[str, any]
     :ivar storage_account: Setting for diagnosing dependent storage account.
@@ -11179,9 +11409,11 @@ class DiagnoseRequestProperties(msrest.serialization.Model):
         'application_insights': {'key': 'applicationInsights', 'type': '{object}'},
         'container_registry': {'key': 'containerRegistry', 'type': '{object}'},
         'dns_resolution': {'key': 'dnsResolution', 'type': '{object}'},
+        'hub': {'key': 'hub', 'type': '{object}'},
         'key_vault': {'key': 'keyVault', 'type': '{object}'},
         'nsg': {'key': 'nsg', 'type': '{object}'},
         'others': {'key': 'others', 'type': '{object}'},
+        'required_resource_providers': {'key': 'requiredResourceProviders', 'type': '{object}'},
         'resource_lock': {'key': 'resourceLock', 'type': '{object}'},
         'storage_account': {'key': 'storageAccount', 'type': '{object}'},
         'udr': {'key': 'udr', 'type': '{object}'},
@@ -11193,9 +11425,11 @@ class DiagnoseRequestProperties(msrest.serialization.Model):
         application_insights: Optional[Dict[str, Any]] = None,
         container_registry: Optional[Dict[str, Any]] = None,
         dns_resolution: Optional[Dict[str, Any]] = None,
+        hub: Optional[Dict[str, Any]] = None,
         key_vault: Optional[Dict[str, Any]] = None,
         nsg: Optional[Dict[str, Any]] = None,
         others: Optional[Dict[str, Any]] = None,
+        required_resource_providers: Optional[Dict[str, Any]] = None,
         resource_lock: Optional[Dict[str, Any]] = None,
         storage_account: Optional[Dict[str, Any]] = None,
         udr: Optional[Dict[str, Any]] = None,
@@ -11208,12 +11442,17 @@ class DiagnoseRequestProperties(msrest.serialization.Model):
         :paramtype container_registry: dict[str, any]
         :keyword dns_resolution: Setting for diagnosing dns resolution.
         :paramtype dns_resolution: dict[str, any]
+        :keyword hub: Setting for diagnosing the hub.
+        :paramtype hub: dict[str, any]
         :keyword key_vault: Setting for diagnosing dependent key vault.
         :paramtype key_vault: dict[str, any]
         :keyword nsg: Setting for diagnosing network security group.
         :paramtype nsg: dict[str, any]
         :keyword others: Setting for diagnosing unclassified category of problems.
         :paramtype others: dict[str, any]
+        :keyword required_resource_providers: Setting for diagnosing the presence of required resource
+         providers in the workspace.
+        :paramtype required_resource_providers: dict[str, any]
         :keyword resource_lock: Setting for diagnosing resource lock.
         :paramtype resource_lock: dict[str, any]
         :keyword storage_account: Setting for diagnosing dependent storage account.
@@ -11225,9 +11464,11 @@ class DiagnoseRequestProperties(msrest.serialization.Model):
         self.application_insights = application_insights
         self.container_registry = container_registry
         self.dns_resolution = dns_resolution
+        self.hub = hub
         self.key_vault = key_vault
         self.nsg = nsg
         self.others = others
+        self.required_resource_providers = required_resource_providers
         self.resource_lock = resource_lock
         self.storage_account = storage_account
         self.udr = udr
@@ -20096,6 +20337,31 @@ class ListAmlUserFeatureResult(msrest.serialization.Model):
         self.next_link = None
 
 
+class ListComputePoliciesResponse(msrest.serialization.Model):
+    """ListComputePoliciesResponse.
+
+    :ivar policies:
+    :vartype policies: list[~azure.mgmt.machinelearningservices.models.ComputePolicyDto]
+    """
+
+    _attribute_map = {
+        'policies': {'key': 'policies', 'type': '[ComputePolicyDto]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        policies: Optional[List["ComputePolicyDto"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword policies:
+        :paramtype policies: list[~azure.mgmt.machinelearningservices.models.ComputePolicyDto]
+        """
+        super(ListComputePoliciesResponse, self).__init__(**kwargs)
+        self.policies = policies
+
+
 class ListNotebookKeysResult(msrest.serialization.Model):
     """ListNotebookKeysResult.
 
@@ -20422,17 +20688,36 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
 
     :ivar auth_type: Required. Authentication type of the connection target.Constant filled by
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
-     "ServicePrincipal", "AccessKey", "ApiKey", "CustomKeys".
+     "ServicePrincipal", "AccessKey", "ApiKey", "CustomKeys", "OAuth2".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
      "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
-     "CognitiveSearch", "CognitiveService", "CustomKeys".
+     "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureAIContentSafety", "CosmosDb",
+     "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
+     "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
+     "AmazonRedshift", "Db2", "Drill", "GoogleBigQuery", "Greenplum", "Hbase", "Hive", "Impala",
+     "Informix", "MariaDb", "MicrosoftAccess", "MySql", "Netezza", "Oracle", "Phoenix",
+     "PostgreSql", "Presto", "SapOpenHub", "SapBw", "SapHana", "SapTable", "Spark", "SqlServer",
+     "Sybase", "Teradata", "Vertica", "Cassandra", "Couchbase", "MongoDbV2", "MongoDbAtlas",
+     "AmazonS3Compatible", "FileServer", "FtpServer", "GoogleCloudStorage", "Hdfs",
+     "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc", "GenericRest", "AmazonMws",
+     "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira",
+     "Magento", "Marketo", "Office365", "Eloqua", "Responsys", "OracleServiceCloud", "PayPal",
+     "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
+     "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
+     "WebTable", "Xero", "Zoho".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+    :ivar created_by_workspace_arm_id:
+    :vartype created_by_workspace_arm_id: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
+    :ivar is_shared_to_all:
+    :vartype is_shared_to_all: bool
     :ivar metadata: Any object.
     :vartype metadata: any
+    :ivar shared_user_list:
+    :vartype shared_user_list: list[str]
     :ivar target:
     :vartype target: str
     :ivar credentials:
@@ -20447,8 +20732,11 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
+        'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'metadata': {'key': 'metadata', 'type': 'object'},
+        'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
         'target': {'key': 'target', 'type': 'str'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionManagedIdentity'},
     }
@@ -20457,8 +20745,11 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
         self,
         *,
         category: Optional[Union[str, "ConnectionCategory"]] = None,
+        created_by_workspace_arm_id: Optional[str] = None,
         expiry_time: Optional[datetime.datetime] = None,
+        is_shared_to_all: Optional[bool] = None,
         metadata: Optional[Any] = None,
+        shared_user_list: Optional[List[str]] = None,
         target: Optional[str] = None,
         credentials: Optional["WorkspaceConnectionManagedIdentity"] = None,
         **kwargs
@@ -20467,19 +20758,38 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
          "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
-         "CognitiveSearch", "CognitiveService", "CustomKeys".
+         "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureAIContentSafety", "CosmosDb",
+         "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
+         "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
+         "AmazonRedshift", "Db2", "Drill", "GoogleBigQuery", "Greenplum", "Hbase", "Hive", "Impala",
+         "Informix", "MariaDb", "MicrosoftAccess", "MySql", "Netezza", "Oracle", "Phoenix",
+         "PostgreSql", "Presto", "SapOpenHub", "SapBw", "SapHana", "SapTable", "Spark", "SqlServer",
+         "Sybase", "Teradata", "Vertica", "Cassandra", "Couchbase", "MongoDbV2", "MongoDbAtlas",
+         "AmazonS3Compatible", "FileServer", "FtpServer", "GoogleCloudStorage", "Hdfs",
+         "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc", "GenericRest", "AmazonMws",
+         "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira",
+         "Magento", "Marketo", "Office365", "Eloqua", "Responsys", "OracleServiceCloud", "PayPal",
+         "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
+         "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
+         "WebTable", "Xero", "Zoho".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword created_by_workspace_arm_id:
+        :paramtype created_by_workspace_arm_id: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
+        :keyword is_shared_to_all:
+        :paramtype is_shared_to_all: bool
         :keyword metadata: Any object.
         :paramtype metadata: any
+        :keyword shared_user_list:
+        :paramtype shared_user_list: list[str]
         :keyword target:
         :paramtype target: str
         :keyword credentials:
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionManagedIdentity
         """
-        super(ManagedIdentityAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, metadata=metadata, target=target, **kwargs)
+        super(ManagedIdentityAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, created_by_workspace_arm_id=created_by_workspace_arm_id, expiry_time=expiry_time, is_shared_to_all=is_shared_to_all, metadata=metadata, shared_user_list=shared_user_list, target=target, **kwargs)
         self.auth_type = 'ManagedIdentity'  # type: str
         self.credentials = credentials
 
@@ -20595,6 +20905,62 @@ class ManagedNetworkSettings(msrest.serialization.Model):
         self.network_id = None
         self.outbound_rules = outbound_rules
         self.status = status
+
+
+class ManagedNetworkSettingsEx(ManagedNetworkSettings):
+    """ManagedNetworkSettingsEx.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar isolation_mode: Isolation mode for the managed network of a machine learning workspace.
+     Possible values include: "Disabled", "AllowInternetOutbound", "AllowOnlyApprovedOutbound".
+    :vartype isolation_mode: str or ~azure.mgmt.machinelearningservices.models.IsolationMode
+    :ivar network_id:
+    :vartype network_id: str
+    :ivar outbound_rules: Dictionary of :code:`<OutboundRule>`.
+    :vartype outbound_rules: dict[str, ~azure.mgmt.machinelearningservices.models.OutboundRule]
+    :ivar status: Status of the Provisioning for the managed network of a machine learning
+     workspace.
+    :vartype status: ~azure.mgmt.machinelearningservices.models.ManagedNetworkProvisionStatus
+    :ivar changeable_isolation_modes:
+    :vartype changeable_isolation_modes: list[str or
+     ~azure.mgmt.machinelearningservices.models.IsolationMode]
+    """
+
+    _validation = {
+        'network_id': {'readonly': True},
+        'changeable_isolation_modes': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'isolation_mode': {'key': 'isolationMode', 'type': 'str'},
+        'network_id': {'key': 'networkId', 'type': 'str'},
+        'outbound_rules': {'key': 'outboundRules', 'type': '{OutboundRule}'},
+        'status': {'key': 'status', 'type': 'ManagedNetworkProvisionStatus'},
+        'changeable_isolation_modes': {'key': 'changeableIsolationModes', 'type': '[str]'},
+    }
+
+    def __init__(
+        self,
+        *,
+        isolation_mode: Optional[Union[str, "IsolationMode"]] = None,
+        outbound_rules: Optional[Dict[str, "OutboundRule"]] = None,
+        status: Optional["ManagedNetworkProvisionStatus"] = None,
+        **kwargs
+    ):
+        """
+        :keyword isolation_mode: Isolation mode for the managed network of a machine learning
+         workspace. Possible values include: "Disabled", "AllowInternetOutbound",
+         "AllowOnlyApprovedOutbound".
+        :paramtype isolation_mode: str or ~azure.mgmt.machinelearningservices.models.IsolationMode
+        :keyword outbound_rules: Dictionary of :code:`<OutboundRule>`.
+        :paramtype outbound_rules: dict[str, ~azure.mgmt.machinelearningservices.models.OutboundRule]
+        :keyword status: Status of the Provisioning for the managed network of a machine learning
+         workspace.
+        :paramtype status: ~azure.mgmt.machinelearningservices.models.ManagedNetworkProvisionStatus
+        """
+        super(ManagedNetworkSettingsEx, self).__init__(isolation_mode=isolation_mode, outbound_rules=outbound_rules, status=status, **kwargs)
+        self.changeable_isolation_modes = None
 
 
 class ManagedOnlineDeployment(OnlineDeploymentProperties):
@@ -22667,17 +23033,36 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
 
     :ivar auth_type: Required. Authentication type of the connection target.Constant filled by
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
-     "ServicePrincipal", "AccessKey", "ApiKey", "CustomKeys".
+     "ServicePrincipal", "AccessKey", "ApiKey", "CustomKeys", "OAuth2".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
      "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
-     "CognitiveSearch", "CognitiveService", "CustomKeys".
+     "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureAIContentSafety", "CosmosDb",
+     "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
+     "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
+     "AmazonRedshift", "Db2", "Drill", "GoogleBigQuery", "Greenplum", "Hbase", "Hive", "Impala",
+     "Informix", "MariaDb", "MicrosoftAccess", "MySql", "Netezza", "Oracle", "Phoenix",
+     "PostgreSql", "Presto", "SapOpenHub", "SapBw", "SapHana", "SapTable", "Spark", "SqlServer",
+     "Sybase", "Teradata", "Vertica", "Cassandra", "Couchbase", "MongoDbV2", "MongoDbAtlas",
+     "AmazonS3Compatible", "FileServer", "FtpServer", "GoogleCloudStorage", "Hdfs",
+     "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc", "GenericRest", "AmazonMws",
+     "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira",
+     "Magento", "Marketo", "Office365", "Eloqua", "Responsys", "OracleServiceCloud", "PayPal",
+     "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
+     "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
+     "WebTable", "Xero", "Zoho".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+    :ivar created_by_workspace_arm_id:
+    :vartype created_by_workspace_arm_id: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
+    :ivar is_shared_to_all:
+    :vartype is_shared_to_all: bool
     :ivar metadata: Any object.
     :vartype metadata: any
+    :ivar shared_user_list:
+    :vartype shared_user_list: list[str]
     :ivar target:
     :vartype target: str
     """
@@ -22689,8 +23074,11 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
+        'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'metadata': {'key': 'metadata', 'type': 'object'},
+        'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
         'target': {'key': 'target', 'type': 'str'},
     }
 
@@ -22698,8 +23086,11 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
         self,
         *,
         category: Optional[Union[str, "ConnectionCategory"]] = None,
+        created_by_workspace_arm_id: Optional[str] = None,
         expiry_time: Optional[datetime.datetime] = None,
+        is_shared_to_all: Optional[bool] = None,
         metadata: Optional[Any] = None,
+        shared_user_list: Optional[List[str]] = None,
         target: Optional[str] = None,
         **kwargs
     ):
@@ -22707,16 +23098,35 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
          "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
-         "CognitiveSearch", "CognitiveService", "CustomKeys".
+         "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureAIContentSafety", "CosmosDb",
+         "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
+         "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
+         "AmazonRedshift", "Db2", "Drill", "GoogleBigQuery", "Greenplum", "Hbase", "Hive", "Impala",
+         "Informix", "MariaDb", "MicrosoftAccess", "MySql", "Netezza", "Oracle", "Phoenix",
+         "PostgreSql", "Presto", "SapOpenHub", "SapBw", "SapHana", "SapTable", "Spark", "SqlServer",
+         "Sybase", "Teradata", "Vertica", "Cassandra", "Couchbase", "MongoDbV2", "MongoDbAtlas",
+         "AmazonS3Compatible", "FileServer", "FtpServer", "GoogleCloudStorage", "Hdfs",
+         "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc", "GenericRest", "AmazonMws",
+         "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira",
+         "Magento", "Marketo", "Office365", "Eloqua", "Responsys", "OracleServiceCloud", "PayPal",
+         "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
+         "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
+         "WebTable", "Xero", "Zoho".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword created_by_workspace_arm_id:
+        :paramtype created_by_workspace_arm_id: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
+        :keyword is_shared_to_all:
+        :paramtype is_shared_to_all: bool
         :keyword metadata: Any object.
         :paramtype metadata: any
+        :keyword shared_user_list:
+        :paramtype shared_user_list: list[str]
         :keyword target:
         :paramtype target: str
         """
-        super(NoneAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, metadata=metadata, target=target, **kwargs)
+        super(NoneAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, created_by_workspace_arm_id=created_by_workspace_arm_id, expiry_time=expiry_time, is_shared_to_all=is_shared_to_all, metadata=metadata, shared_user_list=shared_user_list, target=target, **kwargs)
         self.auth_type = 'None'  # type: str
 
 
@@ -23081,6 +23491,119 @@ class NumericalPredictionDriftMetricThreshold(PredictionDriftMetricThresholdBase
         super(NumericalPredictionDriftMetricThreshold, self).__init__(threshold=threshold, **kwargs)
         self.data_type = 'Numerical'  # type: str
         self.metric = metric
+
+
+class OAuth2AuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
+    """OAuth2AuthTypeWorkspaceConnectionProperties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar auth_type: Required. Authentication type of the connection target.Constant filled by
+     server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
+     "ServicePrincipal", "AccessKey", "ApiKey", "CustomKeys", "OAuth2".
+    :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
+    :ivar category: Category of the connection. Possible values include: "PythonFeed",
+     "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
+     "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+     "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureAIContentSafety", "CosmosDb",
+     "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
+     "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
+     "AmazonRedshift", "Db2", "Drill", "GoogleBigQuery", "Greenplum", "Hbase", "Hive", "Impala",
+     "Informix", "MariaDb", "MicrosoftAccess", "MySql", "Netezza", "Oracle", "Phoenix",
+     "PostgreSql", "Presto", "SapOpenHub", "SapBw", "SapHana", "SapTable", "Spark", "SqlServer",
+     "Sybase", "Teradata", "Vertica", "Cassandra", "Couchbase", "MongoDbV2", "MongoDbAtlas",
+     "AmazonS3Compatible", "FileServer", "FtpServer", "GoogleCloudStorage", "Hdfs",
+     "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc", "GenericRest", "AmazonMws",
+     "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira",
+     "Magento", "Marketo", "Office365", "Eloqua", "Responsys", "OracleServiceCloud", "PayPal",
+     "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
+     "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
+     "WebTable", "Xero", "Zoho".
+    :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+    :ivar created_by_workspace_arm_id:
+    :vartype created_by_workspace_arm_id: str
+    :ivar expiry_time:
+    :vartype expiry_time: ~datetime.datetime
+    :ivar is_shared_to_all:
+    :vartype is_shared_to_all: bool
+    :ivar metadata: Any object.
+    :vartype metadata: any
+    :ivar shared_user_list:
+    :vartype shared_user_list: list[str]
+    :ivar target:
+    :vartype target: str
+    :ivar credentials: ClientId and ClientSecret are required. Other properties are optional
+     depending on each OAuth2 provider's implementaion.
+    :vartype credentials: ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionOAuth2
+    """
+
+    _validation = {
+        'auth_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'auth_type': {'key': 'authType', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+        'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
+        'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
+        'metadata': {'key': 'metadata', 'type': 'object'},
+        'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
+        'target': {'key': 'target', 'type': 'str'},
+        'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionOAuth2'},
+    }
+
+    def __init__(
+        self,
+        *,
+        category: Optional[Union[str, "ConnectionCategory"]] = None,
+        created_by_workspace_arm_id: Optional[str] = None,
+        expiry_time: Optional[datetime.datetime] = None,
+        is_shared_to_all: Optional[bool] = None,
+        metadata: Optional[Any] = None,
+        shared_user_list: Optional[List[str]] = None,
+        target: Optional[str] = None,
+        credentials: Optional["WorkspaceConnectionOAuth2"] = None,
+        **kwargs
+    ):
+        """
+        :keyword category: Category of the connection. Possible values include: "PythonFeed",
+         "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
+         "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
+         "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureAIContentSafety", "CosmosDb",
+         "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
+         "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
+         "AmazonRedshift", "Db2", "Drill", "GoogleBigQuery", "Greenplum", "Hbase", "Hive", "Impala",
+         "Informix", "MariaDb", "MicrosoftAccess", "MySql", "Netezza", "Oracle", "Phoenix",
+         "PostgreSql", "Presto", "SapOpenHub", "SapBw", "SapHana", "SapTable", "Spark", "SqlServer",
+         "Sybase", "Teradata", "Vertica", "Cassandra", "Couchbase", "MongoDbV2", "MongoDbAtlas",
+         "AmazonS3Compatible", "FileServer", "FtpServer", "GoogleCloudStorage", "Hdfs",
+         "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc", "GenericRest", "AmazonMws",
+         "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira",
+         "Magento", "Marketo", "Office365", "Eloqua", "Responsys", "OracleServiceCloud", "PayPal",
+         "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
+         "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
+         "WebTable", "Xero", "Zoho".
+        :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword created_by_workspace_arm_id:
+        :paramtype created_by_workspace_arm_id: str
+        :keyword expiry_time:
+        :paramtype expiry_time: ~datetime.datetime
+        :keyword is_shared_to_all:
+        :paramtype is_shared_to_all: bool
+        :keyword metadata: Any object.
+        :paramtype metadata: any
+        :keyword shared_user_list:
+        :paramtype shared_user_list: list[str]
+        :keyword target:
+        :paramtype target: str
+        :keyword credentials: ClientId and ClientSecret are required. Other properties are optional
+         depending on each OAuth2 provider's implementaion.
+        :paramtype credentials: ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionOAuth2
+        """
+        super(OAuth2AuthTypeWorkspaceConnectionProperties, self).__init__(category=category, created_by_workspace_arm_id=created_by_workspace_arm_id, expiry_time=expiry_time, is_shared_to_all=is_shared_to_all, metadata=metadata, shared_user_list=shared_user_list, target=target, **kwargs)
+        self.auth_type = 'OAuth2'  # type: str
+        self.credentials = credentials
 
 
 class Objective(msrest.serialization.Model):
@@ -23686,56 +24209,141 @@ class OnlineRequestSettings(msrest.serialization.Model):
         self.request_timeout = request_timeout
 
 
-class OperationDisplay(msrest.serialization.Model):
-    """Display name of operation.
+class Operation(msrest.serialization.Model):
+    """Details of a REST API operation, returned from the Resource Provider Operations API.
 
-    :ivar description: Gets or sets the description for the operation.
-    :vartype description: str
-    :ivar operation: Gets or sets the operation that users can perform.
-    :vartype operation: str
-    :ivar provider: Gets or sets the resource provider name:
-     Microsoft.MachineLearningExperimentation.
-    :vartype provider: str
-    :ivar resource: Gets or sets the resource on which the operation is performed.
-    :vartype resource: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
+     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
+    :vartype name: str
+    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
+     data-plane operations and "false" for ARM/control-plane operations.
+    :vartype is_data_action: bool
+    :ivar display: Localized display information for this particular operation.
+    :vartype display: ~azure.mgmt.machinelearningservices.models.OperationDisplay
+    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
+     (RBAC) and audit logs UX. Default value is "user,system". Possible values include: "user",
+     "system", "user,system".
+    :vartype origin: str or ~azure.mgmt.machinelearningservices.models.Origin
+    :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
+     internal only APIs. Possible values include: "Internal".
+    :vartype action_type: str or ~azure.mgmt.machinelearningservices.models.ActionType
     """
 
+    _validation = {
+        'name': {'readonly': True},
+        'is_data_action': {'readonly': True},
+        'origin': {'readonly': True},
+        'action_type': {'readonly': True},
+    }
+
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'origin': {'key': 'origin', 'type': 'str'},
+        'action_type': {'key': 'actionType', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        description: Optional[str] = None,
-        operation: Optional[str] = None,
-        provider: Optional[str] = None,
-        resource: Optional[str] = None,
+        display: Optional["OperationDisplay"] = None,
         **kwargs
     ):
         """
-        :keyword description: Gets or sets the description for the operation.
-        :paramtype description: str
-        :keyword operation: Gets or sets the operation that users can perform.
-        :paramtype operation: str
-        :keyword provider: Gets or sets the resource provider name:
-         Microsoft.MachineLearningExperimentation.
-        :paramtype provider: str
-        :keyword resource: Gets or sets the resource on which the operation is performed.
-        :paramtype resource: str
+        :keyword display: Localized display information for this particular operation.
+        :paramtype display: ~azure.mgmt.machinelearningservices.models.OperationDisplay
+        """
+        super(Operation, self).__init__(**kwargs)
+        self.name = None
+        self.is_data_action = None
+        self.display = display
+        self.origin = None
+        self.action_type = None
+
+
+class OperationDisplay(msrest.serialization.Model):
+    """Localized display information for this particular operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
+     Monitoring Insights" or "Microsoft Compute".
+    :vartype provider: str
+    :ivar resource: The localized friendly name of the resource type related to this operation.
+     E.g. "Virtual Machines" or "Job Schedule Collections".
+    :vartype resource: str
+    :ivar operation: The concise, localized friendly name for the operation; suitable for
+     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
+    :vartype operation: str
+    :ivar description: The short, localized friendly description of the operation; suitable for
+     tool tips and detailed views.
+    :vartype description: str
+    """
+
+    _validation = {
+        'provider': {'readonly': True},
+        'resource': {'readonly': True},
+        'operation': {'readonly': True},
+        'description': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'provider': {'key': 'provider', 'type': 'str'},
+        'resource': {'key': 'resource', 'type': 'str'},
+        'operation': {'key': 'operation', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
         """
         super(OperationDisplay, self).__init__(**kwargs)
-        self.description = description
-        self.operation = operation
-        self.provider = provider
-        self.resource = resource
+        self.provider = None
+        self.resource = None
+        self.operation = None
+        self.description = None
+
+
+class OperationListResult(msrest.serialization.Model):
+    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of operations supported by the resource provider.
+    :vartype value: list[~azure.mgmt.machinelearningservices.models.Operation]
+    :ivar next_link: URL to get the next set of operation list results (if there are any).
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Operation]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(OperationListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class OutboundRuleBasicResource(Resource):
-    """Outbound Rule Basic Resource for the managed network of a machine learning workspace.
+    """OutboundRuleBasicResource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -24609,17 +25217,36 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
 
     :ivar auth_type: Required. Authentication type of the connection target.Constant filled by
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
-     "ServicePrincipal", "AccessKey", "ApiKey", "CustomKeys".
+     "ServicePrincipal", "AccessKey", "ApiKey", "CustomKeys", "OAuth2".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
      "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
-     "CognitiveSearch", "CognitiveService", "CustomKeys".
+     "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureAIContentSafety", "CosmosDb",
+     "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
+     "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
+     "AmazonRedshift", "Db2", "Drill", "GoogleBigQuery", "Greenplum", "Hbase", "Hive", "Impala",
+     "Informix", "MariaDb", "MicrosoftAccess", "MySql", "Netezza", "Oracle", "Phoenix",
+     "PostgreSql", "Presto", "SapOpenHub", "SapBw", "SapHana", "SapTable", "Spark", "SqlServer",
+     "Sybase", "Teradata", "Vertica", "Cassandra", "Couchbase", "MongoDbV2", "MongoDbAtlas",
+     "AmazonS3Compatible", "FileServer", "FtpServer", "GoogleCloudStorage", "Hdfs",
+     "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc", "GenericRest", "AmazonMws",
+     "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira",
+     "Magento", "Marketo", "Office365", "Eloqua", "Responsys", "OracleServiceCloud", "PayPal",
+     "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
+     "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
+     "WebTable", "Xero", "Zoho".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+    :ivar created_by_workspace_arm_id:
+    :vartype created_by_workspace_arm_id: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
+    :ivar is_shared_to_all:
+    :vartype is_shared_to_all: bool
     :ivar metadata: Any object.
     :vartype metadata: any
+    :ivar shared_user_list:
+    :vartype shared_user_list: list[str]
     :ivar target:
     :vartype target: str
     :ivar credentials:
@@ -24634,8 +25261,11 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
+        'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'metadata': {'key': 'metadata', 'type': 'object'},
+        'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
         'target': {'key': 'target', 'type': 'str'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionPersonalAccessToken'},
     }
@@ -24644,8 +25274,11 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         self,
         *,
         category: Optional[Union[str, "ConnectionCategory"]] = None,
+        created_by_workspace_arm_id: Optional[str] = None,
         expiry_time: Optional[datetime.datetime] = None,
+        is_shared_to_all: Optional[bool] = None,
         metadata: Optional[Any] = None,
+        shared_user_list: Optional[List[str]] = None,
         target: Optional[str] = None,
         credentials: Optional["WorkspaceConnectionPersonalAccessToken"] = None,
         **kwargs
@@ -24654,19 +25287,38 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
          "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
-         "CognitiveSearch", "CognitiveService", "CustomKeys".
+         "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureAIContentSafety", "CosmosDb",
+         "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
+         "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
+         "AmazonRedshift", "Db2", "Drill", "GoogleBigQuery", "Greenplum", "Hbase", "Hive", "Impala",
+         "Informix", "MariaDb", "MicrosoftAccess", "MySql", "Netezza", "Oracle", "Phoenix",
+         "PostgreSql", "Presto", "SapOpenHub", "SapBw", "SapHana", "SapTable", "Spark", "SqlServer",
+         "Sybase", "Teradata", "Vertica", "Cassandra", "Couchbase", "MongoDbV2", "MongoDbAtlas",
+         "AmazonS3Compatible", "FileServer", "FtpServer", "GoogleCloudStorage", "Hdfs",
+         "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc", "GenericRest", "AmazonMws",
+         "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira",
+         "Magento", "Marketo", "Office365", "Eloqua", "Responsys", "OracleServiceCloud", "PayPal",
+         "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
+         "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
+         "WebTable", "Xero", "Zoho".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword created_by_workspace_arm_id:
+        :paramtype created_by_workspace_arm_id: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
+        :keyword is_shared_to_all:
+        :paramtype is_shared_to_all: bool
         :keyword metadata: Any object.
         :paramtype metadata: any
+        :keyword shared_user_list:
+        :paramtype shared_user_list: list[str]
         :keyword target:
         :paramtype target: str
         :keyword credentials:
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionPersonalAccessToken
         """
-        super(PATAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, metadata=metadata, target=target, **kwargs)
+        super(PATAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, created_by_workspace_arm_id=created_by_workspace_arm_id, expiry_time=expiry_time, is_shared_to_all=is_shared_to_all, metadata=metadata, shared_user_list=shared_user_list, target=target, **kwargs)
         self.auth_type = 'PAT'  # type: str
         self.credentials = credentials
 
@@ -25119,7 +25771,6 @@ class PrivateEndpointConnection(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -25145,6 +25796,7 @@ class PrivateEndpointConnection(Resource):
         tags: Optional[Dict[str, str]] = None,
         private_endpoint: Optional["WorkspacePrivateEndpointResource"] = None,
         private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
+        provisioning_state: Optional[Union[str, "PrivateEndpointConnectionProvisioningState"]] = None,
         **kwargs
     ):
         """
@@ -25163,6 +25815,10 @@ class PrivateEndpointConnection(Resource):
         :keyword private_link_service_connection_state: The connection state.
         :paramtype private_link_service_connection_state:
          ~azure.mgmt.machinelearningservices.models.PrivateLinkServiceConnectionState
+        :keyword provisioning_state: The current provisioning state. Possible values include:
+         "Succeeded", "Creating", "Deleting", "Failed".
+        :paramtype provisioning_state: str or
+         ~azure.mgmt.machinelearningservices.models.PrivateEndpointConnectionProvisioningState
         """
         super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.identity = identity
@@ -25171,7 +25827,7 @@ class PrivateEndpointConnection(Resource):
         self.tags = tags
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
-        self.provisioning_state = None
+        self.provisioning_state = provisioning_state
 
 
 class PrivateEndpointConnectionListResult(msrest.serialization.Model):
@@ -27066,17 +27722,36 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
 
     :ivar auth_type: Required. Authentication type of the connection target.Constant filled by
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
-     "ServicePrincipal", "AccessKey", "ApiKey", "CustomKeys".
+     "ServicePrincipal", "AccessKey", "ApiKey", "CustomKeys", "OAuth2".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
      "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
-     "CognitiveSearch", "CognitiveService", "CustomKeys".
+     "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureAIContentSafety", "CosmosDb",
+     "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
+     "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
+     "AmazonRedshift", "Db2", "Drill", "GoogleBigQuery", "Greenplum", "Hbase", "Hive", "Impala",
+     "Informix", "MariaDb", "MicrosoftAccess", "MySql", "Netezza", "Oracle", "Phoenix",
+     "PostgreSql", "Presto", "SapOpenHub", "SapBw", "SapHana", "SapTable", "Spark", "SqlServer",
+     "Sybase", "Teradata", "Vertica", "Cassandra", "Couchbase", "MongoDbV2", "MongoDbAtlas",
+     "AmazonS3Compatible", "FileServer", "FtpServer", "GoogleCloudStorage", "Hdfs",
+     "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc", "GenericRest", "AmazonMws",
+     "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira",
+     "Magento", "Marketo", "Office365", "Eloqua", "Responsys", "OracleServiceCloud", "PayPal",
+     "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
+     "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
+     "WebTable", "Xero", "Zoho".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+    :ivar created_by_workspace_arm_id:
+    :vartype created_by_workspace_arm_id: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
+    :ivar is_shared_to_all:
+    :vartype is_shared_to_all: bool
     :ivar metadata: Any object.
     :vartype metadata: any
+    :ivar shared_user_list:
+    :vartype shared_user_list: list[str]
     :ivar target:
     :vartype target: str
     :ivar credentials:
@@ -27091,8 +27766,11 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
+        'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'metadata': {'key': 'metadata', 'type': 'object'},
+        'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
         'target': {'key': 'target', 'type': 'str'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionSharedAccessSignature'},
     }
@@ -27101,8 +27779,11 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         self,
         *,
         category: Optional[Union[str, "ConnectionCategory"]] = None,
+        created_by_workspace_arm_id: Optional[str] = None,
         expiry_time: Optional[datetime.datetime] = None,
+        is_shared_to_all: Optional[bool] = None,
         metadata: Optional[Any] = None,
+        shared_user_list: Optional[List[str]] = None,
         target: Optional[str] = None,
         credentials: Optional["WorkspaceConnectionSharedAccessSignature"] = None,
         **kwargs
@@ -27111,19 +27792,38 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
          "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
-         "CognitiveSearch", "CognitiveService", "CustomKeys".
+         "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureAIContentSafety", "CosmosDb",
+         "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
+         "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
+         "AmazonRedshift", "Db2", "Drill", "GoogleBigQuery", "Greenplum", "Hbase", "Hive", "Impala",
+         "Informix", "MariaDb", "MicrosoftAccess", "MySql", "Netezza", "Oracle", "Phoenix",
+         "PostgreSql", "Presto", "SapOpenHub", "SapBw", "SapHana", "SapTable", "Spark", "SqlServer",
+         "Sybase", "Teradata", "Vertica", "Cassandra", "Couchbase", "MongoDbV2", "MongoDbAtlas",
+         "AmazonS3Compatible", "FileServer", "FtpServer", "GoogleCloudStorage", "Hdfs",
+         "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc", "GenericRest", "AmazonMws",
+         "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira",
+         "Magento", "Marketo", "Office365", "Eloqua", "Responsys", "OracleServiceCloud", "PayPal",
+         "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
+         "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
+         "WebTable", "Xero", "Zoho".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword created_by_workspace_arm_id:
+        :paramtype created_by_workspace_arm_id: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
+        :keyword is_shared_to_all:
+        :paramtype is_shared_to_all: bool
         :keyword metadata: Any object.
         :paramtype metadata: any
+        :keyword shared_user_list:
+        :paramtype shared_user_list: list[str]
         :keyword target:
         :paramtype target: str
         :keyword credentials:
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionSharedAccessSignature
         """
-        super(SASAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, metadata=metadata, target=target, **kwargs)
+        super(SASAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, created_by_workspace_arm_id=created_by_workspace_arm_id, expiry_time=expiry_time, is_shared_to_all=is_shared_to_all, metadata=metadata, shared_user_list=shared_user_list, target=target, **kwargs)
         self.auth_type = 'SAS'  # type: str
         self.credentials = credentials
 
@@ -27667,17 +28367,36 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
 
     :ivar auth_type: Required. Authentication type of the connection target.Constant filled by
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
-     "ServicePrincipal", "AccessKey", "ApiKey", "CustomKeys".
+     "ServicePrincipal", "AccessKey", "ApiKey", "CustomKeys", "OAuth2".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
      "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
-     "CognitiveSearch", "CognitiveService", "CustomKeys".
+     "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureAIContentSafety", "CosmosDb",
+     "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
+     "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
+     "AmazonRedshift", "Db2", "Drill", "GoogleBigQuery", "Greenplum", "Hbase", "Hive", "Impala",
+     "Informix", "MariaDb", "MicrosoftAccess", "MySql", "Netezza", "Oracle", "Phoenix",
+     "PostgreSql", "Presto", "SapOpenHub", "SapBw", "SapHana", "SapTable", "Spark", "SqlServer",
+     "Sybase", "Teradata", "Vertica", "Cassandra", "Couchbase", "MongoDbV2", "MongoDbAtlas",
+     "AmazonS3Compatible", "FileServer", "FtpServer", "GoogleCloudStorage", "Hdfs",
+     "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc", "GenericRest", "AmazonMws",
+     "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira",
+     "Magento", "Marketo", "Office365", "Eloqua", "Responsys", "OracleServiceCloud", "PayPal",
+     "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
+     "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
+     "WebTable", "Xero", "Zoho".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+    :ivar created_by_workspace_arm_id:
+    :vartype created_by_workspace_arm_id: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
+    :ivar is_shared_to_all:
+    :vartype is_shared_to_all: bool
     :ivar metadata: Any object.
     :vartype metadata: any
+    :ivar shared_user_list:
+    :vartype shared_user_list: list[str]
     :ivar target:
     :vartype target: str
     :ivar credentials:
@@ -27692,8 +28411,11 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
+        'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'metadata': {'key': 'metadata', 'type': 'object'},
+        'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
         'target': {'key': 'target', 'type': 'str'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionServicePrincipal'},
     }
@@ -27702,8 +28424,11 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         self,
         *,
         category: Optional[Union[str, "ConnectionCategory"]] = None,
+        created_by_workspace_arm_id: Optional[str] = None,
         expiry_time: Optional[datetime.datetime] = None,
+        is_shared_to_all: Optional[bool] = None,
         metadata: Optional[Any] = None,
+        shared_user_list: Optional[List[str]] = None,
         target: Optional[str] = None,
         credentials: Optional["WorkspaceConnectionServicePrincipal"] = None,
         **kwargs
@@ -27712,19 +28437,38 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
          "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
-         "CognitiveSearch", "CognitiveService", "CustomKeys".
+         "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureAIContentSafety", "CosmosDb",
+         "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
+         "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
+         "AmazonRedshift", "Db2", "Drill", "GoogleBigQuery", "Greenplum", "Hbase", "Hive", "Impala",
+         "Informix", "MariaDb", "MicrosoftAccess", "MySql", "Netezza", "Oracle", "Phoenix",
+         "PostgreSql", "Presto", "SapOpenHub", "SapBw", "SapHana", "SapTable", "Spark", "SqlServer",
+         "Sybase", "Teradata", "Vertica", "Cassandra", "Couchbase", "MongoDbV2", "MongoDbAtlas",
+         "AmazonS3Compatible", "FileServer", "FtpServer", "GoogleCloudStorage", "Hdfs",
+         "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc", "GenericRest", "AmazonMws",
+         "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira",
+         "Magento", "Marketo", "Office365", "Eloqua", "Responsys", "OracleServiceCloud", "PayPal",
+         "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
+         "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
+         "WebTable", "Xero", "Zoho".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword created_by_workspace_arm_id:
+        :paramtype created_by_workspace_arm_id: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
+        :keyword is_shared_to_all:
+        :paramtype is_shared_to_all: bool
         :keyword metadata: Any object.
         :paramtype metadata: any
+        :keyword shared_user_list:
+        :paramtype shared_user_list: list[str]
         :keyword target:
         :paramtype target: str
         :keyword credentials:
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionServicePrincipal
         """
-        super(ServicePrincipalAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, metadata=metadata, target=target, **kwargs)
+        super(ServicePrincipalAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, created_by_workspace_arm_id=created_by_workspace_arm_id, expiry_time=expiry_time, is_shared_to_all=is_shared_to_all, metadata=metadata, shared_user_list=shared_user_list, target=target, **kwargs)
         self.auth_type = 'ServicePrincipal'  # type: str
         self.credentials = credentials
 
@@ -31757,17 +32501,36 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
 
     :ivar auth_type: Required. Authentication type of the connection target.Constant filled by
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
-     "ServicePrincipal", "AccessKey", "ApiKey", "CustomKeys".
+     "ServicePrincipal", "AccessKey", "ApiKey", "CustomKeys", "OAuth2".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
      "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
-     "CognitiveSearch", "CognitiveService", "CustomKeys".
+     "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureAIContentSafety", "CosmosDb",
+     "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
+     "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
+     "AmazonRedshift", "Db2", "Drill", "GoogleBigQuery", "Greenplum", "Hbase", "Hive", "Impala",
+     "Informix", "MariaDb", "MicrosoftAccess", "MySql", "Netezza", "Oracle", "Phoenix",
+     "PostgreSql", "Presto", "SapOpenHub", "SapBw", "SapHana", "SapTable", "Spark", "SqlServer",
+     "Sybase", "Teradata", "Vertica", "Cassandra", "Couchbase", "MongoDbV2", "MongoDbAtlas",
+     "AmazonS3Compatible", "FileServer", "FtpServer", "GoogleCloudStorage", "Hdfs",
+     "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc", "GenericRest", "AmazonMws",
+     "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira",
+     "Magento", "Marketo", "Office365", "Eloqua", "Responsys", "OracleServiceCloud", "PayPal",
+     "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
+     "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
+     "WebTable", "Xero", "Zoho".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+    :ivar created_by_workspace_arm_id:
+    :vartype created_by_workspace_arm_id: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
+    :ivar is_shared_to_all:
+    :vartype is_shared_to_all: bool
     :ivar metadata: Any object.
     :vartype metadata: any
+    :ivar shared_user_list:
+    :vartype shared_user_list: list[str]
     :ivar target:
     :vartype target: str
     :ivar credentials:
@@ -31782,8 +32545,11 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
+        'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'metadata': {'key': 'metadata', 'type': 'object'},
+        'shared_user_list': {'key': 'sharedUserList', 'type': '[str]'},
         'target': {'key': 'target', 'type': 'str'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionUsernamePassword'},
     }
@@ -31792,8 +32558,11 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         self,
         *,
         category: Optional[Union[str, "ConnectionCategory"]] = None,
+        created_by_workspace_arm_id: Optional[str] = None,
         expiry_time: Optional[datetime.datetime] = None,
+        is_shared_to_all: Optional[bool] = None,
         metadata: Optional[Any] = None,
+        shared_user_list: Optional[List[str]] = None,
         target: Optional[str] = None,
         credentials: Optional["WorkspaceConnectionUsernamePassword"] = None,
         **kwargs
@@ -31802,19 +32571,38 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "S3", "Snowflake", "AzureSqlDb", "AzureSynapseAnalytics",
          "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
-         "CognitiveSearch", "CognitiveService", "CustomKeys".
+         "CognitiveSearch", "CognitiveService", "CustomKeys", "AzureAIContentSafety", "CosmosDb",
+         "CosmosDbMongoDbApi", "AzureDataExplorer", "AzureMariaDb", "AzureDatabricksDeltaLake",
+         "AzureSqlMi", "AzureTableStorage", "AmazonRdsForOracle", "AmazonRdsForSqlServer",
+         "AmazonRedshift", "Db2", "Drill", "GoogleBigQuery", "Greenplum", "Hbase", "Hive", "Impala",
+         "Informix", "MariaDb", "MicrosoftAccess", "MySql", "Netezza", "Oracle", "Phoenix",
+         "PostgreSql", "Presto", "SapOpenHub", "SapBw", "SapHana", "SapTable", "Spark", "SqlServer",
+         "Sybase", "Teradata", "Vertica", "Cassandra", "Couchbase", "MongoDbV2", "MongoDbAtlas",
+         "AmazonS3Compatible", "FileServer", "FtpServer", "GoogleCloudStorage", "Hdfs",
+         "OracleCloudStorage", "Sftp", "GenericHttp", "ODataRest", "Odbc", "GenericRest", "AmazonMws",
+         "Concur", "Dynamics", "DynamicsAx", "DynamicsCrm", "GoogleAdWords", "Hubspot", "Jira",
+         "Magento", "Marketo", "Office365", "Eloqua", "Responsys", "OracleServiceCloud", "PayPal",
+         "QuickBooks", "Salesforce", "SalesforceServiceCloud", "SalesforceMarketingCloud",
+         "SapCloudForCustomer", "SapEcc", "ServiceNow", "SharePointOnlineList", "Shopify", "Square",
+         "WebTable", "Xero", "Zoho".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+        :keyword created_by_workspace_arm_id:
+        :paramtype created_by_workspace_arm_id: str
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
+        :keyword is_shared_to_all:
+        :paramtype is_shared_to_all: bool
         :keyword metadata: Any object.
         :paramtype metadata: any
+        :keyword shared_user_list:
+        :paramtype shared_user_list: list[str]
         :keyword target:
         :paramtype target: str
         :keyword credentials:
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionUsernamePassword
         """
-        super(UsernamePasswordAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, metadata=metadata, target=target, **kwargs)
+        super(UsernamePasswordAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, created_by_workspace_arm_id=created_by_workspace_arm_id, expiry_time=expiry_time, is_shared_to_all=is_shared_to_all, metadata=metadata, shared_user_list=shared_user_list, target=target, **kwargs)
         self.auth_type = 'UsernamePassword'  # type: str
         self.credentials = credentials
 
@@ -32424,13 +33212,15 @@ class Workspace(Resource):
     :vartype hub_resource_id: str
     :ivar image_build_compute: The compute name for image build.
     :vartype image_build_compute: str
+    :ivar ip_allowlist: The list of IP addresses that are allowed to access the workspace.
+    :vartype ip_allowlist: list[str]
     :ivar key_vault: ARM id of the key vault associated with this workspace. This cannot be changed
      once the workspace has been created.
     :vartype key_vault: str
     :ivar key_vaults:
     :vartype key_vaults: list[str]
-    :ivar managed_network: Managed Network settings for a machine learning workspace.
-    :vartype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettings
+    :ivar managed_network:
+    :vartype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettingsEx
     :ivar ml_flow_tracking_uri: The URI associated with this workspace that machine learning flow
      must point at to set up tracking.
     :vartype ml_flow_tracking_uri: str
@@ -32528,9 +33318,10 @@ class Workspace(Resource):
         'hbi_workspace': {'key': 'properties.hbiWorkspace', 'type': 'bool'},
         'hub_resource_id': {'key': 'properties.hubResourceId', 'type': 'str'},
         'image_build_compute': {'key': 'properties.imageBuildCompute', 'type': 'str'},
+        'ip_allowlist': {'key': 'properties.ipAllowlist', 'type': '[str]'},
         'key_vault': {'key': 'properties.keyVault', 'type': 'str'},
         'key_vaults': {'key': 'properties.keyVaults', 'type': '[str]'},
-        'managed_network': {'key': 'properties.managedNetwork', 'type': 'ManagedNetworkSettings'},
+        'managed_network': {'key': 'properties.managedNetwork', 'type': 'ManagedNetworkSettingsEx'},
         'ml_flow_tracking_uri': {'key': 'properties.mlFlowTrackingUri', 'type': 'str'},
         'notebook_info': {'key': 'properties.notebookInfo', 'type': 'NotebookResourceInfo'},
         'primary_user_assigned_identity': {'key': 'properties.primaryUserAssignedIdentity', 'type': 'str'},
@@ -32575,9 +33366,10 @@ class Workspace(Resource):
         hbi_workspace: Optional[bool] = None,
         hub_resource_id: Optional[str] = None,
         image_build_compute: Optional[str] = None,
+        ip_allowlist: Optional[List[str]] = None,
         key_vault: Optional[str] = None,
         key_vaults: Optional[List[str]] = None,
-        managed_network: Optional["ManagedNetworkSettings"] = None,
+        managed_network: Optional["ManagedNetworkSettingsEx"] = None,
         primary_user_assigned_identity: Optional[str] = None,
         public_network_access: Optional[Union[str, "PublicNetworkAccessType"]] = None,
         service_managed_resources_settings: Optional["ServiceManagedResourcesSettings"] = None,
@@ -32637,13 +33429,15 @@ class Workspace(Resource):
         :paramtype hub_resource_id: str
         :keyword image_build_compute: The compute name for image build.
         :paramtype image_build_compute: str
+        :keyword ip_allowlist: The list of IP addresses that are allowed to access the workspace.
+        :paramtype ip_allowlist: list[str]
         :keyword key_vault: ARM id of the key vault associated with this workspace. This cannot be
          changed once the workspace has been created.
         :paramtype key_vault: str
         :keyword key_vaults:
         :paramtype key_vaults: list[str]
-        :keyword managed_network: Managed Network settings for a machine learning workspace.
-        :paramtype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettings
+        :keyword managed_network:
+        :paramtype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettingsEx
         :keyword primary_user_assigned_identity: The user assigned identity resource id that represents
          the workspace identity.
         :paramtype primary_user_assigned_identity: str
@@ -32696,6 +33490,7 @@ class Workspace(Resource):
         self.hbi_workspace = hbi_workspace
         self.hub_resource_id = hub_resource_id
         self.image_build_compute = image_build_compute
+        self.ip_allowlist = ip_allowlist
         self.key_vault = key_vault
         self.key_vaults = key_vaults
         self.managed_network = managed_network
@@ -32807,6 +33602,87 @@ class WorkspaceConnectionManagedIdentity(msrest.serialization.Model):
         super(WorkspaceConnectionManagedIdentity, self).__init__(**kwargs)
         self.client_id = client_id
         self.resource_id = resource_id
+
+
+class WorkspaceConnectionOAuth2(msrest.serialization.Model):
+    """ClientId and ClientSecret are required. Other properties are optional
+depending on each OAuth2 provider's implementaion.
+
+    :ivar auth_url: Required by Concur connection category.
+    :vartype auth_url: str
+    :ivar client_id:
+    :vartype client_id: str
+    :ivar client_secret:
+    :vartype client_secret: str
+    :ivar developer_token: Required by GoogleAdWords connection category.
+    :vartype developer_token: str
+    :ivar password:
+    :vartype password: str
+    :ivar refresh_token: Required by GoogleBigQuery, GoogleAdWords, Hubspot, QuickBooks, Square,
+     Xero, Zoho
+     where user needs to get RefreshToken offline.
+    :vartype refresh_token: str
+    :ivar tenant_id: Required by QuickBooks and Xero conection categories.
+    :vartype tenant_id: str
+    :ivar username: Concur, ServiceNow auth server AccessToken grant type is 'Password'
+     which requires UsernamePassword.
+    :vartype username: str
+    """
+
+    _attribute_map = {
+        'auth_url': {'key': 'authUrl', 'type': 'str'},
+        'client_id': {'key': 'clientId', 'type': 'str'},
+        'client_secret': {'key': 'clientSecret', 'type': 'str'},
+        'developer_token': {'key': 'developerToken', 'type': 'str'},
+        'password': {'key': 'password', 'type': 'str'},
+        'refresh_token': {'key': 'refreshToken', 'type': 'str'},
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'username': {'key': 'username', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        auth_url: Optional[str] = None,
+        client_id: Optional[str] = None,
+        client_secret: Optional[str] = None,
+        developer_token: Optional[str] = None,
+        password: Optional[str] = None,
+        refresh_token: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        username: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword auth_url: Required by Concur connection category.
+        :paramtype auth_url: str
+        :keyword client_id:
+        :paramtype client_id: str
+        :keyword client_secret:
+        :paramtype client_secret: str
+        :keyword developer_token: Required by GoogleAdWords connection category.
+        :paramtype developer_token: str
+        :keyword password:
+        :paramtype password: str
+        :keyword refresh_token: Required by GoogleBigQuery, GoogleAdWords, Hubspot, QuickBooks, Square,
+         Xero, Zoho
+         where user needs to get RefreshToken offline.
+        :paramtype refresh_token: str
+        :keyword tenant_id: Required by QuickBooks and Xero conection categories.
+        :paramtype tenant_id: str
+        :keyword username: Concur, ServiceNow auth server AccessToken grant type is 'Password'
+         which requires UsernamePassword.
+        :paramtype username: str
+        """
+        super(WorkspaceConnectionOAuth2, self).__init__(**kwargs)
+        self.auth_url = auth_url
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.developer_token = developer_token
+        self.password = password
+        self.refresh_token = refresh_token
+        self.tenant_id = tenant_id
+        self.username = username
 
 
 class WorkspaceConnectionPersonalAccessToken(msrest.serialization.Model):
@@ -33018,12 +33894,16 @@ class WorkspaceConnectionUsernamePassword(msrest.serialization.Model):
 
     :ivar password:
     :vartype password: str
+    :ivar security_token: Optional, required by connections like SalesForce for extra security in
+     addition to UsernamePassword.
+    :vartype security_token: str
     :ivar username:
     :vartype username: str
     """
 
     _attribute_map = {
         'password': {'key': 'password', 'type': 'str'},
+        'security_token': {'key': 'securityToken', 'type': 'str'},
         'username': {'key': 'username', 'type': 'str'},
     }
 
@@ -33031,17 +33911,22 @@ class WorkspaceConnectionUsernamePassword(msrest.serialization.Model):
         self,
         *,
         password: Optional[str] = None,
+        security_token: Optional[str] = None,
         username: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword password:
         :paramtype password: str
+        :keyword security_token: Optional, required by connections like SalesForce for extra security
+         in addition to UsernamePassword.
+        :paramtype security_token: str
         :keyword username:
         :paramtype username: str
         """
         super(WorkspaceConnectionUsernamePassword, self).__init__(**kwargs)
         self.password = password
+        self.security_token = security_token
         self.username = username
 
 
@@ -33173,8 +34058,10 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
     :vartype friendly_name: str
     :ivar image_build_compute: The compute name for image build.
     :vartype image_build_compute: str
-    :ivar managed_network: Managed Network settings for a machine learning workspace.
-    :vartype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettings
+    :ivar ip_allowlist: The list of IP addresses that are allowed to access the workspace.
+    :vartype ip_allowlist: list[str]
+    :ivar managed_network:
+    :vartype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettingsEx
     :ivar primary_user_assigned_identity: The user assigned identity resource id that represents
      the workspace identity.
     :vartype primary_user_assigned_identity: str
@@ -33204,7 +34091,8 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         'feature_store_settings': {'key': 'properties.featureStoreSettings', 'type': 'FeatureStoreSettings'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'image_build_compute': {'key': 'properties.imageBuildCompute', 'type': 'str'},
-        'managed_network': {'key': 'properties.managedNetwork', 'type': 'ManagedNetworkSettings'},
+        'ip_allowlist': {'key': 'properties.ipAllowlist', 'type': '[str]'},
+        'managed_network': {'key': 'properties.managedNetwork', 'type': 'ManagedNetworkSettingsEx'},
         'primary_user_assigned_identity': {'key': 'properties.primaryUserAssignedIdentity', 'type': 'str'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
         'service_managed_resources_settings': {'key': 'properties.serviceManagedResourcesSettings', 'type': 'ServiceManagedResourcesSettings'},
@@ -33226,7 +34114,8 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         feature_store_settings: Optional["FeatureStoreSettings"] = None,
         friendly_name: Optional[str] = None,
         image_build_compute: Optional[str] = None,
-        managed_network: Optional["ManagedNetworkSettings"] = None,
+        ip_allowlist: Optional[List[str]] = None,
+        managed_network: Optional["ManagedNetworkSettingsEx"] = None,
         primary_user_assigned_identity: Optional[str] = None,
         public_network_access: Optional[Union[str, "PublicNetworkAccessType"]] = None,
         service_managed_resources_settings: Optional["ServiceManagedResourcesSettings"] = None,
@@ -33260,8 +34149,10 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         :paramtype friendly_name: str
         :keyword image_build_compute: The compute name for image build.
         :paramtype image_build_compute: str
-        :keyword managed_network: Managed Network settings for a machine learning workspace.
-        :paramtype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettings
+        :keyword ip_allowlist: The list of IP addresses that are allowed to access the workspace.
+        :paramtype ip_allowlist: list[str]
+        :keyword managed_network:
+        :paramtype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettingsEx
         :keyword primary_user_assigned_identity: The user assigned identity resource id that represents
          the workspace identity.
         :paramtype primary_user_assigned_identity: str
@@ -33291,6 +34182,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         self.feature_store_settings = feature_store_settings
         self.friendly_name = friendly_name
         self.image_build_compute = image_build_compute
+        self.ip_allowlist = ip_allowlist
         self.managed_network = managed_network
         self.primary_user_assigned_identity = primary_user_assigned_identity
         self.public_network_access = public_network_access

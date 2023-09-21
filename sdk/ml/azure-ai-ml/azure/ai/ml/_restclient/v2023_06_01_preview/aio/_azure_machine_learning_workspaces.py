@@ -16,7 +16,7 @@ from azure.mgmt.core import AsyncARMPipelineClient
 
 from .. import models
 from ._configuration import AzureMachineLearningWorkspacesConfiguration
-from .operations import BatchDeploymentsOperations, BatchEndpointsOperations, CodeContainersOperations, CodeVersionsOperations, ComponentContainersOperations, ComponentVersionsOperations, ComputeOperations, DataContainersOperations, DataVersionsOperations, DatastoresOperations, EnvironmentContainersOperations, EnvironmentVersionsOperations, FeaturesOperations, FeaturesetContainersOperations, FeaturesetVersionsOperations, FeaturestoreEntityContainersOperations, FeaturestoreEntityVersionsOperations, JobsOperations, LabelingJobsOperations, ManagedNetworkProvisionsOperations, ManagedNetworkSettingsRuleOperations, ModelContainersOperations, ModelVersionsOperations, OnlineDeploymentsOperations, OnlineEndpointsOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, QuotasOperations, RegistriesOperations, RegistryCodeContainersOperations, RegistryCodeVersionsOperations, RegistryComponentContainersOperations, RegistryComponentVersionsOperations, RegistryDataContainersOperations, RegistryDataVersionsOperations, RegistryEnvironmentContainersOperations, RegistryEnvironmentVersionsOperations, RegistryModelContainersOperations, RegistryModelVersionsOperations, SchedulesOperations, UsagesOperations, VirtualMachineSizesOperations, WorkspaceConnectionsOperations, WorkspaceFeaturesOperations, WorkspacesOperations
+from .operations import BatchDeploymentsOperations, BatchEndpointsOperations, CodeContainersOperations, CodeVersionsOperations, ComponentContainersOperations, ComponentVersionsOperations, ComputeOperations, DataContainersOperations, DataVersionsOperations, DatastoresOperations, EnvironmentContainersOperations, EnvironmentVersionsOperations, FeaturesOperations, FeaturesetContainersOperations, FeaturesetVersionsOperations, FeaturestoreEntityContainersOperations, FeaturestoreEntityVersionsOperations, HubPolicyOperations, JobsOperations, LabelingJobsOperations, ManagedNetworkProvisionsOperations, ManagedNetworkSettingsRuleOperations, ModelContainersOperations, ModelVersionsOperations, OnlineDeploymentsOperations, OnlineEndpointsOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, QuotasOperations, RegistriesOperations, RegistryCodeContainersOperations, RegistryCodeVersionsOperations, RegistryComponentContainersOperations, RegistryComponentVersionsOperations, RegistryDataContainersOperations, RegistryDataVersionsOperations, RegistryEnvironmentContainersOperations, RegistryEnvironmentVersionsOperations, RegistryModelContainersOperations, RegistryModelVersionsOperations, SchedulesOperations, UsagesOperations, VirtualMachineSizesOperations, WorkspaceConnectionsOperations, WorkspaceFeaturesOperations, WorkspacesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -144,6 +144,8 @@ class AzureMachineLearningWorkspaces:    # pylint: disable=too-many-instance-att
     :ivar managed_network_settings_rule: ManagedNetworkSettingsRuleOperations operations
     :vartype managed_network_settings_rule:
      azure.mgmt.machinelearningservices.aio.operations.ManagedNetworkSettingsRuleOperations
+    :ivar hub_policy: HubPolicyOperations operations
+    :vartype hub_policy: azure.mgmt.machinelearningservices.aio.operations.HubPolicyOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections:
      azure.mgmt.machinelearningservices.aio.operations.PrivateEndpointConnectionsOperations
@@ -223,6 +225,7 @@ class AzureMachineLearningWorkspaces:    # pylint: disable=too-many-instance-att
         self.workspaces = WorkspacesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.workspace_connections = WorkspaceConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.managed_network_settings_rule = ManagedNetworkSettingsRuleOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.hub_policy = HubPolicyOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.managed_network_provisions = ManagedNetworkProvisionsOperations(self._client, self._config, self._serialize, self._deserialize)

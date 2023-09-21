@@ -76,6 +76,7 @@ from azure.ai.ml.operations import (
     WorkspaceConnectionsOperations,
     WorkspaceHubOperations,
     WorkspaceOperations,
+    ComputePolicyOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._feature_set_operations import FeatureSetOperations
@@ -371,6 +372,13 @@ class MLClient:
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.WORKSPACE, self._workspaces)
+
+        self._policies = ComputePolicyOperations(
+            self._operation_scope,
+            self._operation_config,
+            self._service_client_06_2023_preview,
+        )
+        self._operation_container.add(AzureMLResourceType.COMPUTE, self._policies)
 
         self._workspace_outbound_rules = WorkspaceOutboundRuleOperations(
             self._operation_scope,
@@ -780,6 +788,10 @@ class MLClient:
         :rtype: HubOperations
         """
         return self._workspace_hubs
+
+    @property
+    def policies(self) -> ComputePolicyOperations:
+        return self._policies
 
     @property
     @experimental

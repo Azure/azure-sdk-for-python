@@ -24,8 +24,6 @@ try:
     from ._models_py3 import AmlComputeNodesInformation
     from ._models_py3 import AmlComputeProperties
     from ._models_py3 import AmlComputeSchema
-    from ._models_py3 import AmlOperation
-    from ._models_py3 import AmlOperationListResult
     from ._models_py3 import AmlToken
     from ._models_py3 import AmlTokenComputeIdentity
     from ._models_py3 import AmlUserFeature
@@ -116,6 +114,8 @@ try:
     from ._models_py3 import ComputeInstanceSchema
     from ._models_py3 import ComputeInstanceSshSettings
     from ._models_py3 import ComputeInstanceVersion
+    from ._models_py3 import ComputePolicyDto
+    from ._models_py3 import ComputePolicyRequest
     from ._models_py3 import ComputeResource
     from ._models_py3 import ComputeResourceSchema
     from ._models_py3 import ComputeRuntimeDto
@@ -313,6 +313,7 @@ try:
     from ._models_py3 import LabelingJobTextProperties
     from ._models_py3 import LakeHouseArtifact
     from ._models_py3 import ListAmlUserFeatureResult
+    from ._models_py3 import ListComputePoliciesResponse
     from ._models_py3 import ListNotebookKeysResult
     from ._models_py3 import ListStorageAccountKeysResult
     from ._models_py3 import ListUsagesResult
@@ -333,6 +334,7 @@ try:
     from ._models_py3 import ManagedNetworkProvisionOptions
     from ._models_py3 import ManagedNetworkProvisionStatus
     from ._models_py3 import ManagedNetworkSettings
+    from ._models_py3 import ManagedNetworkSettingsEx
     from ._models_py3 import ManagedOnlineDeployment
     from ._models_py3 import ManagedServiceIdentity
     from ._models_py3 import MaterializationComputeResource
@@ -379,6 +381,7 @@ try:
     from ._models_py3 import NumericalDataDriftMetricThreshold
     from ._models_py3 import NumericalDataQualityMetricThreshold
     from ._models_py3 import NumericalPredictionDriftMetricThreshold
+    from ._models_py3 import OAuth2AuthTypeWorkspaceConnectionProperties
     from ._models_py3 import Objective
     from ._models_py3 import OneLakeArtifact
     from ._models_py3 import OneLakeDatastore
@@ -391,7 +394,9 @@ try:
     from ._models_py3 import OnlineInferenceConfiguration
     from ._models_py3 import OnlineRequestSettings
     from ._models_py3 import OnlineScaleSettings
+    from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
+    from ._models_py3 import OperationListResult
     from ._models_py3 import OutboundRule
     from ._models_py3 import OutboundRuleBasicResource
     from ._models_py3 import OutboundRuleListResult
@@ -565,6 +570,7 @@ try:
     from ._models_py3 import WorkspaceConnectionAccessKey
     from ._models_py3 import WorkspaceConnectionApiKey
     from ._models_py3 import WorkspaceConnectionManagedIdentity
+    from ._models_py3 import WorkspaceConnectionOAuth2
     from ._models_py3 import WorkspaceConnectionPersonalAccessToken
     from ._models_py3 import WorkspaceConnectionPropertiesV2
     from ._models_py3 import WorkspaceConnectionPropertiesV2BasicResource
@@ -595,8 +601,6 @@ except (SyntaxError, ImportError):
     from ._models import AmlComputeNodesInformation  # type: ignore
     from ._models import AmlComputeProperties  # type: ignore
     from ._models import AmlComputeSchema  # type: ignore
-    from ._models import AmlOperation  # type: ignore
-    from ._models import AmlOperationListResult  # type: ignore
     from ._models import AmlToken  # type: ignore
     from ._models import AmlTokenComputeIdentity  # type: ignore
     from ._models import AmlUserFeature  # type: ignore
@@ -687,6 +691,8 @@ except (SyntaxError, ImportError):
     from ._models import ComputeInstanceSchema  # type: ignore
     from ._models import ComputeInstanceSshSettings  # type: ignore
     from ._models import ComputeInstanceVersion  # type: ignore
+    from ._models import ComputePolicyDto  # type: ignore
+    from ._models import ComputePolicyRequest  # type: ignore
     from ._models import ComputeResource  # type: ignore
     from ._models import ComputeResourceSchema  # type: ignore
     from ._models import ComputeRuntimeDto  # type: ignore
@@ -884,6 +890,7 @@ except (SyntaxError, ImportError):
     from ._models import LabelingJobTextProperties  # type: ignore
     from ._models import LakeHouseArtifact  # type: ignore
     from ._models import ListAmlUserFeatureResult  # type: ignore
+    from ._models import ListComputePoliciesResponse  # type: ignore
     from ._models import ListNotebookKeysResult  # type: ignore
     from ._models import ListStorageAccountKeysResult  # type: ignore
     from ._models import ListUsagesResult  # type: ignore
@@ -904,6 +911,7 @@ except (SyntaxError, ImportError):
     from ._models import ManagedNetworkProvisionOptions  # type: ignore
     from ._models import ManagedNetworkProvisionStatus  # type: ignore
     from ._models import ManagedNetworkSettings  # type: ignore
+    from ._models import ManagedNetworkSettingsEx  # type: ignore
     from ._models import ManagedOnlineDeployment  # type: ignore
     from ._models import ManagedServiceIdentity  # type: ignore
     from ._models import MaterializationComputeResource  # type: ignore
@@ -950,6 +958,7 @@ except (SyntaxError, ImportError):
     from ._models import NumericalDataDriftMetricThreshold  # type: ignore
     from ._models import NumericalDataQualityMetricThreshold  # type: ignore
     from ._models import NumericalPredictionDriftMetricThreshold  # type: ignore
+    from ._models import OAuth2AuthTypeWorkspaceConnectionProperties  # type: ignore
     from ._models import Objective  # type: ignore
     from ._models import OneLakeArtifact  # type: ignore
     from ._models import OneLakeDatastore  # type: ignore
@@ -962,7 +971,9 @@ except (SyntaxError, ImportError):
     from ._models import OnlineInferenceConfiguration  # type: ignore
     from ._models import OnlineRequestSettings  # type: ignore
     from ._models import OnlineScaleSettings  # type: ignore
+    from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
+    from ._models import OperationListResult  # type: ignore
     from ._models import OutboundRule  # type: ignore
     from ._models import OutboundRuleBasicResource  # type: ignore
     from ._models import OutboundRuleListResult  # type: ignore
@@ -1136,6 +1147,7 @@ except (SyntaxError, ImportError):
     from ._models import WorkspaceConnectionAccessKey  # type: ignore
     from ._models import WorkspaceConnectionApiKey  # type: ignore
     from ._models import WorkspaceConnectionManagedIdentity  # type: ignore
+    from ._models import WorkspaceConnectionOAuth2  # type: ignore
     from ._models import WorkspaceConnectionPersonalAccessToken  # type: ignore
     from ._models import WorkspaceConnectionPropertiesV2  # type: ignore
     from ._models import WorkspaceConnectionPropertiesV2BasicResource  # type: ignore
@@ -1150,6 +1162,7 @@ except (SyntaxError, ImportError):
     from ._models import WorkspaceUpdateParameters  # type: ignore
 
 from ._azure_machine_learning_workspaces_enums import (
+    ActionType,
     AllocationState,
     ApplicationSharingPolicy,
     AssetProvisioningState,
@@ -1268,6 +1281,7 @@ from ._azure_machine_learning_workspaces_enums import (
     OperationStatus,
     OperationTrigger,
     OrderString,
+    Origin,
     OsType,
     OutputDeliveryMode,
     PackageBuildState,
@@ -1275,6 +1289,8 @@ from ._azure_machine_learning_workspaces_enums import (
     PackageInputType,
     PendingUploadCredentialType,
     PendingUploadType,
+    PolicyDefinition,
+    PolicyEffect,
     PrivateEndpointConnectionProvisioningState,
     ProtectionLevel,
     Protocol,
@@ -1354,8 +1370,6 @@ __all__ = [
     'AmlComputeNodesInformation',
     'AmlComputeProperties',
     'AmlComputeSchema',
-    'AmlOperation',
-    'AmlOperationListResult',
     'AmlToken',
     'AmlTokenComputeIdentity',
     'AmlUserFeature',
@@ -1446,6 +1460,8 @@ __all__ = [
     'ComputeInstanceSchema',
     'ComputeInstanceSshSettings',
     'ComputeInstanceVersion',
+    'ComputePolicyDto',
+    'ComputePolicyRequest',
     'ComputeResource',
     'ComputeResourceSchema',
     'ComputeRuntimeDto',
@@ -1643,6 +1659,7 @@ __all__ = [
     'LabelingJobTextProperties',
     'LakeHouseArtifact',
     'ListAmlUserFeatureResult',
+    'ListComputePoliciesResponse',
     'ListNotebookKeysResult',
     'ListStorageAccountKeysResult',
     'ListUsagesResult',
@@ -1663,6 +1680,7 @@ __all__ = [
     'ManagedNetworkProvisionOptions',
     'ManagedNetworkProvisionStatus',
     'ManagedNetworkSettings',
+    'ManagedNetworkSettingsEx',
     'ManagedOnlineDeployment',
     'ManagedServiceIdentity',
     'MaterializationComputeResource',
@@ -1709,6 +1727,7 @@ __all__ = [
     'NumericalDataDriftMetricThreshold',
     'NumericalDataQualityMetricThreshold',
     'NumericalPredictionDriftMetricThreshold',
+    'OAuth2AuthTypeWorkspaceConnectionProperties',
     'Objective',
     'OneLakeArtifact',
     'OneLakeDatastore',
@@ -1721,7 +1740,9 @@ __all__ = [
     'OnlineInferenceConfiguration',
     'OnlineRequestSettings',
     'OnlineScaleSettings',
+    'Operation',
     'OperationDisplay',
+    'OperationListResult',
     'OutboundRule',
     'OutboundRuleBasicResource',
     'OutboundRuleListResult',
@@ -1895,6 +1916,7 @@ __all__ = [
     'WorkspaceConnectionAccessKey',
     'WorkspaceConnectionApiKey',
     'WorkspaceConnectionManagedIdentity',
+    'WorkspaceConnectionOAuth2',
     'WorkspaceConnectionPersonalAccessToken',
     'WorkspaceConnectionPropertiesV2',
     'WorkspaceConnectionPropertiesV2BasicResource',
@@ -1907,6 +1929,7 @@ __all__ = [
     'WorkspaceListResult',
     'WorkspacePrivateEndpointResource',
     'WorkspaceUpdateParameters',
+    'ActionType',
     'AllocationState',
     'ApplicationSharingPolicy',
     'AssetProvisioningState',
@@ -2025,6 +2048,7 @@ __all__ = [
     'OperationStatus',
     'OperationTrigger',
     'OrderString',
+    'Origin',
     'OsType',
     'OutputDeliveryMode',
     'PackageBuildState',
@@ -2032,6 +2056,8 @@ __all__ = [
     'PackageInputType',
     'PendingUploadCredentialType',
     'PendingUploadType',
+    'PolicyDefinition',
+    'PolicyEffect',
     'PrivateEndpointConnectionProvisioningState',
     'ProtectionLevel',
     'Protocol',

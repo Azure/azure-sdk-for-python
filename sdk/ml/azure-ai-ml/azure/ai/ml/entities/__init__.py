@@ -202,6 +202,7 @@ from ._monitoring.thresholds import (
 )
 
 from ._workspace_hub.workspace_hub import WorkspaceHub, WorkspaceHubConfig
+from ._policies.policy import Policy, PolicyDefinition, PolicyEffect
 
 from ._assets._artifacts.feature_set import FeatureSet
 from ._workspace.compute_runtime import ComputeRuntime
@@ -448,4 +449,7 @@ __all__ = [
     "DeploymentCollection",
     "RequestLogging",
     "NoneCredentialConfiguration",
+    "Policy",
+    "PolicyEffect",
+    "PolicyDefinition",
 ]

@@ -49,6 +49,7 @@ from ._operations import Operations
 from ._workspaces_operations import WorkspacesOperations
 from ._workspace_connections_operations import WorkspaceConnectionsOperations
 from ._managed_network_settings_rule_operations import ManagedNetworkSettingsRuleOperations
+from ._hub_policy_operations import HubPolicyOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._managed_network_provisions_operations import ManagedNetworkProvisionsOperations
@@ -97,6 +98,7 @@ __all__ = [
     'WorkspacesOperations',
     'WorkspaceConnectionsOperations',
     'ManagedNetworkSettingsRuleOperations',
+    'HubPolicyOperations',
     'PrivateEndpointConnectionsOperations',
     'PrivateLinkResourcesOperations',
     'ManagedNetworkProvisionsOperations',
