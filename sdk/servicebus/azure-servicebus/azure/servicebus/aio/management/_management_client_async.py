@@ -98,7 +98,6 @@ from ...management._utils import (
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
 
 class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
@@ -116,7 +115,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
     def __init__(
         self,
         fully_qualified_namespace: str,
-        credential: Union["AsyncTokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"],
+        credential: "AsyncTokenCredential",
         *,
         api_version: Union[str, ApiVersion] = DEFAULT_VERSION,
         **kwargs: Any
@@ -275,12 +274,11 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             token,
             token_expiry,
         ) = _parse_conn_str(conn_str)
-        credential: Union["AsyncTokenCredential", "AzureSasCredential", "AzureNamedKeyCredential"]
+        credential: Union[ServiceBusSASTokenCredential, ServiceBusSharedKeyCredential]
         if token and token_expiry:
-            credential = cast("AzureSasCredential", ServiceBusSASTokenCredential(token, token_expiry))
+            credential = ServiceBusSASTokenCredential(token, token_expiry)
         elif shared_access_key_name and shared_access_key:
-            credential = cast("AzureNamedKeyCredential",
-                              ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key))
+            credential = ServiceBusSharedKeyCredential(shared_access_key_name, shared_access_key)
         if "//" in endpoint:
             endpoint = endpoint[endpoint.index("//") + 2 :]
         return cls(endpoint, credential, api_version=api_version, **kwargs)

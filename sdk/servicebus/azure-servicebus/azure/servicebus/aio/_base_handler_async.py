@@ -6,7 +6,7 @@ import logging
 import asyncio
 import uuid
 import time
-from typing import TYPE_CHECKING, Any, Callable, Optional, Dict, Union
+from typing import TYPE_CHECKING, Any, Callable, Optional, Dict, Union, Type
 
 from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 
@@ -36,6 +36,7 @@ if TYPE_CHECKING:
     from .._pyamqp.aio._client_async import AMQPClientAsync as pyamqp_AMQPClientAsync
     from .._pyamqp.message import Message as pyamqp_Message
     from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.types import TracebackType
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -66,6 +67,19 @@ class ServiceBusSASTokenCredential(object):
         """
         return AccessToken(self.token, self.expiry)
 
+    async def close(self) -> None:
+        pass
+
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional["TracebackType"] = None,
+    ) -> None:
+        pass
+
+    async def __aenter__(self) -> "ServiceBusSASTokenCredential":
+        return self
 
 class ServiceBusSharedKeyCredential(object):
     """The shared access key credential used for authentication.
@@ -86,6 +100,19 @@ class ServiceBusSharedKeyCredential(object):
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
+    async def close(self) -> None:
+        pass
+
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional["TracebackType"] = None,
+    ) -> None:
+        pass
+
+    async def __aenter__(self) -> "ServiceBusSharedKeyCredential":
+        return self
 
 class ServiceBusAzureNamedKeyTokenCredentialAsync(object): # pylint:disable=name-too-long
     """The named key credential used for authentication.
@@ -103,6 +130,19 @@ class ServiceBusAzureNamedKeyTokenCredentialAsync(object): # pylint:disable=name
         name, key = self._credential.named_key
         return _generate_sas_token(scopes[0], name, key)
 
+    async def close(self) -> None:
+        pass
+
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional["TracebackType"] = None,
+    ) -> None:
+        pass
+
+    async def __aenter__(self) -> "ServiceBusAzureNamedKeyTokenCredentialAsync":
+        return self
 
 class ServiceBusAzureSasTokenCredentialAsync(object):
     """The shared access token credential used for authentication
