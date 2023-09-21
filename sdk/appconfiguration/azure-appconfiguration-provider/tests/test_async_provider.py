@@ -59,10 +59,14 @@ class TestAppConfigurationProvider(AppConfigTestCase):
     # method: provider_selectors
     @app_config_decorator_async
     @recorded_by_proxy_async
-    async def test_provider_key_vault_reference(self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url):
+    async def test_provider_key_vault_reference(
+        self, appconfiguration_connection_string, appconfiguration_keyvault_secret_url
+    ):
         selects = {SettingSelector(key_filter="*", label_filter="prod")}
         async with await self.create_client(
-            appconfiguration_connection_string, selects=selects, keyvault_secret_url=appconfiguration_keyvault_secret_url
+            appconfiguration_connection_string,
+            selects=selects,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
         ) as client:
             assert client["secret"] == "Very secret value"
 
@@ -75,6 +79,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             appconfiguration_connection_string, selects=selects, secret_resolver=secret_resolver
         ) as client:
             assert client["secret"] == "Reslover Value"
+
 
 async def secret_resolver(secret_id):
     return "Reslover Value"

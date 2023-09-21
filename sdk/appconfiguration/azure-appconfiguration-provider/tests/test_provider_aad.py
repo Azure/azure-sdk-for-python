@@ -71,5 +71,6 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         )
         assert client["secret"] == "Reslover Value"
 
+
 def secret_resolver(secret_id):
     return "Reslover Value"
