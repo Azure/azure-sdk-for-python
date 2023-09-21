@@ -91,7 +91,7 @@ def get_configs(keyvault_secret_url):
             create_config_setting(
                 "secret",
                 "prod",
-                '{"uri":"' + keyvault_secret_url + 'secrets/TestSecret"}',
+                '{"uri":"' + keyvault_secret_url + '"}',
                 "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8",
             )
         )
