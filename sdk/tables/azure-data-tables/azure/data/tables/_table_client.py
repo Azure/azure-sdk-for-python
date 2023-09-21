@@ -34,6 +34,7 @@ from ._serialize import (
     _parameter_filter_substitution,
     _add_entity_properties,
     _prepare_key,
+    _validate_match_headers,
 )
 from ._deserialize import deserialize_iso, _return_headers_and_deserialized, _convert_to_entity, _trim_service_metadata
 from ._table_batch import TableBatchOperations, EntityType, TransactionOperationType
@@ -316,14 +317,25 @@ class TableClient(TablesBaseClient):
             row_key = kwargs.pop("row_key", None)
             if row_key is None:
                 row_key = args[1]
+        
+        match_condition = kwargs.pop("match_condition", None)
+        etag = kwargs.pop("etag", None)
+        if match_condition and entity and not etag:
+            try:
+                etag = entity.metadata.get("etag", None)
+            except (AttributeError, TypeError):
+                pass
+        if not match_condition or match_condition == MatchConditions.Unconditionally:
+            match_condition = MatchConditions.IfPresent
+        _validate_match_headers(etag, match_condition)
 
         try:
             self._client.table.delete_entity(
                 table=self.table_name,
                 partition_key=_prepare_key(partition_key),
                 row_key=_prepare_key(row_key),
-                etag=kwargs.pop("etag", None),
-                match_condition=kwargs.pop("match_condition", None) or MatchConditions.IfPresent,
+                etag=etag,
+                match_condition=match_condition,
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -392,9 +404,21 @@ class TableClient(TablesBaseClient):
                 :dedent: 16
                 :caption: Updating an already exiting entity in a Table
         """
+        match_condition = kwargs.pop("match_condition", None)
+        etag = kwargs.pop("etag", None)
+        if match_condition and not etag:
+            try:
+                etag = entity.metadata.get("etag", None)
+            except (AttributeError, TypeError):
+                pass
+        if not match_condition or match_condition == MatchConditions.Unconditionally:
+            match_condition = MatchConditions.IfPresent
+        _validate_match_headers(etag, match_condition)
+
         entity = _add_entity_properties(entity)
         partition_key = entity["PartitionKey"]
         row_key = entity["RowKey"]
+
         try:
             metadata = None
             content = None
@@ -404,8 +428,8 @@ class TableClient(TablesBaseClient):
                     partition_key=_prepare_key(partition_key),
                     row_key=_prepare_key(row_key),
                     table_entity_properties=entity,  # type: ignore
-                    etag=kwargs.pop("etag", None),
-                    match_condition=kwargs.pop("match_condition", None) or MatchConditions.IfPresent,
+                    etag=etag,
+                    match_condition=match_condition,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs,
                 )
@@ -414,8 +438,8 @@ class TableClient(TablesBaseClient):
                     table=self.table_name,
                     partition_key=_prepare_key(partition_key),
                     row_key=_prepare_key(row_key),
-                    etag=kwargs.pop("etag", None),
-                    match_condition=kwargs.pop("match_condition", None) or MatchConditions.IfPresent,
+                    etag=etag,
+                    match_condition=match_condition,
                     table_entity_properties=entity,  # type: ignore
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs,

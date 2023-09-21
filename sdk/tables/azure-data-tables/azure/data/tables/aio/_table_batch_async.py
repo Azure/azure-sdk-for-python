@@ -12,13 +12,14 @@ from .._models import UpdateMode
 from .._table_batch import EntityType, TransactionOperationType
 from .._serialize import (
     _prepare_key,
-    _get_match_headers,
     _add_entity_properties,
+    _validate_match_headers,
 )
 from .._generated import models
 from .._generated.aio import AzureTable
 from .._generated.aio._configuration import AzureTableConfiguration
 from .._generated._serialization import Serializer, Deserializer
+from .._generated._vendor import prep_if_match
 
 
 class TableBatchOperations(object):
@@ -233,8 +234,6 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
-        temp = entity.copy()  # type: ignore
-
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
@@ -242,30 +241,30 @@ class TableBatchOperations(object):
                 etag = entity.metadata.get("etag", None)  # type: ignore
             except (AttributeError, TypeError):
                 pass
-        if_match = _get_match_headers(
-            etag=etag,
-            match_condition=match_condition or MatchConditions.Unconditionally,
-        )
+        if not match_condition or match_condition == MatchConditions.Unconditionally:
+            match_condition = MatchConditions.IfPresent
+        _validate_match_headers(etag, match_condition)
 
-        partition_key = _prepare_key(temp["PartitionKey"])
-        row_key = _prepare_key(temp["RowKey"])
-        temp = _add_entity_properties(temp)
+        entity = _add_entity_properties(entity)
+        partition_key = entity["PartitionKey"]
+        row_key = entity["RowKey"]
+
         if mode == UpdateMode.REPLACE:
             self._batch_update_entity(
                 table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
-                if_match=if_match,
-                table_entity_properties=temp,
+                partition_key=_prepare_key(partition_key),
+                row_key=_prepare_key(row_key),
+                if_match=prep_if_match(etag, match_condition),
+                table_entity_properties=entity,
                 **kwargs,
             )
         elif mode == UpdateMode.MERGE:
             self._batch_merge_entity(
                 table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
-                if_match=if_match,
-                table_entity_properties=temp,
+                partition_key=_prepare_key(partition_key),
+                row_key=_prepare_key(row_key),
+                if_match=prep_if_match(etag, match_condition),
+                table_entity_properties=entity,
                 **kwargs,
             )
         else:
@@ -467,10 +466,6 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
-        temp = entity.copy()  # type: ignore
-        partition_key = _prepare_key(temp["PartitionKey"])
-        row_key = _prepare_key(temp["RowKey"])
-
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
@@ -478,13 +473,16 @@ class TableBatchOperations(object):
                 etag = entity.metadata.get("etag", None)  # type: ignore
             except (AttributeError, TypeError):
                 pass
-        if_match = _get_match_headers(
-            etag=etag,
-            match_condition=match_condition or MatchConditions.Unconditionally,
-        )
+        if not match_condition or match_condition == MatchConditions.Unconditionally:
+            match_condition = MatchConditions.IfPresent
+        _validate_match_headers(etag, match_condition)
 
         self._batch_delete_entity(
-            table=self.table_name, partition_key=partition_key, row_key=row_key, if_match=if_match, **kwargs
+            table=self.table_name,
+            partition_key=_prepare_key(entity["PartitionKey"]),
+            row_key=_prepare_key(entity["RowKey"]),
+            if_match=prep_if_match(etag, match_condition),
+            **kwargs,
         )
 
     def _batch_delete_entity(

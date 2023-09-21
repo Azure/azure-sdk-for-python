@@ -29,6 +29,7 @@ from .._serialize import (
     _parameter_filter_substitution,
     _prepare_key,
     _add_entity_properties,
+    _validate_match_headers,
 )
 from .._deserialize import deserialize_iso, _return_headers_and_deserialized, _convert_to_entity, _trim_service_metadata
 from .._error import (
@@ -322,14 +323,25 @@ class TableClient(AsyncTablesBaseClient):
             row_key = kwargs.pop("row_key", None)
             if row_key is None:
                 row_key = args[1]
+        
+        match_condition = kwargs.pop("match_condition", None)
+        etag = kwargs.pop("etag", None)
+        if match_condition and entity and not etag:
+            try:
+                etag = entity.metadata.get("etag", None)
+            except (AttributeError, TypeError):
+                pass
+        if not match_condition or match_condition == MatchConditions.Unconditionally:
+            match_condition = MatchConditions.IfPresent
+        _validate_match_headers(etag, match_condition)
 
         try:
             await self._client.table.delete_entity(
                 table=self.table_name,
                 partition_key=_prepare_key(partition_key),
                 row_key=_prepare_key(row_key),
-                etag=kwargs.pop("etag", None),
-                match_condition=kwargs.pop("match_condition", None),
+                etag=etag,
+                match_condition=match_condition,
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -401,9 +413,21 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Querying entities from a TableClient
         """
+        match_condition = kwargs.pop("match_condition", None)
+        etag = kwargs.pop("etag", None)
+        if match_condition and not etag:
+            try:
+                etag = entity.metadata.get("etag", None)
+            except (AttributeError, TypeError):
+                pass
+        if not match_condition or match_condition == MatchConditions.Unconditionally:
+            match_condition = MatchConditions.IfPresent
+        _validate_match_headers(etag, match_condition)
+
         partition_key = entity["PartitionKey"]
         row_key = entity["RowKey"]
         entity = _add_entity_properties(entity)
+
         try:
             metadata = None
             content = None
@@ -413,8 +437,8 @@ class TableClient(AsyncTablesBaseClient):
                     partition_key=_prepare_key(partition_key),
                     row_key=_prepare_key(row_key),
                     table_entity_properties=entity,  # type: ignore
-                    etag=kwargs.pop("etag", None),
-                    match_condition=kwargs.pop("match_condition", None),
+                    etag=etag,
+                    match_condition=match_condition,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs,
                 )
@@ -423,8 +447,8 @@ class TableClient(AsyncTablesBaseClient):
                     table=self.table_name,
                     partition_key=_prepare_key(partition_key),
                     row_key=_prepare_key(row_key),
-                    etag=kwargs.pop("etag", None),
-                    match_condition=kwargs.pop("match_condition", None),
+                    etag=etag,
+                    match_condition=match_condition,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     table_entity_properties=entity,  # type: ignore
                     **kwargs,
