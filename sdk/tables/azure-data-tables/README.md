@@ -87,39 +87,22 @@ For Tables Storage, the connection string can be found in your storage account i
 az storage account show-connection-string -g MyResourceGroup -n MyStorageAccount
 ```
 
-```python
-from azure.data.tables import TableServiceClient
-connection_string = "DefaultEndpointsProtocol=https;AccountName=<my_account_name>;AccountKey=<my_account_key>;EndpointSuffix=core.windows.net"
-service = TableServiceClient.from_connection_string(conn_str=connection_string)
-```
-
-```python
-from azure.data.tables import TableServiceClient
-connection_string = "DefaultEndpointsProtocol=https;AccountName=<my_account_name>;AccountKey=<my_account_key>;TableEndpoint=https://<my_account_name>.table.cosmos.azure.com"
-service = TableServiceClient.from_connection_string(conn_str=connection_string)
-```
-
 For Tables Cosmos, the connection string can be found in your cosmos account in the [Azure Portal][azure_portal_account_url] under the "Connection Strings" section or with the following Azure CLI command:
 
 ```bash
 az cosmosdb list-connection-strings -g MyResourceGroup -n MyCosmosAccount
 ```
 
-```python
-from azure.data.tables import TableServiceClient
-connection_string = "DefaultEndpointsProtocol=https;AccountName=<my_account_name>;AccountKey=<my_account_key>;EndpointSuffix=cosmos.azure.com"
-service = TableServiceClient.from_connection_string(conn_str=connection_string)
-```
+Create a client from a connection string:
 
 ```python
 from azure.data.tables import TableServiceClient
-connection_string = "DefaultEndpointsProtocol=https;AccountName=<my_account_name>;AccountKey=<my_account_key>;TableEndpoint=https://<my_account_name>.table.cosmos.azure.com"
+connection_string = "AccountName=<my_account_name>;AccountKey=<my_account_key>;EndpointSuffix=<endpoint_suffix>"
 service = TableServiceClient.from_connection_string(conn_str=connection_string)
 ```
 
 ##### Creating the client from a SAS token
-To use a [shared access signature (SAS) token][azure_sas_token], provide the token as a string. If your account URL includes the SAS token, omit the credential parameter. You can generate a SAS token from the Azure Portal under [Shared access signature](https://docs.microsoft.com/rest/api/storageservices/create-service-sas) or use one of the `generate_*_sas()`
-   functions to create a sas token for the account or table:
+To use a [shared access signature (SAS) token][azure_sas_token], provide the token as a string. If your account URL includes the SAS token, omit the credential parameter. You can generate a SAS token from the Azure Portal under [Shared access signature](https://docs.microsoft.com/rest/api/storageservices/create-service-sas) or use one of the `generate_*_sas()` functions to create a sas token for the account or table:
 
 ```python
 from datetime import datetime, timedelta
