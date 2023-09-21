@@ -26,20 +26,22 @@ from azure.ai.ml._schema._feature_set.feature_set_backfill_schema import (
 class FeatureSetBackfillRequest(RestTranslatableMixin):
     """Feature Set Backfill Request
 
-    :param name: _description_
+    :param name: The name of the backfill job request
     :type name: str
-    :param version: _description_
+    :param version: The version of the backfill job request.
     :type version: str
-    :param feature_window: _description_
-    :type feature_window: FeatureWindow
-    :param description: _description_, defaults to None
-    :type description: Optional[str], optional
-    :param tags: _description_, defaults to None
-    :type tags: Optional[Dict[str, str]], optional
-    :param resource: _description_, defaults to None
-    :type resource: Optional[MaterializationComputeResource], optional
-    :param spark_conf: _description_, defaults to None
-    :type spark_conf: Optional[Dict[str, str]], optional
+    :param feature_window: The window of time for the feature set backfill request.
+    :type feature_window: ~azure.ai.ml._restclient.v2023_04_01_preview.models.FeatureWindow
+    :param description: The description of the backfill job request. Defaults to None.
+    :type description: Optional[str]
+    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
+    :type tags: Optional[dict[str, str]]
+    :keyword resource: The compute resource settings. Defaults to None.
+    :paramtype resource: Optional[~azure.ai.ml.entities.MaterializationComputeResource]
+    :param spark_conf: Specifies the spark configuration. Defaults to None.
+    :type spark_conf: Optional[dict[str, str]]
+
+    TODO: add code sample
     """
 
     def __init__(

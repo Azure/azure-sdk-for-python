@@ -19,9 +19,9 @@ class MaterializationSettings(RestTranslatableMixin):
 
     :keyword schedule: The schedule details. Defaults to None.
     :paramtype schedule: Optional[~azure.ai.ml.entities.RecurrenceTrigger]
-    :keyword offline_enabled: Specifies if offline store is enabled. Defaults to None.
+    :keyword offline_enabled: Boolean that specifies if offline store is enabled. Defaults to None.
     :paramtype offline_enabled: Optional[bool]
-    :keyword online_enabled: Specifies if online store is enabled. Defaults to None.
+    :keyword online_enabled: Boolean that specifies if online store is enabled. Defaults to None.
     :paramtype online_enabled: Optional[bool]
     :keyword notification: The notification details. Defaults to None.
     :paramtype notification: Optional[~azure.ai.ml.entities.Notification]

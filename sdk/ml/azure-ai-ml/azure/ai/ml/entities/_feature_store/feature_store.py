@@ -112,8 +112,7 @@ class FeatureStore(Workspace):
         primary_user_assigned_identity: Optional[str] = None,
         managed_network: Optional[ManagedNetwork] = None,
         **kwargs,
-    ):
-
+    ) -> None:
         feature_store_settings = kwargs.pop(
             "feature_store_settings",
             FeatureStoreSettings(

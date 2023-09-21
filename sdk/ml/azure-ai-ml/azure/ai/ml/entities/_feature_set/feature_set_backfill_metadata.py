@@ -13,15 +13,18 @@ from azure.ai.ml._utils._experimental import experimental
 
 @experimental
 class FeatureSetBackfillMetadata(RestTranslatableMixin):
-    """_summary_
+    """Feature Set Backfill Metadata
 
     :param job_id: The ID of the backfill job. Defaults to None.
     :type job_id: Optional[str]
     :param type: The type of the backfill job. Defaults to None.
     :type type: Optional[str]
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
 
     TODO: FInish this docstring
     """
+
     def __init__(
         self,
         *,

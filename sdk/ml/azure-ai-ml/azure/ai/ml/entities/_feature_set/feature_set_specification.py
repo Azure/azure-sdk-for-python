@@ -17,6 +17,8 @@ class FeatureSetSpecification(RestTranslatableMixin):
     :type path: Optional[str]    
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
+
+    TODO: Include code sample
     """
 
     def __init__(self, *, path: Optional[str] = None, **kwargs) -> None:  # pylint: disable=unused-argument

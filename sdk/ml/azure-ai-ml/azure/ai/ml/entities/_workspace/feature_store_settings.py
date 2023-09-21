@@ -17,6 +17,13 @@ from .compute_runtime import ComputeRuntime
 class FeatureStoreSettings(RestTranslatableMixin):
     """Feature Store Settings
 
+    :param compute_runtime: The spark compute runtime settings. defaults to None.
+    :type compute_runtime: Optional[~compute_runtime.ComputeRuntime]
+    :param offline_store_connection_name: The offline store connection name. Defaults to None.
+    :type offline_store_connection_name: Optional[str]
+    :param online_store_connection_name: The online store connection name. Defaults to None.
+    :type online_store_connection_name: Optional[str]
+
     TODO: Finish this docstring
     """
 

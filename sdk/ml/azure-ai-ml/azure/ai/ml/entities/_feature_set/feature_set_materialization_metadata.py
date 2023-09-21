@@ -22,25 +22,30 @@ FeaturestoreJobTypeMap: Dict[str, MaterializationType] = {
 class FeatureSetMaterializationMetadata(RestTranslatableMixin):
     """Feature Set Materialization Metadata
 
-    :param type: _description_
+    :param type: The type of the materialization job.
     :type type: MaterializationType
-    :param feature_window_end_time: _description_
+    :param feature_window_start_time: The feature window start time for the feature set materialization job.
+    :type feature_window_start_time: Optional[datetime]
+    :param feature_window_end_time: The feature window end time for the feature set materialization job.
     :type feature_window_end_time: Optional[datetime]
-    :param name: _description_
+    :param name: The name of the feature set materialization job.
     :type name: Optional[str]
-    :param display_name: _description_
+    :param display_name: The display name for the feature set materialization job.
     :type display_name: Optional[str]
-    :param creation_context: _description_
-    :type creation_context: Optional[SystemData]
-    :param duration: _description_
-    :type duration: Optional[timedelta]
-    :param status: _description_
+    :param creation_context: The creation context of the feature set materialization job.
+    :type creation_context: Optional[~azure.ai.ml.entities.SystemData]
+    :param duration: current time elapsed for feature set materialization job.
+    :type duration: Optional[~datetime.timedelta]
+    :param status: The status of the feature set materialization job.
     :type status: Optional[str]
-    :param tags: _description_
-    :type tags: Optional[Dict[str, str]]
+    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :type tags: Optional[dict[str, str]]
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
 
-    TODO: FInish this docstring
+    TODO: add code sample
     """
+
     def __init__(
         self,
         *,
