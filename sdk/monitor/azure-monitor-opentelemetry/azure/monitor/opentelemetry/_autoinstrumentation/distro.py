@@ -27,8 +27,8 @@ from azure.monitor.opentelemetry._constants import (
 )
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
     AzureDiagnosticLogging,
-    _ATTACH_SUCCESS_DISTRO,
     _ATTACH_FAILURE_DISTRO,
+    _ATTACH_SUCCESS_DISTRO,
 )
 from azure.monitor.opentelemetry._diagnostics.status_logger import (
     AzureStatusLogger,
@@ -69,13 +69,13 @@ def _configure_auto_instrumentation() -> None:
         )
         settings.tracing_implementation = OpenTelemetrySpan
         AzureStatusLogger.log_status(True)
-        AzureDiagnosticLogging.log(
+        AzureDiagnosticLogging.info(
             "Azure Monitor OpenTelemetry Distro configured successfully.",
             _ATTACH_SUCCESS_DISTRO
         )
     except Exception as exc:
         AzureStatusLogger.log_status(False, reason=str(exc))
-        AzureDiagnosticLogging.log(
+        AzureDiagnosticLogging.info(
             _CONFIG_FAILED_MSG % exc,
             _ATTACH_FAILURE_DISTRO,
         )

@@ -16,8 +16,8 @@ from azure.monitor.opentelemetry._constants import (
 )
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
     AzureDiagnosticLogging,
-    _ATTACH_SUCCESS_CONFIGURATOR,
     _ATTACH_FAILURE_CONFIGURATOR,
+    _ATTACH_SUCCESS_CONFIGURATOR,
 )
 from azure.monitor.opentelemetry._diagnostics.status_logger import (
     AzureStatusLogger,
@@ -32,18 +32,18 @@ class AzureMonitorConfigurator(_OTelSDKConfigurator):
             AzureStatusLogger.log_status(False, "Configurator being configured.")
             super()._configure(**kwargs)
             AzureStatusLogger.log_status(True)
-            AzureDiagnosticLogging.log(
+            AzureDiagnosticLogging.info(
                 "Azure Monitor Configurator configured successfully.",
                 _ATTACH_SUCCESS_CONFIGURATOR
             )
         except ValueError as e:
-            AzureDiagnosticLogging.log(
+            AzureDiagnosticLogging.info(
                 "Azure Monitor Configurator failed during configuration due to a ValueError: %s" % e,
                 _ATTACH_FAILURE_CONFIGURATOR,
             )
             raise e
         except Exception as e:
-            AzureDiagnosticLogging.log(
+            AzureDiagnosticLogging.info(
                 "Azure Monitor Configurator failed during configuration: %s" % e,
                 _ATTACH_FAILURE_CONFIGURATOR,
             )
