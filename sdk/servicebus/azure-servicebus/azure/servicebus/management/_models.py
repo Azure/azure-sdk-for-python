@@ -30,10 +30,7 @@ from ._model_workaround import adjust_attribute_map, avoid_timedelta_overflow
 from ._constants import RULE_SQL_COMPATIBILITY_LEVEL
 from ._utils import _normalize_entity_path_to_full_path_if_needed
 
-RULE_FILTERS = Union["SqlRuleFilter",
-                      "CorrelationRuleFilter",
-                        "TrueRuleFilter",
-                          "FalseRuleFilter"]
+RULE_FILTERS = Union["SqlRuleFilter", "CorrelationRuleFilter", "TrueRuleFilter", "FalseRuleFilter"]
 
 adjust_attribute_map()
 
