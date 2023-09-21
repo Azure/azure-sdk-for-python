@@ -34,13 +34,13 @@ class BaseSession(object):
         session_id: str,
         receiver: Union["ServiceBusReceiver", "ServiceBusReceiverAsync"]
     ) -> None:
-        self._session_id = session_id
-        self._receiver = receiver
-        self._encoding = "UTF-8"
-        self._session_start = None
+        self._session_id: str = session_id
+        self._receiver: Union["ServiceBusReceiver", "ServiceBusReceiverAsync"] = receiver
+        self._encoding: str = "UTF-8"
+        self._session_start:Optional[datetime.datetime] = None
         self._locked_until_utc: Optional[datetime.datetime] = None
-        self._lock_lost = False
-        self.auto_renew_error = None
+        self._lock_lost: bool = False
+        self.auto_renew_error: Optional[Exception] = None
 
     @property
     def _lock_expired(self) -> bool:
