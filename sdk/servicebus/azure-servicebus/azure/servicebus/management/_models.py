@@ -8,7 +8,7 @@ import functools
 from collections import OrderedDict
 from copy import deepcopy
 from datetime import datetime, timedelta
-from typing import Dict, Any, Union, Optional, List, TYPE_CHECKING
+from typing import Dict, Any, Union, Optional, List, Tuple, TYPE_CHECKING
 
 from ._generated.models import (
     QueueDescription as InternalQueueDescription,
@@ -101,19 +101,19 @@ class DictMixin(object):
     def has_key(self, k: str) -> bool:
         return k in self.__dict__
 
-    def update(self, *args, **kwargs):
+    def update(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:
         return self.__dict__.update(*args, **kwargs)
 
-    def keys(self):
+    def keys(self) -> List[str]:
         return [k for k in self.__dict__ if not k.startswith("_")]
 
-    def values(self):
+    def values(self) -> List[Any]:
         return [v for k, v in self.__dict__.items() if not k.startswith("_")]
 
-    def items(self):
+    def items(self) -> List[Tuple(str, Any)]:
         return [(k, v) for k, v in self.__dict__.items() if not k.startswith("_")]
 
-    def get(self, key, default=None):
+    def get(self, key: str, default: Optional[Any] = None) -> Any:
         if key in self.__dict__:
             return self.__dict__[key]
         return default
