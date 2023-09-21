@@ -767,7 +767,7 @@ try:
         # wait_time used by pyamqp
         @staticmethod
         def iter_next(
-            receiver: "ServiceBusReceiver", wait_time: Optional[int] = None
+            receiver: "ServiceBusReceiver"
         ) -> "ServiceBusReceivedMessage":  # pylint: disable=unused-argument
             # pylint: disable=protected-access
             try:
