@@ -50,6 +50,7 @@ setup(
             "sdk_find_invalid_versions=ci_tools.versioning.find_invalid_versions:find_invalid_versions_main",
             "sdk_verify_keywords=ci_tools.keywords_verify:entrypoint",
             "multiapi_combiner=packaging_tools.multiapi_combiner:combine",
+            "sdk_invoke_optional_tests=ci_tools.scenario:entrypoint"
         ],
     },
     extras_require={
