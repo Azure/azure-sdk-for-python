@@ -12,7 +12,7 @@ class MaterializationStore:
 
     :param type: The type of the materialization store.
     :type type: str
-    :param target: The Azure Resource ID of the materialization store target.
+    :param target: The ARM ID of the materialization store target.
     :type target: str
 
     .. admonition:: Example:
@@ -31,9 +31,20 @@ class MaterializationStore:
 
     @property
     def target(self):
+        """Get target value
+
+        :return: returns the ID of the target
+        :rtype: str
+        """
         return self.__target
 
     @target.setter
     def target(self, value: str):
+        """Set target value
+
+        :param value: the ID of the target
+        :type value: str
+        :raises ~azure.ai.ml.exceptions.ValidationException~: Raised if the value is an invalid ARM ID.
+        """
         _ = AzureResourceId(value)
         self.__target = value
