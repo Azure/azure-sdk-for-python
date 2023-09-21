@@ -8,7 +8,7 @@ import functools
 from collections import OrderedDict
 from copy import deepcopy
 from datetime import datetime, timedelta
-from typing import Dict, Any, Union, Optional, List
+from typing import Dict, Any, Union, Optional, List, TYPE_CHECKING
 
 from ._generated.models import (
     QueueDescription as InternalQueueDescription,
@@ -29,6 +29,9 @@ from ._generated.models import (
 from ._model_workaround import adjust_attribute_map, avoid_timedelta_overflow
 from ._constants import RULE_SQL_COMPATIBILITY_LEVEL
 from ._utils import _normalize_entity_path_to_full_path_if_needed
+
+if TYPE_CHECKING:
+    from ._generated.models import MessagingSku
 
 RULE_FILTERS = Union["SqlRuleFilter", "CorrelationRuleFilter", "TrueRuleFilter", "FalseRuleFilter"]
 
@@ -71,7 +74,7 @@ class DictMixin(object):
     def __delitem__(self, key: str) -> None:
         self.__dict__[key] = None
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         """Compare objects by comparing all attributes.
         :param any other: The object to compare with
         :return: `True` if `self` and `other` are equal, `False` otherwise.
@@ -81,7 +84,7 @@ class DictMixin(object):
             return self.__dict__ == other.__dict__
         return False
 
-    def __ne__(self, other):
+    def __ne__(self, other: Any) -> bool:
         """Compare objects by comparing all attributes.
         :param any other: The object to compare with
         :return: `True` if `self` and `other` are not equal, `False` otherwise.
@@ -89,7 +92,7 @@ class DictMixin(object):
         """
         return not self.__eq__(other)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str({k: v for k, v in self.__dict__.items() if not k.startswith("_")})
 
     def __contains__(self, key: str) -> bool:
@@ -134,21 +137,20 @@ class NamespaceProperties(DictMixin):
     :type name: str
     """
 
-    def __init__(self, name, **kwargs):
-        self.name = name
+    def __init__(self, name: str, **kwargs: Any):
+        self.name: str = name
 
         extraction_missing_args: List[str] = []
         extract_kwarg = functools.partial(
             extract_kwarg_template, kwargs, extraction_missing_args
         )
 
-        self.name = name
-        self.alias = extract_kwarg("alias")
-        self.created_at_utc = extract_kwarg("created_at_utc")
-        self.messaging_sku = extract_kwarg("messaging_sku")
-        self.messaging_units = extract_kwarg("messaging_units")
-        self.modified_at_utc = extract_kwarg("modified_at_utc")
-        self.namespace_type = extract_kwarg("namespace_type")
+        self.alias: str = extract_kwarg("alias")
+        self.created_at_utc: datetime = extract_kwarg("created_at_utc")
+        self.messaging_sku: Union[str, "MessagingSku"] = extract_kwarg("messaging_sku")
+        self.messaging_units: int = extract_kwarg("messaging_units")
+        self.modified_at_utc: datetime = extract_kwarg("modified_at_utc")
+        self.namespace_type: str = extract_kwarg("namespace_type")
 
         validate_extraction_missing_args(extraction_missing_args)
 
