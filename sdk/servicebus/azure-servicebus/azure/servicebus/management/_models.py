@@ -110,7 +110,7 @@ class DictMixin(object):
     def values(self) -> List[Any]:
         return [v for k, v in self.__dict__.items() if not k.startswith("_")]
 
-    def items(self) -> List[Tuple(str, Any)]:
+    def items(self) -> List[Tuple]:
         return [(k, v) for k, v in self.__dict__.items() if not k.startswith("_")]
 
     def get(self, key: str, default: Optional[Any] = None) -> Any:
