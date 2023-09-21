@@ -739,7 +739,6 @@ class MLClient:
         return self._workspace_outbound_rules
 
     @property
-    @experimental
     def registries(self) -> RegistryOperations:
         """A collection of registry-related operations.
 
