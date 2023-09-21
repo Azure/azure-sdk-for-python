@@ -9,6 +9,7 @@ import asyncio
 import time
 import functools
 from typing import TYPE_CHECKING, Any, Dict, List, Callable, Optional, Union, cast
+from typing_extensions import TypeAlias
 
 from azure.core.credentials import (
     AccessToken,
@@ -56,7 +57,7 @@ if TYPE_CHECKING:
         uamqp_AMQPClientAsync = None
     from azure.core.credentials_async import AsyncTokenCredential
 
-    CredentialTypes = Union[
+    CredentialTypes: TypeAlias = Union[
         "EventHubSharedKeyCredential",
         AsyncTokenCredential,
         AzureSasCredential,

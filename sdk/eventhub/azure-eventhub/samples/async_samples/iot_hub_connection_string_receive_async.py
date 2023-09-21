@@ -13,7 +13,7 @@ receive events.
 More information about the built-in messaging endpoint can be found at:
 https://docs.microsoft.com/en-us/azure/iot-hub/iot-hub-devguide-messages-read-builtin
 """
-
+from typing import cast
 import os
 import re
 import time
@@ -87,7 +87,7 @@ def convert_iothub_to_eventhub_conn_str(iothub_conn_str):
             # between the port and 'ConsumerGroups'.
             # (ex. "...servicebus.windows.net:12345/<Event Hub name>/ConsumerGroups/...").
             # The regex matches string ':<digits>/', then any characters, then the string '/ConsumerGroups'.
-            iot_hub_name = re.search(":\d+\/.*/ConsumerGroups", str(redirect.address)).group(0).split("/")[1]
+            iot_hub_name = cast(re.Match, re.search(":\d+\/.*/ConsumerGroups", str(redirect.address))).group(0).split("/")[1]
         return "Endpoint=sb://{}/;SharedAccessKeyName={};SharedAccessKey={};EntityPath={}".format(
             fully_qualified_name,
             shared_access_key_name,

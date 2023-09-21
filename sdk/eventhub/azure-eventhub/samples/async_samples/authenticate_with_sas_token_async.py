@@ -15,10 +15,7 @@ import time
 import hmac
 import hashlib
 import base64
-try:
-    from urllib.parse import quote as url_parse_quote
-except ImportError:
-    from urllib import pathname2url as url_parse_quote
+from urllib.parse import quote as url_parse_quote
 
 from azure.core.credentials import AccessToken
 from azure.eventhub.aio import EventHubProducerClient
@@ -52,6 +49,15 @@ class CustomizedSASCredential(object):
         """
         return AccessToken(self.token, self.expiry)
 
+    async def close(self):
+        pass
+
+    async def __aenter__(self):
+        """Return `self` upon entering the runtime context."""
+        return self
+
+    async def __aexit__(self, exc_type, exc_value, traceback):
+        return None
 
 # Target namespace and hub must also be specified.  Consumer group is set to default unless required otherwise.
 FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
