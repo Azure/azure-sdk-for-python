@@ -154,8 +154,7 @@ class ParallelComponent(
             # Convert str to int.
             pattern = re.compile(r"^\d+([kKmMgG][bB])*$")
             if not pattern.match(mini_batch_size):
-                # raise ValueError(r"Parameter mini_batch_size must follow regex rule ^\d+([kKmMgG][bB])*$")
-                raise ValueError(f"Parameter mini_batch_size: {mini_batch_size} must follow regex rule")
+                raise ValueError(r"Parameter mini_batch_size must follow regex rule ^\d+([kKmMgG][bB])*$")
 
             try:
                 self.mini_batch_size = int(mini_batch_size)
