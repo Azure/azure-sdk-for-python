@@ -488,7 +488,7 @@ class TestNetAppVolume(AzureMgmtRecordedTestCase):
             volume = self.client.volumes.get(setup.TEST_RG, setup.PERMA_ACCOUNT, setup.TEST_POOL_2, volumeName1)
             assert volume.name == setup.PERMA_ACCOUNT + "/" + setup.TEST_POOL_2 + "/" + volumeName1
 
-            volume_list = self.client.volumes.list(setup.TEST_RG, setup.PERMA_ACCOUNT, setup.PERMA_POOL)
+            volume_list = self.client.volumes.list(setup.TEST_RG, setup.PERMA_ACCOUNT, setup.TEST_POOL_2)
             assert len(list(volume_list)) == 1
         finally:
             delete_volume(self.client, setup.TEST_RG, setup.PERMA_ACCOUNT, setup.TEST_POOL_2, volumeName1)
