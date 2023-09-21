@@ -48,7 +48,14 @@ class DataColumn(RestTranslatableMixin):
     :type kwargs: dict
     :raises ValidationException: Raised if type is specified and is not a valid DataColumnType or str.
 
-    TODO: Include an example
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../samples/ml_samples_featurestore.py
+            :start-after: [START configure_feature_store_entity]
+            :end-before: [END configure_feature_store_entity]
+            :language: python
+            :dedent: 8
+            :caption: Using DataColumn when creating an index column for a feature store entity
     """
 
     def __init__(self, *, name: str, type: Optional[Union[str, DataColumnType]] = None, **kwargs) -> None:

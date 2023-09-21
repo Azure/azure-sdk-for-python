@@ -84,7 +84,14 @@ class FeatureStore(Workspace):
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
-    TODO: Add example code
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../../samples/ml_samples_featurestore.py
+            :start-after: [START create_feature_store]
+            :end-before: [END create_feature_store]
+            :language: Python
+            :dedent: 8
+            :caption: Instantiating a Feature Store object
     """
 
     def __init__(

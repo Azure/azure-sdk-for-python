@@ -13,7 +13,14 @@ from azure.ai.ml._utils._experimental import experimental
 class DataColumnType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Dataframe Column Type Enum
 
-    TODO: Include an example
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../samples/ml_samples_featurestore.py
+            :start-after: [START configure_feature_store_entity]
+            :end-before: [END configure_feature_store_entity]
+            :language: python
+            :dedent: 8
+            :caption: Using DataColumnType when instantiating a DataColumn
     """
 
     STRING = "string"

@@ -15,7 +15,14 @@ class MaterializationStore:
     :param target: The Azure Resource ID of the materialization store target.
     :type target: str
 
-    TODO: Add code sample
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../../samples/ml_samples_featurestore.py
+            :start-after: [START configure_materialization_store]
+            :end-before: [END configure_materialization_store]
+            :language: Python
+            :dedent: 8
+            :caption: Configuring a Materialization Store
     """
     def __init__(self, type: str, target: str) -> None:  # pylint: disable=redefined-builtin
         self.type = type

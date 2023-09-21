@@ -13,12 +13,19 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class FeatureSetSpecification(RestTranslatableMixin):
     """Feature Set Specification
 
-    :param path: Specifies the feature set spec path. Defaults to None.
+    :param path: Specifies the feature set spec path to file. Defaults to None.
     :type path: Optional[str]    
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
-    TODO: Include code sample
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../samples/ml_samples_featurestore.py
+            :start-after: [START configure_feature_set]
+            :end-before: [END configure_feature_set]
+            :language: python
+            :dedent: 8
+            :caption: Using Feature Set Spec to create Feature Set
     """
 
     def __init__(self, *, path: Optional[str] = None, **kwargs) -> None:  # pylint: disable=unused-argument

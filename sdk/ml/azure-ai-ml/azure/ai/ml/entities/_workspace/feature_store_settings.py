@@ -24,7 +24,14 @@ class FeatureStoreSettings(RestTranslatableMixin):
     :param online_store_connection_name: The online store connection name. Defaults to None.
     :type online_store_connection_name: Optional[str]
 
-    TODO: Finish this docstring
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../samples/ml_samples_featurestore.py
+            :start-after: [START configure_feature_store_settings]
+            :end-before: [END configure_feature_store_settings]
+            :language: python
+            :dedent: 8
+            :caption: Instantiating FeatureStoreSettings
     """
 
     def __init__(
