@@ -726,7 +726,7 @@ class CallConnectionClient:
             mute_participants_request,
             **kwargs)
         return MuteParticipantsResult._from_generated(response)  # pylint:disable=protected-access
-    
+
     @distributed_trace
     def cancel_add_participant(
         self,
