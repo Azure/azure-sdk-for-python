@@ -157,6 +157,7 @@ class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REBOOT_DEVICE = "rebootDevice"
     FACTORY_RESET_DEVICE = "factoryResetDevice"
     FIRMWARE_UPDATE = "firmwareUpdate"
+    IMPORT_ENUM = "import"
 
 
 class NetworkRuleIPAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
