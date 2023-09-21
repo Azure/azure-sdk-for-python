@@ -349,6 +349,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: bytes
         """
         output = bytearray()
+        message._message = cast(Message, message._message)  # pylint: disable=protected-access
         return encode_payload(output, message._message)  # pylint: disable=protected-access
 
     @staticmethod

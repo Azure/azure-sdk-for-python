@@ -898,8 +898,7 @@ def describe_performative(performative):
     }
 
 
-def encode_payload(output, payload):
-    # type: (bytearray, Message) -> bytes
+def encode_payload(output: bytearray, payload: Message) -> bytes:
 
     if payload[0]:  # header
         # TODO: Header and Properties encoding can be optimized to

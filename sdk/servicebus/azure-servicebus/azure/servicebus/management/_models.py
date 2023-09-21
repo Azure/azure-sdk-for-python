@@ -101,7 +101,7 @@ class DictMixin(object):
     def has_key(self, k: str) -> bool:
         return k in self.__dict__
 
-    def update(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:
+    def update(self, *args: Any, **kwargs: Any) -> Optional[Dict[str, Any]]:
         return self.__dict__.update(*args, **kwargs)
 
     def keys(self) -> List[str]:
