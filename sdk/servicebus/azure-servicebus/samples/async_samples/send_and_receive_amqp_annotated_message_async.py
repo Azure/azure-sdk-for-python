@@ -34,7 +34,7 @@ async def send_data_message(sender):
 async def send_sequence_message(sender):
     sequence_body = [b'message', 123.456, True]
     footer = {'footer_key': 'footer_value'}
-    properties = AmqpMessageProperties(subject = "sequence")
+    properties = AmqpMessageProperties(subject="sequence")
     application_properties = {"body_type": "sequence"}
     sequence_message = AmqpAnnotatedMessage(
         sequence_body=sequence_body,
@@ -48,7 +48,7 @@ async def send_sequence_message(sender):
 
 async def send_value_message(sender):
     value_body = {b"key": [-123, b'data', False]}
-    header = AmqpMessageHeader(priority = 10)
+    header = AmqpMessageHeader(priority=10)
     annotations = {"annotation_key": "value"}
     application_properties = {"body_type": "value"}
     value_message = AmqpAnnotatedMessage(
