@@ -11,6 +11,7 @@ import pytest
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     AzureError,
+    ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
     ResourceModifiedError,
@@ -25,9 +26,10 @@ from azure.storage.filedatalake import (
     EncryptionScopeOptions,
     FileSystemSasPermissions,
     generate_directory_sas,
-    generate_file_system_sas
+    generate_file_system_sas,
+    DataLakeTokenAudience
 )
-from azure.storage.filedatalake._models import AccessControlChangeCounters, AccessControlChangeResult
+from azure.storage.filedatalake._models import AccessControlChangeCounters, AccessControlChangeResult, TokenAudience
 from azure.storage.filedatalake._serialize import _SUPPORTED_API_VERSIONS
 
 from devtools_testutils import recorded_by_proxy
@@ -1556,6 +1558,80 @@ class TestDirectory(StorageRecordedTestCase):
         assert filesys_client2.api_version == "2019-02-02"
         assert dir_client2.api_version == "2019-02-02"
         assert file_client2.api_version == "2019-02-02"
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_public_audience_dir_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+
+        directory_name = self._get_directory_reference()
+        token_credential = self.generate_oauth_token()
+        directory_client = DataLakeDirectoryClient(
+            self.dsc.url, self.file_system_name, directory_name,
+            credential=token_credential, audience=TokenAudience.public_audience())
+
+        response = directory_client.exists()
+        assert response is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_custom_audience_dir_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+
+        directory_name = self._get_directory_reference()
+        token_credential = self.generate_oauth_token()
+        audience_str = f'https://{datalake_storage_account_name}.blob.core.windows.net/'
+        directory_client = DataLakeDirectoryClient(
+            self.dsc.url, self.file_system_name, directory_name,
+            credential=token_credential, audience=TokenAudience(audience_str)
+        )
+
+        response = directory_client.exists()
+        assert response is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_storage_account_audience_dir_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+
+        directory_name = self._get_directory_reference()
+        token_credential = self.generate_oauth_token()
+        directory_client = DataLakeDirectoryClient(
+            self.dsc.url, self.file_system_name, directory_name,
+            credential=token_credential,
+            audience=DataLakeTokenAudience.get_datalake_account_audience(datalake_storage_account_name)
+        )
+
+        response = directory_client.exists()
+        assert response is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_bad_audience_dir_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+
+        directory_name = self._get_directory_reference()
+        token_credential = self.generate_oauth_token()
+        audience_str = f'https://badaudience.blob.core.windows.net/'
+        directory_client = DataLakeDirectoryClient(
+            self.dsc.url, self.file_system_name, directory_name,
+            credential=token_credential, audience=audience_str
+        )
+
+        with pytest.raises(ClientAuthenticationError):
+            directory_client.exists()
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

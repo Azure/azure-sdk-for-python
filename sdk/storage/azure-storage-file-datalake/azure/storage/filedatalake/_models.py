@@ -1167,4 +1167,4 @@ class DataLakeTokenAudience(TokenAudience):
         :returns: The Audience for the given Storage account and respective service endpoint.
         :rtype: DataLakeTokenAudience
         """
-        return cls(f'https://{account_name}.dfs.core.windows.net/')
+        return cls(f'https://{account_name}.blob.core.windows.net/')

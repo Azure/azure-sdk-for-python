@@ -498,11 +498,12 @@ class TokenAudience():
         https://learn.microsoft.com/azure/storage/blobs/authorize-access-azure-active-directory. Please use one
         of the provided classmethods over creating a custom value unless you have a specific scenario for doing so.
     """
-    STORAGE_OAUTH_SCOPE = "https://storage.azure.com/.default"
+    DEFAULT_OAUTH_SCOPE = ".default"
+    STORAGE_OAUTH_SCOPE = "https://storage.azure.com/"
     _value: str
 
     def __init__(self, value: str) -> None:
-        self._value = value
+        self._value = value + TokenAudience.DEFAULT_OAUTH_SCOPE
 
     @classmethod
     def public_audience(cls) -> Self:
