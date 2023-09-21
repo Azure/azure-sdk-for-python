@@ -10,7 +10,7 @@ package-name: azure-ai-anomalydetector
 license-header: MICROSOFT_MIT_NO_VERSION
 title: AnomalyDetectorClient
 package-version: 3.0.0b6
-package-mode: dataplane
+package-mode: azure-dataplane
 package-pprint-name: Cognitive Services Anomaly Detector
 security: AzureKey
 security-header-name: Ocp-Apim-Subscription-Key

@@ -31,7 +31,7 @@ head-as-boolean: true
 package-version: 1.1.0b1
 add-credential: true
 credential-scopes: https://webpubsub.azure.com/.default
-package-mode: dataplane
+package-mode: azure-dataplane
 package-pprint-name: Azure WebPubSub Service
 ```
 

@@ -9,7 +9,7 @@ package-name: azure-purview-workflow
 license-header: MICROSOFT_MIT_NO_VERSION
 title: PurviewWorkflowClient
 package-version: 1.0.0b1
-package-mode: dataplane
+package-mode: azure-dataplane
 package-pprint-name: Azure Purview Workflow Service
 security: AADToken
 security-scopes: https://purview.azure.net/.default
