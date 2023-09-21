@@ -777,10 +777,10 @@ def _get_nested_dict_byte_size(d, seen=None):
     if isinstance(d, dict):
         for key, value in d.items():
             size += getsizeof(key)
-            size += get_nested_dict_byte_size(value, seen)
+            size += _get_nested_dict_byte_size(value, seen)
     elif isinstance(d, (list, tuple, set)):
         for item in d:
-            size += get_nested_dict_byte_size(item, seen)
+            size += _get_nested_dict_byte_size(item, seen)
     else:
         size += getsizeof(d)
 
