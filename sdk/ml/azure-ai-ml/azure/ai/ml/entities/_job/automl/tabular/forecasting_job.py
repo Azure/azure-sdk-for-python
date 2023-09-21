@@ -6,40 +6,21 @@
 
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    AutoMLJob as RestAutoMLJob,
-)
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    Forecasting as RestForecasting,
-)
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    ForecastingPrimaryMetrics,
-    JobBase,
-    TaskType,
-)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import Forecasting as RestForecasting
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ForecastingPrimaryMetrics, JobBase, TaskType
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
 from azure.ai.ml.constants import TabularTrainingMode
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
-from azure.ai.ml.entities._job._input_output_helpers import (
-    from_rest_data_outputs,
-    to_rest_data_outputs,
-)
-from azure.ai.ml.entities._job.automl.stack_ensemble_settings import (
-    StackEnsembleSettings,
-)
+from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
+from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
 from azure.ai.ml.entities._job.automl.tabular.automl_tabular import AutoMLTabular
-from azure.ai.ml.entities._job.automl.tabular.featurization_settings import (
-    TabularFeaturizationSettings,
-)
-from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import (
-    ForecastingSettings,
-)
+from azure.ai.ml.entities._job.automl.tabular.featurization_settings import TabularFeaturizationSettings
+from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
-from azure.ai.ml.entities._job.automl.training_settings import (
-    ForecastingTrainingSettings,
-)
+from azure.ai.ml.entities._job.automl.training_settings import ForecastingTrainingSettings
 from azure.ai.ml.entities._util import load_from_dict
 
 
@@ -198,6 +179,7 @@ class ForecastingJob(AutoMLTabular):
             #. We scan the PACF values from the beginning and the value before the first insignificant
                auto correlation will designate the lag. If first significant element (value correlate with
                itself) is followed by insignificant, the lag will be 0 and we will not use look back features.
+
         :type target_lags: Optional[Union[str, int, List[int]]]
         :keyword feature_lags: Flag for generating lags for the numeric features with 'auto' or None.
         :paramtype feature_lags: Optional[str]
@@ -225,11 +207,13 @@ class ForecastingJob(AutoMLTabular):
             The parameter defining how if AutoML should handle short time series.
 
             Possible values: 'auto' (default), 'pad', 'drop' and None.
+
             * **auto** short series will be padded if there are no long series,
             otherwise short series will be dropped.
             * **pad** all the short series will be padded.
             * **drop**  all the short series will be dropped".
             * **None** the short series will not be modified.
+
             If set to 'pad', the table will be padded with the zeroes and
             empty values for the regressors and random values for target with the mean
             equal to target value median for given time series id. If median is more or equal
@@ -621,9 +605,7 @@ class ForecastingJob(AutoMLTabular):
         additional_message: str,
         **kwargs,
     ) -> "ForecastingJob":
-        from azure.ai.ml._schema.automl.table_vertical.forecasting import (
-            AutoMLForecastingSchema,
-        )
+        from azure.ai.ml._schema.automl.table_vertical.forecasting import AutoMLForecastingSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLForecastingNodeSchema
 
         if kwargs.pop("inside_pipeline", False):
@@ -652,9 +634,7 @@ class ForecastingJob(AutoMLTabular):
         return job
 
     def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
-        from azure.ai.ml._schema.automl.table_vertical.forecasting import (
-            AutoMLForecastingSchema,
-        )
+        from azure.ai.ml._schema.automl.table_vertical.forecasting import AutoMLForecastingSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLForecastingNodeSchema
 
         if inside_pipeline:

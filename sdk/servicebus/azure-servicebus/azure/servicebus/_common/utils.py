@@ -19,7 +19,8 @@ from typing import (
     Union,
     Tuple,
     cast,
-    Callable
+    Callable,
+    Iterable,
 )
 from datetime import timezone
 
@@ -58,7 +59,9 @@ if TYPE_CHECKING:
         Mapping[str, Any],
         ServiceBusMessage,
         AmqpAnnotatedMessage,
-        List[Union[Mapping[str, Any], ServiceBusMessage, AmqpAnnotatedMessage]],
+        Iterable[Mapping[str, Any]],
+        Iterable[ServiceBusMessage],
+        Iterable[AmqpAnnotatedMessage],
     ]
 
     SingleMessageType = Union[
@@ -239,7 +242,7 @@ def transform_outbound_messages(
     :return: A list of ServiceBusMessage or a single ServiceBusMessage transformed.
     :rtype: ~azure.servicebus.ServiceBusMessage or list[~azure.servicebus.ServiceBusMessage]
     """
-    if isinstance(messages, list):
+    if isinstance(messages, Iterable) and not isinstance(messages, Mapping):
         return [
             _convert_to_single_service_bus_message(m, message_type, to_outgoing_amqp_message) for m in messages
         ]

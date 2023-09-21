@@ -29,14 +29,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.signal_rcustom_certificates.delete(
+    client.signal_rcustom_certificates.delete(
         resource_group_name="myResourceGroup",
         resource_name="mySignalRService",
         certificate_name="myCert",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/signalr/resource-manager/Microsoft.SignalRService/stable/2023-02-01/examples/SignalRCustomCertificates_Delete.json
+# x-ms-original-file: specification/signalr/resource-manager/Microsoft.SignalRService/preview/2023-06-01-preview/examples/SignalRCustomCertificates_Delete.json
 if __name__ == "__main__":
     main()

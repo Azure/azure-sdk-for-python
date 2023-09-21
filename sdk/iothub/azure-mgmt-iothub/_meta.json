@@ -1,11 +1,28 @@
 {
-  "commit": "396209531039d3e211cb1ec0982606dbbdf64ac2",
+  "commit": "c4224d4d7c5f3a70af395a4ca0011b891d73200e",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.9.2",
+  "autorest": "3.9.7",
   "use": [
-    "@autorest/python@6.4.3",
-    "@autorest/modelerfour@4.24.3"
+    "@autorest/python@6.7.1",
+    "@autorest/modelerfour@4.26.2"
   ],
-  "autorest_command": "autorest specification/iothub/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.4.3 --use=@autorest/modelerfour@4.24.3 --version=3.9.2 --version-tolerant=False",
-  "readme": "specification/iothub/resource-manager/readme.md"
+  "autorest_command": "autorest specification/iothub/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.7.1 --use=@autorest/modelerfour@4.26.2 --version=3.9.7 --version-tolerant=False",
+  "readme": "specification/iothub/resource-manager/readme.md",
+  "package-2023-06": "2023-08-16 18:48:22 -0700 8fa9b5051129dd4808c9be1f5b753af226b044db Microsoft.Devices/stable/2023-06-30/iothub.json",
+  "package-preview-2023-06": "2023-08-14 22:58:07 -0700 d99f18b18405cd446f7abc2c9e6b3884f5c549f8 Microsoft.Devices/preview/2023-06-30-preview/iothub.json",
+  "package-preview-2022-11": "2023-03-14 21:37:19 -0700 7e5861ad01a796a72617080e89e42f428e66242e Microsoft.Devices/preview/2022-11-15-preview/iothub.json",
+  "package-preview-2022-04-30": "2022-08-09 20:31:29 -0700 1f75c8b5d3f55387d6e07e7f2f879a88f529180d Microsoft.Devices/preview/2022-04-30-preview/iothub.json",
+  "package-2021-07-02": "2023-01-27 19:16:47 -0800 0b0f8d5b088da606ffbb8b2828dc366982f106e5 Microsoft.Devices/stable/2021-07-02/iothub.json",
+  "package-2021-07": "2023-01-27 19:16:47 -0800 0b0f8d5b088da606ffbb8b2828dc366982f106e5 Microsoft.Devices/stable/2021-07-02/iothub.json",
+  "package-2021-03": "2021-05-07 19:43:30 -0700 4b7dca50a9a7559865803927a87a06ad0d73ff06 Microsoft.Devices/stable/2021-03-31/iothub.json",
+  "package-preview-2021-03": "2021-04-05 22:04:32 -0700 2331a635ead0549b8c0f3891bf9bf2e5e5ad76bc Microsoft.Devices/preview/2021-03-03-preview/iothub.json",
+  "package-2020-03": "2021-05-05 01:19:33 -0700 8c76ee1ab76c977e1bdd4abc5369704684576111 Microsoft.Devices/stable/2020-03-01/iothub.json",
+  "package-2019-11": "2021-04-27 02:22:18 -0700 8873dabb56a800c037ca56beab11dd5a9ed988ad Microsoft.Devices/stable/2019-11-04/iothub.json",
+  "package-preview-2019-07": "2021-04-27 02:22:18 -0700 8873dabb56a800c037ca56beab11dd5a9ed988ad Microsoft.Devices/preview/2019-07-01-preview/iothub.json",
+  "package-2019-03": "2021-04-27 02:22:18 -0700 8873dabb56a800c037ca56beab11dd5a9ed988ad Microsoft.Devices/stable/2019-03-22/iothub.json",
+  "package-2018-04": "2021-04-27 02:22:18 -0700 8873dabb56a800c037ca56beab11dd5a9ed988ad Microsoft.Devices/stable/2018-04-01/iothub.json",
+  "package-2018-01": "2021-04-27 02:22:18 -0700 8873dabb56a800c037ca56beab11dd5a9ed988ad Microsoft.Devices/stable/2018-01-22/iothub.json",
+  "package-2017-07": "2021-04-27 02:22:18 -0700 8873dabb56a800c037ca56beab11dd5a9ed988ad Microsoft.Devices/stable/2017-07-01/iothub.json",
+  "package-2017-01": "2021-04-27 02:22:18 -0700 8873dabb56a800c037ca56beab11dd5a9ed988ad Microsoft.Devices/stable/2017-01-19/iothub.json",
+  "package-2016-02": "2021-04-27 02:22:18 -0700 8873dabb56a800c037ca56beab11dd5a9ed988ad Microsoft.Devices/stable/2016-02-03/iothub.json"
 }

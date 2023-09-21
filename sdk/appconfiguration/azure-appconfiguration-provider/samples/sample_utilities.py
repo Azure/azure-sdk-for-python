@@ -53,3 +53,9 @@ def get_credential(authority, **kwargs):
         client_secret=os.environ.get("APPCONFIGURATION_CLIENT_SECRET"),
         authority=authority,
     )
+
+
+def get_client_modifications():
+    modifications = {}
+    modifications["user_agent"] = "SDK/Sample"
+    return modifications
