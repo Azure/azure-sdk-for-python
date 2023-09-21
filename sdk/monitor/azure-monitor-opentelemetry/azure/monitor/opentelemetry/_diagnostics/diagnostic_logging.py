@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from enum import Enum
 import logging
 import threading
 from os import makedirs
@@ -25,7 +26,14 @@ _SUBSCRIPTION_ID = (
     _SUBSCRIPTION_ID_ENV_VAR.split("+")[0] if _SUBSCRIPTION_ID_ENV_VAR else None
 )
 _logger = logging.getLogger(__name__)
+_logger.propagate = False
+_logger.setLevel(logging.INFO)
 _DIAGNOSTIC_LOG_PATH = _get_log_path()
+_DIAGNOSTIC_LOGGING_INITIALIZED = 4100
+_ATTACH_SUCCESS_DISTRO = 4200
+_ATTACH_SUCCESS_CONFIGURATOR = 4201
+_ATTACH_FAILURE_DISTRO = 4400
+_ATTACH_FAILURE_CONFIGURATOR = 4401
 
 
 class AzureDiagnosticLogging:
@@ -35,6 +43,7 @@ class AzureDiagnosticLogging:
 
     @classmethod
     def _initialize(cls):
+        print("JEREVOSS: _initialize")
         with AzureDiagnosticLogging._lock:
             if not AzureDiagnosticLogging._initialized:
                 if _IS_DIAGNOSTICS_ENABLED and _DIAGNOSTIC_LOG_PATH:
@@ -51,6 +60,7 @@ class AzureDiagnosticLogging:
                         + f'"extensionVersion":"{_EXTENSION_VERSION}", '
                         + f'"sdkVersion":"{VERSION}", '
                         + f'"subscriptionId":"{_SUBSCRIPTION_ID}", '
+                        + '"msgId":"%(msgId)s", '
                         + '"language":"python"'
                         + "}"
                         + "}"
@@ -66,14 +76,12 @@ class AzureDiagnosticLogging:
                         fmt=log_format, datefmt="%Y-%m-%dT%H:%M:%S"
                     )
                     AzureDiagnosticLogging._f_handler.setFormatter(formatter)
+                    _logger.addHandler(AzureDiagnosticLogging._f_handler)
                     AzureDiagnosticLogging._initialized = True
-                    _logger.info("Initialized Azure Diagnostic Logger.")
+                    # AzureDiagnosticLogging.log("Initialized Azure Diagnostic Logger.", _DIAGNOSTIC_LOGGING_INITIALIZED)
 
     @classmethod
-    def enable(cls, logger: logging.Logger):
+    def log(cls, message: str, message_id: int):
+        print("JEREVOSS: log: %s" % message)
         AzureDiagnosticLogging._initialize()
-        if AzureDiagnosticLogging._initialized and AzureDiagnosticLogging._f_handler:
-            logger.addHandler(AzureDiagnosticLogging._f_handler)
-            _logger.info(
-                "Added Azure diagnostics logging to %s.", logger.name
-            )
+        _logger.info(message, extra={'msgId': message_id})

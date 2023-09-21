@@ -27,6 +27,8 @@ from azure.monitor.opentelemetry._constants import (
 )
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
     AzureDiagnosticLogging,
+    _ATTACH_SUCCESS_DISTRO,
+    _ATTACH_FAILURE_DISTRO,
 )
 from azure.monitor.opentelemetry._diagnostics.status_logger import (
     AzureStatusLogger,
@@ -35,18 +37,17 @@ from azure.monitor.opentelemetry._diagnostics.status_logger import (
 _CONFIG_FAILED_MSG = "Azure Monitor OpenTelemetry Distro failed during configuration: %s"
 
 _logger = logging.getLogger(__name__)
-_opentelemetry_logger = logging.getLogger("opentelemetry")
-# TODO: Enabled when duplicate logging issue is solved
-# _exporter_logger = logging.getLogger("azure.monitor.opentelemetry.exporter")
 
 
 class AzureMonitorDistro(BaseDistro):
     def _configure(self, **kwargs) -> None:
+        print("JEREVOSS: _configure")
         if not _is_attach_enabled():
             warn(_PREVIEW_ENTRY_POINT_WARNING)
         try:
             _configure_auto_instrumentation()
         except Exception as ex:
+            print("JEREVOSS: distro _configure Exception %s" % exc)
             _logger.exception(
                 ("Error occurred auto-instrumenting AzureMonitorDistro")
             )
@@ -54,10 +55,9 @@ class AzureMonitorDistro(BaseDistro):
 
 
 def _configure_auto_instrumentation() -> None:
+    print("JEREVOSS: _configure_auto_instrumentation")
     try:
         AzureStatusLogger.log_status(False, "Distro being configured.")
-        AzureDiagnosticLogging.enable(_logger)
-        AzureDiagnosticLogging.enable(_opentelemetry_logger)
         environ.setdefault(
             OTEL_METRICS_EXPORTER, "azure_monitor_opentelemetry_exporter"
         )
@@ -72,10 +72,15 @@ def _configure_auto_instrumentation() -> None:
         )
         settings.tracing_implementation = OpenTelemetrySpan
         AzureStatusLogger.log_status(True)
-        _logger.info(
-            "Azure Monitor OpenTelemetry Distro configured successfully."
+        AzureDiagnosticLogging.log(
+            "Azure Monitor OpenTelemetry Distro configured successfully.",
+            _ATTACH_SUCCESS_DISTRO
         )
     except Exception as exc:
-        AzureStatusLogger.log_status(False, reason=exc)
-        _logger.error(_CONFIG_FAILED_MSG, exc)
+        print("JEREVOSS: distro _configure_auto_instrumentation Exception %s" % exc)
+        AzureStatusLogger.log_status(False, reason=str(exc))
+        AzureDiagnosticLogging.log(
+            _CONFIG_FAILED_MSG % exc,
+            _ATTACH_FAILURE_DISTRO,
+        )
         raise exc

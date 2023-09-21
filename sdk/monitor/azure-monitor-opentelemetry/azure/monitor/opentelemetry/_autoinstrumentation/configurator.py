@@ -16,25 +16,36 @@ from azure.monitor.opentelemetry._constants import (
 )
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
     AzureDiagnosticLogging,
+    _ATTACH_SUCCESS_CONFIGURATOR,
+    _ATTACH_FAILURE_CONFIGURATOR,
 )
-
-_logger = logging.getLogger(__name__)
+from azure.monitor.opentelemetry._diagnostics.status_logger import (
+    AzureStatusLogger,
+)
 
 
 class AzureMonitorConfigurator(_OTelSDKConfigurator):
     def _configure(self, **kwargs):
+        print("JEREVOSS: _configure")
         if not _is_attach_enabled():
             warn(_PREVIEW_ENTRY_POINT_WARNING)
         try:
-            AzureDiagnosticLogging.enable(_logger)
+            AzureStatusLogger.log_status(False, "Configurator being configured.")
             super()._configure(**kwargs)
+            AzureStatusLogger.log_status(True)
+            AzureDiagnosticLogging.log(
+                "Azure Monitor Configurator configured successfully.",
+                _ATTACH_SUCCESS_CONFIGURATOR
+            )
         except ValueError as e:
-            _logger.error(
-                "Azure Monitor Configurator failed during configuration due to a ValueError: %s", e
+            AzureDiagnosticLogging.log(
+                "Azure Monitor Configurator failed during configuration due to a ValueError: %s" % e,
+                _ATTACH_FAILURE_CONFIGURATOR,
             )
             raise e
         except Exception as e:
-            _logger.error(
-                "Azure Monitor Configurator failed during configuration: %s", e
+            AzureDiagnosticLogging.log(
+                "Azure Monitor Configurator failed during configuration: %s" % e,
+                _ATTACH_FAILURE_CONFIGURATOR,
             )
             raise e
