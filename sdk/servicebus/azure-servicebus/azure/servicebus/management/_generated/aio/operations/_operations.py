@@ -44,7 +44,7 @@ from .._vendor import ServiceBusManagementClientMixinABC
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
-    from typing import MutableMapping  # pylint: disable=ungrouped-imports
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -196,9 +196,9 @@ class EntityOperations:
             deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete(self, entity_name: str, **kwargs: Any) -> JSON:
@@ -301,7 +301,7 @@ class ServiceBusManagementClientOperationsMixin(ServiceBusManagementClientMixinA
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run( # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -367,7 +367,7 @@ class ServiceBusManagementClientOperationsMixin(ServiceBusManagementClientMixinA
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run( # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -429,7 +429,7 @@ class ServiceBusManagementClientOperationsMixin(ServiceBusManagementClientMixinA
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run( # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -606,9 +606,9 @@ class SubscriptionOperations:
             deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete(self, topic_name: str, subscription_name: str, **kwargs: Any) -> JSON:
@@ -836,9 +836,9 @@ class RuleOperations:
             deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace_async
     async def delete(self, topic_name: str, subscription_name: str, rule_name: str, **kwargs: Any) -> JSON:

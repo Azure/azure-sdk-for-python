@@ -150,7 +150,6 @@ def get_renewable_lock_duration(
 def create_authentication(client) -> Union["uamqp_JWTTokenAuth", "pyamqp_JWTTokenAuth"]:
     # pylint: disable=protected-access
     try:
-        # ignore mypy's warning because token_type is Optional
         token_type = client._credential.token_type
     except AttributeError:
         token_type = TOKEN_TYPE_JWT

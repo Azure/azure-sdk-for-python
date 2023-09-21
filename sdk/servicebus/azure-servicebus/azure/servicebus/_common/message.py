@@ -130,7 +130,7 @@ class ServiceBusMessage(
         # problems as MessageProperties won't absorb spurious args.
         self._encoding = kwargs.pop("encoding", "UTF-8")
         self._uamqp_message: Optional[Union[LegacyMessage, "Message"]] = None
-        self._message: Union["Message", "pyamqp_Message"] = None
+        self._message: Optional[Union["Message", "pyamqp_Message"]] = None
 
         # Internal usage only for transforming AmqpAnnotatedMessage to outgoing ServiceBusMessage
         if "message" in kwargs:
