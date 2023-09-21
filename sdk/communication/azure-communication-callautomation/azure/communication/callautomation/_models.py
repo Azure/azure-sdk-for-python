@@ -523,6 +523,8 @@ class AddParticipantResult:
     :paramtype operation_context: str
     """
 
+    invitation_id: str
+    """invitation ID used to add participant."""
     participant: Optional[CallParticipant]
     """Participant that was added with this request."""
     operation_context: Optional[str]
@@ -531,15 +533,18 @@ class AddParticipantResult:
     def __init__(
         self,
         *,
+        invitation_id: str,
         participant: Optional[CallParticipant] = None,
         operation_context: Optional[str] = None
     ):
+        self.invitation_id = invitation_id
         self.participant = participant
         self.operation_context = operation_context
 
     @classmethod
     def _from_generated(cls, add_participant_result_generated: 'AddParticipantResultRest'):
         return cls(
+            invitation_id=add_participant_result_generated.invitation_id,
             participant=CallParticipant._from_generated(  # pylint:disable=protected-access
                 add_participant_result_generated.participant
             ),
