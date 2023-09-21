@@ -254,6 +254,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
     """
 
     def __init__(self, **kwargs) -> None:
+        # pylint:disable=too-many-instance-attributes
         self._dict: Dict[str, str] = {}
         self._trim_prefixes: List[str] = []
         self._client: Optional[AzureAppConfigurationClient] = None
