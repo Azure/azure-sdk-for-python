@@ -235,17 +235,28 @@ class ServiceBusReceiver(
         )
 
     def __iter__(self):
-        return self._iter_contextual_wrapper()
+        # return self._iter_contextual_wrapper()
+        return self
 
-    def _inner_next(self, wait_time=None):
+    def _inner_next(self):
         # We do this weird wrapping such that an imperitive next() call, and a generator-based iter both trace sanely.
-        self._check_live()
         while True:
             try:
-                return self._do_retryable_operation(self._iter_next, wait_time=wait_time)
+                # pylint: disable=protected-access
+                self._check_live()
+                while True:
+                    try:
+                        message = self._do_retryable_operation(self._iter_next)
+                        break
+                    except StopIteration:
+                        self._message_iter = None
+                        raise
+                links = get_receive_links(message)
+                with receive_trace_context_manager(self, links=links):
+                    yield message
             except StopIteration:
-                self._message_iter = None
-                raise
+                break
+        
 
     def __next__(self) -> ServiceBusReceivedMessage:
         # Normally this would wrap the yield of the iter, but for a direct next call we just trace imperitively.
@@ -590,34 +601,6 @@ class ServiceBusReceiver(
     def close(self) -> None:
         super(ServiceBusReceiver, self).close()
         self._message_iter = None  # pylint: disable=attribute-defined-outside-init
-
-    def _get_streaming_message_iter(
-        self, max_wait_time: Optional[float] = None
-    ) -> Iterator[ServiceBusReceivedMessage]:
-        """Receive messages from an iterator indefinitely, or if a max_wait_time is specified, until
-        such a timeout occurs.
-
-        :param max_wait_time: Maximum time to wait in seconds for the next message to arrive.
-         If no messages arrive, and no timeout is specified, this call will not return
-         until the connection is closed. If specified, and no messages arrive for the
-         timeout period, the iterator will stop.
-        :type max_wait_time: Optional[float]
-        :return: An iterator of messages.
-        :rtype: Iterator[ServiceBusReceivedMessage]
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-                :start-after: [START receive_forever]
-                :end-before: [END receive_forever]
-                :language: python
-                :dedent: 4
-                :caption: Receive indefinitely from an iterator in streaming fashion.
-        """
-        self._check_live()
-        if max_wait_time is not None and max_wait_time <= 0:
-            raise ValueError("The max_wait_time must be greater than 0.")
-        return self._iter_contextual_wrapper(max_wait_time)
 
     def receive_messages(
         self,
