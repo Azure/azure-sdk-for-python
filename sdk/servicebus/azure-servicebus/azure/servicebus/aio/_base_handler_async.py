@@ -164,6 +164,19 @@ class ServiceBusAzureSasTokenCredentialAsync(object):
         signature, expiry = parse_sas_credential(self._credential)
         return AccessToken(signature, expiry)
 
+    async def close(self) -> None:
+        pass
+
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional["TracebackType"] = None,
+    ) -> None:
+        pass
+
+    async def __aenter__(self) -> "ServiceBusAzureSasTokenCredentialAsync":
+        return self
 
 class BaseHandler:  # pylint:disable=too-many-instance-attributes
     def __init__(
