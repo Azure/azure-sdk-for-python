@@ -1,5 +1,23 @@
 # Release History
 
+## 27.0.0 (2023-10-23)
+
+### Features Added
+
+  - Added operation ManagedClustersOperations.get_mesh_revision_profile
+  - Added operation ManagedClustersOperations.get_mesh_upgrade_profile
+  - Added operation ManagedClustersOperations.list_mesh_revision_profiles
+  - Added operation ManagedClustersOperations.list_mesh_upgrade_profiles
+  - Added operation group MachinesOperations
+  - Model IstioComponents has a new parameter egress_gateways
+  - Model ManagedCluster has a new parameter resource_uid
+  - Model ManagedCluster has a new parameter service_mesh_profile
+  - Model ManagedClusterIngressProfileWebAppRouting has a new parameter dns_zone_resource_ids
+
+### Breaking Changes
+
+  - Model ManagedClusterIngressProfileWebAppRouting no longer has parameter dns_zone_resource_id
+
 ## 26.0.0 (2023-08-18)
 
 ### Features Added
