@@ -121,7 +121,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START batch_endpoint_operations_list]
                 :end-before: [END batch_endpoint_operations_list]
                 :language: python
@@ -150,7 +150,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START batch_endpoint_operations_get]
                 :end-before: [END batch_endpoint_operations_get]
                 :language: python
@@ -180,7 +180,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START batch_endpoint_operations_delete]
                 :end-before: [END batch_endpoint_operations_delete]
                 :language: python
@@ -219,7 +219,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START batch_endpoint_operations_create_or_update]
                 :end-before: [END batch_endpoint_operations_create_or_update]
                 :language: python
@@ -280,7 +280,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START batch_endpoint_operations_invoke]
                 :end-before: [END batch_endpoint_operations_invoke]
                 :language: python
@@ -392,7 +392,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START batch_endpoint_operations_list_jobs]
                 :end-before: [END batch_endpoint_operations_list_jobs]
                 :language: python

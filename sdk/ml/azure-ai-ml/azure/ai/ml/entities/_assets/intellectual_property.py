@@ -22,7 +22,7 @@ class IntellectualProperty(RestTranslatableMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START intellectual_property_configuration]
             :end-before: [END intellectual_property_configuration]
             :language: python
