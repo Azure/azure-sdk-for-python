@@ -284,8 +284,8 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
 
     def __str__(self) -> str:
         try:
-            _res_1: str = self._to_yaml()
-            return _res_1
+            toYaml: str = self._to_yaml()
+            return toYaml
         except BaseException:  # pylint: disable=broad-except
-            _res_2: str = super(CommandComponent, self).__str__()
-            return _res_2
+            toStr: str = super(CommandComponent, self).__str__()
+            return toStr
