@@ -58,6 +58,7 @@ class DialogInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Determines the type of the dialog."""
 
     POWER_VIRTUAL_AGENTS = "powerVirtualAgents"
+    AZURE_OPEN_AI = "azureOpenAI"
 
 
 class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -168,3 +169,16 @@ class RecordingStorage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ACS = "acs"
     BLOB_STORAGE = "blobStorage"
+
+
+class RecordingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """RecordingType."""
+
+    ACS = "acs"
+    TEAMS = "teams"
+
+
+class TranscriptionTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of transport to be used for live transcription, eg. Websocket."""
+
+    WEBSOCKET = "websocket"
