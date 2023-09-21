@@ -128,7 +128,7 @@ class ParallelComponent(
         # No validation on value passed here because in pipeline job, required code&environment maybe absent
         # and fill in later with job defaults.
         self.task = task
-        self.mini_batch_size: int = -1
+        self.mini_batch_size: int = 0
         self.partition_keys = partition_keys
         self.input_data = input_data
         self.retry_settings = retry_settings
@@ -154,7 +154,8 @@ class ParallelComponent(
             # Convert str to int.
             pattern = re.compile(r"^\d+([kKmMgG][bB])*$")
             if not pattern.match(mini_batch_size):
-                raise ValueError(r"Parameter mini_batch_size must follow regex rule ^\d+([kKmMgG][bB])*$")
+                # raise ValueError(r"Parameter mini_batch_size must follow regex rule ^\d+([kKmMgG][bB])*$")
+                raise ValueError(f"Parameter mini_batch_size: {mini_batch_size} must follow regex rule")
 
             try:
                 self.mini_batch_size = int(mini_batch_size)
