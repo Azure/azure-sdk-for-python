@@ -151,7 +151,9 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype maintenance_window: ~azure.mgmt.cosmosdbforpostgresql.models.MaintenanceWindow
     :ivar preferred_primary_zone: Preferred primary availability zone (AZ) for all cluster servers.
     :vartype preferred_primary_zone: str
-    :ivar enable_shards_on_coordinator: If shards on coordinator is enabled or not for the cluster.
+    :ivar enable_shards_on_coordinator: If distributed tables are placed on coordinator or not.
+     Should be set to 'true' on single node clusters. Requires shard rebalancing after value is
+     changed.
     :vartype enable_shards_on_coordinator: bool
     :ivar enable_ha: If high availability (HA) is enabled or not for the cluster.
     :vartype enable_ha: bool
@@ -295,8 +297,9 @@ class Cluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :keyword preferred_primary_zone: Preferred primary availability zone (AZ) for all cluster
          servers.
         :paramtype preferred_primary_zone: str
-        :keyword enable_shards_on_coordinator: If shards on coordinator is enabled or not for the
-         cluster.
+        :keyword enable_shards_on_coordinator: If distributed tables are placed on coordinator or not.
+         Should be set to 'true' on single node clusters. Requires shard rebalancing after value is
+         changed.
         :paramtype enable_shards_on_coordinator: bool
         :keyword enable_ha: If high availability (HA) is enabled or not for the cluster.
         :paramtype enable_ha: bool
@@ -408,7 +411,9 @@ class ClusterForUpdate(_serialization.Model):  # pylint: disable=too-many-instan
     :vartype postgresql_version: str
     :ivar citus_version: The Citus extension version on all cluster servers.
     :vartype citus_version: str
-    :ivar enable_shards_on_coordinator: If shards on coordinator is enabled or not for the cluster.
+    :ivar enable_shards_on_coordinator: If distributed tables are placed on coordinator or not.
+     Should be set to 'true' on single node clusters. Requires shard rebalancing after value is
+     changed.
     :vartype enable_shards_on_coordinator: bool
     :ivar enable_ha: If high availability (HA) is enabled or not for the cluster.
     :vartype enable_ha: bool
@@ -493,8 +498,9 @@ class ClusterForUpdate(_serialization.Model):  # pylint: disable=too-many-instan
         :paramtype postgresql_version: str
         :keyword citus_version: The Citus extension version on all cluster servers.
         :paramtype citus_version: str
-        :keyword enable_shards_on_coordinator: If shards on coordinator is enabled or not for the
-         cluster.
+        :keyword enable_shards_on_coordinator: If distributed tables are placed on coordinator or not.
+         Should be set to 'true' on single node clusters. Requires shard rebalancing after value is
+         changed.
         :paramtype enable_shards_on_coordinator: bool
         :keyword enable_ha: If high availability (HA) is enabled or not for the cluster.
         :paramtype enable_ha: bool

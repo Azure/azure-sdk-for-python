@@ -90,9 +90,9 @@ def _get_param_with_standard_annotation(
     :rtype: Dict[str, Union[Annotation, "Input", "Output"]]
     """
     # TODO: we'd better remove this potential recursive import
+    from .group_input import GroupInput
     from .input import Input
     from .output import Output
-    from .group_input import GroupInput
 
     def _is_dsl_type_cls(t: type):
         if type(t) is not type:  # pylint: disable=unidiomatic-typecheck
@@ -254,6 +254,7 @@ def _get_param_with_standard_annotation(
         :rtype: Dict[str, Union[Annotation, Input, Output]]
 
         .. admonition:: Additional Note
+
            :class: note
 
            If cls overwrite an inherited no default field with default, it will be put in the

@@ -23,6 +23,7 @@ def validate_to_from_rest_translation(json_path: str, yaml_path: str) -> None:
         yaml_dict = yaml.safe_load(f)
 
     yaml_dict.pop("name", None)
+
     assert json.loads(json.dumps(yaml_dict)) == json.loads(
         json.dumps(Schedule._from_rest_object(deserialized_schedule)._to_dict())
     )
@@ -64,6 +65,12 @@ class TestMonitorSchedule:
     def test_custom_basic(self) -> None:
         json_path = "tests/test_configs/monitoring/rest_json_configs/custom_rest.json"
         yaml_path = "tests/test_configs/monitoring/yaml_configs/custom.yaml"
+
+        validate_to_from_rest_translation(json_path, yaml_path)
+
+    def test_generation_safety_basic(self) -> None:
+        json_path = "tests/test_configs/monitoring/rest_json_configs/generation_safety_rest.json"
+        yaml_path = "tests/test_configs/monitoring/yaml_configs/generation_safety.yaml"
 
         validate_to_from_rest_translation(json_path, yaml_path)
 

@@ -31,12 +31,11 @@ def main():
         resource_name="vault1",
     )
 
-    response = client.replication_recovery_plans.begin_delete(
+    client.replication_recovery_plans.begin_delete(
         recovery_plan_name="RPtest1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2022-10-01/examples/ReplicationRecoveryPlans_Delete.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2023-06-01/examples/ReplicationRecoveryPlans_Delete.json
 if __name__ == "__main__":
     main()
