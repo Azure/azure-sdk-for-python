@@ -636,7 +636,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def iter_next(
-        receiver: "ServiceBusReceiver", wait_time: Optional[int] = None
+        receiver: "ServiceBusReceiver"
     ) -> "ServiceBusReceivedMessage":
         """
         Used to iterate through received messages.
@@ -649,8 +649,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         try:
             receiver._receive_context.set()
             receiver._open()
-            if not receiver._message_iter or wait_time:
-                receiver._message_iter = receiver._handler.receive_messages_iter(timeout=wait_time)
+            if not receiver._message_iter:
+                receiver._message_iter = receiver._handler.receive_messages_iter(timeout=receiver._max_wait_time)
             pyamqp_message = next(
                 cast(Iterator["Message"], receiver._message_iter)
             )
