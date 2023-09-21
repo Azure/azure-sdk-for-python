@@ -41,13 +41,11 @@ _logger = logging.getLogger(__name__)
 
 class AzureMonitorDistro(BaseDistro):
     def _configure(self, **kwargs) -> None:
-        print("JEREVOSS: _configure")
         if not _is_attach_enabled():
             warn(_PREVIEW_ENTRY_POINT_WARNING)
         try:
             _configure_auto_instrumentation()
         except Exception as ex:
-            print("JEREVOSS: distro _configure Exception %s" % exc)
             _logger.exception(
                 ("Error occurred auto-instrumenting AzureMonitorDistro")
             )
@@ -55,7 +53,6 @@ class AzureMonitorDistro(BaseDistro):
 
 
 def _configure_auto_instrumentation() -> None:
-    print("JEREVOSS: _configure_auto_instrumentation")
     try:
         AzureStatusLogger.log_status(False, "Distro being configured.")
         environ.setdefault(
@@ -77,7 +74,6 @@ def _configure_auto_instrumentation() -> None:
             _ATTACH_SUCCESS_DISTRO
         )
     except Exception as exc:
-        print("JEREVOSS: distro _configure_auto_instrumentation Exception %s" % exc)
         AzureStatusLogger.log_status(False, reason=str(exc))
         AzureDiagnosticLogging.log(
             _CONFIG_FAILED_MSG % exc,

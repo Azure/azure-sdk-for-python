@@ -43,7 +43,6 @@ class AzureDiagnosticLogging:
 
     @classmethod
     def _initialize(cls):
-        print("JEREVOSS: _initialize")
         with AzureDiagnosticLogging._lock:
             if not AzureDiagnosticLogging._initialized:
                 if _IS_DIAGNOSTICS_ENABLED and _DIAGNOSTIC_LOG_PATH:
@@ -82,6 +81,5 @@ class AzureDiagnosticLogging:
 
     @classmethod
     def log(cls, message: str, message_id: int):
-        print("JEREVOSS: log: %s" % message)
         AzureDiagnosticLogging._initialize()
         _logger.info(message, extra={'msgId': message_id})

@@ -26,7 +26,6 @@ from azure.monitor.opentelemetry._diagnostics.status_logger import (
 
 class AzureMonitorConfigurator(_OTelSDKConfigurator):
     def _configure(self, **kwargs):
-        print("JEREVOSS: _configure")
         if not _is_attach_enabled():
             warn(_PREVIEW_ENTRY_POINT_WARNING)
         try:

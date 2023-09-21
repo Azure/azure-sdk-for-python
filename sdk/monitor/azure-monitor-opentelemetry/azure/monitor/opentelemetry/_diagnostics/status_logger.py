@@ -44,7 +44,6 @@ class AzureStatusLogger:
 
     @classmethod
     def log_status(cls, agent_initialized_successfully, reason=None):
-        print("JEREVOSS: log_status: %s" % agent_initialized_successfully)
         if _IS_DIAGNOSTICS_ENABLED and _STATUS_LOG_PATH:
             pid = getpid()
             status_json = AzureStatusLogger._get_status_json(
