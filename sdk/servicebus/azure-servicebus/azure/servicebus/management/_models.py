@@ -31,7 +31,7 @@ from ._constants import RULE_SQL_COMPATIBILITY_LEVEL
 from ._utils import _normalize_entity_path_to_full_path_if_needed
 
 if TYPE_CHECKING:
-    from ._generated.models import MessagingSku
+    from ._generated.models import MessagingSku, NamespaceType
 
 RULE_FILTERS = Union["SqlRuleFilter", "CorrelationRuleFilter", "TrueRuleFilter", "FalseRuleFilter"]
 
@@ -150,7 +150,7 @@ class NamespaceProperties(DictMixin):
         self.messaging_sku: Union[str, "MessagingSku"] = extract_kwarg("messaging_sku")
         self.messaging_units: int = extract_kwarg("messaging_units")
         self.modified_at_utc: datetime = extract_kwarg("modified_at_utc")
-        self.namespace_type: str = extract_kwarg("namespace_type")
+        self.namespace_type: Union[str, "NamespaceType"] = extract_kwarg("namespace_type")
 
         validate_extraction_missing_args(extraction_missing_args)
 
