@@ -243,33 +243,26 @@ class ServiceBusReceiver(
         while True:
             try:
                 # pylint: disable=protected-access
-                self._check_live()
-                while True:
-                    try:
-                        message = self._do_retryable_operation(self._iter_next)
-                        break
-                    except StopIteration:
-                        self._message_iter = None
-                        raise
-                links = get_receive_links(message)
-                with receive_trace_context_manager(self, links=links):
-                    yield message
+                return self._do_retryable_operation(self._iter_next)
             except StopIteration:
-                break
+                self._message_iter = None
+                raise
         
 
     def __next__(self) -> ServiceBusReceivedMessage:
-        # Normally this would wrap the yield of the iter, but for a direct next call we just trace imperitively.
         try:
             self._receive_context.set()
-            message: ServiceBusReceivedMessage = self._inner_next()
-            links = get_receive_links(message)
-            with receive_trace_context_manager(self, links=links):
-                return message
+            while True:
+                try:
+                    # pylint: disable=protected-access
+                    message = self._inner_next()
+                    links = get_receive_links(message)
+                    with receive_trace_context_manager(self, links=links):
+                        return message
+                except StopIteration:
+                    break
         finally:
             self._receive_context.clear()
-
-    next = __next__  # for python2.7
 
     @classmethod
     def _from_connection_string(

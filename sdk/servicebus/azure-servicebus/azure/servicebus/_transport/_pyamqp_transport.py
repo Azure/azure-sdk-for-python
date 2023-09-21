@@ -627,7 +627,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         while True:
             try:
                 # pylint: disable=protected-access
-                message = receiver._inner_next(wait_time=max_wait_time)
+                message = receiver._inner_next()
                 links = get_receive_links(message)
                 with receive_trace_context_manager(receiver, links=links):
                     yield message
