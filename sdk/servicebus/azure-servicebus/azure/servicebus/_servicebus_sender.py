@@ -7,7 +7,7 @@ import time
 import uuid
 import datetime
 import warnings
-from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast
+from typing import Any, TYPE_CHECKING, Union, List, Optional, Mapping, cast, Iterable
 
 from ._base_handler import BaseHandler
 from ._common import mgmt_handlers
@@ -58,7 +58,9 @@ if TYPE_CHECKING:
         Mapping[str, Any],
         ServiceBusMessage,
         AmqpAnnotatedMessage,
-        List[Union[Mapping[str, Any], ServiceBusMessage, AmqpAnnotatedMessage]],
+        Iterable[Mapping[str, Any]],
+        Iterable[ServiceBusMessage],
+        Iterable[AmqpAnnotatedMessage],
     ]
     MessageObjTypes = Union[
         ServiceBusMessage,

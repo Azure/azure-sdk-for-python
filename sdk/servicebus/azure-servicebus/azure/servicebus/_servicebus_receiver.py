@@ -247,11 +247,11 @@ class ServiceBusReceiver(
                 self._message_iter = None
                 raise
 
-    def __next__(self):
+    def __next__(self) -> ServiceBusReceivedMessage:
         # Normally this would wrap the yield of the iter, but for a direct next call we just trace imperitively.
         try:
             self._receive_context.set()
-            message = self._inner_next()
+            message: ServiceBusReceivedMessage = self._inner_next()
             links = get_receive_links(message)
             with receive_trace_context_manager(self, links=links):
                 return message
@@ -663,7 +663,7 @@ class ServiceBusReceiver(
         if max_message_count is not None and max_message_count <= 0:
             raise ValueError("The max_message_count must be greater than 0")
         start_time = time.time_ns()
-        messages = self._do_retryable_operation(
+        messages: List[ServiceBusReceivedMessage] = self._do_retryable_operation(
             self._receive,
             max_message_count=max_message_count,
             timeout=max_wait_time,

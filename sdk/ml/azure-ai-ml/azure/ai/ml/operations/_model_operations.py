@@ -7,8 +7,8 @@
 from contextlib import contextmanager
 from os import PathLike, path
 from typing import Dict, Iterable, Optional, Union
+
 from marshmallow.exceptions import ValidationError as SchemaValidationError
-from azure.ai.ml.constants._common import REGISTRY_URI_FORMAT
 
 from azure.ai.ml._artifacts._artifact_utilities import (
     _check_and_upload_path,
@@ -24,13 +24,8 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    ListViewType,
-    ModelVersion,
-)
-from azure.ai.ml._restclient.v2023_04_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient042023Preview,
-)
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, ModelVersion
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -53,20 +48,12 @@ from azure.ai.ml._utils._registry_utils import (
     get_sas_uri_for_registry_asset,
     get_storage_details_for_registry_assets,
 )
-from azure.ai.ml._utils._storage_utils import (
-    get_ds_name_and_path_prefix,
-    get_storage_client,
-)
-from azure.ai.ml._utils.utils import (
-    resolve_short_datastore_url,
-    validate_ml_flow_folder,
-)
-from azure.ai.ml.entities._assets import Model, ModelPackage, Environment
-from azure.ai.ml.entities._assets.workspace_asset_reference import (
-    WorkspaceAssetReference,
-)
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ID_FORMAT, AzureMLResourceType
+from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
+from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ID_FORMAT, REGISTRY_URI_FORMAT, AzureMLResourceType
+from azure.ai.ml.entities._assets import Environment, Model, ModelPackage
 from azure.ai.ml.entities._assets._artifacts.code import Code
+from azure.ai.ml.entities._assets.workspace_asset_reference import WorkspaceAssetReference
 from azure.ai.ml.entities._credentials import AccountKeyConfiguration
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -150,7 +137,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_create_or_update]
                 :end-before: [END model_operations_create_or_update]
                 :language: python
@@ -317,7 +304,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_get]
                 :end-before: [END model_operations_get]
                 :language: python
@@ -366,7 +353,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_download]
                 :end-before: [END model_operations_download]
                 :language: python
@@ -449,7 +436,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_archive]
                 :end-before: [END model_operations_archive]
                 :language: python
@@ -485,7 +472,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_restore]
                 :end-before: [END model_operations_restore]
                 :language: python
@@ -524,7 +511,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_list]
                 :end-before: [END model_operations_list]
                 :language: python
@@ -586,7 +573,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_share]
                 :end-before: [END model_operations_share]
                 :language: python
@@ -678,7 +665,7 @@ class ModelOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START model_operations_package]
                 :end-before: [END model_operations_package]
                 :language: python

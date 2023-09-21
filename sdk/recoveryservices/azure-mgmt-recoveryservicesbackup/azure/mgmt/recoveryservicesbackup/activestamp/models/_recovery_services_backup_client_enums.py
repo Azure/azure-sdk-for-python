@@ -655,6 +655,7 @@ class SoftDeleteFeatureState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INVALID = "Invalid"
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+    ALWAYS_ON = "AlwaysON"
 
 
 class SQLDataDirectoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -36,6 +36,8 @@ from ._models_py3 import PrivateLinkResourceList
 from ._models_py3 import PrivateLinkServiceConnectionState
 from ._models_py3 import ProxyResource
 from ._models_py3 import RegenerateKeyParameters
+from ._models_py3 import Replica
+from ._models_py3 import ReplicaList
 from ._models_py3 import Resource
 from ._models_py3 import ResourceLogCategory
 from ._models_py3 import ResourceLogConfiguration
@@ -115,6 +117,8 @@ __all__ = [
     "PrivateLinkServiceConnectionState",
     "ProxyResource",
     "RegenerateKeyParameters",
+    "Replica",
+    "ReplicaList",
     "Resource",
     "ResourceLogCategory",
     "ResourceLogConfiguration",
