@@ -3610,7 +3610,7 @@ class CallMediaOperations:
     def start_hold_music(  # pylint: disable=inconsistent-return-statements
         self,
         call_connection_id: str,
-        hold_participant_request: _models.HoldParticipantRequest,
+        hold_participant_request: _models.StartHoldMusicRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -3623,7 +3623,7 @@ class CallMediaOperations:
         :type call_connection_id: str
         :param hold_participant_request: The participants to be hold from the call. Required.
         :type hold_participant_request:
-         ~azure.communication.callautomation.models.HoldParticipantRequest
+         ~azure.communication.callautomation.models.StartHoldMusicRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3659,10 +3659,7 @@ class CallMediaOperations:
 
     @distributed_trace
     def start_hold_music(  # pylint: disable=inconsistent-return-statements
-        self,
-        call_connection_id: str,
-        hold_participant_request: Union[_models.HoldParticipantRequest, IO],
-        **kwargs: Any,
+        self, call_connection_id: str, hold_participant_request: Union[_models.StartHoldMusicRequest, IO], **kwargs: Any
     ) -> None:
         """Hold participant from the call using identifier.
 
@@ -3671,9 +3668,9 @@ class CallMediaOperations:
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
         :param hold_participant_request: The participants to be hold from the call. Is either a
-         HoldParticipantRequest type or a IO type. Required.
+         StartHoldMusicRequest type or a IO type. Required.
         :type hold_participant_request:
-         ~azure.communication.callautomation.models.HoldParticipantRequest or IO
+         ~azure.communication.callautomation.models.StartHoldMusicRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -3701,7 +3698,7 @@ class CallMediaOperations:
         if isinstance(hold_participant_request, (IOBase, bytes)):
             _content = hold_participant_request
         else:
-            _json = self._serialize.body(hold_participant_request, "HoldParticipantRequest")
+            _json = self._serialize.body(hold_participant_request, "StartHoldMusicRequest")
 
         request = build_call_media_start_hold_music_request(
             call_connection_id=call_connection_id,
@@ -3738,7 +3735,7 @@ class CallMediaOperations:
     def stop_hold_music(  # pylint: disable=inconsistent-return-statements
         self,
         call_connection_id: str,
-        unhold_participant_request: _models.UnholdParticipantRequest,
+        unhold_participant_request: _models.StopHoldMusicRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any,
@@ -3751,7 +3748,7 @@ class CallMediaOperations:
         :type call_connection_id: str
         :param unhold_participant_request: The participants to be hold from the call. Required.
         :type unhold_participant_request:
-         ~azure.communication.callautomation.models.UnholdParticipantRequest
+         ~azure.communication.callautomation.models.StopHoldMusicRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3789,7 +3786,7 @@ class CallMediaOperations:
     def stop_hold_music(  # pylint: disable=inconsistent-return-statements
         self,
         call_connection_id: str,
-        unhold_participant_request: Union[_models.UnholdParticipantRequest, IO],
+        unhold_participant_request: Union[_models.StopHoldMusicRequest, IO],
         **kwargs: Any,
     ) -> None:
         """Unhold participants from the call using identifier.
@@ -3799,9 +3796,9 @@ class CallMediaOperations:
         :param call_connection_id: The call connection id. Required.
         :type call_connection_id: str
         :param unhold_participant_request: The participants to be hold from the call. Is either a
-         UnholdParticipantRequest type or a IO type. Required.
+         StopHoldMusicRequest type or a IO type. Required.
         :type unhold_participant_request:
-         ~azure.communication.callautomation.models.UnholdParticipantRequest or IO
+         ~azure.communication.callautomation.models.StopHoldMusicRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -3829,7 +3826,7 @@ class CallMediaOperations:
         if isinstance(unhold_participant_request, (IOBase, bytes)):
             _content = unhold_participant_request
         else:
-            _json = self._serialize.body(unhold_participant_request, "UnholdParticipantRequest")
+            _json = self._serialize.body(unhold_participant_request, "StopHoldMusicRequest")
 
         request = build_call_media_stop_hold_music_request(
             call_connection_id=call_connection_id,

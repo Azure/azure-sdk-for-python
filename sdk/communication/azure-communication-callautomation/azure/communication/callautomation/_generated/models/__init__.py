@@ -51,7 +51,6 @@ from ._models import DtmfOptions
 from ._models import DtmfResult
 from ._models import ExternalStorage
 from ._models import FileSource
-from ._models import HoldParticipantRequest
 from ._models import MediaStreamingConfiguration
 from ._models import MicrosoftTeamsUserIdentifierModel
 from ._models import MuteParticipantsRequest
@@ -86,7 +85,9 @@ from ._models import SpeechResult
 from ._models import SsmlSource
 from ._models import StartCallRecordingRequest
 from ._models import StartDialogRequest
+from ._models import StartHoldMusicRequest
 from ._models import StartTranscriptionRequest
+from ._models import StopHoldMusicRequest
 from ._models import StopTranscriptionRequest
 from ._models import TextSource
 from ._models import ToneInfo
@@ -98,7 +99,6 @@ from ._models import TranscriptionStopped
 from ._models import TranscriptionUpdate
 from ._models import TransferCallResponse
 from ._models import TransferToParticipantRequest
-from ._models import UnholdParticipantRequest
 from ._models import UnmuteParticipantsRequest
 from ._models import UnmuteParticipantsResponse
 from ._models import UpdateTranscriptionDataRequest
@@ -175,7 +175,6 @@ __all__ = [
     "DtmfResult",
     "ExternalStorage",
     "FileSource",
-    "HoldParticipantRequest",
     "MediaStreamingConfiguration",
     "MicrosoftTeamsUserIdentifierModel",
     "MuteParticipantsRequest",
@@ -210,7 +209,9 @@ __all__ = [
     "SsmlSource",
     "StartCallRecordingRequest",
     "StartDialogRequest",
+    "StartHoldMusicRequest",
     "StartTranscriptionRequest",
+    "StopHoldMusicRequest",
     "StopTranscriptionRequest",
     "TextSource",
     "ToneInfo",
@@ -222,7 +223,6 @@ __all__ = [
     "TranscriptionUpdate",
     "TransferCallResponse",
     "TransferToParticipantRequest",
-    "UnholdParticipantRequest",
     "UnmuteParticipantsRequest",
     "UnmuteParticipantsResponse",
     "UpdateTranscriptionDataRequest",
