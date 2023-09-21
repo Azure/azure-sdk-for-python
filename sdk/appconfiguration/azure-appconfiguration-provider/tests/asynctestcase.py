@@ -24,8 +24,10 @@ class AppConfigTestCase(AzureRecordedTestCase):
         keyvault_secret_url=None,
         refresh_on=None,
         refresh_interval=30,
+        secret_resolver=None,
     ):
         cred = self.get_credential(AzureAppConfigurationClient, is_async=True)
+        keyvault_cred = cred if keyvault_secret_url else None
 
         client = AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
         await setup_configs(client, keyvault_secret_url)
@@ -37,6 +39,8 @@ class AppConfigTestCase(AzureRecordedTestCase):
             refresh_on=refresh_on,
             refresh_interval=refresh_interval,
             user_agent="SDK/Integration",
+            key_vault_credentials=keyvault_cred,
+            secret_resolver=secret_resolver,
         )
 
     async def create_client(
@@ -47,9 +51,13 @@ class AppConfigTestCase(AzureRecordedTestCase):
         keyvault_secret_url=None,
         refresh_on=None,
         refresh_interval=30,
+        secret_resolver=None,
     ):
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
         await setup_configs(client, keyvault_secret_url)
+
+        keyvault_cred = self.get_credential(AzureAppConfigurationClient, is_async=True) if keyvault_secret_url else None
+
         return await load(
             connection_string=appconfiguration_connection_string,
             trim_prefixes=trim_prefixes,
@@ -57,6 +65,8 @@ class AppConfigTestCase(AzureRecordedTestCase):
             refresh_on=refresh_on,
             refresh_interval=refresh_interval,
             user_agent="SDK/Integration",
+            key_vault_credentials=keyvault_cred,
+            secret_resolver=secret_resolver,
         )
 
 

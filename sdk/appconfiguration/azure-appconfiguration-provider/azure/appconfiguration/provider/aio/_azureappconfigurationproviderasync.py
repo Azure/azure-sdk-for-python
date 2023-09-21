@@ -207,9 +207,8 @@ def _buildprovider(
 
 
 async def _resolve_keyvault_reference(
-    config: "SecretReferenceConfigurationSetting", provider: "AzureAppConfigurationProvider", **kwargs
-) -> str:
-    if not ("key_vault_credential" in kwargs or "key_vault_client_configs" in kwargs or "secret_resolver" in kwargs):
+    config: "SecretReferenceConfigurationSetting", provider: "AzureAppConfigurationProvider") -> str:
+    if not (provider._key_vault_credentials or provider._key_vault_client_configs or provider._secret_resolver):
         raise ValueError("Key Vault options must be set to resolve Key Vault references.")
 
     if config.secret_id is None:
@@ -222,8 +221,8 @@ async def _resolve_keyvault_reference(
     # pylint:disable=protected-access
     referenced_client = provider._secret_clients.get(vault_url, None)
 
-    vault_config = kwargs.get("key_vault_client_configs", {}).get(vault_url, {})
-    credential = vault_config.pop("credential", kwargs.get("key_vault_credential", None))
+    vault_config = provider._key_vault_client_configs.get(vault_url, {})
+    credential = vault_config.pop("credential", provider._key_vault_credentials)
 
     if referenced_client is None and credential is not None:
         referenced_client = SecretClient(vault_url=vault_url, credential=credential, **vault_config)
@@ -234,8 +233,8 @@ async def _resolve_keyvault_reference(
             await referenced_client.get_secret(key_vault_identifier.name, version=key_vault_identifier.version)
         ).value
 
-    if "secret_resolver" in kwargs:
-        resolved = kwargs["secret_resolver"](config.secret_id)
+    if provider._secret_resolver:
+        resolved = provider._secret_resolver(config.secret_id)
         try:
             # Secret resolver was async
             return await resolved
@@ -269,6 +268,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         self._refresh_on: Mapping[Tuple[str, str] : Optional[str]] = {_build_sentinel(s): None for s in refresh_on}
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
+        self._key_vault_credentials = kwargs.pop("key_vault_credentials", None)
+        self._secret_resolver = kwargs.pop("secret_resolver", None)
+        self._key_vault_client_configs = kwargs.pop("key_vault_client_configs", {})
         self._update_lock = Lock()
 
     async def refresh(self, **kwargs) -> None:

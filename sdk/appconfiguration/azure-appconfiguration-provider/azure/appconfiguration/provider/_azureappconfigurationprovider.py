@@ -227,9 +227,8 @@ def _buildprovider(
 
 
 def _resolve_keyvault_reference(
-    config: "SecretReferenceConfigurationSetting", provider: "AzureAppConfigurationProvider", **kwargs
-) -> str:
-    if not ("key_vault_credential" in kwargs or "key_vault_client_configs" in kwargs or "secret_resolver" in kwargs):
+    config: "SecretReferenceConfigurationSetting", provider: "AzureAppConfigurationProvider") -> str:
+    if not (provider._key_vault_credentials or provider._key_vault_client_configs or provider._secret_resolver):
         raise ValueError("Key Vault options must be set to resolve Key Vault references.")
 
     if config.secret_id is None:
@@ -242,8 +241,8 @@ def _resolve_keyvault_reference(
     # pylint:disable=protected-access
     referenced_client = provider._secret_clients.get(vault_url, None)
 
-    vault_config = kwargs.get("key_vault_client_configs", {}).get(vault_url, {})
-    credential = vault_config.pop("credential", kwargs.get("key_vault_credential", None))
+    vault_config = provider._key_vault_client_configs.get(vault_url, {})
+    credential = vault_config.pop("credential", provider._key_vault_credentials)
 
     if referenced_client is None and credential is not None:
         referenced_client = SecretClient(vault_url=vault_url, credential=credential, **vault_config)
@@ -252,8 +251,8 @@ def _resolve_keyvault_reference(
     if referenced_client:
         return referenced_client.get_secret(key_vault_identifier.name, version=key_vault_identifier.version).value
 
-    if "secret_resolver" in kwargs:
-        return kwargs["secret_resolver"](config.secret_id)
+    if provider._secret_resolver:
+        return provider._secret_resolver(config.secret_id)
 
     raise ValueError("No Secret Client found for Key Vault reference %s" % (vault_url))
 
@@ -374,6 +373,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
         self._refresh_on: Mapping[Tuple[str, str] : Optional[str]] = {_build_sentinel(s): None for s in refresh_on}
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
+        self._key_vault_credentials = kwargs.pop("key_vault_credentials", None)
+        self._secret_resolver = kwargs.pop("secret_resolver", None)
+        self._key_vault_client_configs = kwargs.pop("key_vault_client_configs", {})
         self._update_lock = Lock()
 
     def refresh(self, **kwargs) -> None:
@@ -426,7 +428,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             )
             for config in configurations:
                 key = self._process_key_name(config)
-                value = self._process_key_value(config, **kwargs)
+                value = self._process_key_value(config)
 
                 if isinstance(config, FeatureFlagConfigurationSetting):
                     feature_management = configuration_settings.get(FEATURE_MANAGEMENT_KEY, {})
@@ -453,9 +455,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
             return trimmed_key[len(FEATURE_FLAG_PREFIX) :]
         return trimmed_key
 
-    def _process_key_value(self, config, **kwargs):
+    def _process_key_value(self, config):
         if isinstance(config, SecretReferenceConfigurationSetting):
-            return _resolve_keyvault_reference(config, self, **kwargs)
+            return _resolve_keyvault_reference(config, self)
         if _is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
             # Feature flags are of type json, but don't treat them as such
             try:
