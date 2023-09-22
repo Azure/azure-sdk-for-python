@@ -35,7 +35,8 @@ class FeatureStoreEntity(Asset):
     :type version: str
     :param index_columns: Specifies index columns of the feature-store entity resource.
     :type index_columns: list[~azure.ai.ml.entities.DataColumn]
-    :param stage: The feature store entity stage. Allowed values: Development, Production, Archived. Defaults to "Development".
+    :param stage: The feature store entity stage. Allowed values: Development, Production, Archived.
+        Defaults to "Development".
     :type stage: Optional[str]
     :param description: The description of the feature store entity resource. Defaults to None.
     :type description: Optional[str]
@@ -46,6 +47,7 @@ class FeatureStoreEntity(Asset):
     :raises ValidationException: Raised if stage is specified and is not valid.
 
     .. admonition:: Example:
+
         .. literalinclude:: ../../../../../../samples/ml_samples_featurestore.py
             :start-after: [START configure_feature_store_entity]
             :end-before: [END configure_feature_store_entity]

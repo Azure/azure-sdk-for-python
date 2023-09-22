@@ -39,7 +39,7 @@ FeatureDataTypeMap: Dict[str, DataColumnType] = {
 @experimental
 class DataColumn(RestTranslatableMixin):
     """A dataframe column
-    
+
     :param name: The column name
     :type name: str
     :param type: The column data type. Defaults to None.

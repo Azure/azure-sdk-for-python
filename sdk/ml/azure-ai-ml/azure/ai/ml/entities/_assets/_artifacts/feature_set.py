@@ -52,6 +52,7 @@ class FeatureSet(Artifact):
     :raises ValidationException: Raised if stage is specified and is not valid.
 
     .. admonition:: Example:
+
         .. literalinclude:: ../../../../../../samples/ml_samples_featurestore.py
             :start-after: [START configure_feature_set]
             :end-before: [END configure_feature_set]

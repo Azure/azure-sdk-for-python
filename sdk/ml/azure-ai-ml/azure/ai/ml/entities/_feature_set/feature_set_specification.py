@@ -14,7 +14,7 @@ class FeatureSetSpecification(RestTranslatableMixin):
     """Feature Set Specification
 
     :param path: Specifies the feature set spec path to file. Defaults to None.
-    :type path: Optional[str]    
+    :type path: Optional[str]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 

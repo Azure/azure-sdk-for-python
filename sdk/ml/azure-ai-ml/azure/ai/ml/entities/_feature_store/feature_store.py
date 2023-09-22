@@ -44,7 +44,8 @@ class FeatureStore(Workspace):
     :type description: Optional[str]
     :param tags: Tags of the feature store.
     :type tags: dict
-    :param display_name: The display name for the feature store. This is non-unique within the resource group. Defaults to None.
+    :param display_name: The display name for the feature store. This is non-unique within the resource group.
+        Defaults to None.
     :type display_name: Optional[str]
     :param location: The location to create the feature store in.
         If not specified, the same location as the resource group will be used. Defaults to None.
@@ -56,7 +57,8 @@ class FeatureStore(Workspace):
         For more information, see
         https://docs.microsoft.com/azure/machine-learning/concept-data-encryption#encryption-at-rest.
     :type hbi_workspace: Optional[bool]
-    :param storage_account: The resource ID of an existing storage account to use instead of creating a new one. Defaults to None.
+    :param storage_account: The resource ID of an existing storage account to use instead of creating a new one.
+        Defaults to None.
     :type storage_account: Optional[str]
     :param container_registry: The resource ID of an existing container registry
         to use instead of creating a new one. Defaults to None.
