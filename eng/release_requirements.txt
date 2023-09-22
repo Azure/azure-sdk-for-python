@@ -1,4 +1,2 @@
-twine==3.1.1; python_version >= '3.6'
-pkginfo==1.5.0.1
-urllib3==2.0.4
+twine==4.0.2; python_version >= '3.6'
 tools/azure-sdk-tools
