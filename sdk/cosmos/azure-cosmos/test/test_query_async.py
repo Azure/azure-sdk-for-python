@@ -382,7 +382,7 @@ class TestQueryAsync:
         query_plan_dict = await self.client.client_connection._GetQueryPlanThroughGateway(query, container_link)
         query_execution_info = _PartitionedQueryExecutionInfo(query_plan_dict)
         assert query_execution_info.has_rewritten_query()
-        assert query_execution_info.has_distinct_type(), distinct != "None"
+        assert query_execution_info.has_distinct_type() == distinct != "None"
         assert query_execution_info.get_distinct_type() == distinct
         assert query_execution_info.has_top() == top is not None
         assert query_execution_info.get_top() == top
