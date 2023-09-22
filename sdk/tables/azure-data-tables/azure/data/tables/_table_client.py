@@ -317,7 +317,7 @@ class TableClient(TablesBaseClient):
             row_key = kwargs.pop("row_key", None)
             if row_key is None:
                 row_key = args[1]
-        
+
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
         if match_condition and entity and not etag:
