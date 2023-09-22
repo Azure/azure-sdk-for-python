@@ -155,7 +155,7 @@ def setup_adapter(deployment_id):
     session = requests.Session()
 
     session.mount(
-        prefix=f"{openai.api_base}",
+        prefix=f"{openai.api_base}/openai/deployments/{deployment_id}",
         adapter=CustomAdapter()
     )
 
