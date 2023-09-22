@@ -21,6 +21,7 @@ from azure.data.tables import (
     __version__ as VERSION,
 )
 from azure.data.tables._error import _validate_cosmos_tablename
+from azure.data.tables._models import LocationMode
 
 from _shared.testcase import TableTestCase
 from preparers import cosmos_decorator
@@ -167,6 +168,28 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
             batch.append(("upsert", {"PartitionKey": "A", "RowKey": "B"}))
             client.submit_transaction(batch)
         assert error.value.error_code == "ResourceNotFound"
+
+    @cosmos_decorator
+    @recorded_by_proxy
+    def test_table_client_location_mode(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        table_name = self.get_resource_name("mytable")
+        entity = {"PartitionKey": "foo", "RowKey": "bar"}
+
+        with TableClient(
+            url, table_name, credential=tables_primary_cosmos_account_key, location_mode=LocationMode.SECONDARY
+        ) as client:
+            client.create_table()
+            client.create_entity(entity)
+            client.upsert_entity(entity)
+            client.get_entity("foo", "bar")
+
+            entities = client.list_entities()
+            for e in entities:
+                pass
+
+            client.delete_entity(entity)
+            client.delete_table()
 
     @cosmos_decorator
     @recorded_by_proxy
