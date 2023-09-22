@@ -9,6 +9,13 @@ try:
 except:
     import tomli as toml
 import tomli_w as tomlw
+import logging
+
+from ci_tools.environment_exclusions import (
+    is_check_enabled
+)
+from ci_tools.variables import in_ci
+from ci_tools.parsing import ParsedSetup
 
 
 def clean_environment():
@@ -38,3 +45,13 @@ def entrypoint():
         dest="target",
         help="The target package path"
     )
+    args = parser.parse_args()
+
+    parsed_package = ParsedSetup.from_path(args.target)
+
+    if in_ci():
+        if not is_check_enabled(args.target, "optional"):
+            logging.info(
+                f"Package {parsed_package.package_name} opts-out of bandit check."
+            )
+            exit(0)
