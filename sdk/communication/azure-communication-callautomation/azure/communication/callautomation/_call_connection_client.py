@@ -726,7 +726,7 @@ class CallConnectionClient:
             mute_participants_request,
             **kwargs)
         return MuteParticipantsResult._from_generated(response)  # pylint:disable=protected-access
-    
+
     @distributed_trace
     def start_hold_music(
         self,
@@ -766,7 +766,7 @@ class CallConnectionClient:
             **kwargs
         )
         self._call_media_client.start_hold_music(self._call_connection_id, hold_request)
-        
+
     @distributed_trace
     def stop_hold_music(
         self,
