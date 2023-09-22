@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+from abc import abstractmethod
 from os import PathLike
 from typing import IO, Any, AnyStr, Dict, List, Optional, Union
 
@@ -93,7 +94,8 @@ class VmSize(RestTranslatableMixin):
         return res
 
     @classmethod
-    def _load(  # type: ignore[empty-body]
+    @abstractmethod
+    def _load(
         cls,
         path: Union[PathLike, str],
         params_override: Optional[list] = None,
