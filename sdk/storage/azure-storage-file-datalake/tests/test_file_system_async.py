@@ -1225,8 +1225,10 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         )
 
         # Assert
-        response = await fsc.create_directory('testdir11')
-        assert response is not None
+        response1 = await fsc.exists()
+        response2 = await fsc.create_directory('testdir11')
+        assert response1 is not None
+        assert response2 is not None
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -1252,8 +1254,10 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         )
 
         # Assert
-        response = await fsc.create_directory('testdir22')
-        assert response is not None
+        response1 = await fsc.exists()
+        response2 = await fsc.create_directory('testdir22')
+        assert response1 is not None
+        assert response2 is not None
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -1278,8 +1282,10 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         )
 
         # Assert
-        response = await fsc.create_directory('testdir33')
-        assert response is not None
+        response1 = await fsc.exists()
+        response2 = await fsc.create_directory('testdir33')
+        assert response1 is not None
+        assert response2 is not None
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -1306,6 +1312,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         with pytest.raises(ClientAuthenticationError):
+            await fsc.exists()
             await fsc.create_directory('testdir44')
 
 # ------------------------------------------------------------------------------

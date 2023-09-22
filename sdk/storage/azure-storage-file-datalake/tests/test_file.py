@@ -1602,8 +1602,10 @@ class TestFile(StorageRecordedTestCase):
 
         # Assert
         data = b'Hello world'
-        response = fc.upload_data(data, overwrite=True)
-        assert response is not None
+        response1 = fc.get_file_properties()
+        response2 = fc.upload_data(data, overwrite=True)
+        assert response1 is not None
+        assert response2 is not None
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -1628,8 +1630,10 @@ class TestFile(StorageRecordedTestCase):
 
         # Assert
         data = b'Hello world'
-        response = fc.upload_data(data, overwrite=True)
-        assert response is not None
+        response1 = fc.get_file_properties()
+        response2 = fc.upload_data(data, overwrite=True)
+        assert response1 is not None
+        assert response2 is not None
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -1653,8 +1657,10 @@ class TestFile(StorageRecordedTestCase):
 
         # Assert
         data = b'Hello world'
-        response = fc.upload_data(data, overwrite=True)
-        assert response is not None
+        response1 = fc.get_file_properties()
+        response2 = fc.upload_data(data, overwrite=True)
+        assert response1 is not None
+        assert response2 is not None
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -1680,6 +1686,7 @@ class TestFile(StorageRecordedTestCase):
         # Assert
         data = b'Hello world'
         with pytest.raises(ClientAuthenticationError):
+            fc.get_file_properties()
             fc.upload_data(data, overwrite=True)
 
 # ------------------------------------------------------------------------------

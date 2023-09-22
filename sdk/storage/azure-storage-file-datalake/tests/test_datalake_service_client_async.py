@@ -474,8 +474,10 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         )
 
         # Assert
-        response = await dsc.create_file_system('testfs11')
-        assert response is not None
+        response1 = dsc.list_file_systems()
+        response2 = dsc.create_file_system('testfs11')
+        assert response1 is not None
+        assert response2 is not None
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -496,8 +498,10 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         )
 
         # Assert
-        response = await dsc.create_file_system('testfs22')
-        assert response is not None
+        response1 = dsc.list_file_systems()
+        response2 = dsc.create_file_system('testfs22')
+        assert response1 is not None
+        assert response2 is not None
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -517,8 +521,10 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         )
 
         # Assert
-        response = await dsc.create_file_system('testfs33')
-        assert response is not None
+        response1 = dsc.list_file_systems()
+        response2 = dsc.create_file_system('testfs33')
+        assert response1 is not None
+        assert response2 is not None
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -540,4 +546,5 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         with pytest.raises(ClientAuthenticationError):
+            dsc.list_file_systems()
             await dsc.create_file_system('testfs44')
