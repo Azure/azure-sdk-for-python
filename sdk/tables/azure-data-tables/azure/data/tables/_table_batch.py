@@ -484,7 +484,7 @@ class TableBatchOperations(object):
             table=self.table_name,
             partition_key=_prepare_key(entity["PartitionKey"]),
             row_key=_prepare_key(entity["RowKey"]),
-            if_match=prep_if_match(etag, match_condition),
+            if_match=prep_if_match(etag, match_condition),  # type: ignore[arg-type]
             **kwargs,
         )
 
