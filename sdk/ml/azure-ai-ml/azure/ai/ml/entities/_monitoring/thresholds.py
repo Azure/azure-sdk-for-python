@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=unused-argument, line-too-long
+
 from typing import Any, Dict, List, Optional
 
 from typing_extensions import Literal
@@ -694,7 +696,9 @@ class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):  
         metric_thresholds = []
         if self.groundedness:
             if "acceptable_groundedness_score_per_instance" in self.groundedness:
-                acceptable_threshold = MonitoringThreshold(value=self.groundedness["acceptable_groundedness_score_per_instance"])
+                acceptable_threshold = MonitoringThreshold(
+                    value=self.groundedness["acceptable_groundedness_score_per_instance"]
+                )
             else:
                 acceptable_threshold = MonitoringThreshold(value=3)
             metric_thresholds.append(
@@ -710,7 +714,9 @@ class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):  
             )
         if self.relevance:
             if "acceptable_relevance_score_per_instance" in self.relevance:
-                acceptable_threshold = MonitoringThreshold(value=self.relevance["acceptable_relevance_score_per_instance"])
+                acceptable_threshold = MonitoringThreshold(
+                    value=self.relevance["acceptable_relevance_score_per_instance"]
+                )
             else:
                 acceptable_threshold = MonitoringThreshold(value=3)
             metric_thresholds.append(
@@ -726,7 +732,9 @@ class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):  
             )
         if self.coherence:
             if "acceptable_coherence_score_per_instance" in self.coherence:
-                acceptable_threshold = MonitoringThreshold(value=self.coherence["acceptable_coherence_score_per_instance"])
+                acceptable_threshold = MonitoringThreshold(
+                    value=self.coherence["acceptable_coherence_score_per_instance"]
+                )
             else:
                 acceptable_threshold = MonitoringThreshold(value=3)
             metric_thresholds.append(
@@ -758,7 +766,9 @@ class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):  
             )
         if self.similarity:
             if "acceptable_similarity_score_per_instance" in self.similarity:
-                acceptable_threshold = MonitoringThreshold(value=self.similarity["acceptable_similarity_score_per_instance"])
+                acceptable_threshold = MonitoringThreshold(
+                    value=self.similarity["acceptable_similarity_score_per_instance"]
+                )
             else:
                 acceptable_threshold = MonitoringThreshold(value=3)
             metric_thresholds.append(
