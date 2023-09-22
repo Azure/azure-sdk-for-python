@@ -71,8 +71,7 @@ class AsyncStorageAccountHostsMixin(object):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
         if hasattr(credential, 'get_token'):
-            audience: TokenAudience = kwargs.pop('audience', TokenAudience.public_audience())
-            audience = audience.create_default_scope()
+            audience = kwargs.pop('audience', TokenAudience.public_audience())
             self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, str(audience))
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential

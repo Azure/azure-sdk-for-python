@@ -97,7 +97,6 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             **kwargs)
         # to override the class field _container_client sync version
         kwargs.pop('_hosts', None)
-        kwargs.pop('audience', None)
         self._container_client = ContainerClient(self._blob_account_url, self.file_system_name,
                                                  credential=credential,
                                                  _hosts=self._container_client._hosts,# pylint: disable=protected-access

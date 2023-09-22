@@ -493,13 +493,14 @@ class TokenAudience():
     """
     Base class that defines what calling functions and attributes should be defined for an Azure Active
     Directory audience token.
+
     :param str value: The audience to use when requesting tokens for Azure Active Directory authentication.
         For more information please take a look at:
         https://learn.microsoft.com/azure/storage/blobs/authorize-access-azure-active-directory. Please use one
         of the provided classmethods over creating a custom value unless you have a specific scenario for doing so.
     """
     _DEFAULT_OAUTH_SCOPE = ".default"
-    _STORAGE_OAUTH_SCOPE = "https://storage.azure.com/"
+    _STORAGE_OAUTH_AUDIENCE = "https://storage.azure.com/"
     _value: str
 
     def __init__(self, value: str) -> None:
@@ -508,30 +509,18 @@ class TokenAudience():
     @classmethod
     def public_audience(cls) -> Self:
         """Default Audience. Use to acquire a token for authorizing requests to any Azure Storage account.
+
         Resource ID: 'https://storage.azure.com/'
         If no audience is specified, this is the default value.
+
         :returns: The Default Audience.
         :rtype: TokenAudience
         """
-        return cls(TokenAudience._STORAGE_OAUTH_SCOPE)
-
-    def create_default_scope(self) -> Self:
-        """Creates a scope with the respective audience and default scope.
-
-        :returns: The respective audience with default scope specified.
-        :rtype: TokenAudience
-        """
-        if self._value.endswith("/"):
-            self._value = self._value + TokenAudience._DEFAULT_OAUTH_SCOPE
-        else:
-            self._value = self._value + "/" + TokenAudience._DEFAULT_OAUTH_SCOPE
-        return self
-
-    def __eq__(self, other: object) -> bool:
-        return self._value == other._value
-
-    def __ne__(self, other: object) -> bool:
-        return self._value != other._value
+        return cls(TokenAudience._STORAGE_OAUTH_AUDIENCE)
 
     def __str__(self) -> str:
-        return self._value
+        if self._value.endswith("/"):
+            value = self._value + TokenAudience._DEFAULT_OAUTH_SCOPE
+        else:
+            value = self._value + "/" + TokenAudience._DEFAULT_OAUTH_SCOPE
+        return value

@@ -69,7 +69,6 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
                                          **kwargs)  # type: ignore
 
         kwargs.pop('_hosts', None)
-        kwargs.pop('audience', None)
 
         self._blob_client = BlobClient(account_url=self._blob_account_url, container_name=self.file_system_name,
                                        blob_name=self.path_name,

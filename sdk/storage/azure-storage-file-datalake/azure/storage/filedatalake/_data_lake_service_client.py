@@ -89,14 +89,11 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         parsed_url = urlparse(account_url.rstrip('/'))
         if not parsed_url.netloc:
             raise ValueError(f"Invalid URL: {account_url}")
-        audience = kwargs.pop('audience', None)
 
         blob_account_url = convert_dfs_url_to_blob_url(account_url)
         self._blob_account_url = blob_account_url
         self._blob_service_client = BlobServiceClient(blob_account_url, credential, **kwargs)
         self._blob_service_client._hosts[LocationMode.SECONDARY] = ""  #pylint: disable=protected-access
-        if audience:
-            kwargs['audience'] = audience
 
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)

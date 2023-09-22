@@ -90,7 +90,6 @@ class FileSystemClient(StorageAccountHostsMixin):
             raise ValueError("Please specify a file system name.")
         if not parsed_url.netloc:
             raise ValueError(f"Invalid URL: {account_url}")
-        audience = kwargs.pop('audience', None)
 
         blob_account_url = convert_dfs_url_to_blob_url(account_url)
         # TODO: add self.account_url to base_client and remove _blob_account_url
@@ -103,8 +102,6 @@ class FileSystemClient(StorageAccountHostsMixin):
             blob_hosts = {LocationMode.PRIMARY: blob_primary_account_url, LocationMode.SECONDARY: ""}
         self._container_client = ContainerClient(blob_account_url, file_system_name,
                                                  credential=credential, _hosts=blob_hosts, **kwargs)
-        if audience:
-            kwargs['audience'] = audience
 
         _, sas_token = parse_query(parsed_url.query)
         self.file_system_name = file_system_name

@@ -1578,8 +1578,10 @@ class TestDirectory(StorageRecordedTestCase):
             credential=token_credential, audience=DataLakeTokenAudience.public_audience())
 
         # Assert
-        response = directory_client.create_sub_directory('testsubdir')
-        assert response is not None
+        response1 = directory_client.exists()
+        response2 = directory_client.create_sub_directory('testsubdir')
+        assert response1 is not None
+        assert response2 is not None
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -1602,8 +1604,10 @@ class TestDirectory(StorageRecordedTestCase):
         )
 
         # Assert
-        response = directory_client.create_sub_directory('testsubdir')
-        assert response is not None
+        response1 = directory_client.exists()
+        response2 = directory_client.create_sub_directory('testsubdir')
+        assert response1 is not None
+        assert response2 is not None
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -1626,8 +1630,10 @@ class TestDirectory(StorageRecordedTestCase):
         )
 
         # Assert
-        response = directory_client.create_sub_directory('testsubdir')
-        assert response is not None
+        response1 = directory_client.exists()
+        response2 = directory_client.create_sub_directory('testsubdir')
+        assert response1 is not None
+        assert response2 is not None
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -1651,6 +1657,7 @@ class TestDirectory(StorageRecordedTestCase):
 
         # Assert
         with pytest.raises(ClientAuthenticationError):
+            directory_client.exists()
             directory_client.create_sub_directory('testsubdir')
 
 

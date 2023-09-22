@@ -80,7 +80,6 @@ class PathClient(StorageAccountHostsMixin):
         except AttributeError as exc:
             raise ValueError("Account URL must be a string.") from exc
         parsed_url = urlparse(account_url.rstrip('/'))
-        audience = kwargs.pop('audience', None)
 
         # remove the preceding/trailing delimiter from the path components
         file_system_name = file_system_name.strip('/')
@@ -104,8 +103,6 @@ class PathClient(StorageAccountHostsMixin):
             blob_hosts = {LocationMode.PRIMARY: blob_primary_account_url, LocationMode.SECONDARY: ""}
         self._blob_client = BlobClient(blob_account_url, file_system_name, path_name,
                                        credential=credential, _hosts=blob_hosts, **kwargs)
-        if audience:
-            kwargs['audience'] = audience
 
         _, sas_token = parse_query(parsed_url.query)
         self.file_system_name = file_system_name

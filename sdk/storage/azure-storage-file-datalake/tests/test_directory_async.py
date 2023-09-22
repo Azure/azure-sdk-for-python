@@ -1527,8 +1527,10 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
             credential=token_credential, audience=DataLakeTokenAudience.public_audience())
 
         # Assert
-        response = directory_client.create_sub_directory('testsubdir')
-        assert response is not None
+        response1 = directory_client.exists()
+        response2 = directory_client.create_sub_directory('testsubdir')
+        assert response1 is not None
+        assert response2 is not None
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -1551,8 +1553,10 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
             credential=token_credential, audience=DataLakeTokenAudience(audience_str))
 
         # Assert
-        response = directory_client.create_sub_directory('testsubdir')
-        assert response is not None
+        response1 = directory_client.exists()
+        response2 = directory_client.create_sub_directory('testsubdir')
+        assert response1 is not None
+        assert response2 is not None
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -1576,8 +1580,10 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         )
 
         # Assert
-        response = directory_client.create_sub_directory('testsubdir')
-        assert response is not None
+        response1 = directory_client.exists()
+        response2 = directory_client.create_sub_directory('testsubdir')
+        assert response1 is not None
+        assert response2 is not None
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -1601,6 +1607,7 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         with pytest.raises(ClientAuthenticationError):
+            await directory_client.exists()
             await directory_client.create_sub_directory('testsubdir')
 
 # ------------------------------------------------------------------------------
