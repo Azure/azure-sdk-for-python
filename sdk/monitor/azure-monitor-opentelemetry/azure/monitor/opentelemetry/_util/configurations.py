@@ -24,6 +24,7 @@ from azure.monitor.opentelemetry._constants import (
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
     DISABLED_INSTRUMENTATIONS_ARG,
+    LOGGER_NAME_ARG,
     SAMPLING_RATIO_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
@@ -50,6 +51,7 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     _default_disable_metrics(configurations)
     _default_disable_tracing(configurations)
     _default_disabled_instrumentations(configurations)
+    _default_logger_name(configurations)
     _default_sampling_ratio(configurations)
     _default_disable_azure_core_tracing(configurations)
 
@@ -91,6 +93,11 @@ def _default_disabled_instrumentations(configurations):
             x.strip() for x in disabled_instrumentation
         ]
     configurations[DISABLED_INSTRUMENTATIONS_ARG] = disabled_instrumentation
+
+
+def _default_logger_name(configurations):
+    logger_name = environ.get(LOGGER_NAME_ARG, "")
+    configurations[LOGGER_NAME_ARG] = logger_name
 
 
 # TODO: remove when sampler uses env var instead

@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Add ability to specify which logger to export telemetry for via `logger_name` configuration
+    ([#32087](https://github.com/Azure/azure-sdk-for-python/pull/32087))
+
 ### Breaking Changes
 
 ### Bugs Fixed

@@ -59,7 +59,7 @@ You can use `configure_azure_monitor` to set up instrumentation for your app to 
 | Parameter | Description | Environment Variable |
 |-------------------|----------------------------------------------------|----------------------|
 | `connection_string` | The [connection string][connection_string_doc] for your Application Insights resource. The connection string will be automatically populated from the `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable if not explicitly passed in. | `APPLICATIONINSIGHTS_CONNECTION_STRING` |
-
+| `logger_name` | The name of the [Python logger][python_logger] and all of it's children loggers that you want to collect telemetry for. | `N/A` |
 
 You can configure further with [OpenTelemetry environment variables][ot_env_vars] such as:
 | Environment Variable | Description |
@@ -130,8 +130,6 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [connection_string_doc]: https://learn.microsoft.com/azure/azure-monitor/app/sdk-connection-string
 [distro_feature_request]: https://github.com/Azure/azure-sdk-for-python/issues/new
 [exporter_configuration_docs]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry-exporter#configuration
-[logging_level]: https://docs.python.org/3/library/logging.html#levels
-[logger_name_hierarchy_doc]: https://docs.python.org/3/library/logging.html#logger-objects
 [ot_env_vars]: https://opentelemetry.io/docs/reference/specification/sdk-environment-variables/
 [ot_instrumentations]: https://github.com/open-telemetry/opentelemetry-python-contrib/tree/main/instrumentation
 [ot_metric_reader]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#metricreader
@@ -165,5 +163,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [pypi_urllib]: https://docs.python.org/3/library/urllib.html
 [pypi_urllib3]: https://pypi.org/project/urllib3/
 [python]: https://www.python.org/downloads/
+[python_logger]: https://docs.python.org/3/library/logging.html#logger-objects
+[python_logging_level]: https://docs.python.org/3/library/logging.html#levels
 [samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples
 [samples_manual]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/manual.py
