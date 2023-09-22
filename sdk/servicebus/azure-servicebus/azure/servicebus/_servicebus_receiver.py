@@ -355,7 +355,7 @@ class ServiceBusReceiver(
         # to the internal buffer since they cannot be re-received, even if not received during an active receive call.
         if self._prefetch_count == 0 and self._receive_mode == ServiceBusReceiveMode.PEEK_LOCK:
             # pylint: disable=protected-access
-            self._handler._message_received = functools.partial( # type: ignore[assignment]
+            self._handler._message_received = functools.partial(
                 self._amqp_transport.enhanced_message_received,
                 self
             )

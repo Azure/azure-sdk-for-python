@@ -250,6 +250,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         from the Service Bus entity.
 
         :param ~azure.servicebus.aio.ServiceBusReceiver receiver: The receiver object.
+        :param ~pyamqp.AttachFrame frame: Required.
         :param ~pyamqp.Message message: The received message.
         """
         # pylint: disable=protected-access

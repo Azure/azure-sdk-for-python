@@ -21,7 +21,6 @@ from typing import (
     cast,
     Iterable,
 )
-from typing_extensions import Literal
 
 try:
     from uamqp import (
@@ -792,7 +791,7 @@ try:
                 receiver._receive_context.clear()
 
         @staticmethod
-        def enhanced_message_received(
+        def enhanced_message_received(  # pylint: disable=arguments-differ
             receiver: "ServiceBusReceiver", message: "Message"
         ) -> None:
             """

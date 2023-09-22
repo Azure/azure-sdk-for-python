@@ -666,7 +666,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             receiver._receive_context.clear()
 
     @staticmethod
-    def enhanced_message_received(
+    def enhanced_message_received(  # pylint: disable=arguments-differ
         receiver: "ServiceBusReceiver",
         frame: "AttachFrame",
         message: "Message"
@@ -680,6 +680,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         from the Service Bus entity.
 
         :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object.
+        :param ~pyamqp.AttachFrame frame: Required.
         :param ~pyamqp.Message message: The received message.
         """
         # pylint: disable=protected-access
