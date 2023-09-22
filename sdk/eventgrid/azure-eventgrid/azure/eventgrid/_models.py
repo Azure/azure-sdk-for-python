@@ -98,7 +98,7 @@ class EventGridEvent(object):
         self.event_time = kwargs.pop("event_time")
         self.data = data
         self.data_version = data_version
-        self.topic = kwargs.pop("topic")
+        self.topic = kwargs.pop("topic", None)
         self.metadata_version = None
 
     def __repr__(self):
