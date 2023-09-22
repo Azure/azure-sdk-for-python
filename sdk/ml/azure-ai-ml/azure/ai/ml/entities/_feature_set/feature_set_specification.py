@@ -20,7 +20,7 @@ class FeatureSetSpecification(RestTranslatableMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_featurestore.py
+        .. literalinclude:: ../../../../../../samples/ml_samples_featurestore.py
             :start-after: [START configure_feature_set]
             :end-before: [END configure_feature_set]
             :language: python

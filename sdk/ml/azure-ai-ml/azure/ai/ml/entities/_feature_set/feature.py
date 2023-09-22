@@ -6,11 +6,11 @@
 
 from typing import Dict, Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Feature as RestFeature, FeatureProperties
-
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml.entities._feature_store_entity.data_column_type import DataColumnType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import Feature as RestFeature
+from azure.ai.ml._restclient.v2023_04_01_preview.models import FeatureProperties
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.entities._feature_store_entity.data_column_type import DataColumnType
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 @experimental
@@ -20,7 +20,7 @@ class Feature(RestTranslatableMixin):
     :param name: The name of the feature resource.
     :type name: str
     :param data_type: The data type of the feature resource.
-    :type data_type: ~azure.ai.ml.entities._feature_store_entity.data_column_type
+    :type data_type: ~azure.ai.ml.entities.DataColumnType
     :param description: The description of the feature resource. Defaults to None.
     :type description: Optional[str]
     :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
