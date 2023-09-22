@@ -1818,7 +1818,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                     batch.get("operations").append(operation)
                     batch.get("indexes").append(index)
                     index += 1
-                    batch["size"] = batch.get("size") + base._get_nested_dict_byte_size(operation)
+                    batch["size"] = batch.get("size") + len(str(operation))
                     # Split batch into micro batches if at 100 operations or if total request size > 220Kb
                     if len(batch.get("operations")) == 100 or batch.get("size") > 220000:
                         micro_batches.append(batch.copy())

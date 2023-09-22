@@ -30,7 +30,6 @@ import json
 from typing import Dict, Any, Optional, TypeVar  # pylint: disable=unused-import
 from urllib.parse import urlparse
 from urllib3.util.retry import Retry
-from sys import getsizeof
 from azure.core.async_paging import AsyncItemPaged
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import raise_with_traceback  # type: ignore
@@ -1248,7 +1247,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                     batch.get("operations").append(operation)
                     batch.get("indexes").append(index)
                     index += 1
-                    batch["size"] = batch.get("size") + getsizeof(operation)
+                    batch["size"] = batch.get("size") + len(str(operation))
                     # Split batch into micro batches if at 100 operations or if total request size > 220Kb
                     if len(batch.get("operations")) == 100 or batch.get("size") > 220000:
                         micro_batches.append(batch.copy())

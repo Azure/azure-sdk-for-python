@@ -763,25 +763,25 @@ def _populate_bulk_headers(current_headers, pk_range_id):
     current_headers.update({http_constants.HttpHeaders.ShouldBatchContinueOnError: True})
 
 
-def _get_nested_dict_byte_size(dict_part, seen=None):
-    if seen is None:
-        seen = set()
-
-    obj_id = id(dict_part)
-    if obj_id in seen:
-        return 0
-    seen.add(obj_id)
-
-    size = 0
-
-    if isinstance(dict_part, dict):
-        for key, value in dict_part.items():
-            size += getsizeof(key, 65)
-            size += _get_nested_dict_byte_size(value, seen)
-    elif isinstance(dict_part, (list, tuple, set)):
-        for item in dict_part:
-            size += _get_nested_dict_byte_size(item, seen)
-    else:
-        size += getsizeof(dict_part, 65)
-
-    return size
+# def _get_nested_dict_byte_size(dict_part, seen=None):
+#     if seen is None:
+#         seen = set()
+# 
+#     obj_id = id(dict_part)
+#     if obj_id in seen:
+#         return 0
+#     seen.add(obj_id)
+#
+#     size = 0
+#
+#     if isinstance(dict_part, dict):
+#         for key, value in dict_part.items():
+#             size += getsizeof(key, 70)
+#             size += _get_nested_dict_byte_size(value, seen)
+#     elif isinstance(dict_part, (list, tuple, set)):
+#         for item in dict_part:
+#             size += _get_nested_dict_byte_size(item, seen)
+#     else:
+#         size += getsizeof(dict_part, 70)
+#
+#     return size
