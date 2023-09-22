@@ -16,8 +16,6 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
 )
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory, OutboundRuleType
 
-from azure.ai.ml._utils._experimental import experimental
-
 
 class OutboundRule(ABC):
     """Base class for Outbound Rules, cannot be instantiated directly.
@@ -72,7 +70,6 @@ class OutboundRule(ABC):
         return None
 
 
-@experimental
 class FqdnDestination(OutboundRule):
     """Class representing a FQDN outbound rule.
 
@@ -100,7 +97,6 @@ class FqdnDestination(OutboundRule):
         }
 
 
-@experimental
 class PrivateEndpointDestination(OutboundRule):
     """Class representing a Private Endpoint outbound rule.
 
@@ -153,7 +149,6 @@ class PrivateEndpointDestination(OutboundRule):
         }
 
 
-@experimental
 class ServiceTagDestination(OutboundRule):
     """Class representing a Service Tag outbound rule.
 
@@ -205,7 +200,6 @@ class ServiceTagDestination(OutboundRule):
         }
 
 
-@experimental
 class ManagedNetwork:
     def __init__(
         self,
@@ -248,7 +242,6 @@ class ManagedNetwork:
         )
 
 
-@experimental
 class ManagedNetworkProvisionStatus:
     """ManagedNetworkProvisionStatus.
 

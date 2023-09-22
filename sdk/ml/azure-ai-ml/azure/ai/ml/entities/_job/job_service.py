@@ -196,7 +196,7 @@ class SshJobService(JobServiceBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START ssh_job_service_configuration]
             :end-before: [END ssh_job_service_configuration]
             :language: python
@@ -259,7 +259,7 @@ class TensorBoardJobService(JobServiceBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START ssh_job_service_configuration]
             :end-before: [END ssh_job_service_configuration]
             :language: python
@@ -320,7 +320,7 @@ class JupyterLabJobService(JobServiceBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START ssh_job_service_configuration]
             :end-before: [END ssh_job_service_configuration]
             :language: python
@@ -376,7 +376,7 @@ class VsCodeJobService(JobServiceBase):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START ssh_job_service_configuration]
             :end-before: [END ssh_job_service_configuration]
             :language: python

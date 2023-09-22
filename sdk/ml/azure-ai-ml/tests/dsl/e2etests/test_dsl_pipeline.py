@@ -1132,7 +1132,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         # Assert binding on compute not changed after resolve dependencies
         client.components._resolve_dependencies_for_pipeline_component_jobs(
-            component, resolver=client.components._orchestrators.get_asset_arm_id, resolve_inputs=False
+            component, resolver=client.components._orchestrators.get_asset_arm_id
         )
         assert component.jobs["node2"].compute == "${{parent.inputs.node_compute}}"
 

@@ -198,6 +198,7 @@ class FeatureSet(Artifact):
         :raises FileExistsError: Raised if dest is a file path and the file already exists.
         :raises IOError: Raised if dest is an open file and the file is not writable.
         """
+
         import os
         import shutil
         from azure.ai.ml._utils.utils import is_url
