@@ -86,7 +86,6 @@ stages:
                       - script: |
                           set -e
                           python -m pip install -r eng/release_requirements.txt
-                          python -m pip install tools/azure-sdk-tools
                         displayName: Install Release Dependencies
 
                       - task: PythonScript@0
