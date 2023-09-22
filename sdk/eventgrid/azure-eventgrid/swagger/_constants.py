@@ -3,7 +3,7 @@
 #############################################################################
 files = [
 
-    "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.Communication/stable/2018-01-01/AzureCommunicationServices.json",
+    "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/afd6ba71916fe90db9151d316d250975ca5ae6ca/specification/eventgrid/data-plane/Microsoft.Communication/stable/2018-01-01/AzureCommunicationServices.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.ApiManagement/stable/2018-01-01/APIManagement.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.AppConfiguration/stable/2018-01-01/AppConfiguration.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.ContainerRegistry/stable/2018-01-01/ContainerRegistry.json",
@@ -19,7 +19,9 @@ files = [
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.Maps/stable/2018-01-01/Maps.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.PolicyInsights/stable/2018-01-01/PolicyInsights.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.Cache/stable/2018-01-01/RedisCache.json",
-    "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.Resources/stable/2018-01-01/Resources.json",
+    "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/afd6ba71916fe90db9151d316d250975ca5ae6ca/specification/eventgrid/data-plane/Microsoft.ResourceNotifications/stable/2018-01-01/HealthResources.json",
+    "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/afd6ba71916fe90db9151d316d250975ca5ae6ca/specification/eventgrid/data-plane/Microsoft.ResourceNotifications/stable/2018-01-01/Resources.json",
+    "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/afd6ba71916fe90db9151d316d250975ca5ae6ca/specification/eventgrid/data-plane/Microsoft.ResourceNotifications/stable/2018-01-01/MaintenanceResources.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.ServiceBus/stable/2018-01-01/ServiceBus.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.SignalRService/stable/2018-01-01/SignalRService.json",
     "https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/eventgrid/data-plane/Microsoft.Storage/stable/2018-01-01/Storage.json",
@@ -61,4 +63,6 @@ additional_events = {
 }
 
 EXCEPTIONS = ['ContainerRegistryArtifactEventData', 'ContainerRegistryEventData', 'ContainerServiceClusterSupportEventData', 'ContainerServiceNodePoolRollingEventData',
-              'EventGridMQTTClientEventData', 'AppConfigurationSnapshotEventData']
+              'EventGridMQTTClientEventData', 'AppConfigurationSnapshotEventData', 'HealthResourcesResourceEventData', 'HealthResourcesResourceInfo','MaintenanceResourcesEventData',
+              'MaintenanceResourcesResourceInfo', 'ResourceManagementResourceInfo', 'AcsRouterJobEventData', 'AcsRouterWorkerEventData', 'AcsRouterEventData',
+              'ResourceManagementEventData', 'ResourceManagementResourceInfo']
