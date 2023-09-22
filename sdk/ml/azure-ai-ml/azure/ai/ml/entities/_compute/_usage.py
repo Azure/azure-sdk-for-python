@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from os import PathLike
-from typing import IO, AnyStr, Dict, Optional, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import Usage as RestUsage
 from azure.ai.ml._restclient.v2022_10_01_preview.models import UsageUnit
@@ -70,7 +70,7 @@ class Usage(RestTranslatableMixin):
         result.__dict__.update(obj.as_dict())
         return result
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dumps the job content into a file in YAML format.
 
         :param dest: The local path or file stream to write the YAML content to.
@@ -88,13 +88,14 @@ class Usage(RestTranslatableMixin):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return UsageSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = UsageSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     @classmethod
-    def _load(
+    def _load(  # type: ignore[empty-body]
         cls,
         path: Union[PathLike, str],
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "Usage":
         pass

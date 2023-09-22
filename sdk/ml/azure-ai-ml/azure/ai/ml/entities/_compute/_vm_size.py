@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from os import PathLike
-from typing import IO, AnyStr, Dict, List, Optional, Union
+from typing import IO, Any, AnyStr, Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import VirtualMachineSize
 from azure.ai.ml._schema.compute.vm_size import VmSizeSchema
@@ -71,7 +71,7 @@ class VmSize(RestTranslatableMixin):
         result.__dict__.update(obj.as_dict())
         return result
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the virtual machine size content into a file in yaml format.
 
         :param dest: The destination to receive this virtual machine size's content.
@@ -89,13 +89,14 @@ class VmSize(RestTranslatableMixin):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return VmSizeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = VmSizeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     @classmethod
-    def _load(
+    def _load(  # type: ignore[empty-body]
         cls,
         path: Union[PathLike, str],
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "VmSize":
         pass
