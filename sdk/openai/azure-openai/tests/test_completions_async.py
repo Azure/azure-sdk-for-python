@@ -437,7 +437,7 @@ class TestCompletionsAsync(AzureRecordedTestCase):
             **kwargs
         )
         # prompt content filter result
-        prompt_filter_result = completion.prompt_annotations[0].content_filter_results
+        prompt_filter_result = completion.prompt_filter_results[0].content_filter_results
         assert prompt_filter_result.hate.filtered is False
         assert prompt_filter_result.hate.severity == "safe"
         assert prompt_filter_result.self_harm.filtered is False
