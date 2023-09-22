@@ -27,7 +27,6 @@ from email.utils import formatdate
 import json
 import uuid
 import binascii
-from sys import getsizeof
 from typing import Dict, Any, Union
 
 from urllib.parse import quote as urllib_quote

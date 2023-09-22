@@ -1889,10 +1889,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return self.DeleteResource(path, "docs", document_id, None, options, **kwargs)
 
     def DeleteAllItemsByPartitionKey(
-            self,
-            collection_link,
-            options=None,
-            **kwargs
+        self,
+        collection_link,
+        options=None,
+        **kwargs
     ) -> None:
         """Exposes an API to delete all items with a single partition key without the user having
          to explicitly call delete on each record in the partition key.
