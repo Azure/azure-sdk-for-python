@@ -50,10 +50,10 @@ class DataColumn(RestTranslatableMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_featurestore.py
+        .. literalinclude:: ../../../../../../samples/ml_samples_featurestore.py
             :start-after: [START configure_feature_store_entity]
             :end-before: [END configure_feature_store_entity]
-            :language: python
+            :language: Python
             :dedent: 8
             :caption: Using DataColumn when creating an index column for a feature store entity
     """

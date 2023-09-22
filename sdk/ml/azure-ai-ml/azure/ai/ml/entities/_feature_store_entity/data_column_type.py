@@ -4,9 +4,8 @@
 
 from enum import Enum
 
-from azure.core import CaseInsensitiveEnumMeta
-
 from azure.ai.ml._utils._experimental import experimental
+from azure.core import CaseInsensitiveEnumMeta
 
 
 @experimental
@@ -15,10 +14,10 @@ class DataColumnType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_featurestore.py
+        .. literalinclude:: ../../../../../../samples/ml_samples_featurestore.py
             :start-after: [START configure_feature_store_entity]
             :end-before: [END configure_feature_store_entity]
-            :language: python
+            :language: Python
             :dedent: 8
             :caption: Using DataColumnType when instantiating a DataColumn
     """
