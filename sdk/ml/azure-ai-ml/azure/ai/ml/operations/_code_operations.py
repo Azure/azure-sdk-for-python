@@ -107,7 +107,7 @@ class CodeOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START code_operations_create_or_update]
                 :end-before: [END code_operations_create_or_update]
                 :language: python
@@ -226,7 +226,7 @@ class CodeOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START code_operations_get]
                 :end-before: [END code_operations_get]
                 :language: python

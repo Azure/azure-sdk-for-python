@@ -20,7 +20,7 @@ class MaterializationComputeResource(RestTranslatableMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_compute.py
+        .. literalinclude:: ../samples/ml_samples_compute.py
             :start-after: [START materialization_compute_resource]
             :end-before: [END materialization_compute_resource]
             :language: python

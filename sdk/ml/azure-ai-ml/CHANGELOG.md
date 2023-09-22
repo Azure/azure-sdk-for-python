@@ -13,6 +13,12 @@
 
 ### Other Changes
 
+## 1.10.1 (2023-09-17)
+
+### Bugs Fixed
+- Feature sets can now be registers after being dumped and reloaded.
+- SDK feature store create/update can now assign materialization identities to cross RG offline stores and online stores.
+
 ## 1.10.0 (2023-09-07)
 
 ### Features Added
@@ -145,6 +151,7 @@
 - Added dedicated classes for each type of job service and updated the docstrings. The classes added are `JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService` with a few properties specific to the type.
 - Added Custom Applications Support to Compute Instances.
 - Update data asset list, show and create operations to support data assets in registry.
+- Added Managed Network features to workspace to include `ManagedNetwork`, `FqdnDestination`, `PrivateEndpointDestination`, `ServiceTagDestination` as well as relevant schema.
 
 ### Bugs Fixed
 - Fixed an issue where the ordering of `.amlignore` and `.gitignore` files are not respected.
