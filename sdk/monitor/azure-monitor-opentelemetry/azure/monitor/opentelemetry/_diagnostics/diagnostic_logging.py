@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from enum import Enum
 import logging
 import threading
 from os import makedirs

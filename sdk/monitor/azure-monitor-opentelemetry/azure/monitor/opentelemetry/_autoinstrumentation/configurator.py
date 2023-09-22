@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 
-import logging
 from warnings import warn
 
 from opentelemetry.sdk._configuration import _OTelSDKConfigurator

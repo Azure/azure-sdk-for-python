@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import logging
 from os import environ
 from warnings import warn
 
@@ -35,8 +34,6 @@ from azure.monitor.opentelemetry._diagnostics.status_logger import (
 )
 
 _CONFIG_FAILED_MSG = "Azure Monitor OpenTelemetry Distro failed during configuration: %s"
-
-_logger = logging.getLogger(__name__)
 
 
 class AzureMonitorDistro(BaseDistro):
