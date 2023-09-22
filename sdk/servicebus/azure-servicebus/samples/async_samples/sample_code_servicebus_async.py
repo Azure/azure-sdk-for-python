@@ -160,8 +160,8 @@ async def example_send_and_receive_async():
     servicebus_sender = await example_create_servicebus_sender_async()
     # [START send_async]
     async with servicebus_sender:
-        message = ServiceBusMessage("Hello World")
-        await servicebus_sender.send_messages(message)
+        message_send = ServiceBusMessage("Hello World")
+        await servicebus_sender.send_messages(message_send)
     # [END send_async]
         await servicebus_sender.send_messages([ServiceBusMessage("Hello World")] * 5)
 

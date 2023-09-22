@@ -266,13 +266,13 @@ class JobOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START job_operations_list]
                 :end-before: [END job_operations_list]
                 :language: python
                 :dedent: 8
                 :caption: Retrieving a list of the archived jobs in a workspace with parent job named
-                "iris-dataset-jobs".
+                    "iris-dataset-jobs".
         """
 
         schedule_defined = kwargs.pop("schedule_defined", None)
@@ -320,7 +320,7 @@ class JobOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START job_operations_get]
                 :end-before: [END job_operations_get]
                 :language: python
@@ -357,7 +357,7 @@ class JobOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START job_operations_show_services]
                 :end-before: [END job_operations_show_services]
                 :language: python
@@ -388,7 +388,7 @@ class JobOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START job_operations_begin_cancel]
                 :end-before: [END job_operations_begin_cancel]
                 :language: python
@@ -482,7 +482,7 @@ class JobOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START job_operations_validate]
                 :end-before: [END job_operations_validate]
                 :language: python
@@ -610,7 +610,7 @@ class JobOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START job_operations_create_and_update]
                 :end-before: [END job_operations_create_and_update]
                 :language: python
@@ -734,7 +734,7 @@ class JobOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START job_operations_archive]
                 :end-before: [END job_operations_archive]
                 :language: python
@@ -755,7 +755,7 @@ class JobOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START job_operations_restore]
                 :end-before: [END job_operations_restore]
                 :language: python
@@ -776,7 +776,7 @@ class JobOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START job_operations_stream_logs]
                 :end-before: [END job_operations_stream_logs]
                 :language: python
@@ -819,7 +819,7 @@ class JobOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START job_operations_download]
                 :end-before: [END job_operations_download]
                 :language: python

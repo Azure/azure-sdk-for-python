@@ -20,12 +20,7 @@ from azure.ai.ml.entities._workspace.compute_runtime import ComputeRuntime
 from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 
-from ._constants import (
-    DEFAULT_SPARK_RUNTIME_VERSION,
-    FEATURE_STORE_KIND,
-    OFFLINE_STORE_CONNECTION_NAME,
-    ONLINE_STORE_CONNECTION_NAME,
-)
+from ._constants import DEFAULT_SPARK_RUNTIME_VERSION, FEATURE_STORE_KIND
 from .materialization_store import MaterializationStore
 
 
@@ -63,11 +58,11 @@ class FeatureStore(Workspace):
         :type name: str
         :param compute_runtime: Compute runtime of the feature store.
         :type compute_runtime: ~azure.ai.ml.entities.ComputeRuntime
-        :param offline_store: Offline store for feature store.
-        materialization_identity is required when offline_store is passed.
+        :param offline_store: Offline store for feature store. `materialization_identity` is required when
+            `offline_store` is passed.
         :type offline_store: ~azure.ai.ml.entities.MaterializationStore
-        :param online_store: Online store for feature store.
-        materialization_identity is required when online_store is passed.
+        :param online_store: Online store for feature store. `materialization_identity` is required when
+            `offline_store` is passed.
         :type online_store: ~azure.ai.ml.entities.MaterializationStore
         :param materialization_identity: Identity used for materialization.
         :type materialization_identity: ~azure.ai.ml.entities.ManagedIdentityConfiguration
@@ -77,25 +72,24 @@ class FeatureStore(Workspace):
         :type tags: dict
         :param display_name: Display name for the feature store. This is non-unique within the resource group.
         :type display_name: str
-        :param location: The location to create the feature store in.
-            If not specified, the same location as the resource group will be used.
+        :param location: The location to create the feature store in. If not specified, the same location as
+            the resource group will be used.
         :type location: str
         :param resource_group: Name of resource group to create the feature store in.
         :type resource_group: str
-        :param hbi_workspace: Whether the customer data is of high business impact (HBI),
-            containing sensitive business information.
-            For more information, see
+        :param hbi_workspace: Whether the customer data is of high business impact (HBI), containing sensitive
+            business information. For more information, see
             https://docs.microsoft.com/azure/machine-learning/concept-data-encryption#encryption-at-rest.
         :type hbi_workspace: bool
         :param storage_account: The resource ID of an existing storage account to use instead of creating a new one.
         :type storage_account: str
-        :param container_registry: The resource ID of an existing container registry
-            to use instead of creating a new one.
+        :param container_registry: The resource ID of an existing container registry to use instead of creating a new
+            one.
         :type container_registry: str
         :param key_vault: The resource ID of an existing key vault to use instead of creating a new one.
         :type key_vault: str
-        :param application_insights: The resource ID of an existing application insights
-            to use instead of creating a new one.
+        :param application_insights: The resource ID of an existing application insights to use instead of creating a
+            new one.
         :type application_insights: str
         :param customer_managed_key: Key vault details for encrypting data with customer-managed keys.
             If not specified, Microsoft-managed keys will be used by default.
@@ -116,15 +110,12 @@ class FeatureStore(Workspace):
         :type kwargs: dict
         """
 
-        feature_store_settings = FeatureStoreSettings(
-            compute_runtime=compute_runtime
-            if compute_runtime
-            else ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION),
-            offline_store_connection_name=(
-                OFFLINE_STORE_CONNECTION_NAME if materialization_identity and offline_store else None
-            ),
-            online_store_connection_name=(
-                ONLINE_STORE_CONNECTION_NAME if materialization_identity and online_store else None
+        feature_store_settings = kwargs.pop(
+            "feature_store_settings",
+            FeatureStoreSettings(
+                compute_runtime=compute_runtime
+                if compute_runtime
+                else ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION),
             ),
         )
         self._workspace_id = kwargs.pop("workspace_id", "")
@@ -188,6 +179,7 @@ class FeatureStore(Workspace):
             primary_user_assigned_identity=workspace_object.primary_user_assigned_identity,
             managed_network=workspace_object.managed_network,
             workspace_id=rest_obj.workspace_id,
+            feature_store_settings=workspace_object._feature_store_settings,
         )
 
     @classmethod

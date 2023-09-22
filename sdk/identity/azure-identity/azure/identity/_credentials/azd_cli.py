@@ -137,7 +137,7 @@ class AzureDeveloperCliCredential:
         if not token:
             sanitized_output = sanitize_output(output)
             message = (
-                f"Unexpected output from Azure CLI: '{sanitized_output}'. \n"
+                f"Unexpected output from Azure Developer CLI: '{sanitized_output}'. \n"
                 f"To mitigate this issue, please refer to the troubleshooting guidelines here at "
                 f"https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot."
             )
@@ -224,7 +224,7 @@ def _run_command(command: str, timeout: int) -> str:
         # Fallback check in case the executable is not found while executing subprocess.
         if ex.returncode == 127 or ex.stderr.startswith("'azd' is not recognized"):
             raise CredentialUnavailableError(message=CLI_NOT_FOUND) from ex
-        if "not logged in, run `azd auth login` to login" in ex.stderr:
+        if "not logged in, run `azd auth login` to login" in ex.stderr and "AADSTS" not in ex.stderr:
             raise CredentialUnavailableError(message=NOT_LOGGED_IN) from ex
 
         # return code is from the CLI -> propagate its output

@@ -117,8 +117,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_bayesian_sampling_algorithm]
             :end-before: [END configure_sweep_job_bayesian_sampling_algorithm]
             :language: python

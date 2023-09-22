@@ -106,7 +106,7 @@ class ValidationResult(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START validation_result]
                 :end-before: [END validation_result]
                 :language: markdown

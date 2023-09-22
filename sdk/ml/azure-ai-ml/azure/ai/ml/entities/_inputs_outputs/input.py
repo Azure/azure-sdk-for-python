@@ -61,7 +61,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START create_inputs_outputs]
             :end-before: [END create_inputs_outputs]
             :language: python

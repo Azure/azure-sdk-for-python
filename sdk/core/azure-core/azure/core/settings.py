@@ -31,7 +31,7 @@ from enum import Enum
 import logging
 import os
 import sys
-from typing import Type, Optional, Callable, cast, Union, Dict, Any, TypeVar, Tuple, Generic, Mapping, List
+from typing import Type, Optional, Callable, Union, Dict, Any, TypeVar, Tuple, Generic, Mapping, List
 from azure.core.tracing import AbstractSpan
 
 ValidInputType = TypeVar("ValidInputType")
@@ -65,9 +65,9 @@ def convert_bool(value: Union[str, bool]) -> bool:
     :raises ValueError: If conversion to bool fails
 
     """
-    if value in (True, False):
-        return cast(bool, value)
-    val = cast(str, value).lower()
+    if isinstance(value, bool):
+        return value
+    val = value.lower()
     if val in ["yes", "1", "on", "true", "True"]:
         return True
     if val in ["no", "0", "off", "false", "False"]:
@@ -103,9 +103,11 @@ def convert_logging(value: Union[str, int]) -> int:
     :raises ValueError: If conversion to log level fails
 
     """
-    if value in set(_levels.values()):
-        return cast(int, value)
-    val = cast(str, value).upper()
+    if isinstance(value, int):
+        # If it's an int, return it. We don't need to check if it's in _levels, as custom int levels are allowed.
+        # https://docs.python.org/3/library/logging.html#levels
+        return value
+    val = value.upper()
     level = _levels.get(val)
     if not level:
         raise ValueError("Cannot convert {} to log level, valid values are: {}".format(value, ", ".join(_levels)))
@@ -183,7 +185,6 @@ def convert_tracing_impl(value: Optional[Union[str, Type[AbstractSpan]]]) -> Opt
         )
 
     if not isinstance(value, str):
-        value = cast(Type[AbstractSpan], value)
         return value
 
     value = value.lower()
@@ -271,7 +272,7 @@ class PrioritizedSetting(Generic[ValidInputType, ValueType]):
             return self._convert(value)
 
         # 3. previously user-set value
-        if self._user_value is not _unset:
+        if not isinstance(self._user_value, _Unset):
             return self._convert(self._user_value)
 
         # 2. environment variable
@@ -283,7 +284,7 @@ class PrioritizedSetting(Generic[ValidInputType, ValueType]):
             return self._convert(self._system_hook())
 
         # 0. implicit default
-        if self._default is not _unset:
+        if not isinstance(self._default, _Unset):
             return self._convert(self._default)
 
         raise RuntimeError("No configured value found for setting %r" % self._name)

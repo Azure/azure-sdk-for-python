@@ -109,6 +109,8 @@ This is the most useful skip, but the following skip variables are also supporte
   - Omit 'Analyze Dependencies' step in `analyze` job.
 - `Skip.VerifyDependencies`
   - Omit checking that a package's dependencies are on PyPI before releasing.
+- `Skip.KeywordCheck`
+  - Omit checking that a package's keywords are correctly formulated before releasing.
 
 ## The pyproject.toml
 

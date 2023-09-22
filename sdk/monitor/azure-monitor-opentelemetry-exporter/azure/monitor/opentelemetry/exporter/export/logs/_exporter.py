@@ -62,7 +62,8 @@ class AzureMonitorLogExporter(BaseExporter, LogExporter):
 
         Called when the SDK is shut down.
         """
-        self.storage.close()
+        if self.storage:
+            self.storage.close()
 
     def _log_to_envelope(self, log_data: LogData) -> TelemetryItem:
         if not log_data:
@@ -116,6 +117,9 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     # pylint: disable=line-too-long
     stack_trace = log_record.attributes.get(SpanAttributes.EXCEPTION_STACKTRACE)
     severity_level = _get_severity_level(log_record.severity_number)
+
+    if not log_record.body:
+        log_record.body = "n/a"
 
     # Event telemetry
     if _log_data_is_event(log_data):
