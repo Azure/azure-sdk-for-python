@@ -47,7 +47,7 @@ class FeatureStoreConfigurationOptions(object):
         FeatureStoreSettings(
             compute_runtime=ComputeRuntime(spark_runtime_version="3.2.0"),
             offline_store_connection_name=offline_store_target,
-            online_store_connection_name=online_store_target
+            online_store_connection_name=online_store_target,
         )
         # [END configure_feature_store_settings]
 
@@ -84,7 +84,7 @@ class FeatureStoreConfigurationOptions(object):
             description="This entity represents user account index key accountID.",
             tags={"data_type": "nonPII"},
         )
-        
+
         # wait for featurestore entity creation
         fs_entity_poller = featurestore_client.feature_store_entities.begin_create_or_update(account_entity_config)
         print(fs_entity_poller.result())
@@ -100,7 +100,9 @@ class FeatureStoreConfigurationOptions(object):
             description="7-day and 3-day rolling aggregation of transactions featureset",
             entities=["azureml:account:1"],
             stage="Development",
-            specification=FeatureSetSpecification(path="../tests/test_configs/feature_set/code_sample/FeatureSetSpec.yaml"),
+            specification=FeatureSetSpecification(
+                path="../tests/test_configs/feature_set/code_sample/FeatureSetSpec.yaml"
+            ),
             tags={"data_type": "nonPII"},
         )
 
@@ -126,10 +128,6 @@ class FeatureStoreConfigurationOptions(object):
 
         # Clean up created feature store for sample
         ml_client.feature_stores.begin_delete(featurestore.name, delete_dependent_resources=True)
-
-
-
-        
 
 
 if __name__ == "__main__":

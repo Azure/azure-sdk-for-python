@@ -24,6 +24,7 @@ class MaterializationStore:
             :dedent: 8
             :caption: Configuring a Materialization Store
     """
+
     def __init__(self, type: str, target: str) -> None:  # pylint: disable=redefined-builtin
         self.type = type
         _ = AzureResourceId(target)
