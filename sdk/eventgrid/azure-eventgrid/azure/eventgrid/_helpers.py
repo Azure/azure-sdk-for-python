@@ -17,6 +17,7 @@ from azure.core.rest import HttpRequest
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from azure.core.messaging import CloudEvent
+from ._models import EventGridEvent
 from ._serialization import Serializer
 from ._signature_credential_policy import EventGridSasCredentialPolicy
 from . import _constants as constants
@@ -171,6 +172,9 @@ def _build_request(endpoint, content_type, events, *, channel_name=None):
     if isinstance(events[0], CloudEvent):
         data = _to_json_http_request(events)
         header_parameters['Content-Length'] = str(len(data))
+    elif isinstance(events[0], EventGridEvent):
+        data = _to_json_http_request(events)
+        header_parameters['Content-Length'] = str(len(data))
     else:
         body = serialize.body(events, '[object]')
         if body is None:
@@ -193,24 +197,27 @@ def _to_json_http_request(events):
     data = {}
     list_data = []
     for event in events:
-        data["type"] =  _SERIALIZER.body(event.type, "str")
-        data["specversion"] = _SERIALIZER.body(event.specversion, "str")
-        data["source"] = _SERIALIZER.body(event.source, "str")
-        data["id"] = _SERIALIZER.body(event.id, "str")
-
-        if isinstance(event.data, bytes):
-            data["data_base64"] = _SERIALIZER.body(base64.b64encode(event.data), "bytearray")
-        elif event.data:
-            data["data"] = _SERIALIZER.body(event.data, "str")
-
-        if event.subject:
-            data["subject"] = _SERIALIZER.body(event.subject, "str")
-        if event.time:
-            data["time"] = _SERIALIZER.body(event.time, "iso-8601")
-        if event.datacontenttype:
-            data["datacontenttype"] = _SERIALIZER.body(event.datacontenttype, "str")
-        if event.extensions:
-            data["additional_properties"] = _SERIALIZER.body(event.extensions, "object")
+        if isinstance(event, EventGridEvent):
+            for attr in event._attribute_map:
+                if getattr(event, attr) is not None:
+                    data[attr] = _SERIALIZER.body(getattr(event, attr), event._attribute_map[attr]["type"])
+        else:
+            data["type"] =  _SERIALIZER.body(event.type, "str")
+            data["specversion"] = _SERIALIZER.body(event.specversion, "str")
+            data["source"] = _SERIALIZER.body(event.source, "str")
+            data["id"] = _SERIALIZER.body(event.id, "str")
+            if isinstance(event.data, bytes):
+                data["data_base64"] = _SERIALIZER.body(base64.b64encode(event.data), "bytearray")
+            elif event.data:
+                data["data"] = _SERIALIZER.body(event.data, "str")
+            if event.subject:
+                data["subject"] = _SERIALIZER.body(event.subject, "str")
+            if event.time:
+                data["time"] = _SERIALIZER.body(event.time, "iso-8601")
+            if event.datacontenttype:
+                data["datacontenttype"] = _SERIALIZER.body(event.datacontenttype, "str")
+            if event.extensions:
+                data["additional_properties"] = _SERIALIZER.body(event.extensions, "object")
         list_data.append(data)
 
     return json.dumps(list_data)
