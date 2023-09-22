@@ -12,5 +12,7 @@ stages:
         AZURE_TENANT_ID: $(python-openai-tenant-id)
         AZURE_OPENAI_ENDPOINT: $(python-openai-endpoint)
         AZURE_OPENAI_KEY: $(python-openai-key)
+        AZURE_OPENAI_WHISPER_ENDPOINT: $(python-openai-whisper-endpoint)
+        AZURE_OPENAI_WHISPER_KEY: $(python-openai-whisper-key)
         OPENAI_KEY: $(python-nonazure-openai-key)
         AZURE_TEST_RUN_LIVE: 'true' # use when utilizing the New-TestResources Script

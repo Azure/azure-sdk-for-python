@@ -24,6 +24,9 @@ AZURE_AD = "azuread"
 # Environment variable keys
 ENV_AZURE_OPENAI_ENDPOINT = "AZURE_OPENAI_ENDPOINT"
 ENV_AZURE_OPENAI_KEY = "AZURE_OPENAI_KEY"
+ENV_AZURE_OPENAI_WHISPER_ENDPOINT = "AZURE_OPENAI_WHISPER_ENDPOINT"
+ENV_AZURE_OPENAI_WHISPER_KEY = "AZURE_OPENAI_WHISPER_KEY"
+ENV_AZURE_OPENAI_KEY = "AZURE_OPENAI_KEY"
 ENV_SUBSCRIPTION_ID = "AZURE_SUBSCRIPTION_ID"
 ENV_TENANT_ID = "AZURE_TENANT_ID"
 ENV_CLIENT_ID = "AZURE_CLIENT_ID"
@@ -34,7 +37,7 @@ ENV_AZURE_OPENAI_SEARCH_INDEX = "AZURE_OPENAI_SEARCH_INDEX"
 
 ENV_AZURE_OPENAI_API_VERSION = "2023-09-01-preview"
 ENV_AZURE_OPENAI_COMPLETIONS_NAME = "text-davinci-003"
-ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME = "gpt-4"
+ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME = "gpt-35-turbo-16k"
 ENV_AZURE_OPENAI_EMBEDDINGS_NAME = "text-embedding-ada-002"
 ENV_AZURE_OPENAI_AUDIO_NAME = "whisper-deployment"
 
@@ -55,6 +58,8 @@ def add_sanitizers(test_proxy, environment_variables):
     sanitization_mapping = {
         ENV_AZURE_OPENAI_ENDPOINT: TEST_ENDPOINT,
         ENV_AZURE_OPENAI_KEY: TEST_KEY,
+        ENV_AZURE_OPENAI_WHISPER_ENDPOINT: TEST_ENDPOINT,
+        ENV_AZURE_OPENAI_WHISPER_KEY: TEST_KEY,
         ENV_SUBSCRIPTION_ID: TEST_ID,
         ENV_TENANT_ID: TEST_ID,
         ENV_CLIENT_ID: TEST_ID,
@@ -86,16 +91,23 @@ def azure_openai_creds():
     }
 
 
-def configure_api_type(api_type, **kwargs):
+def configure_api_type(api_type, whisper=False, **kwargs):
     if api_type == "azure":
-        openai.api_base = os.getenv(ENV_AZURE_OPENAI_ENDPOINT).rstrip("/")
+        if whisper:
+            openai.api_base = os.getenv(ENV_AZURE_OPENAI_WHISPER_ENDPOINT).rstrip("/")
+            openai.api_key = os.getenv(ENV_AZURE_OPENAI_WHISPER_KEY)
+        else:
+            openai.api_base = os.getenv(ENV_AZURE_OPENAI_ENDPOINT).rstrip("/")
+            openai.api_key = os.getenv(ENV_AZURE_OPENAI_KEY)
         openai.api_type = "azure"
-        openai.api_key = os.getenv(ENV_AZURE_OPENAI_KEY)
         openai.api_version = ENV_AZURE_OPENAI_API_VERSION
     elif api_type == "azuread":
+        if whisper:
+            openai.api_base = os.getenv(ENV_AZURE_OPENAI_WHISPER_ENDPOINT).rstrip("/")
+        else:
+            openai.api_base = os.getenv(ENV_AZURE_OPENAI_ENDPOINT).rstrip("/")
         credential = DefaultAzureCredential()
         token = credential.get_token("https://cognitiveservices.azure.com/.default")
-        openai.api_base = os.getenv(ENV_AZURE_OPENAI_ENDPOINT).rstrip("/")
         openai.api_type = "azuread"
         openai.api_key = token.token
         openai.api_version = ENV_AZURE_OPENAI_API_VERSION
@@ -110,7 +122,8 @@ def configure_async(f):
     @functools.wraps(f)
     async def wrapper(*args, **kwargs):
         api_type = kwargs.pop("api_type")
-        configure_api_type(api_type, **kwargs)
+        whisper = args[0].qualified_test_name.startswith("test_audio")
+        configure_api_type(api_type, whisper=whisper, **kwargs)
         try:
             return await f(*args, api_type=api_type, **kwargs)
         except openai.error.RateLimitError:
@@ -123,7 +136,8 @@ def configure(f):
     @functools.wraps(f)
     def wrapper(*args, **kwargs):
         api_type = kwargs.pop("api_type")
-        configure_api_type(api_type, **kwargs)
+        whisper = args[0].qualified_test_name.startswith("test_audio")
+        configure_api_type(api_type, whisper=whisper, **kwargs)
         try:
             return f(*args, api_type=api_type, **kwargs)
         except openai.error.RateLimitError:
