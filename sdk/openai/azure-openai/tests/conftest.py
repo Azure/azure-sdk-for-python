@@ -64,7 +64,6 @@ def add_sanitizers(test_proxy, environment_variables):
         ENV_CLIENT_ID: TEST_ID,
         ENV_CLIENT_SECRET: TEST_ID,
         ENV_OPENAI_KEY: TEST_KEY,
-        ENV_OPENAI_KEY: TEST_KEY,
         ENV_AZURE_OPENAI_SEARCH_ENDPOINT: TEST_ENDPOINT,
         ENV_AZURE_OPENAI_SEARCH_KEY: TEST_KEY,
     }
