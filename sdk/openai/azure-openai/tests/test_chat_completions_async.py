@@ -711,7 +711,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "How is Azure machine learning different than Azure OpenAI?"}
         ]
-        setup_adapter_async(azure_openai_creds["chat_completions_name"], byod=True)
+        setup_adapter_async(azure_openai_creds["chat_completions_name"])
         completion = await openai.ChatCompletion.acreate(
             messages=messages,
             deployment_id=azure_openai_creds["chat_completions_name"],
@@ -747,7 +747,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "How is Azure machine learning different than Azure OpenAI?"}
         ]
-        setup_adapter_async(azure_openai_creds["chat_completions_name"], byod=True)
+        setup_adapter_async(azure_openai_creds["chat_completions_name"])
         response = await openai.ChatCompletion.acreate(
             messages=messages,
             deployment_id=azure_openai_creds["chat_completions_name"],

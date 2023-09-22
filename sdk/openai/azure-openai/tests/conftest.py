@@ -32,7 +32,7 @@ ENV_AZURE_OPENAI_SEARCH_ENDPOINT = "AZURE_OPENAI_SEARCH_ENDPOINT"
 ENV_AZURE_OPENAI_SEARCH_KEY = "AZURE_OPENAI_SEARCH_KEY"
 ENV_AZURE_OPENAI_SEARCH_INDEX = "AZURE_OPENAI_SEARCH_INDEX"
 
-ENV_AZURE_OPENAI_API_VERSION = "2023-08-01-preview"
+ENV_AZURE_OPENAI_API_VERSION = "2023-09-01-preview"
 ENV_AZURE_OPENAI_COMPLETIONS_NAME = "text-davinci-003"
 ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME = "gpt-4"
 ENV_AZURE_OPENAI_EMBEDDINGS_NAME = "text-embedding-ada-002"
@@ -132,15 +132,12 @@ def configure(f):
     return wrapper
 
 
-def setup_adapter(deployment_id, *, byod = False, audio = False):
+def setup_adapter(deployment_id):
 
     class CustomAdapter(requests.adapters.HTTPAdapter):
 
         def send(self, request, **kwargs):
-            if byod:
-                request.url = f"{openai.api_base}/openai/deployments/{deployment_id}/extensions/chat/completions?api-version={openai.api_version}"
-            if audio:
-                request.url = f"{openai.api_base}/openai/deployments/{deployment_id}{request.path_url}?api-version=2023-09-01-preview"  # TODO hardcoded api version
+            request.url = f"{openai.api_base}/openai/deployments/{deployment_id}/extensions/chat/completions?api-version={openai.api_version}"
             return super().send(request, **kwargs)
 
     session = requests.Session()
@@ -153,15 +150,12 @@ def setup_adapter(deployment_id, *, byod = False, audio = False):
     openai.requestssession = session
 
 
-def setup_adapter_async(deployment_id, *, byod = False, audio = False):
+def setup_adapter_async(deployment_id):
 
     class CustomAdapterAsync(aiohttp.ClientRequest):
 
         async def send(self, conn) -> aiohttp.ClientResponse:
-            if byod:
-                self.url = yarl.URL(f"{openai.api_base}/openai/deployments/{deployment_id}/extensions/chat/completions?api-version={openai.api_version}")
-            if audio:
-                self.url = yarl.URL(f"{openai.api_base}/openai/deployments/{deployment_id}{self.url.path}?api-version=2023-09-01-preview")  # TODO hardcoded api version
+            self.url = yarl.URL(f"{openai.api_base}/openai/deployments/{deployment_id}/extensions/chat/completions?api-version={openai.api_version}")
             return await super().send(conn)
     
     session = aiohttp.ClientSession(request_class=CustomAdapterAsync)
