@@ -1,0 +1,8 @@
+[packaging]
+package_name = "corehttp"
+package_pprint_name = "CoreHTTP"
+package_doc_id = ""
+is_stable = false
+is_arm = false
+need_msrestazure = false
+auto_update = false
