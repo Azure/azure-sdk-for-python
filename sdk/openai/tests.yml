@@ -6,6 +6,7 @@ stages:
       CloudConfig:
         Public:
           SubscriptionConfigurations:
+            - $(sub-config-azure-cloud-test-resources)
             - $(sub-config-openai-test-resources)  # TestSecrets-
       ServiceDirectory: openai
       MatrixFilters:
