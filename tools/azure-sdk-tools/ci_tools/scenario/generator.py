@@ -52,6 +52,8 @@ def entrypoint():
     if in_ci():
         if not is_check_enabled(args.target, "optional"):
             logging.info(
-                f"Package {parsed_package.package_name} opts-out of bandit check."
+                f"Package {parsed_package.package_name} opts-out of optional check."
             )
             exit(0)
+
+    

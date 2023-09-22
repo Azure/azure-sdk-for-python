@@ -5,9 +5,17 @@ from ci_tools.functions import discover_targeted_packages
 
 
 repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
-core_service_root = os.path.join(repo_root, "sdk", "core")
 storage_service_root = os.path.join(repo_root, "sdk", "storage")
+core_service_root = os.path.join(repo_root, "sdk", "core")
 
+def test_discovery():
+    results = discover_targeted_packages("azure*", core_service_root)
+
+    # if in a set, this should be empty
+    non_empty_results = discover_targeted_packages("azure-servicemanagement-legacy", core_service_root)
+
+    assert len(results) > 1
+    assert len(non_empty_results) == 1
 
 def test_toml_result():
     package_with_toml = os.path.join(core_service_root, "azure-core")
@@ -22,17 +30,6 @@ def test_toml_result():
     }
 
     assert expected == result
-
-
-def test_discovery():
-    results = discover_targeted_packages("azure*", core_service_root)
-
-    # if in a set, this should be empty
-    non_empty_results = discover_targeted_packages("azure-servicemanagement-legacy", core_service_root)
-
-    assert len(results) > 1
-    assert len(non_empty_results) == 1
-
 
 def test_discovery_omit_mgmt():
     results = discover_targeted_packages("azure*", storage_service_root, filter_type="Omit_management")
