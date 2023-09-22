@@ -124,7 +124,7 @@ class EventGridEvent(object):
         deserializer = Deserializer()
         if "eventTime" in event.keys():
             event_time = deserializer.deserialize_iso(event.get("eventTime"))
-            kwargs["event_time"] = event_time if event_time is not None else NULL
+            kwargs["eventTime"] = event_time if event_time is not None else NULL
 
         try:
             event_obj = cls(
@@ -163,5 +163,5 @@ class EventGridEvent(object):
         :return: An EventGridEvent object.
         :raises ValueError: If the provided JSON is invalid.
         """
-        dict_event = _get_json_content(event)
-        return cls.from_dict(dict_event)
+        # dict_event = _get_json_content(event)
+        return cls.from_dict(event)
