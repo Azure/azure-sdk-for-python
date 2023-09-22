@@ -6,6 +6,7 @@
 import pytest
 import platform
 import os
+import time
 
 from datetime import datetime, timedelta
 from devtools_testutils import AzureRecordedTestCase
@@ -16,6 +17,7 @@ from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, Clie
 from azure.identity.aio import DefaultAzureCredential
 from azure.data.tables import AccountSasPermissions, ResourceTypes, generate_account_sas, __version__ as VERSION
 from azure.data.tables.aio import TableServiceClient, TableClient
+from azure.data.tables._models import LocationMode
 from azure.data.tables._constants import DEFAULT_STORAGE_ENDPOINT_SUFFIX
 
 from _shared.asynctestcase import AsyncTableTestCase
@@ -205,6 +207,55 @@ class TestTableClientAsync(AzureRecordedTestCase, AsyncTableTestCase):
     def check_request_auth(self, pipeline_request):
         assert self.sas_token not in pipeline_request.http_request.url
         assert pipeline_request.http_request.headers.get("Authorization") is not None
+
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_table_client_location_mode(self, tables_storage_account_name, tables_primary_storage_account_key):
+        url = self.account_url(tables_storage_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+        entity = {"PartitionKey": "foo", "RowKey": "bar"}
+
+        async with TableClient(
+            url, table_name, credential=tables_primary_storage_account_key, location_mode=LocationMode.SECONDARY
+        ) as client:
+            with pytest.raises(HttpResponseError) as ex:
+                await client.create_table()
+            assert "Write operations are not allowed." in str(ex.value)
+
+        async with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
+            await client.create_table()
+            time.sleep(10)
+
+        async with TableClient(
+            url, table_name, credential=tables_primary_storage_account_key, location_mode=LocationMode.SECONDARY
+        ) as client:
+            with pytest.raises(HttpResponseError) as ex:
+                await client.create_entity(entity)
+            assert "Operation returned an invalid status 'Forbidden'" in str(ex.value)
+
+            with pytest.raises(HttpResponseError) as ex:
+                await client.upsert_entity(entity)
+            assert "Write operations are not allowed." in str(ex.value)
+
+            with pytest.raises(ResourceNotFoundError) as ex:
+                await client.get_entity("foo", "bar")
+            assert "The specified resource does not exist." in str(ex.value)
+
+            entities = client.list_entities()
+            async for e in entities:
+                pass
+
+            with pytest.raises(HttpResponseError) as ex:
+                await client.delete_entity(entity)
+            assert "Write operations are not allowed." in str(ex.value)
+
+            with pytest.raises(HttpResponseError) as ex:
+                await client.delete_table()
+            assert "Write operations are not allowed." in str(ex.value)
+
+        # clean up
+        async with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
+            await client.delete_table()
 
     @tables_decorator_async
     @recorded_by_proxy_async
