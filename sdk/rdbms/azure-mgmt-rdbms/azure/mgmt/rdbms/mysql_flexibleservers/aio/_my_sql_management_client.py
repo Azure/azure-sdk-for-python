@@ -30,6 +30,7 @@ from .operations import (
     LogFilesOperations,
     Operations,
     ReplicasOperations,
+    ServersMigrationOperations,
     ServersOperations,
 )
 
@@ -63,6 +64,9 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
     :vartype servers: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.ServersOperations
     :ivar replicas: ReplicasOperations operations
     :vartype replicas: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.ReplicasOperations
+    :ivar servers_migration: ServersMigrationOperations operations
+    :vartype servers_migration:
+     azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.ServersMigrationOperations
     :ivar log_files: LogFilesOperations operations
     :vartype log_files: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.LogFilesOperations
     :ivar location_based_capabilities: LocationBasedCapabilitiesOperations operations
@@ -85,7 +89,7 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
     :vartype operations: azure.mgmt.rdbms.mysql_flexibleservers.aio.operations.Operations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
@@ -121,6 +125,9 @@ class MySQLManagementClient:  # pylint: disable=client-accepts-api-version-keywo
         self.firewall_rules = FirewallRulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.servers = ServersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.replicas = ReplicasOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.servers_migration = ServersMigrationOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.log_files = LogFilesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.location_based_capabilities = LocationBasedCapabilitiesOperations(
             self._client, self._config, self._serialize, self._deserialize

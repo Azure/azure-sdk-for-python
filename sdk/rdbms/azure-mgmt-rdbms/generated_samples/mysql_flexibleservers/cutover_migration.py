@@ -14,7 +14,7 @@ from azure.mgmt.rdbms.mysql_flexibleservers import MySQLManagementClient
     pip install azure-identity
     pip install azure-mgmt-rdbms
 # USAGE
-    python configuration_update.py
+    python cutover_migration.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,15 +29,13 @@ def main():
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.configurations.begin_update(
+    response = client.servers_migration.begin_cutover_migration(
         resource_group_name="testrg",
-        server_name="testserver",
-        configuration_name="event_scheduler",
-        parameters={"properties": {"source": "user-override", "value": "on"}},
+        server_name="mysqltestserver",
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/Configurations/preview/2023-06-01-preview/examples/ConfigurationUpdate.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2023-06-01-preview/examples/CutoverMigration.json
 if __name__ == "__main__":
     main()

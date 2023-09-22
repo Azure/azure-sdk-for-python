@@ -14,6 +14,7 @@ from ._databases_operations import DatabasesOperations
 from ._firewall_rules_operations import FirewallRulesOperations
 from ._servers_operations import ServersOperations
 from ._replicas_operations import ReplicasOperations
+from ._servers_migration_operations import ServersMigrationOperations
 from ._log_files_operations import LogFilesOperations
 from ._location_based_capabilities_operations import LocationBasedCapabilitiesOperations
 from ._check_virtual_network_subnet_usage_operations import CheckVirtualNetworkSubnetUsageOperations
@@ -35,6 +36,7 @@ __all__ = [
     "FirewallRulesOperations",
     "ServersOperations",
     "ReplicasOperations",
+    "ServersMigrationOperations",
     "LogFilesOperations",
     "LocationBasedCapabilitiesOperations",
     "CheckVirtualNetworkSubnetUsageOperations",

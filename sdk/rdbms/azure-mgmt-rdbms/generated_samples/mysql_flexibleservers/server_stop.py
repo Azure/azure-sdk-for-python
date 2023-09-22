@@ -35,6 +35,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2022-09-30-preview/examples/ServerStop.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/FlexibleServers/preview/2023-06-01-preview/examples/ServerStop.json
 if __name__ == "__main__":
     main()
