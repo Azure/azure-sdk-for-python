@@ -156,14 +156,15 @@ def _convert_to_entity(entry_element):
         else:
             properties[name] = value
 
+    # TODO: investigate whether we can entirely remove lines 160-168
     # Partition key is a known property
     partition_key = properties.pop("PartitionKey", None)
-    if partition_key:
+    if partition_key is not None:
         entity["PartitionKey"] = partition_key
 
     # Row key is a known property
     row_key = properties.pop("RowKey", None)
-    if row_key:
+    if row_key is not None:
         entity["RowKey"] = row_key
 
     # Timestamp is a known property

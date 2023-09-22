@@ -8,6 +8,7 @@ import uuid
 
 from azure.ai.ml._azure_environments import _get_base_url_from_metadata
 from azure.ai.ml._vendor.azure_resources._resource_management_client import ResourceManagementClient
+from azure.ai.ml._vendor.azure_resources.models import GenericResource
 from azure.ai.ml.constants._common import ArmConstants
 from azure.core.credentials import TokenCredential
 
@@ -38,6 +39,21 @@ def get_resource_group_location(credentials: TokenCredential, subscription_id: s
     )
     rg = client.resource_groups.get(resource_group_name)
     return rg.location
+
+
+def get_generic_arm_resource_by_arm_id(
+    credentials: TokenCredential,
+    subscription_id: str,
+    arm_id: str,
+    api_version: str,
+) -> GenericResource:
+    client = ResourceManagementClient(
+        credential=credentials,
+        subscription_id=subscription_id,
+        base_url=_get_base_url_from_metadata(),
+        api_version=ArmConstants.AZURE_MGMT_RESOURCE_API_VERSION,
+    )
+    return client.resources.get_by_id(arm_id, api_version)
 
 
 def delete_resource_by_arm_id(

@@ -84,8 +84,7 @@ class CommandComponent(Component, ParameterizedCommand, AdditionalIncludesMixin)
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
+        .. literalinclude:: ../samples/ml_samples_command_configurations.py
             :start-after: [START command_component_definition]
             :end-before: [END command_component_definition]
             :language: python

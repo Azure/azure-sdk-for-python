@@ -4,8 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 import binascii
-import sys
 from typing import Any, Dict, List, Mapping, Optional, Union, cast
+from typing_extensions import Literal
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.credentials import TokenCredential
@@ -45,11 +45,6 @@ from ._utils import (
 from ._sync_token import SyncTokenPolicy
 from ._user_agent import USER_AGENT
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
-
 
 class AzureAppConfigurationClient:
     """Represents a client that calls restful API of Azure App Configuration service.
@@ -86,7 +81,7 @@ class AzureAppConfigurationClient:
         if pipeline is None:
             aad_mode = not isinstance(credential, AppConfigConnectionStringCredential)
             pipeline = self._create_appconfig_pipeline(
-                credential=credential, aad_mode=aad_mode, base_url=base_url, **kwargs
+                credential=credential, credential_scopes=self._credential_scopes, aad_mode=aad_mode, **kwargs
             )
 
         self._impl = AzureAppConfiguration(
@@ -118,15 +113,14 @@ class AzureAppConfigurationClient:
             **kwargs
         )
 
-    def _create_appconfig_pipeline(self, credential, base_url=None, aad_mode=False, **kwargs):
+    def _create_appconfig_pipeline(self, credential, credential_scopes, aad_mode=False, **kwargs):
         transport = kwargs.get("transport")
         policies = kwargs.get("policies")
 
         if policies is None:  # [] is a valid policy list
             if aad_mode:
-                scope = base_url.strip("/") + "/.default"
                 if hasattr(credential, "get_token"):
-                    credential_policy = BearerTokenCredentialPolicy(credential, scope)
+                    credential_policy = BearerTokenCredentialPolicy(credential, credential_scopes)
                 else:
                     raise TypeError(
                         "Please provide an instance from azure-identity "
@@ -241,7 +235,7 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
-        error_map = {}  # type: Dict[int, Any]
+        error_map: Dict[int, Any] = {}
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfPresent:
@@ -290,7 +284,7 @@ class AzureAppConfigurationClient:
             added_config_setting = client.add_configuration_setting(config_setting)
         """
         key_value = configuration_setting._to_generated()
-        custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
+        custom_headers: Mapping[str, Any] = CaseInsensitiveDict(kwargs.get("headers"))
         error_map = {412: ResourceExistsError}
         try:
             key_value_added = self._impl.put_key_value(
@@ -346,8 +340,8 @@ class AzureAppConfigurationClient:
             returned_config_setting = client.set_configuration_setting(config_setting)
         """
         key_value = configuration_setting._to_generated()
-        custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
-        error_map = {409: ResourceReadOnlyError}  # type: Dict[int, Any]
+        custom_headers: Mapping[str, Any] = CaseInsensitiveDict(kwargs.get("headers"))
+        error_map: Dict[int, Any] = {409: ResourceReadOnlyError}
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
@@ -404,8 +398,8 @@ class AzureAppConfigurationClient:
         """
         etag = kwargs.pop("etag", None)
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
-        custom_headers = CaseInsensitiveDict(kwargs.get("headers"))  # type: Mapping[str, Any]
-        error_map = {409: ResourceReadOnlyError}  # type: Dict[int, Any]
+        custom_headers: Mapping[str, Any] = CaseInsensitiveDict(kwargs.get("headers"))
+        error_map: Dict[int, Any] = {409: ResourceReadOnlyError}
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
@@ -510,7 +504,7 @@ class AzureAppConfigurationClient:
             read_only_config_setting = client.set_read_only(config_setting)
             read_only_config_setting = client.set_read_only(config_setting, read_only=False)
         """
-        error_map = {}  # type: Dict[int, Any]
+        error_map: Dict[int, Any] = {}
         match_condition = kwargs.pop("match_condition", MatchConditions.Unconditionally)
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})
@@ -614,7 +608,7 @@ class AzureAppConfigurationClient:
         :rtype: ~azure.appconfiguration.Snapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        error_map = {}  # type: Dict[int, Any]
+        error_map: Dict[int, Any] = {}
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:
@@ -657,7 +651,7 @@ class AzureAppConfigurationClient:
         :rtype: ~azure.appconfiguration.Snapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        error_map = {}  # type: Dict[int, Any]
+        error_map: Dict[int, Any] = {}
         if match_condition == MatchConditions.IfNotModified:
             error_map.update({412: ResourceModifiedError})
         if match_condition == MatchConditions.IfModified:

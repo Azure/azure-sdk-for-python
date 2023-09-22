@@ -20,14 +20,14 @@ import os
 
 class CommandConfigurationOptions(object):
     def ml_command_config(self):
-        from azure.identity import DefaultAzureCredential
-
         from azure.ai.ml import MLClient
+        from azure.identity import DefaultAzureCredential
 
         subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
         resource_group = os.environ["RESOURCE_GROUP_NAME"]
+        workspace_name = "test-ws1"
         credential = DefaultAzureCredential()
-        ml_client = MLClient(credential, subscription_id, resource_group, workspace_name="test-ws1")
+        ml_client = MLClient(credential, subscription_id, resource_group, workspace_name=workspace_name)
 
         from azure.ai.ml import Input, Output
         from azure.ai.ml.entities import CommandJob, CommandJobLimits

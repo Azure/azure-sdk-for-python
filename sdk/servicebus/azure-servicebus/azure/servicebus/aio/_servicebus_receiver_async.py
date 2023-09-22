@@ -234,7 +234,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     def __aiter__(self):
         return self._iter_contextual_wrapper()
 
-    async def _inner_anext(self, wait_time: Optional[int] = None) -> "ServiceBusReceivedMessage":
+    async def _inner_anext(self, wait_time: Optional[int] = None) -> ServiceBusReceivedMessage:
         # We do this weird wrapping such that an imperitive next() call, and a generator-based iter both trace sanely.
         self._check_live()
         while True:
@@ -244,7 +244,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 self._message_iter = None
                 raise
 
-    async def __anext__(self):
+    async def __anext__(self) -> ServiceBusReceivedMessage:
         try:
             self._receive_context.set()
             message = await self._inner_anext()
@@ -644,7 +644,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         if max_message_count is not None and max_message_count <= 0:
             raise ValueError("The max_message_count must be greater than 0")
         start_time = time.time_ns()
-        messages = await self._do_retryable_operation(
+        messages: List[ServiceBusReceivedMessage] = await self._do_retryable_operation(
             self._receive,
             max_message_count=max_message_count,
             timeout=max_wait_time,

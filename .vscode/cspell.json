@@ -49,6 +49,7 @@
     "sdk/communication/azure-communication-chat/**",
     "sdk/communication/azure-communication-phonenumbers/**",
     "sdk/communication/azure-communication-sms/**",
+    "sdk/communication/azure-communication-callautomation/tests/**",
     "sdk/core/azure/**",
     "sdk/core/azure-common/**",
     "sdk/core/azure-core-tracing-opencensus/**",

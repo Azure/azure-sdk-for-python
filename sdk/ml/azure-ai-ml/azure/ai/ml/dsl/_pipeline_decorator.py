@@ -116,22 +116,22 @@ def pipeline(
     :paramtype tags: dict[str, str]
     :keyword kwargs: A dictionary of additional configuration parameters.
     :paramtype kwargs: dict
+    :return: Either
+      * A decorator, if `func` is None
+      * The decorated `func`
+    :rtype: Union[
+        Callable[[Callable], Callable[..., ~azure.ai.ml.entities.PipelineJob]],
+        Callable[P, ~azure.ai.ml.entities.PipelineJob]
+      ]
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../samples/ml_samples_pipeline_job_configurations.py
+        .. literalinclude:: ../samples/ml_samples_pipeline_job_configurations.py
             :start-after: [START configure_pipeline]
             :end-before: [END configure_pipeline]
             :language: python
             :dedent: 8
             :caption: Shows how to create a pipeline using this decorator.
-    :return: Either
-      * A decorator, if `func` is None
-      * The decorated `func`
-    :rtype: Union[
-        Callable[[Callable], Callable[..., PipelineJob]],
-        Callable[P, PipelineJob]
-      ]
     """
 
     def pipeline_decorator(func: Callable[P, T]) -> Callable[P, PipelineJob]:

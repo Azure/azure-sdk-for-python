@@ -1,8 +1,20 @@
 # Release History
 
-## 12.7.0 (Unreleased)
+## 12.8.0b1 (Unreleased)
 
 ### Features Added
+
+
+## 12.7.1 (2023-09-13)
+
+### Bugs Fixed
+- Fixed breaking `KeyError: 'sdk_moniker'` in `create_configuration`.
+NOTE: This is not an exported method and therefore should not be imported/called directly.
+
+## 12.7.0 (2023-09-12)
+
+### Features Added
+- Stable release of features from 12.7.0b1
 
 ## 12.7.0b1 (2023-08-08)
 

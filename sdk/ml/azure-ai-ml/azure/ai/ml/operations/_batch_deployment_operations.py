@@ -108,7 +108,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START batch_deployment_operations_begin_create_or_update]
                 :end-before: [END batch_deployment_operations_begin_create_or_update]
                 :language: python
@@ -183,7 +183,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START batch_deployment_operations_get]
                 :end-before: [END batch_deployment_operations_get]
                 :language: python
@@ -217,7 +217,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START batch_deployment_operations_delete]
                 :end-before: [END batch_deployment_operations_delete]
                 :language: python
@@ -257,7 +257,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START batch_deployment_operations_list]
                 :end-before: [END batch_deployment_operations_list]
                 :language: python
@@ -287,7 +287,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START batch_deployment_operations_list_jobs]
                 :end-before: [END batch_deployment_operations_list_jobs]
                 :language: python

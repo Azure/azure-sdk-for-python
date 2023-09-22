@@ -153,7 +153,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START component_operations_list]
                 :end-before: [END component_operations_list]
                 :language: python
@@ -244,7 +244,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START component_operations_get]
                 :end-before: [END component_operations_get]
                 :language: python
@@ -558,7 +558,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START component_operations_create_or_update]
                 :end-before: [END component_operations_create_or_update]
                 :language: python
@@ -648,7 +648,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START component_operations_archive]
                 :end-before: [END component_operations_archive]
                 :language: python
@@ -684,7 +684,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START component_operations_restore]
                 :end-before: [END component_operations_restore]
                 :language: python
@@ -760,7 +760,7 @@ class ComponentOperations(_ScopeDependentOperations):
     def _resolve_azureml_id(self, component: Component, jobs_only: bool = False) -> None:
         # TODO: remove the parameter `jobs_only`. Some tests are expecting an arm id after resolving for now.
         resolver = self._orchestrators.resolve_azureml_id
-        self._resolve_dependencies_for_component(component, resolver, resolve_jobs_inputs=True, jobs_only=jobs_only)
+        self._resolve_dependencies_for_component(component, resolver, jobs_only=jobs_only)
 
     def _resolve_arm_id_or_upload_dependencies(self, component: Component) -> None:
         resolver = OperationOrchestrator(
@@ -774,7 +774,6 @@ class ComponentOperations(_ScopeDependentOperations):
         component: Component,
         resolver: Callable,
         *,
-        resolve_jobs_inputs: bool = False,
         jobs_only: bool = False,
     ) -> None:
         # for now, many tests are expecting long arm id instead of short id for environment and code
@@ -805,7 +804,6 @@ class ComponentOperations(_ScopeDependentOperations):
         self._resolve_dependencies_for_pipeline_component_jobs(
             component,
             resolver=resolver,
-            resolve_inputs=resolve_jobs_inputs,
         )
 
     def _resolve_inputs_for_pipeline_component_jobs(self, jobs: Dict[str, Any], base_path: str):
@@ -1049,7 +1047,9 @@ class ComponentOperations(_ScopeDependentOperations):
         return self._client_key
 
     def _resolve_dependencies_for_pipeline_component_jobs(
-        self, component: Union[Component, str], resolver: _AssetResolver, *, resolve_inputs: bool = True
+        self,
+        component: Union[Component, str],
+        resolver: _AssetResolver,
     ):
         """Resolve dependencies for pipeline component jobs.
         Will directly return if component is not a pipeline component.
@@ -1066,8 +1066,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 
-        if resolve_inputs:
-            self._resolve_inputs_for_pipeline_component_jobs(component.jobs, component._base_path)
+        self._resolve_inputs_for_pipeline_component_jobs(component.jobs, component._base_path)
 
         # This is a preparation for concurrent resolution. Nodes will be resolved later layer by layer
         # from bottom to top, as hash calculation of a parent node will be impacted by resolution
