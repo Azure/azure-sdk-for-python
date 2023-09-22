@@ -7,7 +7,7 @@
 import logging
 import re
 import warnings
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AssignedUser
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstance as CIRest
@@ -58,11 +58,11 @@ class ComputeInstanceSshSettings:
         self,
         *,
         ssh_key_value: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         self.ssh_key_value = ssh_key_value
-        self._ssh_port = kwargs.pop("ssh_port", None)
-        self._admin_username = kwargs.pop("admin_username", None)
+        self._ssh_port: str = kwargs.pop("ssh_port", None)
+        self._admin_username: str = kwargs.pop("admin_username", None)
 
     @property
     def admin_username(self) -> str:
@@ -188,13 +188,13 @@ class ComputeInstance(Compute):
         setup_scripts: Optional[SetupScripts] = None,
         enable_node_public_ip: bool = True,
         custom_applications: Optional[List[CustomApplications]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         kwargs[TYPE] = ComputeType.COMPUTEINSTANCE
-        self._state = kwargs.pop("state", None)
-        self._last_operation = kwargs.pop("last_operation", None)
+        self._state: str = kwargs.pop("state", None)
+        self._last_operation: dict = kwargs.pop("last_operation", None)
         self._os_image_metadata = kwargs.pop("os_image_metadata", None)
-        self._services = kwargs.pop("services", None)
+        self._services: list = kwargs.pop("services", None)
         super().__init__(
             name=name,
             location=kwargs.pop("location", None),
@@ -316,7 +316,8 @@ class ComputeInstance(Compute):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return ComputeInstanceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = ComputeInstanceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     def _set_full_subnet_name(self, subscription_id: str, rg: str) -> None:
         if self.network_settings:
@@ -435,12 +436,12 @@ class ComputeInstance(Compute):
         return response
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "ComputeInstance":
+    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs: Any) -> "ComputeInstance":
         loaded_data = load_from_dict(ComputeInstanceSchema, data, context, **kwargs)
         return ComputeInstance(**loaded_data)
 
 
-def _ssh_public_access_to_bool(value: str) -> bool:
+def _ssh_public_access_to_bool(value: str) -> Optional[bool]:
     if value.lower() == "disabled":
         return False
     if value.lower() == "enabled":
