@@ -7,12 +7,7 @@ from typing import Any, cast, Optional, Dict, Callable, Type
 import datetime as dt
 import uuid
 from ._messaging_shared import _get_json_content
-from ._serialization import (
-    Deserializer,
-    attribute_key_case_insensitive_extractor,
-    rest_key_case_insensitive_extractor,
-    last_rest_key_case_insensitive_extractor
-)
+from ._serialization import AzureCoreNull as NULL, Deserializer
 
 class EventGridEvent(object):
     """Properties of an event published to an Event Grid topic using the EventGrid Schema.
@@ -107,6 +102,56 @@ class EventGridEvent(object):
         )[:1024]
     
     @classmethod
+    def from_dict(cls, event: Dict[str, Any]):
+        """Returns the deserialized CloudEvent object when a dict is provided.
+
+        :param event: The dict representation of the event which needs to be deserialized.
+        :type event: dict
+        :rtype: CloudEvent
+        :return: The deserialized CloudEvent object.
+        """
+        kwargs: Dict[str, Any] = {}
+        event_obj = None
+
+        data = event.get("data")
+        kwargs["data"] = data if data is not None else NULL
+
+        for item in ["metadataVersion", "topic", "subject"]:
+            if item in event:
+                val = event.get(item)
+                kwargs[item] = val if val is not None else NULL
+
+        deserializer = Deserializer()
+        event_time = deserializer.deserialize_iso(event.get("time"))
+        kwargs["event_time"] = event_time if event_time is not None else NULL
+
+        try:
+            event_obj = cls(
+                id=event.get("id"),
+                subject=event["subject"],
+                event_type=event["eventType"],
+                data=data,
+                data_version=event.get("dataVersion"),
+                **kwargs,
+            )
+        except KeyError as err:
+            # https://github.com/cloudevents/spec Cloud event spec requires source, type,
+            # specversion. We autopopulate everything other than source, type.
+            # So we will assume the KeyError is coming from source/type access.
+            if all(
+                key in event
+                for key in (
+                    "source",
+                    "type",
+                )
+            ):
+                raise ValueError(
+                    "The event does not conform to the EventGridEvent type spec."
+                    + " The 'subject' and 'event_type' are required."
+                ) from err
+        return event_obj
+    
+    @classmethod
     def from_json(cls, event: Any):
         """
         Returns the deserialized EventGridEvent object when a json payload is provided.
@@ -117,6 +162,5 @@ class EventGridEvent(object):
         :return: An EventGridEvent object.
         :raises ValueError: If the provided JSON is invalid.
         """
-        deserializer = Deserializer()
         dict_event = _get_json_content(event)
-        return deserializer(cls.__name__, dict_event)
+        return cls.from_dict(dict_event)
