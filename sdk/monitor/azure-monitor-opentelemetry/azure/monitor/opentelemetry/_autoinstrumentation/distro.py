@@ -45,39 +45,32 @@ class AzureMonitorDistro(BaseDistro):
             warn(_PREVIEW_ENTRY_POINT_WARNING)
         try:
             _configure_auto_instrumentation()
-        except Exception as exc:
+        except Exception as e:
+            AzureStatusLogger.log_status(False, reason=str(e))
             AzureDiagnosticLogging.error(
-                "Error occurred auto-instrumenting AzureMonitorDistro" % exc,
+                _CONFIG_FAILED_MSG % str(e),
                 _ATTACH_FAILURE_DISTRO,
             )
-            raise exc
+            raise e
 
 
 def _configure_auto_instrumentation() -> None:
-    try:
-        AzureStatusLogger.log_status(False, "Distro being configured.")
-        environ.setdefault(
-            OTEL_METRICS_EXPORTER, "azure_monitor_opentelemetry_exporter"
-        )
-        environ.setdefault(
-            OTEL_TRACES_EXPORTER, "azure_monitor_opentelemetry_exporter"
-        )
-        environ.setdefault(
-            OTEL_LOGS_EXPORTER, "azure_monitor_opentelemetry_exporter"
-        )
-        environ.setdefault(
-            _OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED, "true"
-        )
-        settings.tracing_implementation = OpenTelemetrySpan
-        AzureStatusLogger.log_status(True)
-        AzureDiagnosticLogging.info(
-            "Azure Monitor OpenTelemetry Distro configured successfully.",
-            _ATTACH_SUCCESS_DISTRO
-        )
-    except Exception as exc:
-        AzureStatusLogger.log_status(False, reason=str(exc))
-        AzureDiagnosticLogging.error(
-            _CONFIG_FAILED_MSG % exc,
-            _ATTACH_FAILURE_DISTRO,
-        )
-        raise exc
+    AzureStatusLogger.log_status(False, "Distro being configured.")
+    environ.setdefault(
+        OTEL_METRICS_EXPORTER, "azure_monitor_opentelemetry_exporter"
+    )
+    environ.setdefault(
+        OTEL_TRACES_EXPORTER, "azure_monitor_opentelemetry_exporter"
+    )
+    environ.setdefault(
+        OTEL_LOGS_EXPORTER, "azure_monitor_opentelemetry_exporter"
+    )
+    environ.setdefault(
+        _OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED, "true"
+    )
+    settings.tracing_implementation = OpenTelemetrySpan
+    AzureStatusLogger.log_status(True)
+    AzureDiagnosticLogging.info(
+        "Azure Monitor OpenTelemetry Distro configured successfully.",
+        _ATTACH_SUCCESS_DISTRO
+    )

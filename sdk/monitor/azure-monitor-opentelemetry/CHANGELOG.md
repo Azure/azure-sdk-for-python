@@ -2,6 +2,9 @@
 
 ## 1.0.1 (Unreleased)
 
+- Add message ids for AppLens
+    ([#32195](https://github.com/Azure/azure-sdk-for-python/pull/32195))
+
 ### Features Added
 
 ### Breaking Changes
