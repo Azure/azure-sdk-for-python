@@ -73,13 +73,12 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
     from ._generated.models import BlockList
-    from ._models import (  # pylint: disable=unused-import
+    from ._models import (
         ContentSettings,
         ImmutabilityPolicy,
         PremiumPageBlobTier,
         StandardBlobTier,
         SequenceNumberAction,
-        BlobTokenAudience,
     )
 
 _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = (

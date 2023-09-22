@@ -499,12 +499,12 @@ class TokenAudience():
         https://learn.microsoft.com/azure/storage/blobs/authorize-access-azure-active-directory. Please use one
         of the provided classmethods over creating a custom value unless you have a specific scenario for doing so.
     """
-    DEFAULT_OAUTH_SCOPE = ".default"
-    STORAGE_OAUTH_SCOPE = "https://storage.azure.com/"
+    _DEFAULT_OAUTH_SCOPE = ".default"
+    _STORAGE_OAUTH_SCOPE = "https://storage.azure.com/"
     _value: str
 
     def __init__(self, value: str) -> None:
-        self._value = value + TokenAudience.DEFAULT_OAUTH_SCOPE
+        self._value = value
 
     @classmethod
     def public_audience(cls) -> Self:
@@ -516,7 +516,19 @@ class TokenAudience():
         :returns: The Default Audience.
         :rtype: TokenAudience
         """
-        return cls(TokenAudience.STORAGE_OAUTH_SCOPE)
+        return cls(TokenAudience._STORAGE_OAUTH_SCOPE)
+    
+    def create_default_scope(self) -> Self:
+        """Creates a scope with the respective audience and default scope.
+
+        :returns: The respective audience with default scope specified.
+        :rtype: TokenAudience
+        """
+        if self._value.endswith("/"):
+            self._value = self._value + TokenAudience._DEFAULT_OAUTH_SCOPE
+        else:
+            self._value = self._value + "/" + TokenAudience._DEFAULT_OAUTH_SCOPE
+        return self
 
     def __eq__(self, other: object) -> bool:
         return self._value == other._value
