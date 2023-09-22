@@ -22,6 +22,7 @@ from azure.core.exceptions import (
 from azure.storage.filedatalake import (
     AccountSasPermissions,
     ContentSettings,
+    DataLakeTokenAudience,
     EncryptionScopeOptions,
     FileSasPermissions,
     FileSystemSasPermissions,
@@ -1476,6 +1477,109 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         assert file_properties['owner'] is not None
         assert file_properties['group'] is not None
         assert file_properties['permissions'] is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_public_audience_file_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        file_client = await self._create_file_and_return_client()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        fc = DataLakeFileClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            file_client.file_system_name + '/',
+            '/' + file_client.path_name,
+            credential=token_credential,
+            audience=DataLakeTokenAudience.public_audience()
+        )
+
+        # Assert
+        data = b'Hello world'
+        response = await fc.upload_data(data, overwrite=True)
+        assert response is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_custom_audience_file_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        file_client = await self._create_file_and_return_client()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        audience_str = f'https://{datalake_storage_account_name}.blob.core.windows.net'
+        fc = DataLakeFileClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            file_client.file_system_name + '/',
+            '/' + file_client.path_name,
+            credential=token_credential,
+            audience=DataLakeTokenAudience(audience_str)
+        )
+
+        # Assert
+        data = b'Hello world'
+        response = await fc.upload_data(data, overwrite=True)
+        assert response is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_storage_account_audience_file_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        file_client = await self._create_file_and_return_client()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        audience_str = f'https://{datalake_storage_account_name}.blob.core.windows.net'
+        fc = DataLakeFileClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            file_client.file_system_name + '/',
+            '/' + file_client.path_name,
+            credential=token_credential,
+            audience=DataLakeTokenAudience.get_datalake_account_audience(datalake_storage_account_name)
+        )
+
+        # Assert
+        data = b'Hello world'
+        response = await fc.upload_data(data, overwrite=True)
+        assert response is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_bad_audience_file_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        file_client = await self._create_file_and_return_client()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        audience_str = f'https://badaudience.blob.core.windows.net/'
+        fc = DataLakeFileClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            file_client.file_system_name + '/',
+            '/' + file_client.path_name,
+            credential=token_credential,
+            audience=DataLakeTokenAudience(audience_str)
+        )
+
+        # Assert
+        data = b'Hello world'
+        with pytest.raises(ClientAuthenticationError):
+            await fc.upload_data(data, overwrite=True)
 
 
 # ------------------------------------------------------------------------------

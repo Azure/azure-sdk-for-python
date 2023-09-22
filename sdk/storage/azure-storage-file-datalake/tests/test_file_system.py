@@ -9,13 +9,14 @@ from time import sleep
 
 import pytest
 from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceNotFoundError
 from azure.storage.filedatalake import (
     AccessPolicy,
     AccountSasPermissions,
     DataLakeDirectoryClient,
     DataLakeFileClient,
     DataLakeServiceClient,
+    DataLakeTokenAudience,
     EncryptionScopeOptions,
     FileSystemClient,
     FileSystemSasPermissions,
@@ -1070,6 +1071,112 @@ class TestFileSystem(StorageRecordedTestCase):
         restored_file_client = file_system_client._undelete_path(file_path, resp['deletion_id'])
         resp = restored_file_client.get_file_properties()
         assert resp is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_public_audience_service_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        file_system_name = self._get_file_system_reference()
+        file_system_client = self.dsc.get_file_system_client(file_system_name)
+        file_system_client.create_file_system()
+        file_system_client.create_directory('testdir1')
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        fsc = FileSystemClient(
+            url, file_system_name,
+            credential=token_credential,
+            audience=DataLakeTokenAudience.public_audience()
+        )
+
+        # Assert
+        response = fsc.create_directory('testdir11')
+        assert response is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_custom_audience_service_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        file_system_name = self._get_file_system_reference()
+        file_system_client = self.dsc.get_file_system_client(file_system_name)
+        file_system_client.create_file_system()
+        file_system_client.create_directory('testdir2')
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        audience_str = f'https://{datalake_storage_account_name}.blob.core.windows.net'
+        fsc = FileSystemClient(
+            url, file_system_name,
+            credential=token_credential,
+            audience=DataLakeTokenAudience(audience_str)
+        )
+
+        # Assert
+        response = fsc.create_directory('testdir22')
+        assert response is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_storage_account_audience_service_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        file_system_name = self._get_file_system_reference()
+        file_system_client = self.dsc.get_file_system_client(file_system_name)
+        file_system_client.create_file_system()
+        file_system_client.create_directory('testdir3')
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        fsc = FileSystemClient(
+            url, file_system_name,
+            credential=token_credential,
+            audience=DataLakeTokenAudience.get_datalake_account_audience(datalake_storage_account_name)
+        )
+
+        # Assert
+        response = fsc.create_directory('testdir33')
+        assert response is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_bad_audience_service_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        file_system_name = self._get_file_system_reference()
+        file_system_client = self.dsc.get_file_system_client(file_system_name)
+        file_system_client.create_file_system()
+        file_system_client.create_directory('testdir4')
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        audience_str = f'https://badaudience.blob.core.windows.net/'
+        fsc = FileSystemClient(
+            url, file_system_name,
+            credential=token_credential,
+            audience=DataLakeTokenAudience(audience_str)
+        )
+
+        # Assert
+        with pytest.raises(ClientAuthenticationError):
+            fsc.create_directory('testdir44')
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

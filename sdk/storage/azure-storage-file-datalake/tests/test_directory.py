@@ -29,7 +29,7 @@ from azure.storage.filedatalake import (
     generate_file_system_sas,
     DataLakeTokenAudience
 )
-from azure.storage.filedatalake._models import AccessControlChangeCounters, AccessControlChangeResult, TokenAudience
+from azure.storage.filedatalake._models import AccessControlChangeCounters, AccessControlChangeResult
 from azure.storage.filedatalake._serialize import _SUPPORTED_API_VERSIONS
 
 from devtools_testutils import recorded_by_proxy
@@ -1565,17 +1565,19 @@ class TestDirectory(StorageRecordedTestCase):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
+        # Arrange
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-
         directory_name = self._get_directory_reference()
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         directory_client.create_directory()
 
+        # Act
         token_credential = self.generate_oauth_token()
         directory_client = DataLakeDirectoryClient(
             self.dsc.url, self.file_system_name, directory_name,
-            credential=token_credential, audience=TokenAudience.public_audience())
+            credential=token_credential, audience=DataLakeTokenAudience.public_audience())
 
+        # Assert
         response = directory_client.create_sub_directory('testsubdir')
         assert response is not None
 
@@ -1585,19 +1587,21 @@ class TestDirectory(StorageRecordedTestCase):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
+        # Arrange
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-
         directory_name = self._get_directory_reference()
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         directory_client.create_directory()
 
+        # Act
         token_credential = self.generate_oauth_token()
         audience_str = f'https://{datalake_storage_account_name}.blob.core.windows.net'
         directory_client = DataLakeDirectoryClient(
             self.dsc.url, self.file_system_name, directory_name,
-            credential=token_credential, audience=TokenAudience(audience_str)
+            credential=token_credential, audience=DataLakeTokenAudience(audience_str)
         )
 
+        # Assert
         response = directory_client.create_sub_directory('testsubdir')
         assert response is not None
 
@@ -1607,12 +1611,13 @@ class TestDirectory(StorageRecordedTestCase):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
+        # Arrange
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-
         directory_name = self._get_directory_reference()
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         directory_client.create_directory()
 
+        # Act
         token_credential = self.generate_oauth_token()
         directory_client = DataLakeDirectoryClient(
             self.dsc.url, self.file_system_name, directory_name,
@@ -1620,6 +1625,7 @@ class TestDirectory(StorageRecordedTestCase):
             audience=DataLakeTokenAudience.get_datalake_account_audience(datalake_storage_account_name)
         )
 
+        # Assert
         response = directory_client.create_sub_directory('testsubdir')
         assert response is not None
 
@@ -1629,19 +1635,21 @@ class TestDirectory(StorageRecordedTestCase):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
+        # Arrange
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-
         directory_name = self._get_directory_reference()
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         directory_client.create_directory()
 
+        # Act
         token_credential = self.generate_oauth_token()
         audience_str = f'https://badaudience.blob.core.windows.net/'
         directory_client = DataLakeDirectoryClient(
             self.dsc.url, self.file_system_name, directory_name,
-            credential=token_credential, audience=TokenAudience(audience_str)
+            credential=token_credential, audience=DataLakeTokenAudience(audience_str)
         )
 
+        # Assert
         with pytest.raises(ClientAuthenticationError):
             directory_client.create_sub_directory('testsubdir')
 

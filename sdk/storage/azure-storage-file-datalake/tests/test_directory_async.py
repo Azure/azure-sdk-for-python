@@ -12,6 +12,7 @@ import pytest
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     AzureError,
+    ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
     ResourceModifiedError,
@@ -22,6 +23,7 @@ from azure.storage.filedatalake import (
     AccessControlChangeCounters,
     AccessControlChangeResult,
     ContentSettings,
+    DataLakeTokenAudience,
     DirectorySasPermissions,
     EncryptionScopeOptions,
     FileSystemSasPermissions,
@@ -1504,6 +1506,102 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         assert filesys_client2.api_version == "2019-02-02"
         assert dir_client2.api_version == "2019-02-02"
         assert file_client2.api_version == "2019-02-02"
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_public_audience_dir_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # generate a token with directory level create permission
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        directory_client = DataLakeDirectoryClient(
+            self.dsc.url, self.file_system_name, directory_name,
+            credential=token_credential, audience=DataLakeTokenAudience.public_audience())
+
+        # Assert
+        response = directory_client.create_sub_directory('testsubdir')
+        assert response is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_custom_audience_dir_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # generate a token with directory level create permission
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        audience_str = f'https://{datalake_storage_account_name}.blob.core.windows.net'
+        directory_client = DataLakeDirectoryClient(
+            self.dsc.url, self.file_system_name, directory_name,
+            credential=token_credential, audience=DataLakeTokenAudience(audience_str))
+
+        # Assert
+        response = directory_client.create_sub_directory('testsubdir')
+        assert response is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_storage_account_audience_dir_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # generate a token with directory level create permission
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        directory_client = DataLakeDirectoryClient(
+            self.dsc.url, self.file_system_name, directory_name,
+            credential=token_credential,
+            audience=DataLakeTokenAudience.get_datalake_account_audience(datalake_storage_account_name)
+        )
+
+        # Assert
+        response = directory_client.create_sub_directory('testsubdir')
+        assert response is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_bad_audience_dir_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # generate a token with directory level create permission
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        audience_str = f'https://badaudience.blob.core.windows.net/'
+        directory_client = DataLakeDirectoryClient(
+            self.dsc.url, self.file_system_name, directory_name,
+            credential=token_credential, audience=DataLakeTokenAudience(audience_str))
+
+        # Assert
+        with pytest.raises(ClientAuthenticationError):
+            await directory_client.create_sub_directory('testsubdir')
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

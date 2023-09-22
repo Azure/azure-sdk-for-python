@@ -90,6 +90,7 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             credential=credential,
             **kwargs
         )
+        kwargs.pop('audience', None)
         self._blob_service_client = BlobServiceClient(self._blob_account_url, credential, **kwargs)
         self._blob_service_client._hosts[LocationMode.SECONDARY] = ""  #pylint: disable=protected-access
         self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url, pipeline=self._pipeline)

@@ -517,7 +517,7 @@ class TokenAudience():
         :rtype: TokenAudience
         """
         return cls(TokenAudience._STORAGE_OAUTH_SCOPE)
-    
+
     def create_default_scope(self) -> Self:
         """Creates a scope with the respective audience and default scope.
 

@@ -8,11 +8,12 @@ import pytest
 import sys
 
 from azure.core.credentials import AzureNamedKeyCredential
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 
 from azure.storage.filedatalake import (
     AnalyticsLogging,
     CorsRule,
+    DataLakeTokenAudience,
     Metrics,
     RetentionPolicy,
     StaticWebsite)
@@ -454,3 +455,89 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         dir_client._datalake_client_for_blob_operation.close.assert_called_once()
         file_client._client.__aexit__.assert_called_once()
         file_client._datalake_client_for_blob_operation.close.assert_called_once()
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_public_audience_service_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        await self.dsc.create_file_system('testfs1')
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        dsc = DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, "blob"),
+            credential=token_credential,
+            audience=DataLakeTokenAudience.public_audience()
+        )
+
+        # Assert
+        response = await dsc.create_file_system('testfs11')
+        assert response is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_custom_audience_service_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        await self.dsc.create_file_system('testfs2')
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        audience_str = f'https://{datalake_storage_account_name}.blob.core.windows.net'
+        dsc = DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, "blob"),
+            credential=token_credential,
+            audience=DataLakeTokenAudience(audience_str)
+        )
+
+        # Assert
+        response = await dsc.create_file_system('testfs22')
+        assert response is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_storage_account_audience_service_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        await self.dsc.create_file_system('testfs3')
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        dsc = DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, "blob"),
+            credential=token_credential,
+            audience=DataLakeTokenAudience.get_datalake_account_audience(datalake_storage_account_name)
+        )
+
+        # Assert
+        response = await dsc.create_file_system('testfs33')
+        assert response is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_bad_audience_service_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        await self.dsc.create_file_system('testfs4')
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        audience_str = f'https://badaudience.blob.core.windows.net/'
+        dsc = DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, "blob"),
+            credential=token_credential,
+            audience=DataLakeTokenAudience(audience_str)
+        )
+
+        # Assert
+        with pytest.raises(ClientAuthenticationError):
+            await dsc.create_file_system('testfs44')
