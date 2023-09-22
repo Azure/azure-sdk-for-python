@@ -39,15 +39,15 @@ class ScriptReference(RestTranslatableMixin):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: RestScriptReference) -> "ScriptReference":
+    def _from_rest_object(cls, obj: RestScriptReference) -> Optional["ScriptReference"]:
         if obj is None:
             return obj
         timeout_match = re.match(r"(\d+)m", obj.timeout) if obj.timeout else None
-        timeout_minutes = timeout_match.group(1) if timeout_match else None
+        _timeout_minutes: Optional[int] = int(timeout_match.group(1)) if timeout_match else None
         script_reference = ScriptReference(
             path=obj.script_data if obj.script_data else None,
             command=obj.script_arguments if obj.script_arguments else None,
-            timeout_minutes=timeout_minutes,
+            timeout_minutes=_timeout_minutes,
         )
         return script_reference
 
@@ -75,7 +75,7 @@ class SetupScripts(RestTranslatableMixin):
         return RestSetupScripts(scripts=scripts_to_execute)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestSetupScripts) -> "SetupScripts":
+    def _from_rest_object(cls, obj: RestSetupScripts) -> Optional["SetupScripts"]:
         if obj is None or obj.scripts is None:
             return None
         scripts = obj.scripts
