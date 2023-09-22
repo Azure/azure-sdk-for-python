@@ -52,7 +52,7 @@ from ._serialize import get_modify_conditions, get_container_cpk_scope_info, get
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
-    from ._models import (  # pylint: disable=unused-import
+    from ._models import (
         PublicAccess,
         AccessPolicy,
         StandardBlobTier,

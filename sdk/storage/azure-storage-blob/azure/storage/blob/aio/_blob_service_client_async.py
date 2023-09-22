@@ -45,7 +45,7 @@ if TYPE_CHECKING:
     from datetime import datetime
     from .._shared.models import UserDelegationKey
     from ._lease_async import BlobLeaseClient
-    from .._models import (  # pylint: disable=unused-import
+    from .._models import (
         BlobProperties,
         PublicAccess,
         BlobAnalyticsLogging,
@@ -53,7 +53,6 @@ if TYPE_CHECKING:
         CorsRule,
         RetentionPolicy,
         StaticWebsite,
-        BlobTokenAudience
     )
 
 

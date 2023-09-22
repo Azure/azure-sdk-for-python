@@ -41,7 +41,7 @@ if TYPE_CHECKING:
     from datetime import datetime
     from ._shared.models import UserDelegationKey
     from ._lease import BlobLeaseClient
-    from ._models import (  # pylint: disable=unused-import
+    from ._models import (
         ContainerProperties,
         BlobProperties,
         PublicAccess,

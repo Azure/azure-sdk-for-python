@@ -46,13 +46,12 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
     from datetime import datetime
-    from .._models import (  # pylint: disable=unused-import
+    from .._models import (
         ContentSettings,
         ImmutabilityPolicy,
         PremiumPageBlobTier,
         StandardBlobTier,
         SequenceNumberAction,
-        BlobTokenAudience
     )
 
 
