@@ -122,8 +122,9 @@ class EventGridEvent(object):
                 kwargs[item] = val if val is not None else NULL
 
         deserializer = Deserializer()
-        event_time = deserializer.deserialize_iso(event.get("eventTime"))
-        kwargs["event_time"] = event_time if event_time is not None else NULL
+        if event["eventTime"]:
+            event_time = deserializer.deserialize_iso(event.get("eventTime"))
+            kwargs["event_time"] = event_time if event_time is not None else NULL
 
         try:
             event_obj = cls(
