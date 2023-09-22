@@ -82,13 +82,14 @@ from ._resource_mover_service_api_enums import DependencyType
 from ._resource_mover_service_api_enums import JobName
 from ._resource_mover_service_api_enums import MoveResourceInputType
 from ._resource_mover_service_api_enums import MoveState
+from ._resource_mover_service_api_enums import MoveType
 from ._resource_mover_service_api_enums import ProvisioningState
 from ._resource_mover_service_api_enums import ResolutionType
 from ._resource_mover_service_api_enums import ResourceIdentityType
 from ._resource_mover_service_api_enums import TargetAvailabilityZone
 from ._resource_mover_service_api_enums import ZoneRedundant
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -167,6 +168,7 @@ __all__ = [
     "JobName",
     "MoveResourceInputType",
     "MoveState",
+    "MoveType",
     "ProvisioningState",
     "ResolutionType",
     "ResourceIdentityType",
