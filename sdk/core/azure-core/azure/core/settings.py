@@ -26,13 +26,14 @@
 """Provide access to settings for globally used Azure configuration values.
 """
 from __future__ import annotations
-from collections import namedtuple
 from enum import Enum
 import logging
-import os
 import sys
-from typing import Type, Optional, Callable, Union, Dict, Any, TypeVar, Tuple, Generic, Mapping, List
-from azure.core.tracing import AbstractSpan
+from typing import Type, Optional, Callable, Union, Dict, TypeVar
+
+from generic.core.settings import PrioritizedSetting, Settings as GenericSettings, convert_bool, convert_logging
+from generic.core.tracing import AbstractSpan
+
 
 ValidInputType = TypeVar("ValidInputType")
 ValueType = TypeVar("ValueType")
@@ -47,71 +48,6 @@ class _Unset(Enum):
 
 
 _unset = _Unset.token
-
-
-def convert_bool(value: Union[str, bool]) -> bool:
-    """Convert a string to True or False
-
-    If a boolean is passed in, it is returned as-is. Otherwise the function
-    maps the following strings, ignoring case:
-
-    * "yes", "1", "on" -> True
-    " "no", "0", "off" -> False
-
-    :param value: the value to convert
-    :type value: str or bool
-    :returns: A boolean value matching the intent of the input
-    :rtype: bool
-    :raises ValueError: If conversion to bool fails
-
-    """
-    if isinstance(value, bool):
-        return value
-    val = value.lower()
-    if val in ["yes", "1", "on", "true", "True"]:
-        return True
-    if val in ["no", "0", "off", "false", "False"]:
-        return False
-    raise ValueError("Cannot convert {} to boolean value".format(value))
-
-
-_levels = {
-    "CRITICAL": logging.CRITICAL,
-    "ERROR": logging.ERROR,
-    "WARNING": logging.WARNING,
-    "INFO": logging.INFO,
-    "DEBUG": logging.DEBUG,
-}
-
-
-def convert_logging(value: Union[str, int]) -> int:
-    """Convert a string to a Python logging level
-
-    If a log level is passed in, it is returned as-is. Otherwise the function
-    understands the following strings, ignoring case:
-
-    * "critical"
-    * "error"
-    * "warning"
-    * "info"
-    * "debug"
-
-    :param value: the value to convert
-    :type value: str or int
-    :returns: A log level as an int. See the logging module for details.
-    :rtype: int
-    :raises ValueError: If conversion to log level fails
-
-    """
-    if isinstance(value, int):
-        # If it's an int, return it. We don't need to check if it's in _levels, as custom int levels are allowed.
-        # https://docs.python.org/3/library/logging.html#levels
-        return value
-    val = value.upper()
-    level = _levels.get(val)
-    if not level:
-        raise ValueError("Cannot convert {} to log level, valid values are: {}".format(value, ", ".join(_levels)))
-    return level
 
 
 def _get_opencensus_span() -> Optional[Type[AbstractSpan]]:
@@ -199,127 +135,7 @@ def convert_tracing_impl(value: Optional[Union[str, Type[AbstractSpan]]]) -> Opt
     return wrapper_class
 
 
-class PrioritizedSetting(Generic[ValidInputType, ValueType]):
-    """Return a value for a global setting according to configuration precedence.
-
-    The following methods are searched in order for the setting:
-
-    4. immediate values
-    3. previously user-set value
-    2. environment variable
-    1. system setting
-    0. implicit default
-
-    If a value cannot be determined, a RuntimeError is raised.
-
-    The ``env_var`` argument specifies the name of an environment to check for
-    setting values, e.g. ``"AZURE_LOG_LEVEL"``.
-    If a ``convert`` function is provided, the result will be converted before being used.
-
-    The optional ``system_hook`` can be used to specify a function that will
-    attempt to look up a value for the setting from system-wide configurations.
-    If a ``convert`` function is provided, the hook result will be converted before being used.
-
-    The optional ``default`` argument specified an implicit default value for
-    the setting that is returned if no other methods provide a value. If a ``convert`` function is provided,
-    ``default`` will be converted before being used.
-
-    A ``convert`` argument may be provided to convert values before they are
-    returned. For instance to concert log levels in environment variables
-    to ``logging`` module values. If a ``convert`` function is provided, it must support
-    str as valid input type.
-
-    :param str name: the name of the setting
-    :param str env_var: the name of an environment variable to check for the setting
-    :param callable system_hook: a function that will attempt to look up a value for the setting
-    :param default: an implicit default value for the setting
-    :type default: any
-    :param callable convert: a function to convert values before they are returned
-    """
-
-    def __init__(
-        self,
-        name: str,
-        env_var: Optional[str] = None,
-        system_hook: Optional[Callable[[], ValidInputType]] = None,
-        default: Union[ValidInputType, _Unset] = _unset,
-        convert: Optional[Callable[[Union[ValidInputType, str]], ValueType]] = None,
-    ):
-
-        self._name = name
-        self._env_var = env_var
-        self._system_hook = system_hook
-        self._default = default
-        noop_convert: Callable[[Any], Any] = lambda x: x
-        self._convert: Callable[[Union[ValidInputType, str]], ValueType] = convert if convert else noop_convert
-        self._user_value: Union[ValidInputType, _Unset] = _unset
-
-    def __repr__(self) -> str:
-        return "PrioritizedSetting(%r)" % self._name
-
-    def __call__(self, value: Optional[ValidInputType] = None) -> ValueType:
-        """Return the setting value according to the standard precedence.
-
-        :param value: value
-        :type value: str or int or float or None
-        :returns: the value of the setting
-        :rtype: str or int or float
-        :raises: RuntimeError if no value can be determined
-        """
-
-        # 4. immediate values
-        if value is not None:
-            return self._convert(value)
-
-        # 3. previously user-set value
-        if not isinstance(self._user_value, _Unset):
-            return self._convert(self._user_value)
-
-        # 2. environment variable
-        if self._env_var and self._env_var in os.environ:
-            return self._convert(os.environ[self._env_var])
-
-        # 1. system setting
-        if self._system_hook:
-            return self._convert(self._system_hook())
-
-        # 0. implicit default
-        if not isinstance(self._default, _Unset):
-            return self._convert(self._default)
-
-        raise RuntimeError("No configured value found for setting %r" % self._name)
-
-    def __get__(self, instance: Any, owner: Optional[Any] = None) -> PrioritizedSetting[ValidInputType, ValueType]:
-        return self
-
-    def __set__(self, instance: Any, value: ValidInputType) -> None:
-        self.set_value(value)
-
-    def set_value(self, value: ValidInputType) -> None:
-        """Specify a value for this setting programmatically.
-
-        A value set this way takes precedence over all other methods except
-        immediate values.
-
-        :param value: a user-set value for this setting
-        :type value: str or int or float
-        """
-        self._user_value = value
-
-    def unset_value(self) -> None:
-        """Unset the previous user value such that the priority is reset."""
-        self._user_value = _unset
-
-    @property
-    def env_var(self) -> Optional[str]:
-        return self._env_var
-
-    @property
-    def default(self) -> Union[ValidInputType, _Unset]:
-        return self._default
-
-
-class Settings:
+class Settings(GenericSettings):
     """Settings for globally used Azure configuration values.
 
     You probably don't want to create an instance of this class, but call the singleton instance:
@@ -398,68 +214,7 @@ class Settings:
 
     """
 
-    def __init__(self) -> None:
-        self._defaults_only: bool = False
-
-    @property
-    def defaults_only(self) -> bool:
-        """Whether to ignore environment and system settings and return only base default values.
-
-        :rtype: bool
-        :returns: Whether to ignore environment and system settings and return only base default values.
-        """
-        return self._defaults_only
-
-    @defaults_only.setter
-    def defaults_only(self, value: bool) -> None:
-        self._defaults_only = value
-
-    @property
-    def defaults(self) -> Tuple[Any, ...]:
-        """Return implicit default values for all settings, ignoring environment and system.
-
-        :rtype: namedtuple
-        :returns: The implicit default values for all settings
-        """
-        props = {k: v.default for (k, v) in self.__class__.__dict__.items() if isinstance(v, PrioritizedSetting)}
-        return self._config(props)
-
-    @property
-    def current(self) -> Tuple[Any, ...]:
-        """Return the current values for all settings.
-
-        :rtype: namedtuple
-        :returns: The current values for all settings
-        """
-        if self.defaults_only:
-            return self.defaults
-        return self.config()
-
-    def config(self, **kwargs: Any) -> Tuple[Any, ...]:
-        """Return the currently computed settings, with values overridden by parameter values.
-
-        :keyword dict kwargs: Settings to override
-        :rtype: namedtuple
-        :returns: The current values for all settings, with values overridden by parameter values
-
-        Examples:
-
-        .. code-block:: python
-
-           # return current settings with log level overridden
-           settings.config(log_level=logging.DEBUG)
-
-        """
-        props = {k: v() for (k, v) in self.__class__.__dict__.items() if isinstance(v, PrioritizedSetting)}
-        props.update(kwargs)
-        return self._config(props)
-
-    def _config(self, props: Mapping[str, Any]) -> Tuple[Any, ...]:
-        keys: List[str] = list(props.keys())
-        # https://github.com/python/mypy/issues/4414
-        Config = namedtuple("Config", keys)  # type: ignore
-        return Config(**props)
-
+    # TODO: Consider allowing generic env vars to work in tandem.
     log_level: PrioritizedSetting[Union[str, int], int] = PrioritizedSetting(
         "log_level",
         env_var="AZURE_LOG_LEVEL",
@@ -482,6 +237,7 @@ class Settings:
         convert=convert_tracing_impl,
         default=None,
     )
+
 
 
 settings: Settings = Settings()

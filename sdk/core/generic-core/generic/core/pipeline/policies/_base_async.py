@@ -23,31 +23,35 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TypeVar, Iterator
+import abc
 
-from generic.core.paging import ItemPaged, PageIterator as GenericPageIterator
+from typing import Generic, TypeVar
+from .. import PipelineRequest, PipelineResponse
 
-from .exceptions import AzureError
-
-ReturnType = TypeVar("ReturnType")
-
-__all__ = ["ItemPaged", "PageIterator"]
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
 
 
-class PageIterator(GenericPageIterator):
+class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
+    """An async HTTP policy ABC.
 
-    def __next__(self) -> Iterator[ReturnType]:
-        if self.continuation_token is None and self._did_a_call_already:
-            raise StopIteration("End of paging")
-        try:
-            self._response = self._get_next(self.continuation_token)
-        except AzureError as error:
-            if not error.continuation_token:
-                error.continuation_token = self.continuation_token
-            raise
+    Use with an asynchronous pipeline.
+    """
 
-        self._did_a_call_already = True
+    next: "AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]"
+    """Pointer to the next policy or a transport (wrapped as a policy). Will be set at pipeline creation."""
 
-        self.continuation_token, self._current_page = self._extract_data(self._response)
+    @abc.abstractmethod
+    async def send(
+        self, request: PipelineRequest[HTTPRequestType]
+    ) -> PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]:
+        """Abstract send method for a asynchronous pipeline. Mutates the request.
 
-        return iter(self._current_page)
+        Context content is dependent on the HttpTransport.
+
+        :param request: The pipeline request object.
+        :type request: ~generic.core.pipeline.PipelineRequest
+        :return: The pipeline response object.
+        :rtype: ~generic.core.pipeline.PipelineResponse
+        """

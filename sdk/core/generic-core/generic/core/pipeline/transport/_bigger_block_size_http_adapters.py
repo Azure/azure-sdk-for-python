@@ -23,31 +23,26 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TypeVar, Iterator
 
-from generic.core.paging import ItemPaged, PageIterator as GenericPageIterator
-
-from .exceptions import AzureError
-
-ReturnType = TypeVar("ReturnType")
-
-__all__ = ["ItemPaged", "PageIterator"]
+import sys
+from requests.adapters import HTTPAdapter  # pylint: disable=networking-import-outside-azure-core-transport
 
 
-class PageIterator(GenericPageIterator):
+class BiggerBlockSizeHTTPAdapter(HTTPAdapter):
+    def get_connection(self, url, proxies=None):
+        """Returns a urllib3 connection for the given URL. This should not be
+        called from user code, and is only exposed for use when subclassing the
+        :class:`HTTPAdapter <requests.adapters.HTTPAdapter>`.
 
-    def __next__(self) -> Iterator[ReturnType]:
-        if self.continuation_token is None and self._did_a_call_already:
-            raise StopIteration("End of paging")
-        try:
-            self._response = self._get_next(self.continuation_token)
-        except AzureError as error:
-            if not error.continuation_token:
-                error.continuation_token = self.continuation_token
-            raise
-
-        self._did_a_call_already = True
-
-        self.continuation_token, self._current_page = self._extract_data(self._response)
-
-        return iter(self._current_page)
+        :param str url: The URL to connect to.
+        :param dict proxies: (optional) A Requests-style dictionary of proxies used on this request.
+        :rtype: urllib3.ConnectionPool
+        :returns: The urllib3 ConnectionPool for the given URL.
+        """
+        conn = super(BiggerBlockSizeHTTPAdapter, self).get_connection(url, proxies)
+        system_version = tuple(sys.version_info)[:3]
+        if system_version[:2] >= (3, 7):
+            if not conn.conn_kw:
+                conn.conn_kw = {}
+            conn.conn_kw["blocksize"] = 32768
+        return conn

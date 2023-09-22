@@ -23,31 +23,24 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TypeVar, Iterator
 
-from generic.core.paging import ItemPaged, PageIterator as GenericPageIterator
-
-from .exceptions import AzureError
-
-ReturnType = TypeVar("ReturnType")
-
-__all__ = ["ItemPaged", "PageIterator"]
+from enum import Enum
 
 
-class PageIterator(GenericPageIterator):
+class MatchConditions(Enum):
+    """An enum to describe match conditions."""
 
-    def __next__(self) -> Iterator[ReturnType]:
-        if self.continuation_token is None and self._did_a_call_already:
-            raise StopIteration("End of paging")
-        try:
-            self._response = self._get_next(self.continuation_token)
-        except AzureError as error:
-            if not error.continuation_token:
-                error.continuation_token = self.continuation_token
-            raise
+    Unconditionally = 1
+    """Matches any condition"""
 
-        self._did_a_call_already = True
+    IfNotModified = 2
+    """If the target object is not modified. Usually it maps to etag=<specific etag>"""
 
-        self.continuation_token, self._current_page = self._extract_data(self._response)
+    IfModified = 3
+    """Only if the target object is modified. Usually it maps to etag!=<specific etag>"""
 
-        return iter(self._current_page)
+    IfPresent = 4
+    """If the target object exists. Usually it maps to etag='*'"""
+
+    IfMissing = 5
+    """If the target object does not exist. Usually it maps to etag!='*'"""

@@ -23,31 +23,33 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TypeVar, Iterator
-
-from generic.core.paging import ItemPaged, PageIterator as GenericPageIterator
-
-from .exceptions import AzureError
-
-ReturnType = TypeVar("ReturnType")
-
-__all__ = ["ItemPaged", "PageIterator"]
+from typing import Optional, Type
+from types import TracebackType
+from ._requests_basic import RequestsTransport
+from ._base_async import AsyncHttpTransport
 
 
-class PageIterator(GenericPageIterator):
+class RequestsAsyncTransportBase(RequestsTransport, AsyncHttpTransport):  # type: ignore
+    async def _retrieve_request_data(self, request):
+        if hasattr(request.data, "__aiter__"):
+            # Need to consume that async generator, since requests can't do anything with it
+            # That's not ideal, but a list is our only choice. Memory not optimal here,
+            # but providing an async generator to a requests based transport is not optimal too
+            new_data = []
+            async for part in request.data:
+                new_data.append(part)
+            data_to_send = iter(new_data)
+        else:
+            data_to_send = request.data
+        return data_to_send
 
-    def __next__(self) -> Iterator[ReturnType]:
-        if self.continuation_token is None and self._did_a_call_already:
-            raise StopIteration("End of paging")
-        try:
-            self._response = self._get_next(self.continuation_token)
-        except AzureError as error:
-            if not error.continuation_token:
-                error.continuation_token = self.continuation_token
-            raise
+    async def __aenter__(self):
+        return super(RequestsAsyncTransportBase, self).__enter__()
 
-        self._did_a_call_already = True
-
-        self.continuation_token, self._current_page = self._extract_data(self._response)
-
-        return iter(self._current_page)
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ):
+        return super(RequestsAsyncTransportBase, self).__exit__(exc_type, exc_value, traceback)

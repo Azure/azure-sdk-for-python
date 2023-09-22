@@ -7,3 +7,4 @@ opencensus-ext-threading
 -e ../../../tools/azure-sdk-tools
 -e ../../../tools/azure-devtools
 -e tests/testserver_tests/coretestserver
+-e ../generic-core/

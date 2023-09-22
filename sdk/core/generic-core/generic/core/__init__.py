@@ -23,31 +23,19 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TypeVar, Iterator
 
-from generic.core.paging import ItemPaged, PageIterator as GenericPageIterator
+from ._version import VERSION
 
-from .exceptions import AzureError
+__version__ = VERSION
 
-ReturnType = TypeVar("ReturnType")
+from ._pipeline_client import PipelineClient
+from ._match_conditions import MatchConditions
+from ._enum_meta import CaseInsensitiveEnumMeta
+from ._pipeline_client_async import AsyncPipelineClient
 
-__all__ = ["ItemPaged", "PageIterator"]
-
-
-class PageIterator(GenericPageIterator):
-
-    def __next__(self) -> Iterator[ReturnType]:
-        if self.continuation_token is None and self._did_a_call_already:
-            raise StopIteration("End of paging")
-        try:
-            self._response = self._get_next(self.continuation_token)
-        except AzureError as error:
-            if not error.continuation_token:
-                error.continuation_token = self.continuation_token
-            raise
-
-        self._did_a_call_already = True
-
-        self.continuation_token, self._current_page = self._extract_data(self._response)
-
-        return iter(self._current_page)
+__all__ = [
+    "PipelineClient",
+    "MatchConditions",
+    "CaseInsensitiveEnumMeta",
+    "AsyncPipelineClient",
+]

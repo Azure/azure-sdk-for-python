@@ -28,7 +28,6 @@ import json
 import logging
 import sys
 
-from types import TracebackType
 from typing import (
     Callable,
     Any,
@@ -44,6 +43,12 @@ from typing import (
     TYPE_CHECKING,
 )
 from typing_extensions import Protocol, runtime_checkable
+
+from generic.core.exceptions import (
+    SerializationError,
+    DeserializationError,
+    ServiceError as AzureError,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -269,50 +274,6 @@ class ODataV4Format:
             error_str += "\nInner error: {}".format(json.dumps(self.innererror, indent=4))
         return error_str
 
-
-class AzureError(Exception):
-    """Base exception for all errors.
-
-    :param object message: The message object stringified as 'message' attribute
-    :keyword error: The original exception if any
-    :paramtype error: Exception
-
-    :ivar inner_exception: The exception passed with the 'error' kwarg
-    :vartype inner_exception: Exception
-    :ivar exc_type: The exc_type from sys.exc_info()
-    :ivar exc_value: The exc_value from sys.exc_info()
-    :ivar exc_traceback: The exc_traceback from sys.exc_info()
-    :ivar exc_msg: A string formatting of message parameter, exc_type and exc_value
-    :ivar str message: A stringified version of the message parameter
-    :ivar str continuation_token: A token reference to continue an incomplete operation. This value is optional
-     and will be `None` where continuation is either unavailable or not applicable.
-    """
-
-    def __init__(self, message: Optional[object], *args: Any, **kwargs: Any) -> None:
-        self.inner_exception: Optional[BaseException] = kwargs.get("error")
-
-        exc_info = sys.exc_info()
-        self.exc_type: Optional[Type[Any]] = exc_info[0]
-        self.exc_value: Optional[BaseException] = exc_info[1]
-        self.exc_traceback: Optional[TracebackType] = exc_info[2]
-
-        self.exc_type = self.exc_type if self.exc_type else type(self.inner_exception)
-        self.exc_msg: str = "{}, {}: {}".format(message, self.exc_type.__name__, self.exc_value)
-        self.message: str = str(message)
-        self.continuation_token: Optional[str] = kwargs.get("continuation_token")
-        super(AzureError, self).__init__(self.message, *args)
-
-    def raise_with_traceback(self) -> None:
-        """Raise the exception with the existing traceback.
-
-        .. deprecated:: 1.22.0
-           This method is deprecated as we don't support Python 2 anymore. Use raise/from instead.
-        """
-        try:
-            raise super(AzureError, self).with_traceback(self.exc_traceback)  # pylint: disable=raise-missing-from
-        except AttributeError:
-            self.__traceback__: Optional[TracebackType] = self.exc_traceback
-            raise self  # pylint: disable=raise-missing-from
 
 
 class ServiceRequestError(AzureError):
@@ -569,11 +530,3 @@ class ResponseNotReadError(AzureError):
             "Call .read() on the response first.".format(response.request)
         )
         super(ResponseNotReadError, self).__init__(message)
-
-
-class SerializationError(ValueError):
-    """Raised if an error is encountered during serialization."""
-
-
-class DeserializationError(ValueError):
-    """Raised if an error is encountered during deserialization."""
