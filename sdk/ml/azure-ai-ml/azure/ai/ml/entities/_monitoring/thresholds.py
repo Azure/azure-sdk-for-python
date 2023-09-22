@@ -693,68 +693,83 @@ class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):  
     def _to_rest_object(self) -> GenerationSafetyQualityMetricThreshold:
         metric_thresholds = []
         if self.groundedness:
-            acceptable_threshold = MonitoringThreshold(value=3)
+            if "acceptable_groundedness_score_per_instance" in self.groundedness:
+                acceptable_threshold = MonitoringThreshold(value=self.groundedness["acceptable_groundedness_score_per_instance"])
+            else:
+                acceptable_threshold = MonitoringThreshold(value=3)
             metric_thresholds.append(
                 GenerationSafetyQualityMetricThreshold(
-                    metric="acceptable_groundedness_score_per_instance", threshold=acceptable_threshold
+                    metric="AcceptableGroundednessScorePerInstance", threshold=acceptable_threshold
                 )
             )
             aggregated_threshold = MonitoringThreshold(value=self.groundedness["aggregated_groundedness_pass_rate"])
             metric_thresholds.append(
                 GenerationSafetyQualityMetricThreshold(
-                    metric="aggregated_groundedness_pass_rate", threshold=aggregated_threshold
+                    metric="AggregatedGroundednessPassRate", threshold=aggregated_threshold
                 )
             )
         if self.relevance:
-            acceptable_threshold = MonitoringThreshold(value=3)
+            if "acceptable_relevance_score_per_instance" in self.relevance:
+                acceptable_threshold = MonitoringThreshold(value=self.relevance["acceptable_relevance_score_per_instance"])
+            else:
+                acceptable_threshold = MonitoringThreshold(value=3)
             metric_thresholds.append(
                 GenerationSafetyQualityMetricThreshold(
-                    metric="acceptable_relevance_score_per_instance", threshold=acceptable_threshold
+                    metric="AcceptableRelevanceScorePerInstance", threshold=acceptable_threshold
                 )
             )
             aggregated_threshold = MonitoringThreshold(value=self.relevance["aggregated_relevance_pass_rate"])
             metric_thresholds.append(
                 GenerationSafetyQualityMetricThreshold(
-                    metric="aggregated_relevance_pass_rate", threshold=aggregated_threshold
+                    metric="AggregatedRelevancePassRate", threshold=aggregated_threshold
                 )
             )
         if self.coherence:
-            acceptable_threshold = MonitoringThreshold(value=3)
+            if "acceptable_coherence_score_per_instance" in self.coherence:
+                acceptable_threshold = MonitoringThreshold(value=self.coherence["acceptable_coherence_score_per_instance"])
+            else:
+                acceptable_threshold = MonitoringThreshold(value=3)
             metric_thresholds.append(
                 GenerationSafetyQualityMetricThreshold(
-                    metric="acceptable_coherence_score_per_instance", threshold=acceptable_threshold
+                    metric="AcceptableCoherenceScorePerInstance", threshold=acceptable_threshold
                 )
             )
             aggregated_threshold = MonitoringThreshold(value=self.coherence["aggregated_coherence_pass_rate"])
             metric_thresholds.append(
                 GenerationSafetyQualityMetricThreshold(
-                    metric="aggregated_coherence_pass_rate", threshold=aggregated_threshold
+                    metric="AggregatedCoherencePassRate", threshold=aggregated_threshold
                 )
             )
         if self.fluency:
-            acceptable_threshold = MonitoringThreshold(value=3)
+            if "acceptable_fluency_score_per_instance" in self.fluency:
+                acceptable_threshold = MonitoringThreshold(value=self.fluency["acceptable_fluency_score_per_instance"])
+            else:
+                acceptable_threshold = MonitoringThreshold(value=3)
             metric_thresholds.append(
                 GenerationSafetyQualityMetricThreshold(
-                    metric="acceptable_fluency_score_per_instance", threshold=acceptable_threshold
+                    metric="AcceptableFluencyScorePerInstance", threshold=acceptable_threshold
                 )
             )
             aggregated_threshold = MonitoringThreshold(value=self.fluency["aggregated_fluency_pass_rate"])
             metric_thresholds.append(
                 GenerationSafetyQualityMetricThreshold(
-                    metric="aggregated_fluency_pass_rate", threshold=aggregated_threshold
+                    metric="AggregatedFluencyPassRate", threshold=aggregated_threshold
                 )
             )
         if self.similarity:
-            acceptable_threshold = MonitoringThreshold(value=3)
+            if "acceptable_similarity_score_per_instance" in self.similarity:
+                acceptable_threshold = MonitoringThreshold(value=self.similarity["acceptable_similarity_score_per_instance"])
+            else:
+                acceptable_threshold = MonitoringThreshold(value=3)
             metric_thresholds.append(
                 GenerationSafetyQualityMetricThreshold(
-                    metric="acceptable_similarity_score_per_instance", threshold=acceptable_threshold
+                    metric="AcceptableSimilarityScorePerInstance", threshold=acceptable_threshold
                 )
             )
             aggregated_threshold = MonitoringThreshold(value=self.similarity["aggregated_similarity_pass_rate"])
             metric_thresholds.append(
                 GenerationSafetyQualityMetricThreshold(
-                    metric="aggregated_similarity_pass_rate", threshold=aggregated_threshold
+                    metric="AggregatedSimilarityPassRate", threshold=aggregated_threshold
                 )
             )
         return metric_thresholds
@@ -770,15 +785,25 @@ class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):  
         similarity = {}
 
         for threshold in obj:
-            if threshold.metric == "aggregated_groundedness_pass_rate":
+            if threshold.metric == "AcceptableGroundednessScorePerInstance":
+                groundedness["acceptable_groundedness_score_per_instance"] = threshold.threshold.value
+            if threshold.metric == "AcceptableRelevanceScorePerInstance":
+                relevance["acceptable_relevance_score_per_instance"] = threshold.threshold.value
+            if threshold.metric == "AcceptableCoherenceScorePerInstance":
+                coherence["acceptable_coherence_score_per_instance"] = threshold.threshold.value
+            if threshold.metric == "AcceptableFluencyScorePerInstance":
+                fluency["acceptable_fluency_score_per_instance"] = threshold.threshold.value
+            if threshold.metric == "AcceptableSimilarityScorePerInstance":
+                similarity["acceptable_similarity_score_per_instance"] = threshold.threshold.value
+            if threshold.metric == "AggregatedGroundednessPassRate":
                 groundedness["aggregated_groundedness_pass_rate"] = threshold.threshold.value
-            if threshold.metric == "aggregated_relevance_pass_rate":
+            if threshold.metric == "AggregatedRelevancePassRate":
                 relevance["aggregated_relevance_pass_rate"] = threshold.threshold.value
-            if threshold.metric == "aggregated_coherence_pass_rate":
+            if threshold.metric == "AggregatedCoherencePassRate":
                 coherence["aggregated_coherence_pass_rate"] = threshold.threshold.value
-            if threshold.metric == "aggregated_fluency_pass_rate":
+            if threshold.metric == "AggregatedFluencyPassRate":
                 fluency["aggregated_fluency_pass_rate"] = threshold.threshold.value
-            if threshold.metric == "aggregated_similarity_pass_rate":
+            if threshold.metric == "AggregatedSimilarityPassRate":
                 similarity["aggregated_similarity_pass_rate"] = threshold.threshold.value
 
         return cls(

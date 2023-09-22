@@ -144,19 +144,19 @@ class CustomMonitoringMetricThresholdSchema(MetricThresholdSchema):
 
 class GenerationSafetyQualityMetricThresholdSchema(metaclass=PatchedSchemaMeta):  # pylint: disable=name-too-long
     groundedness = fields.Dict(
-        keys=StringTransformedEnum(allowed_values=["aggregated_groundedness_pass_rate"]), values=fields.Number()
+        keys=StringTransformedEnum(allowed_values=["aggregated_groundedness_pass_rate", "acceptable_groundedness_score_per_instance"]), values=fields.Number()
     )
     relevance = fields.Dict(
-        keys=StringTransformedEnum(allowed_values=["aggregated_relevance_pass_rate"]), values=fields.Number()
+        keys=StringTransformedEnum(allowed_values=["aggregated_relevance_pass_rate", "acceptable_relevance_score_per_instance"]), values=fields.Number()
     )
     coherence = fields.Dict(
-        keys=StringTransformedEnum(allowed_values=["aggregated_coherence_pass_rate"]), values=fields.Number()
+        keys=StringTransformedEnum(allowed_values=["aggregated_coherence_pass_rate", "acceptable_coherence_score_per_instance"]), values=fields.Number()
     )
     fluency = fields.Dict(
-        keys=StringTransformedEnum(allowed_values=["aggregated_fluency_pass_rate"]), values=fields.Number()
+        keys=StringTransformedEnum(allowed_values=["aggregated_fluency_pass_rate", "acceptable_fluency_score_per_instance"]), values=fields.Number()
     )
     similarity = fields.Dict(
-        keys=StringTransformedEnum(allowed_values=["aggregated_similarity_pass_rate"]), values=fields.Number()
+        keys=StringTransformedEnum(allowed_values=["aggregated_similarity_pass_rate", "acceptable_similarity_score_per_instance"]), values=fields.Number()
     )
 
     @post_load
