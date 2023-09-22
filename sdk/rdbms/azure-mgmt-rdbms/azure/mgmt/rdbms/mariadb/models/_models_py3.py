@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,15 +8,23 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._maria_db_management_client_enums import *
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -31,29 +40,28 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -68,22 +76,20 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
 
 
 class Advisor(ProxyResource):
@@ -99,34 +105,33 @@ class Advisor(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param properties: The properties of a recommendation action advisor.
-    :type properties: any
+    :ivar properties: The properties of a recommendation action advisor.
+    :vartype properties: JSON
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'object'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "object"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional[Any] = None,
-        **kwargs
-    ):
-        super(Advisor, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional[JSON] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: The properties of a recommendation action advisor.
+        :paramtype properties: JSON
+        """
+        super().__init__(**kwargs)
         self.properties = properties
 
 
-class AdvisorsResultList(msrest.serialization.Model):
+class AdvisorsResultList(_serialization.Model):
     """A list of query statistics.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -138,42 +143,39 @@ class AdvisorsResultList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Advisor]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Advisor]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AdvisorsResultList, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class CloudErrorAutoGenerated(msrest.serialization.Model):
+class CloudErrorAutoGenerated(_serialization.Model):
     """An error response from the Batch service.
 
-    :param error: Error message.
-    :type error: ~azure.mgmt.rdbms.mariadb.models.ErrorResponse
+    :ivar error: Error message.
+    :vartype error: ~azure.mgmt.rdbms.mariadb.models.ErrorResponse
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
+        "error": {"key": "error", "type": "ErrorResponse"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorResponse"] = None,
-        **kwargs
-    ):
-        super(CloudErrorAutoGenerated, self).__init__(**kwargs)
+    def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: Error message.
+        :paramtype error: ~azure.mgmt.rdbms.mariadb.models.ErrorResponse
+        """
+        super().__init__(**kwargs)
         self.error = error
 
 
@@ -190,8 +192,8 @@ class Configuration(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param value: Value of the configuration.
-    :type value: str
+    :ivar value: Value of the configuration.
+    :vartype value: str
     :ivar description: Description of the configuration.
     :vartype description: str
     :ivar default_value: Default value of the configuration.
@@ -200,40 +202,40 @@ class Configuration(ProxyResource):
     :vartype data_type: str
     :ivar allowed_values: Allowed values of the configuration.
     :vartype allowed_values: str
-    :param source: Source of the configuration.
-    :type source: str
+    :ivar source: Source of the configuration.
+    :vartype source: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'description': {'readonly': True},
-        'default_value': {'readonly': True},
-        'data_type': {'readonly': True},
-        'allowed_values': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "description": {"readonly": True},
+        "default_value": {"readonly": True},
+        "data_type": {"readonly": True},
+        "allowed_values": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'value': {'key': 'properties.value', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'default_value': {'key': 'properties.defaultValue', 'type': 'str'},
-        'data_type': {'key': 'properties.dataType', 'type': 'str'},
-        'allowed_values': {'key': 'properties.allowedValues', 'type': 'str'},
-        'source': {'key': 'properties.source', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "value": {"key": "properties.value", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "default_value": {"key": "properties.defaultValue", "type": "str"},
+        "data_type": {"key": "properties.dataType", "type": "str"},
+        "allowed_values": {"key": "properties.allowedValues", "type": "str"},
+        "source": {"key": "properties.source", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[str] = None,
-        source: Optional[str] = None,
-        **kwargs
-    ):
-        super(Configuration, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[str] = None, source: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: Value of the configuration.
+        :paramtype value: str
+        :keyword source: Source of the configuration.
+        :paramtype source: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.description = None
         self.default_value = None
@@ -242,24 +244,23 @@ class Configuration(ProxyResource):
         self.source = source
 
 
-class ConfigurationListResult(msrest.serialization.Model):
+class ConfigurationListResult(_serialization.Model):
     """A list of server configurations.
 
-    :param value: The list of server configurations.
-    :type value: list[~azure.mgmt.rdbms.mariadb.models.Configuration]
+    :ivar value: The list of server configurations.
+    :vartype value: list[~azure.mgmt.rdbms.mariadb.models.Configuration]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Configuration]'},
+        "value": {"key": "value", "type": "[Configuration]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Configuration"]] = None,
-        **kwargs
-    ):
-        super(ConfigurationListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.Configuration"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The list of server configurations.
+        :paramtype value: list[~azure.mgmt.rdbms.mariadb.models.Configuration]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
@@ -276,60 +277,59 @@ class Database(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param charset: The charset of the database.
-    :type charset: str
-    :param collation: The collation of the database.
-    :type collation: str
+    :ivar charset: The charset of the database.
+    :vartype charset: str
+    :ivar collation: The collation of the database.
+    :vartype collation: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'charset': {'key': 'properties.charset', 'type': 'str'},
-        'collation': {'key': 'properties.collation', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "charset": {"key": "properties.charset", "type": "str"},
+        "collation": {"key": "properties.collation", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        charset: Optional[str] = None,
-        collation: Optional[str] = None,
-        **kwargs
-    ):
-        super(Database, self).__init__(**kwargs)
+    def __init__(self, *, charset: Optional[str] = None, collation: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword charset: The charset of the database.
+        :paramtype charset: str
+        :keyword collation: The collation of the database.
+        :paramtype collation: str
+        """
+        super().__init__(**kwargs)
         self.charset = charset
         self.collation = collation
 
 
-class DatabaseListResult(msrest.serialization.Model):
+class DatabaseListResult(_serialization.Model):
     """A List of databases.
 
-    :param value: The list of databases housed in a server.
-    :type value: list[~azure.mgmt.rdbms.mariadb.models.Database]
+    :ivar value: The list of databases housed in a server.
+    :vartype value: list[~azure.mgmt.rdbms.mariadb.models.Database]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Database]'},
+        "value": {"key": "value", "type": "[Database]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Database"]] = None,
-        **kwargs
-    ):
-        super(DatabaseListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.Database"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The list of databases housed in a server.
+        :paramtype value: list[~azure.mgmt.rdbms.mariadb.models.Database]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -337,30 +337,29 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -377,26 +376,24 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponse]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorResponse]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -419,60 +416,67 @@ class FirewallRule(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param start_ip_address: Required. The start IP address of the server firewall rule. Must be
-     IPv4 format.
-    :type start_ip_address: str
-    :param end_ip_address: Required. The end IP address of the server firewall rule. Must be IPv4
-     format.
-    :type end_ip_address: str
+    :ivar start_ip_address: The start IP address of the server firewall rule. Must be IPv4 format.
+     Required.
+    :vartype start_ip_address: str
+    :ivar end_ip_address: The end IP address of the server firewall rule. Must be IPv4 format.
+     Required.
+    :vartype end_ip_address: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'start_ip_address': {'required': True, 'pattern': r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'},
-        'end_ip_address': {'required': True, 'pattern': r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "start_ip_address": {
+            "required": True,
+            "pattern": r"^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$",
+        },
+        "end_ip_address": {
+            "required": True,
+            "pattern": r"^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$",
+        },
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'start_ip_address': {'key': 'properties.startIpAddress', 'type': 'str'},
-        'end_ip_address': {'key': 'properties.endIpAddress', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "start_ip_address": {"key": "properties.startIpAddress", "type": "str"},
+        "end_ip_address": {"key": "properties.endIpAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        start_ip_address: str,
-        end_ip_address: str,
-        **kwargs
-    ):
-        super(FirewallRule, self).__init__(**kwargs)
+    def __init__(self, *, start_ip_address: str, end_ip_address: str, **kwargs: Any) -> None:
+        """
+        :keyword start_ip_address: The start IP address of the server firewall rule. Must be IPv4
+         format. Required.
+        :paramtype start_ip_address: str
+        :keyword end_ip_address: The end IP address of the server firewall rule. Must be IPv4 format.
+         Required.
+        :paramtype end_ip_address: str
+        """
+        super().__init__(**kwargs)
         self.start_ip_address = start_ip_address
         self.end_ip_address = end_ip_address
 
 
-class FirewallRuleListResult(msrest.serialization.Model):
+class FirewallRuleListResult(_serialization.Model):
     """A list of firewall rules.
 
-    :param value: The list of firewall rules in a server.
-    :type value: list[~azure.mgmt.rdbms.mariadb.models.FirewallRule]
+    :ivar value: The list of firewall rules in a server.
+    :vartype value: list[~azure.mgmt.rdbms.mariadb.models.FirewallRule]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[FirewallRule]'},
+        "value": {"key": "value", "type": "[FirewallRule]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["FirewallRule"]] = None,
-        **kwargs
-    ):
-        super(FirewallRuleListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.FirewallRule"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The list of firewall rules in a server.
+        :paramtype value: list[~azure.mgmt.rdbms.mariadb.models.FirewallRule]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
@@ -489,46 +493,48 @@ class LogFile(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param size_in_kb: Size of the log file.
-    :type size_in_kb: long
+    :ivar size_in_kb: Size of the log file.
+    :vartype size_in_kb: int
     :ivar created_time: Creation timestamp of the log file.
     :vartype created_time: ~datetime.datetime
     :ivar last_modified_time: Last modified timestamp of the log file.
     :vartype last_modified_time: ~datetime.datetime
-    :param type_properties_type: Type of the log file.
-    :type type_properties_type: str
+    :ivar type_properties_type: Type of the log file.
+    :vartype type_properties_type: str
     :ivar url: The url to download the log file from.
     :vartype url: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'created_time': {'readonly': True},
-        'last_modified_time': {'readonly': True},
-        'url': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "created_time": {"readonly": True},
+        "last_modified_time": {"readonly": True},
+        "url": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'size_in_kb': {'key': 'properties.sizeInKB', 'type': 'long'},
-        'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
-        'url': {'key': 'properties.url', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "size_in_kb": {"key": "properties.sizeInKB", "type": "int"},
+        "created_time": {"key": "properties.createdTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
+        "url": {"key": "properties.url", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        size_in_kb: Optional[int] = None,
-        type_properties_type: Optional[str] = None,
-        **kwargs
-    ):
-        super(LogFile, self).__init__(**kwargs)
+        self, *, size_in_kb: Optional[int] = None, type_properties_type: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword size_in_kb: Size of the log file.
+        :paramtype size_in_kb: int
+        :keyword type_properties_type: Type of the log file.
+        :paramtype type_properties_type: str
+        """
+        super().__init__(**kwargs)
         self.size_in_kb = size_in_kb
         self.created_time = None
         self.last_modified_time = None
@@ -536,42 +542,41 @@ class LogFile(ProxyResource):
         self.url = None
 
 
-class LogFileListResult(msrest.serialization.Model):
+class LogFileListResult(_serialization.Model):
     """A list of log files.
 
-    :param value: The list of log files.
-    :type value: list[~azure.mgmt.rdbms.mariadb.models.LogFile]
+    :ivar value: The list of log files.
+    :vartype value: list[~azure.mgmt.rdbms.mariadb.models.LogFile]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LogFile]'},
+        "value": {"key": "value", "type": "[LogFile]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["LogFile"]] = None,
-        **kwargs
-    ):
-        super(LogFileListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.LogFile"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The list of log files.
+        :paramtype value: list[~azure.mgmt.rdbms.mariadb.models.LogFile]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
-class NameAvailability(msrest.serialization.Model):
+class NameAvailability(_serialization.Model):
     """Represents a resource name availability.
 
-    :param message: Error Message.
-    :type message: str
-    :param name_available: Indicates whether the resource name is available.
-    :type name_available: bool
-    :param reason: Reason for name being unavailable.
-    :type reason: str
+    :ivar message: Error Message.
+    :vartype message: str
+    :ivar name_available: Indicates whether the resource name is available.
+    :vartype name_available: bool
+    :ivar reason: Reason for name being unavailable.
+    :vartype reason: str
     """
 
     _attribute_map = {
-        'message': {'key': 'message', 'type': 'str'},
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
+        "message": {"key": "message", "type": "str"},
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
     }
 
     def __init__(
@@ -580,47 +585,55 @@ class NameAvailability(msrest.serialization.Model):
         message: Optional[str] = None,
         name_available: Optional[bool] = None,
         reason: Optional[str] = None,
-        **kwargs
-    ):
-        super(NameAvailability, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword message: Error Message.
+        :paramtype message: str
+        :keyword name_available: Indicates whether the resource name is available.
+        :paramtype name_available: bool
+        :keyword reason: Reason for name being unavailable.
+        :paramtype reason: str
+        """
+        super().__init__(**kwargs)
         self.message = message
         self.name_available = name_available
         self.reason = reason
 
 
-class NameAvailabilityRequest(msrest.serialization.Model):
+class NameAvailabilityRequest(_serialization.Model):
     """Request from client to check resource name availability.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Resource name to verify.
-    :type name: str
-    :param type: Resource type used for verification.
-    :type type: str
+    :ivar name: Resource name to verify. Required.
+    :vartype name: str
+    :ivar type: Resource type used for verification.
+    :vartype type: str
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        type: Optional[str] = None,
-        **kwargs
-    ):
-        super(NameAvailabilityRequest, self).__init__(**kwargs)
+    def __init__(self, *, name: str, type: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: Resource name to verify. Required.
+        :paramtype name: str
+        :keyword type: Resource type used for verification.
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """REST API operation definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -629,39 +642,37 @@ class Operation(msrest.serialization.Model):
     :vartype name: str
     :ivar display: The localized display information for this particular operation or action.
     :vartype display: ~azure.mgmt.rdbms.mariadb.models.OperationDisplay
-    :ivar origin: The intended executor of the operation. Possible values include: "NotSpecified",
-     "user", "system".
+    :ivar origin: The intended executor of the operation. Known values are: "NotSpecified", "user",
+     and "system".
     :vartype origin: str or ~azure.mgmt.rdbms.mariadb.models.OperationOrigin
     :ivar properties: Additional descriptions for the operation.
-    :vartype properties: dict[str, any]
+    :vartype properties: dict[str, JSON]
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'display': {'readonly': True},
-        'origin': {'readonly': True},
-        'properties': {'readonly': True},
+        "name": {"readonly": True},
+        "display": {"readonly": True},
+        "origin": {"readonly": True},
+        "properties": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{object}'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "properties": {"key": "properties", "type": "{object}"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Operation, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.display = None
         self.origin = None
         self.properties = None
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """Display metadata associated with the operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -677,121 +688,142 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-        'description': {'readonly': True},
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(OperationDisplay, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None
         self.description = None
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """A list of resource provider operations.
 
-    :param value: The list of resource provider operations.
-    :type value: list[~azure.mgmt.rdbms.mariadb.models.Operation]
+    :ivar value: The list of resource provider operations.
+    :vartype value: list[~azure.mgmt.rdbms.mariadb.models.Operation]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
+        "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Operation"]] = None,
-        **kwargs
-    ):
-        super(OperationListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The list of resource provider operations.
+        :paramtype value: list[~azure.mgmt.rdbms.mariadb.models.Operation]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
-class PerformanceTierListResult(msrest.serialization.Model):
+class PerformanceTierListResult(_serialization.Model):
     """A list of performance tiers.
 
-    :param value: The list of performance tiers.
-    :type value: list[~azure.mgmt.rdbms.mariadb.models.PerformanceTierProperties]
+    :ivar value: The list of performance tiers.
+    :vartype value: list[~azure.mgmt.rdbms.mariadb.models.PerformanceTierProperties]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PerformanceTierProperties]'},
+        "value": {"key": "value", "type": "[PerformanceTierProperties]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["PerformanceTierProperties"]] = None,
-        **kwargs
-    ):
-        super(PerformanceTierListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.PerformanceTierProperties"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The list of performance tiers.
+        :paramtype value: list[~azure.mgmt.rdbms.mariadb.models.PerformanceTierProperties]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
-class PerformanceTierProperties(msrest.serialization.Model):
+class PerformanceTierProperties(_serialization.Model):
     """Performance tier properties.
 
-    :param id: ID of the performance tier.
-    :type id: str
-    :param max_backup_retention_days: Maximum Backup retention in days for the performance tier
+    :ivar id: ID of the performance tier.
+    :vartype id: str
+    :ivar max_backup_retention_days: Maximum Backup retention in days for the performance tier
      edition.
-    :type max_backup_retention_days: int
-    :param min_backup_retention_days: Minimum Backup retention in days for the performance tier
+    :vartype max_backup_retention_days: int
+    :ivar min_backup_retention_days: Minimum Backup retention in days for the performance tier
      edition.
-    :type min_backup_retention_days: int
-    :param max_storage_mb: Max storage allowed for a server.
-    :type max_storage_mb: int
-    :param min_large_storage_mb: Max storage allowed for a server.
-    :type min_large_storage_mb: int
-    :param max_large_storage_mb: Max storage allowed for a server.
-    :type max_large_storage_mb: int
-    :param min_storage_mb: Max storage allowed for a server.
-    :type min_storage_mb: int
-    :param service_level_objectives: Service level objectives associated with the performance tier.
-    :type service_level_objectives:
+    :vartype min_backup_retention_days: int
+    :ivar max_storage_mb: Max storage allowed for a server.
+    :vartype max_storage_mb: int
+    :ivar min_large_storage_mb: Max storage allowed for a server.
+    :vartype min_large_storage_mb: int
+    :ivar max_large_storage_mb: Max storage allowed for a server.
+    :vartype max_large_storage_mb: int
+    :ivar min_storage_mb: Max storage allowed for a server.
+    :vartype min_storage_mb: int
+    :ivar service_level_objectives: Service level objectives associated with the performance tier.
+    :vartype service_level_objectives:
      list[~azure.mgmt.rdbms.mariadb.models.PerformanceTierServiceLevelObjectives]
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'max_backup_retention_days': {'key': 'maxBackupRetentionDays', 'type': 'int'},
-        'min_backup_retention_days': {'key': 'minBackupRetentionDays', 'type': 'int'},
-        'max_storage_mb': {'key': 'maxStorageMB', 'type': 'int'},
-        'min_large_storage_mb': {'key': 'minLargeStorageMB', 'type': 'int'},
-        'max_large_storage_mb': {'key': 'maxLargeStorageMB', 'type': 'int'},
-        'min_storage_mb': {'key': 'minStorageMB', 'type': 'int'},
-        'service_level_objectives': {'key': 'serviceLevelObjectives', 'type': '[PerformanceTierServiceLevelObjectives]'},
+        "id": {"key": "id", "type": "str"},
+        "max_backup_retention_days": {"key": "maxBackupRetentionDays", "type": "int"},
+        "min_backup_retention_days": {"key": "minBackupRetentionDays", "type": "int"},
+        "max_storage_mb": {"key": "maxStorageMB", "type": "int"},
+        "min_large_storage_mb": {"key": "minLargeStorageMB", "type": "int"},
+        "max_large_storage_mb": {"key": "maxLargeStorageMB", "type": "int"},
+        "min_storage_mb": {"key": "minStorageMB", "type": "int"},
+        "service_level_objectives": {
+            "key": "serviceLevelObjectives",
+            "type": "[PerformanceTierServiceLevelObjectives]",
+        },
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         max_backup_retention_days: Optional[int] = None,
         min_backup_retention_days: Optional[int] = None,
         max_storage_mb: Optional[int] = None,
         min_large_storage_mb: Optional[int] = None,
         max_large_storage_mb: Optional[int] = None,
         min_storage_mb: Optional[int] = None,
-        service_level_objectives: Optional[List["PerformanceTierServiceLevelObjectives"]] = None,
-        **kwargs
-    ):
-        super(PerformanceTierProperties, self).__init__(**kwargs)
+        service_level_objectives: Optional[List["_models.PerformanceTierServiceLevelObjectives"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: ID of the performance tier.
+        :paramtype id: str
+        :keyword max_backup_retention_days: Maximum Backup retention in days for the performance tier
+         edition.
+        :paramtype max_backup_retention_days: int
+        :keyword min_backup_retention_days: Minimum Backup retention in days for the performance tier
+         edition.
+        :paramtype min_backup_retention_days: int
+        :keyword max_storage_mb: Max storage allowed for a server.
+        :paramtype max_storage_mb: int
+        :keyword min_large_storage_mb: Max storage allowed for a server.
+        :paramtype min_large_storage_mb: int
+        :keyword max_large_storage_mb: Max storage allowed for a server.
+        :paramtype max_large_storage_mb: int
+        :keyword min_storage_mb: Max storage allowed for a server.
+        :paramtype min_storage_mb: int
+        :keyword service_level_objectives: Service level objectives associated with the performance
+         tier.
+        :paramtype service_level_objectives:
+         list[~azure.mgmt.rdbms.mariadb.models.PerformanceTierServiceLevelObjectives]
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.max_backup_retention_days = max_backup_retention_days
         self.min_backup_retention_days = min_backup_retention_days
@@ -802,44 +834,44 @@ class PerformanceTierProperties(msrest.serialization.Model):
         self.service_level_objectives = service_level_objectives
 
 
-class PerformanceTierServiceLevelObjectives(msrest.serialization.Model):
+class PerformanceTierServiceLevelObjectives(_serialization.Model):
     """Service level objectives for performance tier.
 
-    :param id: ID for the service level objective.
-    :type id: str
-    :param edition: Edition of the performance tier.
-    :type edition: str
-    :param v_core: vCore associated with the service level objective.
-    :type v_core: int
-    :param hardware_generation: Hardware generation associated with the service level objective.
-    :type hardware_generation: str
-    :param max_backup_retention_days: Maximum Backup retention in days for the performance tier
+    :ivar id: ID for the service level objective.
+    :vartype id: str
+    :ivar edition: Edition of the performance tier.
+    :vartype edition: str
+    :ivar v_core: vCore associated with the service level objective.
+    :vartype v_core: int
+    :ivar hardware_generation: Hardware generation associated with the service level objective.
+    :vartype hardware_generation: str
+    :ivar max_backup_retention_days: Maximum Backup retention in days for the performance tier
      edition.
-    :type max_backup_retention_days: int
-    :param min_backup_retention_days: Minimum Backup retention in days for the performance tier
+    :vartype max_backup_retention_days: int
+    :ivar min_backup_retention_days: Minimum Backup retention in days for the performance tier
      edition.
-    :type min_backup_retention_days: int
-    :param max_storage_mb: Max storage allowed for a server.
-    :type max_storage_mb: int
-    :param min_storage_mb: Max storage allowed for a server.
-    :type min_storage_mb: int
+    :vartype min_backup_retention_days: int
+    :ivar max_storage_mb: Max storage allowed for a server.
+    :vartype max_storage_mb: int
+    :ivar min_storage_mb: Max storage allowed for a server.
+    :vartype min_storage_mb: int
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'edition': {'key': 'edition', 'type': 'str'},
-        'v_core': {'key': 'vCore', 'type': 'int'},
-        'hardware_generation': {'key': 'hardwareGeneration', 'type': 'str'},
-        'max_backup_retention_days': {'key': 'maxBackupRetentionDays', 'type': 'int'},
-        'min_backup_retention_days': {'key': 'minBackupRetentionDays', 'type': 'int'},
-        'max_storage_mb': {'key': 'maxStorageMB', 'type': 'int'},
-        'min_storage_mb': {'key': 'minStorageMB', 'type': 'int'},
+        "id": {"key": "id", "type": "str"},
+        "edition": {"key": "edition", "type": "str"},
+        "v_core": {"key": "vCore", "type": "int"},
+        "hardware_generation": {"key": "hardwareGeneration", "type": "str"},
+        "max_backup_retention_days": {"key": "maxBackupRetentionDays", "type": "int"},
+        "min_backup_retention_days": {"key": "minBackupRetentionDays", "type": "int"},
+        "max_storage_mb": {"key": "maxStorageMB", "type": "int"},
+        "min_storage_mb": {"key": "minStorageMB", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         edition: Optional[str] = None,
         v_core: Optional[int] = None,
         hardware_generation: Optional[str] = None,
@@ -847,9 +879,29 @@ class PerformanceTierServiceLevelObjectives(msrest.serialization.Model):
         min_backup_retention_days: Optional[int] = None,
         max_storage_mb: Optional[int] = None,
         min_storage_mb: Optional[int] = None,
-        **kwargs
-    ):
-        super(PerformanceTierServiceLevelObjectives, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: ID for the service level objective.
+        :paramtype id: str
+        :keyword edition: Edition of the performance tier.
+        :paramtype edition: str
+        :keyword v_core: vCore associated with the service level objective.
+        :paramtype v_core: int
+        :keyword hardware_generation: Hardware generation associated with the service level objective.
+        :paramtype hardware_generation: str
+        :keyword max_backup_retention_days: Maximum Backup retention in days for the performance tier
+         edition.
+        :paramtype max_backup_retention_days: int
+        :keyword min_backup_retention_days: Minimum Backup retention in days for the performance tier
+         edition.
+        :paramtype min_backup_retention_days: int
+        :keyword max_storage_mb: Max storage allowed for a server.
+        :paramtype max_storage_mb: int
+        :keyword min_storage_mb: Max storage allowed for a server.
+        :paramtype min_storage_mb: int
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.edition = edition
         self.v_core = v_core
@@ -873,46 +925,57 @@ class PrivateEndpointConnection(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param private_endpoint: Private endpoint which the connection belongs to.
-    :type private_endpoint: ~azure.mgmt.rdbms.mariadb.models.PrivateEndpointProperty
-    :param private_link_service_connection_state: Connection state of the private endpoint
+    :ivar private_endpoint: Private endpoint which the connection belongs to.
+    :vartype private_endpoint: ~azure.mgmt.rdbms.mariadb.models.PrivateEndpointProperty
+    :ivar private_link_service_connection_state: Connection state of the private endpoint
      connection.
-    :type private_link_service_connection_state:
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.rdbms.mariadb.models.PrivateLinkServiceConnectionStateProperty
     :ivar provisioning_state: State of the private endpoint connection.
     :vartype provisioning_state: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpointProperty'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionStateProperty'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpointProperty"},
+        "private_link_service_connection_state": {
+            "key": "properties.privateLinkServiceConnectionState",
+            "type": "PrivateLinkServiceConnectionStateProperty",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        private_endpoint: Optional["PrivateEndpointProperty"] = None,
-        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionStateProperty"] = None,
-        **kwargs
-    ):
-        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        private_endpoint: Optional["_models.PrivateEndpointProperty"] = None,
+        private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionStateProperty"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword private_endpoint: Private endpoint which the connection belongs to.
+        :paramtype private_endpoint: ~azure.mgmt.rdbms.mariadb.models.PrivateEndpointProperty
+        :keyword private_link_service_connection_state: Connection state of the private endpoint
+         connection.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.rdbms.mariadb.models.PrivateLinkServiceConnectionStateProperty
+        """
+        super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state = None
 
 
-class PrivateEndpointConnectionListResult(msrest.serialization.Model):
+class PrivateEndpointConnectionListResult(_serialization.Model):
     """A list of private endpoint connections.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -924,42 +987,39 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class PrivateEndpointProperty(msrest.serialization.Model):
+class PrivateEndpointProperty(_serialization.Model):
     """PrivateEndpointProperty.
 
-    :param id: Resource id of the private endpoint.
-    :type id: str
+    :ivar id: Resource id of the private endpoint.
+    :vartype id: str
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
-        super(PrivateEndpointProperty, self).__init__(**kwargs)
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+        """
+        :keyword id: Resource id of the private endpoint.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
         self.id = id
 
 
@@ -981,28 +1041,26 @@ class PrivateLinkResource(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'properties': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "properties": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'PrivateLinkResourceProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "PrivateLinkResourceProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PrivateLinkResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.properties = None
 
 
-class PrivateLinkResourceListResult(msrest.serialization.Model):
+class PrivateLinkResourceListResult(_serialization.Model):
     """A list of private link resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1014,25 +1072,23 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PrivateLinkResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PrivateLinkResourceListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class PrivateLinkResourceProperties(msrest.serialization.Model):
+class PrivateLinkResourceProperties(_serialization.Model):
     """Properties of a private link resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1044,93 +1100,97 @@ class PrivateLinkResourceProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'group_id': {'readonly': True},
-        'required_members': {'readonly': True},
+        "group_id": {"readonly": True},
+        "required_members": {"readonly": True},
     }
 
     _attribute_map = {
-        'group_id': {'key': 'groupId', 'type': 'str'},
-        'required_members': {'key': 'requiredMembers', 'type': '[str]'},
+        "group_id": {"key": "groupId", "type": "str"},
+        "required_members": {"key": "requiredMembers", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PrivateLinkResourceProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.group_id = None
         self.required_members = None
 
 
-class PrivateLinkServiceConnectionStateProperty(msrest.serialization.Model):
+class PrivateLinkServiceConnectionStateProperty(_serialization.Model):
     """PrivateLinkServiceConnectionStateProperty.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status: Required. The private link service connection status.
-    :type status: str
-    :param description: Required. The private link service connection description.
-    :type description: str
+    :ivar status: The private link service connection status. Required.
+    :vartype status: str
+    :ivar description: The private link service connection description. Required.
+    :vartype description: str
     :ivar actions_required: The actions required for private link service connection.
     :vartype actions_required: str
     """
 
     _validation = {
-        'status': {'required': True},
-        'description': {'required': True},
-        'actions_required': {'readonly': True},
+        "status": {"required": True},
+        "description": {"required": True},
+        "actions_required": {"readonly": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        status: str,
-        description: str,
-        **kwargs
-    ):
-        super(PrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
+    def __init__(self, *, status: str, description: str, **kwargs: Any) -> None:
+        """
+        :keyword status: The private link service connection status. Required.
+        :paramtype status: str
+        :keyword description: The private link service connection description. Required.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
         self.status = status
         self.description = description
         self.actions_required = None
 
 
-class QueryPerformanceInsightResetDataResult(msrest.serialization.Model):
+class QueryPerformanceInsightResetDataResult(_serialization.Model):
     """Result of Query Performance Insight data reset.
 
-    :param status: Indicates result of the operation. Possible values include: "Succeeded",
-     "Failed".
-    :type status: str or
+    :ivar status: Indicates result of the operation. Known values are: "Succeeded" and "Failed".
+    :vartype status: str or
      ~azure.mgmt.rdbms.mariadb.models.QueryPerformanceInsightResetDataResultState
-    :param message: operation message.
-    :type message: str
+    :ivar message: operation message.
+    :vartype message: str
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        status: Optional[Union[str, "QueryPerformanceInsightResetDataResultState"]] = None,
+        status: Optional[Union[str, "_models.QueryPerformanceInsightResetDataResultState"]] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
-        super(QueryPerformanceInsightResetDataResult, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword status: Indicates result of the operation. Known values are: "Succeeded" and "Failed".
+        :paramtype status: str or
+         ~azure.mgmt.rdbms.mariadb.models.QueryPerformanceInsightResetDataResultState
+        :keyword message: operation message.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
         self.status = status
         self.message = message
 
 
-class QueryStatistic(ProxyResource):
+class QueryStatistic(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Represents a Query Statistic.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1143,48 +1203,48 @@ class QueryStatistic(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param query_id: Database query identifier.
-    :type query_id: str
-    :param start_time: Observation start time.
-    :type start_time: ~datetime.datetime
-    :param end_time: Observation end time.
-    :type end_time: ~datetime.datetime
-    :param aggregation_function: Aggregation function name.
-    :type aggregation_function: str
-    :param database_names: The list of database names.
-    :type database_names: list[str]
-    :param query_execution_count: Number of query executions in this time interval.
-    :type query_execution_count: long
-    :param metric_name: Metric name.
-    :type metric_name: str
-    :param metric_display_name: Metric display name.
-    :type metric_display_name: str
-    :param metric_value: Metric value.
-    :type metric_value: float
-    :param metric_value_unit: Metric value unit.
-    :type metric_value_unit: str
+    :ivar query_id: Database query identifier.
+    :vartype query_id: str
+    :ivar start_time: Observation start time.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Observation end time.
+    :vartype end_time: ~datetime.datetime
+    :ivar aggregation_function: Aggregation function name.
+    :vartype aggregation_function: str
+    :ivar database_names: The list of database names.
+    :vartype database_names: list[str]
+    :ivar query_execution_count: Number of query executions in this time interval.
+    :vartype query_execution_count: int
+    :ivar metric_name: Metric name.
+    :vartype metric_name: str
+    :ivar metric_display_name: Metric display name.
+    :vartype metric_display_name: str
+    :ivar metric_value: Metric value.
+    :vartype metric_value: float
+    :ivar metric_value_unit: Metric value unit.
+    :vartype metric_value_unit: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'query_id': {'key': 'properties.queryId', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
-        'aggregation_function': {'key': 'properties.aggregationFunction', 'type': 'str'},
-        'database_names': {'key': 'properties.databaseNames', 'type': '[str]'},
-        'query_execution_count': {'key': 'properties.queryExecutionCount', 'type': 'long'},
-        'metric_name': {'key': 'properties.metricName', 'type': 'str'},
-        'metric_display_name': {'key': 'properties.metricDisplayName', 'type': 'str'},
-        'metric_value': {'key': 'properties.metricValue', 'type': 'float'},
-        'metric_value_unit': {'key': 'properties.metricValueUnit', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "query_id": {"key": "properties.queryId", "type": "str"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "end_time": {"key": "properties.endTime", "type": "iso-8601"},
+        "aggregation_function": {"key": "properties.aggregationFunction", "type": "str"},
+        "database_names": {"key": "properties.databaseNames", "type": "[str]"},
+        "query_execution_count": {"key": "properties.queryExecutionCount", "type": "int"},
+        "metric_name": {"key": "properties.metricName", "type": "str"},
+        "metric_display_name": {"key": "properties.metricDisplayName", "type": "str"},
+        "metric_value": {"key": "properties.metricValue", "type": "float"},
+        "metric_value_unit": {"key": "properties.metricValueUnit", "type": "str"},
     }
 
     def __init__(
@@ -1200,9 +1260,31 @@ class QueryStatistic(ProxyResource):
         metric_display_name: Optional[str] = None,
         metric_value: Optional[float] = None,
         metric_value_unit: Optional[str] = None,
-        **kwargs
-    ):
-        super(QueryStatistic, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword query_id: Database query identifier.
+        :paramtype query_id: str
+        :keyword start_time: Observation start time.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: Observation end time.
+        :paramtype end_time: ~datetime.datetime
+        :keyword aggregation_function: Aggregation function name.
+        :paramtype aggregation_function: str
+        :keyword database_names: The list of database names.
+        :paramtype database_names: list[str]
+        :keyword query_execution_count: Number of query executions in this time interval.
+        :paramtype query_execution_count: int
+        :keyword metric_name: Metric name.
+        :paramtype metric_name: str
+        :keyword metric_display_name: Metric display name.
+        :paramtype metric_display_name: str
+        :keyword metric_value: Metric value.
+        :paramtype metric_value: float
+        :keyword metric_value_unit: Metric value unit.
+        :paramtype metric_value_unit: str
+        """
+        super().__init__(**kwargs)
         self.query_id = query_id
         self.start_time = start_time
         self.end_time = end_time
@@ -1228,39 +1310,39 @@ class QueryText(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param query_id: Query identifier unique to the server.
-    :type query_id: str
-    :param query_text: Query text.
-    :type query_text: str
+    :ivar query_id: Query identifier unique to the server.
+    :vartype query_id: str
+    :ivar query_text: Query text.
+    :vartype query_text: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'query_id': {'key': 'properties.queryId', 'type': 'str'},
-        'query_text': {'key': 'properties.queryText', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "query_id": {"key": "properties.queryId", "type": "str"},
+        "query_text": {"key": "properties.queryText", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        query_id: Optional[str] = None,
-        query_text: Optional[str] = None,
-        **kwargs
-    ):
-        super(QueryText, self).__init__(**kwargs)
+    def __init__(self, *, query_id: Optional[str] = None, query_text: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword query_id: Query identifier unique to the server.
+        :paramtype query_id: str
+        :keyword query_text: Query text.
+        :paramtype query_text: str
+        """
+        super().__init__(**kwargs)
         self.query_id = query_id
         self.query_text = query_text
 
 
-class QueryTextsResultList(msrest.serialization.Model):
+class QueryTextsResultList(_serialization.Model):
     """A list of query texts.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1272,25 +1354,23 @@ class QueryTextsResultList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[QueryText]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[QueryText]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(QueryTextsResultList, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class RecommendationAction(ProxyResource):
+class RecommendationAction(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Represents a Recommendation Action.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1303,42 +1383,42 @@ class RecommendationAction(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param advisor_name: Advisor name.
-    :type advisor_name: str
-    :param session_id: Recommendation action session identifier.
-    :type session_id: str
-    :param action_id: Recommendation action identifier.
-    :type action_id: int
-    :param created_time: Recommendation action creation time.
-    :type created_time: ~datetime.datetime
-    :param expiration_time: Recommendation action expiration time.
-    :type expiration_time: ~datetime.datetime
-    :param reason: Recommendation action reason.
-    :type reason: str
-    :param recommendation_type: Recommendation action type.
-    :type recommendation_type: str
-    :param details: Recommendation action details.
-    :type details: dict[str, str]
+    :ivar advisor_name: Advisor name.
+    :vartype advisor_name: str
+    :ivar session_id: Recommendation action session identifier.
+    :vartype session_id: str
+    :ivar action_id: Recommendation action identifier.
+    :vartype action_id: int
+    :ivar created_time: Recommendation action creation time.
+    :vartype created_time: ~datetime.datetime
+    :ivar expiration_time: Recommendation action expiration time.
+    :vartype expiration_time: ~datetime.datetime
+    :ivar reason: Recommendation action reason.
+    :vartype reason: str
+    :ivar recommendation_type: Recommendation action type.
+    :vartype recommendation_type: str
+    :ivar details: Recommendation action details.
+    :vartype details: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'advisor_name': {'key': 'properties.advisorName', 'type': 'str'},
-        'session_id': {'key': 'properties.sessionId', 'type': 'str'},
-        'action_id': {'key': 'properties.actionId', 'type': 'int'},
-        'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601'},
-        'expiration_time': {'key': 'properties.expirationTime', 'type': 'iso-8601'},
-        'reason': {'key': 'properties.reason', 'type': 'str'},
-        'recommendation_type': {'key': 'properties.recommendationType', 'type': 'str'},
-        'details': {'key': 'properties.details', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "advisor_name": {"key": "properties.advisorName", "type": "str"},
+        "session_id": {"key": "properties.sessionId", "type": "str"},
+        "action_id": {"key": "properties.actionId", "type": "int"},
+        "created_time": {"key": "properties.createdTime", "type": "iso-8601"},
+        "expiration_time": {"key": "properties.expirationTime", "type": "iso-8601"},
+        "reason": {"key": "properties.reason", "type": "str"},
+        "recommendation_type": {"key": "properties.recommendationType", "type": "str"},
+        "details": {"key": "properties.details", "type": "{str}"},
     }
 
     def __init__(
@@ -1352,9 +1432,27 @@ class RecommendationAction(ProxyResource):
         reason: Optional[str] = None,
         recommendation_type: Optional[str] = None,
         details: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(RecommendationAction, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword advisor_name: Advisor name.
+        :paramtype advisor_name: str
+        :keyword session_id: Recommendation action session identifier.
+        :paramtype session_id: str
+        :keyword action_id: Recommendation action identifier.
+        :paramtype action_id: int
+        :keyword created_time: Recommendation action creation time.
+        :paramtype created_time: ~datetime.datetime
+        :keyword expiration_time: Recommendation action expiration time.
+        :paramtype expiration_time: ~datetime.datetime
+        :keyword reason: Recommendation action reason.
+        :paramtype reason: str
+        :keyword recommendation_type: Recommendation action type.
+        :paramtype recommendation_type: str
+        :keyword details: Recommendation action details.
+        :paramtype details: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.advisor_name = advisor_name
         self.session_id = session_id
         self.action_id = action_id
@@ -1365,7 +1463,7 @@ class RecommendationAction(ProxyResource):
         self.details = details
 
 
-class RecommendationActionsResultList(msrest.serialization.Model):
+class RecommendationActionsResultList(_serialization.Model):
     """A list of recommendation actions.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1377,39 +1475,37 @@ class RecommendationActionsResultList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RecommendationAction]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[RecommendationAction]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RecommendationActionsResultList, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class RecommendedActionSessionsOperationStatus(msrest.serialization.Model):
+class RecommendedActionSessionsOperationStatus(_serialization.Model):
     """Recommendation action session operation status.
 
-    :param name: Operation identifier.
-    :type name: str
-    :param start_time: Operation start time.
-    :type start_time: ~datetime.datetime
-    :param status: Operation status.
-    :type status: str
+    :ivar name: Operation identifier.
+    :vartype name: str
+    :ivar start_time: Operation start time.
+    :vartype start_time: ~datetime.datetime
+    :ivar status: Operation status.
+    :vartype status: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'status': {'key': 'status', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "status": {"key": "status", "type": "str"},
     }
 
     def __init__(
@@ -1418,9 +1514,17 @@ class RecommendedActionSessionsOperationStatus(msrest.serialization.Model):
         name: Optional[str] = None,
         start_time: Optional[datetime.datetime] = None,
         status: Optional[str] = None,
-        **kwargs
-    ):
-        super(RecommendedActionSessionsOperationStatus, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Operation identifier.
+        :paramtype name: str
+        :keyword start_time: Operation start time.
+        :paramtype start_time: ~datetime.datetime
+        :keyword status: Operation status.
+        :paramtype status: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.start_time = start_time
         self.status = status
@@ -1454,34 +1558,32 @@ class RecoverableServerResource(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'last_available_backup_date_time': {'readonly': True},
-        'service_level_objective': {'readonly': True},
-        'edition': {'readonly': True},
-        'v_core': {'readonly': True},
-        'hardware_generation': {'readonly': True},
-        'version': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "last_available_backup_date_time": {"readonly": True},
+        "service_level_objective": {"readonly": True},
+        "edition": {"readonly": True},
+        "v_core": {"readonly": True},
+        "hardware_generation": {"readonly": True},
+        "version": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'last_available_backup_date_time': {'key': 'properties.lastAvailableBackupDateTime', 'type': 'str'},
-        'service_level_objective': {'key': 'properties.serviceLevelObjective', 'type': 'str'},
-        'edition': {'key': 'properties.edition', 'type': 'str'},
-        'v_core': {'key': 'properties.vCore', 'type': 'int'},
-        'hardware_generation': {'key': 'properties.hardwareGeneration', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "last_available_backup_date_time": {"key": "properties.lastAvailableBackupDateTime", "type": "str"},
+        "service_level_objective": {"key": "properties.serviceLevelObjective", "type": "str"},
+        "edition": {"key": "properties.edition", "type": "str"},
+        "v_core": {"key": "properties.vCore", "type": "int"},
+        "hardware_generation": {"key": "properties.hardwareGeneration", "type": "str"},
+        "version": {"key": "properties.version", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RecoverableServerResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.last_available_backup_date_time = None
         self.service_level_objective = None
         self.edition = None
@@ -1491,7 +1593,8 @@ class RecoverableServerResource(ProxyResource):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1505,40 +1608,40 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(TrackedResource, self).__init__(**kwargs)
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
 
-class Server(TrackedResource):
+class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Represents a server.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1553,76 +1656,79 @@ class Server(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param sku: The SKU (pricing tier) of the server.
-    :type sku: ~azure.mgmt.rdbms.mariadb.models.Sku
-    :param administrator_login: The administrator's login name of a server. Can only be specified
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar sku: The SKU (pricing tier) of the server.
+    :vartype sku: ~azure.mgmt.rdbms.mariadb.models.Sku
+    :ivar administrator_login: The administrator's login name of a server. Can only be specified
      when the server is being created (and is required for creation).
-    :type administrator_login: str
-    :param version: Server version. Possible values include: "10.2", "10.3".
-    :type version: str or ~azure.mgmt.rdbms.mariadb.models.ServerVersion
-    :param ssl_enforcement: Enable ssl enforcement or not when connect to server. Possible values
-     include: "Enabled", "Disabled".
-    :type ssl_enforcement: str or ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
-    :param minimal_tls_version: Enforce a minimal Tls version for the server. Possible values
-     include: "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
-    :type minimal_tls_version: str or ~azure.mgmt.rdbms.mariadb.models.MinimalTlsVersionEnum
-    :param user_visible_state: A state of a server that is visible to user. Possible values
-     include: "Ready", "Dropping", "Disabled".
-    :type user_visible_state: str or ~azure.mgmt.rdbms.mariadb.models.ServerState
-    :param fully_qualified_domain_name: The fully qualified domain name of a server.
-    :type fully_qualified_domain_name: str
-    :param earliest_restore_date: Earliest restore point creation time (ISO8601 format).
-    :type earliest_restore_date: ~datetime.datetime
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
-    :param replication_role: The replication role of the server.
-    :type replication_role: str
-    :param master_server_id: The master server id of a replica server.
-    :type master_server_id: str
-    :param replica_capacity: The maximum number of replicas that a master server can have.
-    :type replica_capacity: int
-    :param public_network_access: Whether or not public network access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
-     "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
+    :vartype administrator_login: str
+    :ivar version: Server version. Known values are: "10.2" and "10.3".
+    :vartype version: str or ~azure.mgmt.rdbms.mariadb.models.ServerVersion
+    :ivar ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values are:
+     "Enabled" and "Disabled".
+    :vartype ssl_enforcement: str or ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
+    :ivar minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+     "TLS1_0", "TLS1_1", "TLS1_2", and "TLSEnforcementDisabled".
+    :vartype minimal_tls_version: str or ~azure.mgmt.rdbms.mariadb.models.MinimalTlsVersionEnum
+    :ivar user_visible_state: A state of a server that is visible to user. Known values are:
+     "Ready", "Dropping", and "Disabled".
+    :vartype user_visible_state: str or ~azure.mgmt.rdbms.mariadb.models.ServerState
+    :ivar fully_qualified_domain_name: The fully qualified domain name of a server.
+    :vartype fully_qualified_domain_name: str
+    :ivar earliest_restore_date: Earliest restore point creation time (ISO8601 format).
+    :vartype earliest_restore_date: ~datetime.datetime
+    :ivar storage_profile: Storage profile of a server.
+    :vartype storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
+    :ivar replication_role: The replication role of the server.
+    :vartype replication_role: str
+    :ivar master_server_id: The master server id of a replica server.
+    :vartype master_server_id: str
+    :ivar replica_capacity: The maximum number of replicas that a master server can have.
+    :vartype replica_capacity: int
+    :ivar public_network_access: Whether or not public network access is allowed for this server.
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+     "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
     :ivar private_endpoint_connections: List of private endpoint connections on a server.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.rdbms.mariadb.models.ServerPrivateEndpointConnection]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'replica_capacity': {'minimum': 0},
-        'private_endpoint_connections': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "replica_capacity": {"minimum": 0},
+        "private_endpoint_connections": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'administrator_login': {'key': 'properties.administratorLogin', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'ssl_enforcement': {'key': 'properties.sslEnforcement', 'type': 'str'},
-        'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
-        'user_visible_state': {'key': 'properties.userVisibleState', 'type': 'str'},
-        'fully_qualified_domain_name': {'key': 'properties.fullyQualifiedDomainName', 'type': 'str'},
-        'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
-        'replication_role': {'key': 'properties.replicationRole', 'type': 'str'},
-        'master_server_id': {'key': 'properties.masterServerId', 'type': 'str'},
-        'replica_capacity': {'key': 'properties.replicaCapacity', 'type': 'int'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
-        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[ServerPrivateEndpointConnection]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "administrator_login": {"key": "properties.administratorLogin", "type": "str"},
+        "version": {"key": "properties.version", "type": "str"},
+        "ssl_enforcement": {"key": "properties.sslEnforcement", "type": "str"},
+        "minimal_tls_version": {"key": "properties.minimalTlsVersion", "type": "str"},
+        "user_visible_state": {"key": "properties.userVisibleState", "type": "str"},
+        "fully_qualified_domain_name": {"key": "properties.fullyQualifiedDomainName", "type": "str"},
+        "earliest_restore_date": {"key": "properties.earliestRestoreDate", "type": "iso-8601"},
+        "storage_profile": {"key": "properties.storageProfile", "type": "StorageProfile"},
+        "replication_role": {"key": "properties.replicationRole", "type": "str"},
+        "master_server_id": {"key": "properties.masterServerId", "type": "str"},
+        "replica_capacity": {"key": "properties.replicaCapacity", "type": "int"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[ServerPrivateEndpointConnection]",
+        },
     }
 
     def __init__(
@@ -1630,22 +1736,61 @@ class Server(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         administrator_login: Optional[str] = None,
-        version: Optional[Union[str, "ServerVersion"]] = None,
-        ssl_enforcement: Optional[Union[str, "SslEnforcementEnum"]] = None,
-        minimal_tls_version: Optional[Union[str, "MinimalTlsVersionEnum"]] = None,
-        user_visible_state: Optional[Union[str, "ServerState"]] = None,
+        version: Optional[Union[str, "_models.ServerVersion"]] = None,
+        ssl_enforcement: Optional[Union[str, "_models.SslEnforcementEnum"]] = None,
+        minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersionEnum"]] = None,
+        user_visible_state: Optional[Union[str, "_models.ServerState"]] = None,
         fully_qualified_domain_name: Optional[str] = None,
         earliest_restore_date: Optional[datetime.datetime] = None,
-        storage_profile: Optional["StorageProfile"] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
         replication_role: Optional[str] = None,
         master_server_id: Optional[str] = None,
         replica_capacity: Optional[int] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccessEnum"]] = None,
-        **kwargs
-    ):
-        super(Server, self).__init__(tags=tags, location=location, **kwargs)
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccessEnum"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword sku: The SKU (pricing tier) of the server.
+        :paramtype sku: ~azure.mgmt.rdbms.mariadb.models.Sku
+        :keyword administrator_login: The administrator's login name of a server. Can only be specified
+         when the server is being created (and is required for creation).
+        :paramtype administrator_login: str
+        :keyword version: Server version. Known values are: "10.2" and "10.3".
+        :paramtype version: str or ~azure.mgmt.rdbms.mariadb.models.ServerVersion
+        :keyword ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values
+         are: "Enabled" and "Disabled".
+        :paramtype ssl_enforcement: str or ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
+        :keyword minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+         "TLS1_0", "TLS1_1", "TLS1_2", and "TLSEnforcementDisabled".
+        :paramtype minimal_tls_version: str or ~azure.mgmt.rdbms.mariadb.models.MinimalTlsVersionEnum
+        :keyword user_visible_state: A state of a server that is visible to user. Known values are:
+         "Ready", "Dropping", and "Disabled".
+        :paramtype user_visible_state: str or ~azure.mgmt.rdbms.mariadb.models.ServerState
+        :keyword fully_qualified_domain_name: The fully qualified domain name of a server.
+        :paramtype fully_qualified_domain_name: str
+        :keyword earliest_restore_date: Earliest restore point creation time (ISO8601 format).
+        :paramtype earliest_restore_date: ~datetime.datetime
+        :keyword storage_profile: Storage profile of a server.
+        :paramtype storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
+        :keyword replication_role: The replication role of the server.
+        :paramtype replication_role: str
+        :keyword master_server_id: The master server id of a replica server.
+        :paramtype master_server_id: str
+        :keyword replica_capacity: The maximum number of replicas that a master server can have.
+        :paramtype replica_capacity: int
+        :keyword public_network_access: Whether or not public network access is allowed for this
+         server. Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
         self.administrator_login = administrator_login
         self.version = version
@@ -1662,71 +1807,80 @@ class Server(TrackedResource):
         self.private_endpoint_connections = None
 
 
-class ServerForCreate(msrest.serialization.Model):
+class ServerForCreate(_serialization.Model):
     """Represents a server to be created.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param sku: The SKU (pricing tier) of the server.
-    :type sku: ~azure.mgmt.rdbms.mariadb.models.Sku
-    :param properties: Required. Properties of the server.
-    :type properties: ~azure.mgmt.rdbms.mariadb.models.ServerPropertiesForCreate
-    :param location: Required. The location the resource resides in.
-    :type location: str
-    :param tags: A set of tags. Application-specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
+    :ivar sku: The SKU (pricing tier) of the server.
+    :vartype sku: ~azure.mgmt.rdbms.mariadb.models.Sku
+    :ivar properties: Properties of the server. Required.
+    :vartype properties: ~azure.mgmt.rdbms.mariadb.models.ServerPropertiesForCreate
+    :ivar location: The location the resource resides in. Required.
+    :vartype location: str
+    :ivar tags: Application-specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'properties': {'required': True},
-        'location': {'required': True},
+        "properties": {"required": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'properties': {'key': 'properties', 'type': 'ServerPropertiesForCreate'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "sku": {"key": "sku", "type": "Sku"},
+        "properties": {"key": "properties", "type": "ServerPropertiesForCreate"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        properties: "ServerPropertiesForCreate",
+        properties: "_models.ServerPropertiesForCreate",
         location: str,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(ServerForCreate, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword sku: The SKU (pricing tier) of the server.
+        :paramtype sku: ~azure.mgmt.rdbms.mariadb.models.Sku
+        :keyword properties: Properties of the server. Required.
+        :paramtype properties: ~azure.mgmt.rdbms.mariadb.models.ServerPropertiesForCreate
+        :keyword location: The location the resource resides in. Required.
+        :paramtype location: str
+        :keyword tags: Application-specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.sku = sku
         self.properties = properties
         self.location = location
         self.tags = tags
 
 
-class ServerListResult(msrest.serialization.Model):
+class ServerListResult(_serialization.Model):
     """A list of servers.
 
-    :param value: The list of servers.
-    :type value: list[~azure.mgmt.rdbms.mariadb.models.Server]
+    :ivar value: The list of servers.
+    :vartype value: list[~azure.mgmt.rdbms.mariadb.models.Server]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Server]'},
+        "value": {"key": "value", "type": "[Server]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Server"]] = None,
-        **kwargs
-    ):
-        super(ServerListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.Server"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The list of servers.
+        :paramtype value: list[~azure.mgmt.rdbms.mariadb.models.Server]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
-class ServerPrivateEndpointConnection(msrest.serialization.Model):
+class ServerPrivateEndpointConnection(_serialization.Model):
     """A private endpoint connection under a server.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1738,168 +1892,206 @@ class ServerPrivateEndpointConnection(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'properties': {'readonly': True},
+        "id": {"readonly": True},
+        "properties": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ServerPrivateEndpointConnectionProperties'},
+        "id": {"key": "id", "type": "str"},
+        "properties": {"key": "properties", "type": "ServerPrivateEndpointConnectionProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServerPrivateEndpointConnection, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.properties = None
 
 
-class ServerPrivateEndpointConnectionProperties(msrest.serialization.Model):
+class ServerPrivateEndpointConnectionProperties(_serialization.Model):
     """Properties of a private endpoint connection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param private_endpoint: Private endpoint which the connection belongs to.
-    :type private_endpoint: ~azure.mgmt.rdbms.mariadb.models.PrivateEndpointProperty
-    :param private_link_service_connection_state: Connection state of the private endpoint
+    :ivar private_endpoint: Private endpoint which the connection belongs to.
+    :vartype private_endpoint: ~azure.mgmt.rdbms.mariadb.models.PrivateEndpointProperty
+    :ivar private_link_service_connection_state: Connection state of the private endpoint
      connection.
-    :type private_link_service_connection_state:
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.rdbms.mariadb.models.ServerPrivateLinkServiceConnectionStateProperty
-    :ivar provisioning_state: State of the private endpoint connection. Possible values include:
-     "Approving", "Ready", "Dropping", "Failed", "Rejecting".
+    :ivar provisioning_state: State of the private endpoint connection. Known values are:
+     "Approving", "Ready", "Dropping", "Failed", and "Rejecting".
     :vartype provisioning_state: str or
      ~azure.mgmt.rdbms.mariadb.models.PrivateEndpointProvisioningState
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'private_endpoint': {'key': 'privateEndpoint', 'type': 'PrivateEndpointProperty'},
-        'private_link_service_connection_state': {'key': 'privateLinkServiceConnectionState', 'type': 'ServerPrivateLinkServiceConnectionStateProperty'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "private_endpoint": {"key": "privateEndpoint", "type": "PrivateEndpointProperty"},
+        "private_link_service_connection_state": {
+            "key": "privateLinkServiceConnectionState",
+            "type": "ServerPrivateLinkServiceConnectionStateProperty",
+        },
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        private_endpoint: Optional["PrivateEndpointProperty"] = None,
-        private_link_service_connection_state: Optional["ServerPrivateLinkServiceConnectionStateProperty"] = None,
-        **kwargs
-    ):
-        super(ServerPrivateEndpointConnectionProperties, self).__init__(**kwargs)
+        private_endpoint: Optional["_models.PrivateEndpointProperty"] = None,
+        private_link_service_connection_state: Optional[
+            "_models.ServerPrivateLinkServiceConnectionStateProperty"
+        ] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword private_endpoint: Private endpoint which the connection belongs to.
+        :paramtype private_endpoint: ~azure.mgmt.rdbms.mariadb.models.PrivateEndpointProperty
+        :keyword private_link_service_connection_state: Connection state of the private endpoint
+         connection.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.rdbms.mariadb.models.ServerPrivateLinkServiceConnectionStateProperty
+        """
+        super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state = None
 
 
-class ServerPrivateLinkServiceConnectionStateProperty(msrest.serialization.Model):
+class ServerPrivateLinkServiceConnectionStateProperty(_serialization.Model):
     """ServerPrivateLinkServiceConnectionStateProperty.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status: Required. The private link service connection status. Possible values include:
-     "Approved", "Pending", "Rejected", "Disconnected".
-    :type status: str or ~azure.mgmt.rdbms.mariadb.models.PrivateLinkServiceConnectionStateStatus
-    :param description: Required. The private link service connection description.
-    :type description: str
-    :ivar actions_required: The actions required for private link service connection. Possible
-     values include: "None".
+    :ivar status: The private link service connection status. Required. Known values are:
+     "Approved", "Pending", "Rejected", and "Disconnected".
+    :vartype status: str or
+     ~azure.mgmt.rdbms.mariadb.models.PrivateLinkServiceConnectionStateStatus
+    :ivar description: The private link service connection description. Required.
+    :vartype description: str
+    :ivar actions_required: The actions required for private link service connection. "None"
     :vartype actions_required: str or
      ~azure.mgmt.rdbms.mariadb.models.PrivateLinkServiceConnectionStateActionsRequire
     """
 
     _validation = {
-        'status': {'required': True},
-        'description': {'required': True},
-        'actions_required': {'readonly': True},
+        "status": {"required": True},
+        "description": {"required": True},
+        "actions_required": {"readonly": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        status: Union[str, "PrivateLinkServiceConnectionStateStatus"],
-        description: str,
-        **kwargs
-    ):
-        super(ServerPrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
+        self, *, status: Union[str, "_models.PrivateLinkServiceConnectionStateStatus"], description: str, **kwargs: Any
+    ) -> None:
+        """
+        :keyword status: The private link service connection status. Required. Known values are:
+         "Approved", "Pending", "Rejected", and "Disconnected".
+        :paramtype status: str or
+         ~azure.mgmt.rdbms.mariadb.models.PrivateLinkServiceConnectionStateStatus
+        :keyword description: The private link service connection description. Required.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
         self.status = status
         self.description = description
         self.actions_required = None
 
 
-class ServerPropertiesForCreate(msrest.serialization.Model):
+class ServerPropertiesForCreate(_serialization.Model):
     """The properties used to create a new server.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ServerPropertiesForDefaultCreate, ServerPropertiesForGeoRestore, ServerPropertiesForRestore, ServerPropertiesForReplica.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ServerPropertiesForDefaultCreate, ServerPropertiesForGeoRestore, ServerPropertiesForRestore,
+    ServerPropertiesForReplica
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Server version. Possible values include: "10.2", "10.3".
-    :type version: str or ~azure.mgmt.rdbms.mariadb.models.ServerVersion
-    :param ssl_enforcement: Enable ssl enforcement or not when connect to server. Possible values
-     include: "Enabled", "Disabled".
-    :type ssl_enforcement: str or ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
-    :param minimal_tls_version: Enforce a minimal Tls version for the server. Possible values
-     include: "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
-    :type minimal_tls_version: str or ~azure.mgmt.rdbms.mariadb.models.MinimalTlsVersionEnum
-    :param public_network_access: Whether or not public network access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
-     "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
-    :param create_mode: Required. The mode to create a new server.Constant filled by server.
-     Possible values include: "Default", "PointInTimeRestore", "GeoRestore", "Replica".
-    :type create_mode: str or ~azure.mgmt.rdbms.mariadb.models.CreateMode
+    :ivar version: Server version. Known values are: "10.2" and "10.3".
+    :vartype version: str or ~azure.mgmt.rdbms.mariadb.models.ServerVersion
+    :ivar ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values are:
+     "Enabled" and "Disabled".
+    :vartype ssl_enforcement: str or ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
+    :ivar minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+     "TLS1_0", "TLS1_1", "TLS1_2", and "TLSEnforcementDisabled".
+    :vartype minimal_tls_version: str or ~azure.mgmt.rdbms.mariadb.models.MinimalTlsVersionEnum
+    :ivar public_network_access: Whether or not public network access is allowed for this server.
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+     "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
+    :ivar storage_profile: Storage profile of a server.
+    :vartype storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
+    :ivar create_mode: The mode to create a new server. Required. Known values are: "Default",
+     "PointInTimeRestore", "GeoRestore", and "Replica".
+    :vartype create_mode: str or ~azure.mgmt.rdbms.mariadb.models.CreateMode
     """
 
     _validation = {
-        'create_mode': {'required': True},
+        "create_mode": {"required": True},
     }
 
     _attribute_map = {
-        'version': {'key': 'version', 'type': 'str'},
-        'ssl_enforcement': {'key': 'sslEnforcement', 'type': 'str'},
-        'minimal_tls_version': {'key': 'minimalTlsVersion', 'type': 'str'},
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
-        'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
+        "version": {"key": "version", "type": "str"},
+        "ssl_enforcement": {"key": "sslEnforcement", "type": "str"},
+        "minimal_tls_version": {"key": "minimalTlsVersion", "type": "str"},
+        "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
+        "storage_profile": {"key": "storageProfile", "type": "StorageProfile"},
+        "create_mode": {"key": "createMode", "type": "str"},
     }
 
     _subtype_map = {
-        'create_mode': {'Default': 'ServerPropertiesForDefaultCreate', 'GeoRestore': 'ServerPropertiesForGeoRestore', 'PointInTimeRestore': 'ServerPropertiesForRestore', 'Replica': 'ServerPropertiesForReplica'}
+        "create_mode": {
+            "Default": "ServerPropertiesForDefaultCreate",
+            "GeoRestore": "ServerPropertiesForGeoRestore",
+            "PointInTimeRestore": "ServerPropertiesForRestore",
+            "Replica": "ServerPropertiesForReplica",
+        }
     }
 
     def __init__(
         self,
         *,
-        version: Optional[Union[str, "ServerVersion"]] = None,
-        ssl_enforcement: Optional[Union[str, "SslEnforcementEnum"]] = None,
-        minimal_tls_version: Optional[Union[str, "MinimalTlsVersionEnum"]] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccessEnum"]] = None,
-        storage_profile: Optional["StorageProfile"] = None,
-        **kwargs
-    ):
-        super(ServerPropertiesForCreate, self).__init__(**kwargs)
+        version: Optional[Union[str, "_models.ServerVersion"]] = None,
+        ssl_enforcement: Optional[Union[str, "_models.SslEnforcementEnum"]] = None,
+        minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersionEnum"]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccessEnum"]] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword version: Server version. Known values are: "10.2" and "10.3".
+        :paramtype version: str or ~azure.mgmt.rdbms.mariadb.models.ServerVersion
+        :keyword ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values
+         are: "Enabled" and "Disabled".
+        :paramtype ssl_enforcement: str or ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
+        :keyword minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+         "TLS1_0", "TLS1_1", "TLS1_2", and "TLSEnforcementDisabled".
+        :paramtype minimal_tls_version: str or ~azure.mgmt.rdbms.mariadb.models.MinimalTlsVersionEnum
+        :keyword public_network_access: Whether or not public network access is allowed for this
+         server. Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
+        :keyword storage_profile: Storage profile of a server.
+        :paramtype storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
+        """
+        super().__init__(**kwargs)
         self.version = version
         self.ssl_enforcement = ssl_enforcement
         self.minimal_tls_version = minimal_tls_version
         self.public_network_access = public_network_access
         self.storage_profile = storage_profile
-        self.create_mode = None  # type: Optional[str]
+        self.create_mode: Optional[str] = None
 
 
 class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
@@ -1907,45 +2099,45 @@ class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Server version. Possible values include: "10.2", "10.3".
-    :type version: str or ~azure.mgmt.rdbms.mariadb.models.ServerVersion
-    :param ssl_enforcement: Enable ssl enforcement or not when connect to server. Possible values
-     include: "Enabled", "Disabled".
-    :type ssl_enforcement: str or ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
-    :param minimal_tls_version: Enforce a minimal Tls version for the server. Possible values
-     include: "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
-    :type minimal_tls_version: str or ~azure.mgmt.rdbms.mariadb.models.MinimalTlsVersionEnum
-    :param public_network_access: Whether or not public network access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
-     "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
-    :param create_mode: Required. The mode to create a new server.Constant filled by server.
-     Possible values include: "Default", "PointInTimeRestore", "GeoRestore", "Replica".
-    :type create_mode: str or ~azure.mgmt.rdbms.mariadb.models.CreateMode
-    :param administrator_login: Required. The administrator's login name of a server. Can only be
-     specified when the server is being created (and is required for creation).
-    :type administrator_login: str
-    :param administrator_login_password: Required. The password of the administrator login.
-    :type administrator_login_password: str
+    :ivar version: Server version. Known values are: "10.2" and "10.3".
+    :vartype version: str or ~azure.mgmt.rdbms.mariadb.models.ServerVersion
+    :ivar ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values are:
+     "Enabled" and "Disabled".
+    :vartype ssl_enforcement: str or ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
+    :ivar minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+     "TLS1_0", "TLS1_1", "TLS1_2", and "TLSEnforcementDisabled".
+    :vartype minimal_tls_version: str or ~azure.mgmt.rdbms.mariadb.models.MinimalTlsVersionEnum
+    :ivar public_network_access: Whether or not public network access is allowed for this server.
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+     "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
+    :ivar storage_profile: Storage profile of a server.
+    :vartype storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
+    :ivar create_mode: The mode to create a new server. Required. Known values are: "Default",
+     "PointInTimeRestore", "GeoRestore", and "Replica".
+    :vartype create_mode: str or ~azure.mgmt.rdbms.mariadb.models.CreateMode
+    :ivar administrator_login: The administrator's login name of a server. Can only be specified
+     when the server is being created (and is required for creation). Required.
+    :vartype administrator_login: str
+    :ivar administrator_login_password: The password of the administrator login. Required.
+    :vartype administrator_login_password: str
     """
 
     _validation = {
-        'create_mode': {'required': True},
-        'administrator_login': {'required': True},
-        'administrator_login_password': {'required': True},
+        "create_mode": {"required": True},
+        "administrator_login": {"required": True},
+        "administrator_login_password": {"required": True},
     }
 
     _attribute_map = {
-        'version': {'key': 'version', 'type': 'str'},
-        'ssl_enforcement': {'key': 'sslEnforcement', 'type': 'str'},
-        'minimal_tls_version': {'key': 'minimalTlsVersion', 'type': 'str'},
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
-        'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'administrator_login': {'key': 'administratorLogin', 'type': 'str'},
-        'administrator_login_password': {'key': 'administratorLoginPassword', 'type': 'str'},
+        "version": {"key": "version", "type": "str"},
+        "ssl_enforcement": {"key": "sslEnforcement", "type": "str"},
+        "minimal_tls_version": {"key": "minimalTlsVersion", "type": "str"},
+        "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
+        "storage_profile": {"key": "storageProfile", "type": "StorageProfile"},
+        "create_mode": {"key": "createMode", "type": "str"},
+        "administrator_login": {"key": "administratorLogin", "type": "str"},
+        "administrator_login_password": {"key": "administratorLoginPassword", "type": "str"},
     }
 
     def __init__(
@@ -1953,73 +2145,129 @@ class ServerPropertiesForDefaultCreate(ServerPropertiesForCreate):
         *,
         administrator_login: str,
         administrator_login_password: str,
-        version: Optional[Union[str, "ServerVersion"]] = None,
-        ssl_enforcement: Optional[Union[str, "SslEnforcementEnum"]] = None,
-        minimal_tls_version: Optional[Union[str, "MinimalTlsVersionEnum"]] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccessEnum"]] = None,
-        storage_profile: Optional["StorageProfile"] = None,
-        **kwargs
-    ):
-        super(ServerPropertiesForDefaultCreate, self).__init__(version=version, ssl_enforcement=ssl_enforcement, minimal_tls_version=minimal_tls_version, public_network_access=public_network_access, storage_profile=storage_profile, **kwargs)
-        self.create_mode = 'Default'  # type: str
+        version: Optional[Union[str, "_models.ServerVersion"]] = None,
+        ssl_enforcement: Optional[Union[str, "_models.SslEnforcementEnum"]] = None,
+        minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersionEnum"]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccessEnum"]] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword version: Server version. Known values are: "10.2" and "10.3".
+        :paramtype version: str or ~azure.mgmt.rdbms.mariadb.models.ServerVersion
+        :keyword ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values
+         are: "Enabled" and "Disabled".
+        :paramtype ssl_enforcement: str or ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
+        :keyword minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+         "TLS1_0", "TLS1_1", "TLS1_2", and "TLSEnforcementDisabled".
+        :paramtype minimal_tls_version: str or ~azure.mgmt.rdbms.mariadb.models.MinimalTlsVersionEnum
+        :keyword public_network_access: Whether or not public network access is allowed for this
+         server. Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
+        :keyword storage_profile: Storage profile of a server.
+        :paramtype storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
+        :keyword administrator_login: The administrator's login name of a server. Can only be specified
+         when the server is being created (and is required for creation). Required.
+        :paramtype administrator_login: str
+        :keyword administrator_login_password: The password of the administrator login. Required.
+        :paramtype administrator_login_password: str
+        """
+        super().__init__(
+            version=version,
+            ssl_enforcement=ssl_enforcement,
+            minimal_tls_version=minimal_tls_version,
+            public_network_access=public_network_access,
+            storage_profile=storage_profile,
+            **kwargs
+        )
+        self.create_mode: str = "Default"
         self.administrator_login = administrator_login
         self.administrator_login_password = administrator_login_password
 
 
 class ServerPropertiesForGeoRestore(ServerPropertiesForCreate):
-    """The properties used to create a new server by restoring to a different region from a geo replicated backup.
+    """The properties used to create a new server by restoring to a different region from a geo
+    replicated backup.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Server version. Possible values include: "10.2", "10.3".
-    :type version: str or ~azure.mgmt.rdbms.mariadb.models.ServerVersion
-    :param ssl_enforcement: Enable ssl enforcement or not when connect to server. Possible values
-     include: "Enabled", "Disabled".
-    :type ssl_enforcement: str or ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
-    :param minimal_tls_version: Enforce a minimal Tls version for the server. Possible values
-     include: "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
-    :type minimal_tls_version: str or ~azure.mgmt.rdbms.mariadb.models.MinimalTlsVersionEnum
-    :param public_network_access: Whether or not public network access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
-     "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
-    :param create_mode: Required. The mode to create a new server.Constant filled by server.
-     Possible values include: "Default", "PointInTimeRestore", "GeoRestore", "Replica".
-    :type create_mode: str or ~azure.mgmt.rdbms.mariadb.models.CreateMode
-    :param source_server_id: Required. The source server id to restore from.
-    :type source_server_id: str
+    :ivar version: Server version. Known values are: "10.2" and "10.3".
+    :vartype version: str or ~azure.mgmt.rdbms.mariadb.models.ServerVersion
+    :ivar ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values are:
+     "Enabled" and "Disabled".
+    :vartype ssl_enforcement: str or ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
+    :ivar minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+     "TLS1_0", "TLS1_1", "TLS1_2", and "TLSEnforcementDisabled".
+    :vartype minimal_tls_version: str or ~azure.mgmt.rdbms.mariadb.models.MinimalTlsVersionEnum
+    :ivar public_network_access: Whether or not public network access is allowed for this server.
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+     "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
+    :ivar storage_profile: Storage profile of a server.
+    :vartype storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
+    :ivar create_mode: The mode to create a new server. Required. Known values are: "Default",
+     "PointInTimeRestore", "GeoRestore", and "Replica".
+    :vartype create_mode: str or ~azure.mgmt.rdbms.mariadb.models.CreateMode
+    :ivar source_server_id: The source server id to restore from. Required.
+    :vartype source_server_id: str
     """
 
     _validation = {
-        'create_mode': {'required': True},
-        'source_server_id': {'required': True},
+        "create_mode": {"required": True},
+        "source_server_id": {"required": True},
     }
 
     _attribute_map = {
-        'version': {'key': 'version', 'type': 'str'},
-        'ssl_enforcement': {'key': 'sslEnforcement', 'type': 'str'},
-        'minimal_tls_version': {'key': 'minimalTlsVersion', 'type': 'str'},
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
-        'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'source_server_id': {'key': 'sourceServerId', 'type': 'str'},
+        "version": {"key": "version", "type": "str"},
+        "ssl_enforcement": {"key": "sslEnforcement", "type": "str"},
+        "minimal_tls_version": {"key": "minimalTlsVersion", "type": "str"},
+        "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
+        "storage_profile": {"key": "storageProfile", "type": "StorageProfile"},
+        "create_mode": {"key": "createMode", "type": "str"},
+        "source_server_id": {"key": "sourceServerId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         source_server_id: str,
-        version: Optional[Union[str, "ServerVersion"]] = None,
-        ssl_enforcement: Optional[Union[str, "SslEnforcementEnum"]] = None,
-        minimal_tls_version: Optional[Union[str, "MinimalTlsVersionEnum"]] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccessEnum"]] = None,
-        storage_profile: Optional["StorageProfile"] = None,
-        **kwargs
-    ):
-        super(ServerPropertiesForGeoRestore, self).__init__(version=version, ssl_enforcement=ssl_enforcement, minimal_tls_version=minimal_tls_version, public_network_access=public_network_access, storage_profile=storage_profile, **kwargs)
-        self.create_mode = 'GeoRestore'  # type: str
+        version: Optional[Union[str, "_models.ServerVersion"]] = None,
+        ssl_enforcement: Optional[Union[str, "_models.SslEnforcementEnum"]] = None,
+        minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersionEnum"]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccessEnum"]] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword version: Server version. Known values are: "10.2" and "10.3".
+        :paramtype version: str or ~azure.mgmt.rdbms.mariadb.models.ServerVersion
+        :keyword ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values
+         are: "Enabled" and "Disabled".
+        :paramtype ssl_enforcement: str or ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
+        :keyword minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+         "TLS1_0", "TLS1_1", "TLS1_2", and "TLSEnforcementDisabled".
+        :paramtype minimal_tls_version: str or ~azure.mgmt.rdbms.mariadb.models.MinimalTlsVersionEnum
+        :keyword public_network_access: Whether or not public network access is allowed for this
+         server. Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
+        :keyword storage_profile: Storage profile of a server.
+        :paramtype storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
+        :keyword source_server_id: The source server id to restore from. Required.
+        :paramtype source_server_id: str
+        """
+        super().__init__(
+            version=version,
+            ssl_enforcement=ssl_enforcement,
+            minimal_tls_version=minimal_tls_version,
+            public_network_access=public_network_access,
+            storage_profile=storage_profile,
+            **kwargs
+        )
+        self.create_mode: str = "GeoRestore"
         self.source_server_id = source_server_id
 
 
@@ -2028,55 +2276,81 @@ class ServerPropertiesForReplica(ServerPropertiesForCreate):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Server version. Possible values include: "10.2", "10.3".
-    :type version: str or ~azure.mgmt.rdbms.mariadb.models.ServerVersion
-    :param ssl_enforcement: Enable ssl enforcement or not when connect to server. Possible values
-     include: "Enabled", "Disabled".
-    :type ssl_enforcement: str or ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
-    :param minimal_tls_version: Enforce a minimal Tls version for the server. Possible values
-     include: "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
-    :type minimal_tls_version: str or ~azure.mgmt.rdbms.mariadb.models.MinimalTlsVersionEnum
-    :param public_network_access: Whether or not public network access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
-     "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
-    :param create_mode: Required. The mode to create a new server.Constant filled by server.
-     Possible values include: "Default", "PointInTimeRestore", "GeoRestore", "Replica".
-    :type create_mode: str or ~azure.mgmt.rdbms.mariadb.models.CreateMode
-    :param source_server_id: Required. The master server id to create replica from.
-    :type source_server_id: str
+    :ivar version: Server version. Known values are: "10.2" and "10.3".
+    :vartype version: str or ~azure.mgmt.rdbms.mariadb.models.ServerVersion
+    :ivar ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values are:
+     "Enabled" and "Disabled".
+    :vartype ssl_enforcement: str or ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
+    :ivar minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+     "TLS1_0", "TLS1_1", "TLS1_2", and "TLSEnforcementDisabled".
+    :vartype minimal_tls_version: str or ~azure.mgmt.rdbms.mariadb.models.MinimalTlsVersionEnum
+    :ivar public_network_access: Whether or not public network access is allowed for this server.
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+     "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
+    :ivar storage_profile: Storage profile of a server.
+    :vartype storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
+    :ivar create_mode: The mode to create a new server. Required. Known values are: "Default",
+     "PointInTimeRestore", "GeoRestore", and "Replica".
+    :vartype create_mode: str or ~azure.mgmt.rdbms.mariadb.models.CreateMode
+    :ivar source_server_id: The master server id to create replica from. Required.
+    :vartype source_server_id: str
     """
 
     _validation = {
-        'create_mode': {'required': True},
-        'source_server_id': {'required': True},
+        "create_mode": {"required": True},
+        "source_server_id": {"required": True},
     }
 
     _attribute_map = {
-        'version': {'key': 'version', 'type': 'str'},
-        'ssl_enforcement': {'key': 'sslEnforcement', 'type': 'str'},
-        'minimal_tls_version': {'key': 'minimalTlsVersion', 'type': 'str'},
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
-        'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'source_server_id': {'key': 'sourceServerId', 'type': 'str'},
+        "version": {"key": "version", "type": "str"},
+        "ssl_enforcement": {"key": "sslEnforcement", "type": "str"},
+        "minimal_tls_version": {"key": "minimalTlsVersion", "type": "str"},
+        "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
+        "storage_profile": {"key": "storageProfile", "type": "StorageProfile"},
+        "create_mode": {"key": "createMode", "type": "str"},
+        "source_server_id": {"key": "sourceServerId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         source_server_id: str,
-        version: Optional[Union[str, "ServerVersion"]] = None,
-        ssl_enforcement: Optional[Union[str, "SslEnforcementEnum"]] = None,
-        minimal_tls_version: Optional[Union[str, "MinimalTlsVersionEnum"]] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccessEnum"]] = None,
-        storage_profile: Optional["StorageProfile"] = None,
-        **kwargs
-    ):
-        super(ServerPropertiesForReplica, self).__init__(version=version, ssl_enforcement=ssl_enforcement, minimal_tls_version=minimal_tls_version, public_network_access=public_network_access, storage_profile=storage_profile, **kwargs)
-        self.create_mode = 'Replica'  # type: str
+        version: Optional[Union[str, "_models.ServerVersion"]] = None,
+        ssl_enforcement: Optional[Union[str, "_models.SslEnforcementEnum"]] = None,
+        minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersionEnum"]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccessEnum"]] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword version: Server version. Known values are: "10.2" and "10.3".
+        :paramtype version: str or ~azure.mgmt.rdbms.mariadb.models.ServerVersion
+        :keyword ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values
+         are: "Enabled" and "Disabled".
+        :paramtype ssl_enforcement: str or ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
+        :keyword minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+         "TLS1_0", "TLS1_1", "TLS1_2", and "TLSEnforcementDisabled".
+        :paramtype minimal_tls_version: str or ~azure.mgmt.rdbms.mariadb.models.MinimalTlsVersionEnum
+        :keyword public_network_access: Whether or not public network access is allowed for this
+         server. Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
+        :keyword storage_profile: Storage profile of a server.
+        :paramtype storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
+        :keyword source_server_id: The master server id to create replica from. Required.
+        :paramtype source_server_id: str
+        """
+        super().__init__(
+            version=version,
+            ssl_enforcement=ssl_enforcement,
+            minimal_tls_version=minimal_tls_version,
+            public_network_access=public_network_access,
+            storage_profile=storage_profile,
+            **kwargs
+        )
+        self.create_mode: str = "Replica"
         self.source_server_id = source_server_id
 
 
@@ -2085,45 +2359,45 @@ class ServerPropertiesForRestore(ServerPropertiesForCreate):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param version: Server version. Possible values include: "10.2", "10.3".
-    :type version: str or ~azure.mgmt.rdbms.mariadb.models.ServerVersion
-    :param ssl_enforcement: Enable ssl enforcement or not when connect to server. Possible values
-     include: "Enabled", "Disabled".
-    :type ssl_enforcement: str or ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
-    :param minimal_tls_version: Enforce a minimal Tls version for the server. Possible values
-     include: "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
-    :type minimal_tls_version: str or ~azure.mgmt.rdbms.mariadb.models.MinimalTlsVersionEnum
-    :param public_network_access: Whether or not public network access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
-     "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
-    :param create_mode: Required. The mode to create a new server.Constant filled by server.
-     Possible values include: "Default", "PointInTimeRestore", "GeoRestore", "Replica".
-    :type create_mode: str or ~azure.mgmt.rdbms.mariadb.models.CreateMode
-    :param source_server_id: Required. The source server id to restore from.
-    :type source_server_id: str
-    :param restore_point_in_time: Required. Restore point creation time (ISO8601 format),
-     specifying the time to restore from.
-    :type restore_point_in_time: ~datetime.datetime
+    :ivar version: Server version. Known values are: "10.2" and "10.3".
+    :vartype version: str or ~azure.mgmt.rdbms.mariadb.models.ServerVersion
+    :ivar ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values are:
+     "Enabled" and "Disabled".
+    :vartype ssl_enforcement: str or ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
+    :ivar minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+     "TLS1_0", "TLS1_1", "TLS1_2", and "TLSEnforcementDisabled".
+    :vartype minimal_tls_version: str or ~azure.mgmt.rdbms.mariadb.models.MinimalTlsVersionEnum
+    :ivar public_network_access: Whether or not public network access is allowed for this server.
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+     "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
+    :ivar storage_profile: Storage profile of a server.
+    :vartype storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
+    :ivar create_mode: The mode to create a new server. Required. Known values are: "Default",
+     "PointInTimeRestore", "GeoRestore", and "Replica".
+    :vartype create_mode: str or ~azure.mgmt.rdbms.mariadb.models.CreateMode
+    :ivar source_server_id: The source server id to restore from. Required.
+    :vartype source_server_id: str
+    :ivar restore_point_in_time: Restore point creation time (ISO8601 format), specifying the time
+     to restore from. Required.
+    :vartype restore_point_in_time: ~datetime.datetime
     """
 
     _validation = {
-        'create_mode': {'required': True},
-        'source_server_id': {'required': True},
-        'restore_point_in_time': {'required': True},
+        "create_mode": {"required": True},
+        "source_server_id": {"required": True},
+        "restore_point_in_time": {"required": True},
     }
 
     _attribute_map = {
-        'version': {'key': 'version', 'type': 'str'},
-        'ssl_enforcement': {'key': 'sslEnforcement', 'type': 'str'},
-        'minimal_tls_version': {'key': 'minimalTlsVersion', 'type': 'str'},
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
-        'storage_profile': {'key': 'storageProfile', 'type': 'StorageProfile'},
-        'create_mode': {'key': 'createMode', 'type': 'str'},
-        'source_server_id': {'key': 'sourceServerId', 'type': 'str'},
-        'restore_point_in_time': {'key': 'restorePointInTime', 'type': 'iso-8601'},
+        "version": {"key": "version", "type": "str"},
+        "ssl_enforcement": {"key": "sslEnforcement", "type": "str"},
+        "minimal_tls_version": {"key": "minimalTlsVersion", "type": "str"},
+        "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
+        "storage_profile": {"key": "storageProfile", "type": "StorageProfile"},
+        "create_mode": {"key": "createMode", "type": "str"},
+        "source_server_id": {"key": "sourceServerId", "type": "str"},
+        "restore_point_in_time": {"key": "restorePointInTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -2131,15 +2405,44 @@ class ServerPropertiesForRestore(ServerPropertiesForCreate):
         *,
         source_server_id: str,
         restore_point_in_time: datetime.datetime,
-        version: Optional[Union[str, "ServerVersion"]] = None,
-        ssl_enforcement: Optional[Union[str, "SslEnforcementEnum"]] = None,
-        minimal_tls_version: Optional[Union[str, "MinimalTlsVersionEnum"]] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccessEnum"]] = None,
-        storage_profile: Optional["StorageProfile"] = None,
-        **kwargs
-    ):
-        super(ServerPropertiesForRestore, self).__init__(version=version, ssl_enforcement=ssl_enforcement, minimal_tls_version=minimal_tls_version, public_network_access=public_network_access, storage_profile=storage_profile, **kwargs)
-        self.create_mode = 'PointInTimeRestore'  # type: str
+        version: Optional[Union[str, "_models.ServerVersion"]] = None,
+        ssl_enforcement: Optional[Union[str, "_models.SslEnforcementEnum"]] = None,
+        minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersionEnum"]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccessEnum"]] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword version: Server version. Known values are: "10.2" and "10.3".
+        :paramtype version: str or ~azure.mgmt.rdbms.mariadb.models.ServerVersion
+        :keyword ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values
+         are: "Enabled" and "Disabled".
+        :paramtype ssl_enforcement: str or ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
+        :keyword minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+         "TLS1_0", "TLS1_1", "TLS1_2", and "TLSEnforcementDisabled".
+        :paramtype minimal_tls_version: str or ~azure.mgmt.rdbms.mariadb.models.MinimalTlsVersionEnum
+        :keyword public_network_access: Whether or not public network access is allowed for this
+         server. Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
+        :keyword storage_profile: Storage profile of a server.
+        :paramtype storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
+        :keyword source_server_id: The source server id to restore from. Required.
+        :paramtype source_server_id: str
+        :keyword restore_point_in_time: Restore point creation time (ISO8601 format), specifying the
+         time to restore from. Required.
+        :paramtype restore_point_in_time: ~datetime.datetime
+        """
+        super().__init__(
+            version=version,
+            ssl_enforcement=ssl_enforcement,
+            minimal_tls_version=minimal_tls_version,
+            public_network_access=public_network_access,
+            storage_profile=storage_profile,
+            **kwargs
+        )
+        self.create_mode: str = "PointInTimeRestore"
         self.source_server_id = source_server_id
         self.restore_point_in_time = restore_point_in_time
 
@@ -2157,59 +2460,81 @@ class ServerSecurityAlertPolicy(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param state: Specifies the state of the policy, whether it is enabled or disabled. Possible
-     values include: "Enabled", "Disabled".
-    :type state: str or ~azure.mgmt.rdbms.mariadb.models.ServerSecurityAlertPolicyState
-    :param disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
+    :ivar state: Specifies the state of the policy, whether it is enabled or disabled. Known values
+     are: "Enabled" and "Disabled".
+    :vartype state: str or ~azure.mgmt.rdbms.mariadb.models.ServerSecurityAlertPolicyState
+    :ivar disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
      Sql_Injection, Sql_Injection_Vulnerability, Access_Anomaly.
-    :type disabled_alerts: list[str]
-    :param email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
-    :type email_addresses: list[str]
-    :param email_account_admins: Specifies that the alert is sent to the account administrators.
-    :type email_account_admins: bool
-    :param storage_endpoint: Specifies the blob storage endpoint (e.g.
+    :vartype disabled_alerts: list[str]
+    :ivar email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
+    :vartype email_addresses: list[str]
+    :ivar email_account_admins: Specifies that the alert is sent to the account administrators.
+    :vartype email_account_admins: bool
+    :ivar storage_endpoint: Specifies the blob storage endpoint (e.g.
      https://MyAccount.blob.core.windows.net). This blob storage will hold all Threat Detection
      audit logs.
-    :type storage_endpoint: str
-    :param storage_account_access_key: Specifies the identifier key of the Threat Detection audit
+    :vartype storage_endpoint: str
+    :ivar storage_account_access_key: Specifies the identifier key of the Threat Detection audit
      storage account.
-    :type storage_account_access_key: str
-    :param retention_days: Specifies the number of days to keep in the Threat Detection audit logs.
-    :type retention_days: int
+    :vartype storage_account_access_key: str
+    :ivar retention_days: Specifies the number of days to keep in the Threat Detection audit logs.
+    :vartype retention_days: int
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'disabled_alerts': {'key': 'properties.disabledAlerts', 'type': '[str]'},
-        'email_addresses': {'key': 'properties.emailAddresses', 'type': '[str]'},
-        'email_account_admins': {'key': 'properties.emailAccountAdmins', 'type': 'bool'},
-        'storage_endpoint': {'key': 'properties.storageEndpoint', 'type': 'str'},
-        'storage_account_access_key': {'key': 'properties.storageAccountAccessKey', 'type': 'str'},
-        'retention_days': {'key': 'properties.retentionDays', 'type': 'int'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+        "disabled_alerts": {"key": "properties.disabledAlerts", "type": "[str]"},
+        "email_addresses": {"key": "properties.emailAddresses", "type": "[str]"},
+        "email_account_admins": {"key": "properties.emailAccountAdmins", "type": "bool"},
+        "storage_endpoint": {"key": "properties.storageEndpoint", "type": "str"},
+        "storage_account_access_key": {"key": "properties.storageAccountAccessKey", "type": "str"},
+        "retention_days": {"key": "properties.retentionDays", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        state: Optional[Union[str, "ServerSecurityAlertPolicyState"]] = None,
+        state: Optional[Union[str, "_models.ServerSecurityAlertPolicyState"]] = None,
         disabled_alerts: Optional[List[str]] = None,
         email_addresses: Optional[List[str]] = None,
         email_account_admins: Optional[bool] = None,
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         retention_days: Optional[int] = None,
-        **kwargs
-    ):
-        super(ServerSecurityAlertPolicy, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword state: Specifies the state of the policy, whether it is enabled or disabled. Known
+         values are: "Enabled" and "Disabled".
+        :paramtype state: str or ~azure.mgmt.rdbms.mariadb.models.ServerSecurityAlertPolicyState
+        :keyword disabled_alerts: Specifies an array of alerts that are disabled. Allowed values are:
+         Sql_Injection, Sql_Injection_Vulnerability, Access_Anomaly.
+        :paramtype disabled_alerts: list[str]
+        :keyword email_addresses: Specifies an array of e-mail addresses to which the alert is sent.
+        :paramtype email_addresses: list[str]
+        :keyword email_account_admins: Specifies that the alert is sent to the account administrators.
+        :paramtype email_account_admins: bool
+        :keyword storage_endpoint: Specifies the blob storage endpoint (e.g.
+         https://MyAccount.blob.core.windows.net). This blob storage will hold all Threat Detection
+         audit logs.
+        :paramtype storage_endpoint: str
+        :keyword storage_account_access_key: Specifies the identifier key of the Threat Detection audit
+         storage account.
+        :paramtype storage_account_access_key: str
+        :keyword retention_days: Specifies the number of days to keep in the Threat Detection audit
+         logs.
+        :paramtype retention_days: int
+        """
+        super().__init__(**kwargs)
         self.state = state
         self.disabled_alerts = disabled_alerts
         self.email_addresses = email_addresses
@@ -2219,7 +2544,7 @@ class ServerSecurityAlertPolicy(ProxyResource):
         self.retention_days = retention_days
 
 
-class ServerSecurityAlertPolicyListResult(msrest.serialization.Model):
+class ServerSecurityAlertPolicyListResult(_serialization.Model):
     """A list of the server's security alert policies.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2231,78 +2556,101 @@ class ServerSecurityAlertPolicyListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ServerSecurityAlertPolicy]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ServerSecurityAlertPolicy]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServerSecurityAlertPolicyListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class ServerUpdateParameters(msrest.serialization.Model):
+class ServerUpdateParameters(_serialization.Model):
     """Parameters allowed to update for a server.
 
-    :param sku: The SKU (pricing tier) of the server.
-    :type sku: ~azure.mgmt.rdbms.mariadb.models.Sku
-    :param tags: A set of tags. Application-specific metadata in the form of key-value pairs.
-    :type tags: dict[str, str]
-    :param storage_profile: Storage profile of a server.
-    :type storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
-    :param administrator_login_password: The password of the administrator login.
-    :type administrator_login_password: str
-    :param version: The version of a server. Possible values include: "10.2", "10.3".
-    :type version: str or ~azure.mgmt.rdbms.mariadb.models.ServerVersion
-    :param ssl_enforcement: Enable ssl enforcement or not when connect to server. Possible values
-     include: "Enabled", "Disabled".
-    :type ssl_enforcement: str or ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
-    :param minimal_tls_version: Enforce a minimal Tls version for the server. Possible values
-     include: "TLS1_0", "TLS1_1", "TLS1_2", "TLSEnforcementDisabled".
-    :type minimal_tls_version: str or ~azure.mgmt.rdbms.mariadb.models.MinimalTlsVersionEnum
-    :param public_network_access: Whether or not public network access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Possible values include:
-     "Enabled", "Disabled".
-    :type public_network_access: str or ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
-    :param replication_role: The replication role of the server.
-    :type replication_role: str
+    :ivar sku: The SKU (pricing tier) of the server.
+    :vartype sku: ~azure.mgmt.rdbms.mariadb.models.Sku
+    :ivar tags: Application-specific metadata in the form of key-value pairs.
+    :vartype tags: dict[str, str]
+    :ivar storage_profile: Storage profile of a server.
+    :vartype storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
+    :ivar administrator_login_password: The password of the administrator login.
+    :vartype administrator_login_password: str
+    :ivar version: The version of a server. Known values are: "10.2" and "10.3".
+    :vartype version: str or ~azure.mgmt.rdbms.mariadb.models.ServerVersion
+    :ivar ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values are:
+     "Enabled" and "Disabled".
+    :vartype ssl_enforcement: str or ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
+    :ivar minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+     "TLS1_0", "TLS1_1", "TLS1_2", and "TLSEnforcementDisabled".
+    :vartype minimal_tls_version: str or ~azure.mgmt.rdbms.mariadb.models.MinimalTlsVersionEnum
+    :ivar public_network_access: Whether or not public network access is allowed for this server.
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+     "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
+    :ivar replication_role: The replication role of the server.
+    :vartype replication_role: str
     """
 
     _attribute_map = {
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'storage_profile': {'key': 'properties.storageProfile', 'type': 'StorageProfile'},
-        'administrator_login_password': {'key': 'properties.administratorLoginPassword', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'ssl_enforcement': {'key': 'properties.sslEnforcement', 'type': 'str'},
-        'minimal_tls_version': {'key': 'properties.minimalTlsVersion', 'type': 'str'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
-        'replication_role': {'key': 'properties.replicationRole', 'type': 'str'},
+        "sku": {"key": "sku", "type": "Sku"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "storage_profile": {"key": "properties.storageProfile", "type": "StorageProfile"},
+        "administrator_login_password": {"key": "properties.administratorLoginPassword", "type": "str"},
+        "version": {"key": "properties.version", "type": "str"},
+        "ssl_enforcement": {"key": "properties.sslEnforcement", "type": "str"},
+        "minimal_tls_version": {"key": "properties.minimalTlsVersion", "type": "str"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
+        "replication_role": {"key": "properties.replicationRole", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         tags: Optional[Dict[str, str]] = None,
-        storage_profile: Optional["StorageProfile"] = None,
+        storage_profile: Optional["_models.StorageProfile"] = None,
         administrator_login_password: Optional[str] = None,
-        version: Optional[Union[str, "ServerVersion"]] = None,
-        ssl_enforcement: Optional[Union[str, "SslEnforcementEnum"]] = None,
-        minimal_tls_version: Optional[Union[str, "MinimalTlsVersionEnum"]] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccessEnum"]] = None,
+        version: Optional[Union[str, "_models.ServerVersion"]] = None,
+        ssl_enforcement: Optional[Union[str, "_models.SslEnforcementEnum"]] = None,
+        minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersionEnum"]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccessEnum"]] = None,
         replication_role: Optional[str] = None,
-        **kwargs
-    ):
-        super(ServerUpdateParameters, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword sku: The SKU (pricing tier) of the server.
+        :paramtype sku: ~azure.mgmt.rdbms.mariadb.models.Sku
+        :keyword tags: Application-specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword storage_profile: Storage profile of a server.
+        :paramtype storage_profile: ~azure.mgmt.rdbms.mariadb.models.StorageProfile
+        :keyword administrator_login_password: The password of the administrator login.
+        :paramtype administrator_login_password: str
+        :keyword version: The version of a server. Known values are: "10.2" and "10.3".
+        :paramtype version: str or ~azure.mgmt.rdbms.mariadb.models.ServerVersion
+        :keyword ssl_enforcement: Enable ssl enforcement or not when connect to server. Known values
+         are: "Enabled" and "Disabled".
+        :paramtype ssl_enforcement: str or ~azure.mgmt.rdbms.mariadb.models.SslEnforcementEnum
+        :keyword minimal_tls_version: Enforce a minimal Tls version for the server. Known values are:
+         "TLS1_0", "TLS1_1", "TLS1_2", and "TLSEnforcementDisabled".
+        :paramtype minimal_tls_version: str or ~azure.mgmt.rdbms.mariadb.models.MinimalTlsVersionEnum
+        :keyword public_network_access: Whether or not public network access is allowed for this
+         server. Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.rdbms.mariadb.models.PublicNetworkAccessEnum
+        :keyword replication_role: The replication role of the server.
+        :paramtype replication_role: str
+        """
+        super().__init__(**kwargs)
         self.sku = sku
         self.tags = tags
         self.storage_profile = storage_profile
@@ -2314,49 +2662,63 @@ class ServerUpdateParameters(msrest.serialization.Model):
         self.replication_role = replication_role
 
 
-class Sku(msrest.serialization.Model):
+class Sku(_serialization.Model):
     """Billing information related properties of a server.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the sku, typically, tier + family + cores, e.g. B_Gen4_1,
-     GP_Gen5_8.
-    :type name: str
-    :param tier: The tier of the particular SKU, e.g. Basic. Possible values include: "Basic",
-     "GeneralPurpose", "MemoryOptimized".
-    :type tier: str or ~azure.mgmt.rdbms.mariadb.models.SkuTier
-    :param capacity: The scale up/out capacity, representing server's compute units.
-    :type capacity: int
-    :param size: The size code, to be interpreted by resource as appropriate.
-    :type size: str
-    :param family: The family of hardware.
-    :type family: str
+    :ivar name: The name of the sku, typically, tier + family + cores, e.g. B_Gen4_1, GP_Gen5_8.
+     Required.
+    :vartype name: str
+    :ivar tier: The tier of the particular SKU, e.g. Basic. Known values are: "Basic",
+     "GeneralPurpose", and "MemoryOptimized".
+    :vartype tier: str or ~azure.mgmt.rdbms.mariadb.models.SkuTier
+    :ivar capacity: The scale up/out capacity, representing server's compute units.
+    :vartype capacity: int
+    :ivar size: The size code, to be interpreted by resource as appropriate.
+    :vartype size: str
+    :ivar family: The family of hardware.
+    :vartype family: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'capacity': {'minimum': 0},
+        "name": {"required": True},
+        "capacity": {"minimum": 0},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
-        'size': {'key': 'size', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
+        "size": {"key": "size", "type": "str"},
+        "family": {"key": "family", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        tier: Optional[Union[str, "SkuTier"]] = None,
+        tier: Optional[Union[str, "_models.SkuTier"]] = None,
         capacity: Optional[int] = None,
         size: Optional[str] = None,
         family: Optional[str] = None,
-        **kwargs
-    ):
-        super(Sku, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name of the sku, typically, tier + family + cores, e.g. B_Gen4_1, GP_Gen5_8.
+         Required.
+        :paramtype name: str
+        :keyword tier: The tier of the particular SKU, e.g. Basic. Known values are: "Basic",
+         "GeneralPurpose", and "MemoryOptimized".
+        :paramtype tier: str or ~azure.mgmt.rdbms.mariadb.models.SkuTier
+        :keyword capacity: The scale up/out capacity, representing server's compute units.
+        :paramtype capacity: int
+        :keyword size: The size code, to be interpreted by resource as appropriate.
+        :paramtype size: str
+        :keyword family: The family of hardware.
+        :paramtype family: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.tier = tier
         self.capacity = capacity
@@ -2364,100 +2726,110 @@ class Sku(msrest.serialization.Model):
         self.family = family
 
 
-class StorageProfile(msrest.serialization.Model):
+class StorageProfile(_serialization.Model):
     """Storage Profile properties of a server.
 
-    :param backup_retention_days: Backup retention days for the server.
-    :type backup_retention_days: int
-    :param geo_redundant_backup: Enable Geo-redundant or not for server backup. Possible values
-     include: "Enabled", "Disabled".
-    :type geo_redundant_backup: str or ~azure.mgmt.rdbms.mariadb.models.GeoRedundantBackup
-    :param storage_mb: Max storage allowed for a server.
-    :type storage_mb: int
-    :param storage_autogrow: Enable Storage Auto Grow. Possible values include: "Enabled",
-     "Disabled".
-    :type storage_autogrow: str or ~azure.mgmt.rdbms.mariadb.models.StorageAutogrow
+    :ivar backup_retention_days: Backup retention days for the server.
+    :vartype backup_retention_days: int
+    :ivar geo_redundant_backup: Enable Geo-redundant or not for server backup. Known values are:
+     "Enabled" and "Disabled".
+    :vartype geo_redundant_backup: str or ~azure.mgmt.rdbms.mariadb.models.GeoRedundantBackup
+    :ivar storage_mb: Max storage allowed for a server.
+    :vartype storage_mb: int
+    :ivar storage_autogrow: Enable Storage Auto Grow. Known values are: "Enabled" and "Disabled".
+    :vartype storage_autogrow: str or ~azure.mgmt.rdbms.mariadb.models.StorageAutogrow
     """
 
     _attribute_map = {
-        'backup_retention_days': {'key': 'backupRetentionDays', 'type': 'int'},
-        'geo_redundant_backup': {'key': 'geoRedundantBackup', 'type': 'str'},
-        'storage_mb': {'key': 'storageMB', 'type': 'int'},
-        'storage_autogrow': {'key': 'storageAutogrow', 'type': 'str'},
+        "backup_retention_days": {"key": "backupRetentionDays", "type": "int"},
+        "geo_redundant_backup": {"key": "geoRedundantBackup", "type": "str"},
+        "storage_mb": {"key": "storageMB", "type": "int"},
+        "storage_autogrow": {"key": "storageAutogrow", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         backup_retention_days: Optional[int] = None,
-        geo_redundant_backup: Optional[Union[str, "GeoRedundantBackup"]] = None,
+        geo_redundant_backup: Optional[Union[str, "_models.GeoRedundantBackup"]] = None,
         storage_mb: Optional[int] = None,
-        storage_autogrow: Optional[Union[str, "StorageAutogrow"]] = None,
-        **kwargs
-    ):
-        super(StorageProfile, self).__init__(**kwargs)
+        storage_autogrow: Optional[Union[str, "_models.StorageAutogrow"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword backup_retention_days: Backup retention days for the server.
+        :paramtype backup_retention_days: int
+        :keyword geo_redundant_backup: Enable Geo-redundant or not for server backup. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype geo_redundant_backup: str or ~azure.mgmt.rdbms.mariadb.models.GeoRedundantBackup
+        :keyword storage_mb: Max storage allowed for a server.
+        :paramtype storage_mb: int
+        :keyword storage_autogrow: Enable Storage Auto Grow. Known values are: "Enabled" and
+         "Disabled".
+        :paramtype storage_autogrow: str or ~azure.mgmt.rdbms.mariadb.models.StorageAutogrow
+        """
+        super().__init__(**kwargs)
         self.backup_retention_days = backup_retention_days
         self.geo_redundant_backup = geo_redundant_backup
         self.storage_mb = storage_mb
         self.storage_autogrow = storage_autogrow
 
 
-class TagsObject(msrest.serialization.Model):
+class TagsObject(_serialization.Model):
     """Tags object for patch operations.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(TagsObject, self).__init__(**kwargs)
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.tags = tags
 
 
-class TopQueryStatisticsInput(msrest.serialization.Model):
+class TopQueryStatisticsInput(_serialization.Model):
     """Input to get top query statistics.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param number_of_top_queries: Required. Max number of top queries to return.
-    :type number_of_top_queries: int
-    :param aggregation_function: Required. Aggregation function name.
-    :type aggregation_function: str
-    :param observed_metric: Required. Observed metric name.
-    :type observed_metric: str
-    :param observation_start_time: Required. Observation start time.
-    :type observation_start_time: ~datetime.datetime
-    :param observation_end_time: Required. Observation end time.
-    :type observation_end_time: ~datetime.datetime
-    :param aggregation_window: Required. Aggregation interval type in ISO 8601 format.
-    :type aggregation_window: str
+    :ivar number_of_top_queries: Max number of top queries to return. Required.
+    :vartype number_of_top_queries: int
+    :ivar aggregation_function: Aggregation function name. Required.
+    :vartype aggregation_function: str
+    :ivar observed_metric: Observed metric name. Required.
+    :vartype observed_metric: str
+    :ivar observation_start_time: Observation start time. Required.
+    :vartype observation_start_time: ~datetime.datetime
+    :ivar observation_end_time: Observation end time. Required.
+    :vartype observation_end_time: ~datetime.datetime
+    :ivar aggregation_window: Aggregation interval type in ISO 8601 format. Required.
+    :vartype aggregation_window: str
     """
 
     _validation = {
-        'number_of_top_queries': {'required': True},
-        'aggregation_function': {'required': True},
-        'observed_metric': {'required': True},
-        'observation_start_time': {'required': True},
-        'observation_end_time': {'required': True},
-        'aggregation_window': {'required': True},
+        "number_of_top_queries": {"required": True},
+        "aggregation_function": {"required": True},
+        "observed_metric": {"required": True},
+        "observation_start_time": {"required": True},
+        "observation_end_time": {"required": True},
+        "aggregation_window": {"required": True},
     }
 
     _attribute_map = {
-        'number_of_top_queries': {'key': 'properties.numberOfTopQueries', 'type': 'int'},
-        'aggregation_function': {'key': 'properties.aggregationFunction', 'type': 'str'},
-        'observed_metric': {'key': 'properties.observedMetric', 'type': 'str'},
-        'observation_start_time': {'key': 'properties.observationStartTime', 'type': 'iso-8601'},
-        'observation_end_time': {'key': 'properties.observationEndTime', 'type': 'iso-8601'},
-        'aggregation_window': {'key': 'properties.aggregationWindow', 'type': 'str'},
+        "number_of_top_queries": {"key": "properties.numberOfTopQueries", "type": "int"},
+        "aggregation_function": {"key": "properties.aggregationFunction", "type": "str"},
+        "observed_metric": {"key": "properties.observedMetric", "type": "str"},
+        "observation_start_time": {"key": "properties.observationStartTime", "type": "iso-8601"},
+        "observation_end_time": {"key": "properties.observationEndTime", "type": "iso-8601"},
+        "aggregation_window": {"key": "properties.aggregationWindow", "type": "str"},
     }
 
     def __init__(
@@ -2469,9 +2841,23 @@ class TopQueryStatisticsInput(msrest.serialization.Model):
         observation_start_time: datetime.datetime,
         observation_end_time: datetime.datetime,
         aggregation_window: str,
-        **kwargs
-    ):
-        super(TopQueryStatisticsInput, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword number_of_top_queries: Max number of top queries to return. Required.
+        :paramtype number_of_top_queries: int
+        :keyword aggregation_function: Aggregation function name. Required.
+        :paramtype aggregation_function: str
+        :keyword observed_metric: Observed metric name. Required.
+        :paramtype observed_metric: str
+        :keyword observation_start_time: Observation start time. Required.
+        :paramtype observation_start_time: ~datetime.datetime
+        :keyword observation_end_time: Observation end time. Required.
+        :paramtype observation_end_time: ~datetime.datetime
+        :keyword aggregation_window: Aggregation interval type in ISO 8601 format. Required.
+        :paramtype aggregation_window: str
+        """
+        super().__init__(**kwargs)
         self.number_of_top_queries = number_of_top_queries
         self.aggregation_function = aggregation_function
         self.observed_metric = observed_metric
@@ -2480,7 +2866,7 @@ class TopQueryStatisticsInput(msrest.serialization.Model):
         self.aggregation_window = aggregation_window
 
 
-class TopQueryStatisticsResultList(msrest.serialization.Model):
+class TopQueryStatisticsResultList(_serialization.Model):
     """A list of query statistics.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2492,20 +2878,18 @@ class TopQueryStatisticsResultList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[QueryStatistic]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[QueryStatistic]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TopQueryStatisticsResultList, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
@@ -2523,30 +2907,30 @@ class VirtualNetworkRule(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param virtual_network_subnet_id: The ARM resource id of the virtual network subnet.
-    :type virtual_network_subnet_id: str
-    :param ignore_missing_vnet_service_endpoint: Create firewall rule before the virtual network
-     has vnet service endpoint enabled.
-    :type ignore_missing_vnet_service_endpoint: bool
-    :ivar state: Virtual Network Rule State. Possible values include: "Initializing", "InProgress",
-     "Ready", "Deleting", "Unknown".
+    :ivar virtual_network_subnet_id: The ARM resource id of the virtual network subnet.
+    :vartype virtual_network_subnet_id: str
+    :ivar ignore_missing_vnet_service_endpoint: Create firewall rule before the virtual network has
+     vnet service endpoint enabled.
+    :vartype ignore_missing_vnet_service_endpoint: bool
+    :ivar state: Virtual Network Rule State. Known values are: "Initializing", "InProgress",
+     "Ready", "Deleting", and "Unknown".
     :vartype state: str or ~azure.mgmt.rdbms.mariadb.models.VirtualNetworkRuleState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'virtual_network_subnet_id': {'key': 'properties.virtualNetworkSubnetId', 'type': 'str'},
-        'ignore_missing_vnet_service_endpoint': {'key': 'properties.ignoreMissingVnetServiceEndpoint', 'type': 'bool'},
-        'state': {'key': 'properties.state', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "virtual_network_subnet_id": {"key": "properties.virtualNetworkSubnetId", "type": "str"},
+        "ignore_missing_vnet_service_endpoint": {"key": "properties.ignoreMissingVnetServiceEndpoint", "type": "bool"},
+        "state": {"key": "properties.state", "type": "str"},
     }
 
     def __init__(
@@ -2554,15 +2938,22 @@ class VirtualNetworkRule(ProxyResource):
         *,
         virtual_network_subnet_id: Optional[str] = None,
         ignore_missing_vnet_service_endpoint: Optional[bool] = None,
-        **kwargs
-    ):
-        super(VirtualNetworkRule, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword virtual_network_subnet_id: The ARM resource id of the virtual network subnet.
+        :paramtype virtual_network_subnet_id: str
+        :keyword ignore_missing_vnet_service_endpoint: Create firewall rule before the virtual network
+         has vnet service endpoint enabled.
+        :paramtype ignore_missing_vnet_service_endpoint: bool
+        """
+        super().__init__(**kwargs)
         self.virtual_network_subnet_id = virtual_network_subnet_id
         self.ignore_missing_vnet_service_endpoint = ignore_missing_vnet_service_endpoint
         self.state = None
 
 
-class VirtualNetworkRuleListResult(msrest.serialization.Model):
+class VirtualNetworkRuleListResult(_serialization.Model):
     """A list of virtual network rules.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2574,25 +2965,23 @@ class VirtualNetworkRuleListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualNetworkRule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualNetworkRule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(VirtualNetworkRuleListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class WaitStatistic(ProxyResource):
+class WaitStatistic(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Represents a Wait Statistic.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2605,45 +2994,45 @@ class WaitStatistic(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param start_time: Observation start time.
-    :type start_time: ~datetime.datetime
-    :param end_time: Observation end time.
-    :type end_time: ~datetime.datetime
-    :param event_name: Wait event name.
-    :type event_name: str
-    :param event_type_name: Wait event type name.
-    :type event_type_name: str
-    :param query_id: Database query identifier.
-    :type query_id: long
-    :param database_name: Database Name.
-    :type database_name: str
-    :param user_id: Database user identifier.
-    :type user_id: long
-    :param count: Wait event count observed in this time interval.
-    :type count: long
-    :param total_time_in_ms: Total time of wait in milliseconds in this time interval.
-    :type total_time_in_ms: float
+    :ivar start_time: Observation start time.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Observation end time.
+    :vartype end_time: ~datetime.datetime
+    :ivar event_name: Wait event name.
+    :vartype event_name: str
+    :ivar event_type_name: Wait event type name.
+    :vartype event_type_name: str
+    :ivar query_id: Database query identifier.
+    :vartype query_id: int
+    :ivar database_name: Database Name.
+    :vartype database_name: str
+    :ivar user_id: Database user identifier.
+    :vartype user_id: int
+    :ivar count: Wait event count observed in this time interval.
+    :vartype count: int
+    :ivar total_time_in_ms: Total time of wait in milliseconds in this time interval.
+    :vartype total_time_in_ms: float
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
-        'event_name': {'key': 'properties.eventName', 'type': 'str'},
-        'event_type_name': {'key': 'properties.eventTypeName', 'type': 'str'},
-        'query_id': {'key': 'properties.queryId', 'type': 'long'},
-        'database_name': {'key': 'properties.databaseName', 'type': 'str'},
-        'user_id': {'key': 'properties.userId', 'type': 'long'},
-        'count': {'key': 'properties.count', 'type': 'long'},
-        'total_time_in_ms': {'key': 'properties.totalTimeInMs', 'type': 'float'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "end_time": {"key": "properties.endTime", "type": "iso-8601"},
+        "event_name": {"key": "properties.eventName", "type": "str"},
+        "event_type_name": {"key": "properties.eventTypeName", "type": "str"},
+        "query_id": {"key": "properties.queryId", "type": "int"},
+        "database_name": {"key": "properties.databaseName", "type": "str"},
+        "user_id": {"key": "properties.userId", "type": "int"},
+        "count": {"key": "properties.count", "type": "int"},
+        "total_time_in_ms": {"key": "properties.totalTimeInMs", "type": "float"},
     }
 
     def __init__(
@@ -2658,9 +3047,29 @@ class WaitStatistic(ProxyResource):
         user_id: Optional[int] = None,
         count: Optional[int] = None,
         total_time_in_ms: Optional[float] = None,
-        **kwargs
-    ):
-        super(WaitStatistic, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword start_time: Observation start time.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: Observation end time.
+        :paramtype end_time: ~datetime.datetime
+        :keyword event_name: Wait event name.
+        :paramtype event_name: str
+        :keyword event_type_name: Wait event type name.
+        :paramtype event_type_name: str
+        :keyword query_id: Database query identifier.
+        :paramtype query_id: int
+        :keyword database_name: Database Name.
+        :paramtype database_name: str
+        :keyword user_id: Database user identifier.
+        :paramtype user_id: int
+        :keyword count: Wait event count observed in this time interval.
+        :paramtype count: int
+        :keyword total_time_in_ms: Total time of wait in milliseconds in this time interval.
+        :paramtype total_time_in_ms: float
+        """
+        super().__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
         self.event_name = event_name
@@ -2672,29 +3081,29 @@ class WaitStatistic(ProxyResource):
         self.total_time_in_ms = total_time_in_ms
 
 
-class WaitStatisticsInput(msrest.serialization.Model):
+class WaitStatisticsInput(_serialization.Model):
     """Input to get wait statistics.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param observation_start_time: Required. Observation start time.
-    :type observation_start_time: ~datetime.datetime
-    :param observation_end_time: Required. Observation end time.
-    :type observation_end_time: ~datetime.datetime
-    :param aggregation_window: Required. Aggregation interval type in ISO 8601 format.
-    :type aggregation_window: str
+    :ivar observation_start_time: Observation start time. Required.
+    :vartype observation_start_time: ~datetime.datetime
+    :ivar observation_end_time: Observation end time. Required.
+    :vartype observation_end_time: ~datetime.datetime
+    :ivar aggregation_window: Aggregation interval type in ISO 8601 format. Required.
+    :vartype aggregation_window: str
     """
 
     _validation = {
-        'observation_start_time': {'required': True},
-        'observation_end_time': {'required': True},
-        'aggregation_window': {'required': True},
+        "observation_start_time": {"required": True},
+        "observation_end_time": {"required": True},
+        "aggregation_window": {"required": True},
     }
 
     _attribute_map = {
-        'observation_start_time': {'key': 'properties.observationStartTime', 'type': 'iso-8601'},
-        'observation_end_time': {'key': 'properties.observationEndTime', 'type': 'iso-8601'},
-        'aggregation_window': {'key': 'properties.aggregationWindow', 'type': 'str'},
+        "observation_start_time": {"key": "properties.observationStartTime", "type": "iso-8601"},
+        "observation_end_time": {"key": "properties.observationEndTime", "type": "iso-8601"},
+        "aggregation_window": {"key": "properties.aggregationWindow", "type": "str"},
     }
 
     def __init__(
@@ -2703,15 +3112,23 @@ class WaitStatisticsInput(msrest.serialization.Model):
         observation_start_time: datetime.datetime,
         observation_end_time: datetime.datetime,
         aggregation_window: str,
-        **kwargs
-    ):
-        super(WaitStatisticsInput, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword observation_start_time: Observation start time. Required.
+        :paramtype observation_start_time: ~datetime.datetime
+        :keyword observation_end_time: Observation end time. Required.
+        :paramtype observation_end_time: ~datetime.datetime
+        :keyword aggregation_window: Aggregation interval type in ISO 8601 format. Required.
+        :paramtype aggregation_window: str
+        """
+        super().__init__(**kwargs)
         self.observation_start_time = observation_start_time
         self.observation_end_time = observation_end_time
         self.aggregation_window = aggregation_window
 
 
-class WaitStatisticsResultList(msrest.serialization.Model):
+class WaitStatisticsResultList(_serialization.Model):
     """A list of wait statistics.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2723,19 +3140,17 @@ class WaitStatisticsResultList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[WaitStatistic]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[WaitStatistic]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(WaitStatisticsResultList, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
