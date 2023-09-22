@@ -30,7 +30,6 @@ import json
 from typing import Dict, Any, Optional, TypeVar  # pylint: disable=unused-import
 import urllib.parse
 from urllib3.util.retry import Retry
-from sys import getsizeof
 from azure.core.paging import ItemPaged  # type: ignore
 from azure.core import PipelineClient  # type: ignore
 from azure.core.exceptions import raise_with_traceback  # type: ignore
