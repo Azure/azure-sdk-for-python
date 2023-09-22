@@ -17,7 +17,7 @@ from azure.core.rest import HttpRequest
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from azure.core.messaging import CloudEvent
-from ._generated._serialization import Serializer
+from ._serialization import Serializer
 from ._signature_credential_policy import EventGridSasCredentialPolicy
 from . import _constants as constants
 
