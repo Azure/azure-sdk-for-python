@@ -749,7 +749,7 @@ class CallConnectionClient:
         :param target_participant: The targets to play media to. Default value is 'all', to play media
          to all participants in the call.
         :type target_participant: list[~azure.communication.callautomation.CommunicationIdentifier]
-        :keyword loop: Whether the media should be repeated until stoped.
+        :keyword loop: Whether the media should be repeated until stopped.
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str or None
@@ -760,7 +760,7 @@ class CallConnectionClient:
 
         hold_request = StartHoldMusicRequest(
             play_source_info=play_source._to_generated(),  # pylint:disable=protected-access
-            participant_to_hold=serialize_identifier(target_participant),
+            target_participant=serialize_identifier(target_participant),
             operation_context=operation_context,
             loop=loop,
             **kwargs
@@ -787,9 +787,9 @@ class CallConnectionClient:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        unhold_request = StopHoldMusicRequest(
-            participant_to_unhold=serialize_identifier(target_participant),
+        stop_hold_request = StopHoldMusicRequest(
+            target_participant=serialize_identifier(target_participant),
             operation_context=operation_context,
             **kwargs
         )
-        self._call_media_client.stop_hold_music(self._call_connection_id, unhold_request)
+        self._call_media_client.stop_hold_music(self._call_connection_id, stop_hold_request)

@@ -4314,8 +4314,8 @@ class StartHoldMusicRequest(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar participant_to_hold: Participant to be held from the call. Required.
-    :vartype participant_to_hold:
+    :ivar target_participant: Participant to be held from the call. Required.
+    :vartype target_participant:
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar play_source_info: Prompt to play while in hold. Required.
     :vartype play_source_info: ~azure.communication.callautomation.models.PlaySource
@@ -4327,12 +4327,12 @@ class StartHoldMusicRequest(_serialization.Model):
     """
 
     _validation = {
-        "participant_to_hold": {"required": True},
+        "target_participant": {"required": True},
         "play_source_info": {"required": True},
     }
 
     _attribute_map = {
-        "participant_to_hold": {"key": "participantToHold", "type": "CommunicationIdentifierModel"},
+        "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
         "play_source_info": {"key": "playSourceInfo", "type": "PlaySource"},
         "loop": {"key": "loop", "type": "bool"},
         "operation_context": {"key": "operationContext", "type": "str"},
@@ -4341,15 +4341,15 @@ class StartHoldMusicRequest(_serialization.Model):
     def __init__(
         self,
         *,
-        participant_to_hold: "_models.CommunicationIdentifierModel",
+        target_participant: "_models.CommunicationIdentifierModel",
         play_source_info: "_models.PlaySource",
         loop: Optional[bool] = None,
         operation_context: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword participant_to_hold: Participant to be held from the call. Required.
-        :paramtype participant_to_hold:
+        :keyword target_participant: Participant to be held from the call. Required.
+        :paramtype target_participant:
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
         :keyword play_source_info: Prompt to play while in hold. Required.
         :paramtype play_source_info: ~azure.communication.callautomation.models.PlaySource
@@ -4360,7 +4360,7 @@ class StartHoldMusicRequest(_serialization.Model):
         :paramtype operation_context: str
         """
         super().__init__(**kwargs)
-        self.participant_to_hold = participant_to_hold
+        self.target_participant = target_participant
         self.play_source_info = play_source_info
         self.loop = loop
         self.operation_context = operation_context
@@ -4397,9 +4397,9 @@ class StopHoldMusicRequest(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar participant_to_unhold: Participants to be hold from the call.
+    :ivar target_participant: Participants to be hold from the call.
      Only ACS Users are supported. Required.
-    :vartype participant_to_unhold:
+    :vartype target_participant:
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
@@ -4407,32 +4407,32 @@ class StopHoldMusicRequest(_serialization.Model):
     """
 
     _validation = {
-        "participant_to_unhold": {"required": True},
+        "target_participant": {"required": True},
     }
 
     _attribute_map = {
-        "participant_to_unhold": {"key": "participantToUnhold", "type": "CommunicationIdentifierModel"},
+        "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
         "operation_context": {"key": "operationContext", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        participant_to_unhold: "_models.CommunicationIdentifierModel",
+        target_participant: "_models.CommunicationIdentifierModel",
         operation_context: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword participant_to_unhold: Participants to be hold from the call.
+        :keyword target_participant: Participants to be hold from the call.
          Only ACS Users are supported. Required.
-        :paramtype participant_to_unhold:
+        :paramtype target_participant:
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
         """
         super().__init__(**kwargs)
-        self.participant_to_unhold = participant_to_unhold
+        self.target_participant = target_participant
         self.operation_context = operation_context
 
 
