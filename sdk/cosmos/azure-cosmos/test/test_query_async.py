@@ -68,8 +68,8 @@ class TestQueryAsync:
         query_iterable = created_collection.query_items_change_feed(partition_key=partition_key)
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 0
-        assert 'etag' in created_collection.client_connection.last_response_headers
-        assert created_collection.client_connection.last_response_headers['etag'] != ''
+        assert 'Etag' in created_collection.client_connection.last_response_headers
+        assert created_collection.client_connection.last_response_headers['Etag'] != ''
 
         # Read change feed from beginning should return an empty list
         query_iterable = created_collection.query_items_change_feed(
@@ -78,8 +78,8 @@ class TestQueryAsync:
         )
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 0
-        assert 'etag' in created_collection.client_connection.last_response_headers
-        continuation1 = created_collection.client_connection.last_response_headers['etag']
+        assert 'Etag' in created_collection.client_connection.last_response_headers
+        continuation1 = created_collection.client_connection.last_response_headers['Etag']
         assert continuation1 != ''
 
         # Create a document. Read change feed should return be able to read that document
@@ -92,8 +92,8 @@ class TestQueryAsync:
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 1
         assert iter_list[0]['id'] == 'doc1'
-        assert 'etag' in created_collection.client_connection.last_response_headers
-        continuation2 = created_collection.client_connection.last_response_headers['etag']
+        assert 'Etag' in created_collection.client_connection.last_response_headers
+        continuation2 = created_collection.client_connection.last_response_headers['Etag']
         assert continuation2 != ''
         assert continuation2 != continuation1
 
@@ -149,8 +149,8 @@ class TestQueryAsync:
         for i in range(0, len(expected_ids)):
             doc = await it.__anext__()
             assert doc['id'] == expected_ids[i]
-        assert 'etag' in created_collection.client_connection.last_response_headers
-        continuation3 = created_collection.client_connection.last_response_headers['etag']
+        assert 'Etag' in created_collection.client_connection.last_response_headers
+        continuation3 = created_collection.client_connection.last_response_headers['Etag']
 
         # verify reading empty change feed
         query_iterable = created_collection.query_items_change_feed(
@@ -179,8 +179,8 @@ class TestQueryAsync:
         query_iterable = created_collection.query_items_change_feed(**partition_param)
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 0
-        assert 'etag' in created_collection.client_connection.last_response_headers
-        assert created_collection.client_connection.last_response_headers['etag'] != ''
+        assert 'Etag' in created_collection.client_connection.last_response_headers
+        assert created_collection.client_connection.last_response_headers['Etag'] != ''
 
         # Read change feed from beginning should return an empty list
         query_iterable = created_collection.query_items_change_feed(
@@ -189,8 +189,8 @@ class TestQueryAsync:
         )
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 0
-        assert 'etag' in created_collection.client_connection.last_response_headers
-        continuation1 = created_collection.client_connection.last_response_headers['etag']
+        assert 'Etag' in created_collection.client_connection.last_response_headers
+        continuation1 = created_collection.client_connection.last_response_headers['Etag']
         assert continuation1 != ''
 
         # Create a document. Read change feed should return be able to read that document
@@ -203,8 +203,8 @@ class TestQueryAsync:
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 1
         assert iter_list[0]['id'] == 'doc1'
-        assert 'etag' in created_collection.client_connection.last_response_headers
-        continuation2 = created_collection.client_connection.last_response_headers['etag']
+        assert 'Etag' in created_collection.client_connection.last_response_headers
+        continuation2 = created_collection.client_connection.last_response_headers['Etag']
         assert continuation2 != ''
         assert continuation2 != continuation1
 
@@ -260,8 +260,8 @@ class TestQueryAsync:
         for i in range(0, len(expected_ids)):
             doc = next(it)
             assert doc['id'] == expected_ids[i]
-        assert 'etag' in created_collection.client_connection.last_response_headers
-        continuation3 = created_collection.client_connection.last_response_headers['etag']
+        assert 'Etag' in created_collection.client_connection.last_response_headers
+        continuation3 = created_collection.client_connection.last_response_headers['Etag']
 
         # verify reading empty change feed
         query_iterable = created_collection.query_items_change_feed(
@@ -275,7 +275,7 @@ class TestQueryAsync:
     @pytest.mark.asyncio
     async def test_populate_query_metrics_async(self):
         await self._set_up()
-        created_collection = await self.created_db.create_container_if_not_exists("query_metrics_test",
+        created_collection = await self.created_db.create_container_if_not_exists("query_metrics_test" + str(uuid.uuid4()),
                                                                                   PartitionKey(path="/pk"))
         doc_id = 'MyId' + str(uuid.uuid4())
         document_definition = {'pk': 'pk', 'id': doc_id}
@@ -382,7 +382,7 @@ class TestQueryAsync:
         query_plan_dict = await self.client.client_connection._GetQueryPlanThroughGateway(query, container_link)
         query_execution_info = _PartitionedQueryExecutionInfo(query_plan_dict)
         assert query_execution_info.has_rewritten_query()
-        assert query_execution_info.has_distinct_type(), distinct != _DistinctType.NoneType
+        assert query_execution_info.has_distinct_type(), distinct != "None"
         assert query_execution_info.get_distinct_type() == distinct
         assert query_execution_info.has_top() == top is not None
         assert query_execution_info.get_top() == top
@@ -690,7 +690,6 @@ class TestQueryAsync:
         )
 
         _QueryExecutionContextBase.__anext__ = self.OriginalExecuteFunction
-        _QueryExecutionContextBase.next = self.OriginalExecuteFunction
 
     @pytest.mark.asyncio
     async def test_paging_with_continuation_token_async(self):
@@ -713,7 +712,7 @@ class TestQueryAsync:
         await pager.__anext__()
         token = pager.continuation_token
 
-        second_page = [item async for item in await pager.__anext__()]
+        second_page = [item async for item in await pager.__anext__()][0]
 
         pager = query_iterable.by_page(token)
         second_page_fetched_with_continuation_token = [item async for item in await pager.__anext__()][0]
@@ -769,8 +768,8 @@ class TestQueryAsync:
         query_results = container.query_items(query, parameters=[
             {"name": "@lookupVersion", "value": "console_csat"}  # cspell:disable-line
         ])
-
-        assert [item async for item in query_results] == [None]
+        item_list = [item async for item in query_results]
+        assert item_list == [None]
 
     @pytest.mark.asyncio
     async def test_continuation_token_size_limit_query_async(self):
