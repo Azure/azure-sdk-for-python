@@ -38,7 +38,6 @@ from ..error import (
     AMQPException,
     MessageException
 )
-from ..constants import LinkState
 
 _logger = logging.getLogger(__name__)
 
@@ -724,7 +723,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         if not self._link:
             self._link = self._session.create_receiver_link(
                 source_address=self.source,
-                link_credit=self._link_credit,
+                link_credit=0,  # link_credit=0 on flow frame sent before client is ready
                 send_settle_mode=self._send_settle_mode,
                 rcv_settle_mode=self._receive_settle_mode,
                 max_message_size=self._max_message_size,
@@ -737,9 +736,8 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             return False
         if self._link.get_state().value != 3:  # ATTACHED
             return False
-        # once the receiver client is ready/connection established, we set prefetch
-        if not self._link_credit:   # if prefetch = 0, set link_credit to 1 to keep receiving
-            self._link.link_credit = self._link_credit + 1
+        # once the receiver client is ready/connection established, we set link_credit
+        self._link.link_credit = self._link_credit
         return True
 
     async def _client_run_async(self, **kwargs):
@@ -778,8 +776,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
 
     async def _receive_message_batch_impl_async(self, max_batch_size=None, on_message_received=None, timeout=0):
         self._message_received_callback = on_message_received
-        # if max_batch_size is None and prefetch = 0, receive at least 1
-        max_batch_size = max_batch_size or self._link_credit or 1
+        max_batch_size = max_batch_size or self._link_credit
         timeout_time = time.time() + timeout if timeout else 0
         receiving = True
         batch = []

@@ -677,9 +677,7 @@ try:
             source = kwargs.pop("source")
             retry_policy = kwargs.pop("retry_policy")
             network_trace = kwargs.pop("network_trace")
-            # set to + 1 to pass in max_link_credit through to c_uamqp link
-            # needed for iterator and consistent with previous implementation
-            link_credit = kwargs.pop("link_credit") + 1
+            link_credit = kwargs.pop("link_credit")
             receive_mode = kwargs.pop("receive_mode")
 
             return ReceiveClient(

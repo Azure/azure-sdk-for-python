@@ -32,7 +32,6 @@ from .error import (
 from .outcomes import Received, Rejected, Released, Accepted, Modified
 
 from .constants import (
-    DEFAULT_LINK_CREDIT,
     MAX_CHANNELS,
     MessageDeliveryState,
     SenderSettleMode,
@@ -567,7 +566,7 @@ class SendClient(AMQPClient):
         # Sender and Link settings
         self._max_message_size = kwargs.pop("max_message_size", MAX_FRAME_SIZE_BYTES)
         self._link_properties = kwargs.pop("link_properties", None)
-        self._link_credit = kwargs.pop("link_credit", DEFAULT_LINK_CREDIT)
+        self._link_credit = kwargs.pop("link_credit", None)
         super(SendClient, self).__init__(hostname, **kwargs)
 
     def _client_ready(self):
@@ -828,7 +827,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         if not self._link:
             self._link = self._session.create_receiver_link(
                 source_address=self.source,
-                link_credit=self._link_credit,
+                link_credit=0,  # link_credit=0 on flow frame sent before client is ready
                 send_settle_mode=self._send_settle_mode,
                 rcv_settle_mode=self._receive_settle_mode,
                 max_message_size=self._max_message_size,
@@ -841,9 +840,8 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
             return False
         if self._link.get_state().value != 3:  # ATTACHED
             return False
-        # once the receiver client is ready/connection established, we set prefetch
-        if not self._link_credit:   # if prefetch = 0, set link_credit to 1 to keep receiving
-            self._link.link_credit = self._link_credit + 1
+        # once the receiver client is ready/connection established, we set link_credit
+        self._link.link_credit = self._link_credit
         return True
 
     def _client_run(self, **kwargs):
@@ -886,7 +884,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
     ):
         self._message_received_callback = on_message_received
         # if max_batch_size is None and prefetch = 0, receive at least 1
-        max_batch_size = max_batch_size or self._link_credit or 1
+        max_batch_size = max_batch_size or self._link_credit
         timeout = time.time() + timeout if timeout else 0
         receiving = True
         batch = []

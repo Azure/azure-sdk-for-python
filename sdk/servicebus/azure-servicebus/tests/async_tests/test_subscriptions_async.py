@@ -267,9 +267,9 @@ class TestServiceBusSubscriptionAsync(AzureMgmtRecordedTestCase):
 
                 messages = [ServiceBusMessage("Message") for _ in range(10)]
                 await sender.send_messages(messages)
-                # wait for all messages to be received and added to the receiver internal buffer
+                # wait for all messages to be sent to queue
                 await asyncio.sleep(10)
 
-                # internal buffer should have messages now
+                # receive messages + add to internal buffer should have messages now
                 received_msgs = await receiver.receive_messages(max_message_count=10, max_wait_time=10)
                 assert len(received_msgs) == 10

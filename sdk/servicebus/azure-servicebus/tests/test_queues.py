@@ -583,9 +583,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
     def test_queue_by_queue_client_conn_str_receive_handler_receiveanddelete_prefetch(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
-        if uamqp_transport:
-            pytest.skip(reason="uamqp has incorrect prefetch=0 behavior")
-
         with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
             # send 10 messages
@@ -621,29 +618,29 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
 
             # check peek_messages returns correctly, with default prefetch_count > 0
             messages = []
-            # prefetch gets 2 messages from SB queue, stores in internal buffer, then deletes from SB queue
-            with sb_client.get_queue_receiver(servicebus_queue.name,
-                                            receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
-                                            prefetch_count=2,
-                                            max_wait_time=30) as receiver:
-                # peek messages checks current state of SB queue, and returns 8 since 2 were prefetched and deleted
+            # prefetch 2 messages from SB queue when receive is called and not on open
+            with sb_client.get_queue_receiver(
+                servicebus_queue.name,
+                receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
+                prefetch_count=2,
+                max_wait_time=30
+            ) as receiver:
+                # peek messages checks current state of SB queue, and returns 10
                 peeked_msgs = receiver.peek_messages(max_message_count=10, timeout=10)
-                # in uamqp, this returns 10, b/c prefetch is not honored and is set to 0 in all cases
-                assert len(peeked_msgs) == 8
+                assert len(peeked_msgs) == 10
 
-                # receive_messages returns 2 messages from internal buffer, then 3 more from SB queue and deletes from SB queue
-                recvd_msgs = receiver.receive_messages(max_message_count=5, max_wait_time=10)
-                assert len(recvd_msgs) == 5
+                # receive 3 messages
+                recvd_msgs = receiver.receive_messages(max_message_count=3, max_wait_time=10)
+                assert len(recvd_msgs) == 3
 
-                # iterator receives and deletes 5 leftover messages in SB queue
+                # receive rest of messages in queue
                 for msg in receiver:
                     messages.append(msg)
-                assert len(messages) == 5
+                assert len(messages) == 7
 
                 # queue should be empty now
                 peeked_msgs = receiver.peek_messages(max_message_count=10, timeout=10)
                 assert len(peeked_msgs) == 0
-        
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
