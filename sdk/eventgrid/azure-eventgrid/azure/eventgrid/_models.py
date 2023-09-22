@@ -3,11 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 # pylint:disable=protected-access
-from typing import Any, cast
+from typing import Any, cast, Optional, Dict, Callable, Type
 import datetime as dt
 import uuid
 from ._messaging_shared import _get_json_content
-from ._generated.models import EventGridEvent as InternalEventGridEvent
+from ._serialization import (
+    Deserializer,
+    attribute_key_case_insensitive_extractor,
+    rest_key_case_insensitive_extractor,
+    last_rest_key_case_insensitive_extractor
+)
 
 class EventGridEvent(object):
     """Properties of an event published to an Event Grid topic using the EventGrid Schema.
@@ -78,8 +83,7 @@ class EventGridEvent(object):
         "data_version": {"key": "dataVersion", "type": "str"},
     }
 
-    def __init__(self, subject, event_type, data, data_version, **kwargs):
-        # type: (str, str, object, str, Any) -> None
+    def __init__(self, subject: str, event_type: str, data: Any, data_version: str, **kwargs: Any):
         
         kwargs.setdefault("id", uuid.uuid4())
         kwargs.setdefault("subject", subject)
@@ -88,48 +92,53 @@ class EventGridEvent(object):
         kwargs.setdefault("data", data)
         kwargs.setdefault("data_version", data_version)
 
-        self._internal_event = InternalEventGridEvent(**kwargs)
-
-        self.id = self._internal_event.id
-        self.subject = self._internal_event.subject
-        self.event_type = self._internal_event.event_type
-        self.event_time = self._internal_event.event_time
-        self.data = self._internal_event.data
-        self.data_version = self._internal_event.data_version
-        self.topic = self._internal_event.topic
-        self.metadata_version = self._internal_event.metadata_version
-
-
-    def __setattr__(self, name, value):
-        return setattr(InternalEventGridEvent, name, value)
-
-    def __getattr__(self, name):
-        return getattr(InternalEventGridEvent, name)
-    
-    @classmethod
-    def _to_generated_model(cls, event, **kwargs) -> InternalEventGridEvent:
-        try:
-            kwargs["id"] = event.id
-            kwargs["subject"] = event.subject
-            kwargs["event_type"] = event.event_type
-            kwargs["event_time"] = event.event_time
-            kwargs["data"] = event.data
-            kwargs["data_version"] = event.data_version
-            kwargs["topic"] = event.topic
-            kwargs["metadata_version"] = event.metadata_version
-            return InternalEventGridEvent(**kwargs)
-        except AttributeError:
-            return InternalEventGridEvent.from_dict(event)
-
+        self.id = kwargs.pop("id")
+        self.subject = subject
+        self.event_type = event_type
+        self.event_time = kwargs.pop("event_time")
+        self.data = data
+        self.data_version = data_version
+        self.topic = kwargs.pop("topic")
+        self.metadata_version = None
 
     def __repr__(self):
         return "EventGridEvent(subject={}, event_type={}, id={}, event_time={})".format(
             self.subject, self.event_type, self.id, self.event_time
         )[:1024]
+    
+    @classmethod
+    def from_dict(
+        cls: Type["EventGridEvent"],
+        data: Any,
+        key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
+        content_type: Optional[str] = None,
+    ) -> "EventGridEvent":
+        """Parse a dict using given key extractor return a model.
+
+        By default consider key
+        extractors (rest_key_case_insensitive_extractor, attribute_key_case_insensitive_extractor
+        and last_rest_key_case_insensitive_extractor)
+
+        :param dict data: A dict using RestAPI structure
+        :param str content_type: JSON by default, set application/xml if XML.
+        :returns: An instance of this model
+        :raises: DeserializationError if something went wrong
+        """
+        deserializer = Deserializer(cls._infer_class_models())
+        deserializer.key_extractors = (  # type: ignore
+            [  # type: ignore
+                attribute_key_case_insensitive_extractor,
+                rest_key_case_insensitive_extractor,
+                last_rest_key_case_insensitive_extractor,
+            ]
+            if key_extractors is None
+            else key_extractors
+        )
+        return deserializer(cls.__name__, data, content_type=content_type)
+
 
     @classmethod
-    def from_json(cls, event):
-        # type: (Any) -> EventGridEvent
+    def from_json(cls, event: Any):
         """
         Returns the deserialized EventGridEvent object when a json payload is provided.
         :param event: The json string that should be converted into a EventGridEvent. This can also be
@@ -140,4 +149,4 @@ class EventGridEvent(object):
         :raises ValueError: If the provided JSON is invalid.
         """
         dict_event = _get_json_content(event)
-        return cast(EventGridEvent, InternalEventGridEvent.from_dict(dict_event))
+        return cls.from_dict(dict_event)
