@@ -124,7 +124,7 @@ class EventGridEvent(object):
         :returns: An instance of this model
         :raises: DeserializationError if something went wrong
         """
-        deserializer = Deserializer(cls._infer_class_models())
+        deserializer = Deserializer()
         deserializer.key_extractors = (  # type: ignore
             [  # type: ignore
                 attribute_key_case_insensitive_extractor,
