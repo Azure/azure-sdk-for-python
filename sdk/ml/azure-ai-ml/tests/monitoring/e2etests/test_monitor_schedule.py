@@ -39,18 +39,21 @@ from azure.ai.ml._utils.utils import snake_to_camel
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.production_experiences_test
 class TestMonitorSchedule(AzureRecordedTestCase):
+    @pytest.mark.skip(reason="Endpoint does not exist anymore")
     def test_data_drift_schedule_create(
         self, client: MLClient, data_with_2_versions: str, randstr: Callable[[str], str]
     ):
         test_path = "tests/test_configs/monitoring/yaml_configs/data_drift.yaml"
         created_schedule = create_and_assert_basic_schedule_fields(client, test_path, randstr, data_with_2_versions)
 
+    @pytest.mark.skip(reason="Endpoint does not exist anymore")
     def test_prediction_drift_schedule_create(
         self, client: MLClient, data_with_2_versions: str, randstr: Callable[[str], str]
     ):
         test_path = "tests/test_configs/monitoring/yaml_configs/prediction_drift.yaml"
         created_schedule = create_and_assert_basic_schedule_fields(client, test_path, randstr, data_with_2_versions)
 
+    @pytest.mark.skip(reason="Endpoint does not exist anymore")
     def test_data_quality_schedule_create(
         self, client: MLClient, data_with_2_versions: str, randstr: Callable[[str], str]
     ):
@@ -60,6 +63,7 @@ class TestMonitorSchedule(AzureRecordedTestCase):
     @pytest.mark.skipif(
         condition=is_live(), reason="complicated logic, consult SDK team if this needs to be re-recorded"
     )
+    @pytest.mark.skip(reason="Endpoint does not exist anymore")
     def test_out_of_box_schedule(self, client: MLClient):
         test_path = "tests/test_configs/monitoring/yaml_configs/out_of_the_box.yaml"
         endpoint_name = "iris-endpoint"
@@ -146,6 +150,7 @@ class TestMonitorSchedule(AzureRecordedTestCase):
     @pytest.mark.skipif(
         condition=is_live(), reason="complicated logic, consult SDK team if this needs to be re-recorded"
     )
+    @pytest.mark.skip(reason="Endpoint does not exist anymore")
     def test_default_target_baseline_dataset(self, client: MLClient):
         test_path = "tests/test_configs/monitoring/yaml_configs/no_target_baseline_data.yaml"
         endpoint_name = "iris-endpoint"
