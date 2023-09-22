@@ -42,8 +42,6 @@ class FeatureSetMaterializationMetadata(RestTranslatableMixin):
     :type tags: Optional[dict[str, str]]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
-
-    TODO: add code sample
     """
 
     def __init__(

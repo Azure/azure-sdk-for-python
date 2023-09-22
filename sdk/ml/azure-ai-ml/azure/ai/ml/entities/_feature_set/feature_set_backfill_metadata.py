@@ -21,8 +21,6 @@ class FeatureSetBackfillMetadata(RestTranslatableMixin):
     :type type: Optional[str]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
-
-    TODO: FInish this docstring
     """
 
     def __init__(

@@ -40,8 +40,6 @@ class FeatureSetBackfillRequest(RestTranslatableMixin):
     :paramtype resource: Optional[~azure.ai.ml.entities.MaterializationComputeResource]
     :param spark_conf: Specifies the spark configuration. Defaults to None.
     :type spark_conf: Optional[dict[str, str]]
-
-    TODO: add code sample
     """
 
     def __init__(

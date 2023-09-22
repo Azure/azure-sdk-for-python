@@ -27,8 +27,6 @@ class Feature(RestTranslatableMixin):
     :type tags: Optional[dict[str, str]]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
-
-    TODO: Include an example
     """
 
     def __init__(
