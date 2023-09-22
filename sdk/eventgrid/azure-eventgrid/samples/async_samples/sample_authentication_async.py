@@ -51,7 +51,7 @@ event = EventGridEvent(
     data_version="2.0"
 )
 
-credential_az_cred = DefaultAzureCredential()
+default_az_credential = DefaultAzureCredential()
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
-client = EventGridPublisherClient(endpoint, credential_az_cred)
+client = EventGridPublisherClient(endpoint, default_az_credential)
 # [END client_auth_with_token_cred_async]
