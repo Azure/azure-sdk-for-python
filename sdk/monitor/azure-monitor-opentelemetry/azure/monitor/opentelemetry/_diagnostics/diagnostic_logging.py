@@ -37,7 +37,6 @@ _ATTACH_FAILURE_CONFIGURATOR = "4401"
 class AzureDiagnosticLogging:
     _initialized = False
     _lock = threading.Lock()
-    _f_handler = None
 
     @classmethod
     def _initialize(cls):
@@ -64,7 +63,7 @@ class AzureDiagnosticLogging:
                     )
                     if not exists(_DIAGNOSTIC_LOG_PATH):
                         makedirs(_DIAGNOSTIC_LOG_PATH)
-                    AzureDiagnosticLogging._f_handler = logging.FileHandler(
+                    f_handler = logging.FileHandler(
                         join(
                             _DIAGNOSTIC_LOG_PATH, _DIAGNOSTIC_LOGGER_FILE_NAME
                         )
@@ -72,8 +71,8 @@ class AzureDiagnosticLogging:
                     formatter = logging.Formatter(
                         fmt=log_format, datefmt="%Y-%m-%dT%H:%M:%S"
                     )
-                    AzureDiagnosticLogging._f_handler.setFormatter(formatter)
-                    _logger.addHandler(AzureDiagnosticLogging._f_handler)
+                    f_handler.setFormatter(formatter)
+                    _logger.addHandler(f_handler)
                     AzureDiagnosticLogging._initialized = True
 
     @classmethod
