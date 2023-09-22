@@ -81,3 +81,13 @@ class AzureDiagnosticLogging:
     def info(cls, message: str, message_id: int):
         AzureDiagnosticLogging._initialize()
         _logger.info(message, extra={'msgId': message_id})
+
+    @classmethod
+    def warning(cls, message: str, message_id: int):
+        AzureDiagnosticLogging._initialize()
+        _logger.warning(message, extra={'msgId': message_id})
+
+    @classmethod
+    def error(cls, message: str, message_id: int):
+        AzureDiagnosticLogging._initialize()
+        _logger.error(message, extra={'msgId': message_id})

@@ -45,11 +45,12 @@ class AzureMonitorDistro(BaseDistro):
             warn(_PREVIEW_ENTRY_POINT_WARNING)
         try:
             _configure_auto_instrumentation()
-        except Exception as ex:
-            _logger.exception(
-                ("Error occurred auto-instrumenting AzureMonitorDistro")
+        except Exception as exc:
+            AzureDiagnosticLogging.error(
+                "Error occurred auto-instrumenting AzureMonitorDistro" % exc,
+                _ATTACH_FAILURE_DISTRO,
             )
-            raise ex
+            raise exc
 
 
 def _configure_auto_instrumentation() -> None:
@@ -75,7 +76,7 @@ def _configure_auto_instrumentation() -> None:
         )
     except Exception as exc:
         AzureStatusLogger.log_status(False, reason=str(exc))
-        AzureDiagnosticLogging.info(
+        AzureDiagnosticLogging.error(
             _CONFIG_FAILED_MSG % exc,
             _ATTACH_FAILURE_DISTRO,
         )

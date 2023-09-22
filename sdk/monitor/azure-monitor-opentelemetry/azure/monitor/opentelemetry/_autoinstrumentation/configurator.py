@@ -37,13 +37,13 @@ class AzureMonitorConfigurator(_OTelSDKConfigurator):
                 _ATTACH_SUCCESS_CONFIGURATOR
             )
         except ValueError as e:
-            AzureDiagnosticLogging.info(
+            AzureDiagnosticLogging.error(
                 "Azure Monitor Configurator failed during configuration due to a ValueError: %s" % e,
                 _ATTACH_FAILURE_CONFIGURATOR,
             )
             raise e
         except Exception as e:
-            AzureDiagnosticLogging.info(
+            AzureDiagnosticLogging.error(
                 "Azure Monitor Configurator failed during configuration: %s" % e,
                 _ATTACH_FAILURE_CONFIGURATOR,
             )
