@@ -107,37 +107,6 @@ class EventGridEvent(object):
         )[:1024]
     
     @classmethod
-    def from_dict(
-        cls: Type["EventGridEvent"],
-        data: Any,
-        key_extractors: Optional[Callable[[str, Dict[str, Any], Any], Any]] = None,
-        content_type: Optional[str] = None,
-    ) -> "EventGridEvent":
-        """Parse a dict using given key extractor return a model.
-
-        By default consider key
-        extractors (rest_key_case_insensitive_extractor, attribute_key_case_insensitive_extractor
-        and last_rest_key_case_insensitive_extractor)
-
-        :param dict data: A dict using RestAPI structure
-        :param str content_type: JSON by default, set application/xml if XML.
-        :returns: An instance of this model
-        :raises: DeserializationError if something went wrong
-        """
-        deserializer = Deserializer()
-        deserializer.key_extractors = (  # type: ignore
-            [  # type: ignore
-                attribute_key_case_insensitive_extractor,
-                rest_key_case_insensitive_extractor,
-                last_rest_key_case_insensitive_extractor,
-            ]
-            if key_extractors is None
-            else key_extractors
-        )
-        return deserializer(cls.__name__, data, content_type=content_type)
-
-
-    @classmethod
     def from_json(cls, event: Any):
         """
         Returns the deserialized EventGridEvent object when a json payload is provided.
@@ -148,5 +117,6 @@ class EventGridEvent(object):
         :return: An EventGridEvent object.
         :raises ValueError: If the provided JSON is invalid.
         """
+        deserializer = Deserializer()
         dict_event = _get_json_content(event)
-        return cls.from_dict(dict_event)
+        return deserializer(cls.__name__, dict_event)
