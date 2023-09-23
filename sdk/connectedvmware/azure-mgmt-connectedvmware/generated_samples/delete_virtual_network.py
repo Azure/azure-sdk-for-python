@@ -29,13 +29,12 @@ def main():
         subscription_id="fd3c3665-1729-4b7b-9a38-238e83b0f98b",
     )
 
-    response = client.virtual_networks.begin_delete(
+    client.virtual_networks.begin_delete(
         resource_group_name="testrg",
         virtual_network_name="ProdNetwork",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/connectedvmware/resource-manager/Microsoft.ConnectedVMwarevSphere/preview/2022-07-15-preview/examples/DeleteVirtualNetwork.json
+# x-ms-original-file: specification/connectedvmware/resource-manager/Microsoft.ConnectedVMwarevSphere/stable/2023-10-01/examples/DeleteVirtualNetwork.json
 if __name__ == "__main__":
     main()

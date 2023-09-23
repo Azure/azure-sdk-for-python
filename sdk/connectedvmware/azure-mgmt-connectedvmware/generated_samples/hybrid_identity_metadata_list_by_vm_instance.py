@@ -14,7 +14,7 @@ from azure.mgmt.connectedvmware import AzureArcVMwareManagementServiceAPI
     pip install azure-identity
     pip install azure-mgmt-connectedvmware
 # USAGE
-    python list_virtual_machines.py
+    python hybrid_identity_metadata_list_by_vm_instance.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,14 +26,16 @@ from azure.mgmt.connectedvmware import AzureArcVMwareManagementServiceAPI
 def main():
     client = AzureArcVMwareManagementServiceAPI(
         credential=DefaultAzureCredential(),
-        subscription_id="fd3c3665-1729-4b7b-9a38-238e83b0f98b",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.virtual_machines.list_all()
+    response = client.vm_instance_hybrid_identity_metadata.list(
+        resource_uri="subscriptions/fd3c3665-1729-4b7b-9a38-238e83b0f98b/resourceGroups/testrg/providers/Microsoft.HybridCompute/machines/DemoVM",
+    )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/connectedvmware/resource-manager/Microsoft.ConnectedVMwarevSphere/preview/2022-07-15-preview/examples/ListVirtualMachines.json
+# x-ms-original-file: specification/connectedvmware/resource-manager/Microsoft.ConnectedVMwarevSphere/stable/2023-10-01/examples/HybridIdentityMetadata_ListByVmInstance.json
 if __name__ == "__main__":
     main()

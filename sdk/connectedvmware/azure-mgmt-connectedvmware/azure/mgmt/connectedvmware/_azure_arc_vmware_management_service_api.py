@@ -16,20 +16,18 @@ from . import models as _models
 from ._configuration import AzureArcVMwareManagementServiceAPIConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
-    AzureArcVMwareManagementServiceAPIOperationsMixin,
     ClustersOperations,
     DatastoresOperations,
-    GuestAgentsOperations,
     HostsOperations,
-    HybridIdentityMetadataOperations,
     InventoryItemsOperations,
-    MachineExtensionsOperations,
     Operations,
     ResourcePoolsOperations,
     VCentersOperations,
+    VMInstanceGuestAgentsOperations,
+    VirtualMachineInstancesOperations,
     VirtualMachineTemplatesOperations,
-    VirtualMachinesOperations,
     VirtualNetworksOperations,
+    VmInstanceHybridIdentityMetadataOperations,
 )
 
 if TYPE_CHECKING:
@@ -37,15 +35,11 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AzureArcVMwareManagementServiceAPI(
-    AzureArcVMwareManagementServiceAPIOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class AzureArcVMwareManagementServiceAPI:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Self service experience for VMware.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.connectedvmware.operations.Operations
-    :ivar virtual_machines: VirtualMachinesOperations operations
-    :vartype virtual_machines: azure.mgmt.connectedvmware.operations.VirtualMachinesOperations
     :ivar resource_pools: ResourcePoolsOperations operations
     :vartype resource_pools: azure.mgmt.connectedvmware.operations.ResourcePoolsOperations
     :ivar clusters: ClustersOperations operations
@@ -63,21 +57,24 @@ class AzureArcVMwareManagementServiceAPI(
     :vartype virtual_networks: azure.mgmt.connectedvmware.operations.VirtualNetworksOperations
     :ivar inventory_items: InventoryItemsOperations operations
     :vartype inventory_items: azure.mgmt.connectedvmware.operations.InventoryItemsOperations
-    :ivar hybrid_identity_metadata: HybridIdentityMetadataOperations operations
-    :vartype hybrid_identity_metadata:
-     azure.mgmt.connectedvmware.operations.HybridIdentityMetadataOperations
-    :ivar machine_extensions: MachineExtensionsOperations operations
-    :vartype machine_extensions: azure.mgmt.connectedvmware.operations.MachineExtensionsOperations
-    :ivar guest_agents: GuestAgentsOperations operations
-    :vartype guest_agents: azure.mgmt.connectedvmware.operations.GuestAgentsOperations
+    :ivar virtual_machine_instances: VirtualMachineInstancesOperations operations
+    :vartype virtual_machine_instances:
+     azure.mgmt.connectedvmware.operations.VirtualMachineInstancesOperations
+    :ivar vm_instance_hybrid_identity_metadata: VmInstanceHybridIdentityMetadataOperations
+     operations
+    :vartype vm_instance_hybrid_identity_metadata:
+     azure.mgmt.connectedvmware.operations.VmInstanceHybridIdentityMetadataOperations
+    :ivar vm_instance_guest_agents: VMInstanceGuestAgentsOperations operations
+    :vartype vm_instance_guest_agents:
+     azure.mgmt.connectedvmware.operations.VMInstanceGuestAgentsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The Subscription ID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-07-15-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-10-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -93,16 +90,13 @@ class AzureArcVMwareManagementServiceAPI(
         self._config = AzureArcVMwareManagementServiceAPIConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.virtual_machines = VirtualMachinesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.resource_pools = ResourcePoolsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.clusters = ClustersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.hosts = HostsOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -115,13 +109,15 @@ class AzureArcVMwareManagementServiceAPI(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.inventory_items = InventoryItemsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.hybrid_identity_metadata = HybridIdentityMetadataOperations(
+        self.virtual_machine_instances = VirtualMachineInstancesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.machine_extensions = MachineExtensionsOperations(
+        self.vm_instance_hybrid_identity_metadata = VmInstanceHybridIdentityMetadataOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.guest_agents = GuestAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.vm_instance_guest_agents = VMInstanceGuestAgentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
@@ -152,5 +148,5 @@ class AzureArcVMwareManagementServiceAPI(
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details) -> None:
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

@@ -14,7 +14,7 @@ from azure.mgmt.connectedvmware import AzureArcVMwareManagementServiceAPI
     pip install azure-identity
     pip install azure-mgmt-connectedvmware
 # USAGE
-    python create_virtual_machine.py
+    python create_virtual_machine_instance.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,16 +26,15 @@ from azure.mgmt.connectedvmware import AzureArcVMwareManagementServiceAPI
 def main():
     client = AzureArcVMwareManagementServiceAPI(
         credential=DefaultAzureCredential(),
-        subscription_id="fd3c3665-1729-4b7b-9a38-238e83b0f98b",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.virtual_machines.begin_create_or_update(
-        resource_group_name="testrg",
-        virtual_machine_name="DemoVM",
+    response = client.virtual_machine_instances.begin_create_or_update(
+        resource_uri="subscriptions/fd3c3665-1729-4b7b-9a38-238e83b0f98b/resourceGroups/testrg/providers/Microsoft.HybridCompute/machines/DemoVM",
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/connectedvmware/resource-manager/Microsoft.ConnectedVMwarevSphere/preview/2022-07-15-preview/examples/CreateVirtualMachine.json
+# x-ms-original-file: specification/connectedvmware/resource-manager/Microsoft.ConnectedVMwarevSphere/stable/2023-10-01/examples/CreateVirtualMachineInstance.json
 if __name__ == "__main__":
     main()

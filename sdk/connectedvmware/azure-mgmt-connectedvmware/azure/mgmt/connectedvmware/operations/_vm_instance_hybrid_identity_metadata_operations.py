@@ -36,7 +36,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_list_request(**kwargs: Any) -> HttpRequest:
+def build_get_request(resource_uri: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -44,7 +44,15 @@ def build_list_request(**kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/providers/Microsoft.ConnectedVMwarevSphere/operations")
+    _url = kwargs.pop(
+        "template_url",
+        "/{resourceUri}/providers/Microsoft.ConnectedVMwarevSphere/virtualMachineInstances/default/hybridIdentityMetadata/default",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -55,14 +63,41 @@ def build_list_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+def build_list_request(resource_uri: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-10-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/{resourceUri}/providers/Microsoft.ConnectedVMwarevSphere/virtualMachineInstances/default/hybridIdentityMetadata",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+class VmInstanceHybridIdentityMetadataOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.connectedvmware.AzureArcVMwareManagementServiceAPI`'s
-        :attr:`operations` attribute.
+        :attr:`vm_instance_hybrid_identity_metadata` attribute.
     """
 
     models = _models
@@ -75,19 +110,87 @@ class Operations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> Iterable["_models.Operation"]:
-        """Returns list of all operations.
+    def get(self, resource_uri: str, **kwargs: Any) -> _models.VmInstanceHybridIdentityMetadata:
+        """Gets HybridIdentityMetadata.
 
+        Implements HybridIdentityMetadata GET method.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the Hybrid
+         Compute machine resource to be extended. Required.
+        :type resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either Operation or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.connectedvmware.models.Operation]
+        :return: VmInstanceHybridIdentityMetadata or the result of cls(response)
+        :rtype: ~azure.mgmt.connectedvmware.models.VmInstanceHybridIdentityMetadata
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.VmInstanceHybridIdentityMetadata] = kwargs.pop("cls", None)
+
+        request = build_get_request(
+            resource_uri=resource_uri,
+            api_version=api_version,
+            template_url=self.get.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("VmInstanceHybridIdentityMetadata", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get.metadata = {
+        "url": "/{resourceUri}/providers/Microsoft.ConnectedVMwarevSphere/virtualMachineInstances/default/hybridIdentityMetadata/default"
+    }
+
+    @distributed_trace
+    def list(self, resource_uri: str, **kwargs: Any) -> Iterable["_models.VmInstanceHybridIdentityMetadata"]:
+        """Implements GET HybridIdentityMetadata in a vm.
+
+        Returns the list of HybridIdentityMetadata of the given vm.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the Hybrid
+         Compute machine resource to be extended. Required.
+        :type resource_uri: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either VmInstanceHybridIdentityMetadata or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.connectedvmware.models.VmInstanceHybridIdentityMetadata]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.OperationsList] = kwargs.pop("cls", None)
+        cls: ClsType[_models.VmInstanceHybridIdentityMetadataList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -101,6 +204,7 @@ class Operations:
             if not next_link:
 
                 request = build_list_request(
+                    resource_uri=resource_uri,
                     api_version=api_version,
                     template_url=self.list.metadata["url"],
                     headers=_headers,
@@ -128,7 +232,7 @@ class Operations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("OperationsList", pipeline_response)
+            deserialized = self._deserialize("VmInstanceHybridIdentityMetadataList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -152,4 +256,6 @@ class Operations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/providers/Microsoft.ConnectedVMwarevSphere/operations"}
+    list.metadata = {
+        "url": "/{resourceUri}/providers/Microsoft.ConnectedVMwarevSphere/virtualMachineInstances/default/hybridIdentityMetadata"
+    }
