@@ -21,7 +21,7 @@ def _validate_match_headers(etag, match_condition):
     if match_condition == MatchConditions.IfNotModified:
         if not etag:
             raise ValueError("IfNotModified must be specified with etag.")
-    elif match_condition == MatchConditions.IfPresent:
+    elif match_condition == MatchConditions.Unconditionally:
         if etag:
             raise ValueError("Etag is not supported for an Unconditional operation.")
     else:

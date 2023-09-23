@@ -331,9 +331,10 @@ class TableClient(AsyncTablesBaseClient):
                 etag = entity.metadata.get("etag", None)
             except (AttributeError, TypeError):
                 pass
-        if not match_condition or match_condition == MatchConditions.Unconditionally:
-            match_condition = MatchConditions.IfPresent
+        match_condition = match_condition or MatchConditions.Unconditionally
         _validate_match_headers(etag, match_condition)
+        if match_condition == MatchConditions.Unconditionally:
+            match_condition = MatchConditions.IfPresent
 
         try:
             await self._client.table.delete_entity(
@@ -420,13 +421,14 @@ class TableClient(AsyncTablesBaseClient):
                 etag = entity.metadata.get("etag", None)  # type: ignore[union-attr]
             except (AttributeError, TypeError):
                 pass
-        if not match_condition or match_condition == MatchConditions.Unconditionally:
-            match_condition = MatchConditions.IfPresent
+        match_condition = match_condition or MatchConditions.Unconditionally
         _validate_match_headers(etag, match_condition)
+        if match_condition == MatchConditions.Unconditionally:
+            match_condition = MatchConditions.IfPresent
 
+        entity = _add_entity_properties(entity)
         partition_key = entity["PartitionKey"]
         row_key = entity["RowKey"]
-        entity = _add_entity_properties(entity)
 
         try:
             metadata = None
