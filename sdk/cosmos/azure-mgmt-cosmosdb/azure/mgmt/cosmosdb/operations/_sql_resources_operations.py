@@ -30,7 +30,7 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -45,7 +45,7 @@ def build_list_sql_databases_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -63,7 +63,7 @@ def build_list_sql_databases_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -80,7 +80,7 @@ def build_get_sql_database_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -99,7 +99,7 @@ def build_get_sql_database_request(
         "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -116,7 +116,7 @@ def build_create_update_sql_database_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -136,7 +136,7 @@ def build_create_update_sql_database_request(
         "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -154,7 +154,7 @@ def build_delete_sql_database_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -171,7 +171,7 @@ def build_delete_sql_database_request(
         "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -185,7 +185,7 @@ def build_get_sql_database_throughput_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -204,7 +204,7 @@ def build_get_sql_database_throughput_request(
         "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -221,7 +221,7 @@ def build_update_sql_database_throughput_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -241,7 +241,7 @@ def build_update_sql_database_throughput_request(
         "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -260,7 +260,7 @@ def build_migrate_sql_database_to_autoscale_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -279,7 +279,7 @@ def build_migrate_sql_database_to_autoscale_request(
         "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -296,7 +296,7 @@ def build_migrate_sql_database_to_manual_throughput_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -315,7 +315,7 @@ def build_migrate_sql_database_to_manual_throughput_request(
         "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -326,136 +326,13 @@ def build_migrate_sql_database_to_manual_throughput_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_client_encryption_keys_request(
-    resource_group_name: str, account_name: str, database_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/clientEncryptionKeys",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", max_length=50, min_length=3, pattern=r"^[a-z0-9]+(-[a-z0-9]+)*"
-        ),
-        "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_get_client_encryption_key_request(
-    resource_group_name: str,
-    account_name: str,
-    database_name: str,
-    client_encryption_key_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/clientEncryptionKeys/{clientEncryptionKeyName}",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", max_length=50, min_length=3, pattern=r"^[a-z0-9]+(-[a-z0-9]+)*"
-        ),
-        "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
-        "clientEncryptionKeyName": _SERIALIZER.url("client_encryption_key_name", client_encryption_key_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_create_update_client_encryption_key_request(
-    resource_group_name: str,
-    account_name: str,
-    database_name: str,
-    client_encryption_key_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/clientEncryptionKeys/{clientEncryptionKeyName}",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", max_length=50, min_length=3, pattern=r"^[a-z0-9]+(-[a-z0-9]+)*"
-        ),
-        "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
-        "clientEncryptionKeyName": _SERIALIZER.url("client_encryption_key_name", client_encryption_key_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_list_sql_containers_request(
     resource_group_name: str, account_name: str, database_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -474,7 +351,7 @@ def build_list_sql_containers_request(
         "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -496,7 +373,7 @@ def build_get_sql_container_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -516,7 +393,7 @@ def build_get_sql_container_request(
         "containerName": _SERIALIZER.url("container_name", container_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -538,7 +415,7 @@ def build_create_update_sql_container_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -559,7 +436,7 @@ def build_create_update_sql_container_request(
         "containerName": _SERIALIZER.url("container_name", container_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -582,7 +459,7 @@ def build_delete_sql_container_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -600,96 +477,12 @@ def build_delete_sql_container_request(
         "containerName": _SERIALIZER.url("container_name", container_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
-def build_sql_database_partition_merge_request(
-    resource_group_name: str, account_name: str, database_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/partitionMerge",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", max_length=50, min_length=3, pattern=r"^[a-z0-9]+(-[a-z0-9]+)*"
-        ),
-        "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_list_sql_container_partition_merge_request(
-    resource_group_name: str,
-    account_name: str,
-    database_name: str,
-    container_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/partitionMerge",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", max_length=50, min_length=3, pattern=r"^[a-z0-9]+(-[a-z0-9]+)*"
-        ),
-        "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
-        "containerName": _SERIALIZER.url("container_name", container_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_sql_container_throughput_request(
@@ -703,7 +496,7 @@ def build_get_sql_container_throughput_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -723,7 +516,7 @@ def build_get_sql_container_throughput_request(
         "containerName": _SERIALIZER.url("container_name", container_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -745,7 +538,7 @@ def build_update_sql_container_throughput_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -766,7 +559,7 @@ def build_update_sql_container_throughput_request(
         "containerName": _SERIALIZER.url("container_name", container_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -790,7 +583,7 @@ def build_migrate_sql_container_to_autoscale_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -810,7 +603,7 @@ def build_migrate_sql_container_to_autoscale_request(
         "containerName": _SERIALIZER.url("container_name", container_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -832,7 +625,7 @@ def build_migrate_sql_container_to_manual_throughput_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -852,7 +645,7 @@ def build_migrate_sql_container_to_manual_throughput_request(
         "containerName": _SERIALIZER.url("container_name", container_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -863,20 +656,19 @@ def build_migrate_sql_container_to_manual_throughput_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_sql_database_retrieve_throughput_distribution_request(
+def build_list_client_encryption_keys_request(
     resource_group_name: str, account_name: str, database_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/throughputSettings/default/retrieveThroughputDistribution",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/clientEncryptionKeys",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
@@ -889,77 +681,35 @@ def build_sql_database_retrieve_throughput_distribution_request(
         "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_sql_database_redistribute_throughput_request(
-    resource_group_name: str, account_name: str, database_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/throughputSettings/default/redistributeThroughput",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", max_length=50, min_length=3, pattern=r"^[a-z0-9]+(-[a-z0-9]+)*"
-        ),
-        "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_sql_container_retrieve_throughput_distribution_request(
+def build_get_client_encryption_key_request(
     resource_group_name: str,
     account_name: str,
     database_name: str,
-    container_name: str,
+    client_encryption_key_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/throughputSettings/default/retrieveThroughputDistribution",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/clientEncryptionKeys/{clientEncryptionKeyName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
@@ -970,41 +720,39 @@ def build_sql_container_retrieve_throughput_distribution_request(
             "account_name", account_name, "str", max_length=50, min_length=3, pattern=r"^[a-z0-9]+(-[a-z0-9]+)*"
         ),
         "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
-        "containerName": _SERIALIZER.url("container_name", container_name, "str"),
+        "clientEncryptionKeyName": _SERIALIZER.url("client_encryption_key_name", client_encryption_key_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_sql_container_redistribute_throughput_request(
+def build_create_update_client_encryption_key_request(
     resource_group_name: str,
     account_name: str,
     database_name: str,
-    container_name: str,
+    client_encryption_key_name: str,
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/throughputSettings/default/redistributeThroughput",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/clientEncryptionKeys/{clientEncryptionKeyName}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
@@ -1015,10 +763,10 @@ def build_sql_container_redistribute_throughput_request(
             "account_name", account_name, "str", max_length=50, min_length=3, pattern=r"^[a-z0-9]+(-[a-z0-9]+)*"
         ),
         "databaseName": _SERIALIZER.url("database_name", database_name, "str"),
-        "containerName": _SERIALIZER.url("container_name", container_name, "str"),
+        "clientEncryptionKeyName": _SERIALIZER.url("client_encryption_key_name", client_encryption_key_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1028,7 +776,7 @@ def build_sql_container_redistribute_throughput_request(
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_sql_stored_procedures_request(
@@ -1042,7 +790,7 @@ def build_list_sql_stored_procedures_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1062,7 +810,7 @@ def build_list_sql_stored_procedures_request(
         "containerName": _SERIALIZER.url("container_name", container_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1085,7 +833,7 @@ def build_get_sql_stored_procedure_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1106,7 +854,7 @@ def build_get_sql_stored_procedure_request(
         "storedProcedureName": _SERIALIZER.url("stored_procedure_name", stored_procedure_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1129,7 +877,7 @@ def build_create_update_sql_stored_procedure_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1151,7 +899,7 @@ def build_create_update_sql_stored_procedure_request(
         "storedProcedureName": _SERIALIZER.url("stored_procedure_name", stored_procedure_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1175,7 +923,7 @@ def build_delete_sql_stored_procedure_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -1194,7 +942,7 @@ def build_delete_sql_stored_procedure_request(
         "storedProcedureName": _SERIALIZER.url("stored_procedure_name", stored_procedure_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1213,7 +961,7 @@ def build_list_sql_user_defined_functions_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1233,7 +981,7 @@ def build_list_sql_user_defined_functions_request(
         "containerName": _SERIALIZER.url("container_name", container_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1256,7 +1004,7 @@ def build_get_sql_user_defined_function_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1277,7 +1025,7 @@ def build_get_sql_user_defined_function_request(
         "userDefinedFunctionName": _SERIALIZER.url("user_defined_function_name", user_defined_function_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1300,7 +1048,7 @@ def build_create_update_sql_user_defined_function_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1322,7 +1070,7 @@ def build_create_update_sql_user_defined_function_request(
         "userDefinedFunctionName": _SERIALIZER.url("user_defined_function_name", user_defined_function_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1346,7 +1094,7 @@ def build_delete_sql_user_defined_function_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -1365,7 +1113,7 @@ def build_delete_sql_user_defined_function_request(
         "userDefinedFunctionName": _SERIALIZER.url("user_defined_function_name", user_defined_function_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1384,7 +1132,7 @@ def build_list_sql_triggers_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1404,7 +1152,7 @@ def build_list_sql_triggers_request(
         "containerName": _SERIALIZER.url("container_name", container_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1427,7 +1175,7 @@ def build_get_sql_trigger_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1448,7 +1196,7 @@ def build_get_sql_trigger_request(
         "triggerName": _SERIALIZER.url("trigger_name", trigger_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1471,7 +1219,7 @@ def build_create_update_sql_trigger_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1493,7 +1241,7 @@ def build_create_update_sql_trigger_request(
         "triggerName": _SERIALIZER.url("trigger_name", trigger_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1517,7 +1265,7 @@ def build_delete_sql_trigger_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -1536,7 +1284,7 @@ def build_delete_sql_trigger_request(
         "triggerName": _SERIALIZER.url("trigger_name", trigger_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1550,7 +1298,7 @@ def build_get_sql_role_definition_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1569,7 +1317,7 @@ def build_get_sql_role_definition_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1586,7 +1334,7 @@ def build_create_update_sql_role_definition_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1606,7 +1354,7 @@ def build_create_update_sql_role_definition_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1625,7 +1373,7 @@ def build_delete_sql_role_definition_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1644,7 +1392,7 @@ def build_delete_sql_role_definition_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1661,7 +1409,7 @@ def build_list_sql_role_definitions_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1679,7 +1427,7 @@ def build_list_sql_role_definitions_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1696,7 +1444,7 @@ def build_get_sql_role_assignment_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1715,7 +1463,7 @@ def build_get_sql_role_assignment_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1732,7 +1480,7 @@ def build_create_update_sql_role_assignment_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1752,7 +1500,7 @@ def build_create_update_sql_role_assignment_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1771,7 +1519,7 @@ def build_delete_sql_role_assignment_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1790,7 +1538,7 @@ def build_delete_sql_role_assignment_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1807,7 +1555,7 @@ def build_list_sql_role_assignments_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1825,7 +1573,7 @@ def build_list_sql_role_assignments_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1847,7 +1595,7 @@ def build_retrieve_continuous_backup_information_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1868,7 +1616,7 @@ def build_retrieve_continuous_backup_information_request(
         "containerName": _SERIALIZER.url("container_name", container_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -3012,443 +2760,6 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
     }
 
     @distributed_trace
-    def list_client_encryption_keys(
-        self, resource_group_name: str, account_name: str, database_name: str, **kwargs: Any
-    ) -> Iterable["_models.ClientEncryptionKeyGetResults"]:
-        """Lists the ClientEncryptionKeys under an existing Azure Cosmos DB SQL database.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name. Required.
-        :type account_name: str
-        :param database_name: Cosmos DB database name. Required.
-        :type database_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ClientEncryptionKeyGetResults or the result of
-         cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.ClientEncryptionKeyGetResults]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ClientEncryptionKeysListResult] = kwargs.pop("cls", None)
-
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                request = build_list_client_encryption_keys_request(
-                    resource_group_name=resource_group_name,
-                    account_name=account_name,
-                    database_name=database_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    template_url=self.list_client_encryption_keys.metadata["url"],
-                    headers=_headers,
-                    params=_params,
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                request = _convert_request(request)
-                request.url = self._client.format_url(request.url)
-                request.method = "GET"
-            return request
-
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize("ClientEncryptionKeysListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    list_client_encryption_keys.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/clientEncryptionKeys"
-    }
-
-    @distributed_trace
-    def get_client_encryption_key(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        client_encryption_key_name: str,
-        **kwargs: Any
-    ) -> _models.ClientEncryptionKeyGetResults:
-        """Gets the ClientEncryptionKey under an existing Azure Cosmos DB SQL database.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name. Required.
-        :type account_name: str
-        :param database_name: Cosmos DB database name. Required.
-        :type database_name: str
-        :param client_encryption_key_name: Cosmos DB ClientEncryptionKey name. Required.
-        :type client_encryption_key_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ClientEncryptionKeyGetResults or the result of cls(response)
-        :rtype: ~azure.mgmt.cosmosdb.models.ClientEncryptionKeyGetResults
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.ClientEncryptionKeyGetResults] = kwargs.pop("cls", None)
-
-        request = build_get_client_encryption_key_request(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            database_name=database_name,
-            client_encryption_key_name=client_encryption_key_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            template_url=self.get_client_encryption_key.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("ClientEncryptionKeyGetResults", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    get_client_encryption_key.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/clientEncryptionKeys/{clientEncryptionKeyName}"
-    }
-
-    def _create_update_client_encryption_key_initial(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        client_encryption_key_name: str,
-        create_update_client_encryption_key_parameters: Union[_models.ClientEncryptionKeyCreateUpdateParameters, IO],
-        **kwargs: Any
-    ) -> Optional[_models.ClientEncryptionKeyGetResults]:
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.ClientEncryptionKeyGetResults]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(create_update_client_encryption_key_parameters, (IOBase, bytes)):
-            _content = create_update_client_encryption_key_parameters
-        else:
-            _json = self._serialize.body(
-                create_update_client_encryption_key_parameters, "ClientEncryptionKeyCreateUpdateParameters"
-            )
-
-        request = build_create_update_client_encryption_key_request(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            database_name=database_name,
-            client_encryption_key_name=client_encryption_key_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            template_url=self._create_update_client_encryption_key_initial.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = None
-        response_headers = {}
-        if response.status_code == 200:
-            deserialized = self._deserialize("ClientEncryptionKeyGetResults", pipeline_response)
-
-        if response.status_code == 202:
-            response_headers["azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("azure-AsyncOperation")
-            )
-            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)
-
-        return deserialized
-
-    _create_update_client_encryption_key_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/clientEncryptionKeys/{clientEncryptionKeyName}"
-    }
-
-    @overload
-    def begin_create_update_client_encryption_key(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        client_encryption_key_name: str,
-        create_update_client_encryption_key_parameters: _models.ClientEncryptionKeyCreateUpdateParameters,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.ClientEncryptionKeyGetResults]:
-        """Create or update a ClientEncryptionKey. This API is meant to be invoked via tools such as the
-        Azure Powershell (instead of directly).
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name. Required.
-        :type account_name: str
-        :param database_name: Cosmos DB database name. Required.
-        :type database_name: str
-        :param client_encryption_key_name: Cosmos DB ClientEncryptionKey name. Required.
-        :type client_encryption_key_name: str
-        :param create_update_client_encryption_key_parameters: The parameters to provide for the client
-         encryption key. Required.
-        :type create_update_client_encryption_key_parameters:
-         ~azure.mgmt.cosmosdb.models.ClientEncryptionKeyCreateUpdateParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either ClientEncryptionKeyGetResults or the
-         result of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.ClientEncryptionKeyGetResults]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_create_update_client_encryption_key(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        client_encryption_key_name: str,
-        create_update_client_encryption_key_parameters: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.ClientEncryptionKeyGetResults]:
-        """Create or update a ClientEncryptionKey. This API is meant to be invoked via tools such as the
-        Azure Powershell (instead of directly).
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name. Required.
-        :type account_name: str
-        :param database_name: Cosmos DB database name. Required.
-        :type database_name: str
-        :param client_encryption_key_name: Cosmos DB ClientEncryptionKey name. Required.
-        :type client_encryption_key_name: str
-        :param create_update_client_encryption_key_parameters: The parameters to provide for the client
-         encryption key. Required.
-        :type create_update_client_encryption_key_parameters: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either ClientEncryptionKeyGetResults or the
-         result of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.ClientEncryptionKeyGetResults]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_create_update_client_encryption_key(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        client_encryption_key_name: str,
-        create_update_client_encryption_key_parameters: Union[_models.ClientEncryptionKeyCreateUpdateParameters, IO],
-        **kwargs: Any
-    ) -> LROPoller[_models.ClientEncryptionKeyGetResults]:
-        """Create or update a ClientEncryptionKey. This API is meant to be invoked via tools such as the
-        Azure Powershell (instead of directly).
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name. Required.
-        :type account_name: str
-        :param database_name: Cosmos DB database name. Required.
-        :type database_name: str
-        :param client_encryption_key_name: Cosmos DB ClientEncryptionKey name. Required.
-        :type client_encryption_key_name: str
-        :param create_update_client_encryption_key_parameters: The parameters to provide for the client
-         encryption key. Is either a ClientEncryptionKeyCreateUpdateParameters type or a IO type.
-         Required.
-        :type create_update_client_encryption_key_parameters:
-         ~azure.mgmt.cosmosdb.models.ClientEncryptionKeyCreateUpdateParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either ClientEncryptionKeyGetResults or the
-         result of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.ClientEncryptionKeyGetResults]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ClientEncryptionKeyGetResults] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._create_update_client_encryption_key_initial(
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                database_name=database_name,
-                client_encryption_key_name=client_encryption_key_name,
-                create_update_client_encryption_key_parameters=create_update_client_encryption_key_parameters,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("ClientEncryptionKeyGetResults", pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_create_update_client_encryption_key.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/clientEncryptionKeys/{clientEncryptionKeyName}"
-    }
-
-    @distributed_trace
     def list_sql_containers(
         self, resource_group_name: str, account_name: str, database_name: str, **kwargs: Any
     ) -> Iterable["_models.SqlContainerGetResults"]:
@@ -3997,512 +3308,6 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
 
     begin_delete_sql_container.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}"
-    }
-
-    def _sql_database_partition_merge_initial(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        merge_parameters: Union[_models.MergeParameters, IO],
-        **kwargs: Any
-    ) -> Optional[_models.PhysicalPartitionStorageInfoCollection]:
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.PhysicalPartitionStorageInfoCollection]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(merge_parameters, (IOBase, bytes)):
-            _content = merge_parameters
-        else:
-            _json = self._serialize.body(merge_parameters, "MergeParameters")
-
-        request = build_sql_database_partition_merge_request(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            database_name=database_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            template_url=self._sql_database_partition_merge_initial.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = None
-        response_headers = {}
-        if response.status_code == 200:
-            deserialized = self._deserialize("PhysicalPartitionStorageInfoCollection", pipeline_response)
-
-        if response.status_code == 202:
-            response_headers["azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("azure-AsyncOperation")
-            )
-            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)
-
-        return deserialized
-
-    _sql_database_partition_merge_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/partitionMerge"
-    }
-
-    @overload
-    def begin_sql_database_partition_merge(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        merge_parameters: _models.MergeParameters,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.PhysicalPartitionStorageInfoCollection]:
-        """Merges the partitions of a SQL database.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name. Required.
-        :type account_name: str
-        :param database_name: Cosmos DB database name. Required.
-        :type database_name: str
-        :param merge_parameters: The parameters for the merge operation. Required.
-        :type merge_parameters: ~azure.mgmt.cosmosdb.models.MergeParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either PhysicalPartitionStorageInfoCollection or
-         the result of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionStorageInfoCollection]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_sql_database_partition_merge(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        merge_parameters: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.PhysicalPartitionStorageInfoCollection]:
-        """Merges the partitions of a SQL database.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name. Required.
-        :type account_name: str
-        :param database_name: Cosmos DB database name. Required.
-        :type database_name: str
-        :param merge_parameters: The parameters for the merge operation. Required.
-        :type merge_parameters: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either PhysicalPartitionStorageInfoCollection or
-         the result of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionStorageInfoCollection]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_sql_database_partition_merge(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        merge_parameters: Union[_models.MergeParameters, IO],
-        **kwargs: Any
-    ) -> LROPoller[_models.PhysicalPartitionStorageInfoCollection]:
-        """Merges the partitions of a SQL database.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name. Required.
-        :type account_name: str
-        :param database_name: Cosmos DB database name. Required.
-        :type database_name: str
-        :param merge_parameters: The parameters for the merge operation. Is either a MergeParameters
-         type or a IO type. Required.
-        :type merge_parameters: ~azure.mgmt.cosmosdb.models.MergeParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either PhysicalPartitionStorageInfoCollection or
-         the result of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionStorageInfoCollection]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PhysicalPartitionStorageInfoCollection] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._sql_database_partition_merge_initial(
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                database_name=database_name,
-                merge_parameters=merge_parameters,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("PhysicalPartitionStorageInfoCollection", pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_sql_database_partition_merge.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/partitionMerge"
-    }
-
-    def _list_sql_container_partition_merge_initial(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        container_name: str,
-        merge_parameters: Union[_models.MergeParameters, IO],
-        **kwargs: Any
-    ) -> Optional[_models.PhysicalPartitionStorageInfoCollection]:
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.PhysicalPartitionStorageInfoCollection]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(merge_parameters, (IOBase, bytes)):
-            _content = merge_parameters
-        else:
-            _json = self._serialize.body(merge_parameters, "MergeParameters")
-
-        request = build_list_sql_container_partition_merge_request(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            database_name=database_name,
-            container_name=container_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            template_url=self._list_sql_container_partition_merge_initial.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = None
-        response_headers = {}
-        if response.status_code == 200:
-            deserialized = self._deserialize("PhysicalPartitionStorageInfoCollection", pipeline_response)
-
-        if response.status_code == 202:
-            response_headers["azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("azure-AsyncOperation")
-            )
-            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)
-
-        return deserialized
-
-    _list_sql_container_partition_merge_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/partitionMerge"
-    }
-
-    @overload
-    def begin_list_sql_container_partition_merge(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        container_name: str,
-        merge_parameters: _models.MergeParameters,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.PhysicalPartitionStorageInfoCollection]:
-        """Merges the partitions of a SQL Container.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name. Required.
-        :type account_name: str
-        :param database_name: Cosmos DB database name. Required.
-        :type database_name: str
-        :param container_name: Cosmos DB container name. Required.
-        :type container_name: str
-        :param merge_parameters: The parameters for the merge operation. Required.
-        :type merge_parameters: ~azure.mgmt.cosmosdb.models.MergeParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either PhysicalPartitionStorageInfoCollection or
-         the result of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionStorageInfoCollection]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_list_sql_container_partition_merge(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        container_name: str,
-        merge_parameters: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.PhysicalPartitionStorageInfoCollection]:
-        """Merges the partitions of a SQL Container.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name. Required.
-        :type account_name: str
-        :param database_name: Cosmos DB database name. Required.
-        :type database_name: str
-        :param container_name: Cosmos DB container name. Required.
-        :type container_name: str
-        :param merge_parameters: The parameters for the merge operation. Required.
-        :type merge_parameters: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either PhysicalPartitionStorageInfoCollection or
-         the result of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionStorageInfoCollection]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_list_sql_container_partition_merge(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        container_name: str,
-        merge_parameters: Union[_models.MergeParameters, IO],
-        **kwargs: Any
-    ) -> LROPoller[_models.PhysicalPartitionStorageInfoCollection]:
-        """Merges the partitions of a SQL Container.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name. Required.
-        :type account_name: str
-        :param database_name: Cosmos DB database name. Required.
-        :type database_name: str
-        :param container_name: Cosmos DB container name. Required.
-        :type container_name: str
-        :param merge_parameters: The parameters for the merge operation. Is either a MergeParameters
-         type or a IO type. Required.
-        :type merge_parameters: ~azure.mgmt.cosmosdb.models.MergeParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either PhysicalPartitionStorageInfoCollection or
-         the result of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionStorageInfoCollection]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PhysicalPartitionStorageInfoCollection] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._list_sql_container_partition_merge_initial(
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                database_name=database_name,
-                container_name=container_name,
-                merge_parameters=merge_parameters,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("PhysicalPartitionStorageInfoCollection", pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_list_sql_container_partition_merge.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/partitionMerge"
     }
 
     @distributed_trace
@@ -5109,14 +3914,185 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/throughputSettings/default/migrateToManualThroughput"
     }
 
-    def _sql_database_retrieve_throughput_distribution_initial(
+    @distributed_trace
+    def list_client_encryption_keys(
+        self, resource_group_name: str, account_name: str, database_name: str, **kwargs: Any
+    ) -> Iterable["_models.ClientEncryptionKeyGetResults"]:
+        """Lists the ClientEncryptionKeys under an existing Azure Cosmos DB SQL database.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :param database_name: Cosmos DB database name. Required.
+        :type database_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either ClientEncryptionKeyGetResults or the result of
+         cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.cosmosdb.models.ClientEncryptionKeyGetResults]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.ClientEncryptionKeysListResult] = kwargs.pop("cls", None)
+
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                request = build_list_client_encryption_keys_request(
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    database_name=database_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    template_url=self.list_client_encryption_keys.metadata["url"],
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize("ClientEncryptionKeysListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    list_client_encryption_keys.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/clientEncryptionKeys"
+    }
+
+    @distributed_trace
+    def get_client_encryption_key(
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        retrieve_throughput_parameters: Union[_models.RetrieveThroughputParameters, IO],
+        client_encryption_key_name: str,
         **kwargs: Any
-    ) -> Optional[_models.PhysicalPartitionThroughputInfoResult]:
+    ) -> _models.ClientEncryptionKeyGetResults:
+        """Gets the ClientEncryptionKey under an existing Azure Cosmos DB SQL database.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param account_name: Cosmos DB database account name. Required.
+        :type account_name: str
+        :param database_name: Cosmos DB database name. Required.
+        :type database_name: str
+        :param client_encryption_key_name: Cosmos DB ClientEncryptionKey name. Required.
+        :type client_encryption_key_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ClientEncryptionKeyGetResults or the result of cls(response)
+        :rtype: ~azure.mgmt.cosmosdb.models.ClientEncryptionKeyGetResults
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        cls: ClsType[_models.ClientEncryptionKeyGetResults] = kwargs.pop("cls", None)
+
+        request = build_get_client_encryption_key_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            database_name=database_name,
+            client_encryption_key_name=client_encryption_key_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self.get_client_encryption_key.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("ClientEncryptionKeyGetResults", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get_client_encryption_key.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/clientEncryptionKeys/{clientEncryptionKeyName}"
+    }
+
+    def _create_update_client_encryption_key_initial(
+        self,
+        resource_group_name: str,
+        account_name: str,
+        database_name: str,
+        client_encryption_key_name: str,
+        create_update_client_encryption_key_parameters: Union[_models.ClientEncryptionKeyCreateUpdateParameters, IO],
+        **kwargs: Any
+    ) -> Optional[_models.ClientEncryptionKeyGetResults]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5130,26 +4106,29 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.PhysicalPartitionThroughputInfoResult]] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[_models.ClientEncryptionKeyGetResults]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
         _content = None
-        if isinstance(retrieve_throughput_parameters, (IOBase, bytes)):
-            _content = retrieve_throughput_parameters
+        if isinstance(create_update_client_encryption_key_parameters, (IOBase, bytes)):
+            _content = create_update_client_encryption_key_parameters
         else:
-            _json = self._serialize.body(retrieve_throughput_parameters, "RetrieveThroughputParameters")
+            _json = self._serialize.body(
+                create_update_client_encryption_key_parameters, "ClientEncryptionKeyCreateUpdateParameters"
+            )
 
-        request = build_sql_database_retrieve_throughput_distribution_request(
+        request = build_create_update_client_encryption_key_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             database_name=database_name,
+            client_encryption_key_name=client_encryption_key_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._sql_database_retrieve_throughput_distribution_initial.metadata["url"],
+            template_url=self._create_update_client_encryption_key_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -5170,7 +4149,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         deserialized = None
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize("PhysicalPartitionThroughputInfoResult", pipeline_response)
+            deserialized = self._deserialize("ClientEncryptionKeyGetResults", pipeline_response)
 
         if response.status_code == 202:
             response_headers["azure-AsyncOperation"] = self._deserialize(
@@ -5183,22 +4162,24 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    _sql_database_retrieve_throughput_distribution_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/throughputSettings/default/retrieveThroughputDistribution"
+    _create_update_client_encryption_key_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/clientEncryptionKeys/{clientEncryptionKeyName}"
     }
 
     @overload
-    def begin_sql_database_retrieve_throughput_distribution(
+    def begin_create_update_client_encryption_key(
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        retrieve_throughput_parameters: _models.RetrieveThroughputParameters,
+        client_encryption_key_name: str,
+        create_update_client_encryption_key_parameters: _models.ClientEncryptionKeyCreateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.PhysicalPartitionThroughputInfoResult]:
-        """Retrieve throughput distribution for an Azure Cosmos DB SQL database.
+    ) -> LROPoller[_models.ClientEncryptionKeyGetResults]:
+        """Create or update a ClientEncryptionKey. This API is meant to be invoked via tools such as the
+        Azure Powershell (instead of directly).
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -5207,9 +4188,12 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :type account_name: str
         :param database_name: Cosmos DB database name. Required.
         :type database_name: str
-        :param retrieve_throughput_parameters: The parameters to provide for retrieving throughput
-         distribution for the current SQL database. Required.
-        :type retrieve_throughput_parameters: ~azure.mgmt.cosmosdb.models.RetrieveThroughputParameters
+        :param client_encryption_key_name: Cosmos DB ClientEncryptionKey name. Required.
+        :type client_encryption_key_name: str
+        :param create_update_client_encryption_key_parameters: The parameters to provide for the client
+         encryption key. Required.
+        :type create_update_client_encryption_key_parameters:
+         ~azure.mgmt.cosmosdb.models.ClientEncryptionKeyCreateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5221,25 +4205,27 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either PhysicalPartitionThroughputInfoResult or
-         the result of cls(response)
+        :return: An instance of LROPoller that returns either ClientEncryptionKeyGetResults or the
+         result of cls(response)
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResult]
+         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.ClientEncryptionKeyGetResults]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def begin_sql_database_retrieve_throughput_distribution(
+    def begin_create_update_client_encryption_key(
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        retrieve_throughput_parameters: IO,
+        client_encryption_key_name: str,
+        create_update_client_encryption_key_parameters: IO,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.PhysicalPartitionThroughputInfoResult]:
-        """Retrieve throughput distribution for an Azure Cosmos DB SQL database.
+    ) -> LROPoller[_models.ClientEncryptionKeyGetResults]:
+        """Create or update a ClientEncryptionKey. This API is meant to be invoked via tools such as the
+        Azure Powershell (instead of directly).
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -5248,9 +4234,11 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :type account_name: str
         :param database_name: Cosmos DB database name. Required.
         :type database_name: str
-        :param retrieve_throughput_parameters: The parameters to provide for retrieving throughput
-         distribution for the current SQL database. Required.
-        :type retrieve_throughput_parameters: IO
+        :param client_encryption_key_name: Cosmos DB ClientEncryptionKey name. Required.
+        :type client_encryption_key_name: str
+        :param create_update_client_encryption_key_parameters: The parameters to provide for the client
+         encryption key. Required.
+        :type create_update_client_encryption_key_parameters: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5262,23 +4250,25 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either PhysicalPartitionThroughputInfoResult or
-         the result of cls(response)
+        :return: An instance of LROPoller that returns either ClientEncryptionKeyGetResults or the
+         result of cls(response)
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResult]
+         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.ClientEncryptionKeyGetResults]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def begin_sql_database_retrieve_throughput_distribution(
+    def begin_create_update_client_encryption_key(
         self,
         resource_group_name: str,
         account_name: str,
         database_name: str,
-        retrieve_throughput_parameters: Union[_models.RetrieveThroughputParameters, IO],
+        client_encryption_key_name: str,
+        create_update_client_encryption_key_parameters: Union[_models.ClientEncryptionKeyCreateUpdateParameters, IO],
         **kwargs: Any
-    ) -> LROPoller[_models.PhysicalPartitionThroughputInfoResult]:
-        """Retrieve throughput distribution for an Azure Cosmos DB SQL database.
+    ) -> LROPoller[_models.ClientEncryptionKeyGetResults]:
+        """Create or update a ClientEncryptionKey. This API is meant to be invoked via tools such as the
+        Azure Powershell (instead of directly).
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -5287,11 +4277,13 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :type account_name: str
         :param database_name: Cosmos DB database name. Required.
         :type database_name: str
-        :param retrieve_throughput_parameters: The parameters to provide for retrieving throughput
-         distribution for the current SQL database. Is either a RetrieveThroughputParameters type or a
-         IO type. Required.
-        :type retrieve_throughput_parameters: ~azure.mgmt.cosmosdb.models.RetrieveThroughputParameters
-         or IO
+        :param client_encryption_key_name: Cosmos DB ClientEncryptionKey name. Required.
+        :type client_encryption_key_name: str
+        :param create_update_client_encryption_key_parameters: The parameters to provide for the client
+         encryption key. Is either a ClientEncryptionKeyCreateUpdateParameters type or a IO type.
+         Required.
+        :type create_update_client_encryption_key_parameters:
+         ~azure.mgmt.cosmosdb.models.ClientEncryptionKeyCreateUpdateParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -5303,10 +4295,10 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns either PhysicalPartitionThroughputInfoResult or
-         the result of cls(response)
+        :return: An instance of LROPoller that returns either ClientEncryptionKeyGetResults or the
+         result of cls(response)
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResult]
+         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.ClientEncryptionKeyGetResults]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -5314,16 +4306,17 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PhysicalPartitionThroughputInfoResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ClientEncryptionKeyGetResults] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._sql_database_retrieve_throughput_distribution_initial(
+            raw_result = self._create_update_client_encryption_key_initial(
                 resource_group_name=resource_group_name,
                 account_name=account_name,
                 database_name=database_name,
-                retrieve_throughput_parameters=retrieve_throughput_parameters,
+                client_encryption_key_name=client_encryption_key_name,
+                create_update_client_encryption_key_parameters=create_update_client_encryption_key_parameters,
                 api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -5334,15 +4327,13 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("PhysicalPartitionThroughputInfoResult", pipeline_response)
+            deserialized = self._deserialize("ClientEncryptionKeyGetResults", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -5356,787 +4347,8 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_sql_database_retrieve_throughput_distribution.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/throughputSettings/default/retrieveThroughputDistribution"
-    }
-
-    def _sql_database_redistribute_throughput_initial(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        redistribute_throughput_parameters: Union[_models.RedistributeThroughputParameters, IO],
-        **kwargs: Any
-    ) -> Optional[_models.PhysicalPartitionThroughputInfoResult]:
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.PhysicalPartitionThroughputInfoResult]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(redistribute_throughput_parameters, (IOBase, bytes)):
-            _content = redistribute_throughput_parameters
-        else:
-            _json = self._serialize.body(redistribute_throughput_parameters, "RedistributeThroughputParameters")
-
-        request = build_sql_database_redistribute_throughput_request(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            database_name=database_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            template_url=self._sql_database_redistribute_throughput_initial.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = None
-        response_headers = {}
-        if response.status_code == 200:
-            deserialized = self._deserialize("PhysicalPartitionThroughputInfoResult", pipeline_response)
-
-        if response.status_code == 202:
-            response_headers["azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("azure-AsyncOperation")
-            )
-            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)
-
-        return deserialized
-
-    _sql_database_redistribute_throughput_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/throughputSettings/default/redistributeThroughput"
-    }
-
-    @overload
-    def begin_sql_database_redistribute_throughput(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        redistribute_throughput_parameters: _models.RedistributeThroughputParameters,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.PhysicalPartitionThroughputInfoResult]:
-        """Redistribute throughput for an Azure Cosmos DB SQL database.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name. Required.
-        :type account_name: str
-        :param database_name: Cosmos DB database name. Required.
-        :type database_name: str
-        :param redistribute_throughput_parameters: The parameters to provide for redistributing
-         throughput for the current SQL database. Required.
-        :type redistribute_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.RedistributeThroughputParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either PhysicalPartitionThroughputInfoResult or
-         the result of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_sql_database_redistribute_throughput(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        redistribute_throughput_parameters: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.PhysicalPartitionThroughputInfoResult]:
-        """Redistribute throughput for an Azure Cosmos DB SQL database.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name. Required.
-        :type account_name: str
-        :param database_name: Cosmos DB database name. Required.
-        :type database_name: str
-        :param redistribute_throughput_parameters: The parameters to provide for redistributing
-         throughput for the current SQL database. Required.
-        :type redistribute_throughput_parameters: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either PhysicalPartitionThroughputInfoResult or
-         the result of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_sql_database_redistribute_throughput(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        redistribute_throughput_parameters: Union[_models.RedistributeThroughputParameters, IO],
-        **kwargs: Any
-    ) -> LROPoller[_models.PhysicalPartitionThroughputInfoResult]:
-        """Redistribute throughput for an Azure Cosmos DB SQL database.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name. Required.
-        :type account_name: str
-        :param database_name: Cosmos DB database name. Required.
-        :type database_name: str
-        :param redistribute_throughput_parameters: The parameters to provide for redistributing
-         throughput for the current SQL database. Is either a RedistributeThroughputParameters type or a
-         IO type. Required.
-        :type redistribute_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.RedistributeThroughputParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either PhysicalPartitionThroughputInfoResult or
-         the result of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PhysicalPartitionThroughputInfoResult] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._sql_database_redistribute_throughput_initial(
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                database_name=database_name,
-                redistribute_throughput_parameters=redistribute_throughput_parameters,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("PhysicalPartitionThroughputInfoResult", pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_sql_database_redistribute_throughput.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/throughputSettings/default/redistributeThroughput"
-    }
-
-    def _sql_container_retrieve_throughput_distribution_initial(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        container_name: str,
-        retrieve_throughput_parameters: Union[_models.RetrieveThroughputParameters, IO],
-        **kwargs: Any
-    ) -> Optional[_models.PhysicalPartitionThroughputInfoResult]:
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.PhysicalPartitionThroughputInfoResult]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(retrieve_throughput_parameters, (IOBase, bytes)):
-            _content = retrieve_throughput_parameters
-        else:
-            _json = self._serialize.body(retrieve_throughput_parameters, "RetrieveThroughputParameters")
-
-        request = build_sql_container_retrieve_throughput_distribution_request(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            database_name=database_name,
-            container_name=container_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            template_url=self._sql_container_retrieve_throughput_distribution_initial.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = None
-        response_headers = {}
-        if response.status_code == 200:
-            deserialized = self._deserialize("PhysicalPartitionThroughputInfoResult", pipeline_response)
-
-        if response.status_code == 202:
-            response_headers["azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("azure-AsyncOperation")
-            )
-            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)
-
-        return deserialized
-
-    _sql_container_retrieve_throughput_distribution_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/throughputSettings/default/retrieveThroughputDistribution"
-    }
-
-    @overload
-    def begin_sql_container_retrieve_throughput_distribution(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        container_name: str,
-        retrieve_throughput_parameters: _models.RetrieveThroughputParameters,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.PhysicalPartitionThroughputInfoResult]:
-        """Retrieve throughput distribution for an Azure Cosmos DB SQL container.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name. Required.
-        :type account_name: str
-        :param database_name: Cosmos DB database name. Required.
-        :type database_name: str
-        :param container_name: Cosmos DB container name. Required.
-        :type container_name: str
-        :param retrieve_throughput_parameters: The parameters to provide for retrieving throughput
-         distribution for the current SQL container. Required.
-        :type retrieve_throughput_parameters: ~azure.mgmt.cosmosdb.models.RetrieveThroughputParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either PhysicalPartitionThroughputInfoResult or
-         the result of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_sql_container_retrieve_throughput_distribution(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        container_name: str,
-        retrieve_throughput_parameters: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.PhysicalPartitionThroughputInfoResult]:
-        """Retrieve throughput distribution for an Azure Cosmos DB SQL container.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name. Required.
-        :type account_name: str
-        :param database_name: Cosmos DB database name. Required.
-        :type database_name: str
-        :param container_name: Cosmos DB container name. Required.
-        :type container_name: str
-        :param retrieve_throughput_parameters: The parameters to provide for retrieving throughput
-         distribution for the current SQL container. Required.
-        :type retrieve_throughput_parameters: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either PhysicalPartitionThroughputInfoResult or
-         the result of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_sql_container_retrieve_throughput_distribution(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        container_name: str,
-        retrieve_throughput_parameters: Union[_models.RetrieveThroughputParameters, IO],
-        **kwargs: Any
-    ) -> LROPoller[_models.PhysicalPartitionThroughputInfoResult]:
-        """Retrieve throughput distribution for an Azure Cosmos DB SQL container.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name. Required.
-        :type account_name: str
-        :param database_name: Cosmos DB database name. Required.
-        :type database_name: str
-        :param container_name: Cosmos DB container name. Required.
-        :type container_name: str
-        :param retrieve_throughput_parameters: The parameters to provide for retrieving throughput
-         distribution for the current SQL container. Is either a RetrieveThroughputParameters type or a
-         IO type. Required.
-        :type retrieve_throughput_parameters: ~azure.mgmt.cosmosdb.models.RetrieveThroughputParameters
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either PhysicalPartitionThroughputInfoResult or
-         the result of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PhysicalPartitionThroughputInfoResult] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._sql_container_retrieve_throughput_distribution_initial(
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                database_name=database_name,
-                container_name=container_name,
-                retrieve_throughput_parameters=retrieve_throughput_parameters,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("PhysicalPartitionThroughputInfoResult", pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_sql_container_retrieve_throughput_distribution.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/throughputSettings/default/retrieveThroughputDistribution"
-    }
-
-    def _sql_container_redistribute_throughput_initial(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        container_name: str,
-        redistribute_throughput_parameters: Union[_models.RedistributeThroughputParameters, IO],
-        **kwargs: Any
-    ) -> Optional[_models.PhysicalPartitionThroughputInfoResult]:
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Optional[_models.PhysicalPartitionThroughputInfoResult]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(redistribute_throughput_parameters, (IOBase, bytes)):
-            _content = redistribute_throughput_parameters
-        else:
-            _json = self._serialize.body(redistribute_throughput_parameters, "RedistributeThroughputParameters")
-
-        request = build_sql_container_redistribute_throughput_request(
-            resource_group_name=resource_group_name,
-            account_name=account_name,
-            database_name=database_name,
-            container_name=container_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            template_url=self._sql_container_redistribute_throughput_initial.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = None
-        response_headers = {}
-        if response.status_code == 200:
-            deserialized = self._deserialize("PhysicalPartitionThroughputInfoResult", pipeline_response)
-
-        if response.status_code == 202:
-            response_headers["azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("azure-AsyncOperation")
-            )
-            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)
-
-        return deserialized
-
-    _sql_container_redistribute_throughput_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/throughputSettings/default/redistributeThroughput"
-    }
-
-    @overload
-    def begin_sql_container_redistribute_throughput(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        container_name: str,
-        redistribute_throughput_parameters: _models.RedistributeThroughputParameters,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.PhysicalPartitionThroughputInfoResult]:
-        """Redistribute throughput for an Azure Cosmos DB SQL container.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name. Required.
-        :type account_name: str
-        :param database_name: Cosmos DB database name. Required.
-        :type database_name: str
-        :param container_name: Cosmos DB container name. Required.
-        :type container_name: str
-        :param redistribute_throughput_parameters: The parameters to provide for redistributing
-         throughput for the current SQL container. Required.
-        :type redistribute_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.RedistributeThroughputParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either PhysicalPartitionThroughputInfoResult or
-         the result of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def begin_sql_container_redistribute_throughput(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        container_name: str,
-        redistribute_throughput_parameters: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_models.PhysicalPartitionThroughputInfoResult]:
-        """Redistribute throughput for an Azure Cosmos DB SQL container.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name. Required.
-        :type account_name: str
-        :param database_name: Cosmos DB database name. Required.
-        :type database_name: str
-        :param container_name: Cosmos DB container name. Required.
-        :type container_name: str
-        :param redistribute_throughput_parameters: The parameters to provide for redistributing
-         throughput for the current SQL container. Required.
-        :type redistribute_throughput_parameters: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either PhysicalPartitionThroughputInfoResult or
-         the result of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def begin_sql_container_redistribute_throughput(
-        self,
-        resource_group_name: str,
-        account_name: str,
-        database_name: str,
-        container_name: str,
-        redistribute_throughput_parameters: Union[_models.RedistributeThroughputParameters, IO],
-        **kwargs: Any
-    ) -> LROPoller[_models.PhysicalPartitionThroughputInfoResult]:
-        """Redistribute throughput for an Azure Cosmos DB SQL container.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param account_name: Cosmos DB database account name. Required.
-        :type account_name: str
-        :param database_name: Cosmos DB database name. Required.
-        :type database_name: str
-        :param container_name: Cosmos DB container name. Required.
-        :type container_name: str
-        :param redistribute_throughput_parameters: The parameters to provide for redistributing
-         throughput for the current SQL container. Is either a RedistributeThroughputParameters type or
-         a IO type. Required.
-        :type redistribute_throughput_parameters:
-         ~azure.mgmt.cosmosdb.models.RedistributeThroughputParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
-         operation to not poll, or pass in your own initialized polling object for a personal polling
-         strategy.
-        :paramtype polling: bool or ~azure.core.polling.PollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of LROPoller that returns either PhysicalPartitionThroughputInfoResult or
-         the result of cls(response)
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cosmosdb.models.PhysicalPartitionThroughputInfoResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PhysicalPartitionThroughputInfoResult] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._sql_container_redistribute_throughput_initial(
-                resource_group_name=resource_group_name,
-                account_name=account_name,
-                database_name=database_name,
-                container_name=container_name,
-                redistribute_throughput_parameters=redistribute_throughput_parameters,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("PhysicalPartitionThroughputInfoResult", pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_sql_container_redistribute_throughput.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/throughputSettings/default/redistributeThroughput"
+    begin_create_update_client_encryption_key.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/clientEncryptionKeys/{clientEncryptionKeyName}"
     }
 
     @distributed_trace

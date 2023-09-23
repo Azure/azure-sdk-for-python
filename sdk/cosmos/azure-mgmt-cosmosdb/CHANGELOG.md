@@ -1,5 +1,16 @@
 # Release History
 
+## 9.3.0 (2023-10-23)
+
+### Features Added
+
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter customer_managed_key_status
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter enable_burst_capacity
+  - Model DatabaseAccountGetResults has a new parameter customer_managed_key_status
+  - Model DatabaseAccountGetResults has a new parameter enable_burst_capacity
+  - Model DatabaseAccountUpdateParameters has a new parameter customer_managed_key_status
+  - Model DatabaseAccountUpdateParameters has a new parameter enable_burst_capacity
+
 ## 10.0.0b1 (2023-06-16)
 
 ### Features Added
