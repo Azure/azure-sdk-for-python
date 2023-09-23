@@ -332,7 +332,7 @@ class CallAutomationClient:
             media_streaming_configuration=media_streaming_configuration.to_generated(
             ) if media_streaming_configuration else None,
             azure_cognitive_services_endpoint_url=azure_cognitive_services_endpoint_url,
-            answered_by=serialize_communication_user_identifier(
+            answered_by_identifier=serialize_communication_user_identifier(
                 self.source) if self.source else None,
             operation_context=operation_context
         )

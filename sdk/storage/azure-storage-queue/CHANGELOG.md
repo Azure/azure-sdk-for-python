@@ -1,9 +1,10 @@
 # Release History
 
-## 12.8.0b1 (Unreleased)
+## 12.7.2 (2023-09-25)
 
-### Features Added
-
+### Bugs Fixed
+- Fixed an issue where `user_agent` was being ignored on `send_message`, `receive_message`, `receive_messages`,
+`update_message`, and `peek_messages` if client was configured for encryption.
 
 ## 12.7.1 (2023-09-13)
 
