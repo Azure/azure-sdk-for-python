@@ -5,8 +5,8 @@ from ci_tools.functions import discover_targeted_packages
 
 
 repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
-storage_service_root = os.path.join(repo_root, "sdk", "storage")
 core_service_root = os.path.join(repo_root, "sdk", "core")
+storage_service_root = os.path.join(repo_root, "sdk", "storage")
 
 def test_discovery():
     results = discover_targeted_packages("azure*", core_service_root)
