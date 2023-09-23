@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 from asyncio import Lock
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -39,10 +39,10 @@ class AsyncSyncTokenPolicy(SansIOHTTPPolicy):
 
     def __init__(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self._sync_token_header = "Sync-Token"
-        self._sync_tokens = {}  # type: Dict[str, Any]
+        self._sync_tokens: Dict[str, Any] = {}
         self._lock = Lock()
 
-    async def on_request(self, request: PipelineRequest) -> None:  # type: ignore # pylint: disable=arguments-differ, invalid-overridden-method
+    async def on_request(self, request: PipelineRequest) -> None:  # pylint: disable=invalid-overridden-method
         """This is executed before sending the request to the next policy.
 
         :param request: The PipelineRequest object.
@@ -53,7 +53,9 @@ class AsyncSyncTokenPolicy(SansIOHTTPPolicy):
             if sync_token_header:
                 request.http_request.headers.update({self._sync_token_header: sync_token_header})
 
-    async def on_response(self, request: PipelineRequest, response: PipelineResponse) -> None:  # type: ignore # pylint: disable=arguments-differ, invalid-overridden-method
+    async def on_response(  # pylint: disable=invalid-overridden-method
+        self, request: PipelineRequest, response: PipelineResponse
+    ) -> None:
         """This is executed after the request comes back from the policy.
 
         :param request: The PipelineRequest object.
@@ -77,7 +79,7 @@ class AsyncSyncTokenPolicy(SansIOHTTPPolicy):
             sync_token = SyncToken.from_sync_token_string(raw_token)
             await self._update_sync_token(sync_token)
 
-    async def _update_sync_token(self, sync_token: SyncToken) -> None:
+    async def _update_sync_token(self, sync_token: Optional[SyncToken]) -> None:
         if not sync_token:
             return
         async with self._lock:

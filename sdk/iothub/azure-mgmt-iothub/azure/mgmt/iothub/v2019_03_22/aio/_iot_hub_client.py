@@ -70,13 +70,17 @@ class IotHubClient:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.iot_hub_resource = IotHubResourceOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.resource_provider_common = ResourceProviderCommonOperations(
-            self._client, self._config, self._serialize, self._deserialize
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize, "2019-03-22")
+        self.iot_hub_resource = IotHubResourceOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2019-03-22"
         )
-        self.certificates = CertificatesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.iot_hub = IotHubOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.resource_provider_common = ResourceProviderCommonOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2019-03-22"
+        )
+        self.certificates = CertificatesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2019-03-22"
+        )
+        self.iot_hub = IotHubOperations(self._client, self._config, self._serialize, self._deserialize, "2019-03-22")
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

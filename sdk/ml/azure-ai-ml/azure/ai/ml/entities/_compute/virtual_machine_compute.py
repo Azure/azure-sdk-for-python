@@ -34,7 +34,7 @@ class VirtualMachineSshSettings:
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_compute.py
+        .. literalinclude:: ../samples/ml_samples_compute.py
             :start-after: [START vm_ssh_settings]
             :end-before: [END vm_ssh_settings]
             :language: python
@@ -72,7 +72,7 @@ class VirtualMachineCompute(Compute):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_compute.py
+        .. literalinclude:: ../samples/ml_samples_compute.py
             :start-after: [START vm_compute]
             :end-before: [END vm_compute]
             :language: python

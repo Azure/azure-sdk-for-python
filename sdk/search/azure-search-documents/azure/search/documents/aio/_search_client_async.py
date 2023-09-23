@@ -13,6 +13,7 @@ from .._utils import get_authentication_policy
 from .._generated.aio import SearchIndexClient
 from .._generated.models import (
     AutocompleteMode,
+    AutocompleteRequest,
     IndexAction,
     IndexBatch,
     IndexingResult,
@@ -26,6 +27,7 @@ from .._generated.models import (
     Vector,
     SemanticErrorHandling,
     QueryDebugMode,
+    SuggestRequest,
 )
 from .._search_documents_error import RequestEntityTooLargeError
 from .._index_documents_batch import IndexDocumentsBatch
@@ -60,6 +62,7 @@ class SearchClient(HeadersMixin):
     """
 
     _ODATA_ACCEPT: str = "application/json;odata.metadata=none"
+    _client: SearchIndexClient
 
     def __init__(
         self, endpoint: str, index_name: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
@@ -72,7 +75,7 @@ class SearchClient(HeadersMixin):
         audience = kwargs.pop("audience", None)
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
-            self._client: SearchIndexClient = SearchIndexClient(
+            self._client = SearchIndexClient(
                 endpoint=endpoint,
                 index_name=index_name,
                 sdk_moniker=SDK_MONIKER,
@@ -82,7 +85,7 @@ class SearchClient(HeadersMixin):
         else:
             self._aad = True
             authentication_policy = get_authentication_policy(credential, audience=audience, is_async=True)
-            self._client: SearchIndexClient = SearchIndexClient(
+            self._client = SearchIndexClient(
                 endpoint=endpoint,
                 index_name=index_name,
                 authentication_policy=authentication_policy,
@@ -443,7 +446,9 @@ class SearchClient(HeadersMixin):
         if isinstance(order_by, list):
             query.order_by(order_by)
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        response = await self._client.documents.suggest_post(suggest_request=query.request, **kwargs)
+        request = cast(SuggestRequest, query.request)
+        response = await self._client.documents.suggest_post(suggest_request=request, **kwargs)
+        assert response.results is not None  # Hint for mypy
         results = [r.as_dict() for r in response.results]
         return results
 
@@ -518,7 +523,9 @@ class SearchClient(HeadersMixin):
         )
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        response = await self._client.documents.autocomplete_post(autocomplete_request=query.request, **kwargs)
+        request = cast(AutocompleteRequest, query.request)
+        response = await self._client.documents.autocomplete_post(autocomplete_request=request, **kwargs)
+        assert response.results is not None  # Hint for mypy
         results = [r.as_dict() for r in response.results]
         return results
 
