@@ -8,6 +8,7 @@ from typing import Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
 from azure.ai.ml._schema.job.parallel_job import ParallelJobSchema
+from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._inputs_outputs import Input, Output
@@ -108,20 +109,58 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
         context = context or {BASE_PATH_CONTEXT_KEY: Path("./")}
 
         # Create anonymous parallel component with default version as 1
+        init_kwargs = {}
+        for key in [
+            "mini_batch_size",
+            "partition_keys",
+            "logging_level",
+            "max_concurrency_per_instance",
+            "error_threshold",
+            "mini_batch_error_threshold",
+            "retry_settings",
+            "resources",
+        ]:
+            value = getattr(self, key)
+            from azure.ai.ml.entities import BatchRetrySettings, JobResourceConfiguration
+
+            if key == "retry_settings" and isinstance(value, BatchRetrySettings):
+                values_to_check = [value.max_retries, value.timeout]
+            elif key == "resources" and isinstance(value, JobResourceConfiguration):
+                values_to_check = [
+                    value.locations,
+                    value.instance_count,
+                    value.instance_type,
+                    value.shm_size,
+                    value.max_instance_count,
+                    value.docker_args,
+                ]
+            else:
+                values_to_check = [value]
+
+            # note that component level attributes can not be data binding expressions
+            # so filter out data binding expression properties here;
+            # they will still take effect at node level according to _to_node
+            if any(
+                map(
+                    lambda x: is_data_binding_expression(x, binding_prefix=["parent", "inputs"], is_singular=False)
+                    or is_data_binding_expression(x, binding_prefix=["inputs"], is_singular=False),
+                    values_to_check,
+                )
+            ):
+                continue
+
+            init_kwargs[key] = getattr(self, key)
+
         return ParallelComponent(
             base_path=context[BASE_PATH_CONTEXT_KEY],
-            mini_batch_size=self.mini_batch_size,
-            partition_keys=self.partition_keys,
-            input_data=self.input_data,
+            # for parallel_job.task, all attributes for this are string for now so data binding expression is allowed
+            # in SDK level naturally, but not sure if such component is valid. leave the validation to service side.
             task=self.task,
-            retry_settings=self.retry_settings,
-            logging_level=self.logging_level,
-            max_concurrency_per_instance=self.max_concurrency_per_instance,
-            error_threshold=self.error_threshold,
-            mini_batch_error_threshold=self.mini_batch_error_threshold,
             inputs=self._to_inputs(inputs=self.inputs, pipeline_job_dict=pipeline_job_dict),
             outputs=self._to_outputs(outputs=self.outputs, pipeline_job_dict=pipeline_job_dict),
-            resources=self.resources if self.resources else None,
+            input_data=self.input_data,
+            # keep them if no data binding expression detected to keep the behavior of to_component
+            **init_kwargs,
         )
 
     def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "Parallel":
@@ -154,6 +193,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
             mini_batch_error_threshold=self.mini_batch_error_threshold,
             environment_variables=self.environment_variables,
             properties=self.properties,
+            resources=self.resources if self.resources else None,
         )
 
     def _validate(self) -> None:
