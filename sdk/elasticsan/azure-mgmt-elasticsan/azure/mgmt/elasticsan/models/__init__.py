@@ -9,10 +9,15 @@
 from ._models_py3 import ElasticSan
 from ._models_py3 import ElasticSanList
 from ._models_py3 import ElasticSanUpdate
+from ._models_py3 import EncryptionIdentity
+from ._models_py3 import EncryptionProperties
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
+from ._models_py3 import Identity
 from ._models_py3 import IscsiTargetInfo
+from ._models_py3 import KeyVaultProperties
+from ._models_py3 import ManagedByInfo
 from ._models_py3 import NetworkRuleSet
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
@@ -30,9 +35,13 @@ from ._models_py3 import Sku
 from ._models_py3 import SkuInformation
 from ._models_py3 import SkuInformationList
 from ._models_py3 import SkuLocationInfo
+from ._models_py3 import Snapshot
+from ._models_py3 import SnapshotCreationData
+from ._models_py3 import SnapshotList
 from ._models_py3 import SourceCreationData
 from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
+from ._models_py3 import UserAssignedIdentity
 from ._models_py3 import VirtualNetworkRule
 from ._models_py3 import Volume
 from ._models_py3 import VolumeGroup
@@ -41,17 +50,22 @@ from ._models_py3 import VolumeGroupUpdate
 from ._models_py3 import VolumeList
 from ._models_py3 import VolumeUpdate
 
+from ._elastic_san_mgmt_client_enums import Action
 from ._elastic_san_mgmt_client_enums import ActionType
 from ._elastic_san_mgmt_client_enums import CreatedByType
 from ._elastic_san_mgmt_client_enums import EncryptionType
+from ._elastic_san_mgmt_client_enums import IdentityType
 from ._elastic_san_mgmt_client_enums import OperationalStatus
 from ._elastic_san_mgmt_client_enums import Origin
 from ._elastic_san_mgmt_client_enums import PrivateEndpointServiceConnectionStatus
 from ._elastic_san_mgmt_client_enums import ProvisioningStates
+from ._elastic_san_mgmt_client_enums import PublicNetworkAccess
 from ._elastic_san_mgmt_client_enums import SkuName
 from ._elastic_san_mgmt_client_enums import SkuTier
-from ._elastic_san_mgmt_client_enums import State
 from ._elastic_san_mgmt_client_enums import StorageTargetType
+from ._elastic_san_mgmt_client_enums import VolumeCreateOption
+from ._elastic_san_mgmt_client_enums import XMsDeleteSnapshots
+from ._elastic_san_mgmt_client_enums import XMsForceDelete
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -60,10 +74,15 @@ __all__ = [
     "ElasticSan",
     "ElasticSanList",
     "ElasticSanUpdate",
+    "EncryptionIdentity",
+    "EncryptionProperties",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
+    "Identity",
     "IscsiTargetInfo",
+    "KeyVaultProperties",
+    "ManagedByInfo",
     "NetworkRuleSet",
     "Operation",
     "OperationDisplay",
@@ -81,9 +100,13 @@ __all__ = [
     "SkuInformation",
     "SkuInformationList",
     "SkuLocationInfo",
+    "Snapshot",
+    "SnapshotCreationData",
+    "SnapshotList",
     "SourceCreationData",
     "SystemData",
     "TrackedResource",
+    "UserAssignedIdentity",
     "VirtualNetworkRule",
     "Volume",
     "VolumeGroup",
@@ -91,17 +114,22 @@ __all__ = [
     "VolumeGroupUpdate",
     "VolumeList",
     "VolumeUpdate",
+    "Action",
     "ActionType",
     "CreatedByType",
     "EncryptionType",
+    "IdentityType",
     "OperationalStatus",
     "Origin",
     "PrivateEndpointServiceConnectionStatus",
     "ProvisioningStates",
+    "PublicNetworkAccess",
     "SkuName",
     "SkuTier",
-    "State",
     "StorageTargetType",
+    "VolumeCreateOption",
+    "XMsDeleteSnapshots",
+    "XMsForceDelete",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

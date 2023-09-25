@@ -14,7 +14,7 @@ from azure.mgmt.elasticsan import ElasticSanMgmtClient
     pip install azure-identity
     pip install azure-mgmt-elasticsan
 # USAGE
-    python elastic_sans_list_by_subscription_maximum_set_gen.py
+    python volume_snapshots_create_maximum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,11 +29,22 @@ def main():
         subscription_id="subscriptionid",
     )
 
-    response = client.elastic_sans.list_by_subscription()
-    for item in response:
-        print(item)
+    response = client.volume_snapshots.begin_create(
+        resource_group_name="resourcegroupname",
+        elastic_san_name="elasticsanname",
+        volume_group_name="volumegroupname",
+        snapshot_name="snapshotname",
+        parameters={
+            "properties": {
+                "creationData": {
+                    "sourceId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ElasticSan/elasticSans/{elasticSanName}/volumegroups/{volumeGroupName}/volumes/{volumeName}"
+                }
+            }
+        },
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/ElasticSans_ListBySubscription_MaximumSet_Gen.json
+# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/VolumeSnapshots_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
