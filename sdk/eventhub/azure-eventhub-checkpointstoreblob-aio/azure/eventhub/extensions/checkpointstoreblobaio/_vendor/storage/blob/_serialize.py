@@ -3,7 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=no-self-use
+from typing import (  # pylint: disable=unused-import
+    Any, Dict, Optional, Tuple, Union,
+    TYPE_CHECKING)
+
 try:
     from urllib.parse import quote
 except ImportError:
@@ -29,6 +32,9 @@ from ._generated.models import (
     BlobTags, LeaseAccessConditions
 )
 
+if TYPE_CHECKING:
+    from ._lease import BlobLeaseClient
+
 
 _SUPPORTED_API_VERSIONS = [
     '2019-02-02',
@@ -36,32 +42,45 @@ _SUPPORTED_API_VERSIONS = [
     '2019-10-10',
     '2019-12-12',
     '2020-02-10',
-    '2020-04-08'
+    '2020-04-08',
+    '2020-06-12',
+    '2020-08-04',
+    '2020-10-02',
+    '2020-12-06',
+    '2021-02-12',
+    '2021-04-10',
+    '2021-06-08',
+    '2021-08-06',
+    '2021-12-02',
+    '2022-11-02',
+    '2023-01-03',
+    '2023-05-03',
+    '2023-08-03',
 ]
 
 
 def _get_match_headers(kwargs, match_param, etag_param):
-    # type: (str) -> Tuple(Dict[str, Any], Optional[str], Optional[str])
+    # type: (Dict[str, Any], str, str) -> Tuple(Dict[str, Any], Optional[str], Optional[str])
     if_match = None
     if_none_match = None
     match_condition = kwargs.pop(match_param, None)
     if match_condition == MatchConditions.IfNotModified:
         if_match = kwargs.pop(etag_param, None)
         if not if_match:
-            raise ValueError("'{}' specified without '{}'.".format(match_param, etag_param))
+            raise ValueError(f"'{match_param}' specified without '{etag_param}'.")
     elif match_condition == MatchConditions.IfPresent:
         if_match = '*'
     elif match_condition == MatchConditions.IfModified:
         if_none_match = kwargs.pop(etag_param, None)
         if not if_none_match:
-            raise ValueError("'{}' specified without '{}'.".format(match_param, etag_param))
+            raise ValueError(f"'{match_param}' specified without '{etag_param}'.")
     elif match_condition == MatchConditions.IfMissing:
         if_none_match = '*'
     elif match_condition is None:
         if kwargs.get(etag_param):
-            raise ValueError("'{}' specified without '{}'.".format(etag_param, match_param))
+            raise ValueError(f"'{etag_param}' specified without '{match_param}'.")
     else:
-        raise TypeError("Invalid match condition: {}".format(match_condition))
+        raise TypeError(f"Invalid match condition: {match_condition}")
     return if_match, if_none_match
 
 
@@ -123,21 +142,26 @@ def get_container_cpk_scope_info(kwargs):
     return None
 
 
-def get_api_version(kwargs, default):
+def get_api_version(kwargs):
     # type: (Dict[str, Any]) -> str
-    api_version = kwargs.pop('api_version', None)
+    api_version = kwargs.get('api_version', None)
     if api_version and api_version not in _SUPPORTED_API_VERSIONS:
         versions = '\n'.join(_SUPPORTED_API_VERSIONS)
-        raise ValueError("Unsupported API version '{}'. Please select from:\n{}".format(api_version, versions))
-    return api_version or default
+        raise ValueError(f"Unsupported API version '{api_version}'. Please select from:\n{versions}")
+    return api_version or _SUPPORTED_API_VERSIONS[-1]
 
+def get_version_id(self_vid, kwargs):
+    # type: (Optional[str], Dict[str, Any]) -> Optional[str]
+    if 'version_id' in kwargs:
+        return kwargs.pop('version_id')
+    return self_vid
 
 def serialize_blob_tags_header(tags=None):
     # type: (Optional[Dict[str, str]]) -> str
     if tags is None:
         return None
 
-    components = list()
+    components = []
     if tags:
         for key, value in tags.items():
             components.append(quote(key, safe='.-'))
@@ -153,14 +177,19 @@ def serialize_blob_tags_header(tags=None):
 
 def serialize_blob_tags(tags=None):
     # type: (Optional[Dict[str, str]]) -> Union[BlobTags, None]
-    tag_list = list()
+    tag_list = []
     if tags:
         tag_list = [BlobTag(key=k, value=v) for k, v in tags.items()]
     return BlobTags(blob_tag_set=tag_list)
 
 
 def serialize_query_format(formater):
-    if isinstance(formater, DelimitedJsonDialect):
+    if formater == "ParquetDialect":
+        qq_format = QueryFormat(
+            type=QueryFormatType.PARQUET,
+            parquet_text_configuration=' '
+        )
+    elif isinstance(formater, DelimitedJsonDialect):
         serialization_settings = JsonTextConfiguration(
             record_separator=formater.delimiter
         )
@@ -193,5 +222,5 @@ def serialize_query_format(formater):
     elif not formater:
         return None
     else:
-        raise TypeError("Format must be DelimitedTextDialect or DelimitedJsonDialect.")
+        raise TypeError("Format must be DelimitedTextDialect or DelimitedJsonDialect or ParquetDialect.")
     return QuerySerialization(format=qq_format)
