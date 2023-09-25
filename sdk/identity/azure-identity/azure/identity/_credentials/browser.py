@@ -43,6 +43,17 @@ class InteractiveBrowserCredential(InteractiveCredential):
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
+    :keyword bool allow_broker: An authentication broker is an application that runs on a user's machine that manages
+        the authentication handshakes and token maintenance for connected accounts. The Windows operating system uses
+        the Web Account Manager (WAM) as its authentication broker. If this parameter is set to True, the broker will
+        be used when possible. Defaults to False.
+        Check https://learn.microsoft.com/azure/active-directory/develop/scenario-desktop-acquire-token-wam for more
+        information about WAM.
+    :keyword int parent_window_handle: If your app is a GUI app running on a modern Windows system,
+        and your app opts in to use broker via `allow_broker`, you are required to also provide its window handle,
+        so that the sign in UI window will properly pop up on top of your window.
+    :keyword bool enable_msa_passthrough: Determines whether Microsoft Account (MSA) passthrough is enabled. Note, this
+        is only needed for select legacy first-party applications. Defaults to False.
     :keyword bool disable_instance_discovery: Determines whether or not instance discovery is performed when attempting
         to authenticate. Setting this to true will completely disable both instance discovery and authority validation.
         This functionality is intended for use in scenarios where the metadata endpoint cannot be reached, such as in
