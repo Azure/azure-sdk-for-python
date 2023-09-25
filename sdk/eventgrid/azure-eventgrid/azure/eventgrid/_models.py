@@ -113,26 +113,25 @@ class EventGridEvent(object):
         kwargs: Dict[str, Any] = {}
         event_obj = None
 
-        data = event.get("data")
+        data = event["data"]
         kwargs["data"] = data if data is not None else NULL
 
-        for item in ["metadataVersion", "topic", "subject"]:
+        for item in ["metadata_version", "topic"]:
             if item in event:
-                val = event.get(item)
+                val = event[item]
                 kwargs[item] = val if val is not None else NULL
 
         deserializer = Deserializer()
-        if "eventTime" in event.keys():
-            event_time = deserializer.deserialize_iso(event.get("eventTime"))
-            kwargs["eventTime"] = event_time if event_time is not None else NULL
+        if "event_time" in event.keys():
+            event_time = deserializer.deserialize_iso(event["event_time"])
+            kwargs["event_time"] = event_time if event_time is not None else NULL
 
         try:
             event_obj = cls(
-                id=event.get("id"),
+                id=event["id"],
                 subject=event["subject"],
-                event_type=event["eventType"],
-                data=data,
-                data_version=event.get("dataVersion"),
+                event_type=event["event_type"],
+                data_version=event["data_version"],
                 **kwargs,
             )
         except KeyError as err:
@@ -163,5 +162,5 @@ class EventGridEvent(object):
         :return: An EventGridEvent object.
         :raises ValueError: If the provided JSON is invalid.
         """
-        # dict_event = _get_json_content(event)
-        return cls.from_dict(event)
+        dict_event = _get_json_content(event)
+        return cls.from_dict(dict_event)
