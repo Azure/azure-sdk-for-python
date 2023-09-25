@@ -140,7 +140,7 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     )
     get_logger_provider().add_log_record_processor(log_record_processor)
     handler = LoggingHandler(logger_provider=get_logger_provider())
-    logger_name = configurations[LOGGER_NAME_ARG]
+    logger_name = configurations.get(LOGGER_NAME_ARG, "")
     getLogger(logger_name).addHandler(handler)
 
 

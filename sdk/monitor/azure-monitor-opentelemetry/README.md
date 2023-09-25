@@ -59,7 +59,7 @@ You can use `configure_azure_monitor` to set up instrumentation for your app to 
 | Parameter | Description | Environment Variable |
 |-------------------|----------------------------------------------------|----------------------|
 | `connection_string` | The [connection string][connection_string_doc] for your Application Insights resource. The connection string will be automatically populated from the `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable if not explicitly passed in. | `APPLICATIONINSIGHTS_CONNECTION_STRING` |
-| `logger_name` | The name of the [Python logger][python_logger] and all of it's children loggers that you want to collect telemetry for. | `N/A` |
+| `logger_name` | The name of the [Python logger][python_logger] to collect telemetry for. | `N/A` |
 
 You can configure further with [OpenTelemetry environment variables][ot_env_vars] such as:
 | Environment Variable | Description |
