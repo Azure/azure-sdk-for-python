@@ -519,7 +519,7 @@ def resolve_pipeline_parameter(data: T) -> Union[T, str, "NodeOutput"]:
                 target=ErrorTarget.PIPELINE,
             )
         data_nodeOutput = list(data.values())[0]
-    return data_nodeOutput
+    return data_nodeOutput if data_nodeOutput is not None else data
 
 
 def normalize_job_input_output_type(input_output_value: Union[RestJobOutput, RestJobInput, Dict]) -> None:
