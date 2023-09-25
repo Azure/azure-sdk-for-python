@@ -18,7 +18,7 @@ from azure.ai.ml.entities._util import load_from_dict
 
 class MLTableMetadataPath:
     type: str  # Literal["pattern", "file", "folder"]
-    value: str
+    value: Optional[str]
 
     def __init__(self, *, pathDict: Dict):
         if pathDict.get("pattern", None):
@@ -49,7 +49,7 @@ class MLTableMetadata:
         paths: List[MLTableMetadataPath],
         transformations: Optional[List[Any]] = None,
         base_path: str,
-        **_kwargs,
+        **_kwargs: Any,
     ):
         self.base_path = base_path
         self.paths = paths
@@ -59,7 +59,7 @@ class MLTableMetadata:
     def load(
         cls,
         yaml_path: Union[PathLike, str],
-        **kwargs,
+        **kwargs: Any,
     ) -> "MLTableMetadata":
         """Construct an MLTable object from yaml file.
 
@@ -77,16 +77,18 @@ class MLTableMetadata:
         cls,
         yaml_data: Optional[Dict],
         yaml_path: Optional[Union[PathLike, str]],
-        **kwargs,
+        **kwargs: Any,
     ) -> "MLTableMetadata":
         yaml_data = yaml_data or {}
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
         }
-        return load_from_dict(MLTableMetadataSchema, yaml_data, context, "", unknown=INCLUDE, **kwargs)
+        res: MLTableMetadata = load_from_dict(MLTableMetadataSchema, yaml_data, context, "", unknown=INCLUDE, **kwargs)
+        return res
 
     def _to_dict(self) -> Dict:
-        return MLTableMetadataSchema(context={BASE_PATH_CONTEXT_KEY: "./"}, unknown=INCLUDE).dump(self)
+        res: dict = MLTableMetadataSchema(context={BASE_PATH_CONTEXT_KEY: "./"}, unknown=INCLUDE).dump(self)
+        return res
 
-    def referenced_uris(self) -> List[str]:
+    def referenced_uris(self) -> List[Optional[str]]:
         return [path.value for path in self.paths]
