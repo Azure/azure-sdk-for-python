@@ -96,8 +96,8 @@ def _default_disabled_instrumentations(configurations):
 
 
 def _default_logger_name(configurations):
-    logger_name = environ.get(LOGGER_NAME_ARG, "")
-    configurations[LOGGER_NAME_ARG] = logger_name
+    if LOGGER_NAME_ARG not in configurations:
+        configurations[LOGGER_NAME_ARG] = ""
 
 
 # TODO: remove when sampler uses env var instead

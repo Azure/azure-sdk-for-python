@@ -77,7 +77,7 @@ def configure_azure_monitor(**kwargs) -> None:
      telemetry records for retry. Defaults to `False`.
     :keyword str storage_directory: Storage directory in which to store retry files. Defaults to
      `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
-    :keyword str logger_name: The name of the Python logger that telemetry will be collected for.
+    :keyword str logger_name: The name of the Python logger that telemetry will be collected.
     :rtype: None
     """
 
@@ -140,7 +140,7 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     )
     get_logger_provider().add_log_record_processor(log_record_processor)
     handler = LoggingHandler(logger_provider=get_logger_provider())
-    logger_name = configurations.get(LOGGER_NAME_ARG, "")
+    logger_name = configurations[LOGGER_NAME_ARG]
     getLogger(logger_name).addHandler(handler)
 
 
