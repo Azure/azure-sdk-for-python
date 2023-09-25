@@ -157,7 +157,11 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         return len(self._key.n) * 8  # type: ignore[attr-defined]
 
     def public_numbers(self) -> RSAPublicNumbers:
-        """Returns an `RSAPublicNumbers`."""
+        """Returns an `RSAPublicNumbers` representing the key's public numbers.
+
+        :returns: The public numbers of the key.
+        :rtype: RSAPublicNumbers
+        """
         e = int.from_bytes(self._key.e, "big")  # type: ignore[attr-defined]
         n = int.from_bytes(self._key.n, "big")  # type: ignore[attr-defined]
         return RSAPublicNumbers(e, n)
@@ -308,8 +312,12 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         result = self._client.sign(mapped_algorithm, digest.finalize())
         return result.signature
 
-    def private_numbers(self) -> RSAPrivateNumbers:  # pylint:disable=docstring-missing-return,docstring-missing-rtype
-        """Returns an `RSAPrivateNumbers`."""
+    def private_numbers(self) -> RSAPrivateNumbers:
+        """Returns an `RSAPrivateNumbers` representing the key's private numbers.
+
+        :returns: The private numbers of the key.
+        :rtype: RSAPrivateNumbers
+        """
         # Fetch public numbers from JWK
         e = int.from_bytes(self._key.e, "big")  # type: ignore[attr-defined]
         n = int.from_bytes(self._key.n, "big")  # type: ignore[attr-defined]

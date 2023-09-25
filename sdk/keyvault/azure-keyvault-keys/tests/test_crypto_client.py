@@ -13,6 +13,7 @@ from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 
 from cryptography.hazmat.primitives.hashes import SHA1, SHA256
 from cryptography.hazmat.primitives.asymmetric.padding import MGF1, OAEP, PSS
+from cryptography.hazmat.primitives.asymmetric.rsa import rsa_crt_dmp1, rsa_crt_dmq1, rsa_crt_iqmp
 import pytest
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -41,6 +42,32 @@ all_api_versions = get_decorator()
 only_hsm = get_decorator(only_hsm=True)
 only_vault_latest = get_decorator(only_vault=True, api_versions=[DEFAULT_VERSION])
 no_get = get_decorator(permissions=NO_GET)
+
+
+def _to_bytes(hex):
+    if len(hex) % 2:
+        hex = f"0{hex}"
+    return codecs.decode(hex, "hex_codec")
+
+
+# RSA key with private components so that the JWK could theoretically be used for private operations
+TEST_JWK = {
+    "kty":"RSA",
+    "key_ops":["decrypt", "verify", "unwrapKey"],
+    "n":_to_bytes(
+        "00a0914d00234ac683b21b4c15d5bed887bdc959c2e57af54ae734e8f00720d775d275e455207e3784ceeb60a50a4655dd72a7a94d271e8ee8f7959a669ca6e775bf0e23badae991b4529d978528b4bd90521d32dd2656796ba82b6bbfc7668c8f5eeb5053747fd199319d29a8440d08f4412d527ff9311eda71825920b47b1c46b11ab3e91d7316407e89c7f340f7b85a34042ce51743b27d4718403d34c7b438af6181be05e4d11eb985d38253d7fe9bf53fc2f1b002d22d2d793fa79a504b6ab42d0492804d7071d727a06cf3a8893aa542b1503f832b296371b6707d4dc6e372f8fe67d8ded1c908fde45ce03bc086a71487fa75e43aa0e0679aa0d20efe35"
+    ),
+    "e":_to_bytes("10001"),
+    "p":_to_bytes(
+        "00d1deac8d68ddd2c1fd52d5999655b2cf1565260de5269e43fd2a85f39280e1708ffff0682166cb6106ee5ea5e9ffd9f98d0becc9ff2cda2febc97259215ad84b9051e563e14a051dce438bc6541a24ac4f014cf9732d36ebfc1e61a00d82cbe412090f7793cfbd4b7605be133dfc3991f7e1bed5786f337de5036fc1e2df4cf3"
+    ),
+    "q":_to_bytes(
+        "00c3dc66b641a9b73cd833bc439cd34fc6574465ab5b7e8a92d32595a224d56d911e74624225b48c15a670282a51c40d1dad4bc2e9a3c8dab0c76f10052dfb053bc6ed42c65288a8e8bace7a8881184323f94d7db17ea6dfba651218f931a93b8f738f3d8fd3f6ba218d35b96861a0f584b0ab88ddcf446b9815f4d287d83a3237"
+    ),
+    "d":_to_bytes(
+        "627c7d24668148fe2252c7fa649ea8a5a9ed44d75c766cda42b29b660e99404f0e862d4561a6c95af6a83d213e0a2244b03cd28576473215073785fb067f015da19084ade9f475e08b040a9a2c7ba00253bb8125508c9df140b75161d266be347a5e0f6900fe1d8bbf78ccc25eeb37e0c9d188d6e1fc15169ba4fe12276193d77790d2326928bd60d0d01d6ead8d6ac4861abadceec95358fd6689c50a1671a4a936d2376440a41445501da4e74bfb98f823bd19c45b94eb01d98fc0d2f284507f018ebd929b8180dbe6381fdd434bffb7800aaabdd973d55f9eaf9bb88a6ea7b28c2a80231e72de1ad244826d665582c2362761019de2e9f10cb8bcc2625649"
+    )
+}
 
 
 class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
@@ -90,11 +117,6 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         assert key_attributes.properties.created_on and key_attributes.properties.updated_on,"Missing required date attributes."
 
     def _import_test_key(self, client, name, hardware_protected=False):
-        def _to_bytes(hex):
-            if len(hex) % 2:
-                hex = f"0{hex}"
-            return codecs.decode(hex, "hex_codec")
-
         key = JsonWebKey(
             kty="RSA-HSM" if hardware_protected else "RSA",
             key_ops=["encrypt", "decrypt", "sign", "verify", "wrapKey", "unwrapKey"],
@@ -795,30 +817,8 @@ def test_local_only_mode_no_service_calls():
 
 def test_local_only_mode_raise():
     """A local-only CryptographyClient should raise an exception if an operation can't be performed locally"""
-    def _to_bytes(hex):
-        if len(hex) % 2:
-            hex = f"0{hex}"
-        return codecs.decode(hex, "hex_codec")
 
-    # Create an RSA key with private components so that the JWK could theoretically be used for private operations
-    jwk = {
-        "kty":"RSA",
-        "key_ops":["decrypt", "verify", "unwrapKey"],
-        "n":_to_bytes(
-            "00a0914d00234ac683b21b4c15d5bed887bdc959c2e57af54ae734e8f00720d775d275e455207e3784ceeb60a50a4655dd72a7a94d271e8ee8f7959a669ca6e775bf0e23badae991b4529d978528b4bd90521d32dd2656796ba82b6bbfc7668c8f5eeb5053747fd199319d29a8440d08f4412d527ff9311eda71825920b47b1c46b11ab3e91d7316407e89c7f340f7b85a34042ce51743b27d4718403d34c7b438af6181be05e4d11eb985d38253d7fe9bf53fc2f1b002d22d2d793fa79a504b6ab42d0492804d7071d727a06cf3a8893aa542b1503f832b296371b6707d4dc6e372f8fe67d8ded1c908fde45ce03bc086a71487fa75e43aa0e0679aa0d20efe35"
-        ),
-        "e":_to_bytes("10001"),
-        "p":_to_bytes(
-            "00d1deac8d68ddd2c1fd52d5999655b2cf1565260de5269e43fd2a85f39280e1708ffff0682166cb6106ee5ea5e9ffd9f98d0becc9ff2cda2febc97259215ad84b9051e563e14a051dce438bc6541a24ac4f014cf9732d36ebfc1e61a00d82cbe412090f7793cfbd4b7605be133dfc3991f7e1bed5786f337de5036fc1e2df4cf3"
-        ),
-        "q":_to_bytes(
-            "00c3dc66b641a9b73cd833bc439cd34fc6574465ab5b7e8a92d32595a224d56d911e74624225b48c15a670282a51c40d1dad4bc2e9a3c8dab0c76f10052dfb053bc6ed42c65288a8e8bace7a8881184323f94d7db17ea6dfba651218f931a93b8f738f3d8fd3f6ba218d35b96861a0f584b0ab88ddcf446b9815f4d287d83a3237"
-        ),
-        "d":_to_bytes(
-            "627c7d24668148fe2252c7fa649ea8a5a9ed44d75c766cda42b29b660e99404f0e862d4561a6c95af6a83d213e0a2244b03cd28576473215073785fb067f015da19084ade9f475e08b040a9a2c7ba00253bb8125508c9df140b75161d266be347a5e0f6900fe1d8bbf78ccc25eeb37e0c9d188d6e1fc15169ba4fe12276193d77790d2326928bd60d0d01d6ead8d6ac4861abadceec95358fd6689c50a1671a4a936d2376440a41445501da4e74bfb98f823bd19c45b94eb01d98fc0d2f284507f018ebd929b8180dbe6381fdd434bffb7800aaabdd973d55f9eaf9bb88a6ea7b28c2a80231e72de1ad244826d665582c2362761019de2e9f10cb8bcc2625649"
-        )
-    }
-    client = CryptographyClient.from_jwk(jwk=jwk)
+    client = CryptographyClient.from_jwk(jwk=TEST_JWK)
 
     # Algorithm not supported locally
     with pytest.raises(NotImplementedError) as ex:
@@ -975,6 +975,49 @@ def test_decrypt_argument_validation():
     with pytest.raises(ValueError) as ex:
         client.decrypt(EncryptionAlgorithm.a192_cbcpad, b"...")
     assert "iv" in str(ex.value) and "required" in str(ex.value)
+
+
+def test_rsa_public_key_public_numbers():
+    """Verify behavior of KeyVaultRSAPublicKey.public_numbers"""
+
+    client = CryptographyClient.from_jwk(jwk=TEST_JWK)
+    public_key = client.create_rsa_public_key()
+    public_numbers = public_key.public_numbers()
+    assert public_numbers.e == int.from_bytes(TEST_JWK["e"], "big")
+    assert public_numbers.n == int.from_bytes(TEST_JWK["n"], "big")
+
+
+def test_rsa_public_key_equals():
+    """Verify behavior of KeyVaultRSAPublicKey.__eq__ against a JWK and KeyVaultRSAPublicKey instance"""
+
+    client = CryptographyClient.from_jwk(jwk=TEST_JWK)
+    public_key = client.create_rsa_public_key()
+    assert public_key == JsonWebKey(**TEST_JWK)
+    key_dupe = client.create_rsa_public_key()
+    assert public_key == key_dupe
+
+
+def test_rsa_private_key_public_key():
+    """Verify behavior of KeyVaultRSAPrivateKey.public_key against a JWK and KeyVaultRSAPublicKey instance"""
+
+    client = CryptographyClient.from_jwk(jwk=TEST_JWK)
+    public_key = client.create_rsa_public_key()
+    private_key = client.create_rsa_private_key()
+    assert private_key.public_key() == public_key
+
+
+def test_rsa_private_key_private_numbers():
+    """Verify behavior of KeyVaultRSAPrivateKey.private_numbers"""
+
+    client = CryptographyClient.from_jwk(jwk=TEST_JWK)
+    private_key = client.create_rsa_private_key()
+    private_numbers = private_key.private_numbers()
+    assert private_numbers.d == int.from_bytes(TEST_JWK["d"], "big")
+    assert private_numbers.p == int.from_bytes(TEST_JWK["p"], "big")
+    assert private_numbers.q == int.from_bytes(TEST_JWK["q"], "big")
+    assert private_numbers.dmp1 == rsa_crt_dmp1(private_numbers.d, private_numbers.p)
+    assert private_numbers.dmq1 == rsa_crt_dmq1(private_numbers.d, private_numbers.q)
+    assert private_numbers.iqmp == rsa_crt_iqmp(private_numbers.p, private_numbers.q)
 
 
 def test_retain_url_port():
