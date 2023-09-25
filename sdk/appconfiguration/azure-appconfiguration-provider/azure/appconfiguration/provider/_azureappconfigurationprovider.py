@@ -352,14 +352,14 @@ class _RefreshTimer:
         )
 
 
-class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):
+class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: disable=too-many-instance-attributes
     """
     Provides a dictionary-like interface to Azure App Configuration settings. Enables loading of sets of configuration
     settings from Azure App Configuration into a Python application. Enables trimming of prefixes from configuration
     keys. Enables resolution of Key Vault references in configuration settings.
     """
 
-    def __init__(self, **kwargs) -> None:  # pylint: disable=too-many-instance-attributes
+    def __init__(self, **kwargs) -> None:
         self._dict: Dict[str, str] = {}
         self._trim_prefixes: List[str] = []
         self._client: Optional[AzureAppConfigurationClient] = None
