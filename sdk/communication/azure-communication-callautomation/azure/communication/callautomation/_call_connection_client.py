@@ -730,8 +730,8 @@ class CallConnectionClient:
     @distributed_trace
     def start_hold_music(
         self,
+        target_participant: CommunicationIdentifier,
         play_source: MediaSources,
-        target_participant: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
         *,
         loop: bool = True,
         operation_context: Optional[str] = None,
