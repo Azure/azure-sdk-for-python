@@ -72,8 +72,9 @@ def update_snippet(file: str) -> None:
     file_obj = Path(file)
     with open(file_obj, 'r', encoding='utf8') as f:
         content = f.read()
-    pattern = "(?P<content>(?P<header><!-- SNIPPET:(?P<name>[A-Z a-z0-9_.]+)-->)\\n\\n```python\\n[\\s\\S]*?\\n<!-- END SNIPPET -->)"
-    matches = re.findall(pattern, content)
+    pattern = r"(?P<content>(?P<header><!-- SNIPPET:(?P<name>[A-Z a-z0-9_.]+)-->)[\n]+```python\n[\s\S]*?\n<!-- END SNIPPET -->)"
+    matches = re.findall(pattern, content, flags=re.MULTILINE)
+
     for match in matches:
         s = match
         body = s[0].strip()
