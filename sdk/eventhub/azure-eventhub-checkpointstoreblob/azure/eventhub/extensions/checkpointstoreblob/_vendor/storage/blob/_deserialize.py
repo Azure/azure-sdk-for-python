@@ -3,21 +3,35 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=no-self-use
-from typing import (  # pylint: disable=unused-import
-    Tuple, Dict, List,
+
+from typing import (
+    Dict, List, Optional, Tuple, Union,
     TYPE_CHECKING
 )
+from urllib.parse import unquote
+from xml.etree.ElementTree import Element
 
-from ._models import BlobType, CopyProperties, ContentSettings, LeaseProperties, BlobProperties
+from ._models import (
+    BlobAnalyticsLogging,
+    BlobProperties,
+    BlobType,
+    ContainerProperties,
+    ContentSettings,
+    CopyProperties,
+    CorsRule,
+    ImmutabilityPolicy,
+    LeaseProperties,
+    Metrics,
+    ObjectReplicationPolicy,
+    ObjectReplicationRule,
+    RetentionPolicy,
+    StaticWebsite,
+)
 from ._shared.models import get_enum_value
-
 from ._shared.response_handlers import deserialize_metadata
-from ._models import ContainerProperties, BlobAnalyticsLogging, Metrics, CorsRule, RetentionPolicy, \
-    StaticWebsite, ObjectReplicationPolicy, ObjectReplicationRule
 
 if TYPE_CHECKING:
-    from ._generated.models import PageList
+    from ._generated.models import BlobTag, PageList
 
 
 def deserialize_pipeline_response_into_cls(cls_method, response, obj, headers):
@@ -61,7 +75,7 @@ def deserialize_ors_policies(policy_dictionary):
         rule_id = policy_and_rule_ids[1]
 
         # If we are seeing this policy for the first time, create a new list to store rule_id -> result
-        parsed_result[policy_id] = parsed_result.get(policy_id) or list()
+        parsed_result[policy_id] = parsed_result.get(policy_id) or []
         parsed_result[policy_id].append(ObjectReplicationRule(rule_id=rule_id, status=val))
 
     result_list = [ObjectReplicationPolicy(policy_id=k, rules=v) for k, v in parsed_result.items()]
@@ -95,9 +109,8 @@ def get_page_ranges_result(ranges):
     return page_range, clear_range  # type: ignore
 
 
+# Deserialize a ServiceStats objects into a dict.
 def service_stats_deserialize(generated):
-    """Deserialize a ServiceStats objects into a dict.
-    """
     return {
         'geo_replication': {
             'status': generated.geo_replication.status,
@@ -105,10 +118,8 @@ def service_stats_deserialize(generated):
         }
     }
 
-
+# Deserialize a ServiceProperties objects into a dict.
 def service_properties_deserialize(generated):
-    """Deserialize a ServiceProperties objects into a dict.
-    """
     return {
         'analytics_logging': BlobAnalyticsLogging._from_generated(generated.logging),  # pylint: disable=protected-access
         'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
@@ -122,7 +133,10 @@ def service_properties_deserialize(generated):
 
 def get_blob_properties_from_generated_code(generated):
     blob = BlobProperties()
-    blob.name = generated.name
+    if generated.name.encoded:
+        blob.name = unquote(generated.name.content)
+    else:
+        blob.name = generated.name.content
     blob_type = get_enum_value(generated.properties.blob_type)
     blob.blob_type = BlobType(blob_type) if blob_type else None
     blob.etag = generated.properties.etag
@@ -153,14 +167,44 @@ def get_blob_properties_from_generated_code(generated):
     blob.tags = parse_tags(generated.blob_tags)  # pylint: disable=protected-access
     blob.object_replication_source_properties = deserialize_ors_policies(generated.object_replication_metadata)
     blob.last_accessed_on = generated.properties.last_accessed_on
+    blob.immutability_policy = ImmutabilityPolicy._from_generated(generated)  # pylint: disable=protected-access
+    blob.has_legal_hold = generated.properties.legal_hold
+    blob.has_versions_only = generated.has_versions_only
     return blob
 
-
-def parse_tags(generated_tags):
-    # type: (Optional[List[BlobTag]]) -> Union[Dict[str, str], None]
+def parse_tags(generated_tags: Optional[List["BlobTag"]]) -> Union[Dict[str, str], None]:
     """Deserialize a list of BlobTag objects into a dict.
+
+    :param Optional[List[BlobTag]] generated_tags:
+        A list containing the BlobTag objects from generated code.
+    :returns: A dictionary of the BlobTag objects.
+    :rtype: Dict[str, str] or None
     """
     if generated_tags:
         tag_dict = {t.key: t.value for t in generated_tags.blob_tag_set}
         return tag_dict
     return None
+
+
+def load_single_xml_node(element: Element, name: str) -> Union[Element, None]:
+    return element.find(name)
+
+
+def load_many_xml_nodes(element: Element, name: str, wrapper: Element = None) -> List[Union[Element, None]]:
+    if wrapper:
+        element = load_single_xml_node(element, wrapper)
+    return list(element.findall(name))
+
+
+def load_xml_string(element: Element, name: str) -> str:
+    node = element.find(name)
+    if node is None or not node.text:
+        return None
+    return node.text
+
+
+def load_xml_int(element: Element, name: str) -> int:
+    node = element.find(name)
+    if node is None or not node.text:
+        return None
+    return int(node.text)

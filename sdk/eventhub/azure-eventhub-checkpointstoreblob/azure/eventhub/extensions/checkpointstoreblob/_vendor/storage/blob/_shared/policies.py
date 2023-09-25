@@ -12,7 +12,6 @@ from time import time
 from io import SEEK_SET, UnsupportedOperation
 import logging
 import uuid
-import types
 from typing import Any, TYPE_CHECKING
 from wsgiref.handlers import format_date_time
 try:
@@ -31,14 +30,17 @@ except ImportError:
     )
 
 from azure.core.pipeline.policies import (
+    BearerTokenCredentialPolicy,
     HeadersPolicy,
-    SansIOHTTPPolicy,
-    NetworkTraceLoggingPolicy,
     HTTPPolicy,
-    RequestHistory
+    NetworkTraceLoggingPolicy,
+    RequestHistory,
+    SansIOHTTPPolicy,
 )
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
 
+from .authentication import StorageHttpChallenge
+from .constants import DEFAULT_OAUTH_SCOPE, STORAGE_OAUTH_SCOPE
 from .models import LocationMode
 
 try:
@@ -47,6 +49,7 @@ except NameError:
     _unicode_type = str
 
 if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
     from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
@@ -60,8 +63,8 @@ def encode_base64(data):
     return encoded.decode('utf-8')
 
 
+# Are we out of retries?
 def is_exhausted(settings):
-    """Are we out of retries?"""
     retry_counts = (settings['total'], settings['connect'], settings['read'], settings['status'])
     retry_counts = list(filter(None, retry_counts))
     if not retry_counts:
@@ -74,13 +77,12 @@ def retry_hook(settings, **kwargs):
         settings['hook'](retry_count=settings['count'] - 1, location_mode=settings['mode'], **kwargs)
 
 
-def is_retry(response, mode):
-    """Is this method/status code retryable? (Based on allowlists and control
-    variables such as the number of total retries to allow, whether to
-    respect the Retry-After header, whether this header is present, and
-    whether the returned status code is on the list of status codes to
-    be retried upon on the presence of the aforementioned header)
-    """
+# Is this method/status code retryable? (Based on allowlists and control
+# variables such as the number of total retries to allow, whether to
+# respect the Retry-After header, whether this header is present, and
+# whether the returned status code is on the list of status codes to
+# be retried upon on the presence of the aforementioned header)
+def is_retry(response, mode):   # pylint: disable=too-many-return-statements
     status = response.http_response.status_code
     if 300 <= status < 500:
         # An exception occurred, but in most cases it was expected. Examples could
@@ -98,6 +100,12 @@ def is_retry(response, mode):
         if status in [501, 505]:
             return False
         return True
+    # retry if invalid content md5
+    if response.context.get('validate_content', False) and response.http_response.headers.get('content-md5'):
+        computed_md5 = response.http_request.headers.get('content-md5', None) or \
+                       encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
+        if response.http_response.headers['content-md5'] != computed_md5:
+            return True
     return False
 
 
@@ -168,7 +176,7 @@ class StorageHosts(SansIOHTTPPolicy):
             # Lock retries to the specific location
             request.context.options['retry_to_secondary'] = False
             if use_location not in self.hosts:
-                raise ValueError("Attempting to use undefined host location {}".format(use_location))
+                raise ValueError(f"Attempting to use undefined host location {use_location}")
             if use_location != location_mode:
                 # Update request URL to use the specified location
                 updated = parsed_url._replace(netloc=self.hosts[use_location])
@@ -183,11 +191,15 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
 
     This accepts both global configuration, and per-request level with "enable_http_logger"
     """
+    def __init__(self, logging_enable=False, **kwargs):
+        self.logging_body = kwargs.pop("logging_body", False)
+        super(StorageLoggingPolicy, self).__init__(logging_enable=logging_enable, **kwargs)
 
     def on_request(self, request):
         # type: (PipelineRequest, Any) -> None
         http_request = request.http_request
         options = request.context.options
+        self.logging_body = self.logging_body or options.pop("logging_body", False)
         if options.pop("logging_enable", self.enable_http_logger):
             request.context["logging_enable"] = True
             if not _LOGGER.isEnabledFor(logging.DEBUG):
@@ -216,11 +228,11 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
                     _LOGGER.debug("    %r: %r", header, value)
                 _LOGGER.debug("Request body:")
 
-                # We don't want to log the binary data of a file upload.
-                if isinstance(http_request.body, types.GeneratorType):
-                    _LOGGER.debug("File upload")
-                else:
+                if self.logging_body:
                     _LOGGER.debug(str(http_request.body))
+                else:
+                    # We don't want to log the binary data of a file upload.
+                    _LOGGER.debug("Hidden body, please use logging_body to show body")
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log request: %r", err)
 
@@ -240,19 +252,24 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
                 _LOGGER.debug("Response content:")
                 pattern = re.compile(r'attachment; ?filename=["\w.]+', re.IGNORECASE)
                 header = response.http_response.headers.get('content-disposition')
+                resp_content_type = response.http_response.headers.get("content-type", "")
 
                 if header and pattern.match(header):
                     filename = header.partition('=')[2]
                     _LOGGER.debug("File attachments: %s", filename)
-                elif response.http_response.headers.get("content-type", "").endswith("octet-stream"):
+                elif resp_content_type.endswith("octet-stream"):
                     _LOGGER.debug("Body contains binary data.")
-                elif response.http_response.headers.get("content-type", "").startswith("image"):
+                elif resp_content_type.startswith("image"):
                     _LOGGER.debug("Body contains image data.")
-                else:
-                    if response.context.options.get('stream', False):
+
+                if self.logging_body and resp_content_type.startswith("text"):
+                    _LOGGER.debug(response.http_response.text())
+                elif self.logging_body:
+                    try:
+                        _LOGGER.debug(response.http_response.body())
+                    except ValueError:
                         _LOGGER.debug("Body is streamable")
-                    else:
-                        _LOGGER.debug(response.http_response.text())
+
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log response: %s", repr(err))
 
@@ -278,18 +295,28 @@ class StorageResponseHook(HTTPPolicy):
 
     def send(self, request):
         # type: (PipelineRequest) -> PipelineResponse
-        data_stream_total = request.context.get('data_stream_total') or \
-            request.context.options.pop('data_stream_total', None)
-        download_stream_current = request.context.get('download_stream_current') or \
-            request.context.options.pop('download_stream_current', None)
-        upload_stream_current = request.context.get('upload_stream_current') or \
-            request.context.options.pop('upload_stream_current', None)
+        # Values could be 0
+        data_stream_total = request.context.get('data_stream_total')
+        if data_stream_total is None:
+            data_stream_total = request.context.options.pop('data_stream_total', None)
+        download_stream_current = request.context.get('download_stream_current')
+        if download_stream_current is None:
+            download_stream_current = request.context.options.pop('download_stream_current', None)
+        upload_stream_current = request.context.get('upload_stream_current')
+        if upload_stream_current is None:
+            upload_stream_current = request.context.options.pop('upload_stream_current', None)
+
         response_callback = request.context.get('response_callback') or \
             request.context.options.pop('raw_response_hook', self._response_callback)
 
         response = self.next.send(request)
+
         will_retry = is_retry(response, request.context.options.get('mode'))
-        if not will_retry and download_stream_current is not None:
+        # Auth error could come from Bearer challenge, in which case this request will be made again
+        is_auth_error = response.http_response.status_code == 401
+        should_update_counts = not (will_retry or is_auth_error)
+
+        if should_update_counts and download_stream_current is not None:
             download_stream_current += int(response.http_response.headers.get('Content-Length', 0))
             if data_stream_total is None:
                 content_range = response.http_response.headers.get('Content-Range')
@@ -297,7 +324,7 @@ class StorageResponseHook(HTTPPolicy):
                     data_stream_total = int(content_range.split(' ', 1)[1].split('/', 1)[1])
                 else:
                     data_stream_total = download_stream_current
-        elif not will_retry and upload_stream_current is not None:
+        elif should_update_counts and upload_stream_current is not None:
             upload_stream_current += int(response.http_request.headers.get('Content-Length', 0))
         for pipeline_obj in [request, response]:
             pipeline_obj.context['data_stream_total'] = data_stream_total
@@ -322,6 +349,9 @@ class StorageContentValidation(SansIOHTTPPolicy):
 
     @staticmethod
     def get_content_md5(data):
+        # Since HTTP does not differentiate between no content and empty content,
+        # we have to perform a None check.
+        data = data or b""
         md5 = hashlib.md5() # nosec
         if isinstance(data, bytes):
             md5.update(data)
@@ -335,8 +365,8 @@ class StorageContentValidation(SansIOHTTPPolicy):
                 md5.update(chunk)
             try:
                 data.seek(pos, SEEK_SET)
-            except (AttributeError, IOError):
-                raise ValueError("Data should be bytes or a seekable file-like object.")
+            except (AttributeError, IOError) as exc:
+                raise ValueError("Data should be bytes or a seekable file-like object.") from exc
         else:
             raise ValueError("Data should be bytes or a seekable file-like object.")
 
@@ -356,9 +386,9 @@ class StorageContentValidation(SansIOHTTPPolicy):
             computed_md5 = request.context.get('validate_content_md5') or \
                 encode_base64(StorageContentValidation.get_content_md5(response.http_response.body()))
             if response.http_response.headers['content-md5'] != computed_md5:
-                raise AzureError(
-                    'MD5 mismatch. Expected value is \'{0}\', computed value is \'{1}\'.'.format(
-                        response.http_response.headers['content-md5'], computed_md5),
+                raise AzureError((
+                    f"MD5 mismatch. Expected value is '{response.http_response.headers['content-md5']}', "
+                    f"computed value is '{computed_md5}'."),
                     response=response.http_response
                 )
 
@@ -376,13 +406,12 @@ class StorageRetryPolicy(HTTPPolicy):
         self.retry_to_secondary = kwargs.pop('retry_to_secondary', False)
         super(StorageRetryPolicy, self).__init__()
 
-    def _set_next_host_location(self, settings, request):  # pylint: disable=no-self-use
+    def _set_next_host_location(self, settings, request):
         """
         A function which sets the next host location on the request, if applicable.
 
-        :param ~azure.storage.models.RetryContext context:
-            The retry context containing the previous host location and the request
-            to evaluate and possibly modify.
+        :param Optional[Dict[str, Any]] settings: The configurable values pertaining to the next host location.
+        :param PipelineRequest request: A pipeline request object.
         """
         if settings['hosts'] and all(settings['hosts'].values()):
             url = urlparse(request.url)
@@ -394,7 +423,7 @@ class StorageRetryPolicy(HTTPPolicy):
             updated = url._replace(netloc=settings['hosts'].get(settings['mode']))
             request.url = updated.geturl()
 
-    def configure_retries(self, request):  # pylint: disable=no-self-use
+    def configure_retries(self, request):
         body_position = None
         if hasattr(request.http_request.body, 'read'):
             try:
@@ -417,10 +446,12 @@ class StorageRetryPolicy(HTTPPolicy):
             'history': []
         }
 
-    def get_backoff_time(self, settings):  # pylint: disable=unused-argument,no-self-use
+    def get_backoff_time(self, settings):  # pylint: disable=unused-argument
         """ Formula for computing the current backoff.
         Should be calculated by child class.
 
+        :param Optional[Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
+        :returns: The backoff time.
         :rtype: float
         """
         return 0
@@ -434,11 +465,14 @@ class StorageRetryPolicy(HTTPPolicy):
     def increment(self, settings, request, response=None, error=None):
         """Increment the retry counters.
 
-        :param response: A pipeline response object.
+        :param Optional[Dict[str, Any]] settings: The configurable values pertaining to the increment operation.
+        :param "PipelineRequest" request: A pipeline request object.
+        :param "PipelineResponse": A pipeline response object.
         :param error: An error encountered during the request, or
             None if the response was received successfully.
-
-        :return: Whether the retry attempts are exhausted.
+        :paramtype error: Union[ServiceRequestError, ServiceResponseError]
+        :returns: Whether the retry attempts are exhausted.
+        :rtype: bool
         """
         settings['total'] -= 1
 
@@ -527,9 +561,7 @@ class ExponentialRetry(StorageRetryPolicy):
         '''
         Constructs an Exponential retry object. The initial_backoff is used for
         the first retry. Subsequent retries are retried after initial_backoff +
-        increment_power^retry_count seconds. For example, by default the first retry
-        occurs after 15 seconds, the second after (15+3^1) = 18 seconds, and the
-        third after (15+3^2) = 24 seconds.
+        increment_power^retry_count seconds.
 
         :param int initial_backoff:
             The initial backoff interval, in seconds, for the first retry.
@@ -556,7 +588,8 @@ class ExponentialRetry(StorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :return:
+        :param Optional[Dict[str, Any]] settings: The configurable values pertaining to get backoff time.
+        :returns:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
         :rtype: int or None
@@ -596,7 +629,8 @@ class LinearRetry(StorageRetryPolicy):
         """
         Calculates how long to sleep before retrying.
 
-        :return:
+        :param Optional[Dict[str, Any]] settings: The configurable values pertaining to the backoff time.
+        :returns:
             An integer indicating how long to wait before retrying the request,
             or None to indicate no retry should be performed.
         :rtype: int or None
@@ -608,3 +642,24 @@ class LinearRetry(StorageRetryPolicy):
             if self.backoff > self.random_jitter_range else 0
         random_range_end = self.backoff + self.random_jitter_range
         return random_generator.uniform(random_range_start, random_range_end)
+
+
+class StorageBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
+    """ Custom Bearer token credential policy for following Storage Bearer challenges """
+
+    def __init__(self, credential, **kwargs):
+        # type: (TokenCredential, **Any) -> None
+        super(StorageBearerTokenCredentialPolicy, self).__init__(credential, STORAGE_OAUTH_SCOPE, **kwargs)
+
+    def on_challenge(self, request, response):
+        # type: (PipelineRequest, PipelineResponse) -> bool
+        try:
+            auth_header = response.http_response.headers.get("WWW-Authenticate")
+            challenge = StorageHttpChallenge(auth_header)
+        except ValueError:
+            return False
+
+        scope = challenge.resource_id + DEFAULT_OAUTH_SCOPE
+        self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
+
+        return True

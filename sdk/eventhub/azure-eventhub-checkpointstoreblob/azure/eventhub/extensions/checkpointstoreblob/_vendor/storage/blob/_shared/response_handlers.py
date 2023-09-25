@@ -3,12 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
-    TYPE_CHECKING
-)
+from typing import NoReturn, TYPE_CHECKING
 import logging
+from xml.etree.ElementTree import Element
 
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.exceptions import (
@@ -44,10 +41,8 @@ class PartialBatchErrorException(HttpResponseError):
         super(PartialBatchErrorException, self).__init__(message=message, response=response)
 
 
+# Parses the blob length from the content range header: bytes 1-3/65537
 def parse_length_from_content_range(content_range):
-    '''
-    Parses the blob length from the content range header: bytes 1-3/65537
-    '''
     if content_range is None:
         return None
 
@@ -67,7 +62,10 @@ def normalize_headers(headers):
 
 
 def deserialize_metadata(response, obj, headers):  # pylint: disable=unused-argument
-    raw_metadata = {k: v for k, v in response.http_response.headers.items() if k.startswith("x-ms-meta-")}
+    try:
+        raw_metadata = {k: v for k, v in response.http_response.headers.items() if k.startswith("x-ms-meta-")}
+    except AttributeError:
+        raw_metadata = {k: v for k, v in response.headers.items() if k.startswith("x-ms-meta-")}
     return {k[10:]: v for k, v in raw_metadata.items()}
 
 
@@ -83,29 +81,54 @@ def return_context_and_deserialized(response, deserialized, response_headers):  
     return response.http_response.location_mode, deserialized
 
 
-def process_storage_error(storage_error):
-    # If storage_error is one of the two then it has already been processed and serialized to the specific exception.
-    if isinstance(storage_error, (PartialBatchErrorException, ClientAuthenticationError)):
-        raise storage_error
+def return_raw_deserialized(response, *_):
+    return response.http_response.location_mode, response.context[ContentDecodePolicy.CONTEXT_NAME]
+
+
+def process_storage_error(storage_error) -> NoReturn:  # pylint:disable=too-many-statements
     raise_error = HttpResponseError
+    serialized = False
+    if not storage_error.response:
+        raise storage_error
+    # If it is one of those three then it has been serialized prior by the generated layer.
+    if isinstance(storage_error, (PartialBatchErrorException,
+                                  ClientAuthenticationError, ResourceNotFoundError, ResourceExistsError)):
+        serialized = True
     error_code = storage_error.response.headers.get('x-ms-error-code')
     error_message = storage_error.message
     additional_data = {}
+    error_dict = {}
     try:
         error_body = ContentDecodePolicy.deserialize_from_http_generics(storage_error.response)
-        if error_body:
-            for info in error_body.iter():
-                if info.tag.lower() == 'code':
-                    error_code = info.text
-                elif info.tag.lower() == 'message':
-                    error_message = info.text
-                else:
-                    additional_data[info.tag] = info.text
+        try:
+            error_body = error_body or storage_error.response.reason
+        except AttributeError:
+            error_body = ''
+        # If it is an XML response
+        if isinstance(error_body, Element):
+            error_dict = {
+                child.tag.lower(): child.text
+                for child in error_body
+            }
+        # If it is a JSON response
+        elif isinstance(error_body, dict):
+            error_dict = error_body.get('error', {})
+        elif not error_code:
+            _LOGGER.warning(
+                'Unexpected return type %s from ContentDecodePolicy.deserialize_from_http_generics.', type(error_body))
+            error_dict = {'message': str(error_body)}
+
+        # If we extracted from a Json or XML response
+        if error_dict:
+            error_code = error_dict.get('code')
+            error_message = error_dict.get('message')
+            additional_data = {k: v for k, v in error_dict.items() if k not in {'code', 'message'}}
     except DecodeError:
         pass
 
     try:
-        if error_code:
+        # This check would be unnecessary if we have already serialized the error
+        if error_code and not serialized:
             error_code = StorageErrorCode(error_code)
             if error_code in [StorageErrorCode.condition_not_met,
                               StorageErrorCode.blob_overwritten]:
@@ -137,17 +160,30 @@ def process_storage_error(storage_error):
         # Got an unknown error code
         pass
 
+    # Error message should include all the error properties
     try:
-        error_message += "\nErrorCode:{}".format(error_code.value)
+        error_message += f"\nErrorCode:{error_code.value}"
     except AttributeError:
-        error_message += "\nErrorCode:{}".format(error_code)
+        error_message += f"\nErrorCode:{error_code}"
     for name, info in additional_data.items():
-        error_message += "\n{}:{}".format(name, info)
+        error_message += f"\n{name}:{info}"
 
-    error = raise_error(message=error_message, response=storage_error.response)
+    # No need to create an instance if it has already been serialized by the generated layer
+    if serialized:
+        storage_error.message = error_message
+        error = storage_error
+    else:
+        error = raise_error(message=error_message, response=storage_error.response)
+    # Ensure these properties are stored in the error instance as well (not just the error message)
     error.error_code = error_code
     error.additional_info = additional_data
-    error.raise_with_traceback()
+    # error.args is what's surfaced on the traceback - show error message in all cases
+    error.args = (error.message,)
+    try:
+        # `from None` prevents us from double printing the exception (suppresses generated layer error context)
+        exec("raise error from None")   # pylint: disable=exec-used # nosec
+    except SyntaxError as exc:
+        raise error from exc
 
 
 def parse_to_internal_user_delegation_key(service_user_delegation_key):
