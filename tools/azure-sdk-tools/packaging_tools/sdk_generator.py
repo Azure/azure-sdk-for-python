@@ -76,7 +76,7 @@ def after_multiapi_combiner(sdk_code_path: str, package_name: str, folder_name: 
             subfolders_name = [s.name for s in subfolder_path.iterdir() if s.is_dir() and not s.name.startswith("_")]
             content["packaging"]["exclude_folders"] = ",".join([exclude(f"{package_name}-{s}") for s in subfolders_name])
 
-        with open(toml_file, "w") as file_out:
+        with open(toml_file, "wb") as file_out:
             tomlw.dump(content, file_out)
         call_build_config(package_name, folder_name)
         
