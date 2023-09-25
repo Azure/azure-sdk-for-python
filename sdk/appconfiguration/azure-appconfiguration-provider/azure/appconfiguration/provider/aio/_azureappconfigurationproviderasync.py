@@ -221,7 +221,9 @@ async def _resolve_keyvault_reference(
 ) -> str:
     # pylint:disable=protected-access
     if not (provider._keyvault_credential or provider._keyvault_client_configs or provider._secret_resolver):
-        raise ValueError("Key Vault options must be set to resolve Key Vault references.")
+        raise ValueError(
+            "Either a credential to Key Vault, custom Key Vault client, or a secret resolver must be set to resolve Key Vault references."
+        )
 
     if config.secret_id is None:
         raise ValueError("Key Vault reference must have a uri value.")
