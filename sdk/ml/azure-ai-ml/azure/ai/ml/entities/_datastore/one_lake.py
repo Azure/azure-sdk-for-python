@@ -6,7 +6,7 @@
 
 from abc import ABC
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     OneLakeDatastore as RestOneLakeDatastore,
@@ -92,7 +92,7 @@ class OneLakeDatastore(Datastore):
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         credentials: Optional[Union[NoneCredentialConfiguration, ServicePrincipalConfiguration]] = None,
-        **kwargs: Any
+        **kwargs
     ):
         kwargs[TYPE] = DatastoreType.ONE_LAKE
         super().__init__(
@@ -116,12 +116,11 @@ class OneLakeDatastore(Datastore):
         return DatastoreData(properties=one_lake_ds)
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "OneLakeDatastore":
-        res: OneLakeDatastore = load_from_dict(OneLakeSchema, data, context, additional_message, **kwargs)
-        return res
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "OneLakeDatastore":
+        return load_from_dict(OneLakeSchema, data, context, additional_message, **kwargs)
 
     @classmethod
-    def _from_rest_object(cls, datastore_resource: DatastoreData) -> "OneLakeDatastore":
+    def _from_rest_object(cls, datastore_resource: DatastoreData):
         properties: RestOneLakeDatastore = datastore_resource.properties
         return OneLakeDatastore(
             name=datastore_resource.name,
@@ -134,20 +133,18 @@ class OneLakeDatastore(Datastore):
             tags=properties.tags,
         )
 
-    def __eq__(self, other: Any) -> bool:
-        res: bool = (
+    def __eq__(self, other) -> bool:
+        return (
             super().__eq__(other)
             and self.one_lake_workspace_name == other.one_lake_workspace_name
             and self.artifact.type == other.artifact["type"]
             and self.artifact.name == other.artifact["name"]
             and self.endpoint == other.endpoint
         )
-        return res
 
-    def __ne__(self, other: Any) -> bool:
+    def __ne__(self, other) -> bool:
         return not self.__eq__(other)
 
     def _to_dict(self) -> Dict:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
-        res: dict = OneLakeSchema(context=context).dump(self)
-        return res
+        return OneLakeSchema(context=context).dump(self)

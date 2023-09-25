@@ -43,9 +43,9 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        **kwargs: Any,
+        **kwargs,
     ):
-        self._type: str = kwargs.pop("type", None)
+        self._type = kwargs.pop("type", None)
         super().__init__(
             name=name,
             description=description,
@@ -60,7 +60,7 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
     def type(self) -> str:
         return self._type
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the datastore content into a file in yaml format.
 
         :param dest: The destination to receive this datastore's content.
@@ -84,7 +84,7 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs: Any,
+        **kwargs,
     ) -> "Datastore":
         data = data or {}
         params_override = params_override or []
@@ -136,13 +136,12 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        res: Datastore = ds_type._load_from_dict(
+        return ds_type._load_from_dict(
             data=data,
             context=context,
             additional_message="If the datastore type is incorrect, change the 'type' property.",
             **kwargs,
         )
-        return res
 
     @classmethod
     def _from_rest_object(cls, datastore_resource: DatastoreData) -> "Datastore":
@@ -160,20 +159,15 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
 
         datastore_type = datastore_resource.properties.datastore_type
         if datastore_type == DatastoreType.AZURE_DATA_LAKE_GEN1:
-            res_adl_gen1: Datastore = AzureDataLakeGen1Datastore._from_rest_object(datastore_resource)
-            return res_adl_gen1
+            return AzureDataLakeGen1Datastore._from_rest_object(datastore_resource)
         if datastore_type == DatastoreType.AZURE_DATA_LAKE_GEN2:
-            res_adl_gen2: Datastore = AzureDataLakeGen2Datastore._from_rest_object(datastore_resource)
-            return res_adl_gen2
+            return AzureDataLakeGen2Datastore._from_rest_object(datastore_resource)
         if datastore_type == DatastoreType.AZURE_BLOB:
-            res_abd: Datastore = AzureBlobDatastore._from_rest_object(datastore_resource)
-            return res_abd
+            return AzureBlobDatastore._from_rest_object(datastore_resource)
         if datastore_type == DatastoreType.AZURE_FILE:
-            res_afd: Datastore = AzureFileDatastore._from_rest_object(datastore_resource)
-            return res_afd
+            return AzureFileDatastore._from_rest_object(datastore_resource)
         if datastore_type == DatastoreType.ONE_LAKE:
-            res_old: Datastore = OneLakeDatastore._from_rest_object(datastore_resource)
-            return res_old
+            return OneLakeDatastore._from_rest_object(datastore_resource)
         # disable unless preview release
         # elif datastore_type == DatastoreTypePreview.HDFS:
         #     return HdfsDatastore._from_rest_object(datastore_resource)
@@ -188,12 +182,11 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
 
     @classmethod
     @abstractmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Datastore":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Datastore":
         pass
 
-    def __eq__(self, other: Any) -> bool:
-        res: bool = self.name == other.name and self.type == other.type and self.credentials == other.credentials
-        return res
+    def __eq__(self, other) -> bool:
+        return self.name == other.name and self.type == other.type and self.credentials == other.credentials
 
-    def __ne__(self, other: Any) -> bool:
+    def __ne__(self, other) -> bool:
         return not self.__eq__(other)
