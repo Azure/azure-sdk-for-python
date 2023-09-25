@@ -56,6 +56,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/kubernetesconfiguration/resource-manager/Microsoft.KubernetesConfiguration/stable/2022-11-01/examples/CreateSourceControlConfiguration.json
+# x-ms-original-file: specification/kubernetesconfiguration/resource-manager/Microsoft.KubernetesConfiguration/stable/2023-05-01/examples/CreateSourceControlConfiguration.json
 if __name__ == "__main__":
     main()

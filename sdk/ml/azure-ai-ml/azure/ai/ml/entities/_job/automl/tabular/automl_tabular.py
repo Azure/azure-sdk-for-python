@@ -259,15 +259,13 @@ class AutoMLTabular(AutoMLVertical, ABC):
             Early stopping logic:
 
             * No early stopping for first 20 iterations (landmarks).
-
             * Early stopping window starts on the 21st iteration and looks for early_stopping_n_iters iterations
                 (currently set to 10). This means that the first iteration where stopping can occur is the 31st.
-
             * AutoML still schedules 2 ensemble iterations AFTER early stopping, which might result in higher scores.
-
             * Early stopping is triggered if the absolute value of best score calculated is the same for past
                 early_stopping_n_iters iterations, that is, if there is no improvement in score for
                 early_stopping_n_iters iterations.
+
         :paramtype enable_early_termination: typing.Optional[bool]
         :keyword exit_score: Target score for experiment. The experiment terminates after this score is reached.
             If not specified (no criteria), the experiment runs until no further progress is made

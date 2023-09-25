@@ -140,3 +140,27 @@ class CustomMonitoringMetricThresholdSchema(MetricThresholdSchema):
         from azure.ai.ml.entities._monitoring.thresholds import CustomMonitoringMetricThreshold
 
         return CustomMonitoringMetricThreshold(**data)
+
+
+class GenerationSafetyQualityMetricThresholdSchema(metaclass=PatchedSchemaMeta):  # pylint: disable=name-too-long
+    groundedness = fields.Dict(
+        keys=StringTransformedEnum(allowed_values=["aggregated_groundedness_pass_rate"]), values=fields.Number()
+    )
+    relevance = fields.Dict(
+        keys=StringTransformedEnum(allowed_values=["aggregated_relevance_pass_rate"]), values=fields.Number()
+    )
+    coherence = fields.Dict(
+        keys=StringTransformedEnum(allowed_values=["aggregated_coherence_pass_rate"]), values=fields.Number()
+    )
+    fluency = fields.Dict(
+        keys=StringTransformedEnum(allowed_values=["aggregated_fluency_pass_rate"]), values=fields.Number()
+    )
+    similarity = fields.Dict(
+        keys=StringTransformedEnum(allowed_values=["aggregated_similarity_pass_rate"]), values=fields.Number()
+    )
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._monitoring.thresholds import GenerationSafetyQualityMonitoringMetricThreshold
+
+        return GenerationSafetyQualityMonitoringMetricThreshold(**data)
