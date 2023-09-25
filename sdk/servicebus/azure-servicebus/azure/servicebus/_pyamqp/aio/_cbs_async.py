@@ -53,7 +53,7 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
         self._network_trace_params = {
             "amqpConnection": self._session._connection._container_id,
             "amqpSession": self._session.name,
-            "amqpLink": None
+            "amqpLink": ""
         }
 
         self._token_status_code = None
