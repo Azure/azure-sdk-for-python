@@ -7,7 +7,7 @@
 # pylint: disable=super-init-not-called
 
 import sys
-from typing import Any, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING, Union
+from typing import Any, Callable, Dict, List, Optional, overload, Tuple, TYPE_CHECKING, Union
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
@@ -357,11 +357,40 @@ class QueueMessage(DictMixin):
     """A UTC date value representing the time the message will next be visible.
         Only returned by receive messages operations. Set to None for peek messages."""
 
-    def __init__(self, content: Any = None) -> None:
-        self.id = None  # type: ignore [assignment]
+    @overload
+    def __init__(self, *, id: str, content: Any = None) -> None:
+        ...
+
+    @overload
+    def __init__(
+        self, *,
+        id: Optional[str] = None,
+        inserted_on: Optional["datetime"] = None,
+        expires_on: Optional["datetime"] = None,
+        dequeue_count: Optional[int] = None,
+        content: Any = None,
+        pop_receipt: Optional[str] = None,
+        next_visible_on: Optional["datetime"] = None
+    ) -> None:
+        ...
+
+    def __init__(
+        self, *,
+        id: Optional[str] = None,
+        inserted_on: Optional["datetime"] = None,
+        expires_on: Optional["datetime"] = None,
+        dequeue_count: Optional[int] = None,
+        content: Any = None,
+        pop_receipt: Optional[str] = None,
+        next_visible_on: Optional["datetime"] = None
+    ) -> None:
+        self.id = id  # type: ignore [assignment]
+        self.inserted_on = inserted_on
+        self.expires_on = expires_on
+        self.dequeue_count = dequeue_count
         self.content = content
-        self.pop_receipt = None
-        self.next_visible_on = None
+        self.pop_receipt = pop_receipt
+        self.next_visible_on = next_visible_on
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:

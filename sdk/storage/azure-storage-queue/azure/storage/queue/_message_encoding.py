@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=unused-argument
 
 from base64 import b64encode, b64decode
 from typing import Any, Callable, Dict, Iterable, Optional, TYPE_CHECKING, Union
