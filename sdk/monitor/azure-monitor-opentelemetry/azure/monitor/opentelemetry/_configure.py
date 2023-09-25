@@ -77,6 +77,7 @@ def configure_azure_monitor(**kwargs) -> None:
      telemetry records for retry. Defaults to `False`.
     :keyword str storage_directory: Storage directory in which to store retry files. Defaults to
      `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
+    :keyword str logger_name: The name of the Python logger that telemetry will be collected for.
     :rtype: None
     """
 
