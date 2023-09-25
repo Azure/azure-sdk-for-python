@@ -5,7 +5,7 @@
 # pylint: disable=protected-access,no-member
 
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
 from azure.ai.ml._restclient.v2023_04_01_preview.models import AzureBlobDatastore as RestAzureBlobDatastore
@@ -13,7 +13,8 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     AzureDataLakeGen2Datastore as RestAzureDataLakeGen2Datastore,
 )
 from azure.ai.ml._restclient.v2023_04_01_preview.models import AzureFileDatastore as RestAzureFileDatastore
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData, DatastoreType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData
+from azure.ai.ml._restclient.v2023_04_01_preview.models import DatastoreType
 from azure.ai.ml._schema._datastore import AzureBlobSchema, AzureDataLakeGen2Schema, AzureFileSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._credentials import (
@@ -66,7 +67,7 @@ class AzureFileDatastore(Datastore):
         protocol: str = HTTPS,
         properties: Optional[Dict] = None,
         credentials: Union[AccountKeyConfiguration, SasTokenConfiguration],
-        **kwargs
+        **kwargs: Any
     ):
         kwargs[TYPE] = DatastoreType.AZURE_FILE
         super().__init__(
@@ -90,11 +91,12 @@ class AzureFileDatastore(Datastore):
         return DatastoreData(properties=file_ds)
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "AzureFileDatastore":
-        return load_from_dict(AzureFileSchema, data, context, additional_message)
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "AzureFileDatastore":
+        res: AzureFileDatastore = load_from_dict(AzureFileSchema, data, context, additional_message)
+        return res
 
     @classmethod
-    def _from_rest_object(cls, datastore_resource: DatastoreData):
+    def _from_rest_object(cls, datastore_resource: DatastoreData) -> "AzureFileDatastore":
         properties: RestAzureFileDatastore = datastore_resource.properties
         return AzureFileDatastore(
             name=datastore_resource.name,
@@ -108,21 +110,23 @@ class AzureFileDatastore(Datastore):
             tags=properties.tags,
         )
 
-    def __eq__(self, other) -> bool:
-        return (
+    def __eq__(self, other: Any) -> bool:
+        res: bool = (
             super().__eq__(other)
             and self.file_share_name == other.file_share_name
             and self.account_name == other.account_name
             and self.endpoint == other.endpoint
             and self.protocol == other.protocol
         )
+        return res
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
 
     def _to_dict(self) -> Dict:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
-        return AzureFileSchema(context=context).dump(self)
+        res: dict = AzureFileSchema(context=context).dump(self)
+        return res
 
 
 class AzureBlobDatastore(Datastore):
@@ -162,7 +166,7 @@ class AzureBlobDatastore(Datastore):
         protocol: str = HTTPS,
         properties: Optional[Dict] = None,
         credentials: Optional[Union[AccountKeyConfiguration, SasTokenConfiguration]] = None,
-        **kwargs
+        **kwargs: Any
     ):
         kwargs[TYPE] = DatastoreType.AZURE_BLOB
         super().__init__(
@@ -187,11 +191,12 @@ class AzureBlobDatastore(Datastore):
         return DatastoreData(properties=blob_ds)
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "AzureBlobDatastore":
-        return load_from_dict(AzureBlobSchema, data, context, additional_message)
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "AzureBlobDatastore":
+        res: AzureBlobDatastore = load_from_dict(AzureBlobSchema, data, context, additional_message)
+        return res
 
     @classmethod
-    def _from_rest_object(cls, datastore_resource: DatastoreData):
+    def _from_rest_object(cls, datastore_resource: DatastoreData) -> "AzureBlobDatastore":
         properties: RestAzureBlobDatastore = datastore_resource.properties
         return AzureBlobDatastore(
             name=datastore_resource.name,
@@ -205,21 +210,23 @@ class AzureBlobDatastore(Datastore):
             tags=properties.tags,
         )
 
-    def __eq__(self, other) -> bool:
-        return (
+    def __eq__(self, other: Any) -> bool:
+        res: bool = (
             super().__eq__(other)
             and self.container_name == other.container_name
             and self.account_name == other.account_name
             and self.endpoint == other.endpoint
             and self.protocol == other.protocol
         )
+        return res
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
 
     def _to_dict(self) -> Dict:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
-        return AzureBlobSchema(context=context).dump(self)
+        res: dict = AzureBlobSchema(context=context).dump(self)
+        return res
 
 
 class AzureDataLakeGen2Datastore(Datastore):
@@ -259,7 +266,7 @@ class AzureDataLakeGen2Datastore(Datastore):
         protocol: str = HTTPS,
         properties: Optional[Dict] = None,
         credentials: Optional[Union[ServicePrincipalConfiguration, CertificateConfiguration]] = None,
-        **kwargs
+        **kwargs: Any
     ):
         kwargs[TYPE] = DatastoreType.AZURE_DATA_LAKE_GEN2
         super().__init__(
@@ -285,12 +292,13 @@ class AzureDataLakeGen2Datastore(Datastore):
 
     @classmethod
     def _load_from_dict(
-        cls, data: Dict, context: Dict, additional_message: str, **kwargs
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any
     ) -> "AzureDataLakeGen2Datastore":
-        return load_from_dict(AzureDataLakeGen2Schema, data, context, additional_message)
+        res: AzureDataLakeGen2Datastore = load_from_dict(AzureDataLakeGen2Schema, data, context, additional_message)
+        return res
 
     @classmethod
-    def _from_rest_object(cls, datastore_resource: DatastoreData):
+    def _from_rest_object(cls, datastore_resource: DatastoreData) -> "AzureDataLakeGen2Datastore":
         properties: RestAzureDataLakeGen2Datastore = datastore_resource.properties
         return AzureDataLakeGen2Datastore(
             name=datastore_resource.name,
@@ -304,18 +312,20 @@ class AzureDataLakeGen2Datastore(Datastore):
             tags=properties.tags,
         )
 
-    def __eq__(self, other) -> bool:
-        return (
+    def __eq__(self, other: Any) -> bool:
+        res: bool = (
             super().__eq__(other)
             and self.filesystem == other.filesystem
             and self.account_name == other.account_name
             and self.endpoint == other.endpoint
             and self.protocol == other.protocol
         )
+        return res
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
 
     def _to_dict(self) -> Dict:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
-        return AzureDataLakeGen2Schema(context=context).dump(self)
+        res: dict = AzureDataLakeGen2Schema(context=context).dump(self)
+        return res

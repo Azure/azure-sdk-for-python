@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 from base64 import b64encode
+from typing import Any
 
 from azure.ai.ml._restclient.v2023_04_01_preview import models as model_preview
 from azure.ai.ml._utils._experimental import experimental
@@ -28,7 +29,7 @@ class KerberosKeytabCredentials(BaseKerberosCredentials):
         kerberos_kdc_address: str,
         kerberos_principal: str,
         kerberos_keytab: str,
-        **kwargs,
+        **kwargs: Any,
     ):
         super().__init__(
             kerberos_realm=kerberos_realm,
@@ -84,7 +85,7 @@ class KerberosPasswordCredentials(BaseKerberosCredentials):
         kerberos_kdc_address: str,
         kerberos_principal: str,
         kerberos_password: str,
-        **kwargs,
+        **kwargs: Any,
     ):
         super().__init__(
             kerberos_realm=kerberos_realm,
