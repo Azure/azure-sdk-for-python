@@ -1,0 +1,35 @@
+[
+    {
+        "Package": "azure-schemaregistry",
+        "Version": "==1.2.0",
+        "ExpectedResult": true
+    },
+    { 
+        "Package": "azure-core",
+        "ExpectedResult": true,
+        "Version": "==1.29.4"
+    },
+    {
+        "Package": "azure-mgmt-advisor",
+        "ExpectedResult": true,
+        "Version": "==9.0.0"
+    },
+    {
+        "Package": "azure-mgmt-videoanalyzer",
+        "Version": "==1.0.0b4",
+        "ExpectedResult": false,
+        "Comment": "Unsupported docs directives"
+    },
+    {
+        "Package": "azure-packagedoesnotexist",
+        "Version": "==1.2.3",
+        "ExpectedResult": false,
+        "Comment": "Package does not exist"
+    },
+    {
+        "Package": "azure-ai-ml",
+        "Version": "==1.10.1",
+        "ExpectedResult": false,
+        "Comment": "Unsupported docs directives"
+    }
+]
