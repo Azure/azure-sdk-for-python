@@ -88,7 +88,7 @@ class FeatureStore(Workspace):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../../samples/ml_samples_featurestore.py
+        .. literalinclude:: ../samples/ml_samples_featurestore.py
             :start-after: [START create_feature_store]
             :end-before: [END create_feature_store]
             :language: Python

@@ -14,7 +14,7 @@ class DataColumnType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../../samples/ml_samples_featurestore.py
+        .. literalinclude:: ../samples/ml_samples_featurestore.py
             :start-after: [START configure_feature_store_entity]
             :end-before: [END configure_feature_store_entity]
             :language: Python

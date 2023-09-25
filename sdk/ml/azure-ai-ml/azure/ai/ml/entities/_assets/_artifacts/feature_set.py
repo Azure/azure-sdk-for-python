@@ -53,7 +53,7 @@ class FeatureSet(Artifact):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../../samples/ml_samples_featurestore.py
+        .. literalinclude:: ../samples/ml_samples_featurestore.py
             :start-after: [START configure_feature_set]
             :end-before: [END configure_feature_set]
             :language: Python
@@ -201,6 +201,7 @@ class FeatureSet(Artifact):
 
         import os
         import shutil
+
         from azure.ai.ml._utils.utils import is_url
 
         origin_spec_path = self.specification.path

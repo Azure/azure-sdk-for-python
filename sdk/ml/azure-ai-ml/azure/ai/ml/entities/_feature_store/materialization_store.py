@@ -17,7 +17,7 @@ class MaterializationStore:
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../../samples/ml_samples_featurestore.py
+        .. literalinclude:: ../samples/ml_samples_featurestore.py
             :start-after: [START configure_materialization_store]
             :end-before: [END configure_materialization_store]
             :language: Python

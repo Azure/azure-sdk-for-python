@@ -26,7 +26,7 @@ class FeatureStoreSettings(RestTranslatableMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_featurestore.py
+        .. literalinclude:: ../samples/ml_samples_featurestore.py
             :start-after: [START configure_feature_store_settings]
             :end-before: [END configure_feature_store_settings]
             :language: python
