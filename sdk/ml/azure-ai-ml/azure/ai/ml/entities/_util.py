@@ -483,10 +483,8 @@ def resolve_pipeline_parameters(
 
 def resolve_pipeline_parameter(data: T) -> Union[T, str, "NodeOutput"]:
     """Resolve pipeline parameter.
-
     1. Resolve BaseNode and OutputsAttrDict type to NodeOutput.
     2. Remove empty value (optional).
-
     :param data: The pipeline parameter
     :type data: T
     :return:
@@ -499,13 +497,16 @@ def resolve_pipeline_parameter(data: T) -> Union[T, str, "NodeOutput"]:
     from azure.ai.ml.entities._job.pipeline._io import NodeOutput, OutputsAttrDict
     from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 
-    data_res: Union[str, BaseNode, OutputsAttrDict, NodeOutput]
     if isinstance(data, PipelineExpression):
-        data_res = data.resolve()
+        data_pipelineExpression: Union[str, BaseNode] = data.resolve()
+        return data_pipelineExpression
     if isinstance(data, (BaseNode, Pipeline)):
         # For the case use a node/pipeline node as the input, we use its only one output as the real input.
         # Here we set node = node.outputs, then the following logic will get the output object.
-        data_res = data.outputs
+        data_outputsAttrDict: OutputsAttrDict = data.outputs
+        return data_outputsAttrDict
+
+    data_nodeOutput: NodeOutput = None
     if isinstance(data, OutputsAttrDict):
         # For the case that use the outputs of another component as the input,
         # we use the only one output as the real input,
@@ -517,8 +518,8 @@ def resolve_pipeline_parameter(data: T) -> Union[T, str, "NodeOutput"]:
                 no_personal_data_message="multiple output(s) found of specified outputs, exactly 1 output required.",
                 target=ErrorTarget.PIPELINE,
             )
-        data_res = list(data.values())[0]
-    return data_res
+        data_nodeOutput = list(data.values())[0]
+    return data_nodeOutput
 
 
 def normalize_job_input_output_type(input_output_value: Union[RestJobOutput, RestJobInput, Dict]) -> None:
