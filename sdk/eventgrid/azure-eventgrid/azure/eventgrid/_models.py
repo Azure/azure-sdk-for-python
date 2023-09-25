@@ -78,7 +78,7 @@ class EventGridEvent(object):
         "data_version": {"key": "dataVersion", "type": "str"},
     }
 
-    def __init__(self, subject: str, event_type: str, data: Any, data_version: str, **kwargs: Any):        
+    def __init__(self, subject: str, event_type: str, data: Any, data_version: str, **kwargs: Any):
         kwargs.setdefault("id", uuid.uuid4())
         kwargs.setdefault("subject", subject)
         kwargs.setdefault("event_type", event_type)
@@ -99,7 +99,7 @@ class EventGridEvent(object):
         return "EventGridEvent(subject={}, event_type={}, id={}, event_time={})".format(
             self.subject, self.event_type, self.id, self.event_time
         )[:1024]
-    
+
     @classmethod
     def from_json(cls, event: Any):
         """
@@ -112,7 +112,7 @@ class EventGridEvent(object):
         :raises ValueError: If the provided JSON is invalid.
         """
         dict_event = _get_json_content(event)
-        
+
         kwargs: Dict[str, Any] = {}
         event_obj = None
 
