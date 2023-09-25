@@ -5,7 +5,6 @@ from unittest.mock import Mock, patch
 
 import jwt
 import pytest
-import vcr
 import yaml
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError

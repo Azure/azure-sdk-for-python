@@ -1,8 +1,10 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from pathlib import Path
 
-from marshmallow import fields, post_dump, pre_dump, pre_load
+from marshmallow import ValidationError, fields, post_dump, pre_dump, pre_load
+from marshmallow.fields import Field
 
 from azure.ai.ml._schema.component.input_output import InputPortSchema, OutputPortSchema, ParameterSchema
 from azure.ai.ml._schema.core.fields import (
@@ -13,8 +15,8 @@ from azure.ai.ml._schema.core.fields import (
     UnionField,
 )
 from azure.ai.ml._schema.core.intellectual_property import IntellectualPropertySchema
-from azure.ai.ml._utils.utils import is_private_preview_enabled
-from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml._utils.utils import is_private_preview_enabled, load_yaml
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AzureMLResourceType
 
 from .._utils.utils import _resolve_group_inputs_for_component
 from ..assets.asset import AssetSchema
@@ -24,6 +26,52 @@ from ..core.fields import RegistryStr
 class ComponentNameStr(PythonFuncNameStr):
     def _get_field_name(self):
         return "Component"
+
+
+class ComponentYamlRefField(Field):
+    """Allows you to nest a :class:`Schema <marshmallow.Schema>`
+    inside a yaml ref field.
+    """
+
+    def _jsonschema_type_mapping(self):
+        schema = {"type": "string"}
+        if self.name is not None:
+            schema["title"] = self.name
+        if self.dump_only:
+            schema["readonly"] = True
+        return schema
+
+    def _deserialize(self, value, attr, data, **kwargs):
+        if not isinstance(value, str):
+            raise ValidationError(f"Nested yaml ref field expected a string but got {type(value)}.")
+
+        base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
+
+        source_path = Path(value)
+        # raise if the string is not a valid path, like "azureml:xxx"
+        try:
+            source_path.resolve()
+        except OSError as ex:
+            raise ValidationError(f"Nested file ref field expected a local path but got {value}.") from ex
+
+        if not source_path.is_absolute():
+            source_path = base_path / source_path
+
+        if not source_path.is_file():
+            raise ValidationError(
+                f"Nested yaml ref field expected a local path but can't find {value} based on {base_path.as_posix()}."
+            )
+
+        loaded_value = load_yaml(source_path)
+
+        # local import to avoid circular import
+        from azure.ai.ml.entities import Component
+
+        component = Component._load(data=loaded_value, yaml_path=source_path)  # pylint: disable=protected-access
+        return component
+
+    def _serialize(self, value, attr, obj, **kwargs):
+        raise ValidationError("Serialize on RefField is not supported.")
 
 
 class ComponentSchema(AssetSchema):

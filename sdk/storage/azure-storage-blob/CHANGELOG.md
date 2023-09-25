@@ -1,8 +1,21 @@
 # Release History
 
-## 12.18.0 (Unreleased)
+## 12.18.2 (2023-09-25)
+
+### Bugs Fixed
+- Fixed an issue where `user_agent` was being ignored on `upload_blob` or `download_blob` if client was configured
+for encryption.
+
+## 12.18.1 (2023-09-13)
+
+### Bugs Fixed
+- Fixed breaking `KeyError: 'sdk_moniker'` in `create_configuration`.
+NOTE: This is not an exported method and therefore should not be imported/called directly.
+
+## 12.18.0 (2023-09-12)
 
 ### Features Added
+- Stable release of features from 12.18.0b1
 
 ## 12.18.0b1 (2023-08-08)
 

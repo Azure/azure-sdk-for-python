@@ -31,13 +31,12 @@ def main():
         resource_name="vault1",
     )
 
-    response = client.replication_recovery_services_providers.begin_purge(
+    client.replication_recovery_services_providers.begin_purge(
         fabric_name="cloud1",
         provider_name="241641e6-ee7b-4ee4-8141-821fadda43fa",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2022-10-01/examples/ReplicationRecoveryServicesProviders_Purge.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2023-06-01/examples/ReplicationRecoveryServicesProviders_Purge.json
 if __name__ == "__main__":
     main()

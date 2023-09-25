@@ -781,6 +781,42 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         # Assert
         assert content == decrypted_data
 
+    @QueuePreparer()
+    @recorded_by_proxy_async
+    async def test_encryption_user_agent(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        app_id = 'TestAppId'
+        content = 'Hello World Encrypted!'
+        kek = KeyWrapper('key1')
+
+        def assert_user_agent(request):
+            start = f'{app_id} azstorage-clientsideencryption/2.0 '
+            assert request.http_request.headers['User-Agent'].startswith(start)
+
+        # Test method level keyword
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+        queue = await self._create_queue(qsc)
+        await queue.send_message(content, raw_request_hook=assert_user_agent, user_agent=app_id)
+
+        # Test client constructor level keyword
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"),
+            storage_account_key,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek,
+            user_agent=app_id)
+
+        queue = self._get_queue_reference(qsc)
+        await queue.send_message(content, raw_request_hook=assert_user_agent)
+
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

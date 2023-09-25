@@ -38,6 +38,7 @@ from azure.ai.ml.entities._job.job_service import (
     TensorBoardJobService,
     VsCodeJobService,
 )
+from azure.ai.ml.entities import Environment
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
@@ -71,8 +72,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../samples/ml_samples_command_configurations.py
+        .. literalinclude:: ../samples/ml_samples_command_configurations.py
             :start-after: [START command_job_definition]
             :end-before: [END command_job_definition]
             :language: python
@@ -284,4 +284,6 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.MISSING_FIELD,
             )
+        if isinstance(self.environment, Environment):
+            self.environment.validate()
         validate_inputs_for_command(self.command, self.inputs)

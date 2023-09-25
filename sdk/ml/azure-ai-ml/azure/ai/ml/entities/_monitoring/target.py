@@ -3,8 +3,9 @@
 # ---------------------------------------------------------
 
 from typing import Optional, Union
-from azure.ai.ml._utils._experimental import experimental
+
 from azure.ai.ml._restclient.v2023_06_01_preview.models import MonitoringTarget as RestMonitoringTarget
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._monitoring import MonitorTargetTasks
 
 
@@ -19,8 +20,7 @@ class MonitoringTarget:
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
+        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_monitor_definition]
             :end-before: [END spark_monitor_definition]
             :language: python
