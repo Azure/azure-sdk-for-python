@@ -198,9 +198,10 @@ def _to_json_http_request(events):
     list_data = []
     for event in events:
         if isinstance(event, EventGridEvent):
-            for attr in event._attribute_map:
+            for attr in event._attribute_map: # pylint: disable=protected-access
                 if getattr(event, attr) is not None:
-                    data[event._attribute_map[attr]["key"]] = _SERIALIZER.body(getattr(event, attr), event._attribute_map[attr]["type"])
+                    data[event._attribute_map[attr]["key"]] = _SERIALIZER.body(getattr(event, attr),  # pylint: disable=protected-access
+                                                                               event._attribute_map[attr]["type"]) # pylint: disable=protected-access
         else:
             data["type"] =  _SERIALIZER.body(event.type, "str")
             data["specversion"] = _SERIALIZER.body(event.specversion, "str")

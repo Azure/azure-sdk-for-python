@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 # pylint:disable=protected-access
-from typing import Any, cast, Optional, Dict, Callable, Type
+from typing import Any, Dict
 import datetime as dt
 import uuid
 from ._messaging_shared import _get_json_content
@@ -78,8 +78,7 @@ class EventGridEvent(object):
         "data_version": {"key": "dataVersion", "type": "str"},
     }
 
-    def __init__(self, subject: str, event_type: str, data: Any, data_version: str, **kwargs: Any):
-        
+    def __init__(self, subject: str, event_type: str, data: Any, data_version: str, **kwargs: Any):        
         kwargs.setdefault("id", uuid.uuid4())
         kwargs.setdefault("subject", subject)
         kwargs.setdefault("event_type", event_type)
@@ -102,56 +101,6 @@ class EventGridEvent(object):
         )[:1024]
     
     @classmethod
-    def from_dict(cls, event: Dict[str, Any]):
-        """Returns the deserialized CloudEvent object when a dict is provided.
-
-        :param event: The dict representation of the event which needs to be deserialized.
-        :type event: dict
-        :rtype: CloudEvent
-        :return: The deserialized CloudEvent object.
-        """
-        kwargs: Dict[str, Any] = {}
-        event_obj = None
-
-        data = event["data"]
-        kwargs["data"] = data if data is not None else NULL
-
-        for item in ["metadata_version", "topic"]:
-            if item in event:
-                val = event[item]
-                kwargs[item] = val if val is not None else NULL
-
-        deserializer = Deserializer()
-        if "event_time" in event.keys():
-            event_time = deserializer.deserialize_iso(event["event_time"])
-            kwargs["event_time"] = event_time if event_time is not None else NULL
-
-        try:
-            event_obj = cls(
-                id=event["id"],
-                subject=event["subject"],
-                event_type=event["event_type"],
-                data_version=event["data_version"],
-                **kwargs,
-            )
-        except KeyError as err:
-            # https://github.com/cloudevents/spec Cloud event spec requires source, type,
-            # specversion. We autopopulate everything other than source, type.
-            # So we will assume the KeyError is coming from source/type access.
-            if all(
-                key in event
-                for key in (
-                    "source",
-                    "type",
-                )
-            ):
-                raise ValueError(
-                    "The event does not conform to the EventGridEvent type spec."
-                    + " The 'subject' and 'event_type' are required."
-                ) from err
-        return event_obj
-    
-    @classmethod
     def from_json(cls, event: Any):
         """
         Returns the deserialized EventGridEvent object when a json payload is provided.
@@ -163,4 +112,44 @@ class EventGridEvent(object):
         :raises ValueError: If the provided JSON is invalid.
         """
         dict_event = _get_json_content(event)
-        return cls.from_dict(dict_event)
+        
+        kwargs: Dict[str, Any] = {}
+        event_obj = None
+
+        data = dict_event["data"]
+        kwargs["data"] = data if data is not None else NULL
+
+        for item in ["metadata_version", "topic"]:
+            if item in dict_event:
+                val = dict_event[item]
+                kwargs[item] = val if val is not None else NULL
+
+        deserializer = Deserializer()
+        if "event_time" in dict_event.keys():
+            event_time = deserializer.deserialize_iso(dict_event["event_time"])
+            kwargs["event_time"] = event_time if event_time is not None else NULL
+
+        try:
+            event_obj = cls(
+                id=dict_event["id"],
+                subject=dict_event["subject"],
+                event_type=dict_event["event_type"],
+                data_version=dict_event["data_version"],
+                **kwargs,
+            )
+        except KeyError as err:
+            # https://github.com/cloudevents/spec Cloud event spec requires source, type,
+            # specversion. We autopopulate everything other than source, type.
+            # So we will assume the KeyError is coming from source/type access.
+            if all(
+                key in dict_event
+                for key in (
+                    "source",
+                    "type",
+                )
+            ):
+                raise ValueError(
+                    "The event does not conform to the EventGridEvent type spec."
+                    + " The 'subject' and 'event_type' are required."
+                ) from err
+        return event_obj
