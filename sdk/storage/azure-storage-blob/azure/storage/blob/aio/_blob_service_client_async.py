@@ -46,7 +46,6 @@ if TYPE_CHECKING:
     from .._shared.models import UserDelegationKey
     from ._lease_async import BlobLeaseClient
     from .._models import (
-        BlobProperties,
         PublicAccess,
         BlobAnalyticsLogging,
         Metrics,
