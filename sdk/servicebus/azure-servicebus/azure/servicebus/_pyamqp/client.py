@@ -840,8 +840,6 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
             return False
         if self._link.get_state().value != 3:  # ATTACHED
             return False
-        # once the receiver client is ready/connection established, we set link_credit
-        self._link.link_credit = self._link_credit
         return True
 
     def _client_run(self, **kwargs):
@@ -854,7 +852,7 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         """
         try:
             if self._link.current_link_credit == 0:
-                self._link.flow()
+                self._link.flow(link_credit=self._link_credit)
             self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
             _logger.info("Timeout reached, closing receiver.", extra=self._network_trace_params)

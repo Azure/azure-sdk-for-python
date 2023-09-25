@@ -736,8 +736,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             return False
         if self._link.get_state().value != 3:  # ATTACHED
             return False
-        # once the receiver client is ready/connection established, we set link_credit
-        self._link.link_credit = self._link_credit
         return True
 
     async def _client_run_async(self, **kwargs):
@@ -750,7 +748,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         """
         try:
             if self._link.current_link_credit == 0:
-                await self._link.flow()
+                await self._link.flow(link_credit=self._link_credit)
             await self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
             _logger.info("Timeout reached, closing receiver.", extra=self._network_trace_params)
