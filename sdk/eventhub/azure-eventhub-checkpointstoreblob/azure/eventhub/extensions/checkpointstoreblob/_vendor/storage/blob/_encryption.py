@@ -284,7 +284,7 @@ def modify_user_agent_for_encryption(
     :param str user_agent: The existing User Agent to modify.
     :param str moniker: The specific SDK moniker. The modification will immediately proceed azsdk-python-{moniker}.
     :param str encryption_version: The version of encryption being used.
-    :param Dict[str, Any] request_options: The reuqest options to add the user agent override to.
+    :param Dict[str, Any] request_options: The request options to add the user agent override to.
     """
     # If the user has specified user_agent_overwrite=True, don't make any modifications
     if request_options.get('user_agent_overwrite'):

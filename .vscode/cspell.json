@@ -683,8 +683,13 @@
     {
       "filename": "sdk/eventhub/azure-eventhub-checkpointstoreblob/**",
       "words": [
+        "AESGCM",
+        "aesgcm",
+        "azstorage",
         "blobstoragecs",
         "blobstoragepm",
+        "racwdxytmei",
+        "racwdxyltfmei",
         "rscc",
         "rscd",
         "rsce",
