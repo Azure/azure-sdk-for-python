@@ -14,15 +14,14 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
-    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.rest import HttpRequest, AsyncHttpResponse
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ..._operations._operations import build_confidential_ledger_certificate_get_ledger_identity_request
-from .._vendor import ConfidentialLedgerCertificateClientMixinABC
+from ..._operations._operations import build_get_ledger_identity_request
+from .._vendor import MixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -33,9 +32,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class ConfidentialLedgerCertificateClientOperationsMixin(  # pylint: disable=name-too-long
-    ConfidentialLedgerCertificateClientMixinABC
-):
+class ConfidentialLedgerCertificateClientOperationsMixin(MixinABC):  # pylint: disable=name-too-long
     @distributed_trace_async
     async def get_ledger_identity(self, ledger_id: str, **kwargs: Any) -> JSON:
         """Gets identity information for a Confidential Ledger instance.
@@ -53,25 +50,20 @@ class ConfidentialLedgerCertificateClientOperationsMixin(  # pylint: disable=nam
 
                 # response body for status code(s): 200
                 response == {
-                    "ledgerTlsCertificate": "str",  # PEM-encoded certificate used for TLS by the
+                    "ledgerId": "str",  # Optional. Id for the ledger.
+                    "ledgerTlsCertificate": "str"  # PEM-encoded certificate used for TLS by the
                       Confidential Ledger. Required.
-                    "ledgerId": "str"  # Optional. Id for the ledger.
                 }
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_confidential_ledger_certificate_get_ledger_identity_request(
+        request = build_get_ledger_identity_request(
             ledger_id=ledger_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -82,18 +74,15 @@ class ConfidentialLedgerCertificateClientOperationsMixin(  # pylint: disable=nam
                 "self._config.certificate_endpoint", self._config.certificate_endpoint, "str", skip_quote=True
             ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 

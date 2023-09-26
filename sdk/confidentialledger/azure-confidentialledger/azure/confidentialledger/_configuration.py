@@ -14,9 +14,7 @@ from azure.core.pipeline import policies
 from ._version import VERSION
 
 
-class ConfidentialLedgerClientConfiguration(  # pylint: disable=too-many-instance-attributes,name-too-long
-    Configuration
-):
+class ConfidentialLedgerClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for ConfidentialLedgerClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -32,7 +30,7 @@ class ConfidentialLedgerClientConfiguration(  # pylint: disable=too-many-instanc
 
     def __init__(self, ledger_endpoint: str, **kwargs: Any) -> None:
         super(ConfidentialLedgerClientConfiguration, self).__init__(**kwargs)
-        api_version: str = kwargs.pop("api_version", "2022-05-13")
+        api_version = kwargs.pop("api_version", "2022-05-13")  # type: str
 
         if ledger_endpoint is None:
             raise ValueError("Parameter 'ledger_endpoint' must not be None.")
@@ -42,7 +40,10 @@ class ConfidentialLedgerClientConfiguration(  # pylint: disable=too-many-instanc
         kwargs.setdefault("sdk_moniker", "confidentialledger/{}".format(VERSION))
         self._configure(**kwargs)
 
-    def _configure(self, **kwargs: Any) -> None:
+    def _configure(
+        self, **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)

@@ -11,12 +11,10 @@ from typing import Any
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
-from .._version import VERSION
+from ..._version import VERSION
 
 
-class ConfidentialLedgerCertificateClientConfiguration(  # pylint: disable=too-many-instance-attributes,name-too-long
-    Configuration
-):
+class ConfidentialLedgerCertificateClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for ConfidentialLedgerCertificateClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -32,7 +30,7 @@ class ConfidentialLedgerCertificateClientConfiguration(  # pylint: disable=too-m
 
     def __init__(self, certificate_endpoint: str, **kwargs: Any) -> None:
         super(ConfidentialLedgerCertificateClientConfiguration, self).__init__(**kwargs)
-        api_version: str = kwargs.pop("api_version", "2022-05-13")
+        api_version = kwargs.pop("api_version", "2022-05-13")  # type: str
 
         if certificate_endpoint is None:
             raise ValueError("Parameter 'certificate_endpoint' must not be None.")

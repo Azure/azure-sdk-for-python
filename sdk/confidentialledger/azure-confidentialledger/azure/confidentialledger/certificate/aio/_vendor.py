@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .._serialization import Deserializer, Serializer
 
 
-class ConfidentialLedgerCertificateClientMixinABC(ABC):  # pylint: disable=name-too-long
+class MixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
 
     _client: "AsyncPipelineClient"

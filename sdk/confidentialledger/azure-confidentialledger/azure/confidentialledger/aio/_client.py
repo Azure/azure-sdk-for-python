@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable
+from typing import Any, Awaitable, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -15,6 +15,10 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from .._serialization import Deserializer, Serializer
 from ._configuration import ConfidentialLedgerClientConfiguration
 from ._operations import ConfidentialLedgerClientOperationsMixin
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from typing import Dict
 
 
 class ConfidentialLedgerClient(
@@ -36,7 +40,7 @@ class ConfidentialLedgerClient(
     ) -> None:
         _endpoint = "{ledgerEndpoint}"
         self._config = ConfidentialLedgerClientConfiguration(ledger_endpoint=ledger_endpoint, **kwargs)
-        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -77,5 +81,5 @@ class ConfidentialLedgerClient(
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details: Any) -> None:
+    async def __aexit__(self, *exc_details) -> None:
         await self._client.__aexit__(*exc_details)
