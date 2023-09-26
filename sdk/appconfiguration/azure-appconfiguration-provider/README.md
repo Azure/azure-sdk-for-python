@@ -102,7 +102,7 @@ config.refresh()
 
 Once the provider is refreshed, the configurations can be accessed as normal. And if any changes have been made it will be updated with the latest values. If the `refresh_interval` hasn't passed since the last refresh check, the provider will not check for changes.
 
-For additional info check out [Dynamic Refresh](https://learn.microsoft.com/en-us/azure/azure-app-configuration/enable-dynamic-configuration-python) on MS Learn.
+For additional info check out [Dynamic Refresh](https://learn.microsoft.com/azure/azure-app-configuration/enable-dynamic-configuration-python) on MS Learn.
 
 ### Trimming Keys
 
