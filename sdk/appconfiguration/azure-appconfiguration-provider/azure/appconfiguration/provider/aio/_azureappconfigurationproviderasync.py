@@ -70,14 +70,14 @@ async def load(
 
     :param str endpoint: Endpoint for App Configuration resource.
     :param credential: Credential for App Configuration resource.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword selects: List of setting selectors to filter configuration settings
     :paramtype selects: Optional[List[~azure.appconfiguration.provider.SettingSelector]]
     :keyword trim_prefixes: List of prefixes to trim from configuration keys
     :paramtype trim_prefixes: Optional[List[str]]
     :keyword keyvault_credential: A credential for authenticating with the key vault. This is optional if secret_clients
      is provided.
-    :paramtype keyvault_credential: ~azure.core.credentials.TokenCredential
+    :paramtype keyvault_credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword keyvault_client_configs: A Mapping of SecretClient endpoints to client configurations from
      azure-keyvault-secrets. This is optional if credential is provided. If a credential isn't provided a credential
      will need to be in each set for each.
@@ -117,7 +117,7 @@ async def load(
     :paramtype trim_prefixes: Optional[List[str]]
     :keyword keyvault_credential: A credential for authenticating with the key vault. This is optional if secret_clients
      is provided.
-    :paramtype keyvault_credential: ~azure.core.credentials.TokenCredential
+    :paramtype keyvault_credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword keyvault_client_configs: A Mapping of SecretClient endpoints to client configurations from
      azure-keyvault-secrets. This is optional if credential is provided. If a credential isn't provided a credential
      will need to be in each set for each.

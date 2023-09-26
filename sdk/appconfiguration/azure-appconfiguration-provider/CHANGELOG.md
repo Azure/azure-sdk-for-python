@@ -4,7 +4,7 @@
 
 ### Features Added
 
-* Added support for `keyvault_credential`, `keyvault_client_configs`, and `secret_resolver` as `kwargs` instead of useing `AzureAppConfigurationKeyVaultOptions`.
+* Added support for `keyvault_credential`, `keyvault_client_configs`, and `secret_resolver` as `kwargs` instead of using `AzureAppConfigurationKeyVaultOptions`.
 
 ### Breaking Changes
 
