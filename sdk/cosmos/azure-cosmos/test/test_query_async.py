@@ -196,9 +196,9 @@ class TestQueryAsync:
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 0
         if 'Etag' in created_collection.client_connection.last_response_headers:
-            assert created_collection.client_connection.last_response_headers['Etag'] != ''
+            assert created_collection.client_connection.last_response_headers['Etag']
         elif 'etag' in created_collection.client_connection.last_response_headers:
-            assert created_collection.client_connection.last_response_headers['etag'] != ''
+            assert created_collection.client_connection.last_response_headers['etag']
         else:
             pytest.fail("No Etag or etag found in last response headers")
 
@@ -210,9 +210,9 @@ class TestQueryAsync:
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 0
         if 'Etag' in created_collection.client_connection.last_response_headers:
-            continuation1 = created_collection.client_connection.last_response_headers['Etag'] != ''
+            continuation1 = created_collection.client_connection.last_response_headers['Etag']
         elif 'etag' in created_collection.client_connection.last_response_headers:
-            continuation1 = created_collection.client_connection.last_response_headers['etag'] != ''
+            continuation1 = created_collection.client_connection.last_response_headers['etag']
         else:
             pytest.fail("No Etag or etag found in last response headers")
         assert continuation1 != ''
@@ -228,9 +228,9 @@ class TestQueryAsync:
         assert len(iter_list) == 1
         assert iter_list[0]['id'] == 'doc1'
         if 'Etag' in created_collection.client_connection.last_response_headers:
-            continuation2 = created_collection.client_connection.last_response_headers['Etag'] != ''
+            continuation2 = created_collection.client_connection.last_response_headers['Etag']
         elif 'etag' in created_collection.client_connection.last_response_headers:
-            continuation2 = created_collection.client_connection.last_response_headers['etag'] != ''
+            continuation2 = created_collection.client_connection.last_response_headers['etag']
         else:
             pytest.fail("No Etag or etag found in last response headers")
         assert continuation2 != ''
@@ -289,9 +289,9 @@ class TestQueryAsync:
             doc = next(it)
             assert doc['id'] == expected_ids[i]
         if 'Etag' in created_collection.client_connection.last_response_headers:
-            continuation3 = created_collection.client_connection.last_response_headers['Etag'] != ''
+            continuation3 = created_collection.client_connection.last_response_headers['Etag']
         elif 'etag' in created_collection.client_connection.last_response_headers:
-            continuation3 = created_collection.client_connection.last_response_headers['etag'] != ''
+            continuation3 = created_collection.client_connection.last_response_headers['etag']
         else:
             pytest.fail("No Etag or etag found in last response headers")
 
