@@ -20,7 +20,7 @@ from azure.ai.ml._utils._experimental import experimental
 
 
 class OutboundRule(ABC):
-    """Base class for Outbound Rules, cannot be instantiated directly.
+    """Base class for Outbound Rules, cannot be instantiated directly. Please see FqdnDestination, PrivateEndpointDestination, and ServiceTagDestination objects to create outbound rules.
 
     :param name: Name of the outbound rule.
     :type name: str
@@ -207,6 +207,16 @@ class ServiceTagDestination(OutboundRule):
 
 @experimental
 class ManagedNetwork:
+    """Managed Network settings for a workspace.
+
+    :param isolation_mode: Isolation of the managed network, defaults to Disabled.
+    :type isolation_mode: str
+    :param outbound_rules: List of outbound rules for the managed network.
+    :type outbound_rules: List[~azure.ai.ml.entities.OutboundRule]
+    :param network_id: Network id for the managed network, not meant to be set by user.
+    :type network_id: str
+    """
+
     def __init__(
         self,
         isolation_mode: str = IsolationMode.DISABLED,
