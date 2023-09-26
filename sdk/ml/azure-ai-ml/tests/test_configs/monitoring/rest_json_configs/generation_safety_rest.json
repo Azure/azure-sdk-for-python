@@ -6,7 +6,7 @@
           "computeConfiguration": {
             "computeType": "ServerlessSpark",
             "instanceType": "standard_e8s_v3",
-            "runtimeVersion": "3.2",
+            "runtimeVersion": "3.3",
             "computeIdentity": {
               "computeIdentityType": "AmlToken"
             }
@@ -47,25 +47,25 @@
               ],
               "metricThresholds": [
                     {
-                        "metric": "acceptable_groundedness_score_per_instance",
+                        "metric": "AcceptableGroundednessScorePerInstance",
                         "threshold": {
                         "value": 3
                         }
                     },
                     {
-                        "metric": "aggregated_groundedness_pass_rate",
+                        "metric": "AggregatedGroundednessPassRate",
                         "threshold": {
                         "value": 0.01
                         }
                     },
                     {
-                      "metric": "acceptable_fluency_score_per_instance",
+                      "metric": "AcceptableFluencyScorePerInstance",
                       "threshold": {
                       "value": 3
                       }
                     },
                     {
-                        "metric": "aggregated_fluency_pass_rate",
+                        "metric": "AggregatedFluencyPassRate",
                         "threshold": {
                         "value": 0.02
                         }
