@@ -19,12 +19,12 @@ from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import process_storage_error, parse_length_from_content_range
 from .._deserialize import deserialize_blob_properties, get_page_ranges_result
 from .._download import process_range_and_offset, _ChunkDownloader
-from .._encryption import (
-    adjust_blob_size_for_encryption,
-    decrypt_blob,
-    is_encryption_v2,
-    parse_encryption_data
-)
+# from .._encryption import (
+#     adjust_blob_size_for_encryption,
+#     decrypt_blob,
+#     is_encryption_v2,
+#     parse_encryption_data
+# )
 
 T = TypeVar('T', bytes, str)
 
@@ -33,21 +33,21 @@ async def process_content(data, start_offset, end_offset, encryption):
     if data is None:
         raise ValueError("Response cannot be None.")
     content = data.response.body()
-    if encryption.get('key') is not None or encryption.get('resolver') is not None:
-        try:
-            return decrypt_blob(
-                encryption.get('required'),
-                encryption.get('key'),
-                encryption.get('resolver'),
-                content,
-                start_offset,
-                end_offset,
-                data.response.headers)
-        except Exception as error:
-            raise HttpResponseError(
-                message="Decryption failed.",
-                response=data.response,
-                error=error) from error
+    # if encryption.get('key') is not None or encryption.get('resolver') is not None:
+    #     try:
+    #         return decrypt_blob(
+    #             encryption.get('required'),
+    #             encryption.get('key'),
+    #             encryption.get('resolver'),
+    #             content,
+    #             start_offset,
+    #             end_offset,
+    #             data.response.headers)
+    #     except Exception as error:
+    #         raise HttpResponseError(
+    #             message="Decryption failed.",
+    #             response=data.response,
+    #             error=error) from error
     return content
 
 
@@ -262,7 +262,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         # This will return None if there is no encryption metadata or there are parsing errors.
         # That is acceptable here, the proper error will be caught and surfaced when attempting
         # to decrypt the blob.
-        self._encryption_data = parse_encryption_data(properties.metadata)
+        #self._encryption_data = parse_encryption_data(properties.metadata)
 
         # Restore cls for download
         self._request_options['cls'] = download_cls
@@ -352,7 +352,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             if self._file_size is None:
                 raise ValueError("Required Content-Range response header is missing or malformed.")
             # Remove any extra encryption data size from blob size
-            self._file_size = adjust_blob_size_for_encryption(self._file_size, self._encryption_data)
+            #self._file_size = adjust_blob_size_for_encryption(self._file_size, self._encryption_data)
 
             if self._end_range is not None:
                 # Use the length unless it is over the end of the file

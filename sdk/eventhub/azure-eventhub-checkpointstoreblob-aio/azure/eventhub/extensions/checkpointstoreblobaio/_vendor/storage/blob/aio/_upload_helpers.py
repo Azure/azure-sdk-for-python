@@ -23,15 +23,15 @@ from .._generated.models import (
     AppendPositionAccessConditions,
     ModifiedAccessConditions,
 )
-from .._encryption import (
-    GCMBlobEncryptionStream,
-    encrypt_blob,
-    get_adjusted_upload_size,
-    get_blob_encryptor_and_padder,
-    generate_blob_encryption_data,
-    _ENCRYPTION_PROTOCOL_V1,
-    _ENCRYPTION_PROTOCOL_V2
-)
+# from .._encryption import (
+#     GCMBlobEncryptionStream,
+#     encrypt_blob,
+#     get_adjusted_upload_size,
+#     get_blob_encryptor_and_padder,
+#     generate_blob_encryption_data,
+#     _ENCRYPTION_PROTOCOL_V1,
+#     _ENCRYPTION_PROTOCOL_V2
+# )
 from .._upload_helpers import _convert_mod_error, _any_conditions
 
 if TYPE_CHECKING:
@@ -54,8 +54,8 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
         if not overwrite and not _any_conditions(**kwargs):
             kwargs['modified_access_conditions'].if_none_match = '*'
         adjusted_count = length
-        if (encryption_options.get('key') is not None) and (adjusted_count is not None):
-            adjusted_count = get_adjusted_upload_size(adjusted_count, encryption_options['version'])
+        # if (encryption_options.get('key') is not None) and (adjusted_count is not None):
+        #     adjusted_count = get_adjusted_upload_size(adjusted_count, encryption_options['version'])
         blob_headers = kwargs.pop('blob_headers', None)
         tier = kwargs.pop('standard_blob_tier', None)
         blob_tags_string = kwargs.pop('blob_tags_string', None)
@@ -76,9 +76,9 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
                     raise TypeError('Blob data should be of type bytes.')
             except AttributeError:
                 pass
-            if encryption_options.get('key'):
-                encryption_data, data = encrypt_blob(data, encryption_options['key'], encryption_options['version'])
-                headers['x-ms-meta-encryptiondata'] = encryption_data
+            # if encryption_options.get('key'):
+            #     encryption_data, data = encrypt_blob(data, encryption_options['key'], encryption_options['version'])
+            #     headers['x-ms-meta-encryptiondata'] = encryption_data
             response = await client.upload(
                 body=data,
                 content_length=adjusted_count,
@@ -109,21 +109,21 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
         if use_original_upload_path:
             total_size = length
             encryptor, padder = None, None
-            if encryption_options and encryption_options.get('key'):
-                cek, iv, encryption_data = generate_blob_encryption_data(
-                    encryption_options['key'],
-                    encryption_options['version'])
-                headers['x-ms-meta-encryptiondata'] = encryption_data
+            # if encryption_options and encryption_options.get('key'):
+            #     cek, iv, encryption_data = generate_blob_encryption_data(
+            #         encryption_options['key'],
+            #         encryption_options['version'])
+            #     headers['x-ms-meta-encryptiondata'] = encryption_data
 
-                if encryption_options['version'] == _ENCRYPTION_PROTOCOL_V1:
-                    encryptor, padder = get_blob_encryptor_and_padder(cek, iv, True)
+            #     if encryption_options['version'] == _ENCRYPTION_PROTOCOL_V1:
+            #         encryptor, padder = get_blob_encryptor_and_padder(cek, iv, True)
 
-                # Adjust total_size for encryption V2
-                if encryption_options['version'] == _ENCRYPTION_PROTOCOL_V2:
-                    # Adjust total_size for encryption V2
-                    total_size = adjusted_count
-                    # V2 wraps the data stream with an encryption stream
-                    stream = GCMBlobEncryptionStream(cek, stream)
+            #     # Adjust total_size for encryption V2
+            #     if encryption_options['version'] == _ENCRYPTION_PROTOCOL_V2:
+            #         # Adjust total_size for encryption V2
+            #         total_size = adjusted_count
+            #         # V2 wraps the data stream with an encryption stream
+            #         stream = GCMBlobEncryptionStream(cek, stream)
 
             block_ids = await upload_data_chunks(
                 service=client,
@@ -203,11 +203,11 @@ async def upload_page_blob(
             except AttributeError:
                 tier = premium_page_blob_tier
 
-        if encryption_options and encryption_options.get('key'):
-            cek, iv, encryption_data = generate_blob_encryption_data(
-                encryption_options['key'],
-                encryption_options['version'])
-            headers['x-ms-meta-encryptiondata'] = encryption_data
+        # if encryption_options and encryption_options.get('key'):
+        #     cek, iv, encryption_data = generate_blob_encryption_data(
+        #         encryption_options['key'],
+        #         encryption_options['version'])
+        #     headers['x-ms-meta-encryptiondata'] = encryption_data
 
         blob_tags_string = kwargs.pop('blob_tags_string', None)
         progress_hook = kwargs.pop('progress_hook', None)
@@ -225,11 +225,11 @@ async def upload_page_blob(
         if length == 0:
             return response
 
-        if encryption_options and encryption_options.get('key'):
-            if encryption_options['version'] == _ENCRYPTION_PROTOCOL_V1:
-                encryptor, padder = get_blob_encryptor_and_padder(cek, iv, False)
-                kwargs['encryptor'] = encryptor
-                kwargs['padder'] = padder
+        # if encryption_options and encryption_options.get('key'):
+        #     if encryption_options['version'] == _ENCRYPTION_PROTOCOL_V1:
+        #         encryptor, padder = get_blob_encryptor_and_padder(cek, iv, False)
+        #         kwargs['encryptor'] = encryptor
+        #         kwargs['padder'] = padder
 
         kwargs['modified_access_conditions'] = ModifiedAccessConditions(if_match=response['etag'])
         return await upload_data_chunks(
