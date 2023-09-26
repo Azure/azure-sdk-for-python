@@ -34,7 +34,7 @@ from ._serialize import (
     _parameter_filter_substitution,
     _add_entity_properties,
     _prepare_key,
-    _validate_match_headers,
+    _get_match_condition,
 )
 from ._deserialize import deserialize_iso, _return_headers_and_deserialized, _convert_to_entity, _trim_service_metadata
 from ._table_batch import TableBatchOperations, EntityType, TransactionOperationType
@@ -325,10 +325,10 @@ class TableClient(TablesBaseClient):
                 etag = entity.metadata.get("etag", None)
             except (AttributeError, TypeError):
                 pass
-        match_condition = match_condition or MatchConditions.Unconditionally
-        _validate_match_headers(etag, match_condition)
-        if match_condition == MatchConditions.Unconditionally:
-            match_condition = MatchConditions.IfPresent
+        match_condition = _get_match_condition(
+            etag=etag,
+            match_condition=match_condition or MatchConditions.Unconditionally,
+        )
 
         try:
             self._client.table.delete_entity(
@@ -412,11 +412,9 @@ class TableClient(TablesBaseClient):
                 etag = entity.metadata.get("etag", None)  # type: ignore[union-attr]
             except (AttributeError, TypeError):
                 pass
-        match_condition = match_condition or MatchConditions.Unconditionally
-        _validate_match_headers(etag, match_condition)
-        if match_condition == MatchConditions.Unconditionally:
-            match_condition = MatchConditions.IfPresent
-
+        match_condition = _get_match_condition(
+            etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
+        )
         entity = _add_entity_properties(entity)
         partition_key = entity["PartitionKey"]
         row_key = entity["RowKey"]

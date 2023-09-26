@@ -13,7 +13,7 @@ from .._table_batch import EntityType, TransactionOperationType
 from .._serialize import (
     _prepare_key,
     _add_entity_properties,
-    _validate_match_headers,
+    _get_match_condition,
 )
 from .._generated import models
 from .._generated.aio import AzureTable
@@ -238,12 +238,12 @@ class TableBatchOperations(object):
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
             try:
-                etag = entity.metadata.get("etag", None)  # type: ignore
+                etag = entity.metadata.get("etag", None)  # type: ignore[union-attr]
             except (AttributeError, TypeError):
                 pass
-        if not match_condition or match_condition == MatchConditions.Unconditionally:
-            match_condition = MatchConditions.IfPresent
-        _validate_match_headers(etag, match_condition)
+        match_condition = _get_match_condition(
+            etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
+        )
 
         entity = _add_entity_properties(entity)
         partition_key = entity["PartitionKey"]
@@ -470,12 +470,12 @@ class TableBatchOperations(object):
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
             try:
-                etag = entity.metadata.get("etag", None)  # type: ignore
+                etag = entity.metadata.get("etag", None)  # type: ignore[union-attr]
             except (AttributeError, TypeError):
                 pass
-        if not match_condition or match_condition == MatchConditions.Unconditionally:
-            match_condition = MatchConditions.IfPresent
-        _validate_match_headers(etag, match_condition)
+        match_condition = _get_match_condition(
+            etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
+        )
 
         self._batch_delete_entity(
             table=self.table_name,

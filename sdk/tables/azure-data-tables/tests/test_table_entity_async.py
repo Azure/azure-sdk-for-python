@@ -609,9 +609,14 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
             with pytest.raises(ResourceNotFoundError) as ex:
                 await self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
             assert ex.value.response.status_code == 404
-            
+
             with pytest.raises(ResourceNotFoundError) as ex:
-                await self.table.update_entity(mode=UpdateMode.REPLACE, entity=sent_entity, etag='W/"datetime\'2022-05-06T00%3A34%3A21.0093307Z\'"', match_condition=MatchConditions.IfNotModified)
+                await self.table.update_entity(
+                    mode=UpdateMode.REPLACE,
+                    entity=sent_entity,
+                    etag="W/\"datetime'2022-05-06T00%3A34%3A21.0093307Z'\"",
+                    match_condition=MatchConditions.IfNotModified,
+                )
             assert ex.value.response.status_code == 404
 
             # Assert
@@ -781,7 +786,12 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
             assert ex.value.response.status_code == 404
 
             with pytest.raises(ResourceNotFoundError) as ex:
-                await self.table.update_entity(mode=UpdateMode.MERGE, entity=sent_entity, etag='W/"datetime\'2022-05-06T00%3A34%3A21.0093307Z\'"', match_condition=MatchConditions.IfNotModified)
+                await self.table.update_entity(
+                    mode=UpdateMode.MERGE,
+                    entity=sent_entity,
+                    etag="W/\"datetime'2022-05-06T00%3A34%3A21.0093307Z'\"",
+                    match_condition=MatchConditions.IfNotModified,
+                )
             assert ex.value.response.status_code == 404
 
             # Assert
