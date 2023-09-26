@@ -1,5 +1,9 @@
 # Release History
 
+## 10.2.0b11 (2023-10-23)
+
+change log generation failed!!!
+
 ## 10.2.0b11 (2023-09-22)
 
 ### Features Added
