@@ -307,6 +307,7 @@ class TestConfigure(unittest.TestCase):
 
         configurations = {
             "connection_string": "test_cs",
+            "logger_name": "test",
         }
         _setup_logging(configurations)
 
@@ -323,7 +324,7 @@ class TestConfigure(unittest.TestCase):
         logging_handler_mock.assert_called_once_with(
             logger_provider=lp_init_mock
         )
-        get_logger_mock.assert_called_once_with()
+        get_logger_mock.assert_called_once_with("test")
         logger_mock.addHandler.assert_called_once_with(
             logging_handler_init_mock
         )
