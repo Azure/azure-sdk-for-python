@@ -85,10 +85,6 @@ from ._models import SpeechResult
 from ._models import SsmlSource
 from ._models import StartCallRecordingRequest
 from ._models import StartDialogRequest
-from ._models import StartHoldMusicRequest
-from ._models import StartTranscriptionRequest
-from ._models import StopHoldMusicRequest
-from ._models import StopTranscriptionRequest
 from ._models import TextSource
 from ._models import ToneInfo
 from ._models import TranscriptionConfiguration
@@ -96,7 +92,6 @@ from ._models import TransferCallResponse
 from ._models import TransferToParticipantRequest
 from ._models import UnmuteParticipantsRequest
 from ._models import UnmuteParticipantsResponse
-from ._models import UpdateTranscriptionDataRequest
 from ._models import UserConsent
 
 from ._enums import CallConnectionState
@@ -204,10 +199,6 @@ __all__ = [
     "SsmlSource",
     "StartCallRecordingRequest",
     "StartDialogRequest",
-    "StartHoldMusicRequest",
-    "StartTranscriptionRequest",
-    "StopHoldMusicRequest",
-    "StopTranscriptionRequest",
     "TextSource",
     "ToneInfo",
     "TranscriptionConfiguration",
@@ -215,7 +206,6 @@ __all__ = [
     "TransferToParticipantRequest",
     "UnmuteParticipantsRequest",
     "UnmuteParticipantsResponse",
-    "UpdateTranscriptionDataRequest",
     "UserConsent",
     "CallConnectionState",
     "CallLocatorKind",

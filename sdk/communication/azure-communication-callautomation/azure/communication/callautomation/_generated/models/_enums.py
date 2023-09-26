@@ -58,7 +58,6 @@ class DialogInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Determines the type of the dialog."""
 
     POWER_VIRTUAL_AGENTS = "powerVirtualAgents"
-    AZURE_OPEN_AI = "azureOpenAI"
 
 
 class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
