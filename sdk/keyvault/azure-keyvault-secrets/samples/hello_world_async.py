@@ -5,7 +5,6 @@
 import asyncio
 import datetime
 import os
-from typing import cast
 
 from azure.keyvault.secrets.aio import SecretClient
 from azure.identity.aio import DefaultAzureCredential
@@ -57,7 +56,7 @@ async def run_sample():
     # The update method can be used to update the expiry attribute of the secret. It cannot be used to update
     # the value of the secret.
     print("\n.. Update a Secret by name")
-    expires_on = cast(datetime.datetime, bank_secret.properties.expires_on + datetime.timedelta(days=365))
+    expires_on = bank_secret.properties.expires_on + datetime.timedelta(days=365)
     updated_secret_properties = await client.update_secret_properties(secret.name, expires_on=expires_on)
     print(
         f"Secret with name '{updated_secret_properties.name}' was updated on date "

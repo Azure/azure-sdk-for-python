@@ -4,7 +4,6 @@
 # ------------------------------------
 import datetime
 import os
-from typing import cast
 
 from azure.keyvault.secrets import SecretClient
 from azure.identity import DefaultAzureCredential
@@ -59,7 +58,7 @@ print(f"Secret with name '{bank_secret.name}' was found with value '{bank_secret
 # The update method can be used to update the expiry attribute of the secret. It cannot be used to update
 # the value of the secret.
 print("\n.. Update a Secret by name")
-expires = cast(datetime.datetime, bank_secret.properties.expires_on + datetime.timedelta(days=365))
+expires = bank_secret.properties.expires_on + datetime.timedelta(days=365)
 updated_secret_properties = client.update_secret_properties(secret.name, expires_on=expires)
 print(f"Secret with name '{secret.name}' was updated on date '{updated_secret_properties.updated_on}'")
 print(f"Secret with name '{secret.name}' was updated to expire on '{updated_secret_properties.expires_on}'")
