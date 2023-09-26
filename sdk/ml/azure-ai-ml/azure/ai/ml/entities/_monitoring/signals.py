@@ -981,8 +981,8 @@ class LlmRequestResponseData(RestTranslatableMixin):
         self,
         *,
         input_data: Input,
-        data_column_names: Dict[str, str] = None,
-        data_window_size: str = None,
+        data_column_names: Optional[Dict[str, str]] = None,
+        data_window_size: Optional[str] = None,
     ):
         self.input_data = input_data
         self.data_column_names = data_column_names
@@ -1036,12 +1036,12 @@ class GenerationSafetyQualitySignal(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        production_data: List[LlmRequestResponseData],
-        workspace_connection_id: str,
+        production_data: List[LlmRequestResponseData] = None,
+        workspace_connection_id: Optional[str] = None,
         metric_thresholds: GenerationSafetyQualityMonitoringMetricThreshold,
         alert_enabled: bool = True,
         properties: Optional[Dict[str, str]] = None,
-        sampling_rate: Optional[float] = None,
+        sampling_rate: float = None,
     ):
         self.type = MonitorSignalType.GENERATION_SAFETY_QUALITY
         self.production_data = production_data
