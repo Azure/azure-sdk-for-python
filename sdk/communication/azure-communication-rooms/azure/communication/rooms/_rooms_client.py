@@ -121,8 +121,8 @@ class RoomsClient(object):
                 p.communication_identifier.raw_id: {"role": p.role} for p in participants
             }
 
-        ##repeatability_request_id = uuid.uuid1()
-        ##repeatability_first_sent = datetime.utcnow()
+        repeatability_request_id = uuid.uuid1()
+        repeatability_first_sent = datetime.utcnow()
         create_room_response = self._rooms_service_client.rooms.create(
             create_room_request=create_room_request,
             ##repeatability_request_id=repeatability_request_id,
