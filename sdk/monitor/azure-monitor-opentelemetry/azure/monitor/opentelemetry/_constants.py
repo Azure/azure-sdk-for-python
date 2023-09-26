@@ -22,6 +22,7 @@ DISABLE_LOGGING_ARG = "disable_logging"
 DISABLE_METRICS_ARG = "disable_metrics"
 DISABLE_TRACING_ARG = "disable_tracing"
 DISABLED_INSTRUMENTATIONS_ARG = "disabled_instrumentations"
+LOGGER_NAME_ARG = "logger_name"
 SAMPLING_RATIO_ARG = "sampling_ratio"
 
 
