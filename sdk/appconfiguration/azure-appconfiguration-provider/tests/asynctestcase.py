@@ -39,7 +39,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             refresh_on=refresh_on,
             refresh_interval=refresh_interval,
             user_agent="SDK/Integration",
-            key_vault_credentials=keyvault_cred,
+            keyvault_credential=keyvault_cred,
             secret_resolver=secret_resolver,
         )
 
@@ -65,7 +65,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             refresh_on=refresh_on,
             refresh_interval=refresh_interval,
             user_agent="SDK/Integration",
-            key_vault_credentials=keyvault_cred,
+            keyvault_credential=keyvault_cred,
             secret_resolver=secret_resolver,
         )
 
