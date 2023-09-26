@@ -396,7 +396,7 @@ endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
 key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
 
 client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
-operations = client.list_translation_statuses()  # type: ItemPaged[TranslationStatus]
+operations = client.list_translation_statuses()
 
 for operation in operations:
     print(f"ID: {operation.id}")
