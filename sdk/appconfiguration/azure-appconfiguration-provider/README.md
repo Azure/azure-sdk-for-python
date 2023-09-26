@@ -94,7 +94,7 @@ config = load(
 )
 ```
 
-In this example the provider will be able to be checked for changes every 60 seconds, by default 30 seconds. In order to check for changes the provider's `refresh` method needs to be called.
+In this example, the sentinel key will be checked for changes no sooner than every 60 seconds. In order to check for changes, the provider's `refresh` method needs to be called.
 
 ```python
 config.refresh()
