@@ -8,8 +8,8 @@
 from typing import Any, Dict, TYPE_CHECKING
 
 from azure.core.exceptions import ResourceExistsError
-from ._shared.models import StorageErrorCode
 from ._models import QueueProperties
+from ._shared.models import StorageErrorCode
 from ._shared.response_handlers import deserialize_metadata
 
 if TYPE_CHECKING:

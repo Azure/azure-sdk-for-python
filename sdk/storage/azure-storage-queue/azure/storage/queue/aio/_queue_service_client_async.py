@@ -10,7 +10,6 @@ from typing import (
     Any, Dict, List, Optional,
     TYPE_CHECKING, Union
 )
-
 from typing_extensions import Self
 
 from azure.core.async_paging import AsyncItemPaged
@@ -28,8 +27,8 @@ from .._queue_service_client_helpers import _parse_url
 from .._serialize import get_api_version
 from .._shared.base_client import parse_connection_str, StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
-from .._shared.policies_async import ExponentialRetry
 from .._shared.models import LocationMode
+from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import process_storage_error
 
 if TYPE_CHECKING:

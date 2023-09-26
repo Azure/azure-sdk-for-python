@@ -10,13 +10,13 @@ import sys
 from typing import Any, Callable, Dict, List, Optional, overload, Tuple, TYPE_CHECKING, Union
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
-from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
+from ._shared.response_handlers import process_storage_error, return_context_and_deserialized
 from ._shared.models import DictMixin
 from ._generated.models import AccessPolicy as GenAccessPolicy
+from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
-from ._generated.models import CorsRule as GeneratedCorsRule
 
 if sys.version_info >= (3, 11):
     from typing import Self # pylint: disable=no-name-in-module, ungrouped-imports

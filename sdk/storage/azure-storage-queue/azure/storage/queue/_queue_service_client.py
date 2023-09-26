@@ -9,7 +9,6 @@ from typing import (
     Any, Dict, List, Optional,
     TYPE_CHECKING, Union
 )
-
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError

@@ -11,7 +11,6 @@ from typing import (
     Any, cast, Dict, List,
     Optional, Tuple, TYPE_CHECKING, Union
 )
-
 from typing_extensions import Self
 
 from azure.core.async_paging import AsyncItemPaged
@@ -25,7 +24,7 @@ from .._generated.aio import AzureQueueStorage
 from .._generated.models import QueueMessage as GenQueueMessage, SignedIdentifier
 from .._message_encoding import NoDecodePolicy, NoEncodePolicy
 from .._models import AccessPolicy, QueueMessage
-from .._queue_client_helpers import _parse_url, _format_url_helper, _from_queue_url_helper
+from .._queue_client_helpers import _format_url_helper, _from_queue_url_helper, _parse_url
 from .._serialize import get_api_version
 from .._shared.base_client import parse_connection_str, StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin

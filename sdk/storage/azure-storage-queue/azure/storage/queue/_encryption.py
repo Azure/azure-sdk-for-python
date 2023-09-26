@@ -5,8 +5,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import os
 import math
+import os
 import sys
 import warnings
 from collections import OrderedDict
@@ -29,7 +29,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.utils import CaseInsensitiveDict
 
 from ._version import VERSION
-from ._shared import encode_base64, decode_base64_to_bytes
+from ._shared import decode_base64_to_bytes, encode_base64
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse

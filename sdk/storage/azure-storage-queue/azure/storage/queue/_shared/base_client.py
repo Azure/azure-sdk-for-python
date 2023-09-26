@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import logging
 import uuid
-from typing import (  # pylint: disable=unused-import
+from typing import (
     Any,
     Dict,
     Iterator,
@@ -18,13 +18,13 @@ from typing import (  # pylint: disable=unused-import
 try:
     from urllib.parse import parse_qs, quote
 except ImportError:
-    from urlparse import parse_qs  # type: ignore
-    from urllib2 import quote  # type: ignore
+    from urlparse import parse_qs # type: ignore [no-redef]
+    from urllib2 import quote # type: ignore [no-redef]
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import RequestsTransport, HttpTransport  # pylint: disable=non-abstract-transport-import, no-name-in-module
+from azure.core.pipeline.transport import HttpTransport, RequestsTransport  # pylint: disable=non-abstract-transport-import, no-name-in-module
 from azure.core.pipeline.policies import (
     AzureSasCredentialPolicy,
     BearerTokenCredentialPolicy,
@@ -36,11 +36,9 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
 )
 
+from .authentication import SharedKeyCredentialPolicy
 from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, SERVICE_HOST_BASE, STORAGE_OAUTH_SCOPE
 from .models import LocationMode, StorageConfiguration
-from .authentication import SharedKeyCredentialPolicy
-from .shared_access_signature import QueryStringConstants
-from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
 from .policies import (
     ExponentialRetry,
     QueueMessagePolicy,
@@ -51,8 +49,10 @@ from .policies import (
     StorageRequestHook,
     StorageResponseHook,
 )
+from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
+from .response_handlers import PartialBatchErrorException, process_storage_error
+from .shared_access_signature import QueryStringConstants
 from .._version import VERSION
-from .response_handlers import process_storage_error, PartialBatchErrorException
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -268,7 +268,6 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         config.transport = transport  # type: ignore
         return config, Pipeline(transport, policies=policies)
 
-    # Given a series of request, do a Storage batch call.
     def _batch_send(
         self,
         *reqs: "HttpRequest",
@@ -432,8 +431,7 @@ def parse_connection_str(
 
 
 
-def create_configuration(**kwargs):
-    # type: (**Any) -> StorageConfiguration
+def create_configuration(**kwargs: Any) -> StorageConfiguration:
      # Backwards compatibility if someone is not passing sdk_moniker
     if not kwargs.get("sdk_moniker"):
         kwargs["sdk_moniker"] = f"storage-{kwargs.pop('storage_sdk')}/{VERSION}"

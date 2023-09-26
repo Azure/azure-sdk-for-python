@@ -6,12 +6,12 @@
 # pylint: disable=invalid-overridden-method
 
 import asyncio
-import random
 import logging
-from typing import Any, TYPE_CHECKING
+import random
+from typing import Any, Dict, TYPE_CHECKING
 
-from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, AsyncHTTPPolicy
 from azure.core.exceptions import AzureError
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, AsyncHTTPPolicy
 
 from .authentication import StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE, STORAGE_OAUTH_SCOPE
@@ -45,8 +45,7 @@ class AsyncStorageResponseHook(AsyncHTTPPolicy):
         self._response_callback = kwargs.get('raw_response_hook')
         super(AsyncStorageResponseHook, self).__init__()
 
-    async def send(self, request):
-        # type: (PipelineRequest) -> PipelineResponse
+    async def send(self, request: "PipelineRequest") -> "PipelineResponse":
         # Values could be 0
         data_stream_total = request.context.get('data_stream_total')
         if data_stream_total is None:
@@ -145,9 +144,12 @@ class AsyncStorageRetryPolicy(StorageRetryPolicy):
 class ExponentialRetry(AsyncStorageRetryPolicy):
     """Exponential retry."""
 
-    def __init__(self, initial_backoff=15, increment_base=3, retry_total=3,
-                 retry_to_secondary=False, random_jitter_range=3, **kwargs):
-        '''
+    def __init__(
+        self, initial_backoff: int = 15,
+        increment_base: int = 3, retry_total: int = 3,
+        retry_to_secondary: bool = False, random_jitter_range: int = 3, **kwargs
+    ) -> None:
+        """
         Constructs an Exponential retry object. The initial_backoff is used for
         the first retry. Subsequent retries are retried after initial_backoff +
         increment_power^retry_count seconds. For example, by default the first retry
@@ -168,14 +170,14 @@ class ExponentialRetry(AsyncStorageRetryPolicy):
         :param int random_jitter_range:
             A number in seconds which indicates a range to jitter/randomize for the back-off interval.
             For example, a random_jitter_range of 3 results in the back-off interval x to vary between x+3 and x-3.
-        '''
+        """
         self.initial_backoff = initial_backoff
         self.increment_base = increment_base
         self.random_jitter_range = random_jitter_range
         super(ExponentialRetry, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings):
+    def get_backoff_time(self, settings: Dict[str, Any]) -> float:
         """
         Calculates how long to sleep before retrying.
 
@@ -195,7 +197,13 @@ class ExponentialRetry(AsyncStorageRetryPolicy):
 class LinearRetry(AsyncStorageRetryPolicy):
     """Linear retry."""
 
-    def __init__(self, backoff=15, retry_total=3, retry_to_secondary=False, random_jitter_range=3, **kwargs):
+    def __init__(
+        self, backoff: int = 15,
+        retry_total: int = 3,
+        retry_to_secondary: bool = False,
+        random_jitter_range: int = 3,
+        **kwargs: Any
+    ) -> None:
         """
         Constructs a Linear retry object.
 
@@ -216,7 +224,7 @@ class LinearRetry(AsyncStorageRetryPolicy):
         super(LinearRetry, self).__init__(
             retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings):
+    def get_backoff_time(self, settings: Dict[str, Any]) -> float:
         """
         Calculates how long to sleep before retrying.
 
@@ -238,12 +246,10 @@ class LinearRetry(AsyncStorageRetryPolicy):
 class AsyncStorageBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
     """ Custom Bearer token credential policy for following Storage Bearer challenges """
 
-    def __init__(self, credential, **kwargs):
-        # type: (AsyncTokenCredential, **Any) -> None
+    def __init__(self, credential: AsyncTokenCredential, **kwargs: Any) -> None:
         super(AsyncStorageBearerTokenCredentialPolicy, self).__init__(credential, STORAGE_OAUTH_SCOPE, **kwargs)
 
-    async def on_challenge(self, request, response):
-        # type: (PipelineRequest, PipelineResponse) -> bool
+    async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
         try:
             auth_header = response.http_response.headers.get("WWW-Authenticate")
             challenge = StorageHttpChallenge(auth_header)

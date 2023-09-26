@@ -5,16 +5,16 @@
 # --------------------------------------------------------------------------
 # mypy: disable-error-code="attr-defined"
 
-from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List, Type, Tuple,
-    TYPE_CHECKING
+from typing import (
+    Any, Dict, Iterator, Optional,
+    Tuple, TYPE_CHECKING, Union
 )
 import logging
 
-from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
-from azure.core.pipeline import AsyncPipeline
 from azure.core.async_paging import AsyncList
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import HttpResponseError
+from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
     AsyncBearerTokenCredentialPolicy,
     AsyncRedirectPolicy,
@@ -25,9 +25,10 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.transport import AsyncHttpTransport
 
-from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, STORAGE_OAUTH_SCOPE
 from .authentication import SharedKeyCredentialPolicy
 from .base_client import create_configuration
+from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, STORAGE_OAUTH_SCOPE
+from .models import StorageConfiguration
 from .policies import (
     QueueMessagePolicy,
     StorageContentValidation,
@@ -36,14 +37,12 @@ from .policies import (
     StorageRequestHook,
 )
 from .policies_async import AsyncStorageResponseHook
-from .models import StorageConfiguration
-
-from .response_handlers import process_storage_error, PartialBatchErrorException
+from .response_handlers import PartialBatchErrorException, process_storage_error
 
 if TYPE_CHECKING:
-    from azure.core.pipeline.transport import HttpRequest
     from azure.core.credentials import TokenCredential
     from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -116,12 +115,17 @@ class AsyncStorageAccountHostsMixin(object):
         config.transport = transport #type: ignore
         return config, AsyncPipeline(transport, policies=policies) #type: ignore
 
-    # Given a series of request, do a Storage batch call.
     async def _batch_send(
         self,
-        *reqs,  # type: HttpRequest
-        **kwargs
-    ):
+        *reqs: "HttpRequest",
+        **kwargs: Any
+    ) -> AsyncList["HttpResponse"]:
+        """Given a series of request, do a Storage batch call.
+
+        :param HttpRequest reqs: A collection of HttpRequest objects.
+        :returns: An AsyncList of HttpResponse objects.
+        :rtype: AsyncList[HttpResponse]
+        """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
         client = self._client

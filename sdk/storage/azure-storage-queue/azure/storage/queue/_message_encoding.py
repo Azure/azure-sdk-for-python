@@ -4,12 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from base64 import b64encode, b64decode
+from base64 import b64decode, b64encode
 from typing import Any, Callable, Dict, Iterable, Optional, TYPE_CHECKING, Union
 
 from azure.core.exceptions import DecodeError
 
-from ._encryption import decrypt_queue_message, encrypt_queue_message, _ENCRYPTION_PROTOCOL_V1, KeyEncryptionKey
+from ._encryption import decrypt_queue_message, encrypt_queue_message, KeyEncryptionKey, _ENCRYPTION_PROTOCOL_V1
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
@@ -58,7 +58,14 @@ class MessageEncodePolicy(object):
 
 class MessageDecodePolicy(object):
 
-    def __init__(self):
+    require_encryption: Optional[bool] = None
+    """Indicates whether encryption is required or not."""
+    key_encryption_key: Optional[KeyEncryptionKey] = None
+    """The user-provided key-encryption-key."""
+    resolver: Optional[Callable[[str], bytes]] = None
+    """The user-provided key resolver."""
+
+    def __init__(self) -> None:
         self.require_encryption = False
         self.key_encryption_key = None
         self.resolver = None
@@ -159,9 +166,7 @@ class NoEncodePolicy(MessageEncodePolicy):
 
     def encode(self, content: str) -> str:
         if isinstance(content, bytes):
-            raise TypeError(
-                "Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes."
-            )
+            raise TypeError("Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes.")
         return content
 
 

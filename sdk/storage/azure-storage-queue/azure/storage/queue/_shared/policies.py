@@ -6,29 +6,30 @@
 
 import base64
 import hashlib
-import re
-import random
-from time import time
-from io import SEEK_SET, UnsupportedOperation
 import logging
+import random
+import re
 import uuid
-from typing import Any, Dict, Optional, Union, TYPE_CHECKING
+from io import SEEK_SET, UnsupportedOperation
+from time import time
+from typing import Any, Dict, Optional, TYPE_CHECKING, Union
 from wsgiref.handlers import format_date_time
 try:
     from urllib.parse import (
-        urlparse,
         parse_qsl,
-        urlunparse,
         urlencode,
+        urlparse,
+        urlunparse,
     )
 except ImportError:
     from urllib import urlencode # type: ignore
     from urlparse import ( # type: ignore
-        urlparse,
         parse_qsl,
-        urlunparse,
+        urlparse,
+        urlunparse
     )
 
+from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
     HeadersPolicy,
@@ -37,7 +38,6 @@ from azure.core.pipeline.policies import (
     RequestHistory,
     SansIOHTTPPolicy,
 )
-from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
 
 from .authentication import StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE, STORAGE_OAUTH_SCOPE
@@ -134,7 +134,7 @@ class QueueMessagePolicy(SansIOHTTPPolicy):
 class StorageHeadersPolicy(HeadersPolicy):
     request_id_header_name = 'x-ms-client-request-id'
 
-    def on_request(self, request: "PipelineRequest")-> None:
+    def on_request(self, request: "PipelineRequest") -> None:
         super(StorageHeadersPolicy, self).on_request(request)
         current_time = format_date_time(time())
         request.http_request.headers['x-ms-date'] = current_time
@@ -349,7 +349,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
     """
     header_name = 'Content-MD5'
 
-    def __init__(self, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         super(StorageContentValidation, self).__init__()
 
     @staticmethod

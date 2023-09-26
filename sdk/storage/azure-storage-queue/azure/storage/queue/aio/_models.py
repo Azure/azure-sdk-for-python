@@ -7,12 +7,11 @@
 # pylint: disable=super-init-not-called
 
 from typing import Any, Callable, List, Optional, Tuple
+
 from azure.core.async_paging import AsyncPageIterator
 from azure.core.exceptions import HttpResponseError
-from .._shared.response_handlers import (
-    process_storage_error,
-    return_context_and_deserialized)
 from .._models import QueueMessage, QueueProperties
+from .._shared.response_handlers import process_storage_error, return_context_and_deserialized
 
 
 class MessagesPaged(AsyncPageIterator):
