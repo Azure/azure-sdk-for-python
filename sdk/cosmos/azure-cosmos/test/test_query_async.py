@@ -422,7 +422,7 @@ class TestQueryAsync:
         assert query_execution_info.get_order_by() == order_by
         assert query_execution_info.has_aggregates() == (len(aggregate) > 0)
         assert query_execution_info.get_aggregates() == aggregate
-        assert query_execution_info.has_select_value(), select_value
+        assert query_execution_info.has_select_value() == select_value
         assert query_execution_info.has_offset() == (offset is not None)
         assert query_execution_info.get_offset() == offset
         assert query_execution_info.has_limit() == (limit is not None)
