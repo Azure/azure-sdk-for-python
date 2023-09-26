@@ -211,13 +211,14 @@ class UserAgentPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
         self.overwrite: bool = kwargs.pop("user_agent_overwrite", False)
         self.use_env: bool = kwargs.pop("user_agent_use_env", True)
         application_id: Optional[str] = kwargs.pop("user_agent", None)
-        sdk_moniker: str = kwargs.pop("sdk_moniker", "core/{}".format(azcore_version))
+        core_version = "core/{}".format(azcore_version)
+        sdk_moniker: str = kwargs.pop("sdk_moniker", core_version)
 
         if base_user_agent:
             self._user_agent = base_user_agent
         else:
-            self._user_agent = "azsdk-python-{} Python/{} ({})".format(
-                sdk_moniker, platform.python_version(), platform.platform()
+            self._user_agent = "azsdk-python-{} {} Python/{} ({})".format(
+                sdk_moniker, core_version, platform.python_version(), platform.platform()
             )
 
         if application_id:

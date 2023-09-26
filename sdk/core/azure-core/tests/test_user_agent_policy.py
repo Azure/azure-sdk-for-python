@@ -20,7 +20,7 @@ def test_user_agent_policy(http_request):
     assert user_agent._user_agent == "foo"
 
     user_agent = UserAgentPolicy(sdk_moniker="foosdk/1.0.0")
-    assert user_agent._user_agent.startswith("azsdk-python-foosdk/1.0.0 Python")
+    assert user_agent._user_agent.startswith("azsdk-python-foosdk/1.0.0 core/")
 
     user_agent = UserAgentPolicy(base_user_agent="foo", user_agent="bar", user_agent_use_env=False)
     assert user_agent._user_agent == "bar foo"
