@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,no-value-for-parameter
 
 import os
 from contextlib import contextmanager
@@ -143,7 +143,7 @@ class DataOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START data_operations_list]
                 :end-before: [END data_operations_list]
                 :language: python
@@ -236,7 +236,7 @@ class DataOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START data_operations_get]
                 :end-before: [END data_operations_get]
                 :language: python
@@ -289,7 +289,7 @@ class DataOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START data_operations_create_or_update]
                 :end-before: [END data_operations_create_or_update]
                 :language: python
@@ -429,7 +429,7 @@ class DataOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START data_operations_import_data]
                 :end-before: [END data_operations_import_data]
                 :language: python
@@ -456,7 +456,10 @@ class DataOperations(_ScopeDependentOperations):
             source=data_import.source,
             outputs={
                 "sink": Output(
-                    type=data_import.type, path=data_import.path, name=data_import.name, version=data_import.version
+                    type=data_import.type,
+                    path=data_import.path,
+                    name=data_import.name,
+                    version=data_import.version,
                 )
             },
         )
@@ -494,7 +497,7 @@ class DataOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START data_operations_list_materialization_status]
                 :end-before: [END data_operations_list_materialization_status]
                 :language: python
@@ -503,7 +506,10 @@ class DataOperations(_ScopeDependentOperations):
         """
 
         return self._all_operations.all_operations[AzureMLResourceType.JOB].list(
-            job_type="Pipeline", asset_name=name, list_view_type=list_view_type, **kwargs
+            job_type="Pipeline",
+            asset_name=name,
+            list_view_type=list_view_type,
+            **kwargs,
         )
 
     @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
@@ -565,7 +571,8 @@ class DataOperations(_ScopeDependentOperations):
             return download_mltable_metadata_schema(mltable_schema_url, self._requests_pipeline)
         except Exception:  # pylint: disable=broad-except
             module_logger.info(
-                'Failed to download MLTable metadata jsonschema from "%s", skipping validation', mltable_schema_url
+                'Failed to download MLTable metadata jsonschema from "%s", skipping validation',
+                mltable_schema_url,
             )
             return None
 
@@ -589,7 +596,7 @@ class DataOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START data_operations_archive]
                 :end-before: [END data_operations_archive]
                 :language: python
@@ -627,7 +634,7 @@ class DataOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START data_operations_restore]
                 :end-before: [END data_operations_restore]
                 :language: python
@@ -655,7 +662,11 @@ class DataOperations(_ScopeDependentOperations):
         :rtype: Data
         """
         latest_version = _get_latest_version_from_container(
-            name, self._container_operation, self._resource_group_name, self._workspace_name, self._registry_name
+            name,
+            self._container_operation,
+            self._resource_group_name,
+            self._workspace_name,
+            self._registry_name,
         )
         return self.get(name, version=latest_version)
 
@@ -688,7 +699,7 @@ class DataOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START data_operations_share]
                 :end-before: [END data_operations_share]
                 :language: python
@@ -698,7 +709,9 @@ class DataOperations(_ScopeDependentOperations):
 
         #  Get workspace info to get workspace GUID
         workspace = self._service_client.workspaces.get(
-            resource_group_name=self._resource_group_name, workspace_name=self._workspace_name, **kwargs
+            resource_group_name=self._resource_group_name,
+            workspace_name=self._workspace_name,
+            **kwargs,
         )
         workspace_guid = workspace.workspace_id
         workspace_location = workspace.location

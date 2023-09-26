@@ -7,8 +7,12 @@ from typing import Tuple
 
 from typing_extensions import Literal
 
-from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import AzureMachineLearningWorkspaces
+from azure.ai.ml._restclient.registry_discovery import (
+    AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery,
+)
+from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
+    AzureMachineLearningWorkspaces,
+)
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
     BlobReferenceSASRequestDto,
     TemporaryDataReferenceRequestDto,
@@ -40,12 +44,17 @@ class RegistryDiscovery:
         self._resource_group = None
         self._subscription_id = None
         self._base_url = None
+        self.workspace_region = kwargs.get("workspace_location", None)
 
     def _get_registry_details(self) -> str:
         response = self.service_client_registry_discovery_client.registry_management_non_workspace.registry_management_non_workspace(  # pylint: disable=line-too-long
             self.registry_name
         )
-        self._base_url = f"{response.primary_region_resource_provider_uri}{MFE_PATH_PREFIX}"
+        if self.workspace_region:
+            _check_region_fqdn(self.workspace_region, response)
+            self._base_url = f"https://cert-{self.workspace_region}.experiments.azureml.net/{MFE_PATH_PREFIX}"
+        else:
+            self._base_url = f"{response.primary_region_resource_provider_uri}{MFE_PATH_PREFIX}"
         self._subscription_id = response.subscription_id
         self._resource_group = response.resource_group
 
@@ -175,20 +184,30 @@ def get_storage_details_for_registry_assets(
         blob_uri=uri,
     )
     sas_uri = service_client.data_references.get_blob_reference_sas(
-        name=asset_name, version=asset_version, resource_group_name=rg_name, registry_name=reg_name, body=body
+        name=asset_name,
+        version=asset_version,
+        resource_group_name=rg_name,
+        registry_name=reg_name,
+        body=body,
     )
     if sas_uri.blob_reference_for_consumption.credential.credential_type == "no_credentials":
         return sas_uri.blob_reference_for_consumption.blob_uri, "NoCredentials"
 
-    return sas_uri.blob_reference_for_consumption.credential.additional_properties["sasUri"], "SAS"
+    return (
+        sas_uri.blob_reference_for_consumption.credential.additional_properties["sasUri"],
+        "SAS",
+    )
 
 
-def get_registry_client(credential, registry_name, **kwargs):
+def get_registry_client(credential, registry_name, workspace_location, **kwargs):
     base_url = _get_registry_discovery_endpoint_from_metadata(_get_default_cloud_name())
     kwargs.pop("base_url", None)
+
     service_client_registry_discovery_client = ServiceClientRegistryDiscovery(
         credential=credential, base_url=base_url, **kwargs
     )
+    workspace_kwargs = {"workspace_location": workspace_location}
+    kwargs.update(workspace_kwargs)
     registry_discovery = RegistryDiscovery(
         credential, registry_name, service_client_registry_discovery_client, **kwargs
     )
@@ -196,3 +215,13 @@ def get_registry_client(credential, registry_name, **kwargs):
     subscription_id = registry_discovery.subscription_id
     resource_group_name = registry_discovery.resource_group
     return service_client_10_2021_dataplanepreview, resource_group_name, subscription_id
+
+
+def _check_region_fqdn(workspace_region, response):
+    if workspace_region in response.additional_properties["registryFqdns"].keys():
+        return
+    regions = list(response.additional_properties["registryFqdns"].keys())
+    raise Exception(
+        f"Workspace region {workspace_region} not supported by the \
+                    registry {response.registry_name} regions {regions}"
+    )

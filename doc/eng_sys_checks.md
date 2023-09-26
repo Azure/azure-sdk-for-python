@@ -109,6 +109,8 @@ This is the most useful skip, but the following skip variables are also supporte
   - Omit 'Analyze Dependencies' step in `analyze` job.
 - `Skip.VerifyDependencies`
   - Omit checking that a package's dependencies are on PyPI before releasing.
+- `Skip.KeywordCheck`
+  - Omit checking that a package's keywords are correctly formulated before releasing.
 
 ## The pyproject.toml
 
@@ -193,6 +195,8 @@ Analyze job in both nightly CI and pull request validation pipeline runs a set o
 
 1. Go to root of the package.
 2. Execute following command: `tox run -e pylint -c ../../../eng/tox/tox.ini --root .`
+  
+Note that the `pylint` environment is configured to run against the **earliest supported python version**. This means that users **must** have `python 3.7` installed on their machine to run this check locally.
 
 ### Bandit
 

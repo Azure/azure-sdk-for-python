@@ -135,7 +135,8 @@ class InteractiveBrowserCredential(InteractiveCredential):
                 timeout=self._timeout,
                 prompt="select_account",
                 port=port,
-                # parent_window_handle=self._parent_window_handle,
+                parent_window_handle=self._parent_window_handle,
+                enable_msa_passthrough=self._enable_msa_passthrough,
             )
         except socket.error as ex:
             raise CredentialUnavailableError(message="Couldn't start an HTTP server.") from ex

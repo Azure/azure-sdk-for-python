@@ -35,7 +35,7 @@ class OneLakeArtifact(RestTranslatableMixin, DictMixin, ABC):
     :type type: str
     """
 
-    def __init__(self, name: str, type: Optional[str] = None):
+    def __init__(self, *, name: str, type: Optional[str] = None):
         super().__init__()
         self.name = name
         self.type = type
@@ -49,7 +49,7 @@ class LakeHouseArtifact(OneLakeArtifact):
     :type artifact_name: str
     """
 
-    def __init__(self, name: str):
+    def __init__(self, *, name: str):
         super(LakeHouseArtifact, self).__init__(name=name, type="lake_house")
 
     def _to_datastore_rest_object(self) -> RestLakeHouseArtifact:

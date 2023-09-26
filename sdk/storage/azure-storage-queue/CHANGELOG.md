@@ -1,8 +1,21 @@
 # Release History
 
-## 12.7.0 (Unreleased)
+## 12.7.2 (2023-09-25)
+
+### Bugs Fixed
+- Fixed an issue where `user_agent` was being ignored on `send_message`, `receive_message`, `receive_messages`,
+`update_message`, and `peek_messages` if client was configured for encryption.
+
+## 12.7.1 (2023-09-13)
+
+### Bugs Fixed
+- Fixed breaking `KeyError: 'sdk_moniker'` in `create_configuration`.
+NOTE: This is not an exported method and therefore should not be imported/called directly.
+
+## 12.7.0 (2023-09-12)
 
 ### Features Added
+- Stable release of features from 12.7.0b1
 
 ## 12.7.0b1 (2023-08-08)
 

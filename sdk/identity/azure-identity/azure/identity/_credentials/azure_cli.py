@@ -199,7 +199,7 @@ def _run_command(command: str, timeout: int) -> str:
         # Fallback check in case the executable is not found while executing subprocess.
         if ex.returncode == 127 or ex.stderr.startswith("'az' is not recognized"):
             raise CredentialUnavailableError(message=CLI_NOT_FOUND) from ex
-        if "az login" in ex.stderr or "az account set" in ex.stderr:
+        if ("az login" in ex.stderr or "az account set" in ex.stderr) and "AADSTS" not in ex.stderr:
             raise CredentialUnavailableError(message=NOT_LOGGED_IN) from ex
 
         # return code is from the CLI -> propagate its output

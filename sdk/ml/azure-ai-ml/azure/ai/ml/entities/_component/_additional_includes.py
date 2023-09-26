@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple, Union
 
 from azure.ai.ml.constants._common import AzureDevopsArtifactsType
-from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
+from azure.ai.ml.entities._validation import MutableValidationResult, ValidationResultBuilder
 
 from ..._utils._artifact_utils import ArtifactCache
 from ..._utils._asset_utils import IgnoreFile, get_upload_files_from_folder
@@ -104,7 +104,7 @@ class AdditionalIncludes:
         )
 
     def _validate_additional_include_config(self, additional_include_config):
-        validation_result = _ValidationResultBuilder.success()
+        validation_result = ValidationResultBuilder.success()
         if (
             isinstance(additional_include_config, dict)
             and additional_include_config.get("type") == AzureDevopsArtifactsType.ARTIFACT
@@ -313,7 +313,7 @@ class AdditionalIncludes:
         :return: The validation result.
         :rtype: ~azure.ai.ml.entities._validation.MutableValidationResult
         """
-        validation_result = _ValidationResultBuilder.success()
+        validation_result = ValidationResultBuilder.success()
         include_path = self.base_path / local_path
         # if additional include has not supported characters, resolve will fail and raise OSError
         try:
@@ -356,7 +356,7 @@ class AdditionalIncludes:
         :return: The validation result.
         :rtype: ~azure.ai.ml.entities._validation.MutableValidationResult
         """
-        validation_result = _ValidationResultBuilder.success()
+        validation_result = ValidationResultBuilder.success()
         for additional_include_config in self.origin_configs:
             validation_result.merge_with(self._validate_additional_include_config(additional_include_config))
         return validation_result
@@ -410,7 +410,19 @@ class AdditionalIncludes:
                 yield self.resolved_code_path.absolute()
             return
 
-        tmp_folder_path = Path(tempfile.mkdtemp())
+        # for now, upload path of a code asset will include the folder name of the code path (name of folder or
+        # parent name of file). For example, if code path is /mnt/c/code-a, upload path will be xxx/code-a
+        # which means that the upload path will change every time as we will merge additional includes into a temp
+        # folder. To avoid this, we will copy the code path to a child folder with a fixed name under the temp folder,
+        # then the child folder will be used in upload path.
+        # This issue shouldn't impact users as there is a separate asset existence check before uploading.
+        # We still make this change as:
+        # 1. We will always need to record for twice as upload path will be changed for first time uploading
+        # 2. This will improve the stability of the code asset existence check - AssetNotChanged check in
+        #    BlobStorageClient will be a backup check
+        tmp_folder_path = Path(tempfile.mkdtemp(), "code_with_additional_includes")
+        tmp_folder_path.mkdir(parents=True, exist_ok=True)
+
         root_ignore_file = self._copy_origin_code(tmp_folder_path)
 
         # resolve additional includes

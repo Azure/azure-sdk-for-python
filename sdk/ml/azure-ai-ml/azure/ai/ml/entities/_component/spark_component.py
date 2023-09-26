@@ -82,8 +82,7 @@ class SparkComponent(
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
+        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_component_definition]
             :end-before: [END spark_component_definition]
             :language: python

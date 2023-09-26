@@ -80,7 +80,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
 
     # @monitor_with_activity(logger, "Hub.Get", ActivityType.PUBLICAPI)
     @distributed_trace
-    # pylint: disable=arguments-renamed
+    # pylint: disable=arguments-renamed, arguments-differ
     def get(self, name: str, **kwargs: Dict) -> WorkspaceHub:
         """Get a Workspace WorkspaceHub by name.
 
@@ -103,6 +103,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
     # pylint: disable=arguments-differ
     def begin_create(
         self,
+        *,
         workspace_hub: WorkspaceHub,
         update_dependent_resources: bool = False,
         **kwargs: Dict,
@@ -111,16 +112,16 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
 
         Returns the WorkspaceHub if already exists.
 
-        :param workspace_hub: WorkspaceHub definition.
-        :type workspace_hub: WorkspaceHub
-        :param update_dependent_resources: Whether to update dependent resources. Defaults to False.
-        :type update_dependent_resources: boolean
+        :keyword workspace_hub: WorkspaceHub definition.
+        :paramtype workspace_hub: WorkspaceHub
+        :keyword update_dependent_resources: Whether to update dependent resources. Defaults to False.
+        :paramtype update_dependent_resources: boolean
         :return: An instance of LROPoller that returns a WorkspaceHub.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.WorkspaceHub]
         """
 
         def get_callback():
-            return self.get(workspace_hub.name)
+            return self.get(name=workspace_hub.name)
 
         return super().begin_create(
             workspace=workspace_hub,
@@ -167,7 +168,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
     @distributed_trace
     def begin_delete(
         self, name: str, *, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs: Dict
-    ) -> LROPoller:
+    ) -> LROPoller[None]:
         """Delete a WorkspaceHub.
 
         :param name: Name of the WorkspaceHub
@@ -188,8 +189,10 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
             rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == WORKSPACE_HUB_KIND
         ):
             raise ValidationError("{0} is not a WorkspaceHub".format(name))
-        if hasattr(rest_workspace_obj, "workspace_hub_config") and hasattr(
-            rest_workspace_obj.workspace_hub_config, "additional_workspace_storage_accounts"
+        if (
+            hasattr(rest_workspace_obj, "workspace_hub_config")
+            and hasattr(rest_workspace_obj.workspace_hub_config, "additional_workspace_storage_accounts")
+            and rest_workspace_obj.workspace_hub_config.additional_workspace_storage_accounts
         ):
             for storageaccount in rest_workspace_obj.workspace_hub_config.additional_workspace_storage_accounts:
                 delete_resource_by_arm_id(

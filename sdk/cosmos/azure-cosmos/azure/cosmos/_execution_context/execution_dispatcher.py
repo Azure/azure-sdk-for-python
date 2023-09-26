@@ -154,6 +154,13 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):  # pylint: disable=
         if aggregates:
             self._endpoint = endpoint_component._QueryExecutionAggregateEndpointComponent(self._endpoint, aggregates)
 
+        distinct_type = query_execution_info.get_distinct_type()
+        if distinct_type != _DistinctType.NoneType:
+            if distinct_type == _DistinctType.Ordered:
+                self._endpoint = endpoint_component._QueryExecutionDistinctOrderedEndpointComponent(self._endpoint)
+            else:
+                self._endpoint = endpoint_component._QueryExecutionDistinctUnorderedEndpointComponent(self._endpoint)
+
         offset = query_execution_info.get_offset()
         if offset is not None:
             self._endpoint = endpoint_component._QueryExecutionOffsetEndpointComponent(self._endpoint, offset)
@@ -165,13 +172,6 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):  # pylint: disable=
         limit = query_execution_info.get_limit()
         if limit is not None:
             self._endpoint = endpoint_component._QueryExecutionTopEndpointComponent(self._endpoint, limit)
-
-        distinct_type = query_execution_info.get_distinct_type()
-        if distinct_type != _DistinctType.NoneType:
-            if distinct_type == _DistinctType.Ordered:
-                self._endpoint = endpoint_component._QueryExecutionDistinctOrderedEndpointComponent(self._endpoint)
-            else:
-                self._endpoint = endpoint_component._QueryExecutionDistinctUnorderedEndpointComponent(self._endpoint)
 
     def __next__(self):
         """Returns the next query result.

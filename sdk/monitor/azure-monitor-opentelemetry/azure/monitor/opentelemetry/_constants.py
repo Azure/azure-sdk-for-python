@@ -10,7 +10,7 @@ from os import environ
 from os.path import isdir
 from pathlib import Path
 
-from azure.monitor.opentelemetry.exporter._connection_string_parser import ( # pylint: disable=import-error
+from azure.monitor.opentelemetry.exporter._connection_string_parser import (  # pylint: disable=import-error,no-name-in-module
     ConnectionStringParser,
 )
 

@@ -29,7 +29,7 @@ async def main():
     CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
     config_setting1 = ConfigurationSetting(key="my_key1", label="my_label1")
     config_setting2 = ConfigurationSetting(key="my_key1", label="my_label2")
-    snapshot_name = uuid4()
+    snapshot_name = str(uuid4())
     async with AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING) as client:
         await client.add_configuration_setting(config_setting1)
         await client.add_configuration_setting(config_setting2)
@@ -68,7 +68,7 @@ async def main():
         print("")
 
         # [START list_snapshot_configuration_settings]
-        async for config_setting in client.list_snapshot_configuration_settings(name=snapshot_name):
+        async for config_setting in client.list_snapshot_configuration_settings(snapshot_name=snapshot_name):
             print_configuration_setting(config_setting)
         # [END list_snapshot_configuration_settings]
 

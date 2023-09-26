@@ -100,7 +100,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         for index, filter in enumerate(snapshot.filters):
             assert filter.key == expected_snapshot.filters[index].key
             assert filter.label == expected_snapshot.filters[index].label
-        assert snapshot.items_count == expected_snapshot.items_count
+        assert snapshot.item_count == expected_snapshot.item_count
         assert snapshot.name == expected_snapshot.name
         assert snapshot.retention_period == expected_snapshot.retention_period
         assert snapshot.size == expected_snapshot.size
