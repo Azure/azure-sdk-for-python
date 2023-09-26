@@ -174,7 +174,7 @@ class WorkspaceHub(Workspace):
         """Sets the workspaces associated with the hub, not meant for use by the user.
 
         :param value: List of workspace ARM ids.
-        :type workspace: List[str]
+        :type value: List[str]
         """
         self.associated_workspaces = value
 

@@ -20,7 +20,8 @@ from azure.ai.ml._utils._experimental import experimental
 
 
 class OutboundRule(ABC):
-    """Base class for Outbound Rules, cannot be instantiated directly. Please see FqdnDestination, PrivateEndpointDestination, and ServiceTagDestination objects to create outbound rules.
+    """Base class for Outbound Rules, cannot be instantiated directly. Please see FqdnDestination,
+    PrivateEndpointDestination, and ServiceTagDestination objects to create outbound rules.
 
     :param name: Name of the outbound rule.
     :type name: str
