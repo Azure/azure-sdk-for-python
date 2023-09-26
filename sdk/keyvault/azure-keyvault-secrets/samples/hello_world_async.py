@@ -2,9 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import asyncio
 import datetime
 import os
-import asyncio
+from typing import cast
+
 from azure.keyvault.secrets.aio import SecretClient
 from azure.identity.aio import DefaultAzureCredential
 
@@ -41,19 +43,21 @@ async def run_sample():
     print("\n.. Create Secret")
     expires_on = datetime.datetime.utcnow() + datetime.timedelta(days=365)
     secret = await client.set_secret("helloWorldSecretNameAsync", "helloWorldSecretValue", expires_on=expires_on)
+    assert secret.name
     print(f"Secret with name '{secret.name}' created with value '{secret.value}'")
     print(f"Secret with name '{secret.name}' expires on '{secret.properties.expires_on}'")
 
     # Let's get the bank secret using its name
     print("\n.. Get a Secret by name")
     bank_secret = await client.get_secret(secret.name)
+    assert bank_secret.properties.expires_on
     print(f"Secret with name '{bank_secret.name}' was found with value '{bank_secret.value}'.")
 
     # After one year, the bank account is still active, we need to update the expiry time of the secret.
     # The update method can be used to update the expiry attribute of the secret. It cannot be used to update
     # the value of the secret.
     print("\n.. Update a Secret by name")
-    expires_on = bank_secret.properties.expires_on + datetime.timedelta(days=365)
+    expires_on = cast(datetime.datetime, bank_secret.properties.expires_on + datetime.timedelta(days=365))
     updated_secret_properties = await client.update_secret_properties(secret.name, expires_on=expires_on)
     print(
         f"Secret with name '{updated_secret_properties.name}' was updated on date "
