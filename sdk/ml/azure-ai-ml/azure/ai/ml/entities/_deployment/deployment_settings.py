@@ -41,7 +41,7 @@ class BatchRetrySettings(RestTranslatableMixin):
         )
 
     @classmethod
-    def _from_rest_object(cls, settings: RestBatchRetrySettings) -> "BatchRetrySettings":
+    def _from_rest_object(cls, settings: RestBatchRetrySettings) -> Optional["BatchRetrySettings"]:
         return (
             BatchRetrySettings(
                 max_retries=settings.max_retries,
@@ -94,7 +94,7 @@ class OnlineRequestSettings(RestTranslatableMixin):
             self.max_queue_wait_ms = other.max_queue_wait_ms or self.max_queue_wait_ms
 
     @classmethod
-    def _from_rest_object(cls, settings: RestOnlineRequestSettings) -> "OnlineRequestSettings":
+    def _from_rest_object(cls, settings: RestOnlineRequestSettings) -> Optional["OnlineRequestSettings"]:
         return (
             OnlineRequestSettings(
                 request_timeout_ms=from_iso_duration_format_ms(settings.request_timeout),
@@ -169,7 +169,7 @@ class ProbeSettings(RestTranslatableMixin):
             self.initial_delay = other.initial_delay or self.initial_delay
 
     @classmethod
-    def _from_rest_object(cls, settings: RestProbeSettings) -> "ProbeSettings":
+    def _from_rest_object(cls, settings: RestProbeSettings) -> Optional["ProbeSettings"]:
         return (
             ProbeSettings(
                 failure_threshold=settings.failure_threshold,
