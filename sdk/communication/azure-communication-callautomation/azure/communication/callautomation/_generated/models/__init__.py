@@ -92,11 +92,6 @@ from ._models import StopTranscriptionRequest
 from ._models import TextSource
 from ._models import ToneInfo
 from ._models import TranscriptionConfiguration
-from ._models import TranscriptionFailed
-from ._models import TranscriptionResumed
-from ._models import TranscriptionStarted
-from ._models import TranscriptionStopped
-from ._models import TranscriptionUpdate
 from ._models import TransferCallResponse
 from ._models import TransferToParticipantRequest
 from ._models import UnmuteParticipantsRequest
@@ -216,11 +211,6 @@ __all__ = [
     "TextSource",
     "ToneInfo",
     "TranscriptionConfiguration",
-    "TranscriptionFailed",
-    "TranscriptionResumed",
-    "TranscriptionStarted",
-    "TranscriptionStopped",
-    "TranscriptionUpdate",
     "TransferCallResponse",
     "TransferToParticipantRequest",
     "UnmuteParticipantsRequest",
