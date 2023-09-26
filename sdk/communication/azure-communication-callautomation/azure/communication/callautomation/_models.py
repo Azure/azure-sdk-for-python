@@ -44,6 +44,7 @@ if TYPE_CHECKING:
         TransferCallResponse as TransferParticipantResultRest,
         RecordingStateResponse as RecordingStateResultRest,
         MuteParticipantsResponse as MuteParticipantsResultRest,
+        CancelAddParticipantResponse as CancelAddParticipantResultRest,
     )
 
 
@@ -646,3 +647,33 @@ class MuteParticipantsResult:
     @classmethod
     def _from_generated(cls, mute_participants_result_generated: 'MuteParticipantsResultRest'):
         return cls(operation_context=mute_participants_result_generated.operation_context)
+
+class CancelAddParticipantResult:
+    """ The result payload for cancelling add participant requst for a participant.
+
+    :keyword invitation_id: Invitation ID that was used to add the participant to the call.
+    :paramtype participant: str
+    :keyword operation_context: The operation context provided by client.
+    :paramtype operation_context: str
+    """
+
+    invitation_id: str
+    """Invitation ID that was used to add the participant to the call."""
+    operation_context: Optional[str]
+    """The operation context provided by client."""
+
+    def __init__(
+        self,
+        *,
+        invitation_id: str,
+        operation_context: Optional[str] = None
+    ):
+        self.invitation_id = invitation_id
+        self.operation_context = operation_context
+
+    @classmethod
+    def _from_generated(cls, cancel_add_participant_result_generated: 'CancelAddParticipantResultRest'):
+        return cls(
+            invitation_id=cancel_add_participant_result_generated.invitation_id,
+            operation_context=cancel_add_participant_result_generated.operation_context
+        )
