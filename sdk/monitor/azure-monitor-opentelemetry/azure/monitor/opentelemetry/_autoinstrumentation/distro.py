@@ -33,8 +33,6 @@ from azure.monitor.opentelemetry._diagnostics.status_logger import (
     AzureStatusLogger,
 )
 
-_CONFIG_FAILED_MSG = "Azure Monitor OpenTelemetry Distro failed during configuration: %s"
-
 
 class AzureMonitorDistro(BaseDistro):
     def _configure(self, **kwargs) -> None:
@@ -42,17 +40,21 @@ class AzureMonitorDistro(BaseDistro):
             warn(_PREVIEW_ENTRY_POINT_WARNING)
         try:
             _configure_auto_instrumentation()
+            AzureStatusLogger.log_status(True)
+            AzureDiagnosticLogging.info(
+                "Azure Monitor OpenTelemetry Distro configured successfully.",
+                _ATTACH_SUCCESS_DISTRO
+            )
         except Exception as e:
             AzureStatusLogger.log_status(False, reason=str(e))
             AzureDiagnosticLogging.error(
-                _CONFIG_FAILED_MSG % str(e),
+                "Azure Monitor OpenTelemetry Distro failed during configuration: %s" % str(e),
                 _ATTACH_FAILURE_DISTRO,
             )
             raise e
 
 
 def _configure_auto_instrumentation() -> None:
-    AzureStatusLogger.log_status(False, "Distro being configured.")
     environ.setdefault(
         OTEL_METRICS_EXPORTER, "azure_monitor_opentelemetry_exporter"
     )
@@ -66,8 +68,3 @@ def _configure_auto_instrumentation() -> None:
         _OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED, "true"
     )
     settings.tracing_implementation = OpenTelemetrySpan
-    AzureStatusLogger.log_status(True)
-    AzureDiagnosticLogging.info(
-        "Azure Monitor OpenTelemetry Distro configured successfully.",
-        _ATTACH_SUCCESS_DISTRO
-    )

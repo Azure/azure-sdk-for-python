@@ -28,19 +28,12 @@ class AzureMonitorConfigurator(_OTelSDKConfigurator):
         if not _is_attach_enabled():
             warn(_PREVIEW_ENTRY_POINT_WARNING)
         try:
-            AzureStatusLogger.log_status(False, "Configurator being configured.")
             super()._configure(**kwargs)
             AzureStatusLogger.log_status(True)
             AzureDiagnosticLogging.info(
                 "Azure Monitor Configurator configured successfully.",
                 _ATTACH_SUCCESS_CONFIGURATOR
             )
-        except ValueError as e:
-            AzureDiagnosticLogging.error(
-                "Azure Monitor Configurator failed during configuration due to a ValueError: %s" % str(e),
-                _ATTACH_FAILURE_CONFIGURATOR,
-            )
-            raise e
         except Exception as e:
             AzureDiagnosticLogging.error(
                 "Azure Monitor Configurator failed during configuration: %s" % str(e),
