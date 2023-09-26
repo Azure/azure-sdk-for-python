@@ -16,14 +16,14 @@ class TargetingException(Exception):
 
 class TimeWindowFilter(FeatureFilter):
     def evaluate(self, context, **kwargs):
-        """Determain if the feature flag is enabled for the given context"""
+        """Determine if the feature flag is enabled for the given context"""
         start = context.get("parameters", {}).get("Start")
         end = context.get("parameters", {}).get("End")
 
         current_time = datetime.now(timezone.utc)
 
         if not start and not end:
-            logging.warn("TimeWindowFilter: Either Start or End are required to have as a parameter")
+            logging.warn("%s: At least one of Start or End is required.", TimeWindowFilter.__name__ )
             return False
 
         start_time = parsedate_to_datetime(start) if start else None
@@ -53,19 +53,19 @@ class TargetingFilter(FeatureFilter):
         return self._is_targeted(audienceContextId, group_rollout_percentage)
 
     def evaluate(self, context, **kwargs):
-        """Determain if the feature flag is enabled for the given context"""
+        """Determine if the feature flag is enabled for the given context"""
         target_user = kwargs.pop("user", None)
         target_groups = kwargs.pop("groups", [])
         ignore_case = kwargs.pop("ignore_case", False)
 
         if not target_user and not (target_groups and len(target_groups) > 0):
-            logging.warn("TargetingFilter: Name or Groups are required parameters")
+            logging.warn("%s: Name or Groups are required parameters", TargetingFilter.__name__)
             return False
 
         audience = context.get("parameters", {}).get("Audience", None)
         feature_flag_name = context.get("name", None)
         if not audience:
-            raise TargetingException("Audience is required for TargetingFilter")
+            raise TargetingException("Audience is required for " + TargetingFilter.__name__)
 
         users = audience.get("Users", [])
         groups = audience.get("Groups", [])

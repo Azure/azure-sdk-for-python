@@ -7,5 +7,5 @@
 
 class FeatureFilter:
     def evaluate(self, context, **kwargs):
-        """Determain if the feature flag is enabled for the given context"""
+        """Determine if the feature flag is enabled for the given context"""
         pass

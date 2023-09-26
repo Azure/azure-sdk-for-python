@@ -86,7 +86,7 @@ The `FeatureManager` is the main entry point for using feature flags. It is init
 
 ### Feature Flags
 
-Feature Flags are objects that define how Feature Management enables/disables. It contains an `id` and `enabled` property. The `id` is a string that uniquely identifies the feature flag. The `enabled` property is a boolean that indicates if the feature flag is enabled or disabled. The `conditions` property is a list of `FeatureFilter` objects that are used to determine if the feature flag is enabled or disabled.
+Feature Flags are objects that define how Feature Management enables/disables a feature. It contains an `id` and `enabled` property. The `id` is a string that uniquely identifies the feature flag. The `enabled` property is a boolean that indicates if the feature flag is enabled or disabled. The `conditions` object contains a property `client_filters` which is a list of `FeatureFilter` objects that are used to determine if the feature flag is enabled or disabled.
 
 ```json
 {
@@ -145,36 +145,35 @@ The following steps demonstrate an example of a progressive rollout for a new 'B
 1. The number of "Ring1" users included in the beta is bumped up to 100 percent.
 1. Five percent of the user base is included in the beta.
 1. The rollout percentage is bumped up to 100 percent and the feature is completely rolled out.
-1. This strategy for rolling out a feature is built in to the library through the included Microsoft.Targeting feature filter.
+
+This strategy for rolling out a feature is built in to the library through the included Microsoft.Targeting feature filter.
 
 ##### Defining a Targeting Feature Filter
 
-The Targeting Filter enables a feature flag based on a list of users, groups, or rollout percentages. It has a parameter:
-
-- `Audience` - The audience of the feature flag.
-
-Which contains the following fields:
+The Targeting Filter provides the capability to enable a feature for a target audience. The filter parameters include an `Audience` object which describes users, groups, excluded users/groups, and a default percentage of the user base that should have access to the feature. The `Audience` object contains the following fields:
 
 - `Users` - A list of users that the feature flag is enabled for.
-- `Groups` - A list of groups that the feature flag is enabled for, at different percentages.
+- `Groups` - A list of groups that the feature flag is enabled for and a rollout percentage for each group.
 - `DefaultRolloutPercentage` - A percentage value that the feature flag is enabled for.
-- `Exclusions` - An object that contains a list of users and groups that the feature flag is disabled for.
+- `Exclusion` - An object that contains a list of users and groups that the feature flag is disabled for.
 
 ```json
 {
     "name": "Microsoft.TargetingFilter",
     "parameters": {
-        "Users": ["user1", "user2"],
-        "Groups": [
-            {
-                "Name": "group1",
-                "RolloutPercentage": 100
+        "Audience": {
+            "Users": ["user1", "user2"],
+            "Groups": [
+                {
+                    "Name": "group1",
+                    "RolloutPercentage": 100
+                }
+            ],
+            "DefaultRolloutPercentage": 50,
+            "Exclusion": {
+                "Users": ["user3"],
+                "Groups": ["group2"]
             }
-        ],
-        "DefaultRolloutPercentage": 50,
-        "Exclusion": {
-            "Users": ["user3"],
-            "Groups": ["group2"]
         }
     }
 }
