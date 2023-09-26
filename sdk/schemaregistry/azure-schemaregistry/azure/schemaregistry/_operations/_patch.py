@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 _SERIALIZER = Serializer()
 
 
-def build_schema_registry_get_schema_id_by_content_request(
+def build_schema_registry_get_schema_id_by_content_request( # pylint: disable=name-too-long
     group_name: str,
     name: str,
     **kwargs: Any
@@ -65,7 +65,7 @@ def build_schema_registry_get_schema_id_by_content_request(
         **kwargs
     )
 
-def build_schema_registry_register_schema_request(
+def build_schema_registry_register_schema_request(  # pylint: disable=name-too-long
     group_name: str,
     name: str,
     **kwargs: Any
@@ -265,7 +265,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
 
         if response.status_code not in [204]:
             if _stream:
-                 response.read()  # Load the body in memory and close the socket
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
