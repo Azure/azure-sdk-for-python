@@ -58,12 +58,9 @@ class AsyncStatePollingMethod(BaseStatePollingMethod, AsyncPollingMethod):
                     # delay if session stickiness is lost.
                     self._not_found_count += 1
 
-                    not_retryable = (
-                        not self._retry_not_found or
-                        self._give_up_not_found_error(not_found_exception)
-                    )
+                    not_retryable = not self._retry_not_found or self._give_up_not_found_error(not_found_exception)
 
-                    if not_retryable or self._not_found_count >=3:
+                    if not_retryable or self._not_found_count >= 3:
                         raise
 
                 if not self.finished():
@@ -218,7 +215,9 @@ class ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
         # If this poller was called from begin_create_ledger_entry, we should return the
         # create_ledger_entry response, not the transaction status.
         post_result = kwargs.pop("_create_ledger_entry_response", None)
-        deserialization_callback = lambda x: x if post_result is None else post_result # pylint: disable=unnecessary-lambda-assignment
+        deserialization_callback = (
+            lambda x: x if post_result is None else post_result
+        )  # pylint: disable=unnecessary-lambda-assignment
 
         async def operation() -> JSON:
             return await super(ConfidentialLedgerClientOperationsMixin, self).get_transaction_status(

@@ -14,6 +14,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -22,7 +23,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .._serialization import Serializer
-from .._vendor import MixinABC, _format_url_section
+from .._vendor import ConfidentialLedgerCertificateClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -36,11 +37,13 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_get_ledger_identity_request(ledger_id: str, **kwargs: Any) -> HttpRequest:
+def build_confidential_ledger_certificate_get_ledger_identity_request(  # pylint: disable=name-too-long
+    ledger_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-05-13"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -49,7 +52,7 @@ def build_get_ledger_identity_request(ledger_id: str, **kwargs: Any) -> HttpRequ
         "ledgerId": _SERIALIZER.url("ledger_id", ledger_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -60,7 +63,9 @@ def build_get_ledger_identity_request(ledger_id: str, **kwargs: Any) -> HttpRequ
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class ConfidentialLedgerCertificateClientOperationsMixin(MixinABC):  # pylint: disable=name-too-long
+class ConfidentialLedgerCertificateClientOperationsMixin(  # pylint: disable=name-too-long
+    ConfidentialLedgerCertificateClientMixinABC
+):
     @distributed_trace
     def get_ledger_identity(self, ledger_id: str, **kwargs: Any) -> JSON:
         """Gets identity information for a Confidential Ledger instance.
@@ -78,20 +83,25 @@ class ConfidentialLedgerCertificateClientOperationsMixin(MixinABC):  # pylint: d
 
                 # response body for status code(s): 200
                 response == {
-                    "ledgerId": "str",  # Optional. Id for the ledger.
-                    "ledgerTlsCertificate": "str"  # PEM-encoded certificate used for TLS by the
+                    "ledgerTlsCertificate": "str",  # PEM-encoded certificate used for TLS by the
                       Confidential Ledger. Required.
+                    "ledgerId": "str"  # Optional. Id for the ledger.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_ledger_identity_request(
+        request = build_confidential_ledger_certificate_get_ledger_identity_request(
             ledger_id=ledger_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -102,15 +112,18 @@ class ConfidentialLedgerCertificateClientOperationsMixin(MixinABC):  # pylint: d
                 "self._config.certificate_endpoint", self._config.certificate_endpoint, "str", skip_quote=True
             ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 

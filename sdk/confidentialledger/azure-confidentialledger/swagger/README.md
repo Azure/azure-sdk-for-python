@@ -16,7 +16,7 @@ clear-output-folder: false
 no-namespace-folders: true
 title: ConfidentialLedgerClient
 version-tolerant: true
-package-version: 1.1.0
+package-version: 1.1.2
 python: true
 ```
 
@@ -32,7 +32,7 @@ clear-output-folder: true
 no-namespace-folders: true
 title: ConfidentialLedgerCertificateClient
 version-tolerant: true
-package-version: 1.1.0
+package-version: 1.1.2
 python: true
 ```
 
