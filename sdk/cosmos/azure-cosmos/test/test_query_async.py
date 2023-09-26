@@ -195,8 +195,12 @@ class TestQueryAsync:
         query_iterable = created_collection.query_items_change_feed(**partition_param)
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 0
-        assert 'Etag' in created_collection.client_connection.last_response_headers
-        assert created_collection.client_connection.last_response_headers['Etag'] != ''
+        if 'Etag' in created_collection.client_connection.last_response_headers:
+            assert created_collection.client_connection.last_response_headers['Etag'] != ''
+        elif 'etag' in created_collection.client_connection.last_response_headers:
+            assert created_collection.client_connection.last_response_headers['etag'] != ''
+        else:
+            pytest.fail("No Etag or etag found in last response headers")
 
         # Read change feed from beginning should return an empty list
         query_iterable = created_collection.query_items_change_feed(
@@ -205,8 +209,12 @@ class TestQueryAsync:
         )
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 0
-        assert 'Etag' in created_collection.client_connection.last_response_headers
-        continuation1 = created_collection.client_connection.last_response_headers['Etag']
+        if 'Etag' in created_collection.client_connection.last_response_headers:
+            continuation1 = created_collection.client_connection.last_response_headers['Etag'] != ''
+        elif 'etag' in created_collection.client_connection.last_response_headers:
+            continuation1 = created_collection.client_connection.last_response_headers['etag'] != ''
+        else:
+            pytest.fail("No Etag or etag found in last response headers")
         assert continuation1 != ''
 
         # Create a document. Read change feed should return be able to read that document
@@ -219,8 +227,12 @@ class TestQueryAsync:
         iter_list = [item async for item in query_iterable]
         assert len(iter_list) == 1
         assert iter_list[0]['id'] == 'doc1'
-        assert 'Etag' in created_collection.client_connection.last_response_headers
-        continuation2 = created_collection.client_connection.last_response_headers['Etag']
+        if 'Etag' in created_collection.client_connection.last_response_headers:
+            continuation2 = created_collection.client_connection.last_response_headers['Etag'] != ''
+        elif 'etag' in created_collection.client_connection.last_response_headers:
+            continuation2 = created_collection.client_connection.last_response_headers['etag'] != ''
+        else:
+            pytest.fail("No Etag or etag found in last response headers")
         assert continuation2 != ''
         assert continuation2 != continuation1
 
@@ -276,8 +288,12 @@ class TestQueryAsync:
         for i in range(0, len(expected_ids)):
             doc = next(it)
             assert doc['id'] == expected_ids[i]
-        assert 'Etag' in created_collection.client_connection.last_response_headers
-        continuation3 = created_collection.client_connection.last_response_headers['Etag']
+        if 'Etag' in created_collection.client_connection.last_response_headers:
+            continuation3 = created_collection.client_connection.last_response_headers['Etag'] != ''
+        elif 'etag' in created_collection.client_connection.last_response_headers:
+            continuation3 = created_collection.client_connection.last_response_headers['etag'] != ''
+        else:
+            pytest.fail("No Etag or etag found in last response headers")
 
         # verify reading empty change feed
         query_iterable = created_collection.query_items_change_feed(
@@ -398,7 +414,7 @@ class TestQueryAsync:
         query_plan_dict = await self.client.client_connection._GetQueryPlanThroughGateway(query, container_link)
         query_execution_info = _PartitionedQueryExecutionInfo(query_plan_dict)
         assert query_execution_info.has_rewritten_query()
-        assert query_execution_info.has_distinct_type() and distinct != "None"
+        assert (query_execution_info.has_distinct_type()) == (distinct != "None")
         assert query_execution_info.get_distinct_type() == distinct
         assert query_execution_info.has_top() == top is not None
         assert query_execution_info.get_top() == top
