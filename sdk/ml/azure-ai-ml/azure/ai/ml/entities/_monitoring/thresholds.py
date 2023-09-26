@@ -98,8 +98,9 @@ class NumericalDriftMetrics(RestTranslatableMixin):
             normalized_wasserstein_distance=0.1,
         )
 
-    def defaults(self) -> "NumericalDriftMetrics":
-        return self._get_default_thresholds()
+    @classmethod
+    def defaults(cls) -> "NumericalDriftMetrics":
+        return cls._get_default_thresholds()
 
     def get_name_and_threshold(self):
         return self._find_name_and_threshold()
@@ -151,8 +152,9 @@ class CategoricalDriftMetrics(RestTranslatableMixin):
             jensen_shannon_distance=0.1,
         )
 
-    def defaults(self) -> "CategoricalDriftMetrics":
-        return self._get_default_thresholds()
+    @classmethod
+    def defaults(cls) -> "CategoricalDriftMetrics":
+        return cls._get_default_thresholds()
 
     def get_name_and_threshold(self):
         return self._find_name_and_threshold()
@@ -236,8 +238,8 @@ class DataDriftMetricThreshold(MetricThreshold):
     @classmethod
     def _get_default_thresholds(cls) -> "DataDriftMetricThreshold":
         return cls(
-            numerical=NumericalDriftMetrics().defaults(),
-            categorical=CategoricalDriftMetrics().defaults(),
+            numerical=NumericalDriftMetrics.defaults(),
+            categorical=CategoricalDriftMetrics.defaults(),
         )
 
     def __eq__(self, other: Any):
@@ -322,8 +324,8 @@ class PredictionDriftMetricThreshold(MetricThreshold):
     @classmethod
     def _get_default_thresholds(cls) -> "PredictionDriftMetricThreshold":
         return cls(
-            numerical=NumericalDriftMetrics().defaults(),
-            categorical=CategoricalDriftMetrics().defaults(),
+            numerical=NumericalDriftMetrics.defaults(),
+            categorical=CategoricalDriftMetrics.defaults(),
         )
 
     def __eq__(self, other: Any):
@@ -394,8 +396,9 @@ class DataQualityMetricsNumerical(RestTranslatableMixin):
             out_of_bounds_rate=0.0,
         )
 
-    def defaults(self) -> "DataQualityMetricsNumerical":
-        return self._get_default_thresholds()
+    @classmethod
+    def defaults(cls) -> "DataQualityMetricsNumerical":
+        return cls._get_default_thresholds()
 
 
 @experimental
@@ -456,8 +459,9 @@ class DataQualityMetricsCategorical(RestTranslatableMixin):
             out_of_bounds_rate=0.0,
         )
 
-    def defaults(self) -> "DataQualityMetricsCategorical":
-        return self._get_default_thresholds()
+    @classmethod
+    def defaults(cls) -> "DataQualityMetricsCategorical":
+        return cls._get_default_thresholds()
 
 
 @experimental
