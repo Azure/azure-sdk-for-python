@@ -45,7 +45,7 @@ class ResourceSettings(RestTranslatableMixin):
         return ContainerResourceSettings(cpu=self.cpu, memory=self.memory, gpu=self.gpu)
 
     @classmethod
-    def _from_rest_object(cls, settings: ContainerResourceSettings) -> "ResourceSettings":
+    def _from_rest_object(cls, settings: ContainerResourceSettings) -> Optional["ResourceSettings"]:
         return (
             ResourceSettings(
                 cpu=settings.cpu,

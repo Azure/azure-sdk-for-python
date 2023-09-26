@@ -41,7 +41,7 @@ class CodeConfiguration(DictMixin):
         self._scoring_script = scoring_script
 
     @property
-    def scoring_script(self) -> str:
+    def scoring_script(self) -> Optional[str]:
         """The scoring script file path relative to the code directory.
 
         :rtype: str
