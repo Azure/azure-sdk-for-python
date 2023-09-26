@@ -76,14 +76,14 @@ class TableAccessPolicy(GenAccessPolicy):
 
 class TableRetentionPolicy(GeneratedRetentionPolicy):
     """The retention policy which determines how long the associated data should persist."""
-    
+
     enabled: bool
     """Indicates whether a retention policy is enabled for the storage service. Default value is False."""
     days: Optional[int]
     """Indicates the number of days that metrics or logging or soft-deleted data should be retained.
         All data older than this value will be deleted. Must be specified if policy is enabled.
     """
-    
+
     def __init__(self, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
         self.enabled = kwargs.get("enabled", False)
         self.days = kwargs.get("days")
@@ -105,7 +105,7 @@ class TableRetentionPolicy(GeneratedRetentionPolicy):
 
 class TableAnalyticsLogging(GeneratedLogging):
     """Azure Analytics Logging settings."""
-    
+
     version: str
     """The version of Storage Analytics to configure."""
     delete: bool
@@ -115,7 +115,7 @@ class TableAnalyticsLogging(GeneratedLogging):
     write: bool
     """Indicates whether all write requests should be logged."""
     retention_policy: TableRetentionPolicy
-    """The retention policy for the metrics."""    
+    """The retention policy for the metrics."""
 
     def __init__(self, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
         self.version = kwargs.get("version", "1.0")
@@ -185,9 +185,9 @@ class TableMetrics(GeneratedMetrics):
 
 class TableCorsRule:
     """CORS is an HTTP feature that enables a web application running under one domain to access resources in another
-        domain. Web browsers implement a security restriction known as same-origin policy that prevents a web page
-        from calling APIs in a different domain; CORS provides a secure way to allow one domain (the origin domain) to
-        call APIs in another domain.
+    domain. Web browsers implement a security restriction known as same-origin policy that prevents a web page
+    from calling APIs in a different domain; CORS provides a secure way to allow one domain (the origin domain) to
+    call APIs in another domain.
     """
 
     allowed_origins: List[str]
@@ -358,7 +358,7 @@ class TableEntityPropertiesPaged(PageIterator):
 
 class TableSasPermissions:
     """TableSasPermissions class to be used with the :func:`~azure.data.tables.generate_account_sas` function."""
-    
+
     read: bool
     """Get entities and query entities."""
     add: bool
@@ -367,7 +367,7 @@ class TableSasPermissions:
     """Update entities. Add and Update permissions are required for upsert operations."""
     delete: bool
     """Delete entities."""
-    
+
     def __init__(self, **kwargs: Any) -> None:
         self._str = kwargs.pop("_str", "") or ""
         self.read = kwargs.pop("read", False) or ("r" in self._str)
@@ -457,9 +457,9 @@ def service_properties_deserialize(generated: GenTableServiceProperties) -> Dict
 
 class TableItem:
     """Represents an Azure TableItem.
-        Returned by TableServiceClient.list_tables and TableServiceClient.query_tables.
+    Returned by TableServiceClient.list_tables and TableServiceClient.query_tables.
     """
-    
+
     name: str
     """The name of the table."""
 
