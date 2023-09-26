@@ -75,10 +75,12 @@ async def load(
     :paramtype selects: Optional[List[~azure.appconfiguration.provider.SettingSelector]]
     :keyword trim_prefixes: List of prefixes to trim from configuration keys
     :paramtype trim_prefixes: Optional[List[str]]
-    :keyword keyvault_credential: A credential for authenticating with the key vault. This is optional if secret_clients is
-         provided.
+    :keyword keyvault_credential: A credential for authenticating with the key vault. This is optional if secret_clients
+     is provided.
     :paramtype keyvault_credential: ~azure.core.credentials.TokenCredential
-    :keyword keyvault_client_configs: A Mapping of SecretClient endpoints to client configurations from azure-keyvault-secrets. This is optional if credential is provided. If a credential isn't provided a credential will need to be in each set for each.
+    :keyword keyvault_client_configs: A Mapping of SecretClient endpoints to client configurations from
+     azure-keyvault-secrets. This is optional if credential is provided. If a credential isn't provided a credential
+     will need to be in each set for each.
     :paramtype keyvault_client_configs: Mapping[Url, Mapping]
     :keyword secret_resolver: A function that takes a URI and returns a value.
     :paramtype secret_resolver: Callable[[str], str]
@@ -113,10 +115,12 @@ async def load(
     :paramtype selects: Optional[List[~azure.appconfiguration.provider.SettingSelector]]
     :keyword trim_prefixes: List of prefixes to trim from configuration keys
     :paramtype trim_prefixes: Optional[List[str]]
-    :keyword keyvault_credential: A credential for authenticating with the key vault. This is optional if secret_clients is
-         provided.
+    :keyword keyvault_credential: A credential for authenticating with the key vault. This is optional if secret_clients
+     is provided.
     :paramtype keyvault_credential: ~azure.core.credentials.TokenCredential
-    :keyword keyvault_client_configs: A Mapping of SecretClient endpoints to client configurations from azure-keyvault-secrets. This is optional if credential is provided. If a credential isn't provided a credential will need to be in each set for each.
+    :keyword keyvault_client_configs: A Mapping of SecretClient endpoints to client configurations from
+     azure-keyvault-secrets. This is optional if credential is provided. If a credential isn't provided a credential
+     will need to be in each set for each.
     :paramtype keyvault_client_configs: Mapping[Url, Mapping]
     :keyword secret_resolver: A function that takes a URI and returns a value.
     :paramtype secret_resolver: Callable[[str], str]
@@ -222,7 +226,10 @@ async def _resolve_keyvault_reference(
     # pylint:disable=protected-access
     if not (provider._keyvault_credential or provider._keyvault_client_configs or provider._secret_resolver):
         raise ValueError(
-            "Either a credential to Key Vault, custom Key Vault client, or a secret resolver must be set to resolve Key Vault references."
+            """
+            Either a credential to Key Vault, custom Key Vault client, or a secret resolver must be set to resolve Key
+             Vault references.
+            """
         )
 
     if config.secret_id is None:
