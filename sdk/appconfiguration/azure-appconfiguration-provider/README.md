@@ -87,7 +87,7 @@ def my_callback_on_fail(error):
 
 config = load(
     connection_string=connection_string,
-    refresh_on=[SentinelKey("message")],
+    refresh_on=[SentinelKey("Sentinel")],
     refresh_interval=60,
     on_refresh_error=my_callback_on_fail,
     **kwargs,
