@@ -273,7 +273,7 @@ class WorkspaceOperationsBase(ABC):
                 "Updating the workspace-attached Azure Container Registry resource may break lineage of "
                 "previous jobs or your ability to rerun earlier jobs in this workspace. "
                 "Are you sure you want to perform this operation? "
-                "Include the --update_dependent_resources/-u parameter with this request to confirm."
+                "Include the --update-dependent-resources/-u parameter with this request to confirm."
             )
             raise ValidationException(
                 message=msg,
