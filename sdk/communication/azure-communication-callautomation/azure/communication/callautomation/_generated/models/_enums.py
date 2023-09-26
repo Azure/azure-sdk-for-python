@@ -58,6 +58,7 @@ class DialogInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Determines the type of the dialog."""
 
     POWER_VIRTUAL_AGENTS = "powerVirtualAgents"
+    AZURE_OPEN_AI = "azureOpenAI"
 
 
 class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -175,6 +176,31 @@ class RecordingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ACS = "acs"
     TEAMS = "teams"
+
+
+class TranscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TranscriptionStatus."""
+
+    TRANSCRIPTION_STARTED = "transcriptionStarted"
+    TRANSCRIPTION_FAILED = "transcriptionFailed"
+    TRANSCRIPTION_RESUMED = "transcriptionResumed"
+    TRANSCRIPTION_LOCALE_UPDATED = "transcriptionLocaleUpdated"
+    TRANSCRIPTION_STOPPED = "transcriptionStopped"
+    UNSPECIFIED_ERROR = "unspecifiedError"
+
+
+class TranscriptionStatusDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TranscriptionStatusDetails."""
+
+    SUBSCRIPTION_STARTED = "subscriptionStarted"
+    STREAM_CONNECTION_REESTABLISHED = "streamConnectionReestablished"
+    STREAM_CONNECTION_UNSUCCESSFUL = "streamConnectionUnsuccessful"
+    STREAM_URL_MISSING = "streamUrlMissing"
+    SERVICE_SHUTDOWN = "serviceShutdown"
+    STREAM_CONNECTION_INTERRUPTED = "streamConnectionInterrupted"
+    SPEECH_SERVICES_CONNECTION_ERROR = "speechServicesConnectionError"
+    SUBSCRIPTION_STOPPED = "subscriptionStopped"
+    UNSPECIFIED_ERROR = "unspecifiedError"
 
 
 class TranscriptionTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

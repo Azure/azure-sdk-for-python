@@ -85,13 +85,23 @@ from ._models import SpeechResult
 from ._models import SsmlSource
 from ._models import StartCallRecordingRequest
 from ._models import StartDialogRequest
+from ._models import StartHoldMusicRequest
+from ._models import StartTranscriptionRequest
+from ._models import StopHoldMusicRequest
+from ._models import StopTranscriptionRequest
 from ._models import TextSource
 from ._models import ToneInfo
 from ._models import TranscriptionConfiguration
+from ._models import TranscriptionFailed
+from ._models import TranscriptionResumed
+from ._models import TranscriptionStarted
+from ._models import TranscriptionStopped
+from ._models import TranscriptionUpdate
 from ._models import TransferCallResponse
 from ._models import TransferToParticipantRequest
 from ._models import UnmuteParticipantsRequest
 from ._models import UnmuteParticipantsResponse
+from ._models import UpdateTranscriptionDataRequest
 from ._models import UserConsent
 
 from ._enums import CallConnectionState
@@ -114,6 +124,8 @@ from ._enums import RecordingFormat
 from ._enums import RecordingState
 from ._enums import RecordingStorage
 from ._enums import RecordingType
+from ._enums import TranscriptionStatus
+from ._enums import TranscriptionStatusDetails
 from ._enums import TranscriptionTransportType
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -199,13 +211,23 @@ __all__ = [
     "SsmlSource",
     "StartCallRecordingRequest",
     "StartDialogRequest",
+    "StartHoldMusicRequest",
+    "StartTranscriptionRequest",
+    "StopHoldMusicRequest",
+    "StopTranscriptionRequest",
     "TextSource",
     "ToneInfo",
     "TranscriptionConfiguration",
+    "TranscriptionFailed",
+    "TranscriptionResumed",
+    "TranscriptionStarted",
+    "TranscriptionStopped",
+    "TranscriptionUpdate",
     "TransferCallResponse",
     "TransferToParticipantRequest",
     "UnmuteParticipantsRequest",
     "UnmuteParticipantsResponse",
+    "UpdateTranscriptionDataRequest",
     "UserConsent",
     "CallConnectionState",
     "CallLocatorKind",
@@ -227,6 +249,8 @@ __all__ = [
     "RecordingState",
     "RecordingStorage",
     "RecordingType",
+    "TranscriptionStatus",
+    "TranscriptionStatusDetails",
     "TranscriptionTransportType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
