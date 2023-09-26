@@ -17,6 +17,8 @@ kwargs = get_client_modifications()
 # Connection to Azure App Configuration using AAD with Provided Client
 client_configs = {key_vault_uri: {"credential": credential}}
 selects = {SettingSelector(key_filter="*", label_filter="prod")}
-config = load(endpoint=endpoint, credential=credential, keyvault_client_configs=client_configs, selects=selects, **kwargs)
+config = load(
+    endpoint=endpoint, credential=credential, keyvault_client_configs=client_configs, selects=selects, **kwargs
+)
 
 print(config["secret"])
