@@ -57,7 +57,7 @@ from ._deserialize import (
     deserialize_pipeline_response_into_cls
 )
 from ._download import StorageStreamDownloader
-from ._encryption import modify_user_agent_for_encryption, StorageEncryptionMixin
+from ._encryption import StorageEncryptionMixin
 from ._lease import BlobLeaseClient
 from ._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, QuickQueryDialect, \
     DelimitedJsonDialect, DelimitedTextDialect, PageRangePaged, PageRange
@@ -366,8 +366,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             metadata: Optional[Dict[str, str]] = None,
             **kwargs
         ) -> Dict[str, Any]:
-        if self.require_encryption and not self.key_encryption_key:
-            raise ValueError("Encryption required but no key was provided.")
+        # if self.require_encryption and not self.key_encryption_key:
+        #     raise ValueError("Encryption required but no key was provided.")
         encryption_options = {
             'required': self.require_encryption,
             'version': self.encryption_version,
@@ -431,12 +431,12 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         kwargs['max_concurrency'] = max_concurrency
         kwargs['encryption_options'] = encryption_options
         # Add feature flag to user agent for encryption
-        if self.key_encryption_key:
-            modify_user_agent_for_encryption(
-                self._config.user_agent_policy.user_agent,
-                self._sdk_moniker,
-                self.encryption_version,
-                kwargs)
+        # if self.key_encryption_key:
+        #     modify_user_agent_for_encryption(
+        #         self._config.user_agent_policy.user_agent,
+        #         self._sdk_moniker,
+        #         self.encryption_version,
+        #         kwargs)
 
         if blob_type == BlobType.BlockBlob:
             kwargs['client'] = self._client.block_blob
@@ -446,8 +446,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 raise ValueError("Encryption version 2.0 does not currently support page blobs.")
             kwargs['client'] = self._client.page_blob
         elif blob_type == BlobType.AppendBlob:
-            if self.require_encryption or (self.key_encryption_key is not None):
-                raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+            # if self.require_encryption or (self.key_encryption_key is not None):
+            #     raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
             kwargs['client'] = self._client.append_blob
         else:
             raise ValueError(f"Unsupported BlobType: {blob_type}")
@@ -760,8 +760,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     def _download_blob_options(self, offset=None, length=None, encoding=None, **kwargs):
         # type: (Optional[int], Optional[int], Optional[str], **Any) -> Dict[str, Any]
-        if self.require_encryption and not (self.key_encryption_key or self.key_resolver_function):
-            raise ValueError("Encryption required but no key was provided.")
+        # if self.require_encryption and not (self.key_encryption_key or self.key_resolver_function):
+        #     raise ValueError("Encryption required but no key was provided.")
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
         if length is not None:
@@ -781,12 +781,12 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                                encryption_algorithm=cpk.algorithm)
 
         # Add feature flag to user agent for encryption
-        if self.key_encryption_key or self.key_resolver_function:
-            modify_user_agent_for_encryption(
-                self._config.user_agent_policy.user_agent,
-                self._sdk_moniker,
-                self.encryption_version,
-                kwargs)
+        # if self.key_encryption_key or self.key_resolver_function:
+        #     modify_user_agent_for_encryption(
+        #         self._config.user_agent_policy.user_agent,
+        #         self._sdk_moniker,
+        #         self.encryption_version,
+        #         kwargs)
 
         options = {
             'clients': self._client,
@@ -1604,8 +1604,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        # if self.require_encryption or (self.key_encryption_key is not None):
+        #     raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -1768,8 +1768,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     def _create_append_blob_options(self, content_settings=None, metadata=None, **kwargs):
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        # if self.require_encryption or (self.key_encryption_key is not None):
+        #     raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -2450,8 +2450,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        # if self.require_encryption or (self.key_encryption_key is not None):
+        #     raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         block_id = encode_base64(str(block_id))
         if isinstance(data, str):
             data = data.encode(kwargs.pop('encoding', 'UTF-8'))  # type: ignore
@@ -2718,8 +2718,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        # if self.require_encryption or (self.key_encryption_key is not None):
+        #     raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
         for block in block_list:
             try:
@@ -3493,8 +3493,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         # type: (...) -> Dict[str, Any]
         if isinstance(page, str):
             page = page.encode(kwargs.pop('encoding', 'UTF-8'))
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        # if self.require_encryption or (self.key_encryption_key is not None):
+        #     raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
         if offset is None or offset % 512 != 0:
             raise ValueError("offset must be an integer that aligns with 512 page size")
@@ -3641,8 +3641,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             **kwargs
     ):
         # type: (...) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        # if self.require_encryption or (self.key_encryption_key is not None):
+        #     raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
         # TODO: extract the code to a method format_range
         if offset is None or offset % 512 != 0:
@@ -3814,8 +3814,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     def _clear_page_options(self, offset, length, **kwargs):
         # type: (int, int, **Any) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        # if self.require_encryption or (self.key_encryption_key is not None):
+        #     raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         seq_conditions = SequenceNumberAccessConditions(
             if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),
@@ -3927,8 +3927,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        # if self.require_encryption or (self.key_encryption_key is not None):
+        #     raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
         if isinstance(data, str):
             data = data.encode(kwargs.pop('encoding', 'UTF-8')) # type: ignore
@@ -4076,8 +4076,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             **kwargs
     ):
         # type: (...) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        # if self.require_encryption or (self.key_encryption_key is not None):
+        #     raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
         # If end range is provided, start range must be provided
         if source_length is not None and source_offset is None:
@@ -4241,8 +4241,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     def _seal_append_blob_options(self, **kwargs):
         # type: (...) -> Dict[str, Any]
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        # if self.require_encryption or (self.key_encryption_key is not None):
+        #     raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
         appendpos_condition = kwargs.pop('appendpos_condition', None)
         append_conditions = None
