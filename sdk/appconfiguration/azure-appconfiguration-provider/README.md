@@ -77,7 +77,7 @@ In this example all configuration with empty label and the dev label are loaded.
 The provider can be configured to refresh configurations from the store on a set interval. This is done by providing a `refresh_on` to the provider, which is a list of key(s) that will be watched for changes, and when they do change a refresh can happen. `refresh_interval` is the period of time in seconds between refreshes. `on_refresh_error` is a callback that will be called when a refresh fails.
 
 ```python
-from azure.appconfiguration.provider import load
+from azure.appconfiguration.provider import load, SentinelKey
 import os
 
 connection_string = os.environ.get("APPCONFIGURATION_CONNECTION_STRING")
