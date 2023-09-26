@@ -1,6 +1,6 @@
 
 
-from utils import async_wrapper
+from tests.async_wrapper import async_wrapper
 import pytest
 
 class TestAyncWrapper:
@@ -25,8 +25,9 @@ class TestAyncWrapper:
         def func():
             for i in range(3):
                 yield i
-        result = await async_wrapper(func())
-        assert result == [0, 1, 2]
+        iterable = func()
+        result = await async_wrapper(iterable)
+        assert result == iterable
 
     @pytest.mark.asyncio
     async def test_isSync(self):

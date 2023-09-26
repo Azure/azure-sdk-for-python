@@ -29,10 +29,8 @@ from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
 
 from batch_preparers import AccountPreparer, PoolPreparer, JobPreparer
 
-from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import (
     AzureMgmtRecordedTestCase,
-    recorded_by_proxy,
     ResourceGroupPreparer,
     StorageAccountPreparer,
     CachedResourceGroupPreparer,
@@ -43,13 +41,12 @@ from azure_devtools.scenario_tests.recording_processors import (
     GeneralNameReplacer,
     RecordingProcessor,
 )
-from utils import async_wrapper
+from async_wrapper import async_wrapper
+from proxy_decorator import recorded_by_proxy_async
 
-from azure.core.pipeline.transport import AioHttpTransport
 
 TEST_SYNC_CLIENT = True
 BatchClient = SyncBatchClient if TEST_SYNC_CLIENT else AsyncBatchClient
-record_decorator = recorded_by_proxy if TEST_SYNC_CLIENT else recorded_by_proxy_async
 
 AZURE_LOCATION = "eastasia"
 BATCH_ENVIRONMENT = None  # Set this to None if testing against prod
@@ -104,7 +101,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
     def create_sharedkey_client(self, batch_account, credential, **kwargs):
         client = BatchClient(
-            credential=credential, endpoint=self._batch_url(batch_account), transport=AioHttpTransport()
+            credential=credential, endpoint=self._batch_url(batch_account)
         )
         return client
 
@@ -143,7 +140,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         batch_job = kwargs.pop("batch_job")
         client = self.create_sharedkey_client(**kwargs)
         # Test List Applications
-        apps = await async_wrapper(client.list_applications())
+        apps = list(await async_wrapper(client.list_applications()))
         # apps = list(await async_wrapper(client.list_applications()))
         assert len(apps) == 1
 
