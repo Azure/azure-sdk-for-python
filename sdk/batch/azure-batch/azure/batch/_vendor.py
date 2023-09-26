@@ -11,7 +11,6 @@ from typing import Optional, TYPE_CHECKING
 from azure.core import MatchConditions
 
 from ._configuration import BatchClientConfiguration
-
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core import PipelineClient

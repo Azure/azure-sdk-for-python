@@ -5,6 +5,7 @@ from devtools_testutils import test_proxy, set_custom_default_matcher
 @pytest.fixture(scope="session", autouse=True)
 def start_proxy(test_proxy):
     set_custom_default_matcher(
-        ignored_headers="Accept, ocp-date, client-request-id"
+        ignored_headers="Accept, ocp-date, client-request-id",
+        excluded_headers="Connection"
     )
     return

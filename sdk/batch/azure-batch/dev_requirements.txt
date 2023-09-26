@@ -4,3 +4,4 @@
 -e ../../../tools/azure-devtools
 azure-mgmt-resource<=21.1.0
 azure-mgmt-storage<=20.0.0
+aiohttp>=3.0
