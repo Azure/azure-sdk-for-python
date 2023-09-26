@@ -414,18 +414,18 @@ class TestQueryAsync:
         query_plan_dict = await self.client.client_connection._GetQueryPlanThroughGateway(query, container_link)
         query_execution_info = _PartitionedQueryExecutionInfo(query_plan_dict)
         assert query_execution_info.has_rewritten_query()
-        assert (query_execution_info.has_distinct_type()) == (distinct != "None")
+        assert query_execution_info.has_distinct_type() == (distinct != "None")
         assert query_execution_info.get_distinct_type() == distinct
-        assert query_execution_info.has_top() == top is not None
+        assert query_execution_info.has_top() == (top is not None)
         assert query_execution_info.get_top() == top
-        assert query_execution_info.has_order_by() == len(order_by) > 0
+        assert query_execution_info.has_order_by() == (len(order_by) > 0)
         assert query_execution_info.get_order_by() == order_by
-        assert query_execution_info.has_aggregates() == len(aggregate) > 0
+        assert query_execution_info.has_aggregates() == (len(aggregate) > 0)
         assert query_execution_info.get_aggregates() == aggregate
         assert query_execution_info.has_select_value(), select_value
-        assert query_execution_info.has_offset() == offset is not None
+        assert query_execution_info.has_offset() == (offset is not None)
         assert query_execution_info.get_offset() == offset
-        assert query_execution_info.has_limit() == limit is not None
+        assert query_execution_info.has_limit() == (limit is not None)
         assert query_execution_info.get_limit() == limit
 
     @pytest.mark.asyncio
