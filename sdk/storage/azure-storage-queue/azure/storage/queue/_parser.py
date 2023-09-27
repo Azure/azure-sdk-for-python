@@ -14,4 +14,4 @@ def _build_audience_url(account_name: str) -> str:
     :rtype: str
     """
 
-    return f'https://{account_name}.queue.core.windows.net/{DEFAULT_OAUTH_SCOPE}'
+    return f'https://{account_name}.queue.core.windows.net{DEFAULT_OAUTH_SCOPE}'
