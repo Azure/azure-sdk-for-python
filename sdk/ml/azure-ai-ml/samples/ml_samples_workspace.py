@@ -42,7 +42,7 @@ class WorkspaceConfigurationOptions(object):
         from azure.ai.ml import load_workspace_hub
 
         hub = load_workspace_hub(
-            "./tests/test_configs/workspace/workspacehub_min.yaml",
+            "../tests/test_configs/workspace/workspacehub_min.yaml",
             params_override=[{"description": "loaded from workspacehub_min.yaml"}],
         )
         # [END load_workspace_hub]
