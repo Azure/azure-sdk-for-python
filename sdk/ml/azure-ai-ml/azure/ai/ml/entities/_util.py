@@ -471,10 +471,13 @@ def copy_output_setting(source: Union["Output", "NodeOutput"], target: "NodeOutp
     """Copy node output setting from source to target.
     Currently only path, name, version will be copied."""
     # pylint: disable=protected-access
-    from azure.ai.ml.entities._job.pipeline._io import NodeOutput
+    from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineOutput
 
     if not isinstance(source, NodeOutput):
         # Only copy when source is an output builder
         return
-    if source._data:
-        target._data = copy.deepcopy(source._data)
+    source_data = source._data
+    if isinstance(source_data, PipelineOutput):
+        source_data = source_data._data
+    if source_data:
+        target._data = copy.deepcopy(source_data)
