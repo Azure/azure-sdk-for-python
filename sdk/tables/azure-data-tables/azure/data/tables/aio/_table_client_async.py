@@ -408,7 +408,7 @@ class TableClient(AsyncTablesBaseClient):
         """
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
-        if match_condition and entity and not etag:
+        if match_condition and not etag:
             try:
                 etag = entity.metadata.get("etag", None)  # type: ignore[union-attr]
             except (AttributeError, TypeError):
