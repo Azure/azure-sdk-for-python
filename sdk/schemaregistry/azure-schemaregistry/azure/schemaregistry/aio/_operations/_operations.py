@@ -10,16 +10,28 @@ from typing import Any, AsyncIterable, Callable, Dict, List, Optional, TypeVar
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, ResourceNotModifiedError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models
+from ...models import _models
 from ..._model_base import _deserialize
-from ..._operations._operations import build_schema_registry_get_schema_by_id_request, build_schema_registry_get_schema_by_version_request, build_schema_registry_list_schema_groups_request, build_schema_registry_list_schema_versions_request
+from ..._operations._operations import (
+    build_schema_registry_get_schema_by_id_request,
+    build_schema_registry_get_schema_by_version_request,
+    build_schema_registry_list_schema_groups_request,
+    build_schema_registry_list_schema_versions_request
+)
 from .._vendor import SchemaRegistryClientMixinABC, raise_if_not_implemented
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -39,7 +51,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
     def list_schema_groups(
         self,
         **kwargs: Any
-    ) -> AsyncIterable["_models._models.SchemaGroup"]:
+    ) -> AsyncIterable["_models.SchemaGroup"]:
         """Get list of schema groups.
 
         Gets the list of schema groups user is authorized to access.
@@ -51,36 +63,49 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models._models.SchemaGroup]] = kwargs.pop(  # pylint: disable=protected-access
+        cls: ClsType[List[_models.SchemaGroup]] = kwargs.pop(  # pylint: disable=protected-access
             'cls', None
         )
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError
         }
         error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_schema_registry_list_schema_groups_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, 'str', skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
                 _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict({
-                    key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
+                _next_request_params = case_insensitive_dict(
+                    {key: [urllib.parse.quote(v) for v in value] for key, value in
+                     urllib.parse.parse_qs(_parsed_next_link.query).items()}
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params
+                )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, 'str', skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -88,7 +113,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models._models.SchemaGroup], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.SchemaGroup], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -138,7 +163,10 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError
         }
         error_map.update(kwargs.pop('error_map', {}) or {})
 
@@ -149,7 +177,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
             'cls', None
         )
 
-        
+
         request = build_schema_registry_get_schema_by_id_request(
             id=id,
             api_version=self._config.api_version,
@@ -206,7 +234,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         group_name: str,
         name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models._models.Version"]:
+    ) -> AsyncIterable["_models.Version"]:
         """List schema versions.
 
         Gets the list of all versions of one schema.
@@ -222,17 +250,20 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models._models.Version]] = kwargs.pop(  # pylint: disable=protected-access
+        cls: ClsType[List[_models.Version]] = kwargs.pop(  # pylint: disable=protected-access
             'cls', None
         )
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError
         }
         error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_schema_registry_list_schema_versions_request(
                     group_name=group_name,
                     name=name,
@@ -241,7 +272,9 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, 'str', skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -249,11 +282,18 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
                 # make call to next link with the client's api-version
                 _parsed_next_link = urllib.parse.urlparse(next_link)
                 _next_request_params = case_insensitive_dict({
-                    key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
+                    key: [urllib.parse.quote(v) for v in value] for key, value in
+                        urllib.parse.parse_qs(_parsed_next_link.query).items()})
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params
+                )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, 'str', skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
@@ -261,7 +301,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models._models.Version], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.Version], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -316,7 +356,10 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError
         }
         error_map.update(kwargs.pop('error_map', {}) or {})
 
@@ -327,7 +370,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
             'cls', None
         )
 
-        
+
         request = build_schema_registry_get_schema_by_version_request(
             group_name=group_name,
             name=name,
@@ -377,5 +420,3 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
             return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
         return deserialized # type: ignore
-
-

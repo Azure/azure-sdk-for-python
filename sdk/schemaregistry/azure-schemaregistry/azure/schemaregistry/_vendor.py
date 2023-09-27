@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
     from ._serialization import Deserializer, Serializer
 
-class SchemaRegistryClientMixinABC(  
+class SchemaRegistryClientMixinABC(
     ABC
 ):
     """DO NOT use this class. It is for internal typing use only."""
@@ -32,4 +32,3 @@ def raise_if_not_implemented(cls, abstract_methods):
         " Please refer to https://aka.ms/azsdk/python/dpcodegen/python/customize to learn how to customize.".format(
         cls.__name__, '\', \''.join(not_implemented))
         )
-
