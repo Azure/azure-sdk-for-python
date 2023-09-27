@@ -1036,13 +1036,8 @@ class GenerationSafetyQualitySignal(RestTranslatableMixin):
     def __init__(
         self,
         *,
-<<<<<<< HEAD
-        production_data: List[LlmRequestResponseData],
-        workspace_connection_id: str,
-=======
         production_data: List[LlmData] = None,
         workspace_connection_id: Optional[str] = None,
->>>>>>> 39637c1fe5 (Change llmrequestresponseData to LlmData (#32244))
         metric_thresholds: GenerationSafetyQualityMonitoringMetricThreshold,
         alert_enabled: bool = True,
         properties: Optional[Dict[str, str]] = None,
