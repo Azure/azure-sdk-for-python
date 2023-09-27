@@ -9,17 +9,22 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List
 import datetime
 from typing import Any, Callable, Dict, Iterable, List, Optional, TypeVar
-from .. import models as _models
 from ._operations import (
     BatchClientOperationsMixin as BatchClientOperationsMixinGenerated,
 )
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+from azure.core.exceptions import HttpResponseError
+from azure.core.rest import HttpResponse
+
+__all__: List[str] = [
+    "BatchClientOperationsMixin"
+]  # Add all objects you want publicly available to users at this package level
+
 
 class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     """Customize generated code"""
 
-    def get_node_file(
+    async def get_node_file(
         self,
         pool_id: str,
         node_id: str,
@@ -78,9 +83,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             }
         )
         kwargs["stream"] = True
-        return super().get_node_file(*args, **kwargs)
+        return await super().get_node_file(*args, **kwargs)
 
-    def get_node_file_properties(
+    async def get_node_file_properties(
         self,
         pool_id: str,
         node_id: str,
@@ -139,11 +144,11 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             json_response,
             headers,
         )
-        get_response = super().get_node_file_properties(*args, **kwargs)
+        get_response = await super().get_node_file_properties(*args, **kwargs)
 
         return get_response[0].http_response
 
-    def get_task_file_properties(
+    async def get_task_file_properties(
         self,
         job_id: str,
         task_id: str,
@@ -202,11 +207,11 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             json_response,
             headers,
         )
-        get_response = super().get_task_file_properties(*args, **kwargs)
+        get_response = await super().get_task_file_properties(*args, **kwargs)
 
         return get_response[0].http_response
 
-    def get_node_remote_desktop_file(
+    async def get_node_remote_desktop_file(
         self,
         pool_id: str,
         node_id: str,
@@ -244,9 +249,9 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         args = [pool_id, node_id]
         kwargs.update({"time_out": time_out, "ocp_date": ocp_date})
         kwargs["stream"] = True
-        return super().get_node_remote_desktop_file(*args, **kwargs)
+        return await super().get_node_remote_desktop_file(*args, **kwargs)
 
-    def get_task_file(
+    async def get_task_file(
         self,
         job_id: str,
         task_id: str,
@@ -306,8 +311,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             }
         )
         kwargs["stream"] = True
-        return super().get_task_file(*args, **kwargs)
-
+        return await super().get_task_file(*args, **kwargs)
 
 
 def patch_sdk():

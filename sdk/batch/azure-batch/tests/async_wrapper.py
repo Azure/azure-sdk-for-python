@@ -12,21 +12,23 @@ async def async_wrapper(obj):
         return items
         
     if inspect.iscoroutine(obj):
-        return await obj
+        waited = await obj
+        # wrap again to handle nested coroutines or async generators
+        return await async_wrapper(waited)
 
     return obj
 
 
-async def main():
-    def func():
-        for i in range(3):
-            yield i
-    print(asyncio.iscoroutine(func()))
-    result = await async_wrapper(func())
-    m =  models.BatchApplication()
-    print(isinstance(m, Iterable))
-    print(result)
+# async def main():
+#     def func():
+#         for i in range(3):
+#             yield i
+#     print(asyncio.iscoroutine(func()))
+#     result = await async_wrapper(func())
+#     m =  models.BatchApplication()
+#     print(isinstance(m, Iterable))
+#     print(result)
 
-asyncio.run(main())
+# asyncio.run(main())
 
 # client\..*?\) => await async_wrapper($0)
