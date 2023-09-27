@@ -52,6 +52,15 @@ class WorkspaceOutboundRuleOperations:
         :type outbound_rule_name: str
         :return: The OutboundRule with the provided name for the workspace.
         :rtype: ~azure.ai.ml.entities.OutboundRule
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START obrule_get]
+                :end-before: [END obrule_get]
+                :language: python
+                :dedent: 8
+                :caption: Get the outbound rule for a workspace with the given name.
         """
 
         workspace_name = self._check_workspace_name(workspace_name)
@@ -70,6 +79,15 @@ class WorkspaceOutboundRuleOperations:
         :type rule: ~azure.ai.ml.entities.OutboundRule
         :return: An instance of LROPoller that returns an OutboundRule.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.OutboundRule]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START obrule_begin_create]
+                :end-before: [END obrule_begin_create]
+                :language: python
+                :dedent: 8
+                :caption: Create an FQDN outbound rule for a workspace with the given name, similar can be done for PrivateEndpointDestination or ServiceTagDestination.
         """
 
         workspace_name = self._check_workspace_name(workspace_name)
@@ -79,8 +97,7 @@ class WorkspaceOutboundRuleOperations:
 
         # pylint: disable=unused-argument, docstring-missing-param
         def callback(_, deserialized, args):
-            """
-            callback to be called after completion
+            """Callback to be called after completion
 
             :return: Outbound rule deserialized.
             :rtype: ~azure.ai.ml.entities.OutboundRule
@@ -105,6 +122,15 @@ class WorkspaceOutboundRuleOperations:
         :type rule: ~azure.ai.ml.entities.OutboundRule
         :return: An instance of LROPoller that returns an OutboundRule.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.OutboundRule]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START obrule_begin_update]
+                :end-before: [END obrule_begin_update]
+                :language: python
+                :dedent: 8
+                :caption: Update an FQDN outbound rule for a workspace with the given name, similar can be done for PrivateEndpointDestination or ServiceTagDestination
         """
 
         workspace_name = self._check_workspace_name(workspace_name)
@@ -114,8 +140,7 @@ class WorkspaceOutboundRuleOperations:
 
         # pylint: disable=unused-argument, docstring-missing-param
         def callback(_, deserialized, args):
-            """
-            callback to be called after completion
+            """Callback to be called after completion
 
             :return: Outbound rule deserialized.
             :rtype: ~azure.ai.ml.entities.OutboundRule
@@ -138,6 +163,15 @@ class WorkspaceOutboundRuleOperations:
         :type workspace_name: str
         :return: An Iterable of OutboundRule.
         :rtype: Iterable[OutboundRule]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START obrule_list]
+                :end-before: [END obrule_list]
+                :language: python
+                :dedent: 8
+                :caption: List the outbound rule for a workspace with the given name.
         """
 
         workspace_name = self._check_workspace_name(workspace_name)
@@ -161,6 +195,15 @@ class WorkspaceOutboundRuleOperations:
         :type outbound_rule_name: str
         :return: An Iterable of OutboundRule.
         :rtype: Iterable[OutboundRule]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START obrule_begin_remove]
+                :end-before: [END obrule_begin_remove]
+                :language: python
+                :dedent: 8
+                :caption: Remove the outbound rule for a workspace with the given name.
         """
 
         workspace_name = self._check_workspace_name(workspace_name)

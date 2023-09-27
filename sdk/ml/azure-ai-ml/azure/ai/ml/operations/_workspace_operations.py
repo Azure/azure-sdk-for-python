@@ -64,6 +64,15 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :paramtype scope: str
         :return: An iterator like instance of Workspace objects
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Workspace]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START workspace_list]
+                :end-before: [END workspace_list]
+                :language: python
+                :dedent: 8
+                :caption: List the workspaces by resource group or subscription.
         """
 
         if scope == Scope.SUBSCRIPTION:
@@ -85,6 +94,15 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :type name: str
         :return: The workspace with the provided name.
         :rtype: ~azure.ai.ml.entities.Workspace
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START workspace_get]
+                :end-before: [END workspace_get]
+                :language: python
+                :dedent: 8
+                :caption: Get the workspace with the given name.
         """
 
         return super().get(workspace_name=name, **kwargs)
@@ -99,6 +117,15 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :type name: str
         :return: Keys of workspace dependent resources.
         :rtype: ~azure.ai.ml.entities.WorkspaceKeys
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START workspace_get_keys]
+                :end-before: [END workspace_get_keys]
+                :language: python
+                :dedent: 8
+                :caption: Get the workspace keys for the workspace with the given name.
         """
         workspace_name = self._check_workspace_name(name)
         obj = self._operation.list_keys(self._resource_group_name, workspace_name)
@@ -116,6 +143,15 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :type name: str
         :return: An instance of LROPoller that returns either None or the sync keys result.
         :rtype: ~azure.core.polling.LROPoller[None]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START workspace_sync_keys]
+                :end-before: [END workspace_sync_keys]
+                :language: python
+                :dedent: 8
+                :caption: Begin sync keys for the workspace with the given name.
         """
         workspace_name = self._check_workspace_name(name)
         return self._operation.begin_resync_keys(self._resource_group_name, workspace_name)
@@ -137,6 +173,15 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :paramtype workspace_name: str
         :return: An instance of LROPoller.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.ManagedNetworkProvisionStatus]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START workspace_provision_network]
+                :end-before: [END workspace_provision_network]
+                :language: python
+                :dedent: 8
+                :caption: Begin provision network for a workspace with managed network.
         """
         workspace_name = self._check_workspace_name(workspace_name)
 
@@ -170,6 +215,15 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :type update_dependent_resources: boolean
         :return: An instance of LROPoller that returns a Workspace.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START workspace_begin_create]
+                :end-before: [END workspace_begin_create]
+                :language: python
+                :dedent: 8
+                :caption: Begin create for a workspace.
         """
         return super().begin_create(workspace, update_dependent_resources=update_dependent_resources, **kwargs)
 
@@ -190,6 +244,15 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :paramtype update_dependent_resources: boolean
         :return: An instance of LROPoller that returns a Workspace.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START workspace_begin_update]
+                :end-before: [END workspace_begin_update]
+                :language: python
+                :dedent: 8
+                :caption: Begin update for a workspace.
         """
         return super().begin_update(workspace, update_dependent_resources=update_dependent_resources, **kwargs)
 
@@ -211,6 +274,15 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :paramtype permanently_delete: bool
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START workspace_begin_delete]
+                :end-before: [END workspace_begin_delete]
+                :language: python
+                :dedent: 8
+                :caption: Begin permanent (force) deletion for a workspace and delete dependent resources.
         """
         return super().begin_delete(
             name, delete_dependent_resources=delete_dependent_resources, permanently_delete=permanently_delete, **kwargs
@@ -230,14 +302,22 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         :type name: str
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.DiagnoseResponseResultValue]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START workspace_begin_diagnose]
+                :end-before: [END workspace_begin_diagnose]
+                :language: python
+                :dedent: 8
+                :caption: Begin diagnose operation for a workspace.
         """
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         parameters = DiagnoseWorkspaceParameters(value=DiagnoseRequestProperties())._to_rest_object()
 
         # pylint: disable=unused-argument, docstring-missing-param
         def callback(_, deserialized, args):
-            """
-            callback to be called after completion
+            """Callback to be called after completion
 
             :return: DiagnoseResponseResult deserialized.
             :rtype: ~azure.ai.ml.entities.DiagnoseResponseResult

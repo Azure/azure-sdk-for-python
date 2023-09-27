@@ -52,7 +52,7 @@ class WorkspaceKeys:
     :param container_registry_credentials: Key for ACR associated with given workspace
     :type container_registry_credentials:ContainerRegistryCredential
     :param notebook_access_keys: Key for notebook resource associated with given workspace
-    :type notebook_access_keys:NotebookAccessKeys
+    :type notebook_access_keys: NotebookAccessKeys
     """
 
     def __init__(

@@ -54,6 +54,15 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         :type name: str
         :return: The workspace connection with the provided name.
         :rtype: ~azure.ai.ml.entities.WorkspaceConnection
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START get_connection]
+                :end-before: [END get_connection]
+                :language: python
+                :dedent: 8
+                :caption: Get a workspace connection by name.
         """
 
         obj = self._operation.get(
@@ -74,6 +83,15 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         :type workspace_connection: ~azure.ai.ml.entities.WorkspaceConnection
         :return: Created or update workspace connection.
         :rtype: ~azure.ai.ml.entities.WorkspaceConnection
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START createorupdate_connection]
+                :end-before: [END createorupdate_connection]
+                :language: python
+                :dedent: 8
+                :caption: Create or update a workspace connection, this example shows snowflake.
         """
         rest_workspace_connection = workspace_connection._to_rest_object()
         response = self._operation.create(
@@ -92,6 +110,15 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
 
         :param name: Name of the workspace connection.
         :type name: str
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START delete_connection]
+                :end-before: [END delete_connection]
+                :language: python
+                :dedent: 8
+                :caption: Delete a workspace connection.
         """
 
         self._operation.delete(
@@ -111,6 +138,15 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         :type connection_type: Optional[str]
         :return: An iterator like instance of workspace connection objects
         :rtype: Iterable[~azure.ai.ml.entities.WorkspaceConnection]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START list_connection]
+                :end-before: [END list_connection]
+                :language: python
+                :dedent: 8
+                :caption: Lists all connections for a workspace for a certain type, in this case "git".
         """
         return self._operation.list(
             workspace_name=self._workspace_name,

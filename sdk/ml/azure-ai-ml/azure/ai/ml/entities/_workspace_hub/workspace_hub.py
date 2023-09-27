@@ -67,6 +67,13 @@ class WorkspaceHub(Workspace):
     :type enable_data_isolation: bool
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
+
+    .. literalinclude:: ../../../../../samples/ml_samples_workspace.py
+            :start-after: [START workspace_hub]
+            :end-before: [END workspace_hub]
+            :language: python
+            :dedent: 8
+            :caption: Creating a WorkspaceHub object.
     """
 
     def __init__(

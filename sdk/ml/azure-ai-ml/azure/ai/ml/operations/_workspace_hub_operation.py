@@ -57,6 +57,15 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         :paramtype scope: str
         :return: An iterator like instance of WorkspaceHub objects
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.WorkspaceHub]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START hub_list]
+                :end-before: [END hub_list]
+                :language: python
+                :dedent: 8
+                :caption: List the workspace hubs by resource group or subscription.
         """
 
         if scope == Scope.SUBSCRIPTION:
@@ -84,6 +93,15 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         :type name: str
         :return: The WorkspaceHub with the provided name.
         :rtype: ~azure.ai.ml.entities.WorkspaceHub
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START hub_get]
+                :end-before: [END hub_get]
+                :language: python
+                :dedent: 8
+                :caption: Get the workspace hub by name.
         """
 
         workspace_hub = None
@@ -114,10 +132,19 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         :paramtype update_dependent_resources: boolean
         :return: An instance of LROPoller that returns a WorkspaceHub.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.WorkspaceHub]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START hub_begin_create]
+                :end-before: [END hub_begin_create]
+                :language: python
+                :dedent: 8
+                :caption: Create the workspace hub.
         """
 
         def get_callback():
-            """callback to called after completion"""
+            """Callback to be called after completion"""
             return self.get(name=workspace_hub.name)
 
         return super().begin_create(
@@ -144,6 +171,15 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         :return: An instance of LROPoller that returns a WorkspaceHub.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.WorkspaceHub]
         :raises ~azure.ai.ml.ValidationException: Raised if workspace_hub is not a WorkspaceHub.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START hub_begin_update]
+                :end-before: [END hub_begin_update]
+                :language: python
+                :dedent: 8
+                :caption: Update the workspace hub.
         """
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, workspace_hub.name)
@@ -158,8 +194,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
             )
 
         def deserialize_callback(rest_obj):
-            """
-            callback to be called after completion
+            """Callback to be called after completion
 
             :param rest_obj: A rest representation of the Workspace.
             :type: Any
@@ -194,6 +229,15 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.ai.ml.ValidationException: Raised if workspace with name is not a WorkspaceHub.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+                :start-after: [START hub_begin_delete]
+                :end-before: [END hub_begin_delete]
+                :language: python
+                :dedent: 8
+                :caption: Delete the workspace hub.
         """
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, name)

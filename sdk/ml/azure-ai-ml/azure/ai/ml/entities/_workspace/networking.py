@@ -82,6 +82,13 @@ class FqdnDestination(OutboundRule):
     :param destination: Fully qualified domain name to which outbound connections are allowed.
         For example: “*.contoso.com”.
     :type destination: str
+
+    .. literalinclude:: ../../../../../samples/ml_samples_workspace.py
+            :start-after: [START fqdn_outboundrule]
+            :end-before: [END fqdn_outboundrule]
+            :language: python
+            :dedent: 8
+            :caption: Creating a FqdnDestination outbound rule object.
     """
 
     def __init__(self, *, name: str, destination: str, **kwargs) -> None:
@@ -113,6 +120,13 @@ class PrivateEndpointDestination(OutboundRule):
     :type subresource_target: str
     :param spark_enabled: Indicates if the private endpoint can be used for Spark jobs, default is “false”.
     :type spark_enabled: bool
+
+    .. literalinclude:: ../../../../../samples/ml_samples_workspace.py
+            :start-after: [START private_endpoint_outboundrule]
+            :end-before: [END private_endpoint_outboundrule]
+            :language: python
+            :dedent: 8
+            :caption: Creating a PrivateEndpointDestination outbound rule object.
     """
 
     def __init__(
@@ -167,6 +181,13 @@ class ServiceTagDestination(OutboundRule):
     :param port_ranges: A comma-separated list of single ports and/or range of ports, such as "80,1024-65535".
         Traffics should be allowed to these port ranges.
     :type port_ranges: str
+
+    .. literalinclude:: ../../../../../samples/ml_samples_workspace.py
+            :start-after: [START service_tag_outboundrule]
+            :end-before: [END service_tag_outboundrule]
+            :language: python
+            :dedent: 8
+            :caption: Creating a ServiceTagDestination outbound rule object.
     """
 
     def __init__(
@@ -216,6 +237,13 @@ class ManagedNetwork:
     :type outbound_rules: List[~azure.ai.ml.entities.OutboundRule]
     :param network_id: Network id for the managed network, not meant to be set by user.
     :type network_id: str
+
+    .. literalinclude:: ../../../../../samples/ml_samples_workspace.py
+            :start-after: [START workspace_managed_network]
+            :end-before: [END workspace_managed_network]
+            :language: python
+            :dedent: 8
+            :caption: Creating a ManagedNetwork object with one of each rule type.
     """
 
     def __init__(

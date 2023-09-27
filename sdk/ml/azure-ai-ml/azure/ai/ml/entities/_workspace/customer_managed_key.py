@@ -22,6 +22,15 @@ class CustomerManagedKey:
     :param search_id: ARM id of bring-your-own search account that customer brings
     to store customer's data with encryption.
     :type search_id: str
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../../../../../samples/ml_samples_workspace.py
+            :start-after: [START customermanagedkey]
+            :end-before: [END customermanagedkey]
+            :language: python
+            :dedent: 8
+            :caption: Creating a CustomerManagedKey object.
     """
 
     def __init__(

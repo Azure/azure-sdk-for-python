@@ -184,8 +184,7 @@ class WorkspaceOperationsBase(ABC):
         )
 
         def callback():
-            """
-            callback to be called after completion
+            """Callback to be called after completion
 
             :return: Result of calling appropriate callback.
             :rtype: Any
@@ -197,8 +196,7 @@ class WorkspaceOperationsBase(ABC):
         if injected_callback:
             # pylint: disable=function-redefined
             def real_callback():
-                """
-                callback to be called after completion
+                """Callback to be called after completion
 
                 :return: Result of calling appropriate callback.
                 :rtype: Any
@@ -273,7 +271,8 @@ class WorkspaceOperationsBase(ABC):
                 "Updating the workspace-attached Azure Container Registry resource may break lineage of "
                 "previous jobs or your ability to rerun earlier jobs in this workspace. "
                 "Are you sure you want to perform this operation? "
-                "Include the --update-dependent-resources/-u parameter with this request to confirm."
+                "Include the update_dependent_resources argument in SDK or the "
+                "--update-dependent-resources/-u parameter in CLI with this request to confirm."
             )
             raise ValidationException(
                 message=msg,
@@ -291,7 +290,9 @@ class WorkspaceOperationsBase(ABC):
             msg = (
                 "Updating the workspace-attached Azure Application Insights resource may break lineage "
                 "of deployed inference endpoints this workspace. Are you sure you want to perform this "
-                "operation? Include the --update_dependent_resources/-u parameter with this request to confirm."
+                "operation? "
+                "Include the update_dependent_resources argument in SDK or the "
+                "--update-dependent-resources/-u parameter in CLI with this request to confirm."
             )
             raise ValidationException(
                 message=msg,
@@ -347,8 +348,7 @@ class WorkspaceOperationsBase(ABC):
 
         # pylint: disable=unused-argument, docstring-missing-param
         def callback(_, deserialized, args):
-            """
-            callback to be called after completion
+            """Callback to be called after completion
 
             :return: Workspace deserialized.
             :rtype: ~azure.ai.ml.entities.Workspace
@@ -391,8 +391,7 @@ class WorkspaceOperationsBase(ABC):
         if injected_callback:
             # pylint: disable=function-redefined, docstring-missing-param
             def real_callback(_, deserialized, args):
-                """
-                callback to be called after completion
+                """Callback to be called after completion
 
                 :return: Result of calling appropriate callback.
                 :rtype: Any
