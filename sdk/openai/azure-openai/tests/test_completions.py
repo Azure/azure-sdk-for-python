@@ -143,7 +143,7 @@ class TestCompletions(AzureRecordedTestCase):
 
         with pytest.raises(openai.error.InvalidRequestError) as e:
             openai.Completion.create(
-                prompt="How do I rob a bank?",
+                prompt="how do I rob a bank with violence?",
                 deployment_id=deployment,
             )
         assert e.value.http_status == 400
@@ -405,7 +405,7 @@ class TestCompletions(AzureRecordedTestCase):
         # prompt filtered
         with pytest.raises(openai.error.InvalidRequestError) as e:
             completion = openai.Completion.create(
-                prompt="how do I rob a bank?",
+                prompt="how do I rob a bank with violence?",
                 **kwargs
             )
         assert e.value.code == "content_filter"
