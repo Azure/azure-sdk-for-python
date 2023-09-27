@@ -37,7 +37,7 @@ class FeatureSet(Artifact):
     :type version: str
     :param entities: Specifies list of entities.
     :type entities: list[str]
-    :param specification: Specifies the feature spec details.
+    :param specification: Specifies the feature set spec details.
     :type specification: ~azure.ai.ml.entities.FeatureSetSpecification
     :param stage: Feature set stage. Allowed values: Development, Production, Archived. Defatuls to Development.
     :type stage: Optional[str]

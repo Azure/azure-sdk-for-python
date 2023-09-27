@@ -17,11 +17,11 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class Feature(RestTranslatableMixin):
     """Feature
 
-    :param name: The name of the feature resource.
+    :param name: The name of the feature.
     :type name: str
-    :param data_type: The data type of the feature resource.
+    :param data_type: The data type of the feature.
     :type data_type: ~azure.ai.ml.entities.DataColumnType
-    :param description: The description of the feature resource. Defaults to None.
+    :param description: The description of the feature. Defaults to None.
     :type description: Optional[str]
     :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
     :type tags: Optional[dict[str, str]]

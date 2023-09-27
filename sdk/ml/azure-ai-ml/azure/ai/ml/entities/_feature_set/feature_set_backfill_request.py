@@ -9,17 +9,12 @@ from pathlib import Path
 from typing import Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import FeatureWindow
-
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml.entities._feature_set.materialization_compute_resource import (
-    MaterializationComputeResource,
-)
+from azure.ai.ml._schema._feature_set.feature_set_backfill_schema import FeatureSetBackfillSchema
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
-from azure.ai.ml._schema._feature_set.feature_set_backfill_schema import (
-    FeatureSetBackfillSchema,
-)
+from azure.ai.ml.entities._feature_set.materialization_compute_resource import MaterializationComputeResource
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.entities._util import load_from_dict
 
 
 @experimental
@@ -30,7 +25,7 @@ class FeatureSetBackfillRequest(RestTranslatableMixin):
     :type name: str
     :param version: The version of the backfill job request.
     :type version: str
-    :param feature_window: The window of time for the feature set backfill request.
+    :param feature_window: The time window for the feature set backfill request.
     :type feature_window: ~azure.ai.ml._restclient.v2023_04_01_preview.models.FeatureWindow
     :param description: The description of the backfill job request. Defaults to None.
     :type description: Optional[str]

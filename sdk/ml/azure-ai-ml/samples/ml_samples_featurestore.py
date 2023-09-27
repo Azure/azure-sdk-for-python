@@ -37,8 +37,7 @@ class FeatureStoreConfigurationOptions(object):
         )
 
         # [START configure_feature_store_settings]
-        from azure.ai.ml.entities import FeatureStoreSettings
-        from azure.ai.ml.entities import ComputeRuntime
+        from azure.ai.ml.entities import ComputeRuntime, FeatureStoreSettings
 
         offline_store_target = f"/subscriptions/{subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.Storage/storageAccounts/{storage_account_name}/blobServices/default/containers/{storage_file_system_name}"
 
@@ -71,8 +70,7 @@ class FeatureStoreConfigurationOptions(object):
         )
 
         # [START configure_feature_store_entity]
-        from azure.ai.ml.entities import DataColumn, DataColumnType
-        from azure.ai.ml.entities import FeatureStoreEntity
+        from azure.ai.ml.entities import DataColumn, DataColumnType, FeatureStoreEntity
 
         account_column = DataColumn(name="accountID", type=DataColumnType.STRING)
 
@@ -91,8 +89,7 @@ class FeatureStoreConfigurationOptions(object):
         # [END configure_feature_store_entity]
 
         # [START configure_feature_set]
-        from azure.ai.ml.entities import FeatureSetSpecification
-        from azure.ai.ml.entities import FeatureSet
+        from azure.ai.ml.entities import FeatureSet, FeatureSetSpecification
 
         transaction_fset_config = FeatureSet(
             name="transactions",
@@ -111,7 +108,7 @@ class FeatureStoreConfigurationOptions(object):
         # [END configure_feature_set]
 
         # [START configure_materialization_store]
-        from azure.ai.ml.entities import MaterializationStore
+        from azure.ai.ml.entities import ManagedIdentityConfiguration, MaterializationStore
 
         gen2_container_arm_id = "/subscriptions/{sub_id}/resourceGroups/{rg}/providers/Microsoft.Storage/storageAccounts/{account}/blobServices/default/containers/{container}".format(
             sub_id=subscription_id,
@@ -123,6 +120,17 @@ class FeatureStoreConfigurationOptions(object):
         offline_store = MaterializationStore(
             type="azure_data_lake_gen2",
             target=gen2_container_arm_id,
+        )
+
+        # Must define materialization identity when defining offline/online store.
+        fs = FeatureStore(
+            name=featurestore_name,
+            offline_store=offline_store,
+            materialization_identity=ManagedIdentityConfiguration(
+                client_id="<YOUR-UAI-CLIENT-ID>",
+                resource_id="<YOUR-UAI-RESOURCE-ID>",
+                principal_id="<YOUR-UAI-PRINCIPAL-ID>",
+            ),
         )
         # [END configure_materialization_store]
 
