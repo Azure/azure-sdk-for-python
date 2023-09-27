@@ -42,7 +42,7 @@ from azure_devtools.scenario_tests.recording_processors import (
     RecordingProcessor,
 )
 from tests.async_wrapper import async_wrapper
-from tests.proxy_decorator import recorded_by_proxy_async, client_setup
+from tests.decorators import recorded_by_proxy_async, client_setup
 
 # toggle to test sync or async client
 TEST_SYNC_CLIENT = False

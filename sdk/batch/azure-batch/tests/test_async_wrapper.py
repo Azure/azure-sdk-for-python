@@ -21,6 +21,25 @@ class TestAyncWrapper:
         assert result == [0, 1, 2]
 
     @pytest.mark.asyncio
+    async def test_isNestedAsyncIterable(self):
+        async def func():
+            async def nested():
+                for i in range(3):
+                    yield i
+            return nested()
+        result = await async_wrapper(func())
+        assert result == [0, 1, 2]
+
+    @pytest.mark.asyncio
+    async def test_isNestedCoroutine(self):
+        async def func():
+            async def nested():
+                return 2
+            return nested()
+        result = await async_wrapper(func())
+        assert result == 2
+
+    @pytest.mark.asyncio
     async def test_isIterable(self):
         def func():
             for i in range(3):
