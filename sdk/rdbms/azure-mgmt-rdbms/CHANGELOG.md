@@ -1,10 +1,6 @@
 # Release History
 
-## 10.2.0b11 (2023-10-23)
-
-change log generation failed!!!
-
-## 10.2.0b11 (2023-09-22)
+## 10.2.0b11 (2023-09-27)
 
 ### Features Added
 
@@ -26,6 +22,7 @@ change log generation failed!!!
   - Model ErrorResponse no longer has parameter target in `mysql_flexibleservers`
   - Enum BackupFormat has new value RAW and removes NONE in `mysql_flexibleservers`
   - Enum SkuTier is renamed to ServerSkuTier in `mysql_flexibleservers`
+  - Model Storage rename parameter iops_tier to tier in `postgresql_flexibleservers`
 
 ## 10.2.0b10 (2023-06-08)
 
