@@ -83,6 +83,10 @@ class TableClient(TablesBaseClient):
         self.table_name: str = table_name
         super(TableClient, self).__init__(endpoint, credential=credential, **kwargs)
 
+    def __enter__(self) -> "TableClient":
+        self._client.__enter__()
+        return self
+    
     @classmethod
     def from_connection_string(cls, conn_str: str, table_name: str, **kwargs: Any) -> "TableClient":
         """Create TableClient from a Connection String.

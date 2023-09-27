@@ -79,7 +79,7 @@ class ConditionalUpdateSamples(object):
             except ResourceModifiedError:
                 print("This entity has been altered and may no longer be in the expected state.")
             entity2 = table_client.get_entity(
-                partition_key=self.entity1["PartitionKey"], row_key=self.entity1["RowKey"]
+                partition_key=self.entity1["PartitionKey"], row_key=self.entity1["RowKey"]  # type: ignore[arg-type]
             )
             print("Entity after merge:")
             print(entity2)
@@ -96,7 +96,7 @@ class ConditionalUpdateSamples(object):
             except ResourceModifiedError:
                 print("This entity has been altered and may no longer be in the expected state.")
             entity3 = table_client.get_entity(
-                partition_key=self.entity1["PartitionKey"], row_key=self.entity1["RowKey"]
+                partition_key=self.entity1["PartitionKey"], row_key=self.entity1["RowKey"]  # type: ignore[arg-type]
             )
             print("Entity after replace:")
             print(entity3)
@@ -117,7 +117,7 @@ class ConditionalUpdateSamples(object):
                 table_client.create_entity(entity=self.entity2)
             except ResourceExistsError:
                 entity = table_client.get_entity(
-                    partition_key=self.entity2["PartitionKey"], row_key=self.entity2["RowKey"]
+                    partition_key=self.entity2["PartitionKey"], row_key=self.entity2["RowKey"]  # type: ignore[arg-type]
                 )
                 if target_field not in entity:
                     table_client.update_entity(

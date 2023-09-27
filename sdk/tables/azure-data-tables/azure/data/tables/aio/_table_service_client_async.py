@@ -73,6 +73,10 @@ class TableServiceClient(AsyncTablesBaseClient):
             :caption: Creating the tableServiceClient with Shared Access Signature.
     """
 
+    async def __aenter__(self) -> "TableServiceClient":
+        await self._client.__aenter__()
+        return self
+    
     def _format_url(self, hostname: str) -> str:
         """Format the endpoint URL according to the current location
         mode hostname.

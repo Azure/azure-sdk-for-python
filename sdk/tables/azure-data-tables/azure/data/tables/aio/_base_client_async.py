@@ -73,10 +73,6 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), **kwargs)
         self._client._config.version = get_api_version(kwargs, self._client._config.version)  # type: ignore[assignment] # pylint: disable=protected-access
 
-    async def __aenter__(self) -> "AsyncTablesBaseClient":
-        await self._client.__aenter__()
-        return self
-
     async def __aexit__(self, *args: Any) -> None:
         await self._client.__aexit__(*args)
 

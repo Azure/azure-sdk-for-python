@@ -87,7 +87,7 @@ class InsertDeleteEntity(object):
                 print("Entity already exists!")
 
             # [START delete_entity]
-            table_client.delete_entity(row_key=self.entity["RowKey"], partition_key=self.entity["PartitionKey"])
+            table_client.delete_entity(row_key=self.entity["RowKey"], partition_key=self.entity["PartitionKey"])  # type: ignore[call-overload]
             print("Successfully deleted!")
             # [END delete_entity]
 

@@ -68,6 +68,10 @@ class TableServiceClient(TablesBaseClient):
             :dedent: 8
             :caption: Authenticating a TableServiceClient from a Shared Account Key
     """
+    
+    def __enter__(self) -> "TableServiceClient":
+        self._client.__enter__()
+        return self
 
     def _format_url(self, hostname: str) -> str:
         """Format the endpoint URL according to the current location

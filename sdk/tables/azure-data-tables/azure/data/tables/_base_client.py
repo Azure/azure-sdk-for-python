@@ -259,10 +259,6 @@ class TablesBaseClient(AccountHostsMixin):
         self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), **kwargs)
         self._client._config.version = get_api_version(kwargs, self._client._config.version)  # type: ignore[assignment] # pylint: disable=protected-access
 
-    def __enter__(self) -> "TablesBaseClient":
-        self._client.__enter__()
-        return self
-
     def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)
 
