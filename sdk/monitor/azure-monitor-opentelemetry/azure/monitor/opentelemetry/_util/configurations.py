@@ -102,24 +102,6 @@ def _default_sampling_ratio(configurations):
     configurations[SAMPLING_RATIO_ARG] = default
 
 
-def _merge_nested_dicts_in_place(d1, d2):
-    for key, value in d2.items():
-        if key in d1 and isinstance(d1[key], dict) and isinstance(value, dict):
-            _merge_nested_dicts_in_place(d1[key], value)
-        else:
-            d1[key] = value
-
-
-def _merge_nested_dicts(d1, d2):
-    merged = d1.copy()
-    for key, value in d2.items():
-        if key in merged and isinstance(merged[key], dict) and isinstance(value, dict):
-            _merge_nested_dicts_in_place(merged[key], value)
-        else:
-            merged[key] = value
-    return merged
-
-
 def _default_instrumentation_options(configurations):
     disabled_instrumentation = environ.get(
         OTEL_PYTHON_DISABLED_INSTRUMENTATIONS, ""
@@ -130,16 +112,16 @@ def _default_instrumentation_options(configurations):
         x.strip() for x in disabled_instrumentation
     ]
 
-    default_instrumentation_options = {}
+    merged_instrumentation_options = {}
+    instrumentation_options = configurations.get(INSTRUMENTATION_OPTIONS_ARG, {})
     for lib_name in _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES:
         disabled_by_env_var = lib_name in disabled_instrumentation
-        default_instrumentation_options[lib_name] = {"enabled": not disabled_by_env_var}
+        default = {"enabled": not disabled_by_env_var}
+        merged_instrumentation_options[lib_name] = instrumentation_options.get(lib_name, {}) | default
     for lib_name in _PREVIEW_INSTRUMENTED_LIBRARIES:
-        default_instrumentation_options[lib_name] = {"enabled": False}
+        default = {"enabled": False}
+        merged_instrumentation_options[lib_name] = instrumentation_options.get(lib_name, {}) | default
 
-    # Explicit configuration takes priority over environment variables
-    instrumentation_options = configurations.get(INSTRUMENTATION_OPTIONS_ARG, {})
-    merged_instrumentation_options = _merge_nested_dicts(default_instrumentation_options, instrumentation_options)
     configurations[INSTRUMENTATION_OPTIONS_ARG] = merged_instrumentation_options
 
 
