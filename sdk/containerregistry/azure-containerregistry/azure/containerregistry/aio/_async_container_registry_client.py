@@ -165,7 +165,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         def prepare_request(next_link=None):
             # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters: Dict[str, Any] = {}
             header_parameters["Accept"] = self._client._serialize.header(  # pylint: disable=protected-access
                 "accept", accept, "str"
             )
@@ -183,7 +183,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 }
                 url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
                 # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters: Dict[str, Any] = {}
                 if last is not None:
                     query_parameters["last"] = self._client._serialize.query(  # pylint: disable=protected-access
                         "last", last, "str"
@@ -198,7 +198,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 )
             else:
                 url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters: Dict[str, Any] = {}
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
                         "self._config.url",
@@ -290,7 +290,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         def prepare_request(next_link=None):
             # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters: Dict[str, Any] = {}
             header_parameters["Accept"] = self._client._serialize.header(  # pylint: disable=protected-access
                 "accept", accept, "str"
             )
@@ -309,7 +309,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 }
                 url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
                 # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters: Dict[str, Any] = {}
                 if last is not None:
                     query_parameters["last"] = self._client._serialize.query(  # pylint: disable=protected-access
                         "last", last, "str"
@@ -328,7 +328,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 )
             else:
                 url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters: Dict[str, Any] = {}
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
                         "self._client._config.url",
@@ -505,7 +505,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         def prepare_request(next_link=None):
             # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
+            header_parameters: Dict[str, Any] = {}
             header_parameters["Accept"] = self._client._serialize.header(  # pylint: disable=protected-access
                 "accept", accept, "str"
             )
@@ -524,7 +524,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 }
                 url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
                 # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters: Dict[str, Any] = {}
                 if last is not None:
                     query_parameters["last"] = self._client._serialize.query(  # pylint: disable=protected-access
                         "last", last, "str"
@@ -547,7 +547,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 )
             else:
                 url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
+                query_parameters: Dict[str, Any] = {}
                 path_format_arguments = {
                     "url": self._client._serialize.url(  # pylint: disable=protected-access
                         "self._client._config.url",
