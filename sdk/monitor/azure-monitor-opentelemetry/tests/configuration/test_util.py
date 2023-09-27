@@ -31,7 +31,7 @@ from opentelemetry.environment_variables import (
 
 class TestUtil(TestCase):
     @patch.dict("os.environ", {}, clear=True)
-    @patch("azure.monitor.opentelemetry.util._configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
+    @patch("azure.monitor.opentelemetry._util.configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
     def test_get_configurations(self):
         configurations = _get_configurations(
             connection_string="test_cs",
@@ -126,7 +126,7 @@ class TestUtil(TestCase):
         },
         clear=True,
     )
-    @patch("azure.monitor.opentelemetry.util._configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
+    @patch("azure.monitor.opentelemetry._util.configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
     def test_merge_instrumentation_options_conflict(self):
         configurations = _get_configurations(
             instrumentation_options = {
@@ -152,7 +152,7 @@ class TestUtil(TestCase):
         })
 
     @patch.dict("os.environ", {}, clear=True)
-    @patch("azure.monitor.opentelemetry.util._configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
+    @patch("azure.monitor.opentelemetry._util.configurations._PREVIEW_INSTRUMENTED_LIBRARIES", ("previewlib1", "previewlib2"))
     def test_merge_instrumentation_options_extra_args(self):
         configurations = _get_configurations(
             instrumentation_options = {
