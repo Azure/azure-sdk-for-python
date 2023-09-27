@@ -25,13 +25,18 @@ _SUBSCRIPTION_ID = (
     _SUBSCRIPTION_ID_ENV_VAR.split("+")[0] if _SUBSCRIPTION_ID_ENV_VAR else None
 )
 _logger = logging.getLogger(__name__)
+_logger.propagate = False
+_logger.setLevel(logging.INFO)
 _DIAGNOSTIC_LOG_PATH = _get_log_path()
+_ATTACH_SUCCESS_DISTRO = "4200"
+_ATTACH_SUCCESS_CONFIGURATOR = "4201"
+_ATTACH_FAILURE_DISTRO = "4400"
+_ATTACH_FAILURE_CONFIGURATOR = "4401"
 
 
 class AzureDiagnosticLogging:
     _initialized = False
     _lock = threading.Lock()
-    _f_handler = None
 
     @classmethod
     def _initialize(cls):
@@ -51,13 +56,14 @@ class AzureDiagnosticLogging:
                         + f'"extensionVersion":"{_EXTENSION_VERSION}", '
                         + f'"sdkVersion":"{VERSION}", '
                         + f'"subscriptionId":"{_SUBSCRIPTION_ID}", '
+                        + '"msgId":"%(msgId)s", '
                         + '"language":"python"'
                         + "}"
                         + "}"
                     )
                     if not exists(_DIAGNOSTIC_LOG_PATH):
                         makedirs(_DIAGNOSTIC_LOG_PATH)
-                    AzureDiagnosticLogging._f_handler = logging.FileHandler(
+                    f_handler = logging.FileHandler(
                         join(
                             _DIAGNOSTIC_LOG_PATH, _DIAGNOSTIC_LOGGER_FILE_NAME
                         )
@@ -65,15 +71,21 @@ class AzureDiagnosticLogging:
                     formatter = logging.Formatter(
                         fmt=log_format, datefmt="%Y-%m-%dT%H:%M:%S"
                     )
-                    AzureDiagnosticLogging._f_handler.setFormatter(formatter)
+                    f_handler.setFormatter(formatter)
+                    _logger.addHandler(f_handler)
                     AzureDiagnosticLogging._initialized = True
-                    _logger.info("Initialized Azure Diagnostic Logger.")
 
     @classmethod
-    def enable(cls, logger: logging.Logger):
+    def info(cls, message: str, message_id: int):
         AzureDiagnosticLogging._initialize()
-        if AzureDiagnosticLogging._initialized and AzureDiagnosticLogging._f_handler:
-            logger.addHandler(AzureDiagnosticLogging._f_handler)
-            _logger.info(
-                "Added Azure diagnostics logging to %s.", logger.name
-            )
+        _logger.info(message, extra={'msgId': message_id})
+
+    @classmethod
+    def warning(cls, message: str, message_id: int):
+        AzureDiagnosticLogging._initialize()
+        _logger.warning(message, extra={'msgId': message_id})
+
+    @classmethod
+    def error(cls, message: str, message_id: int):
+        AzureDiagnosticLogging._initialize()
+        _logger.error(message, extra={'msgId': message_id})
