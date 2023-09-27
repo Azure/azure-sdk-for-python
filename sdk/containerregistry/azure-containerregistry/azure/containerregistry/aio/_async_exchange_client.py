@@ -9,6 +9,7 @@ from typing import Any, Optional
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.aio import ContainerRegistry
 from .._generated.models import PostContentSchemaGrantType
@@ -55,7 +56,8 @@ class ACRExchangeClient(object):
         self._refresh_token: Optional[str] = None
         self._expiration_time: float = 0
 
-    async def get_acr_access_token(  # pylint:disable=client-method-missing-tracing-decorator-async
+    @distributed_trace_async
+    async def get_acr_access_token(
         self, challenge: str, **kwargs
     ) -> Optional[str]:
         parsed_challenge = _parse_challenge(challenge)
@@ -64,7 +66,8 @@ class ACRExchangeClient(object):
             refresh_token, service=parsed_challenge["service"], scope=parsed_challenge["scope"], **kwargs
         )
 
-    async def get_refresh_token(  # pylint:disable=client-method-missing-tracing-decorator-async
+    @distributed_trace_async
+    async def get_refresh_token(
         self, service: str, **kwargs
     ) -> str:
         if not self._refresh_token or self._expiration_time - time.time() > 300:
@@ -72,7 +75,8 @@ class ACRExchangeClient(object):
             self._expiration_time = _parse_exp_time(self._refresh_token)
         return self._refresh_token
 
-    async def exchange_aad_token_for_refresh_token(  # pylint:disable=client-method-missing-tracing-decorator-async
+    @distributed_trace_async
+    async def exchange_aad_token_for_refresh_token(
         self, service: str, **kwargs
     ) -> str:
         token = await self._credential.get_token(*self.credential_scopes)
@@ -81,7 +85,8 @@ class ACRExchangeClient(object):
         )
         return refresh_token.refresh_token if refresh_token.refresh_token is not None else ""
 
-    async def exchange_refresh_token_for_access_token(  # pylint:disable=client-method-missing-tracing-decorator-async
+    @distributed_trace_async
+    async def exchange_refresh_token_for_access_token(
         self, refresh_token: str, service: str, scope: str, **kwargs
     ) -> Optional[str]:
         access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(  # type: ignore[attr-defined] # pylint: disable=line-too-long

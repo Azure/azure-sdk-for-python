@@ -9,6 +9,7 @@ from typing import Any, Optional
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.tracing.decorator import distributed_trace
 
 from ._generated import ContainerRegistry
 from ._generated.models import PostContentSchemaGrantType
@@ -55,7 +56,8 @@ class ACRExchangeClient(object):
         self._refresh_token: Optional[str] = None
         self._expiration_time: float = 0
 
-    def get_acr_access_token(  # pylint:disable=client-method-missing-tracing-decorator
+    @distributed_trace
+    def get_acr_access_token(
         self, challenge: str, **kwargs
     ) -> Optional[str]:
         parsed_challenge = _parse_challenge(challenge)
@@ -64,7 +66,8 @@ class ACRExchangeClient(object):
             refresh_token, service=parsed_challenge["service"], scope=parsed_challenge["scope"], **kwargs
         )
 
-    def get_refresh_token(  # pylint:disable=client-method-missing-tracing-decorator
+    @distributed_trace
+    def get_refresh_token(
         self, service: str, **kwargs
     ) -> str:
         if not self._refresh_token or self._expiration_time - time.time() > 300:
@@ -72,7 +75,8 @@ class ACRExchangeClient(object):
             self._expiration_time = _parse_exp_time(self._refresh_token)
         return self._refresh_token
 
-    def exchange_aad_token_for_refresh_token(  # pylint:disable=client-method-missing-tracing-decorator
+    @distributed_trace
+    def exchange_aad_token_for_refresh_token(
         self, service: str, **kwargs
     ) -> str:
         refresh_token = self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(  # type: ignore[attr-defined] # pylint: disable=line-too-long
@@ -83,7 +87,8 @@ class ACRExchangeClient(object):
         )
         return refresh_token.refresh_token if refresh_token.refresh_token is not None else ""
 
-    def exchange_refresh_token_for_access_token(  # pylint:disable=client-method-missing-tracing-decorator
+    @distributed_trace
+    def exchange_refresh_token_for_access_token(
         self, refresh_token: str, service: str, scope: str, **kwargs
     ) -> Optional[str]:
         access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(  # type: ignore[attr-defined] # pylint: disable=line-too-long
