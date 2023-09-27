@@ -178,7 +178,7 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
         if "keyvault_client_configs" not in kwargs:
             kwargs["keyvault_client_configs"] = key_vault_options.client_options
 
-    if "keyvault_credential" in kwargs and "secret_resolver" in kwargs:
+    if kwargs.get("keyvault_credential") is not None and kwargs.get("secret_resolver") is not None:
         raise ValueError("A keyvault credential and secret resolver can't both be configured.")
 
     provider = _buildprovider(connection_string, endpoint, credential, **kwargs)

@@ -22,7 +22,10 @@ class AppConfigTestCase(AzureRecordedTestCase):
         secret_resolver=None,
     ):
         cred = self.get_credential(AzureAppConfigurationClient)
-        keyvault_cred = cred if keyvault_secret_url else None
+        if not secret_resolver and keyvault_secret_url:
+            keyvault_cred = cred
+        else:
+            keyvault_cred = None
 
         client = AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
         setup_configs(client, keyvault_secret_url)
@@ -51,7 +54,10 @@ class AppConfigTestCase(AzureRecordedTestCase):
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
         setup_configs(client, keyvault_secret_url)
 
-        keyvault_cred = self.get_credential(AzureAppConfigurationClient) if keyvault_secret_url else None
+        if not secret_resolver and keyvault_secret_url:
+            keyvault_cred = self.get_credential(AzureAppConfigurationClient)
+        else:
+            keyvault_cred = None
 
         return load(
             connection_string=appconfiguration_connection_string,
