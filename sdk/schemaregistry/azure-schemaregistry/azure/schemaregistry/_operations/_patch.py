@@ -6,7 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Any, TYPE_CHECKING
+from typing import List, IO, Any, TYPE_CHECKING
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -111,7 +111,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         self,
         group_name: str,
         name: str,
-        schema_content: bytes,
+        schema_content: IO,
         **kwargs: Any
     ) -> None:
         """Get ID for existing schema.
@@ -124,7 +124,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         :param name: Name of schema. Required.
         :type name: str
         :param schema_content: String representation (UTF-8) of the registered schema. Required.
-        :type schema_content: bytes
+        :type schema_content: IO
         :keyword content_type: The content type for given schema. Default value is "text/plain;
          charset=utf-8".
         :paramtype content_type: str
@@ -198,7 +198,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         self,
         group_name: str,
         name: str,
-        content: bytes,
+        content: IO,
         **kwargs: Any
     ) -> None:
         """Register new schema.
@@ -212,7 +212,7 @@ class SchemaRegistryClientOperationsMixin(GeneratedClientOperationsMixin):
         :param name: Name of schema. Required.
         :type name: str
         :param content: String representation (UTF-8) of the schema. Required.
-        :type content: bytes
+        :type content: IO
         :keyword content_type: The content type for given schema. Default value is "text/plain;
          charset=utf-8".
         :paramtype content_type: str

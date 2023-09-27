@@ -208,7 +208,7 @@ class SchemaRegistryClient(object):
         # ignoring return type because the generated client operations are not annotated w/ cls return type
         schema_properties: Dict[
             str, Union[int, str]
-        ] = self._generated_client.register_schema(
+        ] = self._generated_client.register_schema( # type: ignore
             group_name=group_name,
             name=name,
             content=cast(IO[Any], definition),
