@@ -61,7 +61,7 @@ class ResourceRequirementsSettings(RestTranslatableMixin):
             else None
         )
 
-    def _merge_with(self, other: "ResourceRequirementsSettings") -> None:
+    def _merge_with(self, other: Optional["ResourceRequirementsSettings"]) -> None:
         if other:
             if self.requests:
                 self.requests._merge_with(other.requests)

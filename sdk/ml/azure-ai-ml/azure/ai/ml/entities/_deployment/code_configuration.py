@@ -42,7 +42,7 @@ class CodeConfiguration(DictMixin):
         self._scoring_script: Optional[Union[str, os.PathLike]] = scoring_script
 
     @property
-    def scoring_script(self) -> Optional[str]:
+    def scoring_script(self) -> Optional[Union[str, os.PathLike]]:
         """The scoring script file path relative to the code directory.
 
         :rtype: str

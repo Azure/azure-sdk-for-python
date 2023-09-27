@@ -56,7 +56,7 @@ class ResourceSettings(RestTranslatableMixin):
             else None
         )
 
-    def _merge_with(self, other: "ResourceSettings") -> None:
+    def _merge_with(self, other: Optional["ResourceSettings"]) -> None:
         if other:
             self.cpu = other.cpu or self.cpu
             self.memory = other.memory or self.memory

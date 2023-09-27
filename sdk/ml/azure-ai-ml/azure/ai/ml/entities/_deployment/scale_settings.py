@@ -41,7 +41,7 @@ class OnlineScaleSettings(RestTranslatableMixin):
     def _to_rest_object(self) -> RestOnlineScaleSettings:
         pass
 
-    def _merge_with(self, other: "OnlineScaleSettings") -> None:
+    def _merge_with(self, other: Optional["OnlineScaleSettings"]) -> None:
         if other:
             self.type = other.type or self.type
 
@@ -136,7 +136,7 @@ class TargetUtilizationScaleSettings(OnlineScaleSettings):
             target_utilization_percentage=self.target_utilization_percentage,
         )
 
-    def _merge_with(self, other: "TargetUtilizationScaleSettings") -> None:
+    def _merge_with(self, other: Optional["TargetUtilizationScaleSettings"]) -> None:
         if other:
             super()._merge_with(other)
             self.min_instances = other.min_instances or self.min_instances

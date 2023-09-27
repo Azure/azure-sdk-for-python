@@ -220,12 +220,13 @@ class OnlineDeployment(Deployment):
 
         if self.code_configuration:
             self.code_configuration._validate()
-            code_id = (
-                self.code_configuration.code
-                if isinstance(self.code_configuration.code, str)
-                else self.code_configuration.code.id
-            )
-            code = RestCodeConfiguration(code_id=code_id, scoring_script=self.code_configuration.scoring_script)
+            if self.code_configuration.code is not None:
+                if isinstance(self.code_configuration.code, str):
+                    code_id = self.code_configuration.code
+                elif not isinstance(self.code_configuration.code, os.PathLike):
+                    code_id = self.code_configuration.code.id
+
+                code = RestCodeConfiguration(code_id=code_id, scoring_script=self.code_configuration.scoring_script)
 
         model_id = None
         if self.model:
@@ -510,7 +511,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
         res: dict = KubernetesOnlineDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
 
-    def _to_rest_object_location(self, location: str) -> RestOnlineDeploymentData:  # pylint: disable=arguments-differ
+    def _to_rest_object(self, location: str) -> RestOnlineDeploymentData:  # pylint: disable=arguments-differ
         self._validate()
         code, environment, model = self._generate_dependencies()
 
@@ -536,7 +537,7 @@ class KubernetesOnlineDeployment(OnlineDeployment):
         return RestOnlineDeploymentData(location=location, properties=properties, tags=self.tags, sku=sku)
 
     def _to_arm_resource_param(self, **kwargs: Any) -> Dict:
-        rest_object = self._to_rest_object_location(**kwargs)
+        rest_object = self._to_rest_object(**kwargs)
         properties = rest_object.properties
         sku = rest_object.sku
         tags = rest_object.tags
@@ -753,7 +754,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
         res: dict = ManagedOnlineDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
         return res
 
-    def _to_rest_object_location(self, location: str) -> RestOnlineDeploymentData:  # pylint: disable=arguments-differ
+    def _to_rest_object(self, location: str) -> RestOnlineDeploymentData:  # pylint: disable=arguments-differ
         self._validate()
         code, environment, model = self._generate_dependencies()
         properties = RestManagedOnlineDeployment(
@@ -786,7 +787,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
         return RestOnlineDeploymentData(location=location, properties=properties, tags=self.tags, sku=sku)
 
     def _to_arm_resource_param(self, **kwargs: Any) -> Dict:
-        rest_object = self._to_rest_object_location(**kwargs)
+        rest_object = self._to_rest_object(**kwargs)
         properties = rest_object.properties
         sku = rest_object.sku
         tags = rest_object.tags

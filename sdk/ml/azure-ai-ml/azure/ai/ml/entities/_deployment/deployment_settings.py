@@ -85,7 +85,7 @@ class OnlineRequestSettings(RestTranslatableMixin):
             request_timeout=to_iso_duration_format_ms(self.request_timeout_ms),
         )
 
-    def _merge_with(self, other: "OnlineRequestSettings") -> None:
+    def _merge_with(self, other: Optional["OnlineRequestSettings"]) -> None:
         if other:
             self.max_concurrent_requests_per_instance = (
                 other.max_concurrent_requests_per_instance or self.max_concurrent_requests_per_instance
@@ -160,7 +160,7 @@ class ProbeSettings(RestTranslatableMixin):
             initial_delay=to_iso_duration_format(self.initial_delay),
         )
 
-    def _merge_with(self, other: "ProbeSettings") -> None:
+    def _merge_with(self, other: Optional["ProbeSettings"]) -> None:
         if other:
             self.failure_threshold = other.failure_threshold or self.failure_threshold
             self.success_threshold = other.success_threshold or self.success_threshold

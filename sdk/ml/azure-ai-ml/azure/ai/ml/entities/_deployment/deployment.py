@@ -144,7 +144,8 @@ class Deployment(Resource, RestTranslatableMixin):
         if not self.code_configuration:
             self.code_configuration = ResourceConfiguration()
 
-        self.code_configuration.code = value
+        if isinstance(self.code_configuration, ResourceConfiguration):
+            self.code_configuration.code = value
 
     @property
     def scoring_script(self) -> Optional[Union[str, PathLike]]:
@@ -155,7 +156,8 @@ class Deployment(Resource, RestTranslatableMixin):
         if not self.code_configuration:
             self.code_configuration = ResourceConfiguration()
 
-        self.code_configuration.scoring_script = value
+        if isinstance(self.code_configuration, ResourceConfiguration):
+            self.code_configuration.scoring_script = value
 
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the deployment content into a file in yaml format.
