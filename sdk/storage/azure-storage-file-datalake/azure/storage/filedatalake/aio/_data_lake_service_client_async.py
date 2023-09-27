@@ -87,11 +87,14 @@ class DataLakeServiceClient(AsyncStorageAccountHostsMixin, DataLakeServiceClient
             **kwargs: Any
         ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
+        audience = kwargs.get('audience')
         super(DataLakeServiceClient, self).__init__(
             account_url,
             credential=credential,
             **kwargs
         )
+        if audience:
+            kwargs['audience'] = audience
         self._blob_service_client = BlobServiceClient(self._blob_account_url, credential, **kwargs)
         self._blob_service_client._hosts[LocationMode.SECONDARY] = ""  #pylint: disable=protected-access
         self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url, pipeline=self._pipeline)

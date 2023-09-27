@@ -158,15 +158,16 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         if not parsed_url.netloc:
             raise ValueError(f"Invalid URL: {account_url}")
 
+        audience: Optional[str] = None
         if kwargs.get("audience"):
-            kwargs["audience"] = f'https://{kwargs.get("audience")}.queue.core.windows.net/.default'
+            audience = f'https://{kwargs.pop("audience")}.blob.core.windows.net/.default'
 
         _, sas_token = parse_query(parsed_url.query)
         self.container_name = container_name
         # This parameter is used for the hierarchy traversal. Give precedence to credential.
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
+        super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, audience=audience, **kwargs)
         self._api_version = get_api_version(kwargs)
         self._client = self._build_generated_client()
         self._configure_encryption(kwargs)

@@ -103,12 +103,13 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         if not sas_token and not credential:
             raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
 
+        audience: Optional[str] = None
         if kwargs.get("audience"):
-            kwargs["audience"] = f'https://{kwargs.get("audience")}.queue.core.windows.net/.default'
+            audience = f'https://{kwargs.pop("audience")}.queue.core.windows.net/.default'
 
         self.queue_name = queue_name
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(QueueClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
+        super(QueueClient, self).__init__(parsed_url, service='queue', credential=credential, audience=audience, **kwargs)
 
         self._config.message_encode_policy = kwargs.get('message_encode_policy', None) or NoEncodePolicy()
         self._config.message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()

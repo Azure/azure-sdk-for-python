@@ -66,11 +66,13 @@ class AsyncStorageAccountHostsMixin(object):
         """
         await self._client.close()
 
-    def _create_pipeline(self, credential, **kwargs):
+    def _create_pipeline(self, credential, audience, **kwargs):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
         if hasattr(credential, 'get_token'):
-            self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
+            if not audience:
+                audience = STORAGE_OAUTH_SCOPE
+            self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, audience)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):

@@ -95,7 +95,11 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         blob_account_url = convert_dfs_url_to_blob_url(account_url)
         # TODO: add self.account_url to base_client and remove _blob_account_url
-        self._blob_account_url = blob_account_url
+        self._blob_account_url = blob_account_url\
+
+        audience: Optional[str] = None
+        if kwargs.get("audience"):
+            audience = f'https://{kwargs.get("audience")}.blob.core.windows.net/.default'
 
         datalake_hosts = kwargs.pop('_hosts', None)
         blob_hosts = None
@@ -109,8 +113,9 @@ class FileSystemClient(StorageAccountHostsMixin):
         self.file_system_name = file_system_name
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
 
+        kwargs.pop('audience', None)
         super(FileSystemClient, self).__init__(parsed_url, service='dfs', credential=self._raw_credential,
-                                               _hosts=datalake_hosts, **kwargs)
+                                               _hosts=datalake_hosts, audience=audience, **kwargs)
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
         self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url,

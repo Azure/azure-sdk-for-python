@@ -92,6 +92,10 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         if not parsed_url.netloc:
             raise ValueError(f"Invalid URL: {account_url}")
 
+        audience: Optional[str] = None
+        if kwargs.get("audience"):
+            audience = f'https://{kwargs.get("audience")}.blob.core.windows.net/.default'
+
         blob_account_url = convert_dfs_url_to_blob_url(account_url)
         self._blob_account_url = blob_account_url
         self._blob_service_client = BlobServiceClient(blob_account_url, credential, **kwargs)
@@ -100,8 +104,9 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
 
+        kwargs.pop('audience', None)
         super(DataLakeServiceClient, self).__init__(parsed_url, service='dfs',
-                                                    credential=self._raw_credential, **kwargs)
+                                                    credential=self._raw_credential, audience=audience, **kwargs)
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
 

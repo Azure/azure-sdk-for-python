@@ -1382,7 +1382,6 @@ class TestStorageQueue(StorageRecordedTestCase):
 
         # Act
         token_credential = self.generate_oauth_token()
-        audience_str = f'https://badaudience.blob.core.windows.net/'
         qsc = QueueServiceClient(
             self.account_url(storage_account_name, "queue"), credential=token_credential,
             audience="badaudience"

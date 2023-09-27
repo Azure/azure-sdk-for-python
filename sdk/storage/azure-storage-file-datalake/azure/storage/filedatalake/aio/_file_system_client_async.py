@@ -92,6 +92,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         **kwargs: Any
     ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
+        audience = kwargs.get('audience')
         super(FileSystemClient, self).__init__(
             account_url,
             file_system_name=file_system_name,
@@ -99,6 +100,8 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             **kwargs)
         # to override the class field _container_client sync version
         kwargs.pop('_hosts', None)
+        if audience:
+            kwargs['audience'] = audience
         self._container_client = ContainerClient(self._blob_account_url, self.file_system_name,
                                                  credential=credential,
                                                  _hosts=self._container_client._hosts,# pylint: disable=protected-access

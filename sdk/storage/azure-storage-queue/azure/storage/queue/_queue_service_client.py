@@ -106,13 +106,15 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         if not parsed_url.netloc:
             raise ValueError(f"Invalid URL: {account_url}")
 
-        _, sas_token = parse_query(parsed_url.query)
+        audience: Optional[str] = None
         if kwargs.get("audience"):
-            kwargs["audience"] = f'https://{kwargs.get("audience")}.queue.core.windows.net/.default'
+            audience = f'https://{kwargs.pop("audience")}.queue.core.windows.net/.default'
+
+        _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
             raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(QueueServiceClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
+        super(QueueServiceClient, self).__init__(parsed_url, service='queue', credential=credential, audience=audience, **kwargs)
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._configure_encryption(kwargs)

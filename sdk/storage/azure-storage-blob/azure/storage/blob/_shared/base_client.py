@@ -35,7 +35,7 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
 )
 
-from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, SERVICE_HOST_BASE
+from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, SERVICE_HOST_BASE, STORAGE_OAUTH_SCOPE
 from .models import LocationMode
 from .authentication import SharedKeyCredentialPolicy
 from .shared_access_signature import QueryStringConstants
@@ -72,6 +72,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         parsed_url,  # type: Any
         service,  # type: str
         credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        *,
+        audience,
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -107,7 +109,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             self._hosts = {LocationMode.PRIMARY: primary_hostname, LocationMode.SECONDARY: secondary_hostname}
 
         self._sdk_moniker = f"storage-{service}/{VERSION}"
-        self._config, self._pipeline = self._create_pipeline(self.credential, sdk_moniker=self._sdk_moniker, **kwargs)
+        self._config, self._pipeline = self._create_pipeline(self.credential, sdk_moniker=self._sdk_moniker, audience=audience, **kwargs)
 
     def __enter__(self):
         self._client.__enter__()
@@ -217,11 +219,13 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             query_str += sas_token
         return query_str.rstrip("?&"), credential
 
-    def _create_pipeline(self, credential, **kwargs):
+    def _create_pipeline(self, credential, audience, **kwargs):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
         if hasattr(credential, "get_token"):
-            self._credential_policy = StorageBearerTokenCredentialPolicy(credential)
+            if not audience:
+                audience = STORAGE_OAUTH_SCOPE
+            self._credential_policy = StorageBearerTokenCredentialPolicy(credential, audience)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
