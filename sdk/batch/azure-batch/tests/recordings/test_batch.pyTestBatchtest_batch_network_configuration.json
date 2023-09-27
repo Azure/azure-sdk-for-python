@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://batch.eastasia.batch.azure.com/pools?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch8733239a.eastasia.batch.azure.com/pools?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -48,12 +48,12 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "DataServiceId": "https://batch.eastasia.batch.azure.com/pools/batch_network_8733239a",
+        "DataServiceId": "https://batch8733239a.eastasia.batch.azure.com/pools/batch_network_8733239a",
         "DataServiceVersion": "3.0",
         "Date": "Wed, 06 Sep 2023 12:45:20 GMT",
         "ETag": "0x8DBAED7222B8ADD",
         "Last-Modified": "Wed, 06 Sep 2023 12:45:21 GMT",
-        "Location": "https://batch.eastasia.batch.azure.com/pools/batch_network_8733239a",
+        "Location": "https://batch8733239a.eastasia.batch.azure.com/pools/batch_network_8733239a",
         "request-id": "f69c722a-ccca-48b0-9537-2f6f5921ff17",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -63,7 +63,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/batch_network_8733239a?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch8733239a.eastasia.batch.azure.com/pools/batch_network_8733239a?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -88,9 +88,9 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#pools/@Element",
+        "odata.metadata": "https://batch8733239a.eastasia.batch.azure.com/$metadata#pools/@Element",
         "id": "batch_network_8733239a",
-        "url": "https://batch.eastasia.batch.azure.com/pools/batch_network_8733239a",
+        "url": "https://batch8733239a.eastasia.batch.azure.com/pools/batch_network_8733239a",
         "eTag": "0x8DBAED7222B8ADD",
         "lastModified": "2023-09-06T12:45:21.7537757Z",
         "creationTime": "2023-09-06T12:45:21.7537757Z",
@@ -147,7 +147,7 @@
       }
     },
     {
-      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/batch_network_8733239a?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch8733239a.eastasia.batch.azure.com/pools/batch_network_8733239a?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -172,9 +172,9 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#pools/@Element",
+        "odata.metadata": "https://batch8733239a.eastasia.batch.azure.com/$metadata#pools/@Element",
         "id": "batch_network_8733239a",
-        "url": "https://batch.eastasia.batch.azure.com/pools/batch_network_8733239a",
+        "url": "https://batch8733239a.eastasia.batch.azure.com/pools/batch_network_8733239a",
         "eTag": "0x8DBAED7222B8ADD",
         "lastModified": "2023-09-06T12:45:21.7537757Z",
         "creationTime": "2023-09-06T12:45:21.7537757Z",
@@ -231,7 +231,7 @@
       }
     },
     {
-      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/batch_network_8733239a?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch8733239a.eastasia.batch.azure.com/pools/batch_network_8733239a?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -256,9 +256,9 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#pools/@Element",
+        "odata.metadata": "https://batch8733239a.eastasia.batch.azure.com/$metadata#pools/@Element",
         "id": "batch_network_8733239a",
-        "url": "https://batch.eastasia.batch.azure.com/pools/batch_network_8733239a",
+        "url": "https://batch8733239a.eastasia.batch.azure.com/pools/batch_network_8733239a",
         "eTag": "0x8DBAED7222B8ADD",
         "lastModified": "2023-09-06T12:45:21.7537757Z",
         "creationTime": "2023-09-06T12:45:21.7537757Z",
@@ -315,7 +315,7 @@
       }
     },
     {
-      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/batch_network_8733239a?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch8733239a.eastasia.batch.azure.com/pools/batch_network_8733239a?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -340,9 +340,9 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#pools/@Element",
+        "odata.metadata": "https://batch8733239a.eastasia.batch.azure.com/$metadata#pools/@Element",
         "id": "batch_network_8733239a",
-        "url": "https://batch.eastasia.batch.azure.com/pools/batch_network_8733239a",
+        "url": "https://batch8733239a.eastasia.batch.azure.com/pools/batch_network_8733239a",
         "eTag": "0x8DBAED7222B8ADD",
         "lastModified": "2023-09-06T12:45:21.7537757Z",
         "creationTime": "2023-09-06T12:45:21.7537757Z",
@@ -399,7 +399,7 @@
       }
     },
     {
-      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/batch_network_8733239a?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch8733239a.eastasia.batch.azure.com/pools/batch_network_8733239a?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -424,9 +424,9 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#pools/@Element",
+        "odata.metadata": "https://batch8733239a.eastasia.batch.azure.com/$metadata#pools/@Element",
         "id": "batch_network_8733239a",
-        "url": "https://batch.eastasia.batch.azure.com/pools/batch_network_8733239a",
+        "url": "https://batch8733239a.eastasia.batch.azure.com/pools/batch_network_8733239a",
         "eTag": "0x8DBAED7222B8ADD",
         "lastModified": "2023-09-06T12:45:21.7537757Z",
         "creationTime": "2023-09-06T12:45:21.7537757Z",
@@ -483,7 +483,7 @@
       }
     },
     {
-      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/batch_network_8733239a?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch8733239a.eastasia.batch.azure.com/pools/batch_network_8733239a?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -508,9 +508,9 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#pools/@Element",
+        "odata.metadata": "https://batch8733239a.eastasia.batch.azure.com/$metadata#pools/@Element",
         "id": "batch_network_8733239a",
-        "url": "https://batch.eastasia.batch.azure.com/pools/batch_network_8733239a",
+        "url": "https://batch8733239a.eastasia.batch.azure.com/pools/batch_network_8733239a",
         "eTag": "0x8DBAED7222B8ADD",
         "lastModified": "2023-09-06T12:45:21.7537757Z",
         "creationTime": "2023-09-06T12:45:21.7537757Z",
@@ -567,7 +567,7 @@
       }
     },
     {
-      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/batch_network_8733239a?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch8733239a.eastasia.batch.azure.com/pools/batch_network_8733239a?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -592,9 +592,9 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#pools/@Element",
+        "odata.metadata": "https://batch8733239a.eastasia.batch.azure.com/$metadata#pools/@Element",
         "id": "batch_network_8733239a",
-        "url": "https://batch.eastasia.batch.azure.com/pools/batch_network_8733239a",
+        "url": "https://batch8733239a.eastasia.batch.azure.com/pools/batch_network_8733239a",
         "eTag": "0x8DBAED7222B8ADD",
         "lastModified": "2023-09-06T12:45:21.7537757Z",
         "creationTime": "2023-09-06T12:45:21.7537757Z",
@@ -652,7 +652,7 @@
       }
     },
     {
-      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/batch_network_8733239a/nodes?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch8733239a.eastasia.batch.azure.com/pools/batch_network_8733239a/nodes?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -675,11 +675,11 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#nodes",
+        "odata.metadata": "https://batch8733239a.eastasia.batch.azure.com/$metadata#nodes",
         "value": [
           {
             "id": "tvmps_df953553d2e2c57f4f08ea8bb6da3baafa876460b991e7be1d93d36866300995_d",
-            "url": "https://batch.eastasia.batch.azure.com/pools/batch_network_8733239a/nodes/tvmps_df953553d2e2c57f4f08ea8bb6da3baafa876460b991e7be1d93d36866300995_d",
+            "url": "https://batch8733239a.eastasia.batch.azure.com/pools/batch_network_8733239a/nodes/tvmps_df953553d2e2c57f4f08ea8bb6da3baafa876460b991e7be1d93d36866300995_d",
             "state": "creating",
             "schedulingState": "enabled",
             "stateTransitionTime": "2023-09-06T12:46:13.260924Z",

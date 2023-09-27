@@ -116,7 +116,7 @@ class AccountPreparer(AzureMgmtPreparer):
            #     self.resource_moniker
            # )
         else:
-            name = 'batch'
+            # name = 'batch'
             # If using pilotprod, need to prefix the region with the environment.
             # IE: myaccount.pilotprod1.eastus.batch.azure.com
             env_prefix = "" if self.batch_environment is None else ".{}".format(self.batch_environment)
