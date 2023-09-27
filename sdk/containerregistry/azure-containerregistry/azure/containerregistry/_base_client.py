@@ -44,11 +44,6 @@ class ContainerRegistryBaseClient(object):
             **kwargs
         )
 
-    def __enter__(self) -> "ContainerRegistryBaseClient":
-        self._client.__enter__()
-        self._auth_policy.__enter__()
-        return self
-
     def __exit__(self, *args: Any) -> None:
         self._auth_policy.__exit__(*args)
         self._client.__exit__(*args)

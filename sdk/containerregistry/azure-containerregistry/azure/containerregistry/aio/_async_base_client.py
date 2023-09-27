@@ -44,11 +44,6 @@ class ContainerRegistryBaseClient(object):
             **kwargs
         )
 
-    async def __aenter__(self) -> "ContainerRegistryBaseClient":
-        await self._auth_policy.__aenter__()
-        await self._client.__aenter__()
-        return self
-
     async def __aexit__(self, *args: Any) -> None:
         await self._auth_policy.__aexit__(*args)
         await self._client.__aexit__(*args)

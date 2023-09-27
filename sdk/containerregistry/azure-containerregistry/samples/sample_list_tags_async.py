@@ -40,7 +40,7 @@ class ListTagsAsync(object):
         load_dotenv(find_dotenv())
 
     async def list_tags(self):
-        endpoint = os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT")
+        endpoint: str = os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT")  # type: ignore[assignment]
         load_registry(endpoint)
         # [START list_tags_anonymous]
         async with ContainerRegistryClient(endpoint) as anon_client:

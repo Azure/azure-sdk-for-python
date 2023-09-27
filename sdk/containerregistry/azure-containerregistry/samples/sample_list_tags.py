@@ -39,7 +39,7 @@ class ListTags(object):
         load_dotenv(find_dotenv())
 
     def list_tags(self):
-        endpoint = os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT")
+        endpoint: str = os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT")  # type: ignore[assignment]
         load_registry(endpoint)
         # [START list_tags_anonymous]
         with ContainerRegistryClient(endpoint) as anon_client:

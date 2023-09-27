@@ -36,7 +36,7 @@ from utilities import load_registry, get_authority, get_credential
 class HelloWorldAsync(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
+        self.endpoint: str = os.environ.get("CONTAINERREGISTRY_ENDPOINT")  # type: ignore[assignment]
         self.authority = get_authority(self.endpoint)
         self.credential = get_credential(self.authority, is_async=True)
 

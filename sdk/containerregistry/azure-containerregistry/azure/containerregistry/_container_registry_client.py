@@ -110,6 +110,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             endpoint=endpoint, credential=credential, credential_scopes=defaultScope, **kwargs
         )
 
+    def __enter__(self) -> "ContainerRegistryClient":
+        self._client.__enter__()
+        self._auth_policy.__enter__()
+        return self
+
     def _get_digest_from_tag(self, repository: str, tag: str) -> str:
         tag_props = self.get_tag_properties(repository, tag)
         return tag_props.digest
