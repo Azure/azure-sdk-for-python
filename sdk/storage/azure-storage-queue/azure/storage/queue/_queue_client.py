@@ -28,6 +28,7 @@ from ._deserialize import deserialize_queue_properties, deserialize_queue_creati
 from ._encryption import modify_user_agent_for_encryption, StorageEncryptionMixin
 from ._message_encoding import NoEncodePolicy, NoDecodePolicy
 from ._models import QueueMessage, AccessPolicy, MessagesPaged
+from ._parser import _build_audience_url
 from ._serialize import get_api_version
 
 if TYPE_CHECKING:
@@ -67,6 +68,9 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     :keyword message_decode_policy: The decoding policy to use on incoming messages.
         Default value is not to decode messages. Other options include :class:`TextBase64DecodePolicy`,
         :class:`BinaryBase64DecodePolicy` or `None`.
+    :keyword str audience: The Storage account name for the audience to use when requesting tokens
+        for Azure Active Directory authentication. Only has an effect when credential is of type TokenCredential.
+        If not specified, the default audience "https://storage.azure.com/" will be used.
 
     .. admonition:: Example:
 
@@ -97,6 +101,9 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
             raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
+
+        if kwargs.get("audience"):
+            kwargs["audience"] = _build_audience_url(kwargs.get("audience"))
 
         self.queue_name = queue_name
         self._query_str, credential = self._format_query_string(sas_token, credential)
@@ -135,6 +142,9 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        :keyword str audience: The Storage account name for the audience to use when requesting tokens
+            for Azure Active Directory authentication. Only has an effect when credential is of type TokenCredential.
+            If not specified, the default audience "https://storage.azure.com/" will be used.
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
         """
@@ -183,6 +193,9 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
+        :keyword str audience: The Storage account name for the audience to use when requesting tokens
+            for Azure Active Directory authentication. Only has an effect when credential is of type TokenCredential.
+            If not specified, the default audience "https://storage.azure.com/" will be used.
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
 

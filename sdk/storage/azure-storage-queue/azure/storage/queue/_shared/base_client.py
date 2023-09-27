@@ -221,7 +221,8 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
         if hasattr(credential, "get_token"):
-            self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
+            audience = kwargs.pop('audience', STORAGE_OAUTH_SCOPE)
+            self._credential_policy = BearerTokenCredentialPolicy(credential, audience)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):

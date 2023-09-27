@@ -30,6 +30,7 @@ from .._deserialize import deserialize_queue_properties, deserialize_queue_creat
 from .._encryption import modify_user_agent_for_encryption, StorageEncryptionMixin
 from .._models import QueueMessage, AccessPolicy
 from .._queue_client import QueueClient as QueueClientBase
+from .._parser import _build_audience_url
 from ._models import MessagesPaged
 
 if TYPE_CHECKING:
@@ -65,6 +66,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
     :keyword message_decode_policy: The decoding policy to use on incoming messages.
         Default value is not to decode messages. Other options include :class:`TextBase64DecodePolicy`,
         :class:`BinaryBase64DecodePolicy` or `None`.
+    :keyword str audience: The Storage account name for the audience to use when requesting tokens
+        for Azure Active Directory authentication. Only has an effect when credential is of type TokenCredential.
+        If not specified, the default audience "https://storage.azure.com/" will be used.
 
     .. admonition:: Example:
 
@@ -91,6 +95,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         ) -> None:
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
+        if kwargs.get("audience"):
+            kwargs["audience"] = _build_audience_url(kwargs.get("audience"))
         super(QueueClient, self).__init__(
             account_url, queue_name=queue_name, credential=credential, loop=loop, **kwargs
         )
