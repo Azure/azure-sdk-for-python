@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 DEFAULT_OAUTH_SCOPE = "/.default"
-STORAGE_OAUTH_SCOPE = "https://storage.azure.com/.default"
 
 def _build_audience_url(account_name: str) -> str:
     """Creates the fully qualified audience URL scoped to the Storage account name provided.
