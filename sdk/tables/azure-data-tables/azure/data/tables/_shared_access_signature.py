@@ -26,14 +26,17 @@ class SharedAccessSignature(object):
     signature tokens with an account name and account key. Users can either
     use the factory or can construct the appropriate service and use the
     generate_*_shared_access_signature method directly.
+
+    :ivar str account_name: The name of the Tables account.
+    :ivar str account_key: The key of the Tables account.
+    :ivar str x_ms_version: The service version used to generate the shared access signatures.
     """
 
     def __init__(self, credential, x_ms_version=DEFAULT_X_MS_VERSION):
         """
         :param credential: The credential used for authenticating requests
-        :type credential: :class:`~azure.core.credentials.NamedKeyCredential`
-        :param str x_ms_version:
-            The service version used to generate the shared access signatures.
+        :type credential: ~azure.core.credentials.AzureNamedKeyCredential
+        :param str x_ms_version: The service version used to generate the shared access signatures.
         """
         self.account_name = credential.named_key.name
         self.account_key = credential.named_key.key
@@ -43,7 +46,7 @@ class SharedAccessSignature(object):
         self,
         services: str,
         resource_types: ResourceTypes,
-        permission: Union[AccountSasPermissions, str],
+        permission: AccountSasPermissions,
         expiry: Union[datetime, str],
         start: Optional[Union[datetime, str]] = None,
         ip_address_or_range: Optional[str] = None,
@@ -61,7 +64,7 @@ class SharedAccessSignature(object):
             Specifies the resource types that are accessible with the account
             SAS. You can combine values to provide access to more than one
             resource type.
-        :param AccountSasPermissions permission:
+        :param ~azure.data.tables.AccountSasPermissions permission:
             The permissions associated with the shared access signature. The
             user is restricted to operations allowed by the permissions.
             Required unless an id is given referencing a stored access policy
@@ -75,32 +78,35 @@ class SharedAccessSignature(object):
             been specified in an associated stored access policy. Azure will always
             convert values to UTC. If a date is passed in without timezone info, it
             is assumed to be UTC.
-        :type expiry: datetime or str
+        :type expiry: ~datetime.datetime or str
         :param start:
             The time at which the shared access signature becomes valid. If
             omitted, start time for this call is assumed to be the time when the
             storage service receives the request. Azure will always convert values
             to UTC. If a date is passed in without timezone info, it is assumed to
             be UTC.
-        :type start: datetime or str
-        :param str ip_address_or_range:
+        :type start: ~datetime.datetime or str or None
+        :param ip_address_or_range:
             Specifies an IP address or a range of IP addresses from which to accept requests.
             If the IP address from which the request originates does not match the IP address
             or address range specified on the SAS token, the request is not authenticated.
             For example, specifying sip=168.1.5.65 or sip=168.1.5.60-168.1.5.70 on the SAS
             restricts the request to those IP addresses.
-        :param Union[str, SASProtocol] protocol:
-            Specifies the protocol permitted for a request made. The default value
-            is https,http. See :class:`~azure.cosmosdb.table.common.models.Protocol` for possible values.
+        :type ip_address_or_range: str or None
+        :param protocol:
+            Specifies the protocol permitted for a request made.
+            See :class:`~azure.data.tables.SASProtocol` for possible values.
+        :type protocol: str or ~azure.data.tables.SASProtocol or None
+        :return: A shared access signature for the account.
+        :rtype: str
         """
         sas = _SharedAccessHelper()
-        sas.add_base(
-            permission, expiry, start, ip_address_or_range, protocol, self.x_ms_version
-        )
+        sas.add_base(permission, expiry, start, ip_address_or_range, protocol, self.x_ms_version)
         sas.add_account(services, resource_types)
         sas.add_account_signature(self.account_name, self.account_key)
 
         return sas.get_token()
+
 
 # cspell:ignoreRegExp rsc.
 class QueryStringConstants(object):
@@ -194,9 +200,7 @@ class _SharedAccessHelper(object):
         content_type,
     ):
         self._add_query(QueryStringConstants.SIGNED_CACHE_CONTROL, cache_control)
-        self._add_query(
-            QueryStringConstants.SIGNED_CONTENT_DISPOSITION, content_disposition
-        )
+        self._add_query(QueryStringConstants.SIGNED_CONTENT_DISPOSITION, content_disposition)
         self._add_query(QueryStringConstants.SIGNED_CONTENT_ENCODING, content_encoding)
         self._add_query(QueryStringConstants.SIGNED_CONTENT_LANGUAGE, content_language)
         self._add_query(QueryStringConstants.SIGNED_CONTENT_TYPE, content_type)
@@ -266,10 +270,4 @@ class _SharedAccessHelper(object):
         )
 
     def get_token(self) -> str:
-        return "&".join(
-            [
-                "{0}={1}".format(n, url_quote(v))
-                for n, v in self.query_dict.items()
-                if v is not None
-            ]
-        )
+        return "&".join([f"{n}={url_quote(v)}" for n, v in self.query_dict.items() if v is not None])

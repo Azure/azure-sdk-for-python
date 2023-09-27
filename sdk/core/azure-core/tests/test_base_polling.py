@@ -305,6 +305,57 @@ def test_post_resource_location(pipeline_client_builder, deserialization_cb, htt
     assert result["location_result"] == True
 
 
+@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(REQUESTS_TRANSPORT_RESPONSES))
+def test_post_direct_success(pipeline_client_builder, deserialization_cb, http_request, http_response):
+
+    # ResourceLocation
+
+    # The initial response contains both Location and Operation-Location, a 202 and a success body
+    initial_response = TestBasePolling.mock_send(
+        http_request,
+        http_response,
+        "POST",
+        202,
+        {
+            "operation-location": "http://example.org/async_monitor",
+        },
+        {"status": "succeeded"},
+    )
+
+    def send(request, **kwargs):
+        pytest.fail("No requests allowed")
+
+    client = pipeline_client_builder(send)
+
+    poll = LROPoller(client, initial_response, deserialization_cb, LROBasePolling(0))
+    result = poll.result()
+    assert result["status"] == "succeeded"
+
+
+@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(REQUESTS_TRANSPORT_RESPONSES))
+def test_post_fail(pipeline_client_builder, deserialization_cb, http_request, http_response):
+
+    # ResourceLocation
+
+    # The initial response contains both Location and Operation-Location, a 202 and a success body
+    initial_response = TestBasePolling.mock_send(
+        http_request,
+        http_response,
+        "POST",
+        500,
+        {"status": "failed"},
+    )
+
+    def send(request, **kwargs):
+        pytest.fail("No requests allowed")
+
+    client = pipeline_client_builder(send)
+
+    with pytest.raises(HttpResponseError):
+        poll = LROPoller(client, initial_response, deserialization_cb, LROBasePolling(0))
+        result = poll.result()
+
+
 class TestBasePolling(object):
 
     convert = re.compile("([a-z0-9])([A-Z])")
@@ -315,7 +366,11 @@ class TestBasePolling(object):
             headers = {}
         response = Response()
         response._content_consumed = True
-        response._content = json.dumps(body).encode("ascii") if body is not None else None
+        #  "requests" never returns None for content. Make sure it's empty bytes at worst
+        # In [4]: r=requests.get("https://httpbin.org/status/200")
+        # In [5]: r.content
+        # Out[5]: b''
+        response._content = json.dumps(body).encode("ascii") if body is not None else b""
         response.request = Request()
         response.request.method = method
         response.request.url = RESOURCE_URL
@@ -347,6 +402,8 @@ class TestBasePolling(object):
             request,
             response,
         )
+        if is_rest(response):
+            response._body()
         return PipelineResponse(request, response, None)  # context
 
     @staticmethod
@@ -390,6 +447,9 @@ class TestBasePolling(object):
             request,
             response,
         )
+        # Make sure body is loaded if this is "rest"
+        if is_rest(response):
+            response._body()
         return PipelineResponse(request, response, None)  # context
 
     @staticmethod

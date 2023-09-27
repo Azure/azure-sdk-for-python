@@ -15,7 +15,7 @@ from azure.communication.jobrouter._shared.utils import parse_connection_str  # 
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.communication.jobrouter import (
-    RouterAdministrationClient,
+    JobRouterAdministrationClient,
     ExceptionPolicy,
     ExceptionRule,
     QueueLengthExceptionTrigger,
@@ -23,7 +23,7 @@ from azure.communication.jobrouter import (
     ReclassifyExceptionAction,
     ManualReclassifyExceptionAction,
     CancelExceptionAction,
-    RoundRobinMode, DistributionPolicy, JobQueue, ClassificationPolicy
+    RoundRobinMode, DistributionPolicy, RouterQueue, ClassificationPolicy
 )
 
 queue_labels = {
@@ -54,7 +54,7 @@ class TestExceptionPolicy(RouterRecordedTestCase):
     def clean_up(self):
         # delete in live mode
         if not self.is_playback():
-            router_client: RouterAdministrationClient = self.create_admin_client()
+            router_client: JobRouterAdministrationClient = self.create_admin_client()
             if self._testMethodName in self.classification_policy_ids \
                     and any(self.classification_policy_ids[self._testMethodName]):
                 for policy_id in set(self.classification_policy_ids[self._testMethodName]):
@@ -79,11 +79,11 @@ class TestExceptionPolicy(RouterRecordedTestCase):
         return self._testMethodName + "_tst_dp"
 
     def setup_distribution_policy(self):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
         distribution_policy_id = self.get_distribution_policy_id()
 
         policy: DistributionPolicy = DistributionPolicy(
-            offer_ttl_seconds = 10.0,
+            offer_expires_after_seconds = 10.0,
             mode = RoundRobinMode(min_concurrent_offers = 1,
                                   max_concurrent_offers = 1),
             name = distribution_policy_id,
@@ -105,10 +105,10 @@ class TestExceptionPolicy(RouterRecordedTestCase):
         return self._testMethodName + "_tst_q"
 
     def setup_job_queue(self):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
         job_queue_id = self.get_job_queue_id()
 
-        job_queue: JobQueue = JobQueue(
+        job_queue: RouterQueue = RouterQueue(
             distribution_policy_id = self.get_distribution_policy_id(),
             name = job_queue_id,
             labels = queue_labels
@@ -130,7 +130,7 @@ class TestExceptionPolicy(RouterRecordedTestCase):
         return self._testMethodName + "_tst_cp"
 
     def setup_classification_policy(self):
-        client: RouterAdministrationClient = self.create_admin_client()
+        client: JobRouterAdministrationClient = self.create_admin_client()
         cp_id = self.get_classification_policy_id()
 
         classification_policy: ClassificationPolicy = ClassificationPolicy(
@@ -158,7 +158,7 @@ class TestExceptionPolicy(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_create_exception_policy(self):
         ep_identifier = "tst_create_ep"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         updated_exception_actions = []
         updated_exception_actions.extend(exception_actions)
@@ -215,7 +215,7 @@ class TestExceptionPolicy(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_update_exception_policy(self):
         ep_identifier = "tst_update_ep"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         updated_exception_actions = []
         updated_exception_actions.extend(exception_actions)
@@ -296,7 +296,7 @@ class TestExceptionPolicy(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_update_exception_policy_w_kwargs(self):
         ep_identifier = "tst_update_ep_w_kwargs"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         updated_exception_actions = []
         updated_exception_actions.extend(exception_actions)
@@ -376,7 +376,7 @@ class TestExceptionPolicy(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_get_exception_policy(self):
         ep_identifier = "tst_get_ep"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         updated_exception_actions = []
         updated_exception_actions.extend(exception_actions)
@@ -444,7 +444,7 @@ class TestExceptionPolicy(RouterRecordedTestCase):
     @RouterPreparers.after_test_execute('clean_up')
     def test_delete_exception_policy(self):
         ep_identifier = "tst_delete_ep"
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         updated_exception_actions = []
         updated_exception_actions.extend(exception_actions)
@@ -508,7 +508,7 @@ class TestExceptionPolicy(RouterRecordedTestCase):
         ep_identifiers = ["tst_list_ep_1", "tst_list_ep_2", "tst_list_ep_3"]
         created_ep_response = {}
         policy_count = 0
-        router_client: RouterAdministrationClient = self.create_admin_client()
+        router_client: JobRouterAdministrationClient = self.create_admin_client()
         self.exception_policy_ids[self._testMethodName] = []
 
         updated_exception_actions = []

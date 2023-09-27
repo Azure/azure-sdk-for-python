@@ -7,6 +7,11 @@
 		"DTMF",
         "pstn",
         "PSTN",
-        "unmuted"
+        "unmuted",
+        "ssml",
+        "Ssml",
+        "SSML",
+        "unassigning",
+        "unassignment"
     ]
 }

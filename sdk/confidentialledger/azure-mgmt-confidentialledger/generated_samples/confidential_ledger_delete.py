@@ -29,11 +29,10 @@ def main():
         subscription_id="0000000-0000-0000-0000-000000000001",
     )
 
-    response = client.ledger.begin_delete(
+    client.ledger.begin_delete(
         resource_group_name="DummyResourceGroupName",
         ledger_name="DummyLedgerName",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/confidentialledger/resource-manager/Microsoft.ConfidentialLedger/preview/2023-01-26-preview/examples/ConfidentialLedger_Delete.json

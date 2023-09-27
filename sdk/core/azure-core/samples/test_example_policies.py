@@ -31,8 +31,9 @@ def test_example_raw_response_hook():
         response.http_response.headers["custom_header"] = "CustomHeader"
 
     from azure.core.pipeline import Pipeline
+    from azure.core.rest import HttpRequest
     from azure.core.pipeline.policies import RedirectPolicy, UserAgentPolicy
-    from azure.core.pipeline.transport import RequestsTransport, HttpRequest
+    from azure.core.pipeline.transport import RequestsTransport
     from azure.core.pipeline.policies import CustomHookPolicy
 
     request = HttpRequest("GET", "https://bing.com")

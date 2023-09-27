@@ -18,7 +18,7 @@ from urllib.parse import urlparse, quote, unquote
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
-from azure.core.paging import ItemPaged  # pylint: disable=ungrouped-imports
+from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from ._generated import AzureFileStorage
 from ._generated.models import FileHTTPHeaders
@@ -166,13 +166,13 @@ class ShareFileClient(StorageAccountHostsMixin):
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Account URL must be a string.") from exc
         parsed_url = urlparse(account_url.rstrip('/'))
         if not (share_name and file_path):
             raise ValueError("Please specify a share name and file name.")
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
+            raise ValueError(f"Invalid URL: {account_url}")
 
         path_snapshot = None
         path_snapshot, sas_token = parse_query(parsed_url.query)
@@ -226,18 +226,19 @@ class ShareFileClient(StorageAccountHostsMixin):
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         :returns: A File client.
         :rtype: ~azure.storage.fileshare.ShareFileClient
         """
         try:
             if not file_url.lower().startswith('http'):
                 file_url = "https://" + file_url
-        except AttributeError:
-            raise ValueError("File URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("File URL must be a string.") from exc
         parsed_url = urlparse(file_url.rstrip('/'))
 
         if not (parsed_url.netloc and parsed_url.path):
-            raise ValueError("Invalid URL: {}".format(file_url))
+            raise ValueError(f"Invalid URL: {file_url}")
         account_url = parsed_url.netloc.rstrip('/') + "?" + parsed_url.query
 
         path_share, _, path_file = parsed_url.path.lstrip('/').partition('/')
@@ -248,18 +249,11 @@ class ShareFileClient(StorageAccountHostsMixin):
         return cls(account_url, share_name, file_path, snapshot, credential, **kwargs)
 
     def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
         share_name = self.share_name
         if isinstance(share_name, str):
             share_name = share_name.encode('UTF-8')
-        return "{}://{}/{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(share_name),
-            "/".join([quote(p, safe='~') for p in self.file_path]),
-            self._query_str)
+        return (f"{self.scheme}://{hostname}/{quote(share_name)}"
+                f"/{'/'.join([quote(p, safe='~') for p in self.file_path])}{self._query_str}")
 
     @classmethod
     def from_connection_string(
@@ -290,6 +284,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         :returns: A File client.
         :rtype: ~azure.storage.fileshare.ShareFileClient
 
@@ -572,7 +567,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         elif hasattr(data, '__iter__'):
             stream = IterStreamer(data, encoding=encoding)
         else:
-            raise TypeError("Unsupported data type: {}".format(type(data)))
+            raise TypeError(f"Unsupported data type: {type(data)}")
         return _upload_file_helper(
             self,
             stream,
@@ -718,6 +713,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         except HttpResponseError as error:
             process_storage_error(error)
 
+    @distributed_trace
     def abort_copy(self, copy_id, **kwargs):
         # type: (Union[str, FileProperties], Any) -> None
         """Abort an ongoing copy operation.
@@ -959,7 +955,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             new_file_sas = self._query_str.strip('?')
 
         new_file_client = ShareFileClient(
-            '{}://{}'.format(self.scheme, self.primary_hostname), self.share_name, new_file_path,
+            f'{self.scheme}://{self.primary_hostname}', self.share_name, new_file_path,
             credential=new_file_sas or self.credential, api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot,
@@ -1232,7 +1228,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             data = data.encode(encoding)
 
         end_range = offset + length - 1  # Reformat to an inclusive range index
-        content_range = 'bytes={0}-{1}'.format(offset, end_range)
+        content_range = f'bytes={offset}-{end_range}'
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         try:
             return self._client.file.upload_range( # type: ignore
@@ -1266,8 +1262,8 @@ class ShareFileClient(StorageAccountHostsMixin):
 
         # Format range
         end_range = offset + length - 1
-        destination_range = 'bytes={0}-{1}'.format(offset, end_range)
-        source_range = 'bytes={0}-{1}'.format(source_offset, source_offset + length - 1)
+        destination_range = f'bytes={offset}-{end_range}'
+        source_range = f'bytes={source_offset}-{source_offset + length - 1}'
         source_authorization = kwargs.pop('source_authorization', None)
         source_mod_conditions = get_source_conditions(kwargs)
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
@@ -1384,9 +1380,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         if offset is not None:
             if length is not None:
                 end_range = offset + length - 1  # Reformat to an inclusive range index
-                content_range = 'bytes={0}-{1}'.format(offset, end_range)
+                content_range = f'bytes={offset}-{end_range}'
             else:
-                content_range = 'bytes={0}-'.format(offset)
+                content_range = f'bytes={offset}-'
         options = {
             'sharesnapshot': self.snapshot,
             'lease_access_conditions': access_conditions,
@@ -1444,6 +1440,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             process_storage_error(error)
         return [{'start': file_range.start, 'end': file_range.end} for file_range in ranges.ranges]
 
+    @distributed_trace
     def get_ranges_diff(  # type: ignore
             self,
             previous_sharesnapshot,  # type: Union[str, Dict[str, Any]]
@@ -1531,7 +1528,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         if length is None or length % 512 != 0:
             raise ValueError("length must be an integer that aligns with 512 bytes file size")
         end_range = length + offset - 1  # Reformat to an inclusive range index
-        content_range = 'bytes={0}-{1}'.format(offset, end_range)
+        content_range = f'bytes={offset}-{end_range}'
         try:
             return self._client.file.upload_range( # type: ignore
                 timeout=timeout,

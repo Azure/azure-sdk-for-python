@@ -11,6 +11,8 @@ import pytest
 import time
 import json
 
+from azure.core.settings import settings
+from azure.core.tracing import SpanKind
 from azure.eventhub import EventData, TransportType, EventDataBatch
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient
 from azure.eventhub.exceptions import EventDataSendError, OperationTimeoutError
@@ -212,21 +214,59 @@ async def test_send_with_partition_key_async(connstr_receivers, live_eventhub, u
 @pytest.mark.parametrize("payload", [b"", b"A single event"])
 @pytest.mark.liveTest
 @pytest.mark.asyncio
-async def test_send_and_receive_small_body_async(connstr_receivers, payload, uamqp_transport, timeout_factor):
+async def test_send_and_receive_small_body_async(connstr_receivers, payload, uamqp_transport, timeout_factor, fake_span):
     connection_str, receivers = connstr_receivers
+
+    settings.tracing_implementation.set_value(fake_span)
     client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
-    async with client:
-        batch = await client.create_batch()
-        batch.add(EventData(payload))
-        await client.send_batch(batch)
-        await client.send_event(EventData(payload))
+    with fake_span(name="SendTest") as root_span:
+        async with client:
+            batch = await client.create_batch()
+            batch.add(EventData(payload))
+            batch.add(EventData(payload))
+
+            await client.send_batch(batch)
+            await client.send_event(EventData(payload))
     received = []
     for r in receivers:
         received.extend([EventData._from_message(x) for x in r.receive_message_batch(timeout=5 * timeout_factor)])
 
-    assert len(received) == 2
+    assert len(received) == 3
     assert list(received[0].body)[0] == payload
     assert list(received[1].body)[0] == payload
+    assert list(received[2].body)[0] == payload
+
+    # Will need to modify FakeSpan in conftest.
+    assert root_span.name == "SendTest"
+    assert len(root_span.children) == 5
+
+    # Check first message added to batch.
+    assert root_span.children[0].name == "EventHubs.message"
+    assert root_span.children[0].kind == SpanKind.PRODUCER
+
+    # Check second message added to batch.
+    assert root_span.children[1].name == "EventHubs.message"
+    assert root_span.children[1].kind == SpanKind.PRODUCER
+
+    # Check send span corresponding to send_batch
+    assert root_span.children[2].name == "EventHubs.send"
+    assert root_span.children[2].kind == SpanKind.CLIENT
+    assert len(root_span.children[2].links) == 2
+    assert root_span.children[2].links[0].headers['traceparent'] == root_span.children[0].traceparent
+    assert root_span.children[2].links[1].headers['traceparent'] == root_span.children[1].traceparent
+
+    # Check message sent using send_event
+    assert root_span.children[3].name == "EventHubs.message"
+    assert root_span.children[3].kind == SpanKind.PRODUCER
+
+    # Check send span corresponding to send_event
+    assert root_span.children[4].name == "EventHubs.send"
+    assert root_span.children[4].kind == SpanKind.CLIENT
+    assert len(root_span.children[4].links) == 1
+    assert root_span.children[4].links[0].headers['traceparent'] == root_span.children[3].traceparent
+
+    # MUST RESET TRACING IMPLEMENTATION TO NONE, ELSE ALL OTHER TESTS ADD TRACING
+    settings.tracing_implementation.set_value(None)
 
 
 @pytest.mark.liveTest

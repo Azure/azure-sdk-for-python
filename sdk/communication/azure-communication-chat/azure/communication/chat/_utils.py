@@ -43,6 +43,10 @@ class CommunicationErrorResponseConverter(object):
             # type: (...) -> Dict(str, ChatThreadParticipant)
             """
             Create dictionary of id -> ChatParticipant
+
+            :param list participants: list of ChatThreadParticipant
+            :return: Dictionary of id -> ChatThreadParticipant
+            :rtype: dict
             """
             result = {}
             for participant in participants:

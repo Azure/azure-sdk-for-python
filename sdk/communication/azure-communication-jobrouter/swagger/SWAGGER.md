@@ -17,9 +17,8 @@ autorest SWAGGER.md
 
 ``` yaml
 tag: package-jobrouter-2022-07-18-preview
-require: https://raw.githubusercontent.com/williamzhao87/azure-rest-api-specs/17ac729b6e3e6fe173efccf9822e6d5d7338031b/specification/communication/data-plane/JobRouter/readme.md
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/29159d148372f5f61cb04b76fc87252b13c62515/specification/communication/data-plane/JobRouter/readme.md
 output-folder: ../azure/communication/jobrouter/_generated
-models-mode: msrest
 namespace: azure.communication.jobrouter
 package-name: azure-communication-jobrouter
 license-header: MICROSOFT_MIT_NO_VERSION

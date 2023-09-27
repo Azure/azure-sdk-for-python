@@ -10,7 +10,7 @@ from azure.identity import CredentialUnavailableError
 from azure.identity.aio._credentials.application import AzureApplicationCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
-from six.moves.urllib_parse import urlparse
+from urllib.parse import urlparse
 
 from helpers import build_aad_response, mock_response
 from helpers_async import get_completed_future
@@ -79,7 +79,10 @@ def test_authority(authority):
 async def test_get_token():
     expected_token = "***"
 
-    async def send(request, **_):
+    async def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         return mock_response(json_payload=build_aad_response(access_token=expected_token))
 
     with patch.dict("os.environ", {var: "..." for var in EnvironmentVariables.CLIENT_SECRET_VARS}, clear=True):

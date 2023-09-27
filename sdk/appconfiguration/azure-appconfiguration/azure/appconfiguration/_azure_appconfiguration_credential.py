@@ -17,6 +17,4 @@ class AppConfigConnectionStringCredential(object):
     """
 
     def __init__(self, connection_string):
-        self.host, self.credential, self.secret = parse_connection_string(
-            connection_string
-        )
+        self.host, self.credential, self.secret = parse_connection_string(connection_string)

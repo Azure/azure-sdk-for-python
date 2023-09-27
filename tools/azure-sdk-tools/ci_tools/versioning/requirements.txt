@@ -1,4 +1,4 @@
-packaging==19.2
+packaging==23.1
 pyparsing==2.4.5
 six==1.13.0
 setuptools==67.6.0

@@ -95,7 +95,7 @@ parser.add_argument("--debug_level", help="Flag for setting a debug level, can b
 args = parser.parse_args()
 starting_position = parse_starting_position(args)
 print_console = args.print_console or (os.environ.get("PRINT_CONSOLE") == "1")
-debug_level = getattr(logging, args.debug_level.upper(), None)
+debug_level = getattr(logging, args.debug_level.upper(), logging.ERROR)
 
 
 LOGGER = get_logger(args.log_filename, "stress_receive_async", level=debug_level, print_console=args.print_console)

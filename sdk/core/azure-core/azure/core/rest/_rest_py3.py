@@ -101,7 +101,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
         content: Optional[ContentType] = None,
         data: Optional[Dict[str, Any]] = None,
         files: Optional[FilesType] = None,
-        **kwargs
+        **kwargs: Any
     ):
         self.url = url
         self.method = method
@@ -117,7 +117,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
             files=files,
             json=json,
         )
-        self.headers = case_insensitive_dict(default_headers)
+        self.headers: MutableMapping[str, str] = case_insensitive_dict(default_headers)
         self.headers.update(headers or {})
 
         if kwargs:
@@ -132,7 +132,16 @@ class HttpRequest(HttpRequestBackcompatMixin):
         files: Optional[FilesType] = None,
         json: Any = None,
     ) -> MutableMapping[str, str]:
-        """Sets the body of the request, and returns the default headers"""
+        """Sets the body of the request, and returns the default headers.
+
+        :param content: Content you want in your request body.
+        :type content: str or bytes or iterable[bytes] or asynciterable[bytes]
+        :param dict data: Form data you want in your request body.
+        :param dict files: Files you want to in your request body.
+        :param any json: A JSON serializable object.
+        :return: The default headers for the request
+        :rtype: MutableMapping[str, str]
+        """
         default_headers: MutableMapping[str, str] = {}
         if data is not None and not isinstance(data, dict):
             # should we warn?
@@ -161,7 +170,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
     def __repr__(self) -> str:
         return "<HttpRequest [{}], url: '{}'>".format(self.method, self.url)
 
-    def __deepcopy__(self, memo=None) -> "HttpRequest":
+    def __deepcopy__(self, memo: Optional[Dict[int, Any]] = None) -> "HttpRequest":
         try:
             request = HttpRequest(
                 method=self.method,
@@ -185,8 +194,8 @@ class _HttpResponseBase(abc.ABC):
         """The request that resulted in this response.
 
         :rtype: ~azure.core.rest.HttpRequest
+        :return: The request that resulted in this response.
         """
-        ...
 
     @property
     @abc.abstractmethod
@@ -194,8 +203,8 @@ class _HttpResponseBase(abc.ABC):
         """The status code of this response.
 
         :rtype: int
+        :return: The status code of this response.
         """
-        ...
 
     @property
     @abc.abstractmethod
@@ -203,8 +212,8 @@ class _HttpResponseBase(abc.ABC):
         """The response headers. Must be case-insensitive.
 
         :rtype: MutableMapping[str, str]
+        :return: The response headers. Must be case-insensitive.
         """
-        ...
 
     @property
     @abc.abstractmethod
@@ -212,8 +221,8 @@ class _HttpResponseBase(abc.ABC):
         """The reason phrase for this response.
 
         :rtype: str
+        :return: The reason phrase for this response.
         """
-        ...
 
     @property
     @abc.abstractmethod
@@ -221,8 +230,8 @@ class _HttpResponseBase(abc.ABC):
         """The content type of the response.
 
         :rtype: str
+        :return: The content type of the response.
         """
-        ...
 
     @property
     @abc.abstractmethod
@@ -230,8 +239,8 @@ class _HttpResponseBase(abc.ABC):
         """Whether the network connection has been closed yet.
 
         :rtype: bool
+        :return: Whether the network connection has been closed yet.
         """
-        ...
 
     @property
     @abc.abstractmethod
@@ -239,8 +248,8 @@ class _HttpResponseBase(abc.ABC):
         """Whether the stream has been consumed.
 
         :rtype: bool
+        :return: Whether the stream has been consumed.
         """
-        ...
 
     @property
     @abc.abstractmethod
@@ -252,13 +261,12 @@ class _HttpResponseBase(abc.ABC):
          we return `None`.
         :rtype: optional[str]
         """
-        ...
 
     @encoding.setter
     def encoding(self, value: Optional[str]) -> None:
         """Sets the response encoding.
 
-        :rtype: None
+        :param optional[str] value: The encoding to set
         """
 
     @property
@@ -267,8 +275,8 @@ class _HttpResponseBase(abc.ABC):
         """The URL that resulted in this response.
 
         :rtype: str
+        :return: The URL that resulted in this response.
         """
-        ...
 
     @property
     @abc.abstractmethod
@@ -276,8 +284,8 @@ class _HttpResponseBase(abc.ABC):
         """Return the response's content in bytes.
 
         :rtype: bytes
+        :return: The response's content in bytes.
         """
-        ...
 
     @abc.abstractmethod
     def text(self, encoding: Optional[str] = None) -> str:
@@ -288,7 +296,6 @@ class _HttpResponseBase(abc.ABC):
         :return: The response's content decoded as a string.
         :rtype: str
         """
-        ...
 
     @abc.abstractmethod
     def json(self) -> Any:
@@ -298,7 +305,6 @@ class _HttpResponseBase(abc.ABC):
         :rtype: any
         :raises json.decoder.JSONDecodeError or ValueError (in python 2.7) if object is not JSON decodable:
         """
-        ...
 
     @abc.abstractmethod
     def raise_for_status(self) -> None:
@@ -306,10 +312,8 @@ class _HttpResponseBase(abc.ABC):
 
         If response is good, does nothing.
 
-        :rtype: None
         :raises ~azure.core.HttpResponseError if the object has an error status code.:
         """
-        ...
 
 
 class HttpResponse(_HttpResponseBase):
@@ -332,7 +336,7 @@ class HttpResponse(_HttpResponseBase):
         ...
 
     @abc.abstractmethod
-    def __exit__(self, *args) -> None:
+    def __exit__(self, *args: Any) -> None:
         ...
 
     @abc.abstractmethod
@@ -346,7 +350,6 @@ class HttpResponse(_HttpResponseBase):
         :return: The read in bytes
         :rtype: bytes
         """
-        ...
 
     @abc.abstractmethod
     def iter_raw(self, **kwargs: Any) -> Iterator[bytes]:
@@ -355,7 +358,6 @@ class HttpResponse(_HttpResponseBase):
         :return: An iterator of bytes from the response
         :rtype: Iterator[str]
         """
-        ...
 
     @abc.abstractmethod
     def iter_bytes(self, **kwargs: Any) -> Iterator[bytes]:
@@ -364,7 +366,6 @@ class HttpResponse(_HttpResponseBase):
         :return: An iterator of bytes from the response
         :rtype: Iterator[str]
         """
-        ...
 
     def __repr__(self) -> str:
         content_type_str = ", Content-Type: {}".format(self.content_type) if self.content_type else ""
@@ -393,7 +394,6 @@ class AsyncHttpResponse(_HttpResponseBase, AsyncContextManager["AsyncHttpRespons
         :return: The response's bytes
         :rtype: bytes
         """
-        ...
 
     @abc.abstractmethod
     async def iter_raw(self, **kwargs: Any) -> AsyncIterator[bytes]:

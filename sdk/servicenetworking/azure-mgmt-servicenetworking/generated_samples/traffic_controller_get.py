@@ -31,7 +31,7 @@ def main():
 
     response = client.traffic_controller_interface.get(
         resource_group_name="rg1",
-        traffic_controller_name="TC1",
+        traffic_controller_name="tc1",
     )
     print(response)
 

@@ -90,7 +90,7 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
             self.verify_successful_room_response(response=response)
 
     @recorded_by_proxy_async
-    async def test_create_room_validUntil_7Months_async(self):
+    async def test_create_room_validUntil_seven_months_async(self):
         # room attributes
         valid_from =  datetime.now() + timedelta(days=3)
         valid_until = valid_from + timedelta(weeks=29)
@@ -102,13 +102,23 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
                 assert ex.value.message is not None
 
     @recorded_by_proxy_async
-    async def test_create_room_validFrom_7Months_async(self):
+    async def test_create_room_validFrom_seven_months_async(self):
         # room attributes
         valid_from = datetime.now() + timedelta(weeks=29)
 
         with pytest.raises(HttpResponseError) as ex:
             async with self.rooms_client:
                 await self.rooms_client.create_room(valid_from=valid_from)
+                assert str(ex.value.status_code) == "400"
+                assert ex.value.message is not None
+
+    @recorded_by_proxy_async
+    async def test_create_room_valid_until_in_past_async(self):
+        # room attributes
+        valid_until = datetime.now() - timedelta(weeks=1)
+        with pytest.raises(HttpResponseError) as ex:
+            async with self.rooms_client:
+                await self.rooms_client.create_room(valid_until=valid_until)
                 assert str(ex.value.status_code) == "400"
                 assert ex.value.message is not None
 
@@ -186,20 +196,14 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
                 response=get_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
 
     @recorded_by_proxy_async
-    async def test_get_invalid_room_async(self):
+    async def test_get_invalid_format_roomId_async(self):
         # random room id
         async with self.rooms_client:
-            create_response = await self.rooms_client.create_room()
-
-            # delete created room
-            await self.rooms_client.delete_room(room_id=create_response.id)
             with pytest.raises(HttpResponseError) as ex:
-
-                await self.rooms_client.get_room(room_id=create_response.id)
-                # Resource not found
-            assert str(ex.value.status_code) == "404"
-            assert ex.value.message is not None
-            await self.rooms_client.delete_room(room_id=create_response.id)
+                await self.rooms_client.get_room(room_id="invalid_id")
+                # Bad Request
+                assert str(ex.value.status_code) == "400"
+                assert ex.value.message is not None
 
     @recorded_by_proxy_async
     async def test_update_room_exceed_max_timerange_async(self):
@@ -210,6 +214,25 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
             # update room attributes
             valid_from =  datetime.now() + timedelta(days=3)
             valid_until =  datetime.now() + timedelta(weeks=29)
+
+            with pytest.raises(HttpResponseError) as ex:
+                await self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
+
+                # delete created room
+                await self.rooms_client.delete_room(room_id=create_response.id)
+
+                assert str(ex.value.status_code) == "400"
+                assert ex.value.message is not None
+
+    @recorded_by_proxy_async
+    async def test_update_room_valid_until_in_past_async(self):
+        # room with no attributes
+        async with self.rooms_client:
+            create_response = await self.rooms_client.create_room()
+
+            # update room attributes
+            valid_from =  datetime.now() - timedelta(days=3)
+            valid_until =  datetime.now() - timedelta(weeks=1)
 
             with pytest.raises(HttpResponseError) as ex:
                 await self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
@@ -237,6 +260,37 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
             await self.rooms_client.delete_room(room_id=create_response.id)
             self.verify_successful_room_response(
                 response=update_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
+
+    @recorded_by_proxy_async
+    async def test_update_room_invalid_format_roomId_async(self):
+        # try to update room with random room_id
+        with pytest.raises(HttpResponseError) as ex:
+            async with self.rooms_client:
+                valid_from =  datetime.now() + timedelta(days=3)
+                valid_until = valid_from + timedelta(days=4)
+                await self.rooms_client.update_room(room_id="invalid_id", valid_from=valid_from, valid_until=valid_until)
+
+                #  assert error is bad request
+                assert str(ex.value.status_code) == "400"
+                assert ex.value.message is not None
+
+    @recorded_by_proxy_async
+    async def test_update_room_deleted_room_async(self):
+        # create a room -> delete it -> try to update it
+        async with self.rooms_client:
+            create_response = await self.rooms_client.create_room()
+
+            # delete the room
+            await self.rooms_client.delete_room(room_id=create_response.id)
+
+            with pytest.raises(HttpResponseError) as ex:
+                valid_from =  datetime.now() + timedelta(days=3)
+                valid_until = valid_from + timedelta(days=4)
+                await self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
+
+                #  assert error is Resource not found
+                assert str(ex.value.status_code) == "404"
+                assert ex.value.message is not None
 
     @recorded_by_proxy_async
     async def test_add_or_update_participant_async(self):
@@ -366,6 +420,44 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
             await self.rooms_client.delete_room(room_id=create_response.id)
 
     @recorded_by_proxy_async
+    async def test_add_or_update_participants_incorrectMri_async(self):
+        # room with no attributes
+        async with self.rooms_client:
+            create_response = await self.rooms_client.create_room()
+
+            participants = [
+                RoomParticipant(
+                    communication_identifier=CommunicationUserIdentifier("wrong_mri"),
+                    role=ParticipantRole.ATTENDEE),
+                self.users["john"]
+            ]
+
+            # update room attributes
+            with pytest.raises(HttpResponseError) as ex:
+                await self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=participants)
+                assert str(ex.value.status_code) == "400"
+                assert ex.value.message is not None
+
+    @recorded_by_proxy_async
+    async def test_add_or_update_participants_wrongRoleName_async(self):
+        # room with no attributes
+        async with self.rooms_client:
+            create_response = await self.rooms_client.create_room()
+
+            participants = [
+                RoomParticipant(
+                    communication_identifier=CommunicationUserIdentifier("chris"),
+                    role='kafka'),
+                self.users["john"]
+            ]
+
+            # update room attributes
+            with pytest.raises(HttpResponseError) as ex:
+                await self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=participants)
+                assert str(ex.value.status_code) == "400"
+                assert ex.value.message is not None
+
+    @recorded_by_proxy_async
     async def test_remove_participant_async(self):
         # add john and chris to room
         create_participants = [
@@ -395,7 +487,40 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
             await self.rooms_client.delete_room(room_id=create_response.id)
 
     @recorded_by_proxy_async
-    async def test_add_or_update_participants_incorrectMri_async(self):
+    async def test_remove_participant_who_do_not_exist_async(self):
+        # add john and chris to room
+        create_participants = [
+            self.users["john"],
+            self.users["chris"]
+        ]
+        remove_participants = [
+            self.users["fred"].communication_identifier
+        ]
+        expected_participants = [
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id1),
+                role=ParticipantRole.PRESENTER
+            ),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id3),
+                role=ParticipantRole.ATTENDEE
+            )
+        ]
+        async with self.rooms_client:
+            create_response = await self.rooms_client.create_room(participants=create_participants)
+            await self.rooms_client.remove_participants(room_id=create_response.id, participants=remove_participants)
+            update_response = self.rooms_client.list_participants(room_id=create_response.id)
+            participants = []
+            async for participant in update_response:
+                participants.append(participant)
+            assert len(participants) == 2
+            case = unittest.TestCase()
+            case.assertCountEqual(expected_participants, participants)
+            # delete created room
+            await self.rooms_client.delete_room(room_id=create_response.id)
+
+    @recorded_by_proxy_async
+    async def test_remove_participant_wrong_mri_async(self):
         # room with no attributes
         async with self.rooms_client:
             create_response = await self.rooms_client.create_room()
@@ -403,67 +528,14 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
             participants = [
                 RoomParticipant(
                     communication_identifier=CommunicationUserIdentifier("wrong_mri"),
-                    role=ParticipantRole.ATTENDEE),
-                self.users["john"]
+                    role=ParticipantRole.ATTENDEE)
             ]
 
             # update room attributes
             with pytest.raises(HttpResponseError) as ex:
-                await self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=participants)
-
-            assert str(ex.value.status_code) == "400"
-            assert ex.value.message is not None
-
-    @recorded_by_proxy_async
-    async def test_add_participants_wrongRoleName_async(self):
-        # room with no attributes
-        async with self.rooms_client:
-            create_response = await self.rooms_client.create_room()
-
-            participants = [
-                RoomParticipant(
-                    communication_identifier=CommunicationUserIdentifier("chris"),
-                    role='kafka'),
-                self.users["john"]
-            ]
-
-            # update room attributes
-            with pytest.raises(HttpResponseError) as ex:
-                await self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=participants)
-
-            assert str(ex.value.status_code) == "400"
-            assert ex.value.message is not None
-
-    @recorded_by_proxy_async
-    async def test_update_room_incorrect_roomId_async(self):
-        # try to update room with random room_id
-        with pytest.raises(HttpResponseError) as ex:
-            async with self.rooms_client:
-                valid_from =  datetime.now() + timedelta(days=3)
-                valid_until = valid_from + timedelta(days=4)
-                await self.rooms_client.update_room(room_id=78469124725336262, valid_from=valid_from, valid_until=valid_until)
-
-                #  assert error is Resource not found
-                assert str(ex.value.status_code) == "404"
+                await self.rooms_client.remove_participants(room_id=create_response.id, participants=participants)
+                assert str(ex.value.status_code) == "400"
                 assert ex.value.message is not None
-
-    @recorded_by_proxy_async
-    async def test_update_room_deleted_room_async(self):
-        # create a room -> delete it -> try to update it
-        async with self.rooms_client:
-            create_response = await self.rooms_client.create_room()
-
-            # delete the room
-            await self.rooms_client.delete_room(room_id=create_response.id)
-
-            with pytest.raises(HttpResponseError) as ex:
-                valid_from =  datetime.now() + timedelta(days=3)
-                valid_until = valid_from + timedelta(days=4)
-                await self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
-
-            #  assert error is Resource not found
-            assert str(ex.value.status_code) == "404"
-            assert ex.value.message is not None
 
     @recorded_by_proxy_async
     async def test_list_rooms_first_room_is_not_null_success_async(self):
@@ -485,6 +557,29 @@ class TestRoomsClientAsync(ACSRoomsTestCase):
 
             # delete the room
             await self.rooms_client.delete_room(room_id=create_response.id)
+
+    @recorded_by_proxy_async
+    async def test_delete_room_success(self):
+        # create a room -> delete the room -> cannot get the room
+        async with self.rooms_client:
+            create_response = await self.rooms_client.create_room()
+            # delete the room
+            await self.rooms_client.delete_room(room_id=create_response.id)
+            # get the deleted room
+            with pytest.raises(HttpResponseError) as ex:
+                await self.rooms_client.get_room(create_response.id)
+                assert str(ex.value.status_code) == "404"
+                assert ex.value.message is not None
+
+    @recorded_by_proxy_async
+    async def test_delete_room_invalid_id(self):
+        # room with no attributes
+        async with self.rooms_client:
+            with pytest.raises(HttpResponseError) as ex:
+                # delete created room with invalid id
+                await self.rooms_client.delete_room(room_id="123")
+                assert str(ex.value.status_code) == "400"
+                assert ex.value.message is not None
 
     def verify_successful_room_response(self, response, valid_from=None, valid_until=None, room_id=None):
         if room_id is not None:

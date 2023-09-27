@@ -175,7 +175,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             list. If an empty list is specified, all CORS rules will be deleted,
             and CORS will be disabled for the service.
         :type cors: list(:class:`~azure.storage.fileshare.CorsRule`)
-        :param protocol_settings:
+        :param protocol:
             Sets protocol settings
         :type protocol: ~azure.storage.fileshare.ShareProtocolSettings
         :keyword int timeout:
@@ -288,6 +288,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
+        :return: A ShareClient for the newly created Share.
         :rtype: ~azure.storage.fileshare.aio.ShareClient
 
         .. admonition:: Example:
@@ -367,6 +368,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
+        :return: A ShareClient for the undeleted Share.
         :rtype: ~azure.storage.fileshare.aio.ShareClient
         """
         share = self.get_share_client(deleted_share_name)

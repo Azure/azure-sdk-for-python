@@ -72,6 +72,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2022-10-01/examples/ContainerApps_TcpApp_CreateOrUpdate.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2023-05-01/examples/ContainerApps_TcpApp_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

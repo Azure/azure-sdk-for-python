@@ -29,14 +29,13 @@ def main():
         subscription_id="12345678-1234-1234-1234-123456789098",
     )
 
-    response = client.cluster_principal_assignments.begin_delete(
+    client.cluster_principal_assignments.begin_delete(
         resource_group_name="kustorptest",
         cluster_name="kustoCluster",
         principal_assignment_name="kustoprincipal1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2022-12-29/examples/KustoClusterPrincipalAssignmentsDelete.json
+# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2023-05-02/examples/KustoClusterPrincipalAssignmentsDelete.json
 if __name__ == "__main__":
     main()

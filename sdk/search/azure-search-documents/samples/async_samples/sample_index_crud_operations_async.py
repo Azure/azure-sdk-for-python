@@ -34,83 +34,92 @@ from azure.search.documents.indexes.models import (
     ScoringProfile,
     SearchFieldDataType,
     SimpleField,
-    SearchableField
+    SearchableField,
 )
 
-client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
 
 async def create_index():
     # [START create_index_async]
+    client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     name = "hotels"
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
         SimpleField(name="baseRate", type=SearchFieldDataType.Double),
         SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
-        ComplexField(name="address", fields=[
-            SimpleField(name="streetAddress", type=SearchFieldDataType.String),
-            SimpleField(name="city", type=SearchFieldDataType.String),
-        ], collection=True)
+        ComplexField(
+            name="address",
+            fields=[
+                SimpleField(name="streetAddress", type=SearchFieldDataType.String),
+                SimpleField(name="city", type=SearchFieldDataType.String),
+            ],
+            collection=True,
+        ),
     ]
 
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
     scoring_profiles = []
-    index = SearchIndex(
-        name=name,
-        fields=fields,
-        scoring_profiles=scoring_profiles,
-        cors_options=cors_options)
+    index = SearchIndex(name=name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options)
 
     result = await client.create_index(index)
+    await client.close()
     # [END create_index_async]
+
 
 async def get_index():
     # [START get_index_async]
+    client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     name = "hotels"
     result = await client.get_index(name)
+    await client.close()
     # [END get_index_async]
+
 
 async def update_index():
     # [START update_index_async]
+    client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     name = "hotels"
     fields = [
         SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
         SimpleField(name="baseRate", type=SearchFieldDataType.Double),
         SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
         SearchableField(name="hotelName", type=SearchFieldDataType.String),
-        ComplexField(name="address", fields=[
-            SimpleField(name="streetAddress", type=SearchFieldDataType.String),
-            SimpleField(name="city", type=SearchFieldDataType.String),
-            SimpleField(name="state", type=SearchFieldDataType.String),
-        ], collection=True)
+        ComplexField(
+            name="address",
+            fields=[
+                SimpleField(name="streetAddress", type=SearchFieldDataType.String),
+                SimpleField(name="city", type=SearchFieldDataType.String),
+                SimpleField(name="state", type=SearchFieldDataType.String),
+            ],
+            collection=True,
+        ),
     ]
 
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
-    scoring_profile = ScoringProfile(
-        name="MyProfile"
-    )
+    scoring_profile = ScoringProfile(name="MyProfile")
     scoring_profiles = []
     scoring_profiles.append(scoring_profile)
-    index = SearchIndex(
-        name=name,
-        fields=fields,
-        scoring_profiles=scoring_profiles,
-        cors_options=cors_options)
+    index = SearchIndex(name=name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options)
 
     result = await client.create_or_update_index(index=index)
+    await client.close()
     # [END update_index_async]
+
 
 async def delete_index():
     # [START delete_index_async]
+    client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
     name = "hotels"
     await client.delete_index(name)
+    await client.close()
     # [END delete_index_async]
+
 
 async def main():
     await create_index()
     await get_index()
     await update_index()
     await delete_index()
-    await client.close()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

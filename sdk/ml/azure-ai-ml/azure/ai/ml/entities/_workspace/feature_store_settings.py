@@ -4,11 +4,12 @@
 
 # pylint: disable=protected-access
 
-from typing import Optional, Any
+from typing import Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml._restclient.v2023_06_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
+
 from .compute_runtime import ComputeRuntime
 
 

@@ -90,6 +90,26 @@ class TestRoomsClient(ACSRoomsTestCase):
 
         self.verify_successful_room_response(response=response)
 
+    @recorded_by_proxy
+    def test_create_room_validUntil_seven_months(self):
+        # room attributes
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until = valid_from + timedelta(weeks=29)
+
+        with pytest.raises(HttpResponseError) as ex:
+            self.rooms_client.create_room(valid_from=valid_from, valid_until=valid_until)
+            assert str(ex.value.status_code) == "400"
+            assert ex.value.message is not None
+
+    @recorded_by_proxy
+    def test_create_room_valid_until_in_past(self):
+        # room attributes
+        valid_until = datetime.now() - timedelta(weeks=1)
+        with pytest.raises(HttpResponseError) as ex:
+            self.rooms_client.create_room(valid_until=valid_until)
+            assert str(ex.value.status_code) == "400"
+            assert ex.value.message is not None
+
     @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_create_room_correct_timerange(self):
@@ -114,9 +134,8 @@ class TestRoomsClient(ACSRoomsTestCase):
 
         with pytest.raises(HttpResponseError) as ex:
             self.rooms_client.create_room(participants=participants)
-
-        assert str(ex.value.status_code) == "400"
-        assert ex.value.message is not None
+            assert str(ex.value.status_code) == "400"
+            assert ex.value.message is not None
 
     @pytest.mark.live_test_only
     @recorded_by_proxy
@@ -158,17 +177,14 @@ class TestRoomsClient(ACSRoomsTestCase):
             response=get_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
 
     @recorded_by_proxy
-    def test_get_invalid_room(self):
+    def test_get_invalid_format_roomId(self):
         # random room id
         with pytest.raises(HttpResponseError) as ex:
-            create_response = self.rooms_client.create_room()
-            self.rooms_client.delete_room(room_id=create_response.id)
-            self.rooms_client.get_room(room_id=create_response.id)
+            self.rooms_client.get_room(room_id="invalid_id")
 
-        # Resource not found
-        assert str(ex.value.status_code) == "404"
-        assert ex.value.message is not None
-        self.rooms_client.delete_room(room_id=create_response.id)
+            # Bad request
+            assert str(ex.value.status_code) == "400"
+            assert ex.value.message is not None
 
     @pytest.mark.live_test_only
     @recorded_by_proxy
@@ -186,6 +202,65 @@ class TestRoomsClient(ACSRoomsTestCase):
         self.rooms_client.delete_room(room_id=create_response.id)
         self.verify_successful_room_response(
             response=update_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
+
+    @recorded_by_proxy
+    def test_update_room_invalid_format_roomId(self):
+        # try to update room with random room_id
+        with pytest.raises(HttpResponseError) as ex:
+            valid_from =  datetime.now() + timedelta(days=3)
+            valid_until = valid_from + timedelta(days=4)
+            self.rooms_client.update_room(room_id="invalid_id", valid_from=valid_from, valid_until=valid_until)
+            #  assert error is bad request
+            assert str(ex.value.status_code) == "400"
+            assert ex.value.message is not None
+
+    @recorded_by_proxy
+    def test_update_room_valid_until_in_past(self):
+        # room with no attributes
+        create_response = self.rooms_client.create_room()
+
+        with pytest.raises(HttpResponseError) as ex:
+            # update room attributes
+            valid_from =  datetime.now() - timedelta(days=3)
+            valid_until =  datetime.now() - timedelta(weeks=1)
+            self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
+            # delete created room
+            self.rooms_client.delete_room(room_id=create_response.id)
+            assert str(ex.value.status_code) == "400"
+            assert ex.value.message is not None
+
+    @recorded_by_proxy
+    def test_update_room_deleted_room(self):
+        # create a room -> delete it -> try to update it
+        create_response = self.rooms_client.create_room()
+
+        # delete the room
+        self.rooms_client.delete_room(room_id=create_response.id)
+        with pytest.raises(HttpResponseError) as ex:
+            valid_from =  datetime.now() + timedelta(days=3)
+            valid_until = valid_from + timedelta(days=4)
+            self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
+
+            #  assert error is Resource not found
+            assert str(ex.value.status_code) == "404"
+            assert ex.value.message is not None
+
+    @recorded_by_proxy
+    def test_update_room_exceed_max_timerange(self):
+        # room with no attributes
+        create_response = self.rooms_client.create_room()
+
+        # update room attributes
+        valid_from =  datetime.now() + timedelta(days=3)
+        valid_until =  datetime.now() + timedelta(weeks=29)
+
+        with pytest.raises(HttpResponseError) as ex:
+            self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
+            assert str(ex.value.status_code) == "400"
+            assert ex.value.message is not None
+
+         # delete created room
+        self.rooms_client.delete_room(room_id=create_response.id)
 
     @recorded_by_proxy
     def test_add_or_update_participants(self):
@@ -316,6 +391,45 @@ class TestRoomsClient(ACSRoomsTestCase):
         self.rooms_client.delete_room(room_id=create_response.id)
 
     @recorded_by_proxy
+    def test_add_or_update_participants_incorrectMri(self):
+        # room with no attributes
+        create_response = self.rooms_client.create_room()
+
+        participants = [
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier("wrong_mri"),
+                role=ParticipantRole.ATTENDEE),
+            self.users["john"]
+        ]
+
+        # update room attributes
+        with pytest.raises(HttpResponseError) as ex:
+            self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=participants)
+            assert str(ex.value.status_code) == "400"
+            assert ex.value.message is not None
+        # delete created room
+        self.rooms_client.delete_room(room_id=create_response.id)
+
+    @recorded_by_proxy
+    def test_add_or_update_room_wrongRoleName(self):
+        # room with no attributes
+        create_response = self.rooms_client.create_room()
+
+        participants = [
+            RoomParticipant(
+                communication_identifier=self.users["john"].communication_identifier,
+                role='Kafka'),
+        ]
+
+        # update room attributes
+        with pytest.raises(HttpResponseError) as ex:
+            self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=participants)
+            assert str(ex.value.status_code) == "400"
+            assert ex.value.message is not None
+        # delete created room
+        self.rooms_client.delete_room(room_id=create_response.id)
+
+    @recorded_by_proxy
     def test_remove_participants(self):
         # add john and chris to room
         create_participants = [
@@ -348,90 +462,57 @@ class TestRoomsClient(ACSRoomsTestCase):
         self.rooms_client.delete_room(room_id=create_response.id)
 
     @recorded_by_proxy
-    def test_update_room_exceed_max_timerange(self):
-        # room with no attributes
-        create_response = self.rooms_client.create_room()
-
-        # update room attributes
-        valid_from =  datetime.now() + timedelta(days=3)
-        valid_until =  datetime.now() + timedelta(weeks=29)
-
-        with pytest.raises(HttpResponseError) as ex:
-            self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
-            assert str(ex.value.status_code) == "400"
-            assert ex.value.message is not None
-
-         # delete created room
+    def test_remove_participant_who_do_not_exist(self):
+        # add john and chris to room
+        create_participants = [
+            self.users["john"],
+            self.users["chris"]
+        ]
+        remove_participants = [
+            self.users["fred"].communication_identifier
+        ]
+        expected_participants = [
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id1),
+                role=ParticipantRole.PRESENTER
+            ),
+            RoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id3),
+                role=ParticipantRole.ATTENDEE
+            )
+        ]
+        create_response = self.rooms_client.create_room(participants=create_participants)
+        self.rooms_client.remove_participants(room_id=create_response.id, participants=remove_participants)
+        update_response = self.rooms_client.list_participants(room_id=create_response.id)
+        participants = []
+        for participant in update_response:
+            participants.append(participant)
+        assert len(participants) == 2
+        case = unittest.TestCase()
+        case.assertCountEqual(expected_participants, participants)
+        # delete created room
         self.rooms_client.delete_room(room_id=create_response.id)
 
     @recorded_by_proxy
-    def test_add_or_update_participants_incorrectMri(self):
-        # room with no attributes
-        create_response = self.rooms_client.create_room()
-
-        participants = [
+    def test_remove_participant_wrong_mri(self):
+        # add john and chris to room
+        create_participants = [
+            self.users["john"],
+            self.users["chris"]
+        ]
+        remove_participants = [
             RoomParticipant(
                 communication_identifier=CommunicationUserIdentifier("wrong_mri"),
                 role=ParticipantRole.ATTENDEE),
-            self.users["john"]
         ]
-
-        # update room attributes
+        create_response = self.rooms_client.create_room(participants=create_participants)
         with pytest.raises(HttpResponseError) as ex:
-            self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=participants)
+            self.rooms_client.remove_participants(room_id=create_response.id, participants=remove_participants)
 
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
         # delete created room
         self.rooms_client.delete_room(room_id=create_response.id)
-
-    @recorded_by_proxy
-    def test_update_room_wrongRoleName(self):
-        # room with no attributes
-        create_response = self.rooms_client.create_room()
-
-        participants = [
-            RoomParticipant(
-                communication_identifier=self.users["john"].communication_identifier,
-                role='Kafka'),
-        ]
-
-        # update room attributes
-        with pytest.raises(HttpResponseError) as ex:
-            self.rooms_client.add_or_update_participants(room_id=create_response.id, participants=participants)
-
-        assert str(ex.value.status_code) == "400"
-        assert ex.value.message is not None
-        # delete created room
-        self.rooms_client.delete_room(room_id=create_response.id)
-
-    @recorded_by_proxy
-    def test_update_room_incorrect_roomId(self):
-        # try to update room with random room_id
-        with pytest.raises(HttpResponseError) as ex:
-            valid_from =  datetime.now() + timedelta(days=3)
-            valid_until = valid_from + timedelta(days=4)
-            self.rooms_client.update_room(room_id=78469124725336262, valid_from=valid_from, valid_until=valid_until)
-
-        #  assert error is Resource not found
-        assert str(ex.value.status_code) == "404"
-        assert ex.value.message is not None
-
-    @recorded_by_proxy
-    def test_update_room_deleted_room(self):
-        # create a room -> delete it -> try to update it
-        create_response = self.rooms_client.create_room()
-
-        # delete the room
-        self.rooms_client.delete_room(room_id=create_response.id)
-        with pytest.raises(HttpResponseError) as ex:
-            valid_from =  datetime.now() + timedelta(days=3)
-            valid_until = valid_from + timedelta(days=4)
-            self.rooms_client.update_room(room_id=create_response.id, valid_from=valid_from, valid_until=valid_until)
-
-        #  assert error is Resource not found
-        assert str(ex.value.status_code) == "404"
-        assert ex.value.message is not None
 
     @recorded_by_proxy
     def test_list_rooms_first_room_is_not_null_success(self):
@@ -452,6 +533,27 @@ class TestRoomsClient(ACSRoomsTestCase):
 
         # delete the room
         self.rooms_client.delete_room(room_id=create_response.id)
+
+    @recorded_by_proxy
+    def test_delete_room_success(self):
+        # create a room -> delete the room -> cannot get the room
+        create_response = self.rooms_client.create_room()
+        # delete the room
+        self.rooms_client.delete_room(room_id=create_response.id)
+        # get the deleted room
+        with pytest.raises(HttpResponseError) as ex:
+            self.rooms_client.get_room(create_response.id)
+            assert str(ex.value.status_code) == "404"
+            assert ex.value.message is not None
+
+    @recorded_by_proxy
+    def test_delete_room_invalid_id(self):
+        # room with no attributes
+        with pytest.raises(HttpResponseError) as ex:
+            # delete created room with invalid id
+            self.rooms_client.delete_room(room_id="123")
+            assert str(ex.value.status_code) == "400"
+            assert ex.value.message is not None
 
     def verify_successful_room_response(self, response, valid_from=None, valid_until=None, room_id=None):
         if room_id is not None:

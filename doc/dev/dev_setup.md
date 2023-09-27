@@ -33,11 +33,11 @@ or execute the various commands available in the toolbox.
 
 4. Setup your development environment
 
-    Install the development requirements for a specific library (located in the `dev_requirements.txt` file at the root of the library), [Tox][tox], [Tox monorepo][tox_monorepo] and an editable install of your library. For example, to install requirements for `azure-ai-formrecognizer`:
+    Install the development requirements for a specific library (located in the `dev_requirements.txt` file at the root of the library), [Tox][tox] and an editable install of your library. For example, to install requirements for `azure-ai-formrecognizer`:
     ```
     azure-sdk-for-python> cd sdk/formrecognizer/azure-ai-formrecognizer
     azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> pip install -r dev_requirements.txt
-    azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> pip install tox tox-monorepo
+    azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> pip install tox<5
     azure-sdk-for-python/sdk/formrecognizer/azure-ai-formrecognizer> pip install -e .
     ```
 
@@ -58,6 +58,5 @@ Follow the instructions in the [Perform one-time test proxy setup][proxy_setup] 
 [python_39]: https://www.microsoft.com/p/python-39/9p7qfqmjrfp7
 [proxy_setup]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#perform-one-time-test-proxy-setup
 [tests]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md
-[tox]: https://tox.readthedocs.io/en/latest/
-[tox_monorepo]: https://pypi.org/project/tox-monorepo/
+[tox]: https://tox.wiki/en/latest/
 [virtual_environment]: https://docs.python.org/3/tutorial/venv.html

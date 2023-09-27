@@ -1,10 +1,10 @@
 # Azure Form Recognizer client library for Python
 
-Azure Form Recognizer is a cloud service that uses machine learning to analyze text and structured data from your documents. It includes the following main features:
+Azure Document Intelligence ([previously known as Form Recognizer][service-rename]) is a cloud service that uses machine learning to analyze text and structured data from your documents. It includes the following main features:
 
 - Layout - Extract content and structure (ex. words, selection marks, tables) from documents.
 - Document - Analyze key-value pairs in addition to general layout from documents.
-- Read - Read page information and detected languages from documents.
+- Read - Read page information from documents.
 - Prebuilt - Extract common field values from select document types (ex. receipts, invoices, business cards, ID documents, U.S. W-2 tax documents, among others) using prebuilt models.
 - Custom - Build custom models from your own data to extract tailored field values in addition to general layout from documents.
 - Classifiers - Build custom classification models that combine layout and language features to accurately detect and identify documents you process within your application.
@@ -30,35 +30,35 @@ Azure Form Recognizer is a cloud service that uses machine learning to analyze t
 Install the Azure Form Recognizer client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-formrecognizer --pre
+pip install azure-ai-formrecognizer
 ```
 
-> Note: This version of the client library defaults to the `2023-02-28-preview` version of the service.
+> Note: This version of the client library defaults to the `2023-07-31` version of the service.
 
 This table shows the relationship between SDK versions and supported API versions of the service:
 
 |SDK version|Supported API version of service
 |-|-
-|3.3.0bX - Latest beta release | 2.0, 2.1, 2022-08-31, 2023-02-28-preview (default)
-|3.2.X - Latest GA release | 2.0, 2.1, 2022-08-31 (default)
+|3.3.X - Latest GA release | 2.0, 2.1, 2022-08-31, 2023-07-31 (default)
+|3.2.X | 2.0, 2.1, 2022-08-31 (default)
 |3.1.X| 2.0, 2.1 (default)
 |3.0.0| 2.0
 
 > Note: Starting with version `3.2.X`, a new set of clients were introduced to leverage the newest features
-> of the Form Recognizer service. Please see the [Migration Guide][migration-guide] for detailed instructions on how to update application
+> of the Document Intelligence service. Please see the [Migration Guide][migration-guide] for detailed instructions on how to update application
 > code from client library version `3.1.X` or lower to the latest version. Additionally, see the [Changelog][changelog] for more detailed information.
 > The below table describes the relationship of each client and its supported API version(s):
 
 |API version|Supported clients
 |-|-
-|2023-02-28-preview | DocumentAnalysisClient and DocumentModelAdministrationClient
+|2023-07-31 | DocumentAnalysisClient and DocumentModelAdministrationClient
 |2022-08-31 | DocumentAnalysisClient and DocumentModelAdministrationClient
 |2.1 | FormRecognizerClient and FormTrainingClient
 |2.0 | FormRecognizerClient and FormTrainingClient
 
 #### Create a Cognitive Services or Form Recognizer resource
 
-Form Recognizer supports both [multi-service and single-service access][cognitive_resource_portal]. Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Form Recognizer access only, create a Form Recognizer resource. Please note that you will need a single-service resource if you intend to use [Azure Active Directory authentication](#create-the-client-with-an-azure-active-directory-credential).
+Document Intelligence supports both [multi-service and single-service access][cognitive_resource_portal]. Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Document Intelligence access only, create a Form Recognizer resource. Please note that you will need a single-service resource if you intend to use [Azure Active Directory authentication](#create-the-client-with-an-azure-active-directory-credential).
 
 You can create either resource using: 
 
@@ -68,7 +68,7 @@ You can create either resource using:
 Below is an example of how you can create a Form Recognizer resource using the CLI:
 
 ```PowerShell
-# Create a new resource group to hold the form recognizer resource
+# Create a new resource group to hold the Form Recognizer resource
 # if using an existing resource group, skip this step
 az group create --name <your-resource-name> --location <location>
 ```
@@ -88,7 +88,7 @@ For more information about creating the resource or how to get the location and 
 
 ### Authenticate the client
 
-In order to interact with the Form Recognizer service, you will need to create an instance of a client.
+In order to interact with the Document Intelligence service, you will need to create an instance of a client.
 An **endpoint** and **credential** are necessary to instantiate the client object.
 
 #### Get the endpoint
@@ -98,7 +98,7 @@ You can find the endpoint for your Form Recognizer resource using the
 or [Azure CLI][azure_cli_endpoint_lookup]:
 
 ```bash
-# Get the endpoint for the form recognizer resource
+# Get the endpoint for the Form Recognizer resource
 az cognitiveservices account show --name "resource-name" --resource-group "resource-group-name" --query "properties.endpoint"
 ```
 
@@ -147,7 +147,7 @@ with the Azure SDK, please install the `azure-identity` package:
 
 ```pip install azure-identity```
 
-You will also need to [register a new AAD application and grant access][register_aad_app] to Form Recognizer by assigning the `"Cognitive Services User"` role to your service principal.
+You will also need to [register a new AAD application and grant access][register_aad_app] to Document Intelligence by assigning the `"Cognitive Services User"` role to your service principal.
 
 Once completed, set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
 `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
@@ -192,7 +192,7 @@ More information about analyzing documents, including supported features, locale
 - Copying a custom model from one Form Recognizer resource to another.
 - Build and manage a custom classification model to classify the documents you process within your application.
 
-Please note that models can also be built using a graphical user interface such as [Form Recognizer Studio][fr-studio].
+Please note that models can also be built using a graphical user interface such as [Document Intelligence Studio][fr-studio].
 
 Sample code snippets are provided to illustrate using a DocumentModelAdministrationClient [here](#examples "Examples").
 
@@ -209,7 +209,7 @@ Sample code snippets are provided to illustrate using long-running operations [b
 
 ## Examples
 
-The following section provides several code snippets covering some of the most common Form Recognizer tasks, including:
+The following section provides several code snippets covering some of the most common Document Intelligence tasks, including:
 
 * [Extract Layout](#extract-layout "Extract Layout")
 * [Using the General Document Model](#using-the-general-document-model "Using the General Document Model")
@@ -316,7 +316,7 @@ print("----------------------------------------")
 
 ### Using the General Document Model
 
-Analyze key-value pairs, tables, styles, and selection marks from documents using the general document model provided by the Form Recognizer service.
+Analyze key-value pairs, tables, styles, and selection marks from documents using the general document model provided by the Document Intelligence service.
 Select the General Document Model by passing `model_id="prebuilt-document"` into the `begin_analyze_document` method:
 
 ```python
@@ -428,7 +428,7 @@ print("----------------------------------------")
 
 ### Using Prebuilt Models
 
-Extract fields from select document types such as receipts, invoices, business cards, identity documents, and U.S. W-2 tax documents using prebuilt models provided by the Form Recognizer service.
+Extract fields from select document types such as receipts, invoices, business cards, identity documents, and U.S. W-2 tax documents using prebuilt models provided by the Document Intelligence service.
 
 For example, to analyze fields from a sales receipt, use the prebuilt receipt model provided by passing `model_id="prebuilt-receipt"` into the `begin_analyze_document` method:
 
@@ -451,70 +451,60 @@ with open(path_to_sample_documents, "rb") as f:
 receipts = poller.result()
 
 for idx, receipt in enumerate(receipts.documents):
-    print("--------Analysis of receipt #{}--------".format(idx + 1))
-    print("Receipt type: {}".format(receipt.doc_type or "N/A"))
+    print(f"--------Analysis of receipt #{idx + 1}--------")
+    print(f"Receipt type: {receipt.doc_type if receipt.doc_type else 'N/A'}")
     merchant_name = receipt.fields.get("MerchantName")
     if merchant_name:
         print(
-            "Merchant Name: {} has confidence: {}".format(
-                merchant_name.value, merchant_name.confidence
-            )
+            f"Merchant Name: {merchant_name.value} has confidence: "
+            f"{merchant_name.confidence}"
         )
     transaction_date = receipt.fields.get("TransactionDate")
     if transaction_date:
         print(
-            "Transaction Date: {} has confidence: {}".format(
-                transaction_date.value, transaction_date.confidence
-            )
+            f"Transaction Date: {transaction_date.value} has confidence: "
+            f"{transaction_date.confidence}"
         )
     if receipt.fields.get("Items"):
         print("Receipt items:")
         for idx, item in enumerate(receipt.fields.get("Items").value):
-            print("...Item #{}".format(idx + 1))
+            print(f"...Item #{idx + 1}")
             item_description = item.value.get("Description")
             if item_description:
                 print(
-                    "......Item Description: {} has confidence: {}".format(
-                        item_description.value, item_description.confidence
-                    )
+                    f"......Item Description: {item_description.value} has confidence: "
+                    f"{item_description.confidence}"
                 )
             item_quantity = item.value.get("Quantity")
             if item_quantity:
                 print(
-                    "......Item Quantity: {} has confidence: {}".format(
-                        item_quantity.value, item_quantity.confidence
-                    )
+                    f"......Item Quantity: {item_quantity.value} has confidence: "
+                    f"{item_quantity.confidence}"
                 )
             item_price = item.value.get("Price")
             if item_price:
                 print(
-                    "......Individual Item Price: {} has confidence: {}".format(
-                        item_price.value, item_price.confidence
-                    )
+                    f"......Individual Item Price: {item_price.value} has confidence: "
+                    f"{item_price.confidence}"
                 )
             item_total_price = item.value.get("TotalPrice")
             if item_total_price:
                 print(
-                    "......Total Item Price: {} has confidence: {}".format(
-                        item_total_price.value, item_total_price.confidence
-                    )
+                    f"......Total Item Price: {item_total_price.value} has confidence: "
+                    f"{item_total_price.confidence}"
                 )
     subtotal = receipt.fields.get("Subtotal")
     if subtotal:
-        print(
-            "Subtotal: {} has confidence: {}".format(
-                subtotal.value, subtotal.confidence
-            )
-        )
+        print(f"Subtotal: {subtotal.value} has confidence: {subtotal.confidence}")
     tax = receipt.fields.get("TotalTax")
     if tax:
-        print("Total tax: {} has confidence: {}".format(tax.value, tax.confidence))
+        print(f"Total tax: {tax.value} has confidence: {tax.confidence}")
     tip = receipt.fields.get("Tip")
     if tip:
-        print("Tip: {} has confidence: {}".format(tip.value, tip.confidence))
+        print(f"Tip: {tip.value} has confidence: {tip.confidence}")
     total = receipt.fields.get("Total")
     if total:
-        print("Total: {} has confidence: {}".format(total.value, total.confidence))
+        print(f"Total: {total.value} has confidence: {total.confidence}")
     print("--------------------------------------")
 ```
 
@@ -532,29 +522,40 @@ More details on setting up a container and required file structure can be found 
 <!-- SNIPPET:sample_build_model.build_model -->
 
 ```python
-from azure.ai.formrecognizer import DocumentModelAdministrationClient, ModelBuildMode
+from azure.ai.formrecognizer import (
+    DocumentModelAdministrationClient,
+    ModelBuildMode,
+)
 from azure.core.credentials import AzureKeyCredential
 
 endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
 key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 container_sas_url = os.environ["CONTAINER_SAS_URL"]
 
-document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
+document_model_admin_client = DocumentModelAdministrationClient(
+    endpoint, AzureKeyCredential(key)
+)
 poller = document_model_admin_client.begin_build_document_model(
-    ModelBuildMode.TEMPLATE, blob_container_url=container_sas_url, description="my model description"
+    ModelBuildMode.TEMPLATE,
+    blob_container_url=container_sas_url,
+    description="my model description",
 )
 model = poller.result()
 
-print("Model ID: {}".format(model.model_id))
-print("Description: {}".format(model.description))
-print("Model created on: {}\n".format(model.created_on))
+print(f"Model ID: {model.model_id}")
+print(f"Description: {model.description}")
+print(f"Model created on: {model.created_on}")
+print(f"Model expires on: {model.expires_on}")
 print("Doc types the model can recognize:")
 for name, doc_type in model.doc_types.items():
-    print("\nDoc Type: '{}' built with '{}' mode which has the following fields:".format(name, doc_type.build_mode))
+    print(
+        f"Doc Type: '{name}' built with '{doc_type.build_mode}' mode which has the following fields:"
+    )
     for field_name, field in doc_type.field_schema.items():
-        print("Field: '{}' has type '{}' and confidence score {}".format(
-            field_name, field["type"], doc_type.field_confidence[field_name]
-        ))
+        print(
+            f"Field: '{field_name}' has type '{field['type']}' and confidence score "
+            f"{doc_type.field_confidence[field_name]}"
+        )
 ```
 
 <!-- END SNIPPET -->
@@ -586,42 +587,37 @@ with open(path_to_sample_documents, "rb") as f:
 result = poller.result()
 
 for idx, document in enumerate(result.documents):
-    print("--------Analyzing document #{}--------".format(idx + 1))
-    print("Document has type {}".format(document.doc_type))
-    print("Document has confidence {}".format(document.confidence))
-    print("Document was analyzed by model with ID {}".format(result.model_id))
+    print(f"--------Analyzing document #{idx + 1}--------")
+    print(f"Document has type {document.doc_type}")
+    print(f"Document has document type confidence {document.confidence}")
+    print(f"Document was analyzed with model with ID {result.model_id}")
     for name, field in document.fields.items():
         field_value = field.value if field.value else field.content
-        print("......found field of type '{}' with value '{}' and with confidence {}".format(field.value_type, field_value, field.confidence))
-
+        print(
+            f"......found field of type '{field.value_type}' with value '{field_value}' and with confidence {field.confidence}"
+        )
 
 # iterate over tables, lines, and selection marks on each page
 for page in result.pages:
-    print("\nLines found on page {}".format(page.page_number))
+    print(f"\nLines found on page {page.page_number}")
     for line in page.lines:
-        print("...Line '{}'".format(line.content))
+        print(f"...Line '{line.content}'")
     for word in page.words:
-        print(
-            "...Word '{}' has a confidence of {}".format(
-                word.content, word.confidence
+        print(f"...Word '{word.content}' has a confidence of {word.confidence}")
+    if page.selection_marks:
+        print(f"\nSelection marks found on page {page.page_number}")
+        for selection_mark in page.selection_marks:
+            print(
+                f"...Selection mark is '{selection_mark.state}' and has a confidence of {selection_mark.confidence}"
             )
-        )
-    for selection_mark in page.selection_marks:
-        print(
-            "...Selection mark is '{}' and has a confidence of {}".format(
-                selection_mark.state, selection_mark.confidence
-            )
-        )
 
 for i, table in enumerate(result.tables):
-    print("\nTable {} can be found on page:".format(i + 1))
+    print(f"\nTable {i + 1} can be found on page:")
     for region in table.bounding_regions:
-        print("...{}".format(region.page_number))
+        print(f"...{region.page_number}")
     for cell in table.cells:
         print(
-            "...Cell[{}][{}] has content '{}'".format(
-                cell.row_index, cell.column_index, cell.content
-            )
+            f"...Cell[{cell.row_index}][{cell.column_index}] has text '{cell.content}'"
         )
 print("-----------------------------------")
 ```
@@ -683,7 +679,7 @@ except ResourceNotFoundError:
 ### General
 
 Form Recognizer client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
-Error codes and messages raised by the Form Recognizer service can be found in the [service documentation][fr-errors].
+Error codes and messages raised by the Document Intelligence service can be found in the [service documentation][fr-errors].
 
 ### Logging
 
@@ -711,7 +707,7 @@ See the [Sample README][sample_readme] for several code snippets illustrating co
 
 ### Additional documentation
 
-For more extensive documentation on Azure Cognitive Services Form Recognizer, see the [Form Recognizer documentation][python-fr-product-docs] on docs.microsoft.com.
+For more extensive documentation on Azure AI Document Intelligence, see the [Document Intelligence documentation][python-fr-product-docs] on docs.microsoft.com.
 
 ## Contributing
 
@@ -765,7 +761,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [sample_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples
 [changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/CHANGELOG.md
 [migration-guide]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/MIGRATION_GUIDE.md
-[classify_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2/sample_classify_document.py
+[classify_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_classify_document.py
+[service-rename]: https://techcommunity.microsoft.com/t5/azure-ai-services-blog/azure-form-recognizer-is-now-azure-ai-document-intelligence-with/ba-p/3875765
 
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/

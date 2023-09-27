@@ -38,7 +38,7 @@ class CallRejectReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class CommunicationCloudEnvironmentModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """CommunicationCloudEnvironmentModel."""
+    """The cloud that the identifier belongs to."""
 
     PUBLIC = "public"
     DOD = "dod"
@@ -46,12 +46,19 @@ class CommunicationCloudEnvironmentModel(str, Enum, metaclass=CaseInsensitiveEnu
 
 
 class CommunicationIdentifierModelKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of CommunicationIdentifierModel."""
+    """The identifier kind, for example 'communicationUser' or 'phoneNumber'."""
 
     UNKNOWN = "unknown"
     COMMUNICATION_USER = "communicationUser"
     PHONE_NUMBER = "phoneNumber"
     MICROSOFT_TEAMS_USER = "microsoftTeamsUser"
+
+
+class DialogInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Determines the type of the dialog."""
+
+    POWER_VIRTUAL_AGENTS = "powerVirtualAgents"
+    AZURE_OPEN_AI = "azureOpenAI"
 
 
 class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -116,7 +123,6 @@ class RecognitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DTMF = "dtmf"
     SPEECH = "speech"
-    SPEECH_OR_DTMF = "speechOrDtmf"
     CHOICES = "choices"
 
 
@@ -163,3 +169,16 @@ class RecordingStorage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ACS = "acs"
     BLOB_STORAGE = "blobStorage"
+
+
+class RecordingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """RecordingType."""
+
+    ACS = "acs"
+    TEAMS = "teams"
+
+
+class TranscriptionTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of transport to be used for live transcription, eg. Websocket."""
+
+    WEBSOCKET = "websocket"

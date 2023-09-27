@@ -275,7 +275,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             )
         except ValueError as e:
             if "begin_analyze_business_card_async" in str(e):
-                raise ValueError(
+                raise ValueError(  # pylint: disable=raise-missing-from
                     "Method 'begin_recognize_business_cards' is only available for API version V2_1 and up"
                 )
             raise e
@@ -323,8 +323,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
             )
         except ValueError as e:
             if "begin_analyze_business_card_async" in str(e):
-                raise ValueError(
-                    "Method 'begin_recognize_business_cards_from_url' is " "only available for API version V2_1 and up"
+                raise ValueError(  # pylint: disable=raise-missing-from
+                    "Method 'begin_recognize_business_cards_from_url' is only available for API version V2_1 and up"
                 )
             raise e
 
@@ -390,13 +390,13 @@ class FormRecognizerClient(FormRecognizerClientBase):
             )
         except ValueError as e:
             if "begin_analyze_id_document_async" in str(e):
-                raise ValueError(
+                raise ValueError(  # pylint: disable=raise-missing-from
                     "Method 'begin_recognize_identity_documents' is only available for API version V2_1 and up"
                 )
             raise e
 
     @distributed_trace
-    def begin_recognize_identity_documents_from_url(
+    def begin_recognize_identity_documents_from_url(  # pylint: disable=name-too-long
         self, identity_document_url: str, **kwargs: Any
     ) -> LROPoller[List[RecognizedForm]]:
         """Extract field text and semantic values from a given identity document.
@@ -435,7 +435,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             )
         except ValueError as e:
             if "begin_analyze_id_document_async" in str(e):
-                raise ValueError(
+                raise ValueError(  # pylint: disable=raise-missing-from
                     "Method 'begin_recognize_identity_documents_from_url' is "
                     "only available for API version V2_1 and up"
                 )
@@ -503,7 +503,7 @@ class FormRecognizerClient(FormRecognizerClientBase):
             )
         except ValueError as e:
             if "begin_analyze_invoice_async" in str(e):
-                raise ValueError("Method 'begin_recognize_invoices' is only available for API version V2_1 and up")
+                raise ValueError("Method 'begin_recognize_invoices' is only available for API version V2_1 and up")  # pylint: disable=raise-missing-from
             raise e
 
     @distributed_trace
@@ -545,8 +545,8 @@ class FormRecognizerClient(FormRecognizerClientBase):
             )
         except ValueError as e:
             if "begin_analyze_invoice_async" in str(e):
-                raise ValueError(
-                    "Method 'begin_recognize_invoices_from_url' is " "only available for API version V2_1 and up"
+                raise ValueError(  # pylint: disable=raise-missing-from
+                    "Method 'begin_recognize_invoices_from_url' is only available for API version V2_1 and up"
                 )
             raise e
 

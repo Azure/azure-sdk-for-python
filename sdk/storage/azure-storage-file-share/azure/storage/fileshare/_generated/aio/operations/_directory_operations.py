@@ -195,7 +195,7 @@ class DirectoryOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {"url": "{url}/{shareName}/{directory}"}
+    create.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def get_properties(  # pylint: disable=inconsistent-return-statements
@@ -293,7 +293,7 @@ class DirectoryOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_properties.metadata = {"url": "{url}/{shareName}/{directory}"}
+    get_properties.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -363,7 +363,7 @@ class DirectoryOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {"url": "{url}/{shareName}/{directory}"}
+    delete.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def set_properties(  # pylint: disable=inconsistent-return-statements
@@ -496,7 +496,7 @@ class DirectoryOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_properties.metadata = {"url": "{url}/{shareName}/{directory}"}
+    set_properties.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def set_metadata(  # pylint: disable=inconsistent-return-statements
@@ -578,7 +578,7 @@ class DirectoryOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_metadata.metadata = {"url": "{url}/{shareName}/{directory}"}
+    set_metadata.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def list_files_and_directories_segment(
@@ -692,7 +692,7 @@ class DirectoryOperations:
 
         return deserialized
 
-    list_files_and_directories_segment.metadata = {"url": "{url}/{shareName}/{directory}"}
+    list_files_and_directories_segment.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def list_handles(
@@ -791,7 +791,7 @@ class DirectoryOperations:
 
         return deserialized
 
-    list_handles.metadata = {"url": "{url}/{shareName}/{directory}"}
+    list_handles.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def force_close_handles(  # pylint: disable=inconsistent-return-statements
@@ -891,7 +891,7 @@ class DirectoryOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    force_close_handles.metadata = {"url": "{url}/{shareName}/{directory}"}
+    force_close_handles.metadata = {"url": "{url}"}
 
     @distributed_trace_async
     async def rename(  # pylint: disable=inconsistent-return-statements
@@ -1063,4 +1063,4 @@ class DirectoryOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    rename.metadata = {"url": "{url}/{shareName}/{directory}"}
+    rename.metadata = {"url": "{url}"}

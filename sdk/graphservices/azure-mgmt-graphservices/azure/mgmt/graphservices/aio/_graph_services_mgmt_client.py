@@ -15,7 +15,7 @@ from azure.mgmt.core import AsyncARMPipelineClient
 from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import GraphServicesMgmtClientConfiguration
-from .operations import AccountOperations, AccountsOperations, OperationOperations
+from .operations import AccountsOperations, Operations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -27,18 +27,16 @@ class GraphServicesMgmtClient:  # pylint: disable=client-accepts-api-version-key
 
     :ivar accounts: AccountsOperations operations
     :vartype accounts: azure.mgmt.graphservices.aio.operations.AccountsOperations
-    :ivar account: AccountOperations operations
-    :vartype account: azure.mgmt.graphservices.aio.operations.AccountOperations
-    :ivar operation: OperationOperations operations
-    :vartype operation: azure.mgmt.graphservices.aio.operations.OperationOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.graphservices.aio.operations.Operations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-09-22-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-04-13". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -61,8 +59,7 @@ class GraphServicesMgmtClient:  # pylint: disable=client-accepts-api-version-key
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.accounts = AccountsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.account = AccountOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operation = OperationOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

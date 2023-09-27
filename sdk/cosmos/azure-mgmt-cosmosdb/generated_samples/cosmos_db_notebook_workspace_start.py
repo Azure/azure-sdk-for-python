@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.notebook_workspaces.begin_start(
+    client.notebook_workspaces.begin_start(
         resource_group_name="rg1",
         account_name="ddb1",
         notebook_workspace_name="default",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-04-15/examples/CosmosDBNotebookWorkspaceStart.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-03-15-preview/examples/CosmosDBNotebookWorkspaceStart.json
 if __name__ == "__main__":
     main()

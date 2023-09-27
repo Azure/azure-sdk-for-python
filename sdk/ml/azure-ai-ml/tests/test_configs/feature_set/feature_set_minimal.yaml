@@ -1,0 +1,15 @@
+name: test-fs
+version: '1'
+entities:
+- azureml:test:1
+specification:
+  path: "./tests/test_configs/feature_set"
+materialization_settings:
+  resource:
+    instance_type: Standard_E8S_V3
+  spark_configuration:
+    spark.driver.cores: 4
+    spark.driver.memory: 36g
+    spark.executor.cores: 4
+    spark.executor.instances: 2
+    spark.executor.memory: 36g

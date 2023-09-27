@@ -17,6 +17,7 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BLOCK = "Block"
     LOG = "Log"
     REDIRECT = "Redirect"
+    ANOMALY_SCORING = "AnomalyScoring"
 
 
 class AggregationInterval(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -260,6 +261,7 @@ class MatchProcessingBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     CONTINUE = "Continue"
     STOP = "Stop"
+    CONTINUE_ENUM = "Continue"
 
 
 class MatchVariable(str, Enum, metaclass=CaseInsensitiveEnumMeta):

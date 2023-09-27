@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._models_py3 import AccountInfo
-from ._models_py3 import AccountInfoSecure
 from ._models_py3 import AppServiceInfo
 from ._models_py3 import AppServiceListResponse
 from ._models_py3 import DynatraceEnvironmentProperties
@@ -24,7 +23,10 @@ from ._models_py3 import LinkableEnvironmentListResponse
 from ._models_py3 import LinkableEnvironmentRequest
 from ._models_py3 import LinkableEnvironmentResponse
 from ._models_py3 import LogRules
+from ._models_py3 import MarketplaceSaaSResourceDetailsRequest
+from ._models_py3 import MarketplaceSaaSResourceDetailsResponse
 from ._models_py3 import MetricRules
+from ._models_py3 import MetricsStatusResponse
 from ._models_py3 import MonitorResource
 from ._models_py3 import MonitorResourceListResult
 from ._models_py3 import MonitorResourceUpdate
@@ -41,7 +43,6 @@ from ._models_py3 import SSODetailsResponse
 from ._models_py3 import SystemData
 from ._models_py3 import TagRule
 from ._models_py3 import TagRuleListResult
-from ._models_py3 import TagRuleUpdate
 from ._models_py3 import TrackedResource
 from ._models_py3 import UserAssignedIdentity
 from ._models_py3 import UserInfo
@@ -76,7 +77,6 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AccountInfo",
-    "AccountInfoSecure",
     "AppServiceInfo",
     "AppServiceListResponse",
     "DynatraceEnvironmentProperties",
@@ -93,7 +93,10 @@ __all__ = [
     "LinkableEnvironmentRequest",
     "LinkableEnvironmentResponse",
     "LogRules",
+    "MarketplaceSaaSResourceDetailsRequest",
+    "MarketplaceSaaSResourceDetailsResponse",
     "MetricRules",
+    "MetricsStatusResponse",
     "MonitorResource",
     "MonitorResourceListResult",
     "MonitorResourceUpdate",
@@ -110,7 +113,6 @@ __all__ = [
     "SystemData",
     "TagRule",
     "TagRuleListResult",
-    "TagRuleUpdate",
     "TrackedResource",
     "UserAssignedIdentity",
     "UserInfo",

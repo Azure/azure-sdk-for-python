@@ -9,15 +9,11 @@ the challenge cache is global to the process.
 import functools
 import os
 import time
+from unittest.mock import Mock, patch
 from urllib.parse import urlparse
 from uuid import uuid4
 
 from devtools_testutils import recorded_by_proxy
-
-try:
-    from unittest.mock import Mock, patch
-except ImportError:  # python < 3.3
-    from mock import Mock, patch  # type: ignore
 
 import pytest
 from azure.core.credentials import AccessToken
@@ -237,6 +233,59 @@ def test_tenant():
 
     tenant = "tenant-id"
     endpoint = f"https://authority.net/{tenant}"
+    resource = "https://vault.azure.net"
+
+    challenge = Mock(
+        status_code=401,
+        headers={"WWW-Authenticate": f'Bearer authorization="{endpoint}", resource={resource}'},
+    )
+
+    test_with_challenge(challenge, tenant)
+
+
+@empty_challenge_cache
+def test_adfs():
+    """The policy should handle AD FS challenges as a special case and omit the tenant ID from token requests"""
+
+    expected_content = b"a duck"
+
+    def test_with_challenge(challenge, expected_tenant):
+        expected_token = "expected_token"
+
+        class Requests:
+            count = 0
+
+        def send(request):
+            Requests.count += 1
+            if Requests.count == 1:
+                # first request should be unauthorized and have no content
+                assert not request.body
+                assert request.headers["Content-Length"] == "0"
+                return challenge
+            elif Requests.count == 2:
+                # second request should be authorized according to challenge and have the expected content
+                assert request.headers["Content-Length"]
+                assert request.body == expected_content
+                assert expected_token in request.headers["Authorization"]
+                return Mock(status_code=200)
+            raise ValueError("unexpected request")
+
+        def get_token(*_, **kwargs):
+            # we shouldn't provide a tenant ID during AD FS authentication
+            assert "tenant_id" not in kwargs
+            return AccessToken(expected_token, 0)
+
+        credential = Mock(get_token=Mock(wraps=get_token))
+        pipeline = Pipeline(policies=[ChallengeAuthPolicy(credential=credential)], transport=Mock(send=send))
+        request = HttpRequest("POST", get_random_url())
+        request.set_bytes_body(expected_content)
+        pipeline.run(request)
+
+        assert credential.get_token.call_count == 1
+
+    tenant = "tenant-id"
+    # AD FS challenges have an unusual authority format; see https://github.com/Azure/azure-sdk-for-python/issues/28648
+    endpoint = f"https://adfs.redmond.azurestack.corp.microsoft.com/adfs/{tenant}"
     resource = "https://vault.azure.net"
 
     challenge = Mock(

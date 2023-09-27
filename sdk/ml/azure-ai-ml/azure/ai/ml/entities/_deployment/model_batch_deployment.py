@@ -42,6 +42,8 @@ class ModelBatchDeployment(Deployment):
     :type description: str
     :param tags: Job tags
     :type tags: Dict[str, Any]
+    :param properties: The asset property dictionary.
+    :type properties: dict[str, str]
     """
 
     def __init__(
@@ -123,6 +125,7 @@ class ModelBatchDeployment(Deployment):
             max_concurrency_per_instance=deployment_settings.max_concurrency_per_instance,
             environment_variables=deployment_settings.environment_variables,
             compute=self.compute,
+            properties=self.properties,
         )
         return BatchDeploymentData(location=location, properties=batch_deployment, tags=self.tags)
 

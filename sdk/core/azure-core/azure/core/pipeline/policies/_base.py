@@ -29,7 +29,6 @@ import copy
 import logging
 
 from typing import (
-    TYPE_CHECKING,
     Generic,
     TypeVar,
     Union,
@@ -41,29 +40,23 @@ from typing import (
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 
-if TYPE_CHECKING:
-    from azure.core.pipeline.transport import HttpTransport
-
-
-HTTPResponseTypeVar = TypeVar("HTTPResponseTypeVar")
-HTTPRequestTypeVar = TypeVar("HTTPRequestTypeVar")
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class HTTPPolicy(abc.ABC, Generic[HTTPRequestTypeVar, HTTPResponseTypeVar]):
+class HTTPPolicy(abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
     """An HTTP policy ABC.
 
     Use with a synchronous pipeline.
     """
 
-    next: "HTTPPolicy[HTTPRequestTypeVar, HTTPResponseTypeVar]"
+    next: "HTTPPolicy[HTTPRequestType, HTTPResponseType]"
     """Pointer to the next policy or a transport (wrapped as a policy). Will be set at pipeline creation."""
 
     @abc.abstractmethod
-    def send(
-        self, request: PipelineRequest[HTTPRequestTypeVar]
-    ) -> PipelineResponse[HTTPRequestTypeVar, HTTPResponseTypeVar]:
+    def send(self, request: PipelineRequest[HTTPRequestType]) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         """Abstract send method for a synchronous pipeline. Mutates the request.
 
         Context content is dependent on the HttpTransport.
@@ -75,7 +68,7 @@ class HTTPPolicy(abc.ABC, Generic[HTTPRequestTypeVar, HTTPResponseTypeVar]):
         """
 
 
-class SansIOHTTPPolicy(Generic[HTTPRequestTypeVar, HTTPResponseTypeVar]):
+class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
     """Represents a sans I/O policy.
 
     SansIOHTTPPolicy is a base class for policies that only modify or
@@ -87,7 +80,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestTypeVar, HTTPResponseTypeVar]):
     but they will then be tied to AsyncPipeline usage.
     """
 
-    def on_request(self, request: PipelineRequest[HTTPRequestTypeVar]) -> Union[None, Awaitable[None]]:
+    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> Union[None, Awaitable[None]]:
         """Is executed before sending the request from next policy.
 
         :param request: Request to be modified before sent from next policy.
@@ -96,8 +89,8 @@ class SansIOHTTPPolicy(Generic[HTTPRequestTypeVar, HTTPResponseTypeVar]):
 
     def on_response(
         self,
-        request: PipelineRequest[HTTPRequestTypeVar],
-        response: PipelineResponse[HTTPRequestTypeVar, HTTPResponseTypeVar],
+        request: PipelineRequest[HTTPRequestType],
+        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
     ) -> Union[None, Awaitable[None]]:
         """Is executed after the request comes back from the policy.
 
@@ -107,10 +100,9 @@ class SansIOHTTPPolicy(Generic[HTTPRequestTypeVar, HTTPResponseTypeVar]):
         :type response: ~azure.core.pipeline.PipelineResponse
         """
 
-    # pylint: disable=no-self-use
     def on_exception(
         self,
-        request: PipelineRequest[HTTPRequestTypeVar],  # pylint: disable=unused-argument
+        request: PipelineRequest[HTTPRequestType],  # pylint: disable=unused-argument
     ) -> None:
         """Is executed if an exception is raised while executing the next policy.
 
@@ -130,7 +122,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestTypeVar, HTTPResponseTypeVar]):
         return
 
 
-class RequestHistory(Generic[HTTPRequestTypeVar, HTTPResponseTypeVar]):
+class RequestHistory(Generic[HTTPRequestType, HTTPResponseType]):
     """A container for an attempted request and the applicable response.
 
     This is used to document requests/responses that resulted in redirected/retried requests.
@@ -145,12 +137,12 @@ class RequestHistory(Generic[HTTPRequestTypeVar, HTTPResponseTypeVar]):
 
     def __init__(
         self,
-        http_request: HTTPRequestTypeVar,
-        http_response: Optional[HTTPResponseTypeVar] = None,
+        http_request: HTTPRequestType,
+        http_response: Optional[HTTPResponseType] = None,
         error: Optional[Exception] = None,
         context: Optional[Dict[str, Any]] = None,
     ) -> None:
-        self.http_request = copy.deepcopy(http_request)
-        self.http_response = http_response
-        self.error = error
-        self.context = context
+        self.http_request: HTTPRequestType = copy.deepcopy(http_request)
+        self.http_response: Optional[HTTPResponseType] = http_response
+        self.error: Optional[Exception] = error
+        self.context: Optional[Dict[str, Any]] = context

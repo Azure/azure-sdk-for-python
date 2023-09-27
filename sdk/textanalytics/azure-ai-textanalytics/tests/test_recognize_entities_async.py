@@ -693,22 +693,3 @@ class TestRecognizeEntities(TextAnalyticsTest):
         with pytest.raises(ValueError) as e:
             res = await client.recognize_entities(["I'm tired"], string_index_type="UnicodeCodePoint", disable_service_logs=True)
         assert str(e.value) == "'string_index_type' is not available in API version v3.0. Use service API version v3.1 or newer.\n'disable_service_logs' is not available in API version v3.0. Use service API version v3.1 or newer.\n"
-
-    @TextAnalyticsPreparer()
-    @TextAnalyticsClientPreparer()
-    @recorded_by_proxy_async
-    async def test_entity_resolutions(self, client):
-        docs = ["The cat is 1 year old and weighs 10 pounds."]
-        response = await client.recognize_entities(docs, model_version="2022-10-01-preview")
-        for doc in response:
-            for entity in doc.entities:
-                assert entity.text is not None
-                assert entity.category is not None
-                assert entity.offset is not None
-                assert entity.confidence_score is not None
-                for res in entity.resolutions:
-                    assert res.resolution_kind in ["WeightResolution", "AgeResolution"]
-                    if res.resolution_kind == "WeightResolution":
-                        assert res.value == 10
-                    if res.resolution_kind == "AgeResolution":
-                        assert res.value == 1

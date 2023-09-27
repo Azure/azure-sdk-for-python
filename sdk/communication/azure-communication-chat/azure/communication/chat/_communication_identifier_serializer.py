@@ -25,6 +25,7 @@ def serialize_identifier(identifier):
     :param identifier: Identifier object
     :type identifier: CommunicationIdentifier
     :return: CommunicationIdentifierModel
+    :rtype: ~azure.communication.chat._generated.models.CommunicationIdentifierModel
     """
     try:
         request_model = {'raw_id': identifier.raw_id}
@@ -33,7 +34,7 @@ def serialize_identifier(identifier):
             request_model[identifier.kind] = dict(identifier.properties)
         return request_model
     except AttributeError:
-        raise TypeError("Unsupported identifier type " + identifier.__class__.__name__)
+        raise TypeError("Unsupported identifier type " + identifier.__class__.__name__) # pylint: disable=raise-missing-from
 
 
 def deserialize_identifier(identifier_model):
@@ -44,6 +45,7 @@ def deserialize_identifier(identifier_model):
     :param identifier_model: CommunicationIdentifierModel
     :type identifier_model: CommunicationIdentifierModel
     :return: CommunicationIdentifier
+    :rtype: ~azure.communication.chat.CommunicationIdentifier
     """
     raw_id = identifier_model.raw_id
 

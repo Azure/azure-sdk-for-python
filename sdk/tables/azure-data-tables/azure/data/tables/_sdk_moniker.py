@@ -8,4 +8,4 @@
 
 from ._version import VERSION
 
-SDK_MONIKER = "data-tables/{}".format(VERSION)
+SDK_MONIKER = f"data-tables/{VERSION}"

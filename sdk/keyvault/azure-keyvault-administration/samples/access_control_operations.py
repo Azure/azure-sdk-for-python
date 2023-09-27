@@ -57,7 +57,7 @@ from azure.keyvault.administration import KeyVaultRoleScope
 role_definitions = client.list_role_definitions(scope=KeyVaultRoleScope.GLOBAL)
 for definition in role_definitions:
     print(f"Role name: {definition.role_name}; Role definition name: {definition.name}")
-# [START list_role_definitions]
+# [END list_role_definitions]
 
 # Let's create a custom role definition. This role permits creating keys in a Managed HSM.
 # We'll provide a friendly role name and let a unique role definition name (a UUID) be generated for us.

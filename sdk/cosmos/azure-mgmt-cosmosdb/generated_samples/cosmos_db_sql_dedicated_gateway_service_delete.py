@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.service.begin_delete(
+    client.service.begin_delete(
         resource_group_name="rg1",
         account_name="ddb1",
         service_name="SqlDedicatedGateway",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-04-15/examples/CosmosDBSqlDedicatedGatewayServiceDelete.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-03-15-preview/examples/CosmosDBSqlDedicatedGatewayServiceDelete.json
 if __name__ == "__main__":
     main()

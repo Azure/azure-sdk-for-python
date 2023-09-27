@@ -85,9 +85,9 @@ class AsyncStorageAccountHostsMixin(object):
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
         if not config.transport:
             try:
-                from azure.core.pipeline.transport import AioHttpTransport
-            except ImportError:
-                raise ImportError("Unable to create async transport. Please check aiohttp is installed.")
+                from azure.core.pipeline.transport import AioHttpTransport  # pylint: disable=non-abstract-transport-import
+            except ImportError as exc:
+                raise ImportError("Unable to create async transport. Please check aiohttp is installed.") from exc
             config.transport = AioHttpTransport(**kwargs)
         policies = [
             QueueMessagePolicy(),
@@ -110,13 +110,12 @@ class AsyncStorageAccountHostsMixin(object):
             policies = policies + kwargs.get("_additional_pipeline_policies")
         return config, AsyncPipeline(config.transport, policies=policies)
 
+    # Given a series of request, do a Storage batch call.
     async def _batch_send(
         self,
         *reqs,  # type: HttpRequest
         **kwargs
     ):
-        """Given a series of request, do a Storage batch call.
-        """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
         request = self._client._client.post(  # pylint: disable=protected-access

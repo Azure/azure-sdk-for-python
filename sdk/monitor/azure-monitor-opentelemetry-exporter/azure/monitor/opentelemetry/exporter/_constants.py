@@ -2,6 +2,12 @@
 # Licensed under the MIT License.
 # cSpell:disable
 
+# Environment variables
+
+_APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL = "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"
+_APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED = \
+    "APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"
+
 # Network
 
 _REDIRECT_STATUS_CODES = (
@@ -27,6 +33,14 @@ _THROTTLE_STATUS_CODES = (
 )
 
 _REACHED_INGESTION_STATUS_CODES = (200, 206, 402, 408, 429, 439, 500)
+
+# Envelope constants
+
+_METRIC_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Metric"
+_EXCEPTION_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Exception"
+_MESSAGE_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Message"
+_REQUEST_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Request"
+_REMOTE_DEPENDENCY_ENVELOPE_NAME = "Microsoft.ApplicationInsights.RemoteDependency"
 
 # Statsbeat
 

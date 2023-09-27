@@ -1,7 +1,6 @@
 name: test_ws_conn_python_pat
 type: python_feed
 target: https://test-feed.com
-expiryTime: "01/05/2025 00:00:00"
 credentials:
   type: pat
   pat: dummy_pat

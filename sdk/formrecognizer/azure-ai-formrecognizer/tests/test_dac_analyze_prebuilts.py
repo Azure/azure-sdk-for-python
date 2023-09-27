@@ -13,7 +13,7 @@ from io import BytesIO
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 from azure.core.credentials import AzureKeyCredential
 from azure.core.serialization import AzureJSONEncoder
-from azure.ai.formrecognizer._generated.v2023_02_28_preview.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2023_07_31.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import DocumentAnalysisClient, AnalyzeResult, FormContentType, AddressValue
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -195,6 +195,7 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         assert id_document.fields.get("CountryRegion").value == "USA"
         assert id_document.fields.get("Region").value == "Washington"
 
+    @pytest.mark.skip("Tracking issue: https://github.com/Azure/azure-sdk-for-python/issues/31214")
     @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
@@ -235,6 +236,7 @@ class TestDACAnalyzePrebuilts(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @pytest.mark.skip("Tracking issue: https://github.com/Azure/azure-sdk-for-python/issues/31214")
     @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()

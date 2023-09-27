@@ -23,20 +23,19 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Union, Generic, TypeVar, List, Dict, Optional
-from contextlib import AbstractAsyncContextManager
+from __future__ import annotations
+from types import TracebackType
+from typing import Any, Union, Generic, TypeVar, List, Dict, Optional, Iterable, Type
+from typing_extensions import AsyncContextManager
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
 from ._tools_async import await_result as _await_result
+from ._base import cleanup_kwargs_for_transport
 from .transport import AsyncHttpTransport
 
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
-ImplPoliciesType = List[
-    AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]  # pylint: disable=unsubscriptable-object
-]
-AsyncPoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
 
 class _SansIOAsyncHTTPPolicyRunner(
@@ -84,6 +83,7 @@ class _AsyncTransportRunner(
     Uses specified HTTP transport type to send request and returns response.
 
     :param sender: The async Http Transport instance.
+    :type sender: ~azure.core.pipeline.transport.AsyncHttpTransport
     """
 
     def __init__(self, sender: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]) -> None:
@@ -100,6 +100,7 @@ class _AsyncTransportRunner(
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
+        cleanup_kwargs_for_transport(request.context.options)
         return PipelineResponse(
             request.http_request,
             await self._sender.send(request.http_request, **request.context.options),
@@ -107,13 +108,14 @@ class _AsyncTransportRunner(
         )
 
 
-class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncHTTPResponseType]):
+class AsyncPipeline(AsyncContextManager["AsyncPipeline"], Generic[HTTPRequestType, AsyncHTTPResponseType]):
     """Async pipeline implementation.
 
     This is implemented as a context manager, that will activate the context
     of the HTTP sender.
 
     :param transport: The async Http Transport instance.
+    :type transport: ~azure.core.pipeline.transport.AsyncHttpTransport
     :param list policies: List of configured policies.
 
     .. admonition:: Example:
@@ -129,7 +131,14 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
     def __init__(
         self,
         transport: AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType],
-        policies: Optional[AsyncPoliciesType] = None,
+        policies: Optional[
+            Iterable[
+                Union[
+                    AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType],
+                    SansIOHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType],
+                ]
+            ]
+        ] = None,
     ) -> None:
         self._impl_policies: List[AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]] = []
         self._transport = transport
@@ -144,17 +153,25 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
         if self._impl_policies:
             self._impl_policies[-1].next = _AsyncTransportRunner(self._transport)
 
-    async def __aenter__(self) -> "AsyncPipeline":
+    async def __aenter__(self) -> AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]:
         await self._transport.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
-        await self._transport.__aexit__(*exc_details)
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
+        await self._transport.__aexit__(exc_type, exc_value, traceback)
 
     async def _prepare_multipart_mixed_request(self, request: HTTPRequestType) -> None:
         """Will execute the multipart policies.
 
         Does nothing if "set_multipart_mixed" was never called.
+
+        :param request: The HTTP request object.
+        :type request: ~azure.core.rest.HttpRequest
         """
         multipart_mixed_info = request.multipart_mixed_info  # type: ignore
         if not multipart_mixed_info:

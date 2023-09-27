@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.cassandra_clusters.begin_deallocate(
+    client.cassandra_clusters.begin_deallocate(
         resource_group_name="cassandra-prod-rg",
         cluster_name="cassandra-prod",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-04-15/examples/CosmosDBManagedCassandraClusterDeallocate.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-03-15-preview/examples/CosmosDBManagedCassandraClusterDeallocate.json
 if __name__ == "__main__":
     main()

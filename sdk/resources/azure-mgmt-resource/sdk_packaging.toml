@@ -6,3 +6,4 @@ is_stable = true
 need_msrestazure = false
 need_azuremgmtcore = true
 sample_link = ""
+title = "ResourceManagementClient"

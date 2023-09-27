@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.extensions.begin_disable_monitoring(
+    client.extensions.begin_disable_monitoring(
         resource_group_name="rg1",
         cluster_name="cluster1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/stable/2021-06-01/examples/DisableLinuxClusterMonitoring.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/preview/2023-04-15-preview/examples/DisableLinuxClusterMonitoring.json
 if __name__ == "__main__":
     main()

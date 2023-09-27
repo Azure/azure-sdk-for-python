@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -18,7 +18,12 @@ if TYPE_CHECKING:
 
 
 class AzureAsyncOperationResult(_serialization.Model):
-    """The response body contains the status of the specified asynchronous operation, indicating whether it has succeeded, is in progress, or has failed. Note that this status is distinct from the HTTP status code returned for the Get Operation Status operation itself. If the asynchronous operation succeeded, the response body includes the HTTP status code for the successful request. If the asynchronous operation failed, the response body includes the HTTP status code for the failed request and error information regarding the failure.
+    """The response body contains the status of the specified asynchronous operation, indicating
+    whether it has succeeded, is in progress, or has failed. Note that this status is distinct from
+    the HTTP status code returned for the Get Operation Status operation itself. If the
+    asynchronous operation succeeded, the response body includes the HTTP status code for the
+    successful request. If the asynchronous operation failed, the response body includes the HTTP
+    status code for the failed request and error information regarding the failure.
 
     :ivar status: Status of the Azure async operation. Known values are: "InProgress", "Succeeded",
      and "Failed".
@@ -37,8 +42,8 @@ class AzureAsyncOperationResult(_serialization.Model):
         *,
         status: Optional[Union[str, "_models.NetworkOperationStatus"]] = None,
         error: Optional["_models.Error"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: Status of the Azure async operation. Known values are: "InProgress",
          "Succeeded", and "Failed".
@@ -127,8 +132,8 @@ class Backend(_serialization.Model):  # pylint: disable=too-many-instance-attrib
         priority: Optional[int] = None,
         weight: Optional[int] = None,
         backend_host_header: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword address: Location of the backend (IP address or FQDN).
         :paramtype address: str
@@ -186,7 +191,7 @@ class SubResource(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -240,8 +245,8 @@ class BackendPool(SubResource):
         backends: Optional[List["_models.Backend"]] = None,
         load_balancing_settings: Optional["_models.SubResource"] = None,
         health_probe_settings: Optional["_models.SubResource"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -264,7 +269,8 @@ class BackendPool(SubResource):
 
 
 class BackendPoolListResult(_serialization.Model):
-    """Result of the request to list Backend Pools. It contains a list of Backend Pools objects and a URL link to get the next set of results.
+    """Result of the request to list Backend Pools. It contains a list of Backend Pools objects and a
+    URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -283,7 +289,7 @@ class BackendPoolListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of BackendPool objects if there are any.
         :paramtype next_link: str
@@ -316,8 +322,8 @@ class BackendPoolUpdateParameters(_serialization.Model):
         backends: Optional[List["_models.Backend"]] = None,
         load_balancing_settings: Optional["_models.SubResource"] = None,
         health_probe_settings: Optional["_models.SubResource"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword backends: The set of backends for this pool.
         :paramtype backends: list[~azure.mgmt.frontdoor.models.Backend]
@@ -365,8 +371,8 @@ class BackendPoolProperties(BackendPoolUpdateParameters):
         backends: Optional[List["_models.Backend"]] = None,
         load_balancing_settings: Optional["_models.SubResource"] = None,
         health_probe_settings: Optional["_models.SubResource"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword backends: The set of backends for this pool.
         :paramtype backends: list[~azure.mgmt.frontdoor.models.Backend]
@@ -411,8 +417,8 @@ class BackendPoolsSettings(_serialization.Model):
         *,
         enforce_certificate_name_check: Union[str, "_models.EnforceCertificateNameCheckEnabledState"] = "Enabled",
         send_recv_timeout_seconds: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enforce_certificate_name_check: Whether to enforce certificate name check on HTTPS
          requests to all backend pools. No effect on non-HTTPS requests. Known values are: "Enabled" and
@@ -429,7 +435,8 @@ class BackendPoolsSettings(_serialization.Model):
 
 
 class CacheConfiguration(_serialization.Model):
-    """Caching settings for a caching-type route. To disable caching, do not provide a cacheConfiguration object.
+    """Caching settings for a caching-type route. To disable caching, do not provide a
+    cacheConfiguration object.
 
     :ivar query_parameter_strip_directive: Treatment of URL query terms when forming the cache key.
      Known values are: "StripNone", "StripAll", "StripOnly", and "StripAllExcept".
@@ -459,8 +466,8 @@ class CacheConfiguration(_serialization.Model):
         query_parameters: Optional[str] = None,
         dynamic_compression: Optional[Union[str, "_models.DynamicCompressionEnabled"]] = None,
         cache_duration: Optional[datetime.timedelta] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword query_parameter_strip_directive: Treatment of URL query terms when forming the cache
          key. Known values are: "StripNone", "StripAll", "StripOnly", and "StripAllExcept".
@@ -504,7 +511,7 @@ class CheckNameAvailabilityInput(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, name: str, type: Union[str, "_models.ResourceType"], **kwargs):
+    def __init__(self, *, name: str, type: Union[str, "_models.ResourceType"], **kwargs: Any) -> None:
         """
         :keyword name: The resource name to validate. Required.
         :paramtype name: str
@@ -543,7 +550,7 @@ class CheckNameAvailabilityOutput(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name_availability = None
@@ -606,8 +613,8 @@ class CustomHttpsConfiguration(_serialization.Model):
         vault: Optional["_models.KeyVaultCertificateSourceParametersVault"] = None,
         secret_name: Optional[str] = None,
         secret_version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword certificate_source: Defines the source of the SSL certificate. Required. Known values
          are: "AzureKeyVault" and "FrontDoor".
@@ -663,7 +670,7 @@ class CustomRule(_serialization.Model):
     :ivar match_conditions: List of match conditions. Required.
     :vartype match_conditions: list[~azure.mgmt.frontdoor.models.MatchCondition]
     :ivar action: Describes what action to be applied when rule matches. Required. Known values
-     are: "Allow", "Block", "Log", and "Redirect".
+     are: "Allow", "Block", "Log", "Redirect", and "AnomalyScoring".
     :vartype action: str or ~azure.mgmt.frontdoor.models.ActionType
     """
 
@@ -699,8 +706,8 @@ class CustomRule(_serialization.Model):
         enabled_state: Optional[Union[str, "_models.CustomRuleEnabledState"]] = None,
         rate_limit_duration_in_minutes: Optional[int] = None,
         rate_limit_threshold: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Describes the name of the rule.
         :paramtype name: str
@@ -721,7 +728,7 @@ class CustomRule(_serialization.Model):
         :keyword match_conditions: List of match conditions. Required.
         :paramtype match_conditions: list[~azure.mgmt.frontdoor.models.MatchCondition]
         :keyword action: Describes what action to be applied when rule matches. Required. Known values
-         are: "Allow", "Block", "Log", and "Redirect".
+         are: "Allow", "Block", "Log", "Redirect", and "AnomalyScoring".
         :paramtype action: str or ~azure.mgmt.frontdoor.models.ActionType
         """
         super().__init__(**kwargs)
@@ -746,13 +753,62 @@ class CustomRuleList(_serialization.Model):
         "rules": {"key": "rules", "type": "[CustomRule]"},
     }
 
-    def __init__(self, *, rules: Optional[List["_models.CustomRule"]] = None, **kwargs):
+    def __init__(self, *, rules: Optional[List["_models.CustomRule"]] = None, **kwargs: Any) -> None:
         """
         :keyword rules: List of rules.
         :paramtype rules: list[~azure.mgmt.frontdoor.models.CustomRule]
         """
         super().__init__(**kwargs)
         self.rules = rules
+
+
+class DefaultErrorResponse(_serialization.Model):
+    """Error response indicates Front Door service is not able to process the incoming request. The
+    reason is provided in the error message.
+
+    :ivar error: Error model.
+    :vartype error: ~azure.mgmt.frontdoor.models.DefaultErrorResponseError
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "DefaultErrorResponseError"},
+    }
+
+    def __init__(self, *, error: Optional["_models.DefaultErrorResponseError"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: Error model.
+        :paramtype error: ~azure.mgmt.frontdoor.models.DefaultErrorResponseError
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
+class DefaultErrorResponseError(_serialization.Model):
+    """Error model.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code = None
+        self.message = None
 
 
 class Endpoint(_serialization.Model):
@@ -769,7 +825,7 @@ class Endpoint(_serialization.Model):
         "endpoint": {"key": "endpoint", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, endpoint: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, endpoint: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the endpoint.
         :paramtype name: str
@@ -812,8 +868,8 @@ class Error(_serialization.Model):
         target: Optional[str] = None,
         details: Optional[List["_models.ErrorDetails"]] = None,
         inner_error: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code:
         :paramtype code: str
@@ -852,8 +908,8 @@ class ErrorDetails(_serialization.Model):
     }
 
     def __init__(
-        self, *, code: Optional[str] = None, target: Optional[str] = None, message: Optional[str] = None, **kwargs
-    ):
+        self, *, code: Optional[str] = None, target: Optional[str] = None, message: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword code:
         :paramtype code: str
@@ -869,7 +925,8 @@ class ErrorDetails(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Error response indicates Front Door service is not able to process the incoming request. The reason is provided in the error message.
+    """Error response indicates Front Door service is not able to process the incoming request. The
+    reason is provided in the error message.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -889,7 +946,7 @@ class ErrorResponse(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -927,7 +984,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -1007,8 +1064,8 @@ class Experiment(Resource):  # pylint: disable=too-many-instance-attributes
         endpoint_a: Optional["_models.Endpoint"] = None,
         endpoint_b: Optional["_models.Endpoint"] = None,
         enabled_state: Optional[Union[str, "_models.State"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -1035,7 +1092,8 @@ class Experiment(Resource):  # pylint: disable=too-many-instance-attributes
 
 
 class ExperimentList(_serialization.Model):
-    """Defines a list of Experiments. It contains a list of Experiment objects and a URL link to get the next set of results.
+    """Defines a list of Experiments. It contains a list of Experiment objects and a URL link to get
+    the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1054,7 +1112,7 @@ class ExperimentList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of Experiment objects if there are any.
         :paramtype next_link: str
@@ -1087,8 +1145,8 @@ class ExperimentUpdateModel(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
         enabled_state: Optional[Union[str, "_models.State"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1131,7 +1189,7 @@ class RouteConfiguration(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.odata_type: Optional[str] = None
@@ -1175,8 +1233,8 @@ class ForwardingConfiguration(RouteConfiguration):
         forwarding_protocol: Optional[Union[str, "_models.FrontDoorForwardingProtocol"]] = None,
         cache_configuration: Optional["_models.CacheConfiguration"] = None,
         backend_pool: Optional["_models.SubResource"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword custom_forwarding_path: A custom path used to rewrite resource paths matched by this
          rule. Leave empty to use incoming path.
@@ -1198,7 +1256,8 @@ class ForwardingConfiguration(RouteConfiguration):
 
 
 class FrontDoor(Resource):  # pylint: disable=too-many-instance-attributes
-    """Front Door represents a collection of backend endpoints to route traffic to along with rules that specify how traffic is sent there.
+    """Front Door represents a collection of backend endpoints to route traffic to along with rules
+    that specify how traffic is sent there.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1292,8 +1351,8 @@ class FrontDoor(Resource):  # pylint: disable=too-many-instance-attributes
         frontend_endpoints: Optional[List["_models.FrontendEndpoint"]] = None,
         backend_pools_settings: Optional["_models.BackendPoolsSettings"] = None,
         enabled_state: Optional[Union[str, "_models.FrontDoorEnabledState"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -1337,7 +1396,8 @@ class FrontDoor(Resource):  # pylint: disable=too-many-instance-attributes
 
 
 class FrontDoorListResult(_serialization.Model):
-    """Result of the request to list Front Doors. It contains a list of Front Door objects and a URL link to get the next set of results.
+    """Result of the request to list Front Doors. It contains a list of Front Door objects and a URL
+    link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1356,7 +1416,7 @@ class FrontDoorListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of Front Door objects if there are any.
         :paramtype next_link: str
@@ -1411,8 +1471,8 @@ class FrontDoorUpdateParameters(_serialization.Model):
         frontend_endpoints: Optional[List["_models.FrontendEndpoint"]] = None,
         backend_pools_settings: Optional["_models.BackendPoolsSettings"] = None,
         enabled_state: Optional[Union[str, "_models.FrontDoorEnabledState"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword friendly_name: A friendly name for the frontDoor.
         :paramtype friendly_name: str
@@ -1520,8 +1580,8 @@ class FrontDoorProperties(FrontDoorUpdateParameters):  # pylint: disable=too-man
         frontend_endpoints: Optional[List["_models.FrontendEndpoint"]] = None,
         backend_pools_settings: Optional["_models.BackendPoolsSettings"] = None,
         enabled_state: Optional[Union[str, "_models.FrontDoorEnabledState"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword friendly_name: A friendly name for the frontDoor.
         :paramtype friendly_name: str
@@ -1645,8 +1705,8 @@ class FrontendEndpoint(SubResource):  # pylint: disable=too-many-instance-attrib
         web_application_firewall_policy_link: Optional[
             "_models.FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -1690,7 +1750,7 @@ class FrontendEndpointLink(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -1736,8 +1796,8 @@ class FrontendEndpointUpdateParameters(_serialization.Model):
         web_application_firewall_policy_link: Optional[
             "_models.FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword host_name: The host name of the frontendEndpoint. Must be a domain name.
         :paramtype host_name: str
@@ -1828,8 +1888,8 @@ class FrontendEndpointProperties(FrontendEndpointUpdateParameters):
         web_application_firewall_policy_link: Optional[
             "_models.FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword host_name: The host name of the frontendEndpoint. Must be a domain name.
         :paramtype host_name: str
@@ -1859,7 +1919,8 @@ class FrontendEndpointProperties(FrontendEndpointUpdateParameters):
 
 
 class FrontendEndpointsListResult(_serialization.Model):
-    """Result of the request to list frontend endpoints. It contains a list of Frontend endpoint objects and a URL link to get the next set of results.
+    """Result of the request to list frontend endpoints. It contains a list of Frontend endpoint
+    objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1878,7 +1939,7 @@ class FrontendEndpointsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of frontend endpoints if there are any.
         :paramtype next_link: str
@@ -1899,7 +1960,7 @@ class FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink(_serializ
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -1940,8 +2001,8 @@ class HeaderAction(_serialization.Model):
         header_action_type: Union[str, "_models.HeaderActionType"],
         header_name: str,
         value: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword header_action_type: Which type of manipulation to apply to the header. Required. Known
          values are: "Append", "Delete", and "Overwrite".
@@ -1959,7 +2020,8 @@ class HeaderAction(_serialization.Model):
 
 
 class HealthProbeSettingsListResult(_serialization.Model):
-    """Result of the request to list HealthProbeSettings. It contains a list of HealthProbeSettings objects and a URL link to get the next set of results.
+    """Result of the request to list HealthProbeSettings. It contains a list of HealthProbeSettings
+    objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1978,7 +2040,7 @@ class HealthProbeSettingsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of HealthProbeSettings objects if there are any.
         :paramtype next_link: str
@@ -2044,8 +2106,8 @@ class HealthProbeSettingsModel(SubResource):
         interval_in_seconds: Optional[int] = None,
         health_probe_method: Union[str, "_models.FrontDoorHealthProbeMethod"] = "HEAD",
         enabled_state: Optional[Union[str, "_models.HealthProbeEnabled"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -2110,8 +2172,8 @@ class HealthProbeSettingsUpdateParameters(_serialization.Model):
         interval_in_seconds: Optional[int] = None,
         health_probe_method: Union[str, "_models.FrontDoorHealthProbeMethod"] = "HEAD",
         enabled_state: Optional[Union[str, "_models.HealthProbeEnabled"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword path: The path to use for the health probe. Default is /.
         :paramtype path: str
@@ -2179,8 +2241,8 @@ class HealthProbeSettingsProperties(HealthProbeSettingsUpdateParameters):
         interval_in_seconds: Optional[int] = None,
         health_probe_method: Union[str, "_models.FrontDoorHealthProbeMethod"] = "HEAD",
         enabled_state: Optional[Union[str, "_models.HealthProbeEnabled"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword path: The path to use for the health probe. Default is /.
         :paramtype path: str
@@ -2218,7 +2280,7 @@ class KeyVaultCertificateSourceParametersVault(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -2280,7 +2342,7 @@ class LatencyMetric(_serialization.Model):
         "b_upper95_ci": {"key": "bUpper95CI", "type": "float"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -2368,8 +2430,8 @@ class LatencyScorecard(Resource):  # pylint: disable=too-many-instance-attribute
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         latency_metrics: Optional[List["_models.LatencyMetric"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -2391,7 +2453,8 @@ class LatencyScorecard(Resource):  # pylint: disable=too-many-instance-attribute
 
 
 class LoadBalancingSettingsListResult(_serialization.Model):
-    """Result of the request to list load balancing settings. It contains a list of load balancing settings objects and a URL link to get the next set of results.
+    """Result of the request to list load balancing settings. It contains a list of load balancing
+    settings objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2410,7 +2473,7 @@ class LoadBalancingSettingsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of LoadBalancingSettings objects if there are any.
         :paramtype next_link: str
@@ -2467,8 +2530,8 @@ class LoadBalancingSettingsModel(SubResource):
         sample_size: Optional[int] = None,
         successful_samples_required: Optional[int] = None,
         additional_latency_milliseconds: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -2517,8 +2580,8 @@ class LoadBalancingSettingsUpdateParameters(_serialization.Model):
         sample_size: Optional[int] = None,
         successful_samples_required: Optional[int] = None,
         additional_latency_milliseconds: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sample_size: The number of samples to consider for load balancing decisions.
         :paramtype sample_size: int
@@ -2570,8 +2633,8 @@ class LoadBalancingSettingsProperties(LoadBalancingSettingsUpdateParameters):
         sample_size: Optional[int] = None,
         successful_samples_required: Optional[int] = None,
         additional_latency_milliseconds: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sample_size: The number of samples to consider for load balancing decisions.
         :paramtype sample_size: int
@@ -2602,7 +2665,7 @@ class ManagedRuleDefinition(_serialization.Model):
      "Disabled" and "Enabled".
     :vartype default_state: str or ~azure.mgmt.frontdoor.models.ManagedRuleEnabledState
     :ivar default_action: Describes the default action to be applied when the managed rule matches.
-     Known values are: "Allow", "Block", "Log", and "Redirect".
+     Known values are: "Allow", "Block", "Log", "Redirect", and "AnomalyScoring".
     :vartype default_action: str or ~azure.mgmt.frontdoor.models.ActionType
     :ivar description: Describes the functionality of the managed rule.
     :vartype description: str
@@ -2622,7 +2685,7 @@ class ManagedRuleDefinition(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.rule_id = None
@@ -2668,8 +2731,8 @@ class ManagedRuleExclusion(_serialization.Model):
         match_variable: Union[str, "_models.ManagedRuleExclusionMatchVariable"],
         selector_match_operator: Union[str, "_models.ManagedRuleExclusionSelectorMatchOperator"],
         selector: str,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword match_variable: The variable type to be excluded. Required. Known values are:
          "RequestHeaderNames", "RequestCookieNames", "QueryStringArgNames", "RequestBodyPostArgNames",
@@ -2716,7 +2779,7 @@ class ManagedRuleGroupDefinition(_serialization.Model):
         "rules": {"key": "rules", "type": "[ManagedRuleDefinition]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.rule_group_name = None
@@ -2754,8 +2817,8 @@ class ManagedRuleGroupOverride(_serialization.Model):
         rule_group_name: str,
         exclusions: Optional[List["_models.ManagedRuleExclusion"]] = None,
         rules: Optional[List["_models.ManagedRuleOverride"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword rule_group_name: Describes the managed rule group to override. Required.
         :paramtype rule_group_name: str
@@ -2782,7 +2845,7 @@ class ManagedRuleOverride(_serialization.Model):
      Disabled if not specified. Known values are: "Disabled" and "Enabled".
     :vartype enabled_state: str or ~azure.mgmt.frontdoor.models.ManagedRuleEnabledState
     :ivar action: Describes the override action to be applied when rule matches. Known values are:
-     "Allow", "Block", "Log", and "Redirect".
+     "Allow", "Block", "Log", "Redirect", and "AnomalyScoring".
     :vartype action: str or ~azure.mgmt.frontdoor.models.ActionType
     :ivar exclusions: Describes the exclusions that are applied to this specific rule.
     :vartype exclusions: list[~azure.mgmt.frontdoor.models.ManagedRuleExclusion]
@@ -2806,8 +2869,8 @@ class ManagedRuleOverride(_serialization.Model):
         enabled_state: Optional[Union[str, "_models.ManagedRuleEnabledState"]] = None,
         action: Optional[Union[str, "_models.ActionType"]] = None,
         exclusions: Optional[List["_models.ManagedRuleExclusion"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword rule_id: Identifier for the managed rule. Required.
         :paramtype rule_id: str
@@ -2815,7 +2878,7 @@ class ManagedRuleOverride(_serialization.Model):
          to Disabled if not specified. Known values are: "Disabled" and "Enabled".
         :paramtype enabled_state: str or ~azure.mgmt.frontdoor.models.ManagedRuleEnabledState
         :keyword action: Describes the override action to be applied when rule matches. Known values
-         are: "Allow", "Block", "Log", and "Redirect".
+         are: "Allow", "Block", "Log", "Redirect", and "AnomalyScoring".
         :paramtype action: str or ~azure.mgmt.frontdoor.models.ActionType
         :keyword exclusions: Describes the exclusions that are applied to this specific rule.
         :paramtype exclusions: list[~azure.mgmt.frontdoor.models.ManagedRuleExclusion]
@@ -2866,8 +2929,8 @@ class ManagedRuleSet(_serialization.Model):
         rule_set_action: Optional[Union[str, "_models.ManagedRuleSetActionType"]] = None,
         exclusions: Optional[List["_models.ManagedRuleExclusion"]] = None,
         rule_group_overrides: Optional[List["_models.ManagedRuleGroupOverride"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword rule_set_type: Defines the rule set type to use. Required.
         :paramtype rule_set_type: str
@@ -2940,7 +3003,7 @@ class ManagedRuleSetDefinition(Resource):
         "rule_groups": {"key": "properties.ruleGroups", "type": "[ManagedRuleGroupDefinition]"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -2975,7 +3038,7 @@ class ManagedRuleSetDefinitionList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to retrieve next set of managed rule set definitions.
         :paramtype next_link: str
@@ -2996,7 +3059,7 @@ class ManagedRuleSetList(_serialization.Model):
         "managed_rule_sets": {"key": "managedRuleSets", "type": "[ManagedRuleSet]"},
     }
 
-    def __init__(self, *, managed_rule_sets: Optional[List["_models.ManagedRuleSet"]] = None, **kwargs):
+    def __init__(self, *, managed_rule_sets: Optional[List["_models.ManagedRuleSet"]] = None, **kwargs: Any) -> None:
         """
         :keyword managed_rule_sets: List of rule sets.
         :paramtype managed_rule_sets: list[~azure.mgmt.frontdoor.models.ManagedRuleSet]
@@ -3053,8 +3116,8 @@ class MatchCondition(_serialization.Model):
         selector: Optional[str] = None,
         negate_condition: Optional[bool] = None,
         transforms: Optional[List[Union[str, "_models.TransformType"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword match_variable: Request variable to compare with. Required. Known values are:
          "RemoteAddr", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
@@ -3130,8 +3193,8 @@ class PolicySettings(_serialization.Model):
         custom_block_response_status_code: Optional[int] = None,
         custom_block_response_body: Optional[str] = None,
         request_body_check: Optional[Union[str, "_models.PolicyRequestBodyCheck"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled_state: Describes if the policy is in enabled or disabled state. Defaults to
          Enabled if not specified. Known values are: "Disabled" and "Enabled".
@@ -3214,8 +3277,8 @@ class PreconfiguredEndpoint(Resource):
         endpoint: Optional[str] = None,
         endpoint_type: Optional[Union[str, "_models.EndpointType"]] = None,
         backend: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -3258,7 +3321,7 @@ class PreconfiguredEndpointList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of PreconfiguredEndpoints if there are any.
         :paramtype next_link: str
@@ -3317,8 +3380,8 @@ class Profile(Resource):
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
         enabled_state: Optional[Union[str, "_models.State"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -3337,7 +3400,8 @@ class Profile(Resource):
 
 
 class ProfileList(_serialization.Model):
-    """Defines a list of Profiles. It contains a list of Profile objects and a URL link to get the next set of results.
+    """Defines a list of Profiles. It contains a list of Profile objects and a URL link to get the
+    next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3356,7 +3420,7 @@ class ProfileList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of Profile objects if there are any.
         :paramtype next_link: str
@@ -3386,8 +3450,8 @@ class ProfileUpdateModel(_serialization.Model):
         *,
         tags: Optional[Dict[str, str]] = None,
         enabled_state: Optional[Union[str, "_models.State"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -3418,7 +3482,7 @@ class PurgeParameters(_serialization.Model):
         "content_paths": {"key": "contentPaths", "type": "[str]"},
     }
 
-    def __init__(self, *, content_paths: List[str], **kwargs):
+    def __init__(self, *, content_paths: List[str], **kwargs: Any) -> None:
         """
         :keyword content_paths: The path to the content to be purged. Can describe a file path or a
          wild card directory. Required.
@@ -3481,8 +3545,8 @@ class RedirectConfiguration(RouteConfiguration):
         custom_path: Optional[str] = None,
         custom_fragment: Optional[str] = None,
         custom_query_string: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword redirect_type: The redirect type the rule will use when redirecting traffic. Known
          values are: "Moved", "Found", "TemporaryRedirect", and "PermanentRedirect".
@@ -3517,7 +3581,8 @@ class RedirectConfiguration(RouteConfiguration):
 
 
 class RoutingRule(SubResource):  # pylint: disable=too-many-instance-attributes
-    """A routing rule represents a specification for traffic to treat and where to send it, along with health probe information.
+    """A routing rule represents a specification for traffic to treat and where to send it, along with
+    health probe information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3586,8 +3651,8 @@ class RoutingRule(SubResource):  # pylint: disable=too-many-instance-attributes
         web_application_firewall_policy_link: Optional[
             "_models.RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -3636,7 +3701,7 @@ class RoutingRuleLink(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -3646,7 +3711,8 @@ class RoutingRuleLink(_serialization.Model):
 
 
 class RoutingRuleListResult(_serialization.Model):
-    """Result of the request to list Routing Rules. It contains a list of Routing Rule objects and a URL link to get the next set of results.
+    """Result of the request to list Routing Rules. It contains a list of Routing Rule objects and a
+    URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3665,7 +3731,7 @@ class RoutingRuleListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of RoutingRule objects if there are any.
         :paramtype next_link: str
@@ -3723,8 +3789,8 @@ class RoutingRuleUpdateParameters(_serialization.Model):
         web_application_firewall_policy_link: Optional[
             "_models.RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword frontend_endpoints: Frontend endpoints associated with this rule.
         :paramtype frontend_endpoints: list[~azure.mgmt.frontdoor.models.SubResource]
@@ -3813,8 +3879,8 @@ class RoutingRuleProperties(RoutingRuleUpdateParameters):
         web_application_firewall_policy_link: Optional[
             "_models.RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword frontend_endpoints: Frontend endpoints associated with this rule.
         :paramtype frontend_endpoints: list[~azure.mgmt.frontdoor.models.SubResource]
@@ -3859,7 +3925,7 @@ class RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink(_serialization
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -3869,7 +3935,8 @@ class RoutingRuleUpdateParametersWebApplicationFirewallPolicyLink(_serialization
 
 
 class RulesEngine(_serialization.Model):
-    """A rules engine configuration containing a list of rules that will run to modify the runtime behavior of the request and response.
+    """A rules engine configuration containing a list of rules that will run to modify the runtime
+    behavior of the request and response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3901,7 +3968,7 @@ class RulesEngine(_serialization.Model):
         "resource_state": {"key": "properties.resourceState", "type": "str"},
     }
 
-    def __init__(self, *, rules: Optional[List["_models.RulesEngineRule"]] = None, **kwargs):
+    def __init__(self, *, rules: Optional[List["_models.RulesEngineRule"]] = None, **kwargs: Any) -> None:
         """
         :keyword rules: A list of rules that define a particular Rules Engine Configuration.
         :paramtype rules: list[~azure.mgmt.frontdoor.models.RulesEngineRule]
@@ -3939,8 +4006,8 @@ class RulesEngineAction(_serialization.Model):
         request_header_actions: Optional[List["_models.HeaderAction"]] = None,
         response_header_actions: Optional[List["_models.HeaderAction"]] = None,
         route_configuration_override: Optional["_models.RouteConfiguration"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword request_header_actions: A list of header actions to apply from the request from AFD to
          the origin.
@@ -3958,7 +4025,8 @@ class RulesEngineAction(_serialization.Model):
 
 
 class RulesEngineListResult(_serialization.Model):
-    """Result of the request to list Rules Engine Configurations. It contains a list of RulesEngine objects and a URL link to get the next set of results.
+    """Result of the request to list Rules Engine Configurations. It contains a list of RulesEngine
+    objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3977,7 +4045,7 @@ class RulesEngineListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of RulesEngine objects if there are any.
         :paramtype next_link: str
@@ -4038,8 +4106,8 @@ class RulesEngineMatchCondition(_serialization.Model):
         selector: Optional[str] = None,
         negate_condition: Optional[bool] = None,
         transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword rules_engine_match_variable: Match Variable. Required. Known values are: "IsMobile",
          "RemoteAddr", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestPath",
@@ -4082,7 +4150,7 @@ class RulesEngineUpdateParameters(_serialization.Model):
         "rules": {"key": "rules", "type": "[RulesEngineRule]"},
     }
 
-    def __init__(self, *, rules: Optional[List["_models.RulesEngineRule"]] = None, **kwargs):
+    def __init__(self, *, rules: Optional[List["_models.RulesEngineRule"]] = None, **kwargs: Any) -> None:
         """
         :keyword rules: A list of rules that define a particular Rules Engine Configuration.
         :paramtype rules: list[~azure.mgmt.frontdoor.models.RulesEngineRule]
@@ -4112,7 +4180,7 @@ class RulesEngineProperties(RulesEngineUpdateParameters):
         "resource_state": {"key": "resourceState", "type": "str"},
     }
 
-    def __init__(self, *, rules: Optional[List["_models.RulesEngineRule"]] = None, **kwargs):
+    def __init__(self, *, rules: Optional[List["_models.RulesEngineRule"]] = None, **kwargs: Any) -> None:
         """
         :keyword rules: A list of rules that define a particular Rules Engine Configuration.
         :paramtype rules: list[~azure.mgmt.frontdoor.models.RulesEngineRule]
@@ -4122,7 +4190,9 @@ class RulesEngineProperties(RulesEngineUpdateParameters):
 
 
 class RulesEngineRule(_serialization.Model):
-    """Contains a list of match conditions, and an action on how to modify the request/response. If multiple rules match, the actions from one rule that conflict with a previous rule overwrite for a singular action, or append in the case of headers manipulation.
+    """Contains a list of match conditions, and an action on how to modify the request/response. If
+    multiple rules match, the actions from one rule that conflict with a previous rule overwrite
+    for a singular action, or append in the case of headers manipulation.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -4138,7 +4208,7 @@ class RulesEngineRule(_serialization.Model):
     :vartype match_conditions: list[~azure.mgmt.frontdoor.models.RulesEngineMatchCondition]
     :ivar match_processing_behavior: If this rule is a match should the rules engine continue
      running the remaining rules or stop. If not present, defaults to Continue. Known values are:
-     "Continue" and "Stop".
+     "Continue", "Stop", and "Continue".
     :vartype match_processing_behavior: str or ~azure.mgmt.frontdoor.models.MatchProcessingBehavior
     """
 
@@ -4164,8 +4234,8 @@ class RulesEngineRule(_serialization.Model):
         action: "_models.RulesEngineAction",
         match_conditions: Optional[List["_models.RulesEngineMatchCondition"]] = None,
         match_processing_behavior: Optional[Union[str, "_models.MatchProcessingBehavior"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: A name to refer to this specific rule. Required.
         :paramtype name: str
@@ -4179,7 +4249,7 @@ class RulesEngineRule(_serialization.Model):
         :paramtype match_conditions: list[~azure.mgmt.frontdoor.models.RulesEngineMatchCondition]
         :keyword match_processing_behavior: If this rule is a match should the rules engine continue
          running the remaining rules or stop. If not present, defaults to Continue. Known values are:
-         "Continue" and "Stop".
+         "Continue", "Stop", and "Continue".
         :paramtype match_processing_behavior: str or
          ~azure.mgmt.frontdoor.models.MatchProcessingBehavior
         """
@@ -4202,7 +4272,7 @@ class SecurityPolicyLink(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -4223,7 +4293,7 @@ class Sku(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[Union[str, "_models.SkuName"]] = None, **kwargs):
+    def __init__(self, *, name: Optional[Union[str, "_models.SkuName"]] = None, **kwargs: Any) -> None:
         """
         :keyword name: Name of the pricing tier. Known values are: "Classic_AzureFrontDoor",
          "Standard_AzureFrontDoor", and "Premium_AzureFrontDoor".
@@ -4244,7 +4314,7 @@ class TagsObject(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -4320,8 +4390,8 @@ class Timeseries(Resource):  # pylint: disable=too-many-instance-attributes
         timeseries_type: Optional[Union[str, "_models.TimeseriesType"]] = None,
         country: Optional[str] = None,
         timeseries_data: Optional[List["_models.TimeseriesDataPoint"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -4369,7 +4439,7 @@ class TimeseriesDataPoint(_serialization.Model):
         "value": {"key": "value", "type": "float"},
     }
 
-    def __init__(self, *, date_time_utc: Optional[str] = None, value: Optional[float] = None, **kwargs):
+    def __init__(self, *, date_time_utc: Optional[str] = None, value: Optional[float] = None, **kwargs: Any) -> None:
         """
         :keyword date_time_utc: The DateTime of the Timeseries data point in UTC.
         :paramtype date_time_utc: str
@@ -4398,7 +4468,7 @@ class ValidateCustomDomainInput(_serialization.Model):
         "host_name": {"key": "hostName", "type": "str"},
     }
 
-    def __init__(self, *, host_name: str, **kwargs):
+    def __init__(self, *, host_name: str, **kwargs: Any) -> None:
         """
         :keyword host_name: The host name of the custom domain. Must be a domain name. Required.
         :paramtype host_name: str
@@ -4432,7 +4502,7 @@ class ValidateCustomDomainOutput(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.custom_domain_validated = None
@@ -4521,8 +4591,8 @@ class WebApplicationFirewallPolicy(Resource):  # pylint: disable=too-many-instan
         policy_settings: Optional["_models.PolicySettings"] = None,
         custom_rules: Optional["_models.CustomRuleList"] = None,
         managed_rules: Optional["_models.ManagedRuleSetList"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -4554,7 +4624,8 @@ class WebApplicationFirewallPolicy(Resource):  # pylint: disable=too-many-instan
 
 
 class WebApplicationFirewallPolicyList(_serialization.Model):
-    """Defines a list of WebApplicationFirewallPolicies. It contains a list of WebApplicationFirewallPolicy objects and a URL link to get the next set of results.
+    """Defines a list of WebApplicationFirewallPolicies. It contains a list of
+    WebApplicationFirewallPolicy objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4574,7 +4645,7 @@ class WebApplicationFirewallPolicyList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: URL to get the next set of WebApplicationFirewallPolicy objects if there
          are any.

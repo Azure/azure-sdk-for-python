@@ -24,19 +24,24 @@ from . import http_challenge_cache as ChallengeCache
 from .challenge_auth_policy import _enforce_tls, _update_challenge
 
 if TYPE_CHECKING:
-    from typing import Any, Optional
+    from typing import Optional
     from azure.core.credentials import AccessToken
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
 class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
-    """policy for handling HTTP authentication challenges"""
+    """Policy for handling HTTP authentication challenges.
+
+    :param credential: An object which can provide an access token for the vault, such as a credential from
+        :mod:`azure.identity.aio`
+    :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
+    """
 
     def __init__(self, credential: "AsyncTokenCredential", *scopes: str, **kwargs) -> None:
         super().__init__(credential, *scopes, **kwargs)
         self._credential = credential
-        self._token = None  # type: Optional[AccessToken]
+        self._token: "Optional[AccessToken]" = None
         self._verify_challenge_resource = kwargs.pop("verify_challenge_resource", True)
 
     async def on_request(self, request: "PipelineRequest") -> None:
@@ -86,7 +91,13 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
 
         body = request.context.pop("key_vault_request_data", None)
         request.http_request.set_text_body(body)  # no-op when text is None
-        await self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
+
+        # The tenant parsed from AD FS challenges is "adfs"; we don't actually need a tenant for AD FS authentication
+        # For AD FS we skip cross-tenant authentication per https://github.com/Azure/azure-sdk-for-python/issues/28648
+        if challenge.tenant_id and challenge.tenant_id.lower().endswith("adfs"):
+            await self.authorize_request(request, scope)
+        else:
+            await self.authorize_request(request, scope, tenant_id=challenge.tenant_id)
 
         return True
 

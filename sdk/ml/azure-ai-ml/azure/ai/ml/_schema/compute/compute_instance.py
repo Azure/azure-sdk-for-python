@@ -5,7 +5,7 @@
 from marshmallow import fields
 from marshmallow.decorators import post_load
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml.constants._compute import ComputeType, ComputeSizeTier
 
@@ -46,9 +46,9 @@ class OsImageMetadataSchema(PathAwareSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import OsImageMetadata
+        from azure.ai.ml.entities import ImageMetadata
 
-        return OsImageMetadata(**data)
+        return ImageMetadata(**data)
 
 
 class ComputeInstanceSchema(ComputeSchema):

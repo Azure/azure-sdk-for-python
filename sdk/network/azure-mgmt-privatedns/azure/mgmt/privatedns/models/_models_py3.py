@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from .. import _serialization
 
@@ -27,7 +27,7 @@ class AaaaRecord(_serialization.Model):
         "ipv6_address": {"key": "ipv6Address", "type": "str"},
     }
 
-    def __init__(self, *, ipv6_address: Optional[str] = None, **kwargs):
+    def __init__(self, *, ipv6_address: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword ipv6_address: The IPv6 address of this AAAA record.
         :paramtype ipv6_address: str
@@ -47,7 +47,7 @@ class ARecord(_serialization.Model):
         "ipv4_address": {"key": "ipv4Address", "type": "str"},
     }
 
-    def __init__(self, *, ipv4_address: Optional[str] = None, **kwargs):
+    def __init__(self, *, ipv4_address: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword ipv4_address: The IPv4 address of this A record.
         :paramtype ipv4_address: str
@@ -86,8 +86,8 @@ class CloudErrorBody(_serialization.Model):
         message: Optional[str] = None,
         target: Optional[str] = None,
         details: Optional[List["_models.CloudErrorBody"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically.
@@ -119,7 +119,7 @@ class CnameRecord(_serialization.Model):
         "cname": {"key": "cname", "type": "str"},
     }
 
-    def __init__(self, *, cname: Optional[str] = None, **kwargs):
+    def __init__(self, *, cname: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword cname: The canonical name for this CNAME record.
         :paramtype cname: str
@@ -142,7 +142,7 @@ class MxRecord(_serialization.Model):
         "exchange": {"key": "exchange", "type": "str"},
     }
 
-    def __init__(self, *, preference: Optional[int] = None, exchange: Optional[str] = None, **kwargs):
+    def __init__(self, *, preference: Optional[int] = None, exchange: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword preference: The preference value for this MX record.
         :paramtype preference: int
@@ -180,7 +180,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -220,7 +220,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, location: Optional[str] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, location: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -324,8 +324,8 @@ class PrivateZone(TrackedResource):  # pylint: disable=too-many-instance-attribu
         tags: Optional[Dict[str, str]] = None,
         location: Optional[str] = None,
         etag: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -366,7 +366,7 @@ class PrivateZoneListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateZone"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.PrivateZone"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Information about the Private DNS zones.
         :paramtype value: list[~azure.mgmt.privatedns.models.PrivateZone]
@@ -402,7 +402,7 @@ class ProxyResource(Resource):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -418,7 +418,7 @@ class PtrRecord(_serialization.Model):
         "ptrdname": {"key": "ptrdname", "type": "str"},
     }
 
-    def __init__(self, *, ptrdname: Optional[str] = None, **kwargs):
+    def __init__(self, *, ptrdname: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword ptrdname: The PTR target domain name for this PTR record.
         :paramtype ptrdname: str
@@ -428,7 +428,8 @@ class PtrRecord(_serialization.Model):
 
 
 class RecordSet(ProxyResource):  # pylint: disable=too-many-instance-attributes
-    """Describes a DNS record set (a collection of DNS records with the same name and type) in a Private DNS zone.
+    """Describes a DNS record set (a collection of DNS records with the same name and type) in a
+    Private DNS zone.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -509,8 +510,8 @@ class RecordSet(ProxyResource):  # pylint: disable=too-many-instance-attributes
         soa_record: Optional["_models.SoaRecord"] = None,
         srv_records: Optional[List["_models.SrvRecord"]] = None,
         txt_records: Optional[List["_models.TxtRecord"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword etag: The ETag of the record set.
         :paramtype etag: str
@@ -571,7 +572,7 @@ class RecordSetListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.RecordSet"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.RecordSet"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Information about the record sets in the response.
         :paramtype value: list[~azure.mgmt.privatedns.models.RecordSet]
@@ -621,8 +622,8 @@ class SoaRecord(_serialization.Model):
         retry_time: Optional[int] = None,
         expire_time: Optional[int] = None,
         minimum_ttl: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword host: The domain name of the authoritative name server for this SOA record.
         :paramtype host: str
@@ -677,8 +678,8 @@ class SrvRecord(_serialization.Model):
         weight: Optional[int] = None,
         port: Optional[int] = None,
         target: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword priority: The priority value for this SRV record.
         :paramtype priority: int
@@ -707,7 +708,7 @@ class SubResource(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -727,7 +728,7 @@ class TxtRecord(_serialization.Model):
         "value": {"key": "value", "type": "[str]"},
     }
 
-    def __init__(self, *, value: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The text value of this TXT record.
         :paramtype value: list[str]
@@ -799,8 +800,8 @@ class VirtualNetworkLink(TrackedResource):
         etag: Optional[str] = None,
         virtual_network: Optional["_models.SubResource"] = None,
         registration_enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -842,7 +843,7 @@ class VirtualNetworkLinkListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.VirtualNetworkLink"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.VirtualNetworkLink"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Information about the virtual network links to the Private DNS zones.
         :paramtype value: list[~azure.mgmt.privatedns.models.VirtualNetworkLink]

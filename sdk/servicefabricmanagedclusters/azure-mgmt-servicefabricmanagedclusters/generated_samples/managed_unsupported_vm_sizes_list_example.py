@@ -36,6 +36,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/servicefabricmanagedclusters/resource-manager/Microsoft.ServiceFabric/preview/2022-08-01-preview/examples/managedUnsupportedVMSizesList_example.json
+# x-ms-original-file: specification/servicefabricmanagedclusters/resource-manager/Microsoft.ServiceFabric/preview/2023-02-01-preview/examples/managedUnsupportedVMSizesList_example.json
 if __name__ == "__main__":
     main()

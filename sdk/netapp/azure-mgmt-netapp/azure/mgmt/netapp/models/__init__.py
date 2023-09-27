@@ -13,7 +13,6 @@ from ._models_py3 import Backup
 from ._models_py3 import BackupPatch
 from ._models_py3 import BackupPoliciesList
 from ._models_py3 import BackupPolicy
-from ._models_py3 import BackupPolicyDetails
 from ._models_py3 import BackupPolicyPatch
 from ._models_py3 import BackupRestoreFiles
 from ._models_py3 import BackupStatus
@@ -28,8 +27,13 @@ from ._models_py3 import CloudErrorBody
 from ._models_py3 import DailySchedule
 from ._models_py3 import Dimension
 from ._models_py3 import EncryptionIdentity
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
 from ._models_py3 import ExportPolicyRule
 from ._models_py3 import FilePathAvailabilityRequest
+from ._models_py3 import GetGroupIdListForLDAPUserRequest
+from ._models_py3 import GetGroupIdListForLDAPUserResponse
 from ._models_py3 import HourlySchedule
 from ._models_py3 import KeyVaultProperties
 from ._models_py3 import LdapSearchScopeOpt
@@ -144,7 +148,6 @@ __all__ = [
     "BackupPatch",
     "BackupPoliciesList",
     "BackupPolicy",
-    "BackupPolicyDetails",
     "BackupPolicyPatch",
     "BackupRestoreFiles",
     "BackupStatus",
@@ -159,8 +162,13 @@ __all__ = [
     "DailySchedule",
     "Dimension",
     "EncryptionIdentity",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
     "ExportPolicyRule",
     "FilePathAvailabilityRequest",
+    "GetGroupIdListForLDAPUserRequest",
+    "GetGroupIdListForLDAPUserResponse",
     "HourlySchedule",
     "KeyVaultProperties",
     "LdapSearchScopeOpt",

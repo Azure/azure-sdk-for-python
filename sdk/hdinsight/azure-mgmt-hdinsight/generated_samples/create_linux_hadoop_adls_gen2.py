@@ -80,6 +80,7 @@ def main():
                 "storageProfile": {
                     "storageaccounts": [
                         {
+                            "enableSecureChannel": True,
                             "fileSystem": "default",
                             "isDefault": True,
                             "key": "storagekey",
@@ -95,6 +96,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/stable/2021-06-01/examples/CreateLinuxHadoopAdlsGen2.json
+# x-ms-original-file: specification/hdinsight/resource-manager/Microsoft.HDInsight/preview/2023-04-15-preview/examples/CreateLinuxHadoopAdlsGen2.json
 if __name__ == "__main__":
     main()

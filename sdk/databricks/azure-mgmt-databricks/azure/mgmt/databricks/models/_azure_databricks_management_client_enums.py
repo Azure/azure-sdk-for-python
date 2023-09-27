@@ -33,13 +33,6 @@ class EncryptionKeySource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MICROSOFT_KEYVAULT = "Microsoft.Keyvault"
 
 
-class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The identity type."""
-
-    NONE = "None"
-    SYSTEM_ASSIGNED = "SystemAssigned"
-
-
 class KeySource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The encryption keySource (provider). Possible values (case-insensitive):  Default,
     Microsoft.Keyvault.
@@ -47,6 +40,17 @@ class KeySource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DEFAULT = "Default"
     MICROSOFT_KEYVAULT = "Microsoft.Keyvault"
+
+
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
+    allowed).
+    """
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
 
 class PeeringProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

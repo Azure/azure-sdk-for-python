@@ -39,6 +39,7 @@ class QueryStringConstants(object):
     SIGNED_KEY_EXPIRY = 'ske'
     SIGNED_KEY_SERVICE = 'sks'
     SIGNED_KEY_VERSION = 'skv'
+    SIGNED_ENCRYPTION_SCOPE = 'ses'
 
     # for ADLS
     SIGNED_AUTHORIZED_OID = 'saoid'
@@ -75,6 +76,7 @@ class QueryStringConstants(object):
             QueryStringConstants.SIGNED_KEY_EXPIRY,
             QueryStringConstants.SIGNED_KEY_SERVICE,
             QueryStringConstants.SIGNED_KEY_VERSION,
+            QueryStringConstants.SIGNED_ENCRYPTION_SCOPE,
             # for ADLS
             QueryStringConstants.SIGNED_AUTHORIZED_OID,
             QueryStringConstants.SIGNED_UNAUTHORIZED_OID,
@@ -111,6 +113,7 @@ class SharedAccessSignature(object):
         Use the returned signature with the sas_token parameter of the service
         or to create a new account object.
 
+        :param Any services: The specified services associated with the shared access signature.
         :param ResourceTypes resource_types:
             Specifies the resource types that are accessible with the account
             SAS. You can combine values to provide access to more than one
@@ -146,6 +149,8 @@ class SharedAccessSignature(object):
         :param str protocol:
             Specifies the protocol permitted for a request made. The default value
             is https,http. See :class:`~azure.storage.common.models.Protocol` for possible values.
+        :returns: The generated SAS token for the account.
+        :rtype: str
         '''
         sas = _SharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)

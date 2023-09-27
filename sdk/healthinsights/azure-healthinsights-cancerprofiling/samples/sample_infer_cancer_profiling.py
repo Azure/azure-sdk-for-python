@@ -40,8 +40,7 @@ class HealthInsightsSamples:
 
         # Construct patient
         # <PatientConstructor>
-        patient_info = models.PatientInfo(sex=models.PatientInfoSex.FEMALE, birth_date=datetime.date(1979, 10, 8))
-        patient1 = models.PatientRecord(id="patient_id", info=patient_info)
+        patient1 = models.PatientRecord(id="patient_id")
         # </PatientConstructor>
 
         # Add document list

@@ -1,5 +1,26 @@
 # Release History
 
+## 2.0.0b4 (2023-05-20)
+
+### Features Added
+
+  - Model ManagedCluster has a new parameter use_custom_vnet
+  - Model ManagedCluster has a new parameter zonal_update_mode
+  - Model NodeType has a new parameter enable_node_public_ip
+  - Model NodeType has a new parameter secure_boot_enabled
+  - Model NodeType has a new parameter security_type
+  - Model NodeType has a new parameter subnet_id
+  - Model NodeType has a new parameter vm_setup_actions
+  - Model NodeType has a new parameter vm_shared_gallery_image_id
+  - Model NodeTypeActionParameters has a new parameter update_type
+  - Model ServiceResourceProperties has a new parameter service_dns_name
+  - Model StatefulServiceProperties has a new parameter service_dns_name
+  - Model StatelessServiceProperties has a new parameter service_dns_name
+
+### Breaking Changes
+
+  - Parameter sku of model ManagedCluster is now required
+
 ## 2.0.0b3 (2022-12-27)
 
 ### Other Changes

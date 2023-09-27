@@ -6,10 +6,20 @@
 # that are used within node constructors. Keep imports and
 # general complexity in this file to a minimum.
 
-from mldesigner import command_component, Output
+from mldesigner import Output, command_component
+
+from azure.ai.ml.constants._common import DefaultOpenEncoding
 
 
 def save_mltable_yaml(path, mltable_paths):
+    """Save MLTable YAML.
+
+    :param path: The path to save the MLTable YAML file.
+    :type path: str
+    :param mltable_paths: List of paths to be included in the MLTable.
+    :type mltable_paths: List[str]
+    :raises ValueError: If the given path points to a file.
+    """
     import os
 
     path = os.path.abspath(path)
@@ -25,15 +35,23 @@ def save_mltable_yaml(path, mltable_paths):
     # To the MLTable's inputs
     mltable_file_content = "\n".join(["paths:"] + [f"- folder : {path}" for path in mltable_paths])
 
-    with open(save_path, "w") as f:
+    with open(save_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
         f.write(mltable_file_content)
 
 
 # TODO 2293610: add support for more types of outputs besides uri_folder and mltable
-# Used by the FL scatter gather node to reduce a dynamic number of silo outputs
-# into a single input for the user-supplied aggregation step.
 @command_component()
 def create_scatter_output_table(aggregated_output: Output(type="mltable"), **kwargs):
+    """Create scatter output table.
+
+    This function is used by the FL scatter gather node to reduce a dynamic number of silo outputs
+    into a single input for the user-supplied aggregation step.
+
+    :param aggregated_output: The aggregated output MLTable.
+    :type aggregated_output: ~mldesigner.Output(type="mltable")
+
+    Keyword arguments represent input names and URI folder paths.
+    """
     # kwargs keys are inputs names (ex: silo_output_silo_1)
     # values are uri_folder paths
     save_mltable_yaml(aggregated_output, kwargs.values())

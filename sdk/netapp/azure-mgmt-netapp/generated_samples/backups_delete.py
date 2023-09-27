@@ -29,16 +29,15 @@ def main():
         subscription_id="D633CC2E-722B-4AE1-B636-BBD9E4C60ED9",
     )
 
-    response = client.backups.begin_delete(
+    client.backups.begin_delete(
         resource_group_name="resourceGroup",
         account_name="accountName",
         pool_name="poolName",
         volume_name="volumeName",
         backup_name="backupName",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2022-09-01/examples/Backups_Delete.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2022-11-01/examples/Backups_Delete.json
 if __name__ == "__main__":
     main()

@@ -1,5 +1,12 @@
 # Release History
 
+## 1.5.0 (2023-06-16)
+
+### Features Added
+
+  - Added operation group AmlFilesystemsOperations
+  - Added operation group StorageCacheManagementClientOperationsMixin
+
 ## 1.4.0 (2023-02-15)
 
 ### Features Added

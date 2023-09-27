@@ -29,14 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.notebook_workspaces.begin_regenerate_auth_token(
+    client.notebook_workspaces.begin_regenerate_auth_token(
         resource_group_name="rg1",
         account_name="ddb1",
         notebook_workspace_name="default",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-04-15/examples/CosmosDBNotebookWorkspaceRegenerateAuthToken.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-03-15-preview/examples/CosmosDBNotebookWorkspaceRegenerateAuthToken.json
 if __name__ == "__main__":
     main()

@@ -68,9 +68,9 @@ class VirtualClusterOperations:
     def list(self, *, scope: Optional[str] = None) -> Iterable[Dict]:
         """List virtual clusters a user has access to.
 
-        :param scope: scope of the listing, "subscription" or None, defaults to None.
+        :keyword scope: scope of the listing, "subscription" or None, defaults to None.
             If None, list virtual clusters across all subscriptions a customer has access to.
-        :type scope: str, optional
+        :paramtype scope: str
         :return: An iterator like instance of dictionaries.
         :rtype: ~azure.core.paging.ItemPaged[Dict]
         """
@@ -85,13 +85,13 @@ class VirtualClusterOperations:
 
         try:
             return get_virtual_clusters_from_subscriptions(self._credentials, subscription_list=subscription_list)
-        except ImportError:
+        except ImportError as e:
             raise UserErrorException(
                 message="Met ImportError when trying to list virtual clusters. "
                 "Please install azure-mgmt-resource to enable this feature; "
                 "and please install azure-mgmt-resource to enable listing virtual clusters "
                 "across all subscriptions a customer has access to."
-            )
+            ) from e
 
     @distributed_trace
     @monitor_with_activity(logger, "VirtualCluster.ListJobs", ActivityType.PUBLICAPI)
@@ -105,7 +105,6 @@ class VirtualClusterOperations:
         """
 
         def make_id(entity_type: str) -> str:
-            """Helper function to make virtual cluster id for search query"""
             return LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT.format(
                 self._subscription_id, self._resource_group_name, AZUREML_RESOURCE_PROVIDER, entity_type, name
             )

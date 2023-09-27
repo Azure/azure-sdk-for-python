@@ -4,7 +4,8 @@
 
 from typing import Any, Dict, Optional, List
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from abc import ABC
+from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     ManagedNetworkSettings as RestManagedNetwork,
     FqdnOutboundRule as RestFqdnOutboundRule,
     PrivateEndpointOutboundRule as RestPrivateEndpointOutboundRule,
@@ -15,12 +16,9 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 )
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory, OutboundRuleType
 
-from azure.ai.ml._utils._experimental import experimental
 
-
-@experimental
-class OutboundRule:
-    """Base class for Outbound Rules, should not be instantiated directly.
+class OutboundRule(ABC):
+    """Base class for Outbound Rules, cannot be instantiated directly.
 
     :param name: Name of the outbound rule.
     :type name: str
@@ -42,7 +40,7 @@ class OutboundRule:
         self.status = kwargs.pop("status", None)
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: Any, name: str) -> "OutboundRule":
+    def _from_rest_object(cls, rest_obj: Any, name: str) -> Optional["OutboundRule"]:
         if isinstance(rest_obj, RestFqdnOutboundRule):
             rule = FqdnDestination(destination=rest_obj.destination, name=name)
             rule.category = rest_obj.category
@@ -69,9 +67,19 @@ class OutboundRule:
             rule.status = rest_obj.status
             return rule
 
+        return None
 
-@experimental
+
 class FqdnDestination(OutboundRule):
+    """Class representing a FQDN outbound rule.
+
+    :param name: Name of the outbound rule.
+    :type name: str
+    :param destination: Fully qualified domain name to which outbound connections are allowed.
+        For example: “*.contoso.com”.
+    :type destination: str
+    """
+
     def __init__(self, *, name: str, destination: str, **kwargs) -> None:
         self.destination = destination
         OutboundRule.__init__(self, type=OutboundRuleType.FQDN, name=name, **kwargs)
@@ -89,8 +97,19 @@ class FqdnDestination(OutboundRule):
         }
 
 
-@experimental
 class PrivateEndpointDestination(OutboundRule):
+    """Class representing a Private Endpoint outbound rule.
+
+    :param name: Name of the outbound rule.
+    :type name: str
+    :param service_resource_id: The resource URI of the root service that supports creation of the private link.
+    :type service_resource_id: str
+    :param subresource_target: The target endpoint of the subresource of the service.
+    :type subresource_target: str
+    :param spark_enabled: Indicates if the private endpoint can be used for Spark jobs, default is “false”.
+    :type spark_enabled: bool
+    """
+
     def __init__(
         self,
         *,
@@ -130,8 +149,20 @@ class PrivateEndpointDestination(OutboundRule):
         }
 
 
-@experimental
 class ServiceTagDestination(OutboundRule):
+    """Class representing a Service Tag outbound rule.
+
+    :param name: Name of the outbound rule.
+    :type name: str
+    :param service_tag: Service Tag of an Azure service, maps to predefined IP addresses for its service endpoints.
+    :type service_tag: str
+    :param protocol: Allowed transport protocol, can be "TCP", "UDP", "ICMP" or "*" for all supported protocols.
+    :type protocol: str
+    :param port_ranges: A comma-separated list of single ports and/or range of ports, such as "80,1024-65535".
+        Traffics should be allowed to these port ranges.
+    :type port_ranges: str
+    """
+
     def __init__(
         self,
         *,
@@ -169,7 +200,6 @@ class ServiceTagDestination(OutboundRule):
         }
 
 
-@experimental
 class ManagedNetwork:
     def __init__(
         self,
@@ -212,18 +242,13 @@ class ManagedNetwork:
         )
 
 
-@experimental
 class ManagedNetworkProvisionStatus:
     """ManagedNetworkProvisionStatus.
 
     :param status: Status for managed network provision.
     :type status: str
     :param spark_ready: Bool value indicating if managed network is spark ready
-    :type spark_ready: str
-    :ivar status: Status for managed network provision.
-    :vartype status: str
-    :ivar spark_ready: Bool value indicating if managed network is spark ready
-    :vartype spark_ready: str
+    :type spark_ready: bool
     """
 
     def __init__(

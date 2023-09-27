@@ -101,6 +101,7 @@ def test_authority(authority):
             with patch.dict("os.environ", {}, clear=True):
                 test_initialization(mock_credential, expect_argument=False)
 
+
 def test_exclude_options():
     def assert_credentials_not_present(chain, *credential_classes):
         actual = {c.__class__ for c in chain.credentials}
@@ -295,6 +296,7 @@ def test_process_timeout():
         _, kwargs = credential.call_args
         assert "process_timeout" in kwargs
         assert kwargs["process_timeout"] == timeout
+
 
 def test_process_timeout():
     """the credential should allow configuring a process timeout for Azure CLI and PowerShell by kwarg"""

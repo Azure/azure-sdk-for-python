@@ -29,7 +29,7 @@ async def sample_abstractive_summarization_async() -> None:
     document = ["This is an example document."]
 
     async with text_analytics_client:
-        poller = await text_analytics_client.begin_abstractive_summary(document)
+        poller = await text_analytics_client.begin_abstract_summary(document)
         abstractive_summary_results = await poller.result()
         async for result in abstractive_summary_results:
             if result.kind == "AbstractiveSummarization":

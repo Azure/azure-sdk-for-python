@@ -33,26 +33,37 @@ def mock_component_operation(
     )
 
 
+@pytest.fixture
+def dummy_component():
+    return CommandComponent(
+        name="random_name", version="1", environment="azureml:AzureML-Minimal:1", command="echo hello"
+    )
+
+
+@pytest.fixture
+def mock_component_from_rest(dummy_component: Component):
+    with patch(
+        "azure.ai.ml.operations._component_operations.Component._from_rest_object",
+        return_value=dummy_component,
+    ) as mock_from_rest:
+        yield mock_from_rest
+
+
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
 class TestComponentOperation:
-    def test_create(self, mock_component_operation: ComponentOperations) -> None:
-        component = CommandComponent(
-            name="random_name", version="1", environment="azureml:AzureML-Minimal:1", command="echo hello"
-        )
-
-        with patch.object(ComponentOperations, "_resolve_arm_id_or_upload_dependencies") as mock_thing, patch(
-            "azure.ai.ml.operations._component_operations.Component._from_rest_object",
-            return_value=CommandComponent(),
-        ):
-            mock_component_operation.create_or_update(component)
+    def test_create(
+        self, mock_component_operation: ComponentOperations, dummy_component: Component, mock_component_from_rest
+    ) -> None:
+        with patch.object(ComponentOperations, "_resolve_arm_id_or_upload_dependencies") as mock_thing:
+            mock_component_operation.create_or_update(dummy_component)
             mock_thing.assert_called_once()
 
         mock_component_operation._version_operation.create_or_update.assert_called_once_with(
-            name=component.name,
+            name=dummy_component.name,
             version="1",
-            body=component._to_rest_object(),
+            body=dummy_component._to_rest_object(),
             resource_group_name=mock_component_operation._operation_scope.resource_group_name,
             workspace_name=mock_component_operation._workspace_name,
         )
@@ -73,21 +84,21 @@ class TestComponentOperation:
             mock_component_operation.create_or_update(component)
             mock_thing.assert_called_once()
 
-    def test_create_autoincrement(self, mock_component_operation: ComponentOperations) -> None:
-        component = CommandComponent(
+    def test_create_autoincrement(
+        self, mock_component_operation: ComponentOperations, mock_component_from_rest
+    ) -> None:
+        dummy_auto_increment_component = CommandComponent(
             name="random_name", version=None, environment="azureml:AzureML-Minimal:1", command="echo hello"
         )
-        assert component._auto_increment_version
-        with patch.object(ComponentOperations, "_resolve_arm_id_or_upload_dependencies") as mock_thing, patch(
-            "azure.ai.ml.operations._component_operations.Component._from_rest_object", return_value=component
-        ):
-            mock_component_operation.create_or_update(component)
+        assert dummy_auto_increment_component._auto_increment_version
+        with patch.object(ComponentOperations, "_resolve_arm_id_or_upload_dependencies") as mock_thing:
+            mock_component_operation.create_or_update(dummy_auto_increment_component)
             mock_thing.assert_called_once()
 
         mock_component_operation._version_operation.create_or_update.assert_called_once_with(
-            name=component.name,
+            name=dummy_auto_increment_component.name,
             version=mock_component_operation._container_operation.get().properties.next_version,
-            body=component._to_rest_object(),
+            body=dummy_auto_increment_component._to_rest_object(),
             resource_group_name=mock_component_operation._operation_scope.resource_group_name,
             workspace_name=mock_component_operation._operation_scope.workspace_name,
         )
@@ -98,24 +109,22 @@ class TestComponentOperation:
         mock_component_operation.list()
         mock_component_operation._container_operation.list.assert_called_once()
 
-    def test_get(self, mock_component_operation: ComponentOperations) -> None:
-        with patch("azure.ai.ml.operations._component_operations.Component") as mock_component_entity:
-            mock_component_operation.get("mock_component", "1")
+    def test_get(self, mock_component_operation: ComponentOperations, mock_component_from_rest) -> None:
+        mock_component_operation.get("mock_component", "1")
 
         mock_component_operation._version_operation.get.assert_called_once()
         create_call_args_str = str(mock_component_operation._version_operation.get.call_args)
         assert "name='mock_component'" in create_call_args_str
         assert "version='1'" in create_call_args_str
-        mock_component_entity._from_rest_object.assert_called_once()
+        mock_component_from_rest.assert_called_once()
 
-    def test_get_default(self, mock_component_operation: ComponentOperations) -> None:
-        with patch("azure.ai.ml.operations._component_operations.Component") as mock_component_entity:
-            mock_component_operation.get("mock_component")
+    def test_get_default(self, mock_component_operation: ComponentOperations, mock_component_from_rest) -> None:
+        mock_component_operation.get("mock_component")
 
         mock_component_operation._version_operation.get.assert_called_once()
         create_call_args_str = str(mock_component_operation._version_operation.get.call_args)
         assert "name='mock_component'" in create_call_args_str
-        mock_component_entity._from_rest_object.assert_called_once()
+        mock_component_from_rest.assert_called_once()
 
     def test_archive_version(self, mock_component_operation: ComponentOperations):
         name = "random_name"

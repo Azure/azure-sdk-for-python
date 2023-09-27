@@ -172,10 +172,10 @@ class KeyVaultBackupResult(object):
 class KeyVaultSetting(object):
     """A Key Vault setting.
 
-    :ivar str name: The name of the account setting.
-    :ivar str value: The value of the account setting.
-    :ivar setting_type: The type specifier of the value.
-    :vartype setting_type: str or KeyVaultSettingType or None
+    :param str name: The name of the account setting.
+    :param str value: The value of the account setting.
+    :param setting_type: The type specifier of the value.
+    :type setting_type: str or KeyVaultSettingType or None
     """
 
     def __init__(

@@ -13,7 +13,7 @@ import warnings
 from enum import Enum
 from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING, cast
 
-from .exceptions import ServiceBusError
+from .exceptions import MessageLockLostError
 from ._base_handler import BaseHandler
 from ._common.message import ServiceBusReceivedMessage
 from ._common.utils import create_authentication
@@ -133,8 +133,12 @@ class ServiceBusReceiver(
      In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
      (if provided) within its request to the service.
     :keyword str client_identifier: A string-based identifier to uniquely identify the client instance.
-      Service Bus will associate it with some error messages for easier correlation of errors.
-      If not specified, a unique id will be generated.
+     Service Bus will associate it with some error messages for easier correlation of errors.
+     If not specified, a unique id will be generated.
+    :keyword float socket_timeout: The time in seconds that the underlying socket on the connection should
+     wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
+     and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
+     a larger than default value may need to be passed in.
     """
 
     def __init__(
@@ -243,11 +247,11 @@ class ServiceBusReceiver(
                 self._message_iter = None
                 raise
 
-    def __next__(self):
+    def __next__(self) -> ServiceBusReceivedMessage:
         # Normally this would wrap the yield of the iter, but for a direct next call we just trace imperitively.
         try:
             self._receive_context.set()
-            message = self._inner_next()
+            message: ServiceBusReceivedMessage = self._inner_next()
             links = get_receive_links(message)
             with receive_trace_context_manager(self, links=links):
                 return message
@@ -460,13 +464,11 @@ class ServiceBusReceiver(
 
         # The following condition check is a hot fix for settling a message received for non-session queue after
         # lock expiration.
-        # uamqp doesn't have the ability to receive disposition result returned from the service after settlement,
-        # so there's no way we could tell whether a disposition succeeds or not and there's no error condition info.
-        # Throwing a general message error type here gives us the evolvability to have more fine-grained exception
-        # subclasses in the future after we add the missing feature support in uamqp.
-        # see issue: https://github.com/Azure/azure-uamqp-c/issues/274
+        # pyamqp doesn't currently (and uamqp doesn't have the ability to) wait to receive disposition result returned
+        # from the service after settlement, so there's no way we could tell whether a disposition succeeds or not and
+        # there's no error condition info. (for uamqp, see issue: https://github.com/Azure/azure-uamqp-c/issues/274)
         if not self._session and message._lock_expired:
-            raise ServiceBusError(
+            raise MessageLockLostError(
                 message="The lock on the message lock has expired.",
                 error=message.auto_renew_error,
             )
@@ -600,6 +602,7 @@ class ServiceBusReceiver(
          until the connection is closed. If specified, and no messages arrive for the
          timeout period, the iterator will stop.
         :type max_wait_time: Optional[float]
+        :return: An iterator of messages.
         :rtype: Iterator[ServiceBusReceivedMessage]
 
         .. admonition:: Example:
@@ -641,7 +644,7 @@ class ServiceBusReceiver(
          If no messages arrive, and no timeout is specified, this call will not return
          until the connection is closed. If specified, an no messages arrive within the
          timeout period, an empty list will be returned.
-
+        :return: A list of messages received. If no messages are available, this will be an empty list.
         :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
@@ -660,7 +663,7 @@ class ServiceBusReceiver(
         if max_message_count is not None and max_message_count <= 0:
             raise ValueError("The max_message_count must be greater than 0")
         start_time = time.time_ns()
-        messages = self._do_retryable_operation(
+        messages: List[ServiceBusReceivedMessage] = self._do_retryable_operation(
             self._receive,
             max_message_count=max_message_count,
             timeout=max_wait_time,
@@ -693,7 +696,8 @@ class ServiceBusReceiver(
          deferred.
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.
-        :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
+        :returns: A list of the requested ~azure.servicebus.ServiceBusReceivedMessage instances.
+        :rtype: list[~azure.servicebus.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
 
@@ -774,8 +778,8 @@ class ServiceBusReceiver(
         :keyword int sequence_number: A message sequence number from which to start browsing messages.
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.
-
-        :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
+        :returns: A list of ~azure.servicebus.ServiceBusReceivedMessage.
+        :rtype: list[~azure.servicebus.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
 

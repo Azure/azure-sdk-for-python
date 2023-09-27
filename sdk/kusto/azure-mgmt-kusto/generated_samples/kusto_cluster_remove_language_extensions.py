@@ -29,14 +29,13 @@ def main():
         subscription_id="12345678-1234-1234-1234-123456789098",
     )
 
-    response = client.clusters.begin_remove_language_extensions(
+    client.clusters.begin_remove_language_extensions(
         resource_group_name="kustorptest",
         cluster_name="kustoCluster",
         language_extensions_to_remove={"value": [{"languageExtensionName": "PYTHON"}, {"languageExtensionName": "R"}]},
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2022-12-29/examples/KustoClusterRemoveLanguageExtensions.json
+# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2023-05-02/examples/KustoClusterRemoveLanguageExtensions.json
 if __name__ == "__main__":
     main()

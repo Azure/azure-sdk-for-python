@@ -36,11 +36,11 @@ With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.rdbms import 
+from azure.mgmt.rdbms.mysql import MySQLManagementClient
 import os
 
 sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = (credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = MySQLManagementClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
 
 ## Examples
@@ -59,6 +59,3 @@ Code samples for this package can be found at:
 If you encounter any bugs or have suggestions, please file an issue in the
 [Issues](https://github.com/Azure/azure-sdk-for-python/issues)
 section of the project. 
-
-
-![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-rdbms%2FREADME.png)

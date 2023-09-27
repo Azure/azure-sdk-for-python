@@ -26,7 +26,7 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class LogsIngestionClientOperationsMixin(GeneratedOps):
-    def upload(  # type: ignore[override] # pylint: disable=arguments-renamed, arguments-differ
+    def upload(
         self,
         rule_id: str,
         stream_name: str,
@@ -64,12 +64,12 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
                     content_encoding = "gzip"
                 logs.seek(0)
 
-            super().upload(rule_id, stream=stream_name, body=logs, content_encoding=content_encoding, **kwargs)
+            super()._upload(rule_id, stream=stream_name, body=logs, content_encoding=content_encoding, **kwargs)
             return
 
         for gzip_data, log_chunk in _create_gzip_requests(cast(List[JSON], logs)):
             try:
-                super().upload(
+                super()._upload(  # type: ignore
                     rule_id, stream=stream_name, body=gzip_data, content_encoding="gzip", **kwargs  # type: ignore
                 )
             except Exception as err:  # pylint: disable=broad-except

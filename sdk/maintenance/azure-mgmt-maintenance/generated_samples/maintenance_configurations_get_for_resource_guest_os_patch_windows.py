@@ -36,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/maintenance/resource-manager/Microsoft.Maintenance/preview/2022-07-01-preview/examples/MaintenanceConfigurations_GetForResource_GuestOSPatchWindows.json
+# x-ms-original-file: specification/maintenance/resource-manager/Microsoft.Maintenance/stable/2023-04-01/examples/MaintenanceConfigurations_GetForResource_GuestOSPatchWindows.json
 if __name__ == "__main__":
     main()

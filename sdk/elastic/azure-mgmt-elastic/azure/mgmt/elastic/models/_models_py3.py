@@ -232,8 +232,6 @@ class ElasticMonitorResource(_serialization.Model):
     :vartype properties: ~azure.mgmt.elastic.models.MonitorProperties
     :ivar identity: Identity properties of the monitor resource.
     :vartype identity: ~azure.mgmt.elastic.models.IdentityProperties
-    :ivar generate_api_key: Flag to determine if User API Key has to be generated and shared.
-    :vartype generate_api_key: bool
     :ivar tags: The tags of the monitor resource.
     :vartype tags: dict[str, str]
     :ivar location: The location of the monitor resource. Required.
@@ -246,7 +244,6 @@ class ElasticMonitorResource(_serialization.Model):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "generate_api_key": {"readonly": True},
         "location": {"required": True},
         "system_data": {"readonly": True},
     }
@@ -258,7 +255,6 @@ class ElasticMonitorResource(_serialization.Model):
         "sku": {"key": "sku", "type": "ResourceSku"},
         "properties": {"key": "properties", "type": "MonitorProperties"},
         "identity": {"key": "identity", "type": "IdentityProperties"},
-        "generate_api_key": {"key": "generateApiKey", "type": "bool"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
@@ -293,7 +289,6 @@ class ElasticMonitorResource(_serialization.Model):
         self.sku = sku
         self.properties = properties
         self.identity = identity
-        self.generate_api_key = None
         self.tags = tags
         self.location = location
         self.system_data = None
@@ -541,6 +536,78 @@ class ElasticTrafficFilterRule(_serialization.Model):
         self.azure_endpoint_guid = azure_endpoint_guid
         self.azure_endpoint_name = azure_endpoint_name
         self.id = id
+
+
+class ElasticVersionListFormat(_serialization.Model):
+    """Elastic Version List Format.
+
+    :ivar properties: Elastic Version Properties.
+    :vartype properties: ~azure.mgmt.elastic.models.ElasticVersionListProperties
+    """
+
+    _attribute_map = {
+        "properties": {"key": "properties", "type": "ElasticVersionListProperties"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.ElasticVersionListProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: Elastic Version Properties.
+        :paramtype properties: ~azure.mgmt.elastic.models.ElasticVersionListProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class ElasticVersionListProperties(_serialization.Model):
+    """Elastic Version Properties.
+
+    :ivar version: Available elastic version of the given region.
+    :vartype version: str
+    """
+
+    _attribute_map = {
+        "version": {"key": "version", "type": "str"},
+    }
+
+    def __init__(self, *, version: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword version: Available elastic version of the given region.
+        :paramtype version: str
+        """
+        super().__init__(**kwargs)
+        self.version = version
+
+
+class ElasticVersionsListResponse(_serialization.Model):
+    """List of elastic versions available in a region.
+
+    :ivar value: Results of a list operation.
+    :vartype value: list[~azure.mgmt.elastic.models.ElasticVersionListFormat]
+    :ivar next_link: Link to the next set of results, if any.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ElasticVersionListFormat]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.ElasticVersionListFormat"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: Results of a list operation.
+        :paramtype value: list[~azure.mgmt.elastic.models.ElasticVersionListFormat]
+        :keyword next_link: Link to the next set of results, if any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class ErrorResponseBody(_serialization.Model):
@@ -799,12 +866,12 @@ class LogRules(_serialization.Model):
 class MarketplaceSaaSInfo(_serialization.Model):
     """Marketplace SAAS Info of the resource.
 
-    :ivar marketplace_subscription: Marketplace Subscription Id.
+    :ivar marketplace_subscription: Marketplace Subscription.
     :vartype marketplace_subscription:
      ~azure.mgmt.elastic.models.MarketplaceSaaSInfoMarketplaceSubscription
-    :ivar marketplace_name: Subscription Details: Marketplace SAAS Name.
+    :ivar marketplace_name: Marketplace Subscription Details: SAAS Name.
     :vartype marketplace_name: str
-    :ivar marketplace_resource_id: Subscription Details: Marketplace Resource URI.
+    :ivar marketplace_resource_id: Marketplace Subscription Details: Resource URI.
     :vartype marketplace_resource_id: str
     """
 
@@ -826,12 +893,12 @@ class MarketplaceSaaSInfo(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword marketplace_subscription: Marketplace Subscription Id.
+        :keyword marketplace_subscription: Marketplace Subscription.
         :paramtype marketplace_subscription:
          ~azure.mgmt.elastic.models.MarketplaceSaaSInfoMarketplaceSubscription
-        :keyword marketplace_name: Subscription Details: Marketplace SAAS Name.
+        :keyword marketplace_name: Marketplace Subscription Details: SAAS Name.
         :paramtype marketplace_name: str
-        :keyword marketplace_resource_id: Subscription Details: Marketplace Resource URI.
+        :keyword marketplace_resource_id: Marketplace Subscription Details: Resource URI.
         :paramtype marketplace_resource_id: str
         """
         super().__init__(**kwargs)
@@ -841,7 +908,7 @@ class MarketplaceSaaSInfo(_serialization.Model):
 
 
 class MarketplaceSaaSInfoMarketplaceSubscription(_serialization.Model):
-    """Marketplace Subscription Id.
+    """Marketplace Subscription.
 
     :ivar id: Marketplace Subscription Id. This is a GUID-formatted string.
     :vartype id: str
@@ -1070,6 +1137,8 @@ class MonitorProperties(_serialization.Model):
     :vartype liftr_resource_category: str or ~azure.mgmt.elastic.models.LiftrResourceCategories
     :ivar liftr_resource_preference: The priority of the resource.
     :vartype liftr_resource_preference: int
+    :ivar generate_api_key: Flag to determine if User API Key has to be generated and shared.
+    :vartype generate_api_key: bool
     """
 
     _validation = {
@@ -1085,6 +1154,7 @@ class MonitorProperties(_serialization.Model):
         "version": {"key": "version", "type": "str"},
         "liftr_resource_category": {"key": "liftrResourceCategory", "type": "str"},
         "liftr_resource_preference": {"key": "liftrResourcePreference", "type": "int"},
+        "generate_api_key": {"key": "generateApiKey", "type": "bool"},
     }
 
     def __init__(
@@ -1095,6 +1165,7 @@ class MonitorProperties(_serialization.Model):
         elastic_properties: Optional["_models.ElasticProperties"] = None,
         user_info: Optional["_models.UserInfo"] = None,
         version: Optional[str] = None,
+        generate_api_key: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1111,6 +1182,8 @@ class MonitorProperties(_serialization.Model):
         :paramtype user_info: ~azure.mgmt.elastic.models.UserInfo
         :keyword version: Version of elastic of the monitor resource.
         :paramtype version: str
+        :keyword generate_api_key: Flag to determine if User API Key has to be generated and shared.
+        :paramtype generate_api_key: bool
         """
         super().__init__(**kwargs)
         self.provisioning_state = provisioning_state
@@ -1120,6 +1193,7 @@ class MonitorProperties(_serialization.Model):
         self.version = version
         self.liftr_resource_category = None
         self.liftr_resource_preference = None
+        self.generate_api_key = generate_api_key
 
 
 class OperationDisplay(_serialization.Model):
@@ -1387,7 +1461,27 @@ class UserApiKeyResponse(_serialization.Model):
     """The User Api Key created for the Organization associated with the User Email Id that was passed
     in the request.
 
-    :ivar api_key: The User Api Key Generated based on ReturnApiKey flag. This is applicable for
+    :ivar properties:
+    :vartype properties: ~azure.mgmt.elastic.models.UserApiKeyResponseProperties
+    """
+
+    _attribute_map = {
+        "properties": {"key": "properties", "type": "UserApiKeyResponseProperties"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.UserApiKeyResponseProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties:
+        :paramtype properties: ~azure.mgmt.elastic.models.UserApiKeyResponseProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class UserApiKeyResponseProperties(_serialization.Model):
+    """UserApiKeyResponseProperties.
+
+    :ivar api_key: The User Api Key Generated based on GenerateApiKey flag. This is applicable for
      non-Portal clients only.
     :vartype api_key: str
     """
@@ -1398,8 +1492,8 @@ class UserApiKeyResponse(_serialization.Model):
 
     def __init__(self, *, api_key: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword api_key: The User Api Key Generated based on ReturnApiKey flag. This is applicable for
-         non-Portal clients only.
+        :keyword api_key: The User Api Key Generated based on GenerateApiKey flag. This is applicable
+         for non-Portal clients only.
         :paramtype api_key: str
         """
         super().__init__(**kwargs)

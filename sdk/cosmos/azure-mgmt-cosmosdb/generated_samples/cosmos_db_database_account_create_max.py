@@ -63,7 +63,9 @@ def main():
                 "databaseAccountOfferType": "Standard",
                 "defaultIdentity": "FirstPartyIdentity",
                 "enableAnalyticalStorage": True,
+                "enableBurstCapacity": True,
                 "enableFreeTier": False,
+                "enableMaterializedViews": False,
                 "ipRules": [{"ipAddressOrRange": "23.43.230.120"}, {"ipAddressOrRange": "110.12.240.0/12"}],
                 "isVirtualNetworkFilterEnabled": True,
                 "keyVaultKeyUri": "https://myKeyVault.vault.azure.net",
@@ -90,6 +92,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-04-15/examples/CosmosDBDatabaseAccountCreateMax.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/preview/2023-03-15-preview/examples/CosmosDBDatabaseAccountCreateMax.json
 if __name__ == "__main__":
     main()

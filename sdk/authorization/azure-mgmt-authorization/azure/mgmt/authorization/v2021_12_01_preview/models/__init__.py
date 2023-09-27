@@ -32,33 +32,12 @@ from ._models_py3 import AccessReviewScheduleDefinitionListResult
 from ._models_py3 import AccessReviewScheduleDefinitionProperties
 from ._models_py3 import AccessReviewScheduleSettings
 from ._models_py3 import AccessReviewScope
-from ._models_py3 import Alert
-from ._models_py3 import AlertConfiguration
-from ._models_py3 import AlertConfigurationListResult
-from ._models_py3 import AlertConfigurationProperties
-from ._models_py3 import AlertDefinition
-from ._models_py3 import AlertDefinitionListResult
-from ._models_py3 import AlertIncident
-from ._models_py3 import AlertIncidentListResult
-from ._models_py3 import AlertIncidentProperties
-from ._models_py3 import AlertListResult
-from ._models_py3 import AlertOperationListResult
-from ._models_py3 import AlertOperationResult
-from ._models_py3 import AzureRolesAssignedOutsidePimAlertConfigurationProperties
-from ._models_py3 import AzureRolesAssignedOutsidePimAlertIncidentProperties
-from ._models_py3 import CloudErrorBody
-from ._models_py3 import DuplicateRoleCreatedAlertConfigurationProperties
-from ._models_py3 import DuplicateRoleCreatedAlertIncidentProperties
 from ._models_py3 import ErrorDefinition
 from ._models_py3 import ErrorDefinitionProperties
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
 from ._models_py3 import RecordAllDecisionsProperties
-from ._models_py3 import TooManyOwnersAssignedToResourceAlertConfigurationProperties
-from ._models_py3 import TooManyOwnersAssignedToResourceAlertIncidentProperties
-from ._models_py3 import TooManyPermanentOwnersAssignedToResourceAlertConfigurationProperties
-from ._models_py3 import TooManyPermanentOwnersAssignedToResourceAlertIncidentProperties
 
 from ._authorization_management_client_enums import AccessRecommendationType
 from ._authorization_management_client_enums import AccessReviewActorIdentityType
@@ -80,7 +59,6 @@ from ._authorization_management_client_enums import DecisionResourceType
 from ._authorization_management_client_enums import DecisionTargetType
 from ._authorization_management_client_enums import DefaultDecisionType
 from ._authorization_management_client_enums import RecordAllDecisionsResult
-from ._authorization_management_client_enums import SeverityLevel
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -112,33 +90,12 @@ __all__ = [
     "AccessReviewScheduleDefinitionProperties",
     "AccessReviewScheduleSettings",
     "AccessReviewScope",
-    "Alert",
-    "AlertConfiguration",
-    "AlertConfigurationListResult",
-    "AlertConfigurationProperties",
-    "AlertDefinition",
-    "AlertDefinitionListResult",
-    "AlertIncident",
-    "AlertIncidentListResult",
-    "AlertIncidentProperties",
-    "AlertListResult",
-    "AlertOperationListResult",
-    "AlertOperationResult",
-    "AzureRolesAssignedOutsidePimAlertConfigurationProperties",
-    "AzureRolesAssignedOutsidePimAlertIncidentProperties",
-    "CloudErrorBody",
-    "DuplicateRoleCreatedAlertConfigurationProperties",
-    "DuplicateRoleCreatedAlertIncidentProperties",
     "ErrorDefinition",
     "ErrorDefinitionProperties",
     "Operation",
     "OperationDisplay",
     "OperationListResult",
     "RecordAllDecisionsProperties",
-    "TooManyOwnersAssignedToResourceAlertConfigurationProperties",
-    "TooManyOwnersAssignedToResourceAlertIncidentProperties",
-    "TooManyPermanentOwnersAssignedToResourceAlertConfigurationProperties",
-    "TooManyPermanentOwnersAssignedToResourceAlertIncidentProperties",
     "AccessRecommendationType",
     "AccessReviewActorIdentityType",
     "AccessReviewApplyResult",
@@ -159,7 +116,6 @@ __all__ = [
     "DecisionTargetType",
     "DefaultDecisionType",
     "RecordAllDecisionsResult",
-    "SeverityLevel",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

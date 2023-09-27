@@ -11,21 +11,18 @@ from azure.core.exceptions import HttpResponseError
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
-from azure.search.documents.indexes.models import(
+from azure.search.documents.indexes.models import (
     SearchIndexerDataSourceConnection,
     SearchIndexerDataContainer,
 )
 from azure.search.documents.indexes import SearchIndexerClient
 
-class TestSearchClientDataSources(AzureRecordedTestCase):
 
+class TestSearchClientDataSources(AzureRecordedTestCase):
     def _create_data_source_connection(self, cs, name):
-        container = SearchIndexerDataContainer(name='searchcontainer')
+        container = SearchIndexerDataContainer(name="searchcontainer")
         data_source_connection = SearchIndexerDataSourceConnection(
-            name=name,
-            type="azureblob",
-            connection_string=cs,
-            container=container
+            name=name, type="azureblob", connection_string=cs, container=container
         )
         return data_source_connection
 
@@ -34,7 +31,7 @@ class TestSearchClientDataSources(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_data_source(self, endpoint, api_key, **kwargs):
         storage_cs = kwargs.get("search_storage_connection_string")
-        client = SearchIndexerClient(endpoint, api_key)
+        client = SearchIndexerClient(endpoint, api_key, retry_backoff_factor=60)
         self._test_create_datasource(client, storage_cs)
         self._test_delete_datasource(client, storage_cs)
         self._test_get_datasource(client, storage_cs)
@@ -98,10 +95,12 @@ class TestSearchClientDataSources(AzureRecordedTestCase):
         client.create_or_update_data_source_connection(data_source_connection)
 
         # prepare data source connection
-        data_source_connection.e_tag = etag # reset to the original data source connection
+        data_source_connection.e_tag = etag  # reset to the original data source connection
         data_source_connection.description = "changed"
         with pytest.raises(HttpResponseError):
-            client.create_or_update_data_source_connection(data_source_connection, match_condition=MatchConditions.IfNotModified)
+            client.create_or_update_data_source_connection(
+                data_source_connection, match_condition=MatchConditions.IfNotModified
+            )
 
     def _test_delete_datasource_if_unchanged(self, client, storage_cs):
         ds_name = "delunch"
@@ -114,7 +113,7 @@ class TestSearchClientDataSources(AzureRecordedTestCase):
         client.create_or_update_data_source_connection(data_source_connection)
 
         # prepare data source connection
-        data_source_connection.e_tag = etag # reset to the original data source connection
+        data_source_connection.e_tag = etag  # reset to the original data source connection
         with pytest.raises(HttpResponseError):
             client.delete_data_source_connection(data_source_connection, match_condition=MatchConditions.IfNotModified)
 
@@ -129,6 +128,8 @@ class TestSearchClientDataSources(AzureRecordedTestCase):
         client.create_or_update_data_source_connection(data_source_connection)
 
         # prepare data source connection
-        data_source_connection.e_tag = etag # reset to the original data source connection
+        data_source_connection.e_tag = etag  # reset to the original data source connection
         with pytest.raises(ValueError):
-            client.delete_data_source_connection(data_source_connection.name, match_condition=MatchConditions.IfNotModified)
+            client.delete_data_source_connection(
+                data_source_connection.name, match_condition=MatchConditions.IfNotModified
+            )

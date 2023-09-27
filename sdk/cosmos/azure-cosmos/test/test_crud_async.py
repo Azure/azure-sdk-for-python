@@ -40,7 +40,6 @@ import azure.cosmos.exceptions as exceptions
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 import azure.cosmos._base as base
 from azure.cosmos.aio import CosmosClient, _retry_utility_async
-from azure.cosmos.diagnostics import RecordDiagnostics
 from azure.cosmos.partition_key import PartitionKey
 import requests
 from urllib3.util.retry import Retry
@@ -198,16 +197,10 @@ class CRUDTests(unittest.TestCase):
         before_create_collections_count = len(collections)
         collection_id = 'test_collection_crud ' + str(uuid.uuid4())
         collection_indexing_policy = {'indexingMode': 'consistent'}
-        created_recorder = RecordDiagnostics()
         created_collection = await created_db.create_container(id=collection_id,
                                                                indexing_policy=collection_indexing_policy,
-                                                               partition_key=PartitionKey(path="/pk", kind="Hash"),
-                                                               response_hook=created_recorder)
+                                                               partition_key=PartitionKey(path="/pk", kind="Hash"))
         self.assertEqual(collection_id, created_collection.id)
-        assert isinstance(created_recorder.headers, Mapping)
-        assert 'Content-Type' in created_recorder.headers
-        assert isinstance(created_recorder.body, Mapping)
-        assert 'id' in created_recorder.body
 
         created_properties = await created_collection.read()
         self.assertEqual('consistent', created_properties['indexingPolicy']['indexingMode'])
@@ -2428,35 +2421,6 @@ class CRUDTests(unittest.TestCase):
         await created_db.delete_container(created_collection1)
         await created_db.delete_container(created_collection2)
 
-    async def test_id_unicode_validation(self):
-        # create database
-        created_db = self.databaseForTest
-
-        # unicode chars in Hindi for Id which translates to: "Hindi is the national language of India"
-        collection_id1 = u'हिन्दी भारत की राष्ट्रीय भाषा है' # cspell:disable-line
-
-        # Special chars for Id
-        collection_id2 = "!@$%^&*()-~`'_[]{}|;:,.<>"
-
-        # verify that collections are created with specified IDs
-        created_collection1 = await created_db.create_container(
-            id=collection_id1,
-            partition_key=PartitionKey(path='/id', kind='Hash')
-        )
-        created_collection2 = await created_db.create_container(
-            id=collection_id2,
-            partition_key=PartitionKey(path='/id', kind='Hash')
-        )
-
-        self.assertEqual(collection_id1, created_collection1.id)
-        self.assertEqual(collection_id2, created_collection2.id)
-
-        created_collection1_properties = await created_collection1.read()
-        created_collection2_properties = await created_collection2.read()
-
-        await created_db.delete_container(created_collection1_properties)
-        await created_db.delete_container(created_collection2_properties)
-
     async def test_get_resource_with_dictionary_and_object(self):
         created_db = self.databaseForTest
 
@@ -2677,6 +2641,51 @@ class CRUDTests(unittest.TestCase):
             await created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
         except exceptions.CosmosHttpResponseError as e:
             self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
+
+    async def test_conditional_patching(self):
+        created_container = await self.databaseForTest.create_container_if_not_exists(id="patch_filter_container", partition_key=PartitionKey(path="/pk"))
+        #Create item to patch
+        item = {
+            "id": "conditional_patch_item",
+            "pk": "patch_item_pk",
+            "prop": "prop1",
+            "address": {
+                "city": "Redmond"
+            },
+            "company": "Microsoft",
+            "number": 3}
+        await created_container.create_item(item)
+
+        #Define patch operations
+        operations = [
+            {"op": "add", "path": "/color", "value": "yellow"},
+            {"op": "remove", "path": "/prop"},
+            {"op": "replace", "path": "/company", "value": "CosmosDB"},
+            {"op": "set", "path": "/address/new_city", "value": "Atlanta"},
+            {"op": "incr", "path": "/number", "value": 7},
+            {"op": "move", "from": "/color", "path": "/favorite_color"}
+        ]
+
+        #Run patch operations with wrong filter
+        num_false = item.get("number") + 1
+        filter_predicate = "from root where root.number = " + str(num_false)
+        try:
+            await created_container.patch_item(item="conditional_patch_item", partition_key="patch_item_pk",
+                                         patch_operations=operations, filter_predicate=filter_predicate)
+        except exceptions.CosmosHttpResponseError as e:
+            self.assertEqual(e.status_code, StatusCodes.PRECONDITION_FAILED)
+
+        #Run patch operations with correct filter
+        filter_predicate = "from root where root.number = " + str(item.get("number"))
+        patched_item = await created_container.patch_item(item="conditional_patch_item", partition_key="patch_item_pk",
+                                                    patch_operations=operations, filter_predicate=filter_predicate)
+        #Verify results from patch operations
+        self.assertTrue(patched_item.get("color") is None)
+        self.assertTrue(patched_item.get("prop") is None)
+        self.assertEqual(patched_item.get("company"), "CosmosDB")
+        self.assertEqual(patched_item.get("address").get("new_city"), "Atlanta")
+        self.assertEqual(patched_item.get("number"), 10)
+        self.assertEqual(patched_item.get("favorite_color"), "yellow")
 
     # Temporarily commenting analytical storage tests until emulator support comes.
     # def test_create_container_with_analytical_store_off(self):

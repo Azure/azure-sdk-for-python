@@ -10,7 +10,9 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any,
     TypeVar, TYPE_CHECKING
 )
+from azure.core.tracing.decorator import distributed_trace
 from azure.storage.blob import BlobLeaseClient
+
 
 
 if TYPE_CHECKING:
@@ -66,6 +68,7 @@ class DataLakeLeaseClient(object):  # pylint: disable=client-accepts-api-version
     def __exit__(self, *args):
         self.release()
 
+    @distributed_trace
     def acquire(self, lease_duration=-1, **kwargs):
         # type: (int, Optional[int], **Any) -> None
         """Requests a new lease.
@@ -106,6 +109,7 @@ class DataLakeLeaseClient(object):  # pylint: disable=client-accepts-api-version
         self._blob_lease_client.acquire(lease_duration=lease_duration, **kwargs)
         self._update_lease_client_attributes()
 
+    @distributed_trace
     def renew(self, **kwargs):
         # type: (Any) -> None
         """Renews the lease.
@@ -144,6 +148,7 @@ class DataLakeLeaseClient(object):  # pylint: disable=client-accepts-api-version
         self._blob_lease_client.renew(**kwargs)
         self._update_lease_client_attributes()
 
+    @distributed_trace
     def release(self, **kwargs):
         # type: (Any) -> None
         """Release the lease.
@@ -180,6 +185,7 @@ class DataLakeLeaseClient(object):  # pylint: disable=client-accepts-api-version
         self._blob_lease_client.release(**kwargs)
         self._update_lease_client_attributes()
 
+    @distributed_trace
     def change(self, proposed_lease_id, **kwargs):
         # type: (str, Any) -> None
         """Change the lease ID of an active lease.
@@ -215,6 +221,7 @@ class DataLakeLeaseClient(object):  # pylint: disable=client-accepts-api-version
         self._blob_lease_client.change(proposed_lease_id=proposed_lease_id, **kwargs)
         self._update_lease_client_attributes()
 
+    @distributed_trace
     def break_lease(self, lease_break_period=None, **kwargs):
         # type: (Optional[int], Any) -> int
         """Break the lease, if the file system or file has an active lease.

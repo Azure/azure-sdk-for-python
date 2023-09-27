@@ -3,6 +3,6 @@ package_name = "azure-mgmt-storagecache"
 package_nspkg = "azure-mgmt-nspkg"
 package_pprint_name = "Storage Cache Management"
 package_doc_id = ""
-is_stable = false
+is_stable = true
 is_arm = true
 title = "StorageCacheManagementClient"

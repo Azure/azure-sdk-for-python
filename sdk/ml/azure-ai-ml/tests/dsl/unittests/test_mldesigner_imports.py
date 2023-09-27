@@ -1,5 +1,5 @@
 import pytest
-from azure.ai.ml import Input
+from azure.ai.ml import Input, load_component
 from azure.ai.ml.entities import (
     Component,
     CommandComponent,
@@ -34,15 +34,23 @@ class TestMldesignerImports:
         assert hasattr(PipelineComponent, "_to_dict")
         assert hasattr(PipelineComponent, "_source_path")
         assert hasattr(PipelineComponent, "jobs")
-        assert hasattr(InternalComponent, "_to_dict")
-        assert hasattr(InternalComponent, "_source_path")
-        assert hasattr(InternalComponent, "_additional_includes")
-        assert hasattr(InternalAdditionalIncludes, "with_includes")
-        assert hasattr(InternalAdditionalIncludes, "code_path")
-        assert hasattr(InternalAdditionalIncludes, "includes")
         assert hasattr(ValidationResult, "passed")
         assert hasattr(ValidationResult, "error_messages")
         assert hasattr(ParallelFor, "_to_rest_items")
+
+    @pytest.mark.usefixtures("enable_internal_components")
+    def test_additional_includes_of_internal_component(self):
+        yaml_path = (
+            "./tests/test_configs/internal/component_with_additional_includes/helloworld_additional_includes.yml"
+        )
+        internal_component = load_component(yaml_path)
+        assert hasattr(internal_component, "_to_dict")
+        assert hasattr(internal_component, "_source_path")
+        assert hasattr(internal_component, "_additional_includes")
+        obj = internal_component._additional_includes
+        assert hasattr(obj, "with_includes")
+        assert hasattr(obj, "code_path")
+        assert hasattr(obj, "includes")
 
     def test_necessary_attributes_for_input(self):
         input_obj = Input()
