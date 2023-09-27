@@ -1,5 +1,19 @@
 # Release History
 
+## 30.2.0 (2023-09-15)
+
+### Features Added
+
+  - Model VirtualMachineNetworkInterfaceConfiguration has a new parameter auxiliary_mode
+  - Model VirtualMachineNetworkInterfaceConfiguration has a new parameter auxiliary_sku
+  - Model VirtualMachinePublicIPAddressDnsSettingsConfiguration has a new parameter domain_name_label_scope
+  - Model VirtualMachineScaleSetNetworkConfiguration has a new parameter auxiliary_mode
+  - Model VirtualMachineScaleSetNetworkConfiguration has a new parameter auxiliary_sku
+  - Model VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings has a new parameter domain_name_label_scope
+  - Model VirtualMachineScaleSetUpdateNetworkConfiguration has a new parameter auxiliary_mode
+  - Model VirtualMachineScaleSetUpdateNetworkConfiguration has a new parameter auxiliary_sku
+  - Model VirtualMachineScaleSetVM has a new parameter time_created
+
 ## 30.1.0 (2023-07-21)
 
 ### Features Added

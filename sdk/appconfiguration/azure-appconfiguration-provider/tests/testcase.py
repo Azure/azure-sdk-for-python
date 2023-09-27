@@ -31,6 +31,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             selects=selects,
             refresh_on=refresh_on,
             refresh_interval=refresh_interval,
+            user_agent="SDK/Integration",
         )
 
     def create_client(
@@ -50,6 +51,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
             selects=selects,
             refresh_on=refresh_on,
             refresh_interval=refresh_interval,
+            user_agent="SDK/Integration",
         )
 
 

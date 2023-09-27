@@ -129,6 +129,17 @@ async def test_not_logged_in():
                 await credential.get_token("scope")
 
 
+async def test_aadsts_error():
+    """When the CLI isn't logged in, the credential should raise CredentialUnavailableError"""
+
+    stderr = "ERROR: AADSTS70043: The refresh token has expired, Please run 'az login' to setup account."
+    with mock.patch("shutil.which", return_value="az"):
+        with mock.patch(SUBPROCESS_EXEC, mock_exec("", stderr, return_code=1)):
+            with pytest.raises(ClientAuthenticationError, match=stderr):
+                credential = AzureCliCredential()
+                await credential.get_token("scope")
+
+
 async def test_unexpected_error():
     """When the CLI returns an unexpected error, the credential should raise an error containing the CLI's output"""
 

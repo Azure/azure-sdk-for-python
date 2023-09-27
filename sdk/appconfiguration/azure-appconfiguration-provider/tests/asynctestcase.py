@@ -22,12 +22,21 @@ class AppConfigTestCase(AzureRecordedTestCase):
         trim_prefixes=[],
         selects={SettingSelector(key_filter="*", label_filter="\0")},
         keyvault_secret_url=None,
+        refresh_on=None,
+        refresh_interval=30,
     ):
         cred = self.get_credential(AzureAppConfigurationClient, is_async=True)
+
         client = AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
         await setup_configs(client, keyvault_secret_url)
         return await load(
-            credential=cred, endpoint=appconfiguration_endpoint_string, trim_prefixes=trim_prefixes, selects=selects
+            credential=cred,
+            endpoint=appconfiguration_endpoint_string,
+            trim_prefixes=trim_prefixes,
+            selects=selects,
+            refresh_on=refresh_on,
+            refresh_interval=refresh_interval,
+            user_agent="SDK/Integration",
         )
 
     async def create_client(
@@ -36,11 +45,18 @@ class AppConfigTestCase(AzureRecordedTestCase):
         trim_prefixes=[],
         selects={SettingSelector(key_filter="*", label_filter="\0")},
         keyvault_secret_url=None,
+        refresh_on=None,
+        refresh_interval=30,
     ):
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
         await setup_configs(client, keyvault_secret_url)
         return await load(
-            connection_string=appconfiguration_connection_string, trim_prefixes=trim_prefixes, selects=selects
+            connection_string=appconfiguration_connection_string,
+            trim_prefixes=trim_prefixes,
+            selects=selects,
+            refresh_on=refresh_on,
+            refresh_interval=refresh_interval,
+            user_agent="SDK/Integration",
         )
 
 

@@ -1,6 +1,31 @@
 # Release History
 
-## 1.0.0b16 (Unreleased)
+## 1.0.1 (Unreleased)
+
+### Features Added
+
+- Add ability to specify which logger to export telemetry for via `logger_name` configuration
+    ([#32192](https://github.com/Azure/azure-sdk-for-python/pull/32192))
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0 (2023-09-12)
+
+### Features Added
+
+- Add Azure resource detectors
+    ([#32087](https://github.com/Azure/azure-sdk-for-python/pull/32087))
+
+### Other Changes
+
+- The `autoinstrumentation', 'diagnostics' and 'util' subnamespaces have been made internal.
+    ([#31931](https://github.com/Azure/azure-sdk-for-python/pull/31931))
+
+## 1.0.0b16 (2023-08-28)
 
 ### Features Added
 
@@ -12,12 +37,8 @@
     ([#31744](https://github.com/Azure/azure-sdk-for-python/pull/31740))
 - Add preview warning for Autoinstrumentation entry points
     ([#31767](https://github.com/Azure/azure-sdk-for-python/pull/31767))
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Bandit and pylint
+    ([#31881](https://github.com/Azure/azure-sdk-for-python/pull/31881))
 
 ## 1.0.0b15 (2023-07-17)
 

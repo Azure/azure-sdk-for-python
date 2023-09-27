@@ -28,6 +28,7 @@ from ._monitoring import (
     MonitorModelType,
     MonitorFeatureType,
     MonitorDatasetContext,
+    MonitorTargetTasks,
 )
 
 TabularTrainingMode.__module__ = __name__
@@ -57,5 +58,6 @@ __all__ = [
     "MonitorModelType",
     "MonitorFeatureType",
     "MonitorDatasetContext",
+    "MonitorTargetTasks",
     "IPProtectionLevel",
 ]

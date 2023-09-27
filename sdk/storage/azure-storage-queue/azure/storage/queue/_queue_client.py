@@ -316,25 +316,22 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def set_queue_metadata(
-        self, metadata=None,  # type: Optional[Dict[str, Any]]
-        **kwargs  # type: Any
-     ):
-        # type: (...) -> Dict[str, Any]
+            self, metadata: Optional[Dict[str, Any]] = None,
+            **kwargs: Any
+        ) -> Dict[str, Any]:
         """Sets user-defined metadata on the specified queue.
 
         Metadata is associated with the queue as name-value pairs.
 
-        :param metadata:
+        :param Optional[Dict[str, Any]] metadata:
             A dict containing name-value pairs to associate with the
             queue as metadata.
-        :type metadata: dict(str, str)
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
             #other-client--per-operation-configuration>`_.
-
         :return: A dictionary of response headers.
         :rtype: Dict[str, Any]
 

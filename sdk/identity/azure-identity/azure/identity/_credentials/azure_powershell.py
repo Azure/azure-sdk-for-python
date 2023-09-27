@@ -158,6 +158,7 @@ def start_process(args: List[str]) -> "subprocess.Popen":
         cwd=working_directory,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
+        stdin=subprocess.DEVNULL,
         universal_newlines=True,
     )
     return proc

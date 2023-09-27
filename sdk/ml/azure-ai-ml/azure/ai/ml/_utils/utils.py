@@ -20,7 +20,7 @@ from contextlib import contextmanager, nullcontext
 from datetime import timedelta
 from functools import singledispatch, wraps
 from os import PathLike
-from pathlib import Path, PosixPath, PureWindowsPath
+from pathlib import Path, PureWindowsPath
 from typing import IO, Any, AnyStr, Callable, Dict, Iterable, List, Optional, Tuple, Union
 from urllib.parse import urlparse
 from uuid import UUID
@@ -28,7 +28,6 @@ from uuid import UUID
 import isodate
 import pydash
 import yaml
-from azure.core.pipeline.policies import RetryPolicy
 
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType, ManagedServiceIdentity
 from azure.ai.ml._scope_dependent_operations import OperationScope
@@ -38,9 +37,12 @@ from azure.ai.ml.constants._common import (
     AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION,
     AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR,
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
+    AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX,
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
+    CommonYamlFields,
     DefaultOpenEncoding,
 )
+from azure.core.pipeline.policies import RetryPolicy
 
 module_logger = logging.getLogger(__name__)
 
@@ -74,10 +76,28 @@ def _snake_to_pascal_convert(text: str) -> str:
 
 
 def snake_to_pascal(text: Optional[str]) -> str:
+    """Convert snake name to pascal.
+
+    :param text: String to convert
+    :type text: Optional[str]
+    :return:
+        * None if text is None
+        * Converted text from snake_case to PascalCase
+    :rtype: Optional[str]
+    """
     return _csv_parser(text, _snake_to_pascal_convert)
 
 
 def snake_to_kebab(text: Optional[str]) -> Optional[str]:
+    """Convert snake name to kebab.
+
+    :param text: String to convert
+    :type text: Optional[str]
+    :return:
+        * None if text is None
+        * Converted text from snake_case to kebab-case
+    :rtype: Optional[str]
+    """
     if text:
         return re.sub("_", "-", text)
     return None
@@ -91,6 +111,15 @@ def _camel_to_snake_convert(text: str) -> str:
 
 
 def camel_to_snake(text: str) -> Optional[str]:
+    """Convert camel name to snake.
+
+     :param text: String to convert
+     :type text: str
+     :return:
+        * None if text is None
+        * Converted text from camelCase to snake_case
+    :rtype: Optional[str]
+    """
     return _csv_parser(text, _camel_to_snake_convert)
 
 
@@ -117,6 +146,13 @@ def _snake_to_camel(name):
 
 
 def float_to_str(f):
+    """Convert a float to a string without scientific notation.
+
+    :param f: Float to convert
+    :type f: float
+    :return: String representation of the float
+    :rtype: str
+    """
     with decimal.localcontext() as ctx:
         ctx.prec = 20  # Support up to 20 significant figures.
         float_as_dec = ctx.create_decimal(repr(f))
@@ -413,16 +449,41 @@ def dump_yaml_to_file(
 
 
 def dict_eq(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> bool:
+    """Compare two dictionaries.
+
+    :param dict1: The first dictionary
+    :type dict1: Dict[str, Any]
+    :param dict2: The second dictionary
+    :type dict2: Dict[str, Any]
+    :return: True if the two dictionaries are equal, False otherwise
+    :rtype: bool
+    """
     if not dict1 and not dict2:
         return True
     return dict1 == dict2
 
 
 def xor(a: Any, b: Any) -> bool:
+    """XOR two values.
+
+    :param a: The first value
+    :type a: Any
+    :param b: The second value
+    :type b: Any
+    :return: False if the two values are both True or both False, True otherwise
+    :rtype: bool
+    """
     return bool(a) != bool(b)
 
 
 def is_url(value: Union[PathLike, str]) -> bool:
+    """Check if a string is a valid URL.
+
+    :param value: The string to check
+    :type value: Union[PathLike, str]
+    :return: True if the string is a valid URL, False otherwise
+    :rtype: bool
+    """
     try:
         result = urlparse(str(value))
         return all([result.scheme, result.netloc])
@@ -432,6 +493,15 @@ def is_url(value: Union[PathLike, str]) -> bool:
 
 # Resolve an URL to long form if it is an azureml short from datastore URL, otherwise return the same value
 def resolve_short_datastore_url(value: Union[PathLike, str], workspace: OperationScope) -> str:
+    """Resolve an URL to long form if it is an azureml short from datastore URL, otherwise return the same value.
+
+    :param value: The URL to resolve
+    :type value: Union[PathLike, str]
+    :param workspace: The workspace
+    :type workspace: OperationScope
+    :return: The resolved URL
+    :rtype: str
+    """
     from azure.ai.ml.exceptions import ValidationException
 
     # These imports can't be placed in at top file level because it will cause a circular import in
@@ -459,6 +529,13 @@ def resolve_short_datastore_url(value: Union[PathLike, str], workspace: Operatio
 
 
 def is_mlflow_uri(value: Union[PathLike, str]) -> bool:
+    """Check if a string is a valid mlflow uri.
+
+    :param value: The string to check
+    :type value: Union[PathLike, str]
+    :return: True if the string is a valid mlflow uri, False otherwise
+    :rtype: bool
+    """
     try:
         return urlparse(str(value)).scheme == "runs"
     except ValueError:
@@ -466,6 +543,16 @@ def is_mlflow_uri(value: Union[PathLike, str]) -> bool:
 
 
 def validate_ml_flow_folder(path: str, model_type: string) -> None:
+    """Validate that the path is a valid ml flow folder.
+
+    :param path: The path to validate
+    :type path: str
+    :param model_type: The model type
+    :type model_type: str
+    :return: No return value
+    :rtype: None
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the path is not a valid ml flow folder.
+    """
     from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
 
     # These imports can't be placed in at top file level because it will cause a circular import in
@@ -487,6 +574,13 @@ def validate_ml_flow_folder(path: str, model_type: string) -> None:
 
 # modified from: https://stackoverflow.com/a/33245493/8093897
 def is_valid_uuid(test_uuid: str) -> bool:
+    """Check if a string is a valid UUID.
+
+    :param test_uuid: The string to check
+    :type test_uuid: str
+    :return: True if the string is a valid UUID, False otherwise
+    :rtype: bool
+    """
     try:
         uuid_obj = UUID(test_uuid, version=4)
     except ValueError:
@@ -496,6 +590,13 @@ def is_valid_uuid(test_uuid: str) -> bool:
 
 @singledispatch
 def from_iso_duration_format(duration: Optional[Any] = None) -> int:  # pylint: disable=unused-argument
+    """Convert ISO duration format to seconds.
+
+    :param duration: The duration to convert
+    :type duration: Optional[Any]
+    :return: The converted duration
+    :rtype: int
+    """
     return None
 
 
@@ -510,26 +611,68 @@ def _(duration: timedelta) -> int:
 
 
 def to_iso_duration_format_mins(time_in_mins: Optional[Union[int, float]]) -> str:
+    """Convert minutes to ISO duration format.
+
+    :param time_in_mins: The time in minutes to convert
+    :type time_in_mins: Optional[Union[int, float]]
+    :return: The converted time in ISO duration format
+    :rtype: str
+    """
     return isodate.duration_isoformat(timedelta(minutes=time_in_mins)) if time_in_mins else None
 
 
 def from_iso_duration_format_mins(duration: Optional[str]) -> int:
+    """Convert ISO duration format to minutes.
+
+    :param duration: The duration to convert
+    :type duration: Optional[str]
+    :return: The converted duration
+    :rtype: int
+    """
     return int(from_iso_duration_format(duration) / 60) if duration else None
 
 
 def to_iso_duration_format(time_in_seconds: Optional[Union[int, float]]) -> str:
+    """Convert seconds to ISO duration format.
+
+    :param time_in_seconds: The time in seconds to convert
+    :type time_in_seconds: Optional[Union[int, float]]
+    :return: The converted time in ISO duration format
+    :rtype: str
+    """
     return isodate.duration_isoformat(timedelta(seconds=time_in_seconds)) if time_in_seconds else None
 
 
 def to_iso_duration_format_ms(time_in_ms: Optional[Union[int, float]]) -> str:
+    """Convert milliseconds to ISO duration format.
+
+    :param time_in_ms: The time in milliseconds to convert
+    :type time_in_ms: Optional[Union[int, float]]
+    :return: The converted time in ISO duration format
+    :rtype: str
+    """
     return isodate.duration_isoformat(timedelta(milliseconds=time_in_ms)) if time_in_ms else None
 
 
 def from_iso_duration_format_ms(duration: Optional[str]) -> int:
+    """Convert ISO duration format to milliseconds.
+
+    :param duration: The duration to convert
+    :type duration: Optional[str]
+    :return: The converted duration
+    :rtype: int
+    """
     return from_iso_duration_format(duration) * 1000 if duration else None
 
 
 def to_iso_duration_format_days(time_in_days: Optional[int]) -> str:
+    """Convert days to ISO duration format.
+
+    :param time_in_days: The time in days to convert
+    :type time_in_days: Optional[int]
+    :return: The converted time in ISO duration format
+    :rtype: str
+    """
     return isodate.duration_isoformat(timedelta(days=time_in_days)) if time_in_days else None
 
 
@@ -583,6 +726,15 @@ def _get_mfe_base_url_from_batch_endpoint(endpoint: "BatchEndpoint") -> str:
 # Allows to use a modified client with a provided url
 @contextmanager
 def modified_operation_client(operation_to_modify, url_to_use):
+    """Modify the operation client to use a different url.
+
+    :param operation_to_modify: The operation to modify
+    :type operation_to_modify: Any
+    :param url_to_use: The url to use
+    :type url_to_use: str
+    :return: The modified operation
+    :rtype: Any
+    """
     original_api_base_url = None
     try:
         # Modify the operation
@@ -597,6 +749,13 @@ def modified_operation_client(operation_to_modify, url_to_use):
 
 
 def from_iso_duration_format_min_sec(duration: Optional[str]) -> str:
+    """Convert ISO duration format to min:sec format.
+
+    :param duration: The duration to convert
+    :type duration: Optional[str]
+    :return: The converted duration
+    :rtype: str
+    """
     return duration.split(".")[0].replace("PT", "").replace("M", "m ") + "s"
 
 
@@ -623,6 +782,13 @@ def hash_dict(items: Dict[str, Any], keys_to_omit: Optional[Iterable[str]] = Non
 def convert_identity_dict(
     identity: Optional[ManagedServiceIdentity] = None,
 ) -> ManagedServiceIdentity:
+    """Convert identity to the right format.
+
+    :param identity: The identity to convert
+    :type identity: Optional[ManagedServiceIdentity]
+    :return: The converted identity
+    :rtype: ManagedServiceIdentity
+    """
     if identity:
         if identity.type.lower() in ("system_assigned", "none"):
             identity = ManagedServiceIdentity(type="SystemAssigned")
@@ -641,14 +807,36 @@ def convert_identity_dict(
 
 
 def strip_double_curly(io_binding_val: str) -> str:
+    """Strip double curly brackets from a string.
+
+    :param io_binding_val: The string to strip
+    :type io_binding_val: str
+    :return: The string with double curly brackets stripped
+    :rtype: str
+    """
     return io_binding_val.replace("${{", "").replace("}}", "")
 
 
 def append_double_curly(io_binding_val: str) -> str:
+    """Append double curly brackets to a string.
+
+    :param io_binding_val: The string to append to
+    :type io_binding_val: str
+    :return: The string with double curly brackets appended
+    :rtype: str
+    """
     return f"${{{{{io_binding_val}}}}}"
 
 
-def map_single_brackets_and_warn(command: str):
+def map_single_brackets_and_warn(command: str) -> str:
+    """Map single brackets to double brackets and warn if found.
+
+    :param command: The command to map
+    :type command: str
+    :return: The mapped command
+    :rtype: str
+    """
+
     def _check_for_parameter(param_prefix: str, command_string: str) -> Tuple[bool, str]:
         template_prefix = r"(?<!\{)\{"
         template_suffix = r"\.([^}]*)\}(?!\})"
@@ -683,7 +871,19 @@ def transform_dict_keys(data: Dict[str, Any], casing_transform: Callable[[str], 
     }
 
 
-def merge_dict(origin, delta, dep=0):
+def merge_dict(origin, delta, dep=0) -> dict:
+    """Merge two dicts recursively.
+    Note that the function will return a copy of the origin dict if the depth of the recursion is 0.
+
+    :param origin: The original dictionary
+    :type origin: dict
+    :param delta: The delta dictionary
+    :type delta: dict
+    :param dep: The depth of the recursion
+    :type dep: int
+    :return: The merged dictionary
+    :rtype: dict
+    """
     result = copy.deepcopy(origin) if dep == 0 else origin
     for key, val in delta.items():
         origin_val = origin.get(key)
@@ -701,7 +901,23 @@ def retry(
     logger: Any,
     max_attempts: int = 1,
     delay_multiplier: int = 0.25,
-):
+) -> Callable:
+    """Retry a function if it fails.
+
+    :param exceptions: Exceptions to retry on.
+    :type exceptions: Union[Tuple[Exception], Exception]
+    :param failure_msg: Message to log on failure.
+    :type failure_msg: str
+    :param logger: Logger to use.
+    :type logger: Any
+    :param max_attempts: Maximum number of attempts.
+    :type max_attempts: int
+    :param delay_multiplier: Multiplier for delay between attempts.
+    :type delay_multiplier: int
+    :return: Decorated function.
+    :rtype: Callable
+    """
+
     def retry_decorator(f):
         @wraps(f)
         def func_with_retries(*args, **kwargs):
@@ -726,6 +942,15 @@ def retry(
 
 
 def get_list_view_type(include_archived: bool, archived_only: bool) -> ListViewType:
+    """Get the list view type based on the include_archived and archived_only flags.
+
+    :param include_archived: Whether to include archived items.
+    :type include_archived: bool
+    :param archived_only: Whether to only include archived items.
+    :type archived_only: bool
+    :return: The list view type.
+    :rtype: ListViewType
+    """
     if include_archived and archived_only:
         raise Exception("Cannot provide both archived-only and include-archived.")
     if include_archived:
@@ -782,32 +1007,95 @@ def get_all_data_binding_expressions(
 
 
 def is_private_preview_enabled():
+    """Check if private preview features are enabled.
+
+    :return: True if private preview features are enabled, False otherwise.
+    :rtype: bool
+    """
     return os.getenv(AZUREML_PRIVATE_FEATURES_ENV_VAR) in ["True", "true", True]
 
 
 def is_on_disk_cache_enabled():
+    """Check if on-disk cache for component registrations in pipeline submission is enabled.
+
+    :return: True if on-disk cache is enabled, False otherwise.
+    :rtype: bool
+    """
     return os.getenv(AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR) not in ["True", "true", True]
 
 
 def is_concurrent_component_registration_enabled():  # pylint: disable=name-too-long
+    """Check if concurrent component registrations in pipeline submission is enabled.
+
+    :return: True if concurrent component registration is enabled, False otherwise.
+    :rtype: bool
+    """
     return os.getenv(AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION) not in ["True", "true", True]
 
 
-def is_internal_components_enabled():
+def _is_internal_components_enabled():
     return os.getenv(AZUREML_INTERNAL_COMPONENTS_ENV_VAR) in ["True", "true", True]
 
 
-def try_enable_internal_components(*, force=False):
+def try_enable_internal_components(*, force=False) -> bool:
     """Try to enable internal components for the current process. This is the only function outside _internal that
     references _internal.
 
     :keyword force: Force enable internal components even if enabled before.
-    :paramtype force: bool
+    :type force: bool
+    :return: True if internal components are enabled, False otherwise.
+    :rtype: bool
     """
-    if is_internal_components_enabled():
+    if _is_internal_components_enabled():
         from azure.ai.ml._internal import enable_internal_components_in_pipeline
 
         enable_internal_components_in_pipeline(force=force)
+
+        return True
+    return False
+
+
+def is_internal_component_data(data: Dict[str, Any], *, raise_if_not_enabled: bool = False) -> bool:
+    """Check if the data is an internal component data by checking schema url prefix.
+
+    :param data: The data to check.
+    :type data: Dict[str, Any]
+    :keyword raise_if_not_enabled: Raise exception if the data is an internal component data but
+        internal components is not enabled.
+    :type raise_if_not_enabled: bool
+    :return: True if the data is an internal component data, False otherwise.
+    :rtype: bool
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the data is an internal component data but
+        internal components is not enabled.
+    """
+    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+
+    # These imports can't be placed in at top file level because it will cause a circular import in
+    # exceptions.py via _get_mfe_url_override
+
+    schema = data.get(CommonYamlFields.SCHEMA, None)
+
+    if schema is None or not isinstance(schema, str):
+        return False
+
+    if not schema.startswith(AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX):
+        return False
+
+    if not _is_internal_components_enabled() and raise_if_not_enabled:
+        no_personal_data_message = (
+            f"Internal components is a private feature in v2, please set environment variable "
+            f"{AZUREML_INTERNAL_COMPONENTS_ENV_VAR} to true to use it."
+        )
+        msg = f"Detected schema url {schema}. {no_personal_data_message}"
+        raise ValidationException(
+            message=msg,
+            target=ErrorTarget.COMPONENT,
+            error_type=ValidationErrorType.INVALID_VALUE,
+            no_personal_data_message=no_personal_data_message,
+            error_category=ErrorCategory.USER_ERROR,
+        )
+
+    return True
 
 
 def is_valid_node_name(name: str) -> bool:
@@ -882,7 +1170,14 @@ def parse_args_description_from_docstring(docstring: str) -> Dict[str, str]:
     return args
 
 
-def convert_windows_path_to_unix(path: Union[str, PathLike]) -> PosixPath:
+def convert_windows_path_to_unix(path: Union[str, PathLike]) -> str:
+    """Convert a Windows path to a Unix path.
+
+    :param path: A Windows path
+    :type path: Union[str, os.PathLike]
+    :return: A Unix path
+    :rtype: str
+    """
     return PureWindowsPath(path).as_posix()
 
 
@@ -919,6 +1214,10 @@ def _is_user_error_from_exception_type(e: Optional[Exception]) -> bool:
 
 
 class DockerProxy:
+    """A proxy class for docker module. It will raise a more user-friendly error message if docker module is not
+    installed.
+    """
+
     def __getattribute__(self, name: str) -> Any:
         try:
             import docker  # pylint: disable=import-error
@@ -1037,10 +1336,21 @@ def get_valid_dot_keys_with_wildcard(
 
 
 def get_base_directory_for_cache() -> Path:
+    """Get the base directory for cache files.
+
+    :return: The base directory for cache files.
+    :rtype: Path
+    """
     return Path(tempfile.gettempdir()).joinpath("azure-ai-ml")
 
 
 def get_versioned_base_directory_for_cache() -> Path:
+    """Get the base directory for cache files of current version of azure-ai-ml.
+    Cache files of different versions will be stored in different directories.
+
+    :return: The base directory for cache files of current version of azure-ai-ml.
+    :rtype: Path
+    """
     # import here to avoid circular import
     from azure.ai.ml._version import VERSION
 

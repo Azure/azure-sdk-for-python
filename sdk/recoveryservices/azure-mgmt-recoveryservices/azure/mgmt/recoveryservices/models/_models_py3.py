@@ -1914,23 +1914,45 @@ class RestoreSettings(_serialization.Model):
 class SecuritySettings(_serialization.Model):
     """Security Settings of the vault.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar immutability_settings: Immutability Settings of a vault.
     :vartype immutability_settings: ~azure.mgmt.recoveryservices.models.ImmutabilitySettings
+    :ivar soft_delete_settings: Soft delete Settings of a vault.
+    :vartype soft_delete_settings: ~azure.mgmt.recoveryservices.models.SoftDeleteSettings
+    :ivar multi_user_authorization: MUA Settings of a vault. Known values are: "Invalid",
+     "Enabled", and "Disabled".
+    :vartype multi_user_authorization: str or
+     ~azure.mgmt.recoveryservices.models.MultiUserAuthorization
     """
+
+    _validation = {
+        "multi_user_authorization": {"readonly": True},
+    }
 
     _attribute_map = {
         "immutability_settings": {"key": "immutabilitySettings", "type": "ImmutabilitySettings"},
+        "soft_delete_settings": {"key": "softDeleteSettings", "type": "SoftDeleteSettings"},
+        "multi_user_authorization": {"key": "multiUserAuthorization", "type": "str"},
     }
 
     def __init__(
-        self, *, immutability_settings: Optional["_models.ImmutabilitySettings"] = None, **kwargs: Any
+        self,
+        *,
+        immutability_settings: Optional["_models.ImmutabilitySettings"] = None,
+        soft_delete_settings: Optional["_models.SoftDeleteSettings"] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword immutability_settings: Immutability Settings of a vault.
         :paramtype immutability_settings: ~azure.mgmt.recoveryservices.models.ImmutabilitySettings
+        :keyword soft_delete_settings: Soft delete Settings of a vault.
+        :paramtype soft_delete_settings: ~azure.mgmt.recoveryservices.models.SoftDeleteSettings
         """
         super().__init__(**kwargs)
         self.immutability_settings = immutability_settings
+        self.soft_delete_settings = soft_delete_settings
+        self.multi_user_authorization = None
 
 
 class Sku(_serialization.Model):
@@ -1996,6 +2018,38 @@ class Sku(_serialization.Model):
         self.family = family
         self.size = size
         self.capacity = capacity
+
+
+class SoftDeleteSettings(_serialization.Model):
+    """Soft delete Settings of vault.
+
+    :ivar soft_delete_state: Known values are: "Invalid", "Enabled", "Disabled", and "AlwaysON".
+    :vartype soft_delete_state: str or ~azure.mgmt.recoveryservices.models.SoftDeleteState
+    :ivar soft_delete_retention_period_in_days: Soft delete retention period in days.
+    :vartype soft_delete_retention_period_in_days: int
+    """
+
+    _attribute_map = {
+        "soft_delete_state": {"key": "softDeleteState", "type": "str"},
+        "soft_delete_retention_period_in_days": {"key": "softDeleteRetentionPeriodInDays", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        soft_delete_state: Optional[Union[str, "_models.SoftDeleteState"]] = None,
+        soft_delete_retention_period_in_days: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword soft_delete_state: Known values are: "Invalid", "Enabled", "Disabled", and "AlwaysON".
+        :paramtype soft_delete_state: str or ~azure.mgmt.recoveryservices.models.SoftDeleteState
+        :keyword soft_delete_retention_period_in_days: Soft delete retention period in days.
+        :paramtype soft_delete_retention_period_in_days: int
+        """
+        super().__init__(**kwargs)
+        self.soft_delete_state = soft_delete_state
+        self.soft_delete_retention_period_in_days = soft_delete_retention_period_in_days
 
 
 class SystemData(_serialization.Model):
@@ -2478,6 +2532,9 @@ class VaultProperties(_serialization.Model):  # pylint: disable=too-many-instanc
      ~azure.mgmt.recoveryservices.models.VaultPropertiesRedundancySettings
     :ivar security_settings: Security Settings of the vault.
     :vartype security_settings: ~azure.mgmt.recoveryservices.models.SecuritySettings
+    :ivar secure_score: Secure Score of Recovery Services Vault. Known values are: "None",
+     "Minimum", "Adequate", and "Maximum".
+    :vartype secure_score: str or ~azure.mgmt.recoveryservices.models.SecureScoreLevel
     """
 
     _validation = {
@@ -2487,6 +2544,7 @@ class VaultProperties(_serialization.Model):  # pylint: disable=too-many-instanc
         "private_endpoint_state_for_site_recovery": {"readonly": True},
         "move_state": {"readonly": True},
         "backup_storage_version": {"readonly": True},
+        "secure_score": {"readonly": True},
     }
 
     _attribute_map = {
@@ -2507,6 +2565,7 @@ class VaultProperties(_serialization.Model):  # pylint: disable=too-many-instanc
         "restore_settings": {"key": "restoreSettings", "type": "RestoreSettings"},
         "redundancy_settings": {"key": "redundancySettings", "type": "VaultPropertiesRedundancySettings"},
         "security_settings": {"key": "securitySettings", "type": "SecuritySettings"},
+        "secure_score": {"key": "secureScore", "type": "str"},
     }
 
     def __init__(
@@ -2559,6 +2618,7 @@ class VaultProperties(_serialization.Model):  # pylint: disable=too-many-instanc
         self.restore_settings = restore_settings
         self.redundancy_settings = redundancy_settings
         self.security_settings = security_settings
+        self.secure_score = None
 
 
 class VaultPropertiesEncryption(_serialization.Model):

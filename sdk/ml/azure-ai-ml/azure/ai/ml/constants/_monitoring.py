@@ -41,6 +41,7 @@ class MonitorSignalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MODEL_PERFORMANCE = "model_performance"
     FEATURE_ATTRIBUTION_DRIFT = "feature_attribution_drift"
     CUSTOM = "custom"
+    GENERATION_SAFETY_QUALITY = "generation_safety_quality"
 
 
 @experimental

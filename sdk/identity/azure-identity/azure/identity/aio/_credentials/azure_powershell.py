@@ -139,5 +139,6 @@ async def start_process(command_line):
         cwd=working_directory,
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
+        stdin=asyncio.subprocess.DEVNULL,
     )
     return proc

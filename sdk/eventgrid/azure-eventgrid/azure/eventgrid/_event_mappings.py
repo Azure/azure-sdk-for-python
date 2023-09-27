@@ -158,6 +158,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AppConfigurationKeyValueModifiedEventName = 'Microsoft.AppConfiguration.KeyValueModified'
 
+    AppConfigurationSnapshotCreatedEventName = 'Microsoft.AppConfiguration.SnapshotCreated'
+
+    AppConfigurationSnapshotModifiedEventName = 'Microsoft.AppConfiguration.SnapshotModified'
+
     ContainerRegistryChartDeletedEventName = 'Microsoft.ContainerRegistry.ChartDeleted'
 
     ContainerRegistryChartPushedEventName = 'Microsoft.ContainerRegistry.ChartPushed'
@@ -184,16 +188,22 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DataBoxOrderCompletedEventName = 'Microsoft.DataBox.OrderCompleted'
 
+    EventGridMQTTClientCreatedOrUpdatedEventName = 'Microsoft.EventGrid.MQTTClientCreatedOrUpdated'
+
+    EventGridMQTTClientDeletedEventName = 'Microsoft.EventGrid.MQTTClientDeleted'
+
+    EventGridMQTTClientSessionConnectedEventName = 'Microsoft.EventGrid.MQTTClientSessionConnected'
+
+    EventGridMQTTClientSessionDisconnectedEventName = 'Microsoft.EventGrid.MQTTClientSessionDisconnected'
+
     EventHubCaptureFileCreatedEventName = 'Microsoft.EventHub.CaptureFileCreated'
 
-    # spell-checker:ignore Dicom
     HealthcareDicomImageCreatedEventName = 'Microsoft.HealthcareApis.DicomImageCreated'
 
     HealthcareDicomImageDeletedEventName = 'Microsoft.HealthcareApis.DicomImageDeleted'
 
     HealthcareDicomImageUpdatedEventName = 'Microsoft.HealthcareApis.DicomImageUpdated'
 
-    # spell-checker:ignore Fhir
     HealthcareFhirResourceCreatedEventName = 'Microsoft.HealthcareApis.FhirResourceCreated'
 
     HealthcareFhirResourceDeletedEventName = 'Microsoft.HealthcareApis.FhirResourceDeleted'
@@ -250,7 +260,6 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     MediaJobCancelingEventName = 'Microsoft.Media.JobCanceling'
 
-    # spell-checker:ignore Errored
     MediaJobErroredEventName = 'Microsoft.Media.JobErrored'
 
     MediaJobFinishedEventName = 'Microsoft.Media.JobFinished'

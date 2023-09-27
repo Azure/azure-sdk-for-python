@@ -53,6 +53,8 @@ class TestDatastoreOperations:
             "adls_gen1.yml",
             "adls_gen2.yml",
             "one_lake.yml",
+            "one_lake_auth_url_back_compat.yml",
+            "credential_less_one_lake.yml",
             # disable until preview release
             # "hdfs_kerberos_pw.yml",
             # "hdfs_kerberos_keytab.yml",

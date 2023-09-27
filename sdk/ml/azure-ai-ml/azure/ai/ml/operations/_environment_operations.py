@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,no-value-for-parameter
 
 from contextlib import contextmanager
 from typing import Any, Iterable, Optional, Union
@@ -101,7 +101,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START env_operations_create_or_update]
                 :end-before: [END env_operations_create_or_update]
                 :language: python
@@ -170,7 +170,10 @@ class EnvironmentOperations(_ScopeDependentOperations):
                 )
 
             environment = _check_and_upload_env_build_context(
-                environment=environment, operations=self, sas_uri=sas_uri, show_progress=self._show_progress
+                environment=environment,
+                operations=self,
+                sas_uri=sas_uri,
+                show_progress=self._show_progress,
             )
             env_version_resource = environment._to_rest_object()
             env_rest_obj = (
@@ -253,7 +256,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START env_operations_get]
                 :end-before: [END env_operations_get]
                 :language: python
@@ -306,7 +309,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START env_operations_list]
                 :end-before: [END env_operations_list]
                 :language: python
@@ -368,7 +371,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START env_operations_archive]
                 :end-before: [END env_operations_archive]
                 :language: python
@@ -405,7 +408,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START env_operations_restore]
                 :end-before: [END env_operations_restore]
                 :language: python
@@ -446,7 +449,13 @@ class EnvironmentOperations(_ScopeDependentOperations):
     @monitor_with_activity(logger, "Environment.Share", ActivityType.PUBLICAPI)
     @experimental
     def share(
-        self, name: str, version: str, *, share_with_name: str, share_with_version: str, registry_name: str
+        self,
+        name: str,
+        version: str,
+        *,
+        share_with_name: str,
+        share_with_version: str,
+        registry_name: str,
     ) -> Environment:
         """Share a environment asset from workspace to registry.
 
@@ -466,7 +475,8 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         #  Get workspace info to get workspace GUID
         workspace = self._service_client.workspaces.get(
-            resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
+            resource_group_name=self._resource_group_name,
+            workspace_name=self._workspace_name,
         )
         workspace_guid = workspace.workspace_id
         workspace_location = workspace.location

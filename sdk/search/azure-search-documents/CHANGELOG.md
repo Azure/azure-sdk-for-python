@@ -1,6 +1,6 @@
 # Release History
 
-## 11.4.0b9 (Unreleased)
+## 11.4.0b10 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 11.4.0b9 (2023-09-12)
+
+### Bugs Fixed
+
+- Fixed the bug that list type of `order_by` was not correctly handled. #31837
 
 ## 11.4.0b8 (2023-08-08)
 

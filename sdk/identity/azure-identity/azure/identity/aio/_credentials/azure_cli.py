@@ -136,6 +136,7 @@ async def _run_command(command: str, timeout: int) -> str:
             *args,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
+            stdin=asyncio.subprocess.DEVNULL,
             cwd=working_directory,
             env=dict(os.environ, AZURE_CORE_NO_COLOR="true"),
         )
@@ -157,7 +158,7 @@ async def _run_command(command: str, timeout: int) -> str:
     if proc.returncode == 127 or stderr.startswith("'az' is not recognized"):
         raise CredentialUnavailableError(CLI_NOT_FOUND)
 
-    if "az login" in stderr or "az account set" in stderr:
+    if ("az login" in stderr or "az account set" in stderr) and "AADSTS" not in stderr:
         raise CredentialUnavailableError(message=NOT_LOGGED_IN)
 
     message = sanitize_output(stderr) if stderr else "Failed to invoke Azure CLI"

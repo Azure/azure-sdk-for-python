@@ -10,10 +10,10 @@ from typing import Optional, Dict, Any
 class HeadersMixin:
     @property
     def _headers(self) -> Dict[str, Any]:
-        return {"api-key": self._credential.key, "Accept": self._ODATA_ACCEPT}
+        return {"api-key": self._credential.key, "Accept": self._ODATA_ACCEPT}  # type: ignore
 
-    def _merge_client_headers(self, headers: Optional[Dict[str, Any]]) -> Dict[str, Any]:
-        if self._aad:
+    def _merge_client_headers(self, headers: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+        if self._aad:  # type: ignore
             return headers
         headers = headers or {}
         combined = self._headers

@@ -1175,6 +1175,9 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
             entity, _ = self._insert_random_entity(rk="")
             self.table.delete_entity(entity)
             entity, _ = self._insert_random_entity(pk="", rk="")
+            result = self.table.get_entity("", "")
+            assert result["PartitionKey"] == ""
+            assert result["RowKey"] == ""
             self.table.delete_entity(partition_key="", row_key="")
             res = self.table.list_entities()
             assert len(list(res)) == 0

@@ -127,7 +127,7 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         if not token:
             sanitized_output = sanitize_output(output)
             message = (
-                f"Unexpected output from Azure CLI: '{sanitized_output}'. \n"
+                f"Unexpected output from Azure Developer CLI: '{sanitized_output}'. \n"
                 f"To mitigate this issue, please refer to the troubleshooting guidelines here at "
                 f"https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot."
             )
@@ -158,6 +158,7 @@ async def _run_command(command: str, timeout: int) -> str:
             *args,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
+            stdin=asyncio.subprocess.DEVNULL,
             cwd=working_directory,
             env=dict(os.environ, NO_COLOR="true"),
         )
@@ -179,7 +180,7 @@ async def _run_command(command: str, timeout: int) -> str:
     if proc.returncode == 127 or stderr.startswith("'azd' is not recognized"):
         raise CredentialUnavailableError(CLI_NOT_FOUND)
 
-    if "not logged in, run `azd auth login` to login" in stderr:
+    if "not logged in, run `azd auth login` to login" in stderr and "AADSTS" not in stderr:
         raise CredentialUnavailableError(message=NOT_LOGGED_IN)
 
     message = sanitize_output(stderr) if stderr else "Failed to invoke Azure Developer CLI"

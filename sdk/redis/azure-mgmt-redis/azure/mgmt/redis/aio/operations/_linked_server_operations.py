@@ -148,7 +148,8 @@ class LinkedServerOperations:
     ) -> AsyncLROPoller[_models.RedisLinkedServerWithProperties]:
         """Adds a linked server to the Redis cache (requires Premium SKU).
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param name: The name of the Redis cache. Required.
         :type name: str
@@ -188,7 +189,8 @@ class LinkedServerOperations:
     ) -> AsyncLROPoller[_models.RedisLinkedServerWithProperties]:
         """Adds a linked server to the Redis cache (requires Premium SKU).
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param name: The name of the Redis cache. Required.
         :type name: str
@@ -226,7 +228,8 @@ class LinkedServerOperations:
     ) -> AsyncLROPoller[_models.RedisLinkedServerWithProperties]:
         """Adds a linked server to the Redis cache (requires Premium SKU).
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param name: The name of the Redis cache. Required.
         :type name: str
@@ -344,8 +347,12 @@ class LinkedServerOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, response_headers)
 
     _delete_initial.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cache/redis/{name}/linkedServers/{linkedServerName}"
@@ -357,7 +364,8 @@ class LinkedServerOperations:
     ) -> AsyncLROPoller[None]:
         """Deletes the linked server from a redis cache (requires Premium SKU).
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param name: The name of the redis cache. Required.
         :type name: str
@@ -426,7 +434,8 @@ class LinkedServerOperations:
     ) -> _models.RedisLinkedServerWithProperties:
         """Gets the detailed information about a linked server of a redis cache (requires Premium SKU).
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param name: The name of the redis cache. Required.
         :type name: str
@@ -493,7 +502,8 @@ class LinkedServerOperations:
     ) -> AsyncIterable["_models.RedisLinkedServerWithProperties"]:
         """Gets the list of linked servers associated with this redis cache (requires Premium SKU).
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param name: The name of the redis cache. Required.
         :type name: str

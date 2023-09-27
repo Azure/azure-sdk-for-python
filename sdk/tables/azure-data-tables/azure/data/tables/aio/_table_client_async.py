@@ -682,4 +682,9 @@ class TableClient(AsyncTablesBaseClient):
                     "of Tuples. Please check documentation for correct Tuple format."
                 ) from exc
 
-        return await self._batch_send(self.table_name, *batched_requests.requests, **kwargs)
+        try:
+            return await self._batch_send(self.table_name, *batched_requests.requests, **kwargs)
+        except HttpResponseError as ex:
+            if ex.status_code == 400 and not batched_requests.requests:
+                return []
+            raise

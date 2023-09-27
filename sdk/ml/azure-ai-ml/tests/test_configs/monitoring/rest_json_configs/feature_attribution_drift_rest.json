@@ -6,7 +6,7 @@
           "computeConfiguration": {
             "computeType": "ServerlessSpark",
             "instanceType": "standard_e8s_v3",
-            "runtimeVersion": "3.2",
+            "runtimeVersion": "3.3",
             "computeIdentity": {
               "computeIdentityType": "AmlToken"
             }
@@ -26,6 +26,8 @@
                   "uri": "my_model_inputs_data:1",
                   "jobInputType": "mltable",
                   "dataContext": "model_inputs",
+                  "windowSize": "P7D",
+                  "windowOffset": "P7D",
                   "columns": {
                     "correlation_id": "inference_correlation_id"
                   }
@@ -35,6 +37,8 @@
                   "uri": "my_model_outputs_data:1",
                   "jobInputType": "mltable",
                   "dataContext": "model_outputs",
+                  "windowSize": "P7D",
+                  "windowOffset": "P7D",
                   "columns": {
                     "correlation_id": "inference_correlation_id",
                     "prediction": "is_fraud",

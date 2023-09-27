@@ -134,7 +134,13 @@
     "offline_store_connection_name" : {
         "value": ""
     },
-    "offline_store_connection_target" : {
+    "offline_store_target" : {
+        "value": ""
+    },
+    "offline_store_resource_group_name" : {
+        "value": ""
+    },
+    "offline_store_subscription_id" : {
         "value": ""
     },
     "materialization_identity_name": {
@@ -143,13 +149,19 @@
     "materialization_identity_resource_id" : {
         "value": ""
     },
-    "grant_materialization_identity_permissions" : {
+    "grant_materialization_permissions" : {
         "value": "true"
     },
     "online_store_connection_name" : {
         "value": ""
     },
-    "online_store_connection_target" : {
+    "online_store_target" : {
+        "value": ""
+    },
+    "online_store_resource_group_name" : {
+        "value": ""
+    },
+    "online_store_subscription_id" : {
         "value": ""
     },
     "workspace_hub_config" : {
