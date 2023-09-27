@@ -64,6 +64,10 @@ class PathClient(StorageAccountHostsMixin):
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory authentication.
+        Only has an effect when credential is of type TokenCredential. Specify your Storage Account name to use
+        the https://account.blob.core.windows.net audience. Otherwise, if not specified, the default audience
+        of https://storage.azure.com/ will be used.
     """
     def __init__(
             self, account_url: str,
@@ -105,6 +109,9 @@ class PathClient(StorageAccountHostsMixin):
         _, sas_token = parse_query(parsed_url.query)
         self.file_system_name = file_system_name
         self.path_name = path_name
+
+        if kwargs.get("audience"):
+            kwargs["audience"] = f'https://{kwargs.get("audience")}.queue.core.windows.net/.default'
 
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
 

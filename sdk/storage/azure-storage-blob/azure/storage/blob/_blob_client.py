@@ -136,6 +136,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         or 4MB.
     :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
         specifies the version of the blob to operate on.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory authentication.
+        Only has an effect when credential is of type TokenCredential. Specify your Storage Account name to use
+        the https://account.blob.core.windows.net audience. Otherwise, if not specified, the default audience
+        of https://storage.azure.com/ will be used.
 
     .. admonition:: Example:
 
@@ -172,6 +176,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             raise ValueError("Please specify a container name and blob name.")
         if not parsed_url.netloc:
             raise ValueError(f"Invalid URL: {account_url}")
+
+        if kwargs.get("audience"):
+            kwargs["audience"] = f'https://{kwargs.get("audience")}.queue.core.windows.net/.default'
 
         path_snapshot, sas_token = parse_query(parsed_url.query)
 
@@ -241,6 +248,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             the snapshot in the url.
         :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
             specifies the version of the blob to operate on.
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory authentication.
+            Only has an effect when credential is of type TokenCredential. Specify your Storage Account name to use
+            the https://account.blob.core.windows.net audience. Otherwise, if not specified, the default audience
+            of https://storage.azure.com/ will be used.
         :returns: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
         """
@@ -323,6 +334,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
         :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
             specifies the version of the blob to operate on.
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory authentication.
+            Only has an effect when credential is of type TokenCredential. Specify your Storage Account name to use
+            the https://account.blob.core.windows.net audience. Otherwise, if not specified, the default audience
+            of https://storage.azure.com/ will be used.
         :returns: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
 
