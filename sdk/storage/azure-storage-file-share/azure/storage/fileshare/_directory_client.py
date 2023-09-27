@@ -130,15 +130,18 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 self.snapshot = snapshot['snapshot'] # type: ignore
             except TypeError:
                 self.snapshot = snapshot or path_snapshot
+
+        audience: Optional[str] = None
         if kwargs.get("audience"):
-            kwargs["audience"] = f'https://{kwargs.get("audience")}.queue.core.windows.net/.default'
+            audience = f'https://{kwargs.pop("audience")}.file-share.core.windows.net/.default'
 
         self.share_name = share_name
         self.directory_path = directory_path
 
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
-        super(ShareDirectoryClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
+        super(ShareDirectoryClient, self).__init__(
+            parsed_url, service='file-share', credential=credential, audience=audience, **kwargs)
         self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
         self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
         self.file_request_intent = token_intent
