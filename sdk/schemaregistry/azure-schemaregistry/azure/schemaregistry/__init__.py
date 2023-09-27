@@ -6,7 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._client import SchemaRegistryClient
 from ._version import VERSION
 
 __version__ = VERSION
@@ -16,7 +15,7 @@ try:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 except ImportError:
     _patch_all = []
-from ._patch import patch_sdk as _patch_sdk
+from ._patch import patch_sdk as _patch_sdk, SchemaRegistryClient
 __all__ = [
     'SchemaRegistryClient',
 ]
