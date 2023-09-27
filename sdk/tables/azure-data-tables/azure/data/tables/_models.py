@@ -9,14 +9,16 @@ from typing import Any, Dict, List, Optional, Callable
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
-from ._generated.models import TableQueryResponse
-from ._generated.models import TableServiceStats as GenTableServiceStats
-from ._generated.models import TableServiceProperties as GenTableServiceProperties
-from ._generated.models import AccessPolicy as GenAccessPolicy
-from ._generated.models import Logging as GeneratedLogging
-from ._generated.models import Metrics as GeneratedMetrics
-from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
-from ._generated.models import CorsRule as GeneratedCorsRule
+from ._generated.models import (
+    TableResponseProperties,
+    TableServiceStats as GenTableServiceStats,
+    TableServiceProperties as GenTableServiceProperties,
+    AccessPolicy as GenAccessPolicy,
+    Logging as GeneratedLogging,
+    Metrics as GeneratedMetrics,
+    RetentionPolicy as GeneratedRetentionPolicy,
+    CorsRule as GeneratedCorsRule,
+)
 from ._deserialize import (
     _convert_to_entity,
     _return_context_and_deserialized,
@@ -428,8 +430,8 @@ def service_stats_deserialize(generated: GenTableServiceStats) -> Dict[str, Any]
     """
     return {
         "geo_replication": {
-            "status": generated.geo_replication.status,  # type: ignore
-            "last_sync_time": generated.geo_replication.last_sync_time,  # type: ignore
+            "status": None if not generated.geo_replication else generated.geo_replication.status,
+            "last_sync_time": None if not generated.geo_replication else generated.geo_replication.last_sync_time,
         }
     }
 
@@ -448,10 +450,9 @@ def service_properties_deserialize(generated: GenTableServiceProperties) -> Dict
         ),
         "hour_metrics": TableMetrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
         "minute_metrics": TableMetrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
-        "cors": [
-            TableCorsRule._from_generated(cors)  # pylint: disable=protected-access
-            for cors in generated.cors  # type: ignore
-        ],
+        "cors": None
+        if not generated.cors
+        else [TableCorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
     }
 
 
@@ -466,10 +467,11 @@ class TableItem:
     def __init__(self, name: str) -> None:
         self.name = name
 
-    # TODO: TableQueryResponse is not the correct type
     @classmethod
-    def _from_generated(cls, generated: TableQueryResponse, **kwargs) -> "TableItem":  # pylint: disable=unused-argument
-        return cls(generated.table_name)  # type: ignore
+    def _from_generated(
+        cls, generated: TableResponseProperties, **kwargs  # pylint: disable=unused-argument
+    ) -> "TableItem":
+        return cls(generated.table_name)  # type:ignore[arg-type]
 
     def __repr__(self) -> str:
         return f"TableItem(name={self.name})"[1024:]
@@ -535,7 +537,7 @@ class ResourceTypes(object):
         self.container = kwargs.get("container", False)
         self._str = ("s" if self.service else "") + ("o" if self.object else "") + ("c" if self.container else "")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self._str
 
     @classmethod
@@ -606,11 +608,11 @@ class AccountSasPermissions(object):
             + ("p" if self.process else "")
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self._str
 
     @classmethod
-    def from_string(cls, permission: str, **kwargs) -> "AccountSasPermissions":
+    def from_string(cls, permission: str, **kwargs: Any) -> "AccountSasPermissions":
         """Create AccountSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to

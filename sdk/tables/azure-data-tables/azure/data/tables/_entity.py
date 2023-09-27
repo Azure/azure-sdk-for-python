@@ -9,13 +9,13 @@ from typing import Any, Dict, Union, NamedTuple
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class TableEntity(Dict[str, Any]):
+class TableEntity(dict):
     """
     An Entity dictionary with additional metadata
 
     """
 
-    _metadata = {}  # type: Dict[str, Any]
+    _metadata: Dict[str, Any] = {}
 
     @property
     def metadata(self) -> Dict[str, Any]:

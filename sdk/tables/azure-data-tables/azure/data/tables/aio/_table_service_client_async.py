@@ -14,9 +14,16 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._base_client import parse_connection_str
 from .._generated.models import TableServiceProperties
-from .._models import service_stats_deserialize, service_properties_deserialize
+from .._models import (
+    TableItem,
+    LocationMode,
+    TableCorsRule,
+    TableMetrics,
+    TableAnalyticsLogging,
+    service_stats_deserialize,
+    service_properties_deserialize,
+)
 from .._error import _process_table_error, _reprocess_error
-from .._models import TableItem, LocationMode, TableCorsRule, TableMetrics, TableAnalyticsLogging
 from .._serialize import _parameter_filter_substitution
 from ._table_client_async import TableClient
 from ._base_client_async import AsyncTablesBaseClient, AsyncTransportWrapper
@@ -108,7 +115,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         """
         try:
             timeout = kwargs.pop("timeout", None)
-            stats = await self._client.service.get_statistics(  # type: ignore
+            stats = await self._client.service.get_statistics(
                 timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs
             )
         except HttpResponseError as error:
@@ -127,7 +134,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         """
         timeout = kwargs.pop("timeout", None)
         try:
-            service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)  # type: ignore
+            service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)
         except HttpResponseError as error:
             try:
                 _process_table_error(error)
@@ -160,16 +167,14 @@ class TableServiceClient(AsyncTablesBaseClient):
         :return: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        if cors:
-            cors = [c._to_generated() for c in cors]  # type: ignore[misc] #pylint:disable=protected-access
         props = TableServiceProperties(
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=cors,  # type: ignore
+            cors=[c._to_generated() for c in cors] if cors else None,  # pylint:disable=protected-access
         )
         try:
-            await self._client.service.set_properties(props, **kwargs)  # type: ignore
+            await self._client.service.set_properties(props, **kwargs)
         except HttpResponseError as error:
             try:
                 _process_table_error(error)
@@ -316,7 +321,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         :rtype: ~azure.data.tables.aio.TableClient
 
         """
-        pipeline = AsyncPipeline(  # type: ignore
+        pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(
                 self._client._client._pipeline._transport  # pylint:disable=protected-access
             ),
@@ -325,7 +330,7 @@ class TableServiceClient(AsyncTablesBaseClient):
         return TableClient(
             self.url,
             table_name=table_name,
-            credential=self.credential,  # type: ignore
+            credential=self.credential,  # type: ignore[arg-type]
             api_version=self.api_version,
             pipeline=pipeline,
             location_mode=self._location_mode,

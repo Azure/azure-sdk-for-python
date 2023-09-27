@@ -147,7 +147,7 @@ def generate_table_sas(credential: AzureNamedKeyCredential, table_name: str, **k
         end_pk=kwargs.pop("end_pk", None),
         end_rk=kwargs.pop("end_rk", None),
         **kwargs
-    )  # type: ignore
+    )
 
 
 class TableSharedAccessSignature(SharedAccessSignature):

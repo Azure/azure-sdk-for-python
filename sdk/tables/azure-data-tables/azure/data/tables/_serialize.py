@@ -155,9 +155,9 @@ _PYTHON_TO_ENTITY_CONVERSIONS = {
 try:
     _PYTHON_TO_ENTITY_CONVERSIONS.update(
         {
-            unicode: _to_entity_str,  # type: ignore
+            unicode: _to_entity_str,  # type: ignore[name-defined]
             str: _to_entity_binary,
-            long: _to_entity_int32,  # type: ignore
+            long: _to_entity_int32,  # type: ignore[name-defined]
         }
     )
 except NameError:
@@ -210,7 +210,7 @@ def _add_entity_properties(source):
     :param source: A table entity.
     :type source: ~azure.data.tables.TableEntity or Mapping[str, Any]
     :return: An entity with property's metadata in JSON format.
-    :rtype: Mapping[str, Any]
+    :rtype: dict
     """
 
     properties = {}

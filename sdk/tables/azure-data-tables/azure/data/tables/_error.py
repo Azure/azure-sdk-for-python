@@ -182,9 +182,9 @@ def _decode_error(response, error_message=None, error_type=None, **kwargs):  # p
         error_type = HttpResponseError
 
     try:
-        error_message += f"\nErrorCode:{error_code.value}"
+        error_message = f"{error_message}\nErrorCode:{error_code.value}"
     except AttributeError:
-        error_message += f"\nErrorCode:{error_code}"
+        error_message = f"{error_message}\nErrorCode:{error_code}"
     for name, info in additional_data.items():
         error_message += f"\n{name}:{info}"
 

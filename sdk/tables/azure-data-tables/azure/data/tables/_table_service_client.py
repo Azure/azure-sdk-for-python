@@ -5,16 +5,22 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 
 from ._generated.models import TableServiceProperties
-from ._models import TablePropertiesPaged, service_stats_deserialize, service_properties_deserialize, TableItem
+from ._models import (
+    TableItem,
+    LocationMode,
+    TableCorsRule,
+    TablePropertiesPaged,
+    service_stats_deserialize,
+    service_properties_deserialize,
+)
 from ._base_client import parse_connection_str, TablesBaseClient, TransportWrapper
-from ._models import LocationMode
 from ._error import _process_table_error, _reprocess_error
 from ._table_client import TableClient
 from ._serialize import _parameter_filter_substitution
@@ -104,9 +110,7 @@ class TableServiceClient(TablesBaseClient):
         """
         try:
             timeout = kwargs.pop("timeout", None)
-            stats = self._client.service.get_statistics(  # type: ignore
-                timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs
-            )
+            stats = self._client.service.get_statistics(timeout=timeout, use_location=LocationMode.SECONDARY, **kwargs)
         except HttpResponseError as error:
             _process_table_error(error)
         return service_stats_deserialize(stats)
@@ -122,7 +126,7 @@ class TableServiceClient(TablesBaseClient):
         """
         timeout = kwargs.pop("timeout", None)
         try:
-            service_props = self._client.service.get_properties(timeout=timeout, **kwargs)  # type: ignore
+            service_props = self._client.service.get_properties(timeout=timeout, **kwargs)
         except HttpResponseError as error:
             try:
                 _process_table_error(error)
@@ -147,14 +151,12 @@ class TableServiceClient(TablesBaseClient):
         :return: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        cors = kwargs.pop("cors", None)
-        if cors:
-            cors = [c._to_generated() for c in cors]  # pylint:disable=protected-access
+        cors: Optional[List[TableCorsRule]] = kwargs.pop("cors", None)
         props = TableServiceProperties(
             logging=kwargs.pop("analytics_logging", None),
             hour_metrics=kwargs.pop("hour_metrics", None),
             minute_metrics=kwargs.pop("minute_metrics", None),
-            cors=cors,  # type: ignore
+            cors=[c._to_generated() for c in cors] if cors else None,  # pylint:disable=protected-access
         )
         try:
             self._client.service.set_properties(props, **kwargs)
@@ -308,14 +310,14 @@ class TableServiceClient(TablesBaseClient):
         :rtype: ~azure.data.tables.TableClient
 
         """
-        pipeline = Pipeline(  # type: ignore
+        pipeline = Pipeline(
             transport=TransportWrapper(self._client._client._pipeline._transport),  # pylint: disable = protected-access
             policies=self._policies,
         )
         return TableClient(
             self.url,
             table_name=table_name,
-            credential=self.credential,
+            credential=self.credential,  # type: ignore[arg-type]
             api_version=self.api_version,
             pipeline=pipeline,
             location_mode=self._location_mode,

@@ -69,9 +69,9 @@ class AsyncTablesBaseClient(AccountHostsMixin):
             is "2019-02-02".
         :paramtype api_version: str
         """
-        super(AsyncTablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)  # type: ignore
+        super(AsyncTablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)
         self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), **kwargs)
-        self._client._config.version = get_api_version(kwargs, self._client._config.version)  # type: ignore # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, self._client._config.version)  # type: ignore[assignment] # pylint: disable=protected-access
 
     async def __aenter__(self) -> "AsyncTablesBaseClient":
         await self._client.__aenter__()
@@ -118,7 +118,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         # Pop it here, so requests doesn't feel bad about additional kwarg
         policies = [StorageHeadersPolicy()]
 
-        changeset = HttpRequest("POST", None)  # type: ignore
+        changeset = HttpRequest("POST", "")
         changeset.set_multipart_mixed(*reqs, policies=policies, boundary=f"changeset_{uuid4()}")
         request = self._client._client.post(  # pylint: disable=protected-access
             url=f"{self.scheme}://{self._primary_hostname}/$batch",

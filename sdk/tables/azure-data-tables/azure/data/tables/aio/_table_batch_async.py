@@ -3,9 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Dict, Any, Optional, Union
+from typing import Dict, Any, Optional, Union, List
 
 from azure.core import MatchConditions
+from azure.core.pipeline.transport import HttpRequest
 
 from .._common_conversion import _transform_patch_to_cosmos_post
 from .._models import UpdateMode
@@ -70,7 +71,7 @@ class TableBatchOperations(object):
         self.table_name = table_name
 
         self._partition_key = kwargs.pop("partition_key", None)
-        self.requests = []  # type: ignore
+        self.requests: List[HttpRequest] = []
 
     def __len__(self):
         return len(self.requests)
@@ -92,9 +93,9 @@ class TableBatchOperations(object):
         :return: None
         """
         try:
-            operation_type, entity, kwargs = operation  # type: ignore
+            operation_type, entity, kwargs = operation  # type: ignore[misc]
         except ValueError:
-            operation_type, entity, kwargs = *operation, {}  # type: ignore
+            operation_type, entity, kwargs = operation[0], operation[1], {}
         try:
             getattr(self, operation_type.lower())(entity, **kwargs)
         except AttributeError as exc:
@@ -118,7 +119,7 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
-        temp = entity.copy()  # type: ignore
+        temp = entity.copy()  # type: ignore[union-attr]
 
         if "PartitionKey" in temp and "RowKey" in temp:
             temp = _add_entity_properties(temp)
@@ -168,7 +169,7 @@ class TableBatchOperations(object):
         accept = "application/json;odata=minimalmetadata"
 
         # Construct URL
-        url = self._batch_create_entity.metadata["url"]  # type: ignore
+        url = self._batch_create_entity.metadata["url"]  # type: ignore[attr-defined]
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
             "table": self._serialize.url("table", table, "str"),
@@ -176,14 +177,14 @@ class TableBatchOperations(object):
         url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
 
         # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters: Dict[str, Any] = {}
         if timeout is not None:
             query_parameters["timeout"] = self._serialize.query("timeout", timeout, "int", minimum=0)
         if format is not None:
             query_parameters["$format"] = self._serialize.query("format", format, "str")
 
         # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters: Dict[str, Any] = {}
         header_parameters["x-ms-version"] = self._serialize.header("self._config.version", self._config.version, "str")
         if request_id_parameter is not None:
             header_parameters["x-ms-client-request-id"] = self._serialize.header(
@@ -197,7 +198,7 @@ class TableBatchOperations(object):
         header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
-        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content_kwargs: Dict[str, Any] = {}
         if entity is not None:
             body_content = self._serialize.body(entity, "{object}")
         else:
@@ -208,7 +209,7 @@ class TableBatchOperations(object):
         )
         self.requests.append(request)
 
-    _batch_create_entity.metadata = {"url": "/{table}"}  # type: ignore
+    _batch_create_entity.metadata = {"url": "/{table}"}  # type: ignore[attr-defined]
 
     def update(self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs) -> None:
         """Adds an update operation to the current batch.
@@ -233,13 +234,13 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
-        temp = entity.copy()  # type: ignore
+        temp = entity.copy()  # type: ignore[union-attr]
 
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
             try:
-                etag = entity.metadata.get("etag", None)  # type: ignore
+                etag = entity.metadata.get("etag", None)  # type: ignore[union-attr]
             except (AttributeError, TypeError):
                 pass
         if_match = _get_match_headers(
@@ -314,7 +315,7 @@ class TableBatchOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self._batch_update_entity.metadata["url"]  # type: ignore
+        url = self._batch_update_entity.metadata["url"]  # type: ignore[attr-defined]
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
             "table": self._serialize.url("table", table, "str"),
@@ -324,14 +325,14 @@ class TableBatchOperations(object):
         url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
 
         # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters: Dict[str, Any] = {}
         if timeout is not None:
             query_parameters["timeout"] = self._serialize.query("timeout", timeout, "int", minimum=0)
         if format is not None:
             query_parameters["$format"] = self._serialize.query("format", format, "str")
 
         # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters: Dict[str, Any] = {}
         header_parameters["x-ms-version"] = self._serialize.header("self._config.version", self._config.version, "str")
         if request_id_parameter is not None:
             header_parameters["x-ms-client-request-id"] = self._serialize.header(
@@ -345,7 +346,7 @@ class TableBatchOperations(object):
         header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
-        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content_kwargs: Dict[str, Any] = {}
         if table_entity_properties is not None:
             body_content = self._serialize.body(table_entity_properties, "{object}")
         else:
@@ -356,7 +357,9 @@ class TableBatchOperations(object):
         )
         self.requests.append(request)
 
-    _batch_update_entity.metadata = {"url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"}  # type: ignore
+    _batch_update_entity.metadata = {  # type: ignore[attr-defined]
+        "url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
+    }
 
     def _batch_merge_entity(
         self,
@@ -401,7 +404,7 @@ class TableBatchOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self._batch_merge_entity.metadata["url"]  # type: ignore
+        url = self._batch_merge_entity.metadata["url"]  # type: ignore[attr-defined]
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
             "table": self._serialize.url("table", table, "str"),
@@ -411,14 +414,14 @@ class TableBatchOperations(object):
         url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
 
         # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters: Dict[str, Any] = {}
         if timeout is not None:
             query_parameters["timeout"] = self._serialize.query("timeout", timeout, "int", minimum=0)
         if format is not None:
             query_parameters["$format"] = self._serialize.query("format", format, "str")
 
         # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters: Dict[str, Any] = {}
         header_parameters["x-ms-version"] = self._serialize.header("self._config.version", self._config.version, "str")
         if request_id_parameter is not None:
             header_parameters["x-ms-client-request-id"] = self._serialize.header(
@@ -432,7 +435,7 @@ class TableBatchOperations(object):
         header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
-        body_content_kwargs = {}  # type: Dict[str, Any]
+        body_content_kwargs: Dict[str, Any] = {}
         if table_entity_properties is not None:
             body_content = self._serialize.body(table_entity_properties, "{object}")
         else:
@@ -445,7 +448,9 @@ class TableBatchOperations(object):
             _transform_patch_to_cosmos_post(request)
         self.requests.append(request)
 
-    _batch_merge_entity.metadata = {"url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"}  # type: ignore
+    _batch_merge_entity.metadata = {  # type: ignore[attr-defined]
+        "url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
+    }
 
     def delete(self, entity: EntityType, **kwargs) -> None:
         """Deletes the specified entity in a table.
@@ -467,7 +472,7 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
-        temp = entity.copy()  # type: ignore
+        temp = entity.copy()  # type: ignore[union-attr]
         partition_key = _prepare_key(temp["PartitionKey"])
         row_key = _prepare_key(temp["RowKey"])
 
@@ -475,7 +480,7 @@ class TableBatchOperations(object):
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
             try:
-                etag = entity.metadata.get("etag", None)  # type: ignore
+                etag = entity.metadata.get("etag", None)  # type: ignore[union-attr]
             except (AttributeError, TypeError):
                 pass
         if_match = _get_match_headers(
@@ -524,7 +529,7 @@ class TableBatchOperations(object):
         accept = "application/json;odata=minimalmetadata"
 
         # Construct URL
-        url = self._batch_delete_entity.metadata["url"]  # type: ignore
+        url = self._batch_delete_entity.metadata["url"]  # type: ignore[attr-defined]
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
             "table": self._serialize.url("table", table, "str"),
@@ -534,14 +539,14 @@ class TableBatchOperations(object):
         url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
 
         # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
+        query_parameters: Dict[str, Any] = {}
         if timeout is not None:
             query_parameters["timeout"] = self._serialize.query("timeout", timeout, "int", minimum=0)
         if format is not None:
             query_parameters["$format"] = self._serialize.query("format", format, "str")
 
         # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
+        header_parameters: Dict[str, Any] = {}
         header_parameters["x-ms-version"] = self._serialize.header("self._config.version", self._config.version, "str")
         if request_id_parameter is not None:
             header_parameters["x-ms-client-request-id"] = self._serialize.header(
@@ -558,7 +563,9 @@ class TableBatchOperations(object):
         )
         self.requests.append(request)
 
-    _batch_delete_entity.metadata = {"url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"}  # type: ignore
+    _batch_delete_entity.metadata = {  # type: ignore[attr-defined]
+        "url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
+    }
 
     def upsert(self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs) -> None:
         """Update/Merge or Insert entity into table.
@@ -580,7 +587,7 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
-        temp = entity.copy()  # type: ignore
+        temp = entity.copy()  # type: ignore[union-attr]
 
         partition_key = _prepare_key(temp["PartitionKey"])
         row_key = _prepare_key(temp["RowKey"])

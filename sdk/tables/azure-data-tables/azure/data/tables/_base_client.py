@@ -3,18 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import os
 
+import os
 from uuid import uuid4
+from urllib.parse import parse_qs, quote, urlparse
 from typing import Any, Dict, List, Optional, Mapping, Union
 
-try:
-    from urllib.parse import parse_qs, quote, urlparse
-except ImportError:
-    from urlparse import parse_qs, urlparse  # type: ignore
-    from urllib2 import quote  # type: ignore
-
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential, TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.utils import parse_connection_string
 from azure.core.pipeline.transport import (
     HttpTransport,
@@ -67,7 +63,9 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         account_url: str,
-        credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = None,
+        credential: Optional[
+            Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential, AsyncTokenCredential]
+        ] = None,
         **kwargs: Any,
     ) -> None:
         try:
@@ -83,10 +81,11 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         if not sas_token and not credential:
             raise ValueError("You need to provide either an AzureSasCredential or AzureNamedKeyCredential")
         self._query_str, credential = format_query_string(sas_token, credential)
-        self._location_mode = kwargs.get("location_mode", LocationMode.PRIMARY)
+        self._location_mode: str = kwargs.get("location_mode", LocationMode.PRIMARY)
         self._hosts = kwargs.get("_hosts")
         self.scheme: str = parsed_url.scheme
         self._cosmos_endpoint = _is_cosmos_endpoint(parsed_url)
+        self.account_name: Optional[str] = None
         if ".core." in parsed_url.netloc or ".cosmos." in parsed_url.netloc:
             account = parsed_url.netloc.split(".table.core.")
             if "cosmos" in parsed_url.netloc:
@@ -103,7 +102,9 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
                 self.account_name = account[0] if len(account) > 1 else None
 
         secondary_hostname: str = ""
-        self.credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = credential
+        self.credential: Optional[
+            Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential, AsyncTokenCredential]
+        ] = credential
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
         if isinstance(self.credential, AzureNamedKeyCredential):
@@ -124,9 +125,37 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
                 LocationMode.SECONDARY: secondary_hostname,
             }
 
-        self._policies = self._configure_policies(hosts=self._hosts, **kwargs)  # type: ignore
+        self._policies = self._configure_policies(hosts=self._hosts, **kwargs)
         if self._cosmos_endpoint:
             self._policies.insert(0, CosmosPatchTransformPolicy())
+
+    def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+
+        :param str hostname: The current location mode hostname.
+        :returns: The full URL to the Tables account.
+        :rtype: str
+        """
+        return f"{self.scheme}://{hostname}{self._query_str}"
+
+    def _configure_policies(self, **kwargs):
+        credential_policy = _configure_credential(self.credential)
+        return [
+            RequestIdPolicy(**kwargs),
+            StorageHeadersPolicy(**kwargs),
+            UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
+            ProxyPolicy(**kwargs),
+            credential_policy,
+            ContentDecodePolicy(response_encoding="utf-8"),
+            RedirectPolicy(**kwargs),
+            StorageHosts(**kwargs),
+            TablesRetryPolicy(**kwargs),
+            CustomHookPolicy(**kwargs),
+            NetworkTraceLoggingPolicy(**kwargs),
+            DistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs),
+        ]
 
     @property
     def url(self) -> str:
@@ -138,7 +167,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         :return: The full endpoint URL including SAS token if used.
         :rtype: str
         """
-        return self._format_url(self._hosts[self._location_mode])  # type: ignore
+        return self._format_url(self._hosts[self._location_mode])  # type: ignore[index]
 
     @property
     def _primary_endpoint(self):
@@ -226,9 +255,9 @@ class TablesBaseClient(AccountHostsMixin):
             is "2019-02-02".
         :paramtype api_version: str
         """
-        super(TablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)  # type: ignore
+        super(TablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)
         self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), **kwargs)
-        self._client._config.version = get_api_version(kwargs, self._client._config.version)  # type: ignore # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, self._client._config.version)  # type: ignore[assignment] # pylint: disable=protected-access
 
     def __enter__(self) -> "TablesBaseClient":
         self._client.__enter__()
@@ -236,24 +265,6 @@ class TablesBaseClient(AccountHostsMixin):
 
     def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)
-
-    def _configure_policies(self, **kwargs):
-        credential_policy = _configure_credential(self.credential)
-        return [
-            RequestIdPolicy(**kwargs),
-            StorageHeadersPolicy(**kwargs),
-            UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
-            ProxyPolicy(**kwargs),
-            credential_policy,
-            ContentDecodePolicy(response_encoding="utf-8"),
-            RedirectPolicy(**kwargs),
-            StorageHosts(**kwargs),
-            TablesRetryPolicy(**kwargs),
-            CustomHookPolicy(**kwargs),
-            NetworkTraceLoggingPolicy(**kwargs),
-            DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
-        ]
 
     def _batch_send(self, table_name: str, *reqs: HttpRequest, **kwargs) -> List[Mapping[str, Any]]:
         # pylint:disable=docstring-should-be-keyword
@@ -269,8 +280,8 @@ class TablesBaseClient(AccountHostsMixin):
         # Pop it here, so requests doesn't feel bad about additional kwarg
         policies = [StorageHeadersPolicy()]
 
-        changeset = HttpRequest("POST", None)  # type: ignore
-        changeset.set_multipart_mixed(*reqs, policies=policies, boundary=f"changeset_{uuid4()}")  # type: ignore
+        changeset = HttpRequest("POST", "")
+        changeset.set_multipart_mixed(*reqs, policies=policies, boundary=f"changeset_{uuid4()}")
         request = self._client._client.post(  # pylint: disable=protected-access
             url=f"{self.scheme}://{self._primary_hostname}/$batch",
             headers={
@@ -345,8 +356,12 @@ class TransportWrapper(HttpTransport):
         pass
 
 
-def parse_connection_str(conn_str, credential, keyword_args):
-    if conn_str is not None and conn_str.lower() == "usedevelopmentstorage=true":
+def parse_connection_str(
+    conn_str: str,
+    credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential, AsyncTokenCredential]],
+    keyword_args: Any,
+):
+    if conn_str.lower() == "usedevelopmentstorage=true":
         conn_str = _DEV_CONN_STRING
     conn_settings = parse_connection_string(conn_str)
     primary = None
@@ -356,10 +371,10 @@ def parse_connection_str(conn_str, credential, keyword_args):
         try:
             credential = AzureNamedKeyCredential(name=conn_settings["accountname"], key=conn_settings["accountkey"])
         except KeyError as exc:
-            credential = conn_settings.get("sharedaccesssignature", None)
-            if not credential:
+            sas_token = conn_settings.get("sharedaccesssignature", None)
+            if not sas_token:
                 raise ValueError("Connection string missing required connection details.") from exc
-            credential = AzureSasCredential(credential)
+            credential = AzureSasCredential(sas_token)
     primary = conn_settings.get("tableendpoint")
     secondary = conn_settings.get("tablesecondaryendpoint")
     if not primary:
