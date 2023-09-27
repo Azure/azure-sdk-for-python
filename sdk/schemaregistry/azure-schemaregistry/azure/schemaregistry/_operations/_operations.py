@@ -16,7 +16,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
+from ..models import _models
 from .._model_base import _deserialize
 from .._serialization import Serializer
 from .._vendor import SchemaRegistryClientMixinABC, raise_if_not_implemented
@@ -173,7 +173,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
     def list_schema_groups(
         self,
         **kwargs: Any
-    ) -> Iterable["_models._models.SchemaGroup"]:
+    ) -> Iterable["_models.SchemaGroup"]:
         """Get list of schema groups.
 
         Gets the list of schema groups user is authorized to access.
@@ -185,7 +185,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models._models.SchemaGroup]] = kwargs.pop(  # pylint: disable=protected-access
+        cls: ClsType[List[_models.SchemaGroup]] = kwargs.pop(  # pylint: disable=protected-access
             'cls', None
         )
 
@@ -222,7 +222,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models._models.SchemaGroup], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.SchemaGroup], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -340,7 +340,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         group_name: str,
         name: str,
         **kwargs: Any
-    ) -> Iterable["_models._models.Version"]:
+    ) -> Iterable["_models.Version"]:
         """List schema versions.
 
         Gets the list of all versions of one schema.
@@ -356,7 +356,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models._models.Version]] = kwargs.pop(  # pylint: disable=protected-access
+        cls: ClsType[List[_models.Version]] = kwargs.pop(  # pylint: disable=protected-access
             'cls', None
         )
 
@@ -395,7 +395,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models._models.Version], deserialized["value"])
+            list_of_elem = _deserialize(List[_models.Version], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
