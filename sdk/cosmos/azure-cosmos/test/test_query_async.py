@@ -501,7 +501,7 @@ class TestQueryAsync:
     @pytest.mark.asyncio
     async def test_distinct_async(self):
         await self._set_up()
-        created_database = await self.config.create_database_if_not_exist(self.client)
+        created_database = self.created_db
         distinct_field = 'distinct_field'
         pk_field = "pk"
         different_field = "different_field"
@@ -780,12 +780,12 @@ class TestQueryAsync:
         container = await self.created_db.create_container_if_not_exists(
             str(uuid.uuid4()), PartitionKey(path="/id"))
         await container.create_item(
-            {"id": str(uuid.uuid4()), "isComplete": True, "version": 3, "lookupVersion": "console_csat"})
+            {"id": str(uuid.uuid4()), "isComplete": True, "version": 3, "lookupVersion": "console_csat"})  # cspell:disable-line
         await container.create_item(
-            {"id": str(uuid.uuid4()), "isComplete": True, "version": 2, "lookupVersion": "console_csat"})
+            {"id": str(uuid.uuid4()), "isComplete": True, "version": 2, "lookupVersion": "console_csat"})  # cspell:disable-line
         query = "Select value max(c.version) FROM c where c.isComplete = true and c.lookupVersion = @lookupVersion"
         query_results = container.query_items(query, parameters=[
-            {"name": "@lookupVersion", "value": "console_csat"}  # cspell:disable-line
+            {"name": "@lookupVersion", "value": "console_version"}  # cspell:disable-line
         ])
         item_list = [item async for item in query_results]
         assert len(item_list) == 1
