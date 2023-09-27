@@ -46,6 +46,8 @@ from .._generated.models import (
     RecognizeOptions,
     MuteParticipantsRequest,
     CancelAddParticipantRequest,
+    StopHoldMusicRequest,
+    StartHoldMusicRequest,
 )
 from .._generated.models._enums import RecognizeInputType
 from .._shared.auth_policy_utils import get_authentication_policy
