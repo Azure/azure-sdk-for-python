@@ -24,10 +24,6 @@ OpenTelemetry instrumentations allow automatic collection of requests sent from 
 
 If you would like to add support for another OpenTelemetry instrumentation, please submit a feature [request][distro_feature_request]. In the meantime, you can use the OpenTelemetry instrumentation manually via it's own APIs (i.e. `instrument()`) in your code. See [this][samples_manual] for an example.
 
-## Azure Core Distributed Tracing
-
-Using the [Azure Core Tracing OpenTelemetry][azure_core_tracing_opentelemetry_plugin] library, you can automatically capture the distributed tracing from Azure Core libraries. See the associated [sample][azure_core_tracing_opentelemetry_plugin_sample] for more information.
-
 ## Key concepts
 
 This package bundles a series of OpenTelemetry and Azure Monitor components to enable the collection and sending of telemetry to Azure Monitor. For MANUAL instrumentation, use the `configure_azure_monitor` function. AUTOMATIC instrumentation is not yet supported.
