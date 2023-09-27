@@ -22,10 +22,8 @@ For guidance on the samples README, visit the [sample guide](https://github.com/
 |[logging/exception_logs.py][exception_logs] | Produce exception logs |
 |[logging/logs_with_traces.py][logs_with_traces] | Produce correlated logs inside an instrumented http library's distributed tracing |
 |[logging/simple.py][logging_simple] | Produce logs |
-
 |[metrics/attributes.py][attributes] | Add attributes to custom metrics counters |
 |[metrics/instruments.py][instruments] | Create observable instruments |
-
 |[tracing/django/sample/manage.py][django] | Instrument a django app |
 |[tracing/db_psycopg2.py][db_psycopg2] | Instrument the PsycoPG2 library |
 |[tracing/http_fastapi.py][http_fastapi] | Instrument a FastAPI app |
@@ -33,6 +31,7 @@ For guidance on the samples README, visit the [sample guide](https://github.com/
 |[tracing/http_requests.py][http_requests] | Instrument the Requests library |
 |[tracing/http_urllib.py][http_urllib] | Instrument the URLLib library |
 |[tracing/http_urllib3.py][http_urllib3] | Instrument the URLLib library |
+|[tracing/instrumentation_options.py][instrumentation_options] | Enable and disable instrumentations |
 |[tracing/manual.py][manual] | Manually add instrumentation |
 |[tracing/sampling.py][sampling] | Sample distributed tracing telemetry |
 |[tracing/tracing_simple.py][tracing_simple] | Produce manual spans |
@@ -76,6 +75,7 @@ To learn more, see the [Azure Monitor OpenTelemetry Distro documentation][distro
 [http_requests]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/http_requests.py
 [http_urllib]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/http_urllib.py
 [http_urllib3]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/http_urllib3.py
+[instrumentation_options]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/instrumentation_options.py
 [manual]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/manual.py
 [sampling]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/sampling.py
 [tracing_simple]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry/samples/tracing/simple.py
