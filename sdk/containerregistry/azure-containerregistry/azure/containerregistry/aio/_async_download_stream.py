@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import hashlib
-from typing import AsyncIterator, AsyncContextManager, Awaitable, cast, Tuple, Dict, Any, TypeVar
+from typing import AsyncIterator, AsyncContextManager, Awaitable, cast, Tuple, Dict, Any
 from typing_extensions import Protocol, Self
 from azure.core.pipeline import PipelineResponse
 from .._models import DigestValidationError
