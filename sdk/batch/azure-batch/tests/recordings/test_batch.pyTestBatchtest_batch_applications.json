@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://batch4ca21fc0.eastasia.batch.azure.com/applications?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/applications?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -24,7 +24,7 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch4ca21fc0.eastasia.batch.azure.com/$metadata#listapplicationsummariesresponses",
+        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#listapplicationsummariesresponses",
         "value": [
           {
             "id": "application_id",
@@ -36,7 +36,7 @@
       }
     },
     {
-      "RequestUri": "https://batch4ca21fc0.eastasia.batch.azure.com/applications/application_id?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/applications/application_id?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -59,7 +59,7 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch4ca21fc0.eastasia.batch.azure.com/$metadata#getapplicationsummaryresponse/@Element",
+        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#getapplicationsummaryresponse/@Element",
         "id": "application_id",
         "versions": [
           "v1.0"
@@ -67,7 +67,7 @@
       }
     },
     {
-      "RequestUri": "https://batch4ca21fc0.eastasia.batch.azure.com/jobs/batch4ca21fc0/tasks?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/jobs/batch4ca21fc0/tasks?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -91,12 +91,12 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "DataServiceId": "https://batch4ca21fc0.eastasia.batch.azure.com/jobs/batch4ca21fc0/tasks/python_task_with_app_package",
+        "DataServiceId": "https://batch.eastasia.batch.azure.com/jobs/batch4ca21fc0/tasks/python_task_with_app_package",
         "DataServiceVersion": "3.0",
         "Date": "Wed, 06 Sep 2023 07:26:13 GMT",
         "ETag": "0x8DBAEAA8D0E3318",
         "Last-Modified": "Wed, 06 Sep 2023 07:26:13 GMT",
-        "Location": "https://batch4ca21fc0.eastasia.batch.azure.com/jobs/batch4ca21fc0/tasks/python_task_with_app_package",
+        "Location": "https://batch.eastasia.batch.azure.com/jobs/batch4ca21fc0/tasks/python_task_with_app_package",
         "request-id": "b359f2b6-c85b-4aa4-8310-dcc6b319a7b0",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -106,7 +106,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch4ca21fc0.eastasia.batch.azure.com/jobs/batch4ca21fc0/tasks/python_task_with_app_package?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/jobs/batch4ca21fc0/tasks/python_task_with_app_package?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -131,9 +131,9 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch4ca21fc0.eastasia.batch.azure.com/$metadata#tasks/@Element",
+        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#tasks/@Element",
         "id": "python_task_with_app_package",
-        "url": "https://batch4ca21fc0.eastasia.batch.azure.com/jobs/batch4ca21fc0/tasks/python_task_with_app_package",
+        "url": "https://batch.eastasia.batch.azure.com/jobs/batch4ca21fc0/tasks/python_task_with_app_package",
         "eTag": "0x8DBAEAA8D0E3318",
         "creationTime": "2023-09-06T07:26:13.7248536Z",
         "lastModified": "2023-09-06T07:26:13.7248536Z",

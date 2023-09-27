@@ -19,6 +19,8 @@ from devtools_testutils.proxy_testcase import (
     stop_record_or_playback,
 )
 
+from tests.async_wrapper import async_wrapper
+
 
 def recorded_by_proxy_async(test_func):
     """Decorator that redirects network requests to target the azure-sdk-tools test proxy. Use with recorded tests.
@@ -55,7 +57,29 @@ def recorded_by_proxy_async(test_func):
             # this makes the request look like it was made to the original endpoint instead of to the proxy
             # without this, things like LROPollers can get broken by polling the wrong endpoint
             parsed_result = url_parse.urlparse(result.request.url)
-            upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
+            upstream_uri = url_parse.urlparse(
+                result.request.headers["x-recording-upstream-base-uri"]
+            )
+            upstream_uri_dict = {
+                "scheme": upstream_uri.scheme,
+                "netloc": upstream_uri.netloc,
+            }
+            original_target = parsed_result._replace(**upstream_uri_dict).geturl()
+
+            result.request.url = original_target
+            return result
+
+        def combined_call_sync(*args, **kwargs):
+            adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
+            result = sync_transport_func(*adjusted_args, **adjusted_kwargs)
+
+            # make the x-recording-upstream-base-uri the URL of the request
+            # this makes the request look like it was made to the original endpoint instead of to the proxy
+            # without this, things like LROPollers can get broken by polling the wrong endpoint
+            parsed_result = url_parse.urlparse(result.request.url)
+            upstream_uri = url_parse.urlparse(
+                result.request.headers["x-recording-upstream-base-uri"]
+            )
             upstream_uri_dict = {
                 "scheme": upstream_uri.scheme,
                 "netloc": upstream_uri.netloc,
@@ -66,25 +90,6 @@ def recorded_by_proxy_async(test_func):
             return result
 
         AioHttpTransport.send = combined_call_async
-
-        def combined_call_sync(*args, **kwargs):
-            adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
-            result = sync_transport_func(*adjusted_args, **adjusted_kwargs)
-
-            # make the x-recording-upstream-base-uri the URL of the request
-            # this makes the request look like it was made to the original endpoint instead of to the proxy
-            # without this, things like LROPollers can get broken by polling the wrong endpoint
-            parsed_result = url_parse.urlparse(result.request.url)
-            upstream_uri = url_parse.urlparse(result.request.headers["x-recording-upstream-base-uri"])
-            upstream_uri_dict = {
-                "scheme": upstream_uri.scheme,
-                "netloc": upstream_uri.netloc,
-            }
-            original_target = parsed_result._replace(**upstream_uri_dict).geturl()
-
-            result.request.url = original_target
-            return result
-
         RequestsTransport.send = combined_call_sync
 
         # call the modified function
@@ -95,10 +100,14 @@ def recorded_by_proxy_async(test_func):
         test_run = False
         try:
             try:
-                test_variables = await test_func(*args, variables=variables, **trimmed_kwargs)
+                test_variables = await test_func(
+                    *args, variables=variables, **trimmed_kwargs
+                )
                 test_run = True
             except TypeError as error:
-                if "unexpected keyword argument" in str(error) and "variables" in str(error):
+                if "unexpected keyword argument" in str(error) and "variables" in str(
+                    error
+                ):
                     logger = logging.getLogger()
                     logger.info(
                         "This test can't accept variables as input. The test method should accept `**kwargs` and/or a "
@@ -111,15 +120,48 @@ def recorded_by_proxy_async(test_func):
                 test_variables = await test_func(*args, **trimmed_kwargs)
 
         except ResourceNotFoundError as error:
-            error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
+            error_body = ContentDecodePolicy.deserialize_from_http_generics(
+                error.response
+            )
             message = error_body.get("message") or error_body.get("Message")
-            error_with_message = ResourceNotFoundError(message=message, response=error.response)
+            error_with_message = ResourceNotFoundError(
+                message=message, response=error.response
+            )
             raise error_with_message from error
 
         finally:
             AioHttpTransport.send = async_transport_func
+            RequestsTransport.send = sync_transport_func
             stop_record_or_playback(test_id, recording_id, test_variables)
 
         return test_variables
 
     return record_wrap
+
+
+def client_setup(BatchClient):
+    """Decorator that sets up a shared key client for a test method."""
+
+    def _batch_url(batch):
+        if batch.account_endpoint.startswith("https://"):
+            return batch.account_endpoint
+        else:
+            return "https://" + batch.account_endpoint
+
+    def create_sharedkey_client(batch_account, credential, **kwargs):
+        client = BatchClient(credential=credential, endpoint=_batch_url(batch_account))
+        return client
+
+    def decorator(test_func):
+        async def wrapper(self, **kwargs):
+            client = create_sharedkey_client(**kwargs)
+            try:
+                await test_func(self, client, **kwargs)
+            except Exception as err:
+                raise err
+            finally:
+                await async_wrapper(client.close())
+
+        return wrapper
+
+    return decorator

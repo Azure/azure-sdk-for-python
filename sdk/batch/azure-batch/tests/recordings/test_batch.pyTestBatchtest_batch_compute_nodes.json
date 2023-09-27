@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/nodes?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/6e50202e/nodes?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -24,11 +24,11 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch6e50202e.eastasia.batch.azure.com/$metadata#nodes",
+        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#nodes",
         "value": [
           {
             "id": "tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d",
-            "url": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d",
+            "url": "https://batch.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d",
             "state": "creating",
             "schedulingState": "enabled",
             "stateTransitionTime": "2023-09-07T03:51:54.8693244Z",
@@ -65,7 +65,7 @@
           },
           {
             "id": "tvmps_8cdf66c790e4302ce091673c3a5ab1d1a27b1c781a58c14c733b8957899c3237_d",
-            "url": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_8cdf66c790e4302ce091673c3a5ab1d1a27b1c781a58c14c733b8957899c3237_d",
+            "url": "https://batch.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_8cdf66c790e4302ce091673c3a5ab1d1a27b1c781a58c14c733b8957899c3237_d",
             "state": "creating",
             "schedulingState": "enabled",
             "stateTransitionTime": "2023-09-07T03:51:54.8693244Z",
@@ -104,7 +104,7 @@
       }
     },
     {
-      "RequestUri": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/nodes?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/6e50202e/nodes?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -127,11 +127,11 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch6e50202e.eastasia.batch.azure.com/$metadata#nodes",
+        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#nodes",
         "value": [
           {
             "id": "tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d",
-            "url": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d",
+            "url": "https://batch.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d",
             "state": "idle",
             "schedulingState": "enabled",
             "stateTransitionTime": "2023-09-07T03:52:15.021834Z",
@@ -174,7 +174,7 @@
           },
           {
             "id": "tvmps_8cdf66c790e4302ce091673c3a5ab1d1a27b1c781a58c14c733b8957899c3237_d",
-            "url": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_8cdf66c790e4302ce091673c3a5ab1d1a27b1c781a58c14c733b8957899c3237_d",
+            "url": "https://batch.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_8cdf66c790e4302ce091673c3a5ab1d1a27b1c781a58c14c733b8957899c3237_d",
             "state": "starting",
             "schedulingState": "enabled",
             "stateTransitionTime": "2023-09-07T03:52:05.5975289Z",
@@ -213,7 +213,7 @@
       }
     },
     {
-      "RequestUri": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/nodes?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/6e50202e/nodes?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -236,11 +236,11 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch6e50202e.eastasia.batch.azure.com/$metadata#nodes",
+        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#nodes",
         "value": [
           {
             "id": "tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d",
-            "url": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d",
+            "url": "https://batch.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d",
             "state": "idle",
             "schedulingState": "enabled",
             "stateTransitionTime": "2023-09-07T03:52:15.021834Z",
@@ -283,7 +283,7 @@
           },
           {
             "id": "tvmps_8cdf66c790e4302ce091673c3a5ab1d1a27b1c781a58c14c733b8957899c3237_d",
-            "url": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_8cdf66c790e4302ce091673c3a5ab1d1a27b1c781a58c14c733b8957899c3237_d",
+            "url": "https://batch.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_8cdf66c790e4302ce091673c3a5ab1d1a27b1c781a58c14c733b8957899c3237_d",
             "state": "starting",
             "schedulingState": "enabled",
             "stateTransitionTime": "2023-09-07T03:52:05.5975289Z",
@@ -322,7 +322,7 @@
       }
     },
     {
-      "RequestUri": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/nodes?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/6e50202e/nodes?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -345,11 +345,11 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch6e50202e.eastasia.batch.azure.com/$metadata#nodes",
+        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#nodes",
         "value": [
           {
             "id": "tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d",
-            "url": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d",
+            "url": "https://batch.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d",
             "state": "idle",
             "schedulingState": "enabled",
             "stateTransitionTime": "2023-09-07T03:52:15.021834Z",
@@ -392,7 +392,7 @@
           },
           {
             "id": "tvmps_8cdf66c790e4302ce091673c3a5ab1d1a27b1c781a58c14c733b8957899c3237_d",
-            "url": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_8cdf66c790e4302ce091673c3a5ab1d1a27b1c781a58c14c733b8957899c3237_d",
+            "url": "https://batch.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_8cdf66c790e4302ce091673c3a5ab1d1a27b1c781a58c14c733b8957899c3237_d",
             "state": "idle",
             "schedulingState": "enabled",
             "stateTransitionTime": "2023-09-07T03:52:27.983133Z",
@@ -437,7 +437,7 @@
       }
     },
     {
-      "RequestUri": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -460,9 +460,9 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch6e50202e.eastasia.batch.azure.com/$metadata#nodes/@Element",
+        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#nodes/@Element",
         "id": "tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d",
-        "url": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d",
+        "url": "https://batch.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d",
         "state": "idle",
         "schedulingState": "enabled",
         "stateTransitionTime": "2023-09-07T03:52:15.021834Z",
@@ -505,7 +505,7 @@
       }
     },
     {
-      "RequestUri": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d/uploadbatchservicelogs?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d/uploadbatchservicelogs?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -533,13 +533,13 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch6e50202e.eastasia.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.UploadBatchServiceLogsResult",
+        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.UploadBatchServiceLogsResult",
         "virtualDirectoryName": "batch6e50202e-22EE7920567F9EAB/6e50202e/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d/6b4f86de-4534-42a5-9922-4e8e0534edfc",
         "numberOfFilesUploaded": 4
       }
     },
     {
-      "RequestUri": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d/disablescheduling?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d/disablescheduling?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -554,7 +554,7 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "DataServiceId": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d/disablescheduling",
+        "DataServiceId": "https://batch.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d/disablescheduling",
         "DataServiceVersion": "3.0",
         "Date": "Thu, 07 Sep 2023 03:52:35 GMT",
         "request-id": "7ae3887d-d478-4850-b951-f222204344dd",
@@ -566,7 +566,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d/enablescheduling?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d/enablescheduling?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -580,7 +580,7 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "DataServiceId": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d/enablescheduling",
+        "DataServiceId": "https://batch.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d/enablescheduling",
         "DataServiceVersion": "3.0",
         "Date": "Thu, 07 Sep 2023 03:52:35 GMT",
         "request-id": "f34d54f2-3ea6-4ffb-bcf6-d65d30725d76",
@@ -592,7 +592,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d/reboot?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d/reboot?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -609,7 +609,7 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "DataServiceId": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d/reboot",
+        "DataServiceId": "https://batch.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_4f03e4a0e1048d07a25d63cde52b01d53e6e483211a097532f930f3e4dee8169_d/reboot",
         "DataServiceVersion": "3.0",
         "Date": "Thu, 07 Sep 2023 03:52:35 GMT",
         "request-id": "e5459c48-ad2b-435e-a87c-9d43ed2b8db4",
@@ -621,7 +621,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_8cdf66c790e4302ce091673c3a5ab1d1a27b1c781a58c14c733b8957899c3237_d/reimage?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/6e50202e/nodes/tvmps_8cdf66c790e4302ce091673c3a5ab1d1a27b1c781a58c14c733b8957899c3237_d/reimage?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -648,7 +648,7 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch6e50202e.eastasia.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element",
+        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element",
         "code": "OperationNotValidOnNode",
         "message": {
           "lang": "en-US",
@@ -663,7 +663,7 @@
       }
     },
     {
-      "RequestUri": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/removenodes?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/6e50202e/removenodes?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -683,7 +683,7 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "DataServiceId": "https://batch6e50202e.eastasia.batch.azure.com/pools/6e50202e/removenodes",
+        "DataServiceId": "https://batch.eastasia.batch.azure.com/pools/6e50202e/removenodes",
         "DataServiceVersion": "3.0",
         "Date": "Thu, 07 Sep 2023 03:52:35 GMT",
         "ETag": "0x8DBAF55DFC27CB6",

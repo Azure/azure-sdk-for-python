@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://batch6c682013.eastasia.batch.azure.com/jobschedules?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/jobschedules?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -31,12 +31,12 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "DataServiceId": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013",
+        "DataServiceId": "https://batch.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013",
         "DataServiceVersion": "3.0",
         "Date": "Wed, 06 Sep 2023 12:44:09 GMT",
         "ETag": "0x8DBAED6F7336C7A",
         "Last-Modified": "Wed, 06 Sep 2023 12:44:09 GMT",
-        "Location": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013",
+        "Location": "https://batch.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013",
         "request-id": "d13f3f45-ab57-4958-bbf2-d4ec6d6ca37f",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -46,7 +46,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch6c682013.eastasia.batch.azure.com/jobschedules?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/jobschedules?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -69,11 +69,11 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch6c682013.eastasia.batch.azure.com/$metadata#jobschedules",
+        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#jobschedules",
         "value": [
           {
             "id": "batch_schedule_6c682013",
-            "url": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013",
+            "url": "https://batch.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013",
             "eTag": "0x8DBAED6F7336C7A",
             "lastModified": "2023-09-06T12:44:09.6633978Z",
             "creationTime": "2023-09-06T12:44:09.6633978Z",
@@ -101,7 +101,7 @@
             "executionInfo": {
               "nextRunTime": "2023-09-07T12:44:09.6633978Z",
               "recentJob": {
-                "url": "https://batch6c682013.eastasia.batch.azure.com/jobs/batch_schedule_6c682013:job-1",
+                "url": "https://batch.eastasia.batch.azure.com/jobs/batch_schedule_6c682013:job-1",
                 "id": "batch_schedule_6c682013:job-1"
               }
             }
@@ -110,7 +110,7 @@
       }
     },
     {
-      "RequestUri": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -135,9 +135,9 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch6c682013.eastasia.batch.azure.com/$metadata#jobschedules/@Element",
+        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#jobschedules/@Element",
         "id": "batch_schedule_6c682013",
-        "url": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013",
+        "url": "https://batch.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013",
         "eTag": "0x8DBAED6F7336C7A",
         "lastModified": "2023-09-06T12:44:09.6633978Z",
         "creationTime": "2023-09-06T12:44:09.6633978Z",
@@ -165,14 +165,14 @@
         "executionInfo": {
           "nextRunTime": "2023-09-07T12:44:09.6633978Z",
           "recentJob": {
-            "url": "https://batch6c682013.eastasia.batch.azure.com/jobs/batch_schedule_6c682013:job-1",
+            "url": "https://batch.eastasia.batch.azure.com/jobs/batch_schedule_6c682013:job-1",
             "id": "batch_schedule_6c682013:job-1"
           }
         }
       }
     },
     {
-      "RequestUri": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013?api-version=2023-05-01.17.0",
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -198,7 +198,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013/jobs?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013/jobs?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -221,11 +221,11 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batch6c682013.eastasia.batch.azure.com/$metadata#jobs",
+        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#jobs",
         "value": [
           {
             "id": "batch_schedule_6c682013:job-1",
-            "url": "https://batch6c682013.eastasia.batch.azure.com/jobs/batch_schedule_6c682013:job-1",
+            "url": "https://batch.eastasia.batch.azure.com/jobs/batch_schedule_6c682013:job-1",
             "eTag": "0x8DBAED6F7395FF9",
             "lastModified": "2023-09-06T12:44:09.7023993Z",
             "creationTime": "2023-09-06T12:44:09.6863974Z",
@@ -253,7 +253,7 @@
       }
     },
     {
-      "RequestUri": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013/disable?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013/disable?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -268,7 +268,7 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "DataServiceId": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013/disable",
+        "DataServiceId": "https://batch.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013/disable",
         "DataServiceVersion": "3.0",
         "Date": "Wed, 06 Sep 2023 12:44:09 GMT",
         "ETag": "0x8DBAED6F7996A91",
@@ -281,7 +281,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013/enable?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013/enable?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -296,7 +296,7 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "DataServiceId": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013/enable",
+        "DataServiceId": "https://batch.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013/enable",
         "DataServiceVersion": "3.0",
         "Date": "Wed, 06 Sep 2023 12:44:10 GMT",
         "ETag": "0x8DBAED6F7BA2D2A",
@@ -309,7 +309,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013?api-version=2023-05-01.17.0",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -333,7 +333,7 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "DataServiceId": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013",
+        "DataServiceId": "https://batch.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013",
         "DataServiceVersion": "3.0",
         "Date": "Wed, 06 Sep 2023 12:44:10 GMT",
         "ETag": "0x8DBAED6F7CDDE36",
@@ -347,7 +347,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013?api-version=2023-05-01.17.0",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -366,7 +366,7 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "DataServiceId": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013",
+        "DataServiceId": "https://batch.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013",
         "DataServiceVersion": "3.0",
         "Date": "Wed, 06 Sep 2023 12:44:10 GMT",
         "ETag": "0x8DBAED6F7E05D60",
@@ -380,7 +380,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013/terminate?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013/terminate?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -394,7 +394,7 @@
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
-        "DataServiceId": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013/terminate",
+        "DataServiceId": "https://batch.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013/terminate",
         "DataServiceVersion": "3.0",
         "Date": "Wed, 06 Sep 2023 12:44:10 GMT",
         "ETag": "0x8DBAED6F7F3CFC0",
@@ -408,7 +408,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batch6c682013.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/jobschedules/batch_schedule_6c682013?api-version=2023-05-01.17.0",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "*/*",

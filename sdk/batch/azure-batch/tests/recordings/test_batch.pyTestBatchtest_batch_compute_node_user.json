@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://batchf68621d9.eastasia.batch.azure.com/pools/f68621d9/nodes?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/f68621d9/nodes?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -24,11 +24,11 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batchf68621d9.eastasia.batch.azure.com/$metadata#nodes",
+        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#nodes",
         "value": [
           {
             "id": "tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d",
-            "url": "https://batchf68621d9.eastasia.batch.azure.com/pools/f68621d9/nodes/tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d",
+            "url": "https://batch.eastasia.batch.azure.com/pools/f68621d9/nodes/tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d",
             "state": "creating",
             "schedulingState": "enabled",
             "stateTransitionTime": "2023-09-07T05:50:53.8866345Z",
@@ -67,7 +67,7 @@
       }
     },
     {
-      "RequestUri": "https://batchf68621d9.eastasia.batch.azure.com/pools/f68621d9/nodes?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/f68621d9/nodes?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -90,11 +90,11 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batchf68621d9.eastasia.batch.azure.com/$metadata#nodes",
+        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#nodes",
         "value": [
           {
             "id": "tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d",
-            "url": "https://batchf68621d9.eastasia.batch.azure.com/pools/f68621d9/nodes/tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d",
+            "url": "https://batch.eastasia.batch.azure.com/pools/f68621d9/nodes/tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d",
             "state": "idle",
             "schedulingState": "enabled",
             "stateTransitionTime": "2023-09-07T05:51:10.160301Z",
@@ -139,7 +139,7 @@
       }
     },
     {
-      "RequestUri": "https://batchf68621d9.eastasia.batch.azure.com/pools/f68621d9/nodes?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/f68621d9/nodes?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -162,11 +162,11 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batchf68621d9.eastasia.batch.azure.com/$metadata#nodes",
+        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#nodes",
         "value": [
           {
             "id": "tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d",
-            "url": "https://batchf68621d9.eastasia.batch.azure.com/pools/f68621d9/nodes/tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d",
+            "url": "https://batch.eastasia.batch.azure.com/pools/f68621d9/nodes/tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d",
             "state": "idle",
             "schedulingState": "enabled",
             "stateTransitionTime": "2023-09-07T05:51:10.160301Z",
@@ -211,7 +211,7 @@
       }
     },
     {
-      "RequestUri": "https://batchf68621d9.eastasia.batch.azure.com/pools/f68621d9/nodes/tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d/users?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/f68621d9/nodes/tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d/users?api-version=2023-05-01.17.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -230,10 +230,10 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "DataServiceId": "https://batchf68621d9.eastasia.batch.azure.com/pools/f68621d9/nodes/tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d/users/BatchPythonSDKUser",
+        "DataServiceId": "https://batch.eastasia.batch.azure.com/pools/f68621d9/nodes/tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d/users/BatchPythonSDKUser",
         "DataServiceVersion": "3.0",
         "Date": "Thu, 07 Sep 2023 05:51:12 GMT",
-        "Location": "https://batchf68621d9.eastasia.batch.azure.com/pools/f68621d9/nodes/tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d/users/BatchPythonSDKUser",
+        "Location": "https://batch.eastasia.batch.azure.com/pools/f68621d9/nodes/tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d/users/BatchPythonSDKUser",
         "request-id": "73b0f991-cae1-4934-ae07-7e61465a5d50",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -243,7 +243,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batchf68621d9.eastasia.batch.azure.com/pools/f68621d9/nodes/tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d/users/BatchPythonSDKUser?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/f68621d9/nodes/tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d/users/BatchPythonSDKUser?api-version=2023-05-01.17.0",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -260,7 +260,7 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "DataServiceId": "https://batchf68621d9.eastasia.batch.azure.com/pools/f68621d9/nodes/tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d/users/BatchPythonSDKUser",
+        "DataServiceId": "https://batch.eastasia.batch.azure.com/pools/f68621d9/nodes/tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d/users/BatchPythonSDKUser",
         "DataServiceVersion": "3.0",
         "Date": "Thu, 07 Sep 2023 05:51:13 GMT",
         "request-id": "25ba3e28-91a1-4972-92d2-231fae9d9f05",
@@ -272,7 +272,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://batchf68621d9.eastasia.batch.azure.com/pools/f68621d9/nodes/tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d/remoteloginsettings?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/f68621d9/nodes/tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d/remoteloginsettings?api-version=2023-05-01.17.0",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -286,7 +286,7 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "DataServiceId": "https://batchf68621d9.eastasia.batch.azure.com/pools/f68621d9/nodes/tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d/remoteloginsettings",
+        "DataServiceId": "https://batch.eastasia.batch.azure.com/pools/f68621d9/nodes/tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d/remoteloginsettings",
         "DataServiceVersion": "3.0",
         "Date": "Thu, 07 Sep 2023 05:51:13 GMT",
         "request-id": "44132a0d-680d-4be6-b382-c9d410b421be",
@@ -296,13 +296,13 @@
         "X-Content-Type-Options": "nosniff"
       },
       "ResponseBody": {
-        "odata.metadata": "https://batchf68621d9.eastasia.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.RemoteLoginSettings",
+        "odata.metadata": "https://batch.eastasia.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.RemoteLoginSettings",
         "remoteLoginIPAddress": "20.24.249.61",
         "remoteLoginPort": 50000
       }
     },
     {
-      "RequestUri": "https://batchf68621d9.eastasia.batch.azure.com/pools/f68621d9/nodes/tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d/users/BatchPythonSDKUser?api-version=2023-05-01.17.0",
+      "RequestUri": "https://batch.eastasia.batch.azure.com/pools/f68621d9/nodes/tvmps_3461f4226fb50be99b81ca756e7105a90dfdd92e18739d190be363976edf3576_d/users/BatchPythonSDKUser?api-version=2023-05-01.17.0",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "*/*",
