@@ -1351,7 +1351,50 @@ class TestStorageQueue(StorageRecordedTestCase):
 
     @QueuePreparer()
     @recorded_by_proxy
-    def test_public_audience_queue_client(self, **kwargs):
+    def test_storage_account_audience_queue_service_client(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
+        qsc.get_service_properties()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), credential=token_credential,
+            audience=storage_account_name
+        )
+
+        # Assert
+        response = qsc.get_service_properties()
+        assert response is not None
+
+    @QueuePreparer()
+    @recorded_by_proxy
+    def test_bad_audience_queue_service_client(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
+        qsc.get_service_properties()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        audience_str = f'https://badaudience.blob.core.windows.net/'
+        qsc = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), credential=token_credential,
+            audience="badaudience"
+        )
+
+        # Assert
+        with pytest.raises(ClientAuthenticationError):
+            qsc.get_service_properties()
+
+    @QueuePreparer()
+    @recorded_by_proxy
+    def test_storage_account_audience_queue_client(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -1362,26 +1405,7 @@ class TestStorageQueue(StorageRecordedTestCase):
         # Act
         token_credential = self.generate_oauth_token()
         queue = QueueClient(
-            self.account_url(storage_account_name, "queue"), 'testqueue1', credential=token_credential)
-
-        # Assert
-        response = queue.get_queue_properties()
-        assert response is not None
-
-    @QueuePreparer()
-    @recorded_by_proxy
-    def test_storage_account_audience_queue_client(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        # Arrange
-        queue = QueueClient(self.account_url(storage_account_name, "queue"), 'testqueue2', storage_account_key)
-        queue.create_queue()
-
-        # Act
-        token_credential = self.generate_oauth_token()
-        queue = QueueClient(
-            self.account_url(storage_account_name, "queue"), 'testqueue2', credential=token_credential,
+            self.account_url(storage_account_name, "queue"), 'testqueue1', credential=token_credential,
             audience=storage_account_name
         )
 
@@ -1396,13 +1420,13 @@ class TestStorageQueue(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        queue = QueueClient(self.account_url(storage_account_name, "queue"), 'testqueue3', storage_account_key)
+        queue = QueueClient(self.account_url(storage_account_name, "queue"), 'testqueue2', storage_account_key)
         queue.create_queue()
 
         # Act
         token_credential = self.generate_oauth_token()
         queue = QueueClient(
-            self.account_url(storage_account_name, "queue"), 'testqueue3', credential=token_credential,
+            self.account_url(storage_account_name, "queue"), 'testqueue2', credential=token_credential,
             audience="badaudience"
         )
 
