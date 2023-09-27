@@ -46,9 +46,7 @@ class AnonymousACRExchangeClient(object):
         )
 
     @distributed_trace
-    def get_acr_access_token(
-        self, challenge: str, **kwargs
-    ) -> Optional[str]:
+    def get_acr_access_token(self, challenge: str, **kwargs) -> Optional[str]:
         parsed_challenge = _parse_challenge(challenge)
         return self.exchange_refresh_token_for_access_token(
             "",

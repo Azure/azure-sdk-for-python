@@ -57,9 +57,7 @@ class ACRExchangeClient(object):
         self._expiration_time: float = 0
 
     @distributed_trace_async
-    async def get_acr_access_token(
-        self, challenge: str, **kwargs
-    ) -> Optional[str]:
+    async def get_acr_access_token(self, challenge: str, **kwargs) -> Optional[str]:
         parsed_challenge = _parse_challenge(challenge)
         refresh_token = await self.get_refresh_token(parsed_challenge["service"], **kwargs)
         return await self.exchange_refresh_token_for_access_token(
@@ -67,18 +65,14 @@ class ACRExchangeClient(object):
         )
 
     @distributed_trace_async
-    async def get_refresh_token(
-        self, service: str, **kwargs
-    ) -> str:
+    async def get_refresh_token(self, service: str, **kwargs) -> str:
         if not self._refresh_token or self._expiration_time - time.time() > 300:
             self._refresh_token = await self.exchange_aad_token_for_refresh_token(service, **kwargs)
             self._expiration_time = _parse_exp_time(self._refresh_token)
         return self._refresh_token
 
     @distributed_trace_async
-    async def exchange_aad_token_for_refresh_token(
-        self, service: str, **kwargs
-    ) -> str:
+    async def exchange_aad_token_for_refresh_token(self, service: str, **kwargs) -> str:
         token = await self._credential.get_token(*self.credential_scopes)
         refresh_token = await self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(  # type: ignore[attr-defined] # pylint: disable=line-too-long
             grant_type=PostContentSchemaGrantType.ACCESS_TOKEN, service=service, access_token=token.token, **kwargs
