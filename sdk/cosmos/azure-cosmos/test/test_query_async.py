@@ -498,7 +498,7 @@ class TestQueryAsync:
         assert list(map(lambda doc: doc['value'], [item async for item in query_iterable])) == results
 
     # TODO: Look into distinct query behavior to re-enable this test when possible
-    @pytest.mark.skip("intermittent failures in the pipeline")
+    @pytest.mark.asyncio
     async def test_distinct_async(self):
         await self._set_up()
         created_database = await self.config.create_database_if_not_exist(self.client)
@@ -656,72 +656,64 @@ class TestQueryAsync:
     async def test_distinct_on_different_types_and_field_orders_async(self):
         await self._set_up()
         created_collection = await self.created_db.create_container_if_not_exists(
-            str(uuid.uuid4()), PartitionKey(path="/pk"))
-        self.payloads = [
-            {'f1': 1, 'f2': 'value', 'f3': 100000000000000000, 'f4': [1, 2, '3'], 'f5': {'f6': {'f7': 2}}},
-            {'f2': '\'value', 'f4': [1.0, 2, '3'], 'f5': {'f6': {'f7': 2.0}}, 'f1': 1.0, 'f3': 100000000000000000.00},
-            {'f3': 100000000000000000.0, 'f5': {'f6': {'f7': 2}}, 'f2': '\'value', 'f1': 1, 'f4': [1, 2.0, '3']}
+            str(uuid.uuid4()), PartitionKey(path="/id"))
+        payloads = [
+            {'id': str(uuid.uuid4()), 'f1': 1, 'f2': 'value', 'f3': 100000000000000000, 'f4': [1, 2, '3'], 'f5': {'f6': {'f7': 2}}},
+            {'id': str(uuid.uuid4()), 'f2': '\'value', 'f4': [1.0, 2, '3'], 'f5': {'f6': {'f7': 2.0}}, 'f1': 1.0, 'f3': 100000000000000000.00},
+            {'id': str(uuid.uuid4()), 'f3': 100000000000000000.0, 'f5': {'f6': {'f7': 2}}, 'f2': '\'value', 'f1': 1, 'f4': [1, 2.0, '3']}
         ]
-        self.OriginalExecuteFunction = _QueryExecutionContextBase.__anext__
-        _QueryExecutionContextBase.__anext__ = self._MockNextFunction
+        for pay in payloads:
+            await created_collection.create_item(pay)
 
         await self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct value c.f1 from c",
-            expected_results=[1],
-            get_mock_result=lambda x, i: (None, x[i]["f1"])
+            expected_results=[1]
         )
 
         await self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct value c.f2 from c",
-            expected_results=['value', '\'value'],
-            get_mock_result=lambda x, i: (None, x[i]["f2"])
+            expected_results=['value', '\'value']
         )
 
         await self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct value c.f2 from c order by c.f2",
-            expected_results=['value', '\'value'],
-            get_mock_result=lambda x, i: (x[i]["f2"], x[i]["f2"])
+            expected_results=['value', '\'value']
         )
 
         await self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct value c.f3 from c",
-            expected_results=[100000000000000000],
-            get_mock_result=lambda x, i: (None, x[i]["f3"])
+            expected_results=[100000000000000000]
         )
 
         await self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct value c.f4 from c",
-            expected_results=[[1, 2, '3']],
-            get_mock_result=lambda x, i: (None, x[i]["f4"])
+            expected_results=[[1, 2, '3']]
         )
 
         await self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct value c.f5.f6 from c",
-            expected_results=[{'f7': 2}],
-            get_mock_result=lambda x, i: (None, x[i]["f5"]["f6"])
+            expected_results=[{'f7': 2}]
         )
 
         await self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct c.f1, c.f2, c.f3 from c",
-            expected_results=[self.payloads[0], self.payloads[1]],
-            get_mock_result=lambda x, i: (None, x[i])
+            expected_results=[{'f1': 1, 'f2': 'value', 'f3': 100000000000000000},
+                              {'f1': 1.0, 'f2': '\'value', 'f3': 100000000000000000.00}]
         )
 
         await self._validate_distinct_on_different_types_and_field_orders(
             collection=created_collection,
             query="Select distinct c.f1, c.f2, c.f3 from c order by c.f1",
-            expected_results=[self.payloads[0], self.payloads[1]],
-            get_mock_result=lambda x, i: (i, x[i])
+            expected_results=[{'f1': 1, 'f2': 'value', 'f3': 100000000000000000},
+                              {'f1': 1.0, 'f2': '\'value', 'f3': 100000000000000000.00}]
         )
-
-        _QueryExecutionContextBase.__anext__ = self.OriginalExecuteFunction
 
     @pytest.mark.asyncio
     async def test_paging_with_continuation_token_async(self):
@@ -776,32 +768,28 @@ class TestQueryAsync:
 
         assert second_page['id'] == second_page_fetched_with_continuation_token['id']
 
-    async def _validate_distinct_on_different_types_and_field_orders(self, collection, query, expected_results,
-                                                                     get_mock_result):
-        self.count = 0
-        self.get_mock_result = get_mock_result
+    async def _validate_distinct_on_different_types_and_field_orders(self, collection, query, expected_results):
         query_iterable = collection.query_items(query)
         results = [item async for item in query_iterable]
         for i in range(len(expected_results)):
-            if isinstance(results[i], dict):
-                assert results[i] == expected_results[i]
-            elif isinstance(results[i], list):
-                assert results[i] == expected_results[i]
-            else:
-                assert results[i] == expected_results[i]
-        self.count = 0
+            assert results[i] in expected_results
 
     @pytest.mark.asyncio
     async def test_value_max_query_async(self):
         await self._set_up()
         container = await self.created_db.create_container_if_not_exists(
-            str(uuid.uuid4()), PartitionKey(path="/pk"))
+            str(uuid.uuid4()), PartitionKey(path="/id"))
+        await container.create_item(
+            {"id": str(uuid.uuid4()), "isComplete": True, "version": 3, "lookupVersion": "console_csat"})
+        await container.create_item(
+            {"id": str(uuid.uuid4()), "isComplete": True, "version": 2, "lookupVersion": "console_csat"})
         query = "Select value max(c.version) FROM c where c.isComplete = true and c.lookupVersion = @lookupVersion"
         query_results = container.query_items(query, parameters=[
             {"name": "@lookupVersion", "value": "console_csat"}  # cspell:disable-line
         ])
         item_list = [item async for item in query_results]
-        assert item_list == [None]
+        assert len(item_list) == 1
+        assert item_list[0] == 3
 
     @pytest.mark.asyncio
     async def test_continuation_token_size_limit_query_async(self):
