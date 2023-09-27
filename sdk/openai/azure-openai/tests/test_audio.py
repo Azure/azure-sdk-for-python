@@ -9,8 +9,8 @@ import openai
 from devtools_testutils import AzureRecordedTestCase
 from conftest import configure, AZURE, OPENAI, ALL
 
-audio_test_file = os.path.join(os.path.abspath(__file__), "..", "./assets/hello.m4a")
-audio_long_test_file = os.path.join(os.path.abspath(__file__), "..", "./assets/wikipediaOcelot.wav")
+audio_test_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./assets/hello.m4a"))
+audio_long_test_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./assets/wikipediaOcelot.wav"))
 
 class TestAudio(AzureRecordedTestCase):
 
