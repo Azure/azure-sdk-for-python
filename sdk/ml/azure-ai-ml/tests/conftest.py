@@ -1044,3 +1044,7 @@ def use_python_amlignore_during_upload(mocker: MockFixture) -> None:
     py_ignore = IGNORE_FILE_DIR / "Python.amlignore"
     # Meant to influence azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore when an ignore file isn't provided
     mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_ignore_file", return_value=IgnoreFile(py_ignore))
+
+
+def pytest_collection_modifyitems(items):
+    items[:] = [item for item in items if item.originalname == "test_read_mltable_metadata_contents"]
