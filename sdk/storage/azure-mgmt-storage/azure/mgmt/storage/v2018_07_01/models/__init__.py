@@ -34,8 +34,6 @@ from ._models_py3 import ListAccountSasResponse
 from ._models_py3 import ListContainerItem
 from ._models_py3 import ListContainerItems
 from ._models_py3 import ListServiceSasResponse
-from ._models_py3 import ManagementPoliciesRules
-from ._models_py3 import ManagementPoliciesRulesSetParameter
 from ._models_py3 import MetricSpecification
 from ._models_py3 import NetworkRuleSet
 from ._models_py3 import Operation
@@ -53,8 +51,6 @@ from ._models_py3 import StorageAccountCreateParameters
 from ._models_py3 import StorageAccountKey
 from ._models_py3 import StorageAccountListKeysResult
 from ._models_py3 import StorageAccountListResult
-from ._models_py3 import StorageAccountManagementPolicies
-from ._models_py3 import StorageAccountManagementPoliciesRulesProperty
 from ._models_py3 import StorageAccountRegenerateKeyParameters
 from ._models_py3 import StorageAccountUpdateParameters
 from ._models_py3 import StorageSkuListResult
@@ -83,7 +79,6 @@ from ._storage_management_client_enums import LeaseContainerRequestAction
 from ._storage_management_client_enums import LeaseDuration
 from ._storage_management_client_enums import LeaseState
 from ._storage_management_client_enums import LeaseStatus
-from ._storage_management_client_enums import ManagementPolicyName
 from ._storage_management_client_enums import Permissions
 from ._storage_management_client_enums import ProvisioningState
 from ._storage_management_client_enums import PublicAccess
@@ -129,8 +124,6 @@ __all__ = [
     "ListContainerItem",
     "ListContainerItems",
     "ListServiceSasResponse",
-    "ManagementPoliciesRules",
-    "ManagementPoliciesRulesSetParameter",
     "MetricSpecification",
     "NetworkRuleSet",
     "Operation",
@@ -148,8 +141,6 @@ __all__ = [
     "StorageAccountKey",
     "StorageAccountListKeysResult",
     "StorageAccountListResult",
-    "StorageAccountManagementPolicies",
-    "StorageAccountManagementPoliciesRulesProperty",
     "StorageAccountRegenerateKeyParameters",
     "StorageAccountUpdateParameters",
     "StorageSkuListResult",
@@ -177,7 +168,6 @@ __all__ = [
     "LeaseDuration",
     "LeaseState",
     "LeaseStatus",
-    "ManagementPolicyName",
     "Permissions",
     "ProvisioningState",
     "PublicAccess",

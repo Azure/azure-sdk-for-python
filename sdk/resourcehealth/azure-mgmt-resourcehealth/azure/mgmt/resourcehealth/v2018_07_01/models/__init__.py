@@ -40,18 +40,18 @@ from ._models_py3 import StatusActiveEvent
 from ._models_py3 import StatusBanner
 from ._models_py3 import Update
 
-from ._microsoft_resource_health_enums import AvailabilityStateValues
-from ._microsoft_resource_health_enums import Enum8
-from ._microsoft_resource_health_enums import EventLevelValues
-from ._microsoft_resource_health_enums import EventSourceValues
-from ._microsoft_resource_health_enums import EventStatusValues
-from ._microsoft_resource_health_enums import EventTypeValues
-from ._microsoft_resource_health_enums import LevelValues
-from ._microsoft_resource_health_enums import LinkTypeValues
-from ._microsoft_resource_health_enums import ReasonChronicityTypes
-from ._microsoft_resource_health_enums import Scenario
-from ._microsoft_resource_health_enums import SeverityValues
-from ._microsoft_resource_health_enums import StageValues
+from ._resource_health_mgmt_client_enums import AvailabilityStateValues
+from ._resource_health_mgmt_client_enums import Enum8
+from ._resource_health_mgmt_client_enums import EventLevelValues
+from ._resource_health_mgmt_client_enums import EventSourceValues
+from ._resource_health_mgmt_client_enums import EventStatusValues
+from ._resource_health_mgmt_client_enums import EventTypeValues
+from ._resource_health_mgmt_client_enums import LevelValues
+from ._resource_health_mgmt_client_enums import LinkTypeValues
+from ._resource_health_mgmt_client_enums import ReasonChronicityTypes
+from ._resource_health_mgmt_client_enums import Scenario
+from ._resource_health_mgmt_client_enums import SeverityValues
+from ._resource_health_mgmt_client_enums import StageValues
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk

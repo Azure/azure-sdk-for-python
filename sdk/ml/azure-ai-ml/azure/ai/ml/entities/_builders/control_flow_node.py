@@ -5,16 +5,16 @@ import logging
 import re
 import uuid
 from abc import ABC
-from typing import Dict, Union
+from typing import Dict, Union  # pylint: disable=unused-import
 
 from marshmallow import ValidationError
 
-from azure.ai.ml._utils.utils import is_data_binding_expression, is_internal_components_enabled
+from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants._common import CommonYamlFields
-from azure.ai.ml.constants._component import ControlFlowType, ComponentSource
+from azure.ai.ml.constants._component import ComponentSource, ControlFlowType
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
-from azure.ai.ml.entities._validation import SchemaValidatableMixin
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType
+from azure.ai.ml.entities._validation import PathAwareSchemaValidatableMixin
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .._util import convert_ordered_dict_to_dict
 from .base_node import BaseNode
@@ -23,13 +23,16 @@ module_logger = logging.getLogger(__name__)
 
 
 # ControlFlowNode did not inherit from BaseNode since it doesn't have inputs/outputs like other nodes.
-class ControlFlowNode(YamlTranslatableMixin, SchemaValidatableMixin, ABC):
-    """Base class for control flow node in pipeline.
+class ControlFlowNode(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, ABC):
+    """Base class for control flow node in the pipeline.
 
     Please do not directly use this class.
+
+    :param kwargs: Additional keyword arguments.
+    :type kwargs: Dict[str, Union[Any]]
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         # TODO(1979547): refactor this
         _source = kwargs.pop("_source", None)
         self._source = _source if _source else ComponentSource.DSL
@@ -44,13 +47,22 @@ class ControlFlowNode(YamlTranslatableMixin, SchemaValidatableMixin, ABC):
 
     @property
     def type(self):
+        """Get the type of the control flow node.
+
+        :return: The type of the control flow node.
+        :rtype: self._type
+        """
         return self._type
 
     def _to_dict(self) -> Dict:
         return self._dump_for_validation()
 
     def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument
-        """Convert self to a rest object for remote call."""
+        """Convert self to a rest object for remote call.
+
+        :return: The rest object
+        :rtype: dict
+        """
         rest_obj = self._to_dict()
         rest_obj["_source"] = self._source
         return convert_ordered_dict_to_dict(rest_obj)
@@ -62,21 +74,26 @@ class ControlFlowNode(YamlTranslatableMixin, SchemaValidatableMixin, ABC):
         _add_component_to_current_definition_builder(self)
 
     @classmethod
-    def _get_validation_error_target(cls) -> ErrorTarget:
-        """Return the error target of this resource.
-
-        Should be overridden by subclass. Value should be in ErrorTarget enum.
-        """
-        return ErrorTarget.PIPELINE
+    def _create_validation_error(cls, message: str, no_personal_data_message: str):
+        return ValidationException(
+            message=message,
+            no_personal_data_message=no_personal_data_message,
+            target=ErrorTarget.PIPELINE,
+        )
 
 
 class LoopNode(ControlFlowNode, ABC):
-    """Base class for loop node in pipeline.
+    """Base class for loop node in the pipeline.
 
     Please do not directly use this class.
+
+    :param body: The body of the loop node.
+    :type body: ~azure.ai.ml.entities._builders.BaseNode
+    :param kwargs: Additional keyword arguments.
+    :type kwargs: Dict[str, Union[Any]]
     """
 
-    def __init__(self, *, body: Union[BaseNode], **kwargs):
+    def __init__(self, *, body: BaseNode, **kwargs) -> None:
         self._body = body
         super(LoopNode, self).__init__(**kwargs)
         # always set the referenced control flow node instance id to the body.
@@ -84,7 +101,14 @@ class LoopNode(ControlFlowNode, ABC):
 
     @property
     def body(self):
+        """Get the body of the loop node.
+
+        :return: The body of the loop node.
+        :rtype: ~azure.ai.ml.entities._builders.BaseNode
+        """
         return self._body
+
+    _extra_body_types = None
 
     @classmethod
     def _attr_type_map(cls) -> dict:
@@ -92,41 +116,38 @@ class LoopNode(ControlFlowNode, ABC):
         from .pipeline import Pipeline
 
         enable_body_type = (Command, Pipeline)
-        if is_internal_components_enabled():
-            from azure.ai.ml._internal.entities import Command as InternalCommand
-            from azure.ai.ml._internal.entities import Pipeline as InternalPipeline
-
-            enable_body_type = enable_body_type + (InternalCommand, InternalPipeline)
+        if cls._extra_body_types is not None:
+            enable_body_type = enable_body_type + cls._extra_body_types
         return {
             "body": enable_body_type,
         }
 
     @classmethod
-    def _get_body_from_pipeline_jobs(cls, pipeline_jobs: dict, body_name: str):
+    def _get_body_from_pipeline_jobs(cls, pipeline_jobs: Dict[str, BaseNode], body_name: str) -> BaseNode:
         # Get body object from pipeline job list.
         if body_name not in pipeline_jobs:
             raise ValidationError(
                 message=f'Cannot find the do-while loop body "{body_name}" in the pipeline.',
-                target=cls._get_validation_error_target(),
+                target=ErrorTarget.PIPELINE,
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
         return pipeline_jobs[body_name]
 
-    def _validate_body(self, raise_error=True):
+    def _validate_body(self):
         # pylint: disable=protected-access
         validation_result = self._create_empty_validation_result()
 
         if self._instance_id != self.body._referenced_control_flow_node_instance_id:
             # When the body is used in another loop node record the error message in validation result.
             validation_result.append_error("body", "The body of loop node cannot be promoted as another loop again.")
-        return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
+        return validation_result
 
     def _get_body_binding_str(self):
         return "${{parent.jobs.%s}}" % self.body.name
 
     @staticmethod
-    def _get_data_binding_expression_value(expression, regex):
+    def _get_data_binding_expression_value(expression: str, regex: str) -> str:
         try:
             if is_data_binding_expression(expression):
                 return re.findall(regex, expression)[0]

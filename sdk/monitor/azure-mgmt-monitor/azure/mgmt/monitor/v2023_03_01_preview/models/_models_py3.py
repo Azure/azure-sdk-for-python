@@ -144,7 +144,7 @@ class EmailReceiver(_serialization.Model):
     :vartype use_common_alert_schema: bool
     :ivar status: The receiver status of the e-mail. Known values are: "NotSpecified", "Enabled",
      and "Disabled".
-    :vartype status: str or ~$(python-base-namespace).v2023_03_01_preview.models.ReceiverStatus
+    :vartype status: str or ~azure.mgmt.monitor.v2023_03_01_preview.models.ReceiverStatus
     """
 
     _validation = {
@@ -219,7 +219,7 @@ class SmsReceiver(_serialization.Model):
     :vartype phone_number: str
     :ivar status: The status of the receiver. Known values are: "NotSpecified", "Enabled", and
      "Disabled".
-    :vartype status: str or ~$(python-base-namespace).v2023_03_01_preview.models.ReceiverStatus
+    :vartype status: str or ~azure.mgmt.monitor.v2023_03_01_preview.models.ReceiverStatus
     """
 
     _validation = {
@@ -257,8 +257,7 @@ class TenantActionGroupList(_serialization.Model):
     """A list of tenant action groups.
 
     :ivar value: The list of tenant action groups.
-    :vartype value:
-     list[~$(python-base-namespace).v2023_03_01_preview.models.TenantActionGroupResource]
+    :vartype value: list[~azure.mgmt.monitor.v2023_03_01_preview.models.TenantActionGroupResource]
     :ivar next_link: Provides the link to retrieve the next set of elements.
     :vartype next_link: str
     """
@@ -278,7 +277,7 @@ class TenantActionGroupList(_serialization.Model):
         """
         :keyword value: The list of tenant action groups.
         :paramtype value:
-         list[~$(python-base-namespace).v2023_03_01_preview.models.TenantActionGroupResource]
+         list[~azure.mgmt.monitor.v2023_03_01_preview.models.TenantActionGroupResource]
         :keyword next_link: Provides the link to retrieve the next set of elements.
         :paramtype next_link: str
         """
@@ -310,21 +309,19 @@ class TenantActionGroupResource(AzureResource):  # pylint: disable=too-many-inst
      is not enabled, then none of its receivers will receive communications.
     :vartype enabled: bool
     :ivar email_receivers: The list of email receivers that are part of this tenant action group.
-    :vartype email_receivers:
-     list[~$(python-base-namespace).v2023_03_01_preview.models.EmailReceiver]
+    :vartype email_receivers: list[~azure.mgmt.monitor.v2023_03_01_preview.models.EmailReceiver]
     :ivar sms_receivers: The list of SMS receivers that are part of this tenant action group.
-    :vartype sms_receivers: list[~$(python-base-namespace).v2023_03_01_preview.models.SmsReceiver]
+    :vartype sms_receivers: list[~azure.mgmt.monitor.v2023_03_01_preview.models.SmsReceiver]
     :ivar webhook_receivers: The list of webhook receivers that are part of this tenant action
      group.
     :vartype webhook_receivers:
-     list[~$(python-base-namespace).v2023_03_01_preview.models.WebhookReceiver]
+     list[~azure.mgmt.monitor.v2023_03_01_preview.models.WebhookReceiver]
     :ivar azure_app_push_receivers: The list of AzureAppPush receivers that are part of this tenant
      action group.
     :vartype azure_app_push_receivers:
-     list[~$(python-base-namespace).v2023_03_01_preview.models.AzureAppPushReceiver]
+     list[~azure.mgmt.monitor.v2023_03_01_preview.models.AzureAppPushReceiver]
     :ivar voice_receivers: The list of voice receivers that are part of this tenant action group.
-    :vartype voice_receivers:
-     list[~$(python-base-namespace).v2023_03_01_preview.models.VoiceReceiver]
+    :vartype voice_receivers: list[~azure.mgmt.monitor.v2023_03_01_preview.models.VoiceReceiver]
     """
 
     _validation = {
@@ -377,23 +374,20 @@ class TenantActionGroupResource(AzureResource):  # pylint: disable=too-many-inst
         :paramtype enabled: bool
         :keyword email_receivers: The list of email receivers that are part of this tenant action
          group.
-        :paramtype email_receivers:
-         list[~$(python-base-namespace).v2023_03_01_preview.models.EmailReceiver]
+        :paramtype email_receivers: list[~azure.mgmt.monitor.v2023_03_01_preview.models.EmailReceiver]
         :keyword sms_receivers: The list of SMS receivers that are part of this tenant action group.
-        :paramtype sms_receivers:
-         list[~$(python-base-namespace).v2023_03_01_preview.models.SmsReceiver]
+        :paramtype sms_receivers: list[~azure.mgmt.monitor.v2023_03_01_preview.models.SmsReceiver]
         :keyword webhook_receivers: The list of webhook receivers that are part of this tenant action
          group.
         :paramtype webhook_receivers:
-         list[~$(python-base-namespace).v2023_03_01_preview.models.WebhookReceiver]
+         list[~azure.mgmt.monitor.v2023_03_01_preview.models.WebhookReceiver]
         :keyword azure_app_push_receivers: The list of AzureAppPush receivers that are part of this
          tenant action group.
         :paramtype azure_app_push_receivers:
-         list[~$(python-base-namespace).v2023_03_01_preview.models.AzureAppPushReceiver]
+         list[~azure.mgmt.monitor.v2023_03_01_preview.models.AzureAppPushReceiver]
         :keyword voice_receivers: The list of voice receivers that are part of this tenant action
          group.
-        :paramtype voice_receivers:
-         list[~$(python-base-namespace).v2023_03_01_preview.models.VoiceReceiver]
+        :paramtype voice_receivers: list[~azure.mgmt.monitor.v2023_03_01_preview.models.VoiceReceiver]
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.group_short_name = group_short_name

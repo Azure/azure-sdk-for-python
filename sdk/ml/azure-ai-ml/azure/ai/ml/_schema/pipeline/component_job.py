@@ -2,13 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=no-self-use,protected-access
+# pylint: disable=protected-access
 
 import logging
 
 from marshmallow import INCLUDE, ValidationError, fields, post_dump, post_load, pre_dump, validates
 
-from ..._schema.assets.environment import AnonymousEnvironmentSchema
 from ..._schema.component import (
     AnonymousCommandComponentSchema,
     AnonymousDataTransferCopyComponentSchema,
@@ -16,6 +15,7 @@ from ..._schema.component import (
     AnonymousParallelComponentSchema,
     AnonymousSparkComponentSchema,
     ComponentFileRefField,
+    ComponentYamlRefField,
     DataTransferCopyComponentFileRefField,
     ImportComponentFileRefField,
     ParallelComponentFileRefField,
@@ -29,9 +29,11 @@ from ...entities._job.pipeline._attr_dict import _AttrDict
 from ...exceptions import ValidationException
 from .._sweep.parameterized_sweep import ParameterizedSweepSchema
 from .._utils.data_binding_expression import support_data_binding_expression_for_fields
+from ..component.flow import FlowComponentSchema
 from ..core.fields import (
     ArmVersionedStr,
     ComputeField,
+    EnvironmentField,
     NestedField,
     RegistryStr,
     StringTransformedEnum,
@@ -78,6 +80,7 @@ class BaseNodeSchema(PathAwareSchema):
         support_data_binding_expression_for_fields(self, ["type", "component", "trial", "inputs"])
 
     @post_dump(pass_original=True)
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def add_user_setting_attr_dict(self, data, original_data, **kwargs):  # pylint: disable=unused-argument
         """Support serializing unknown fields for pipeline node."""
         if isinstance(original_data, _AttrDict):
@@ -163,13 +166,7 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
         },
         load_only=True,
     )
-    environment = UnionField(
-        [
-            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
-            NestedField(AnonymousEnvironmentSchema),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
-        ],
-    )
+    environment = EnvironmentField()
     services = fields.Dict(
         keys=fields.Str(),
         values=UnionField(
@@ -205,7 +202,7 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
         except ValidationException as e:
             # It may raise ValidationError during initialization, command._validate_io e.g. raise ValidationError
             # instead in marshmallow function, so it won't break SchemaValidatable._schema_validate
-            raise ValidationError(e.message)
+            raise ValidationError(e.message) from e
         return command_node
 
     @pre_dump
@@ -256,6 +253,10 @@ class ParallelSchema(BaseNodeSchema, ParameterizedParallelSchema):
                 NestedField(AnonymousParallelComponentSchema, unknown=INCLUDE),
                 # component file reference
                 ParallelComponentFileRefField(),
+            ],
+            NodeType.FLOW_PARALLEL: [
+                NestedField(FlowComponentSchema, unknown=INCLUDE, dump_only=True),
+                ComponentYamlRefField(),
             ],
         },
         plain_union_fields=[
@@ -371,7 +372,7 @@ class SparkSchema(BaseNodeSchema, ParameterizedSparkSchema):
         except ValidationException as e:
             # It may raise ValidationError during initialization, command._validate_io e.g. raise ValidationError
             # instead in marshmallow function, so it won't break SchemaValidatable._schema_validate
-            raise ValidationError(e.message)
+            raise ValidationError(e.message) from e
         return spark_node
 
     @pre_dump
@@ -414,7 +415,7 @@ class DataTransferCopySchema(BaseNodeSchema):
         except ValidationException as e:
             # It may raise ValidationError during initialization, data_transfer._validate_io e.g. raise ValidationError
             # instead in marshmallow function, so it won't break SchemaValidatable._schema_validate
-            raise ValidationError(e.message)
+            raise ValidationError(e.message) from e
         return data_transfer_node
 
     @pre_dump
@@ -465,7 +466,7 @@ class DataTransferImportSchema(BaseNodeSchema):
         except ValidationException as e:
             # It may raise ValidationError during initialization, data_transfer._validate_io e.g. raise ValidationError
             # instead in marshmallow function, so it won't break SchemaValidatable._schema_validate
-            raise ValidationError(e.message)
+            raise ValidationError(e.message) from e
         return data_transfer_node
 
     @pre_dump
@@ -516,7 +517,7 @@ class DataTransferExportSchema(BaseNodeSchema):
         except ValidationException as e:
             # It may raise ValidationError during initialization, data_transfer._validate_io e.g. raise ValidationError
             # instead in marshmallow function, so it won't break SchemaValidatable._schema_validate
-            raise ValidationError(e.message)
+            raise ValidationError(e.message) from e
         return data_transfer_node
 
     @pre_dump

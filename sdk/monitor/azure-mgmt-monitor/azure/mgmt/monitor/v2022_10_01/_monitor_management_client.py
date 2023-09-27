@@ -27,10 +27,10 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
 
     :ivar autoscale_settings: AutoscaleSettingsOperations operations
     :vartype autoscale_settings:
-     $(python-base-namespace).v2022_10_01.operations.AutoscaleSettingsOperations
+     azure.mgmt.monitor.v2022_10_01.operations.AutoscaleSettingsOperations
     :ivar predictive_metric: PredictiveMetricOperations operations
     :vartype predictive_metric:
-     $(python-base-namespace).v2022_10_01.operations.PredictiveMetricOperations
+     azure.mgmt.monitor.v2022_10_01.operations.PredictiveMetricOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.

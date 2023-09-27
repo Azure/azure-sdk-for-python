@@ -8,3 +8,4 @@ is_arm = true
 need_msrestazure = false
 need_azuremgmtcore = true
 sample_link = ""
+title = "ServiceNetworkingMgmtClient"

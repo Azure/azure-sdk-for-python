@@ -16,12 +16,11 @@ from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
 
 class TestSearchClientSynonymMaps(AzureRecordedTestCase):
-
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy
     def test_synonym_map(self, endpoint, api_key):
-        client = SearchIndexClient(endpoint, api_key)
+        client = SearchIndexClient(endpoint, api_key, retry_backoff_factor=60)
         self._test_create_synonym_map(client)
         self._test_delete_synonym_map(client)
         self._test_delete_synonym_map_if_unchanged(client)
@@ -69,9 +68,11 @@ class TestSearchClientSynonymMaps(AzureRecordedTestCase):
         result = client.create_synonym_map(synonym_map)
         etag = result.e_tag
 
-        synonym_map.synonyms = "\n".join([
-            "Washington, Wash. => WA",
-        ])
+        synonym_map.synonyms = "\n".join(
+            [
+                "Washington, Wash. => WA",
+            ]
+        )
         client.create_or_update_synonym_map(synonym_map)
 
         result.e_tag = etag

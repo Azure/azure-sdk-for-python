@@ -7,7 +7,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import sys
 from typing import Any, Callable, Dict, Optional, TypeVar
 
 from azure.core.exceptions import (
@@ -29,10 +28,6 @@ from .. import models as _models
 from ..._serialization import Serializer
 from .._vendor import _convert_request, _format_url_section
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -55,7 +50,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -93,7 +88,7 @@ class PredictiveMetricOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~$(python-base-namespace).v2022_10_01.MonitorManagementClient`'s
+        :class:`~azure.mgmt.monitor.v2022_10_01.MonitorManagementClient`'s
         :attr:`predictive_metric` attribute.
     """
 
@@ -140,7 +135,7 @@ class PredictiveMetricOperations:
         :type aggregation: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PredictiveResponse or the result of cls(response)
-        :rtype: ~$(python-base-namespace).v2022_10_01.models.PredictiveResponse
+        :rtype: ~azure.mgmt.monitor.v2022_10_01.models.PredictiveResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -154,7 +149,7 @@ class PredictiveMetricOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
         cls: ClsType[_models.PredictiveResponse] = kwargs.pop("cls", None)
 
         request = build_get_request(

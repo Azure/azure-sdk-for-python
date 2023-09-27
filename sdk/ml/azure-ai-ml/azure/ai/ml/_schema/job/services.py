@@ -45,7 +45,7 @@ class JobServiceSchema(JobServiceBaseSchema):
     )
 
     @post_load
-    def make(self, data, **kwargs):  # pylint: disable=unused-argument,no-self-use
+    def make(self, data, **kwargs):  # pylint: disable=unused-argument
         data.pop("type", None)
         return JobService(**data)
 
@@ -58,7 +58,7 @@ class TensorBoardJobServiceSchema(JobServiceBaseSchema):
     log_dir = fields.Str()
 
     @post_load
-    def make(self, data, **kwargs):  # pylint: disable=unused-argument,no-self-use
+    def make(self, data, **kwargs):  # pylint: disable=unused-argument
         data.pop("type", None)
         return TensorBoardJobService(**data)
 
@@ -71,7 +71,7 @@ class SshJobServiceSchema(JobServiceBaseSchema):
     ssh_public_keys = fields.Str()
 
     @post_load
-    def make(self, data, **kwargs):  # pylint: disable=unused-argument,no-self-use
+    def make(self, data, **kwargs):  # pylint: disable=unused-argument
         data.pop("type", None)
         return SshJobService(**data)
 
@@ -83,7 +83,7 @@ class VsCodeJobServiceSchema(JobServiceBaseSchema):
     )
 
     @post_load
-    def make(self, data, **kwargs):  # pylint: disable=unused-argument,no-self-use
+    def make(self, data, **kwargs):  # pylint: disable=unused-argument
         data.pop("type", None)
         return VsCodeJobService(**data)
 
@@ -95,6 +95,6 @@ class JupyterLabJobServiceSchema(JobServiceBaseSchema):
     )
 
     @post_load
-    def make(self, data, **kwargs):  # pylint: disable=unused-argument,no-self-use
+    def make(self, data, **kwargs):  # pylint: disable=unused-argument
         data.pop("type", None)
         return JupyterLabJobService(**data)

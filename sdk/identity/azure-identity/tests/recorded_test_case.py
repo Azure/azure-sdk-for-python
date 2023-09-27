@@ -11,7 +11,6 @@ PLAYBACK_CLIENT_ID = "client-id"
 
 
 class RecordedTestCase(AzureRecordedTestCase):
-
     @pytest.fixture()
     def user_assigned_identity_client_id(self):
         self.user_assigned_identity_client_id = os.environ.get("USER_ASSIGNED_IDENTITY_CLIENT_ID", PLAYBACK_CLIENT_ID)

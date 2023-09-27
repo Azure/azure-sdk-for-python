@@ -23,12 +23,16 @@ from ._models_py3 import DataNetwork
 from ._models_py3 import DataNetworkConfiguration
 from ._models_py3 import DataNetworkListResult
 from ._models_py3 import DataNetworkResourceId
+from ._models_py3 import DiagnosticsPackage
+from ._models_py3 import DiagnosticsPackageListResult
+from ._models_py3 import DiagnosticsUploadConfiguration
 from ._models_py3 import EncryptedSimPropertiesFormat
 from ._models_py3 import EncryptedSimUploadList
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import HttpsServerCertificate
+from ._models_py3 import IdentityAndTagsObject
 from ._models_py3 import Installation
 from ._models_py3 import InterfaceProperties
 from ._models_py3 import KeyVaultKey
@@ -41,9 +45,12 @@ from ._models_py3 import NaptConfiguration
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationList
+from ._models_py3 import PacketCapture
+from ._models_py3 import PacketCaptureListResult
 from ._models_py3 import PacketCoreControlPlane
 from ._models_py3 import PacketCoreControlPlaneCollectDiagnosticsPackage
 from ._models_py3 import PacketCoreControlPlaneListResult
+from ._models_py3 import PacketCoreControlPlaneResourceId
 from ._models_py3 import PacketCoreControlPlaneVersion
 from ._models_py3 import PacketCoreControlPlaneVersionListResult
 from ._models_py3 import PacketCoreDataPlane
@@ -79,6 +86,7 @@ from ._models_py3 import SimStaticIpProperties
 from ._models_py3 import SimStaticIpPropertiesStaticIp
 from ._models_py3 import SimUploadList
 from ._models_py3 import Site
+from ._models_py3 import SiteDeletePacketCore
 from ._models_py3 import SiteListResult
 from ._models_py3 import SiteResourceId
 from ._models_py3 import Slice
@@ -97,16 +105,21 @@ from ._mobile_network_management_client_enums import BillingSku
 from ._mobile_network_management_client_enums import CertificateProvisioningState
 from ._mobile_network_management_client_enums import CoreNetworkType
 from ._mobile_network_management_client_enums import CreatedByType
+from ._mobile_network_management_client_enums import DesiredInstallationState
+from ._mobile_network_management_client_enums import DiagnosticsPackageStatus
+from ._mobile_network_management_client_enums import InstallationReason
 from ._mobile_network_management_client_enums import InstallationState
 from ._mobile_network_management_client_enums import ManagedServiceIdentityType
 from ._mobile_network_management_client_enums import NaptEnabled
 from ._mobile_network_management_client_enums import ObsoleteVersion
+from ._mobile_network_management_client_enums import PacketCaptureStatus
 from ._mobile_network_management_client_enums import PduSessionType
 from ._mobile_network_management_client_enums import PlatformType
 from ._mobile_network_management_client_enums import PreemptionCapability
 from ._mobile_network_management_client_enums import PreemptionVulnerability
 from ._mobile_network_management_client_enums import ProvisioningState
 from ._mobile_network_management_client_enums import RecommendedVersion
+from ._mobile_network_management_client_enums import ReinstallRequired
 from ._mobile_network_management_client_enums import SdfDirection
 from ._mobile_network_management_client_enums import SimState
 from ._mobile_network_management_client_enums import SiteProvisioningState
@@ -134,12 +147,16 @@ __all__ = [
     "DataNetworkConfiguration",
     "DataNetworkListResult",
     "DataNetworkResourceId",
+    "DiagnosticsPackage",
+    "DiagnosticsPackageListResult",
+    "DiagnosticsUploadConfiguration",
     "EncryptedSimPropertiesFormat",
     "EncryptedSimUploadList",
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
     "HttpsServerCertificate",
+    "IdentityAndTagsObject",
     "Installation",
     "InterfaceProperties",
     "KeyVaultKey",
@@ -152,9 +169,12 @@ __all__ = [
     "Operation",
     "OperationDisplay",
     "OperationList",
+    "PacketCapture",
+    "PacketCaptureListResult",
     "PacketCoreControlPlane",
     "PacketCoreControlPlaneCollectDiagnosticsPackage",
     "PacketCoreControlPlaneListResult",
+    "PacketCoreControlPlaneResourceId",
     "PacketCoreControlPlaneVersion",
     "PacketCoreControlPlaneVersionListResult",
     "PacketCoreDataPlane",
@@ -190,6 +210,7 @@ __all__ = [
     "SimStaticIpPropertiesStaticIp",
     "SimUploadList",
     "Site",
+    "SiteDeletePacketCore",
     "SiteListResult",
     "SiteResourceId",
     "Slice",
@@ -207,16 +228,21 @@ __all__ = [
     "CertificateProvisioningState",
     "CoreNetworkType",
     "CreatedByType",
+    "DesiredInstallationState",
+    "DiagnosticsPackageStatus",
+    "InstallationReason",
     "InstallationState",
     "ManagedServiceIdentityType",
     "NaptEnabled",
     "ObsoleteVersion",
+    "PacketCaptureStatus",
     "PduSessionType",
     "PlatformType",
     "PreemptionCapability",
     "PreemptionVulnerability",
     "ProvisioningState",
     "RecommendedVersion",
+    "ReinstallRequired",
     "SdfDirection",
     "SimState",
     "SiteProvisioningState",

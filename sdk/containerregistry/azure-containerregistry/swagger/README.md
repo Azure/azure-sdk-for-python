@@ -102,6 +102,7 @@ directive:
 ### Change "parameters.ApiVersionParameter.required" to true
 
 so that the generated client/clientcontext constructors take api_version as a parameter.
+
 ```yaml
 directive:
   - from: swagger-document
@@ -110,7 +111,7 @@ directive:
       $.required = true
 ```
 
-# Change NextLink client name to nextLink
+### Change NextLink client name to nextLink
 ``` yaml
 directive:
   from: swagger-document
@@ -119,23 +120,7 @@ directive:
     $["x-ms-client-name"] = "nextLink"
 ```
 
-# Updates to OciManifest
-``` yaml
-directive:
-  from: swagger-document
-  where: $.definitions.OCIManifest
-  transform: >
-    $["x-csharp-usage"] = "model,input,output,converter";
-    $["x-csharp-formats"] = "json";
-    delete $["x-accessibility"];
-    delete $["allOf"];
-    $.properties["schemaVersion"] = {
-          "type": "integer",
-          "description": "Schema version"
-        };
-```
-
-# Take stream as manifest body
+### Take stream as manifest body
 ``` yaml
 directive:
   from: swagger-document
@@ -147,28 +132,48 @@ directive:
       }
 ```
 
-# Make ArtifactBlobDescriptor a public type
+### Replace ManifestWrapper with stream response to calculate SHA256
 ``` yaml
 directive:
   from: swagger-document
-  where: $.definitions.Descriptor
+  where: $.paths["/v2/{name}/manifests/{reference}"].get.responses["200"]
   transform: >
-    delete $["x-accessibility"]
+      $.schema = {
+          "type": "string",
+          "format": "binary"
+      };
 ```
 
-# Make OciAnnotations a public type
+### Rename parameter "Range" to "RangeHeader"
 ``` yaml
 directive:
   from: swagger-document
-  where: $.definitions.Annotations
+  where: $.parameters.Range
   transform: >
-    delete $["x-accessibility"]
+    $["x-ms-client-name"] = "RangeHeader"
 ```
 
-``` yaml
+### Remove security definitions
+
+as it is incorrect in swagger
+
+```yaml
 directive:
-  from: swagger-document
-  where-operation: ContainerRegistry_GetManifest
-  transform: >
-    $.parameters = $.parameters.filter(item => item.name !== "accept")
+  - from: swagger-document
+    where: $.
+    transform: >
+      delete $["securityDefinitions"];
+      delete $["security"];
+```
+
+### Remove stream response from `deleteBlob`
+
+as we don't care about the stream that is returned and we don't want to clean it up
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $.paths["/v2/{name}/blobs/{digest}"]["delete"]
+    transform: >
+      delete $.responses["202"].schema;
 ```

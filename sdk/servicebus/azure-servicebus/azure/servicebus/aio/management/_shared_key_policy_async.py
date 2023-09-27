@@ -34,7 +34,7 @@ class AsyncServiceBusSharedKeyCredentialPolicy(SansIOHTTPPolicy):
             access_token, self._token_expiry_on = await self._credential.get_token(
                 self._endpoint
             )
-            self._token = access_token.decode("utf-8")
+            self._token = access_token
 
     async def on_request(
         self, request: PipelineRequest

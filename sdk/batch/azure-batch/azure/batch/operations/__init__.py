@@ -12,10 +12,10 @@
 from ._application_operations import ApplicationOperations
 from ._pool_operations import PoolOperations
 from ._account_operations import AccountOperations
-from ._job_operations import JobOperations
 from ._certificate_operations import CertificateOperations
 from ._file_operations import FileOperations
 from ._job_schedule_operations import JobScheduleOperations
+from ._job_operations import JobOperations
 from ._task_operations import TaskOperations
 from ._compute_node_operations import ComputeNodeOperations
 from ._compute_node_extension_operations import ComputeNodeExtensionOperations
@@ -24,10 +24,10 @@ __all__ = [
     'ApplicationOperations',
     'PoolOperations',
     'AccountOperations',
-    'JobOperations',
     'CertificateOperations',
     'FileOperations',
     'JobScheduleOperations',
+    'JobOperations',
     'TaskOperations',
     'ComputeNodeOperations',
     'ComputeNodeExtensionOperations',

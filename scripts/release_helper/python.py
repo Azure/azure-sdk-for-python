@@ -10,17 +10,16 @@ from utils import AUTO_CLOSE_LABEL, get_last_released_date, record_release, get_
 
 # assignee dict which will be assigned to handle issues
 _PYTHON_OWNER = {'azure-sdk', 'msyyc'}
-_PYTHON_ASSIGNEE = {'Wzb123456789'}
+_PYTHON_ASSIGNEE = {'ChenxiJiang333'}
 
 # labels
 _CONFIGURED = 'Configured'
 _AUTO_ASK_FOR_CHECK = 'auto-ask-check'
 _BRANCH_ATTENTION = 'base-branch-attention'
 _MultiAPI = 'MultiAPI'
-_ON_TIME = 'on time'
-_HOLD_ON = 'HoldOn'
 # record published issues
 _FILE_OUT = 'published_issues_python.csv'
+_HINTS = ["FirstGA", "FirstBeta", "HoldOn", "OnTime", "ForCLI"]
 
 
 class IssueProcessPython(IssueProcess):
@@ -93,7 +92,8 @@ class IssueProcessPython(IssueProcess):
                                            pipeline_url=release_pipeline_url,
                                            spec_readme=self.readme_link + '/readme.md',
                                            python_tag=self.python_tag,
-                                           rest_repo_hash=self.rest_repo_hash
+                                           rest_repo_hash=self.rest_repo_hash,
+                                           target_date=self.target_date,
                                            )
                     if res_run:
                         self.log(f'{issue_number} run pipeline successfully')
@@ -113,20 +113,16 @@ class IssueProcessPython(IssueProcess):
         if _BRANCH_ATTENTION in self.issue_package.labels_name:
             self.bot_advice.append('new version is 0.0.0, please check base branch!')
 
-    def on_time_policy(self):
-        if _ON_TIME in self.issue_package.labels_name:
-            self.bot_advice.append('On time')
-
-    def hold_on_policy(self):
-        if _HOLD_ON in self.issue_package.labels_name:
-            self.bot_advice.append('Hold on')
+    def hint_policy(self):
+        for item in _HINTS:
+            if item in self.issue_package.labels_name:
+                self.bot_advice.append(item)
 
     def auto_bot_advice(self):
         super().auto_bot_advice()
         self.multi_api_policy()
         self.attention_policy()
-        self.on_time_policy()
-        self.hold_on_policy()
+        self.hint_policy()
 
     def auto_close(self) -> None:
         if AUTO_CLOSE_LABEL in self.issue_package.labels_name:

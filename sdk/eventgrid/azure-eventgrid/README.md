@@ -10,10 +10,6 @@ Azure Event Grid is a fully-managed intelligent event routing service that allow
 | [Samples][python-eg-samples]
 | [Changelog][python-eg-changelog]
 
-## _Disclaimer_
-
-_Azure SDK Python packages support for Python 2.7 has ended on 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
-
 ## Getting started
 
 ### Prerequisites

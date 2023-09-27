@@ -10,13 +10,14 @@ import pytest
 from azure.core.exceptions import HttpResponseError
 from azure.monitor.query import LogsQueryClient, LogsBatchQuery, LogsQueryError, LogsTable, LogsQueryResult, LogsTableRow, LogsQueryPartialResult
 from azure.monitor.query._helpers import native_col_type
-from devtools_testutils import AzureRecordedTestCase
+
+from base_testcase import AzureMonitorQueryLogsTestCase
 
 
-class TestLogsClient(AzureRecordedTestCase):
+class TestLogsClient(AzureMonitorQueryLogsTestCase):
 
     def test_logs_single_query(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
         query = """AppRequests |
         where TimeGenerated > ago(12h) |
         summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
@@ -28,7 +29,7 @@ class TestLogsClient(AzureRecordedTestCase):
         assert response.tables is not None
 
     def test_logs_single_query_raises_no_timespan(self, monitor_info):
-        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
         query = """AppRequests |
         where TimeGenerated > ago(12h) |
         summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId"""
@@ -38,7 +39,7 @@ class TestLogsClient(AzureRecordedTestCase):
             client.query_workspace(monitor_info['workspace_id'], query)
 
     def test_logs_single_query_with_non_200(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
         query = """AppInsights |
         where TimeGenerated > ago(12h)"""
 
@@ -48,7 +49,7 @@ class TestLogsClient(AzureRecordedTestCase):
         assert "SemanticError" in e.value.message
 
     def test_logs_single_query_with_partial_success(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
         query = """let Weight = 92233720368547758;
         range x from 1 to 3 step 1
         | summarize percentilesw(x, Weight * 100, 50)"""
@@ -59,7 +60,7 @@ class TestLogsClient(AzureRecordedTestCase):
         assert response.__class__ == LogsQueryPartialResult
 
     def test_logs_server_timeout(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
 
         with pytest.raises(HttpResponseError) as e:
             response = client.query_workspace(
@@ -72,7 +73,7 @@ class TestLogsClient(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only("Issues recording dynamic 'id' values in requests/responses")
     def test_logs_query_batch_default(self, monitor_info):
-        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
 
         requests = [
             LogsBatchQuery(
@@ -106,7 +107,7 @@ class TestLogsClient(AzureRecordedTestCase):
         assert r2.__class__ == LogsQueryError
 
     def test_logs_single_query_with_statistics(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
         query = """AppRequests | take 10"""
 
         # returns LogsQueryResult
@@ -115,7 +116,7 @@ class TestLogsClient(AzureRecordedTestCase):
         assert response.statistics is not None
 
     def test_logs_single_query_with_visualization(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
         query = """AppRequests | take 10"""
 
         # returns LogsQueryResult
@@ -125,7 +126,7 @@ class TestLogsClient(AzureRecordedTestCase):
         assert response.visualization is not None
 
     def test_logs_single_query_with_visualization_and_stats(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
         query = """AppRequests | take 10"""
 
         # returns LogsQueryResult
@@ -137,7 +138,7 @@ class TestLogsClient(AzureRecordedTestCase):
 
     @pytest.mark.live_test_only("Issues recording dynamic 'id' values in requests/responses")
     def test_logs_query_batch_with_statistics_in_some(self, monitor_info):
-        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
 
         requests = [
             LogsBatchQuery(
@@ -166,7 +167,7 @@ class TestLogsClient(AzureRecordedTestCase):
         assert response[2].statistics is not None
 
     def test_logs_single_query_additional_workspaces(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
         query = (
             f"{monitor_info['table_name']} | where TimeGenerated > ago(100d)"
             "| project TenantId | summarize count() by TenantId"
@@ -185,7 +186,7 @@ class TestLogsClient(AzureRecordedTestCase):
     @pytest.mark.skip("Flaky deserialization issues with msrest. Re-enable after removing msrest dependency.")
     @pytest.mark.live_test_only("Issues recording dynamic 'id' values in requests/responses")
     def test_logs_query_batch_additional_workspaces(self, monitor_info):
-        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
         query = (
             f"{monitor_info['table_name']} | where TimeGenerated > ago(100d)"
             "| project TenantId | summarize count() by TenantId"
@@ -215,7 +216,7 @@ class TestLogsClient(AzureRecordedTestCase):
             assert len(resp.tables[0].rows) == 2
 
     def test_logs_query_result_iterate_over_tables(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
 
         query = "AppRequests | take 10; AppRequests | take 5"
 
@@ -237,7 +238,7 @@ class TestLogsClient(AzureRecordedTestCase):
         assert response.__class__ == LogsQueryResult
 
     def test_logs_query_result_row_type(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(LogsQueryClient, self.get_credential(LogsQueryClient))
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
 
         query = "AppRequests | take 5"
 
@@ -260,3 +261,36 @@ class TestLogsClient(AzureRecordedTestCase):
 
         val = native_col_type('datetime', '2020-10-10')
         assert val is not None
+
+    def test_logs_resource_query(self, recorded_test, monitor_info):
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
+        query = "requests | summarize count()"
+
+        response = client.query_resource(monitor_info['metrics_resource_id'], query, timespan=None)
+
+        assert response is not None
+        assert response.tables is not None
+        assert len(response.tables[0].rows) == 1
+
+    def test_logs_resource_query_additional_options(self, recorded_test, monitor_info):
+        client = self.get_client(LogsQueryClient, self.get_credential(LogsQueryClient))
+        query = "requests | summarize count()"
+
+        response = client.query_resource(
+            monitor_info['metrics_resource_id'],
+            query,
+            timespan=None,
+            include_statistics=True,
+            include_visualization=True
+        )
+
+        assert response.visualization is not None
+        assert response.statistics is not None
+
+    def test_client_different_endpoint(self):
+        credential = self.get_credential(LogsQueryClient)
+        endpoint = "https://api.loganalytics.azure.cn/v1"
+        client = LogsQueryClient(credential, endpoint=endpoint)
+
+        assert client._endpoint == endpoint
+        assert "https://api.loganalytics.azure.cn/.default" in client._client._config.authentication_policy._scopes

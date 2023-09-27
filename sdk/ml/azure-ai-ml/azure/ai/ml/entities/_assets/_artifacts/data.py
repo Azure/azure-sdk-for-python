@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Dict, Optional, Type, Union
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2022_10_01.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     DataContainer,
     DataContainerProperties,
     DataType,
@@ -170,6 +170,7 @@ class Data(Artifact):
             is_archived=False,
             properties=self.properties,
             data_uri=self.path,
+            auto_delete_setting=self.auto_delete_setting,
         )
         if VersionDetailsClass._attribute_map.get("referenced_uris") is not None:
             data_version_details.referenced_uris = self._referenced_uris
@@ -205,6 +206,7 @@ class Data(Artifact):
             creation_context=SystemData._from_rest_object(data_rest_object.system_data),
             is_anonymous=data_rest_object_details.is_anonymous,
             referenced_uris=getattr(data_rest_object_details, "referenced_uris", None),
+            auto_delete_setting=getattr(data_rest_object_details, "auto_delete_setting", None),
         )
         return data
 

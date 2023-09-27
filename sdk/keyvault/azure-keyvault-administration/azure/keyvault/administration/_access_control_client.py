@@ -53,6 +53,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :keyword name: a name for the role assignment. Must be a UUID.
         :paramtype name: str or uuid.UUID or None
 
+        :returns: The created role assignment.
         :rtype: ~azure.keyvault.administration.KeyVaultRoleAssignment
         """
         name = kwargs.pop("name", None) or uuid4()
@@ -84,6 +85,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :type name: str or uuid.UUID
 
         :returns: None
+        :rtype: None
         """
         try:
             self._client.role_assignments.delete(
@@ -104,6 +106,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :param name: the role assignment's name.
         :type name: str or uuid.UUID
 
+        :returns: The fetched role assignment.
         :rtype: ~azure.keyvault.administration.KeyVaultRoleAssignment
         """
         assignment = self._client.role_assignments.get(
@@ -121,6 +124,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
             Specify a narrower scope as a string.
         :type scope: str or KeyVaultRoleScope
 
+        :returns: A paged response containing the role assignments for the specified scope.
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.administration.KeyVaultRoleAssignment]
         """
         return self._client.role_assignments.list_for_scope(
@@ -200,6 +204,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :param name: the role definition's name.
         :type name: str or uuid.UUID
 
+        :returns: The fetched role definition.
         :rtype: ~azure.keyvault.administration.KeyVaultRoleDefinition
         """
         definition = self._client.role_definitions.get(
@@ -220,6 +225,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
         :type name: str or uuid.UUID
 
         :returns: None
+        :rtype: None
         """
         try:
             self._client.role_definitions.delete(
@@ -238,6 +244,7 @@ class KeyVaultAccessControlClient(KeyVaultClientBase):
             Specify a narrower scope as a string.
         :type scope: str or KeyVaultRoleScope
 
+        :returns: A paged response containing the role definitions for the specified scope.
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.administration.KeyVaultRoleDefinition]
         """
         return self._client.role_definitions.list(

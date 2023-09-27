@@ -90,7 +90,7 @@ class TestSparkJob(AzureRecordedTestCase):
             args="--input1 ${{inputs.input1}} --output1 ${{outputs.output1}} --my_sample_rate 0.01",
             resources={
                 "instance_type": "Standard_E8S_V3",
-                "runtime_version": "3.1.0",
+                "runtime_version": "3.2.0",
             },
         )
 

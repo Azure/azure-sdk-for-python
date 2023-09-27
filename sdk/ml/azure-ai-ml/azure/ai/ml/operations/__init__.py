@@ -16,6 +16,9 @@ from ._compute_operations import ComputeOperations
 from ._data_operations import DataOperations
 from ._datastore_operations import DatastoreOperations
 from ._environment_operations import EnvironmentOperations
+from ._feature_set_operations import FeatureSetOperations
+from ._feature_store_entity_operations import FeatureStoreEntityOperations
+from ._feature_store_operations import FeatureStoreOperations
 from ._job_operations import JobOperations
 from ._model_operations import ModelOperations
 from ._online_deployment_operations import OnlineDeploymentOperations
@@ -24,6 +27,7 @@ from ._registry_operations import RegistryOperations
 from ._schedule_operations import ScheduleOperations
 from ._workspace_connections_operations import WorkspaceConnectionsOperations
 from ._workspace_operations import WorkspaceOperations
+from ._workspace_hub_operation import WorkspaceHubOperations
 
 __all__ = [
     "ComputeOperations",
@@ -42,4 +46,8 @@ __all__ = [
     "WorkspaceConnectionsOperations",
     "RegistryOperations",
     "ScheduleOperations",
+    "WorkspaceHubOperations",
+    "FeatureSetOperations",
+    "FeatureStoreEntityOperations",
+    "FeatureStoreOperations",
 ]

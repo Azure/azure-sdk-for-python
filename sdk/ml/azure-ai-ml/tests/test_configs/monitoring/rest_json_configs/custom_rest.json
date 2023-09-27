@@ -1,0 +1,115 @@
+{
+    "properties": {
+      "action": {
+        "actionType": "CreateMonitor",
+        "monitorDefinition": {
+          "computeConfiguration": {
+            "computeType": "ServerlessSpark",
+            "instanceType": "standard_e8s_v3",
+            "runtimeVersion": "3.3",
+            "computeIdentity": {
+              "computeIdentityType": "AmlToken"
+            }
+          },
+          "monitoringTarget": {
+            "taskType": "classification",
+            "deploymentId": "fake_endpoint_id"
+          },
+          "signals": {
+            "testSignal": {
+              "signalType": "Custom",
+              "componentId": "fake_component:1",
+              "mode": "Enabled",
+              "workspaceConnection": {
+                "environmentVariables": {
+                  "ENV_VAR_1": "value1",
+                  "ENV_VAR_2": "value2"
+                },
+                "secrets": {
+                  "SECRET_1": "secret1",
+                  "SECRET_2": "secret2"
+                }
+              },
+              "inputAssets": {
+                "test_fixed": {
+                  "dataContext": "test",
+                  "inputDataType": "Fixed",
+                  "jobInputType": "mltable",
+                  "uri": "Direct:1"
+                },
+                "test_trailing": {
+                  "dataContext": "test",
+                  "jobInputType": "mltable",
+                  "inputDataType": "Trailing",
+                  "uri": "Direct:1",
+                  "windowSize": "P30D",
+                  "windowOffset": "P7D"
+                },
+                "test_static": {
+                  "dataContext": "test",
+                  "jobInputType": "mltable",
+                  "inputDataType": "Static",
+                  "uri": "Direct:1",
+                  "windowStart": "2023-07-12T00:00:00.000Z",
+                  "windowEnd": "2023-07-17T00:00:00.000Z"
+                }
+              },
+              "inputs":{
+                "input_1": {
+                  "jobInputType": "mltable",
+                  "uri": "Direct:1"
+                },
+                "input_2": {
+                  "jobInputType": "mltable",
+                  "uri": "Direct:2"
+                }
+              },
+              "metricThresholds": [
+                {
+                  "metric": "metric1",
+                  "threshold": {
+                    "value": 0.1
+                  }
+                },
+                {
+                  "metric": "metric2",
+                  "threshold": {
+                    "value": 0.2
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "trigger": {
+        "triggerType": "Recurrence",
+        "timeZone": "utc",
+        "frequency": "week",
+        "interval": 1,
+        "schedule": {
+          "hours": [
+            22,
+            20
+          ],
+          "minutes": [
+            0,
+            0
+          ],
+          "weekDays": [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday"
+          ]
+        }
+      },
+      "properties": {
+        "prop1": "value"
+      },
+      "tags": {
+        "tag1": "tag"
+      }
+    }
+  }

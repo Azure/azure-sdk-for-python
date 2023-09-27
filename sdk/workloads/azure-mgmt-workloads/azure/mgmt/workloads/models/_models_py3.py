@@ -308,15 +308,18 @@ class FileShareConfiguration(_serialization.Model):
 
 
 class CreateAndMountFileShareConfiguration(FileShareConfiguration):
-    """Gets or sets the file share configuration for file share created with the VIS case.
+    """Gets or sets the file share configuration where the transport directory fileshare is created
+    and mounted as a part of the create infra flow. Please pre-create the resource group you intend
+    to place the transport directory in. The storage account and fileshare will be auto-created by
+    the ACSS and doesn’t need to pre-created.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar configuration_type: The type of file share config. Required. Known values are: "Skip",
      "CreateAndMount", and "Mount".
     :vartype configuration_type: str or ~azure.mgmt.workloads.models.ConfigurationType
-    :ivar resource_group: The name of file share resource group. The app rg is used in case of
-     missing input.
+    :ivar resource_group: The name of transport file share resource group. This should be pre
+     created by the customer. The app rg is used in case of missing input.
     :vartype resource_group: str
     :ivar storage_account_name: The name of file share storage account name . A custom name is used
      in case of missing input.
@@ -337,8 +340,8 @@ class CreateAndMountFileShareConfiguration(FileShareConfiguration):
         self, *, resource_group: Optional[str] = None, storage_account_name: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword resource_group: The name of file share resource group. The app rg is used in case of
-         missing input.
+        :keyword resource_group: The name of transport file share resource group. This should be pre
+         created by the customer. The app rg is used in case of missing input.
         :paramtype resource_group: str
         :keyword storage_account_name: The name of file share storage account name . A custom name is
          used in case of missing input.
@@ -891,7 +894,8 @@ class DiskConfiguration(_serialization.Model):
 class DiskDetails(_serialization.Model):
     """The supported disk size details for a disk type.
 
-    :ivar sku: The disk sku.
+    :ivar sku: The type of disk sku. For example, Standard_LRS, Standard_ZRS, Premium_LRS,
+     Premium_ZRS.
     :vartype sku: ~azure.mgmt.workloads.models.DiskSku
     :ivar size_gb: The disk size in GB.
     :vartype size_gb: int
@@ -930,7 +934,8 @@ class DiskDetails(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword sku: The disk sku.
+        :keyword sku: The type of disk sku. For example, Standard_LRS, Standard_ZRS, Premium_LRS,
+         Premium_ZRS.
         :paramtype sku: ~azure.mgmt.workloads.models.DiskSku
         :keyword size_gb: The disk size in GB.
         :paramtype size_gb: int
@@ -956,7 +961,7 @@ class DiskDetails(_serialization.Model):
 
 
 class DiskSku(_serialization.Model):
-    """The disk sku.
+    """The type of disk sku. For example, Standard_LRS, Standard_ZRS, Premium_LRS, Premium_ZRS.
 
     :ivar name: Defines the disk sku name. Known values are: "Standard_LRS", "Premium_LRS",
      "StandardSSD_LRS", "UltraSSD_LRS", "Premium_ZRS", "StandardSSD_ZRS", and "PremiumV2_LRS".
@@ -1577,8 +1582,6 @@ class ImageReference(_serialization.Model):
     creation operations. NOTE: Image reference publisher and offer can only be set when you create
     the scale set.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar publisher: The image publisher.
     :vartype publisher: str
     :ivar offer: Specifies the offer of the platform image or marketplace image used to create the
@@ -1592,26 +1595,13 @@ class ImageReference(_serialization.Model):
      deploy time. Even if you use 'latest', the VM image will not automatically update after deploy
      time even if a new version becomes available.
     :vartype version: str
-    :ivar exact_version: Specifies in decimal numbers, the version of platform image or marketplace
-     image used to create the virtual machine. This readonly field differs from 'version', only if
-     the value specified in 'version' field is 'latest'.
-    :vartype exact_version: str
-    :ivar shared_gallery_image_id: Specified the shared gallery image unique id for vm deployment.
-     This can be fetched from shared gallery image GET call.
-    :vartype shared_gallery_image_id: str
     """
-
-    _validation = {
-        "exact_version": {"readonly": True},
-    }
 
     _attribute_map = {
         "publisher": {"key": "publisher", "type": "str"},
         "offer": {"key": "offer", "type": "str"},
         "sku": {"key": "sku", "type": "str"},
         "version": {"key": "version", "type": "str"},
-        "exact_version": {"key": "exactVersion", "type": "str"},
-        "shared_gallery_image_id": {"key": "sharedGalleryImageId", "type": "str"},
     }
 
     def __init__(
@@ -1621,7 +1611,6 @@ class ImageReference(_serialization.Model):
         offer: Optional[str] = None,
         sku: Optional[str] = None,
         version: Optional[str] = None,
-        shared_gallery_image_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1638,17 +1627,12 @@ class ImageReference(_serialization.Model):
          available at deploy time. Even if you use 'latest', the VM image will not automatically update
          after deploy time even if a new version becomes available.
         :paramtype version: str
-        :keyword shared_gallery_image_id: Specified the shared gallery image unique id for vm
-         deployment. This can be fetched from shared gallery image GET call.
-        :paramtype shared_gallery_image_id: str
         """
         super().__init__(**kwargs)
         self.publisher = publisher
         self.offer = offer
         self.sku = sku
         self.version = version
-        self.exact_version = None
-        self.shared_gallery_image_id = shared_gallery_image_id
 
 
 class InfrastructureConfiguration(_serialization.Model):
@@ -2051,7 +2035,7 @@ class Monitor(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
-    :ivar identity: Managed service identity (user assigned identities).
+    :ivar identity: [currently not in use] Managed service identity(user assigned identities).
     :vartype identity: ~azure.mgmt.workloads.models.UserAssignedServiceIdentity
     :ivar provisioning_state: State of provisioning of the SAP monitor. Known values are:
      "Accepted", "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
@@ -2136,7 +2120,7 @@ class Monitor(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
-        :keyword identity: Managed service identity (user assigned identities).
+        :keyword identity: [currently not in use] Managed service identity(user assigned identities).
         :paramtype identity: ~azure.mgmt.workloads.models.UserAssignedServiceIdentity
         :keyword app_location: The SAP monitor resources will be deployed in the SAP monitoring region.
          The subnet region should be same as the SAP monitoring region.
@@ -2239,7 +2223,8 @@ class MonitorPropertiesErrors(Error):
 
 
 class MountFileShareConfiguration(FileShareConfiguration):
-    """Gets or sets the file share configuration for externally mounted cases.
+    """Gets or sets the file share configuration where the transport directory fileshare already
+    exists, and user wishes to mount the fileshare as a part of the create infra flow.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3206,7 +3191,7 @@ class ProviderInstance(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.workloads.models.SystemData
-    :ivar identity: Managed service identity (user assigned identities).
+    :ivar identity: [currently not in use] Managed service identity(user assigned identities).
     :vartype identity: ~azure.mgmt.workloads.models.UserAssignedServiceIdentity
     :ivar provisioning_state: State of provisioning of the provider instance. Known values are:
      "Accepted", "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
@@ -3214,7 +3199,7 @@ class ProviderInstance(ProxyResource):
      ~azure.mgmt.workloads.models.WorkloadMonitorProvisioningState
     :ivar errors: Defines the provider instance errors.
     :vartype errors: ~azure.mgmt.workloads.models.ProviderInstancePropertiesErrors
-    :ivar provider_settings: Defines the provider instance errors.
+    :ivar provider_settings: Defines the provider specific properties.
     :vartype provider_settings: ~azure.mgmt.workloads.models.ProviderSpecificProperties
     """
 
@@ -3246,9 +3231,9 @@ class ProviderInstance(ProxyResource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword identity: Managed service identity (user assigned identities).
+        :keyword identity: [currently not in use] Managed service identity(user assigned identities).
         :paramtype identity: ~azure.mgmt.workloads.models.UserAssignedServiceIdentity
-        :keyword provider_settings: Defines the provider instance errors.
+        :keyword provider_settings: Defines the provider specific properties.
         :paramtype provider_settings: ~azure.mgmt.workloads.models.ProviderSpecificProperties
         """
         super().__init__(**kwargs)
@@ -4722,7 +4707,8 @@ class SAPVirtualInstance(TrackedResource):  # pylint: disable=too-many-instance-
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
-    :ivar identity: Managed service identity (user assigned identities).
+    :ivar identity: A pre-created user assigned identity with appropriate roles assigned. To learn
+     more on identity and roles required, visit the ACSS how-to-guide.
     :vartype identity: ~azure.mgmt.workloads.models.UserAssignedServiceIdentity
     :ivar environment: Defines the environment type - Production/Non Production. Required. Known
      values are: "NonProd" and "Prod".
@@ -4812,7 +4798,8 @@ class SAPVirtualInstance(TrackedResource):  # pylint: disable=too-many-instance-
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
-        :keyword identity: Managed service identity (user assigned identities).
+        :keyword identity: A pre-created user assigned identity with appropriate roles assigned. To
+         learn more on identity and roles required, visit the ACSS how-to-guide.
         :paramtype identity: ~azure.mgmt.workloads.models.UserAssignedServiceIdentity
         :keyword environment: Defines the environment type - Production/Non Production. Required. Known
          values are: "NonProd" and "Prod".
@@ -5015,7 +5002,9 @@ class SharedStorageResourceNames(_serialization.Model):
 
 
 class SingleServerConfiguration(InfrastructureConfiguration):
-    """Gets or sets the single server configuration.
+    """Gets or sets the single server configuration. For prerequisites for creating the
+    infrastructure, please see `here
+    <https://go.microsoft.com/fwlink/?linkid=2212611&clcid=0x409>`_.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -5197,7 +5186,8 @@ class SingleServerRecommendationResult(SAPSizingRecommendationResult):
 
 
 class SkipFileShareConfiguration(FileShareConfiguration):
-    """Gets or sets the skip file share configuration.
+    """Gets or sets the file share configuration for scenarios where transport directory fileshare is
+    not created or required.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -5462,7 +5452,9 @@ class Tags(_serialization.Model):
 
 
 class ThreeTierConfiguration(InfrastructureConfiguration):
-    """Gets or sets the three tier SAP configuration.
+    """Gets or sets the three tier SAP configuration. For prerequisites for creating the
+    infrastructure, please see `here
+    <https://go.microsoft.com/fwlink/?linkid=2212611&clcid=0x409>`_.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -5724,7 +5716,7 @@ class UpdateMonitorRequest(_serialization.Model):
 
     :ivar tags: Gets or sets the Resource tags.
     :vartype tags: dict[str, str]
-    :ivar identity: Managed service identity (user assigned identities).
+    :ivar identity: [currently not in use] Managed service identity(user assigned identities).
     :vartype identity: ~azure.mgmt.workloads.models.UserAssignedServiceIdentity
     """
 
@@ -5743,7 +5735,7 @@ class UpdateMonitorRequest(_serialization.Model):
         """
         :keyword tags: Gets or sets the Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword identity: Managed service identity (user assigned identities).
+        :keyword identity: [currently not in use] Managed service identity(user assigned identities).
         :paramtype identity: ~azure.mgmt.workloads.models.UserAssignedServiceIdentity
         """
         super().__init__(**kwargs)
@@ -5816,7 +5808,8 @@ class UpdateSAPVirtualInstanceRequest(_serialization.Model):
 
     :ivar tags: Gets or sets the Resource tags.
     :vartype tags: dict[str, str]
-    :ivar identity: Managed service identity (user assigned identities).
+    :ivar identity: A pre-created user assigned identity with appropriate roles assigned. To learn
+     more on identity and roles required, visit the ACSS how-to-guide.
     :vartype identity: ~azure.mgmt.workloads.models.UserAssignedServiceIdentity
     """
 
@@ -5835,7 +5828,8 @@ class UpdateSAPVirtualInstanceRequest(_serialization.Model):
         """
         :keyword tags: Gets or sets the Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword identity: Managed service identity (user assigned identities).
+        :keyword identity: A pre-created user assigned identity with appropriate roles assigned. To
+         learn more on identity and roles required, visit the ACSS how-to-guide.
         :paramtype identity: ~azure.mgmt.workloads.models.UserAssignedServiceIdentity
         """
         super().__init__(**kwargs)
@@ -5872,7 +5866,8 @@ class UserAssignedIdentity(_serialization.Model):
 
 
 class UserAssignedServiceIdentity(_serialization.Model):
-    """Managed service identity (user assigned identities).
+    """A pre-created user assigned identity with appropriate roles assigned. To learn more on identity
+    and roles required, visit the ACSS how-to-guide.
 
     All required parameters must be populated in order to send to Azure.
 

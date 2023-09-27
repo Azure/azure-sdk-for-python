@@ -1,18 +1,24 @@
 # Release History
 
-## 1.0.0b9 (Unreleased)
+## 1.0.0b10 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
-### Key Bugs Fixed
-
-### Fixed
+### Bugs Fixed
 
 ### Other Changes
 
-- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+## 1.0.0b9 (2023-05-09)
+
+### Bugs Fixed
+
+- Fixed a bug where starting a span would fail if an unexpected keyword argument was passed in to `OpenCensusSpan`.
+
+### Other Changes
+
+- Python 2.7 is no longer supported. Please use Python version 3.7 or later.
 
 ## 1.0.0b8 (2021-07-01)
 

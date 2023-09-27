@@ -29,11 +29,11 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.operation.list()
+    response = client.operations.list()
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/graphservicesprod/resource-manager/Microsoft.GraphServices/preview/2022-09-22-preview/examples/Operations_List.json
+# x-ms-original-file: specification/graphservicesprod/resource-manager/Microsoft.GraphServices/stable/2023-04-13/examples/Operations_List.json
 if __name__ == "__main__":
     main()

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._workloads_client_operations import WorkloadsClientOperationsMixin
+from ._workloads_mgmt_client_operations import WorkloadsMgmtClientOperationsMixin
 from ._sap_virtual_instances_operations import SAPVirtualInstancesOperations
 from ._sap_central_instances_operations import SAPCentralInstancesOperations
 from ._sap_database_instances_operations import SAPDatabaseInstancesOperations
@@ -21,7 +21,7 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "WorkloadsClientOperationsMixin",
+    "WorkloadsMgmtClientOperationsMixin",
     "SAPVirtualInstancesOperations",
     "SAPCentralInstancesOperations",
     "SAPDatabaseInstancesOperations",

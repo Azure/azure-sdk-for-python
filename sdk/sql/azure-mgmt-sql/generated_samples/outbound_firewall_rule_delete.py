@@ -29,12 +29,11 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.outbound_firewall_rules.begin_delete(
+    client.outbound_firewall_rules.begin_delete(
         resource_group_name="sqlcrudtest-7398",
         server_name="sqlcrudtest-6661",
         outbound_rule_fqdn="server.database.windows.net",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2021-02-01-preview/examples/OutboundFirewallRuleDelete.json

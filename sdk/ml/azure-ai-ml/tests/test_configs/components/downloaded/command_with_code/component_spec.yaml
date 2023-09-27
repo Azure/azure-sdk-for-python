@@ -1,0 +1,10 @@
+name: random_component_name
+version: '1'
+display_name: Hello_Python_World
+type: command
+command: python hello.py
+environment: azureml://registries/azureml/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu/versions/33
+code: ./code
+resources:
+  instance_count: 1
+is_deterministic: true

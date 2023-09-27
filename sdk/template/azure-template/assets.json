@@ -1,0 +1,7 @@
+{
+  "AssetsRepo": "Azure/azure-sdk-assets",
+  "AssetsRepoPrefixPath": "python",
+  "TagPrefix": "python/template/azure-template",
+  "Tag": "python/template/azure-template_f6e776f55f",
+  "_comments": "Test recordings are in the AssetsRepo tag indicated above; this example tag is nonexistent"
+}

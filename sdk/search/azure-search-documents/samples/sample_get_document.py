@@ -26,6 +26,7 @@ service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
 index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
 key = os.getenv("AZURE_SEARCH_API_KEY")
 
+
 def get_document():
     # [START get_document]
     from azure.core.credentials import AzureKeyCredential
@@ -36,10 +37,11 @@ def get_document():
     result = search_client.get_document(key="23")
 
     print("Details for hotel '23' are:")
-    print("        Name: {}".format(result["HotelName"]))
-    print("      Rating: {}".format(result["Rating"]))
-    print("    Category: {}".format(result["Category"]))
+    print("        Name: {}".format(result["hotelName"]))
+    print("      Rating: {}".format(result["rating"]))
+    print("    Category: {}".format(result["category"]))
     # [END get_document]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     get_document()

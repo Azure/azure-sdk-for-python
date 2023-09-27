@@ -54,7 +54,7 @@ from .._utils import (
 )
 
 
-@pytest.mark.usefixtures("enable_internal_components")
+@pytest.mark.usefixtures("enable_internal_components", "enable_pipeline_private_preview_features")
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
 class TestPipelineJob:
@@ -205,7 +205,26 @@ class TestPipelineJob:
         }
         assert pipeline_rest_dict.jobs["node"]["inputs"]["input_path"] == expected_rest_obj
 
-    @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
+    def test_internal_component_node_output_type(self):
+        from azure.ai.ml._utils.utils import try_enable_internal_components
+
+        # force register internal components after partially reload schema files
+        try_enable_internal_components(force=True)
+        yaml_path = "./tests/test_configs/internal/component_with_input_outputs/component_spec.yaml"
+        component_func = load_component(yaml_path)
+
+        @pipeline
+        def pipeline_func():
+            node = component_func()
+            # node level should have correct output type when type not configured
+            node.outputs.data_any_file.mode = "mount"
+
+        pipeline_job = pipeline_func()
+        rest_pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
+        assert rest_pipeline_job_dict["properties"]["jobs"]["node"]["outputs"] == {
+            "data_any_file": {"mode": "ReadWriteMount", "job_output_type": "uri_file"}
+        }
+
     def test_internal_component_output_as_pipeline_component_output(self):
         from azure.ai.ml._utils.utils import try_enable_internal_components
 
@@ -382,30 +401,30 @@ class TestPipelineJob:
         properties_rest_dict = node._to_rest_object()["resources"]["properties"]
         assert properties_rest_dict == {
             JobComputePropertyFields.AISUPERCOMPUTER: {
-                "instance_type": "STANDARD_D2_V2",
-                "image_version": "1.0",
-                "locations": ["eastus2euap"],
-                "ai_super_computer_storage_data": {
+                "InstanceType": "STANDARD_D2_V2",
+                "ImageVersion": "1.0",
+                "Locations": ["eastus2euap"],
+                "AISuperComputerStorageData": {
                     "data": {
-                        "container_name": "container_name",
-                        "relative_path": "relative_path",
+                        "ContainerName": "container_name",
+                        "RelativePath": "relative_path",
                     }
                 },
-                "interactive": True,
-                "scale_policy": {
-                    "auto_scale_instance_type_count_set": [1, 2, 3],
-                    "auto_scale_interval_in_sec": 60,
-                    "max_instance_type_count": 3,
-                    "min_instance_type_count": 1,
+                "Interactive": True,
+                "ScalePolicy": {
+                    "AutoScaleInstanceTypeCountSet": [1, 2, 3],
+                    "AutoScaleIntervalInSec": 60,
+                    "MaxInstanceTypeCount": 3,
+                    "MinInstanceTypeCount": 1,
                 },
-                "virtual_cluster_arm_id": "virtual_cluster_arm_id",
-                "tensorboard_log_directory": "tensorboard_log_directory",
-                "ssh_public_key": "ssh_public_key",
-                "enable_azml_int": True,
-                "priority": "Medium",
-                "sla_tier": "Standard",
-                "suspend_on_idle_time_hours": 1,
-                "user_alias": "user_alias",
+                "VirtualClusterArmId": "virtual_cluster_arm_id",
+                "TensorboardLogDirectory": "tensorboard_log_directory",
+                "SSHPublicKey": "ssh_public_key",
+                "EnableAzmlInt": True,
+                "Priority": "Medium",
+                "SLATier": "Standard",
+                "SuspendOnIdleTimeHours": 1,
+                "UserAlias": "user_alias",
             }
         }
 
@@ -678,3 +697,24 @@ class TestPipelineJob:
             )
         # check if all the fields are correctly serialized
         pipeline_job.component._get_anonymous_hash()
+
+    def test_node_output_type_promotion(self):
+        test_path = "./tests/test_configs/internal/helloworld/helloworld_component_command.yml"
+        component: InternalComponent = load_component(test_path)
+
+        @pipeline()
+        def pipeline_func():
+            node = component(
+                training_data=Input(path="./tests/test_configs/data"),
+                max_epochs=1,
+            )
+            node.outputs.model_output.mode = "mount"
+            return node.outputs
+
+        pipeline_job = pipeline_func()
+        pipeline_dict = pipeline_job._to_rest_object().as_dict()
+        # type will be preserved & mode will be promoted to pipeline level
+        assert pipeline_dict["properties"]["outputs"]["model_output"] == {
+            "job_output_type": "uri_folder",
+            "mode": "ReadWriteMount",
+        }

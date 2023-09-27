@@ -8,15 +8,22 @@
 
 from ._models_py3 import ElasticSan
 from ._models_py3 import ElasticSanList
-from ._models_py3 import ElasticSanOperationDisplay
-from ._models_py3 import ElasticSanOperationListResult
-from ._models_py3 import ElasticSanRPOperation
 from ._models_py3 import ElasticSanUpdate
-from ._models_py3 import Error
 from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import IscsiTargetInfo
 from ._models_py3 import NetworkRuleSet
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import PrivateEndpoint
+from ._models_py3 import PrivateEndpointConnection
+from ._models_py3 import PrivateEndpointConnectionListResult
+from ._models_py3 import PrivateLinkResource
+from ._models_py3 import PrivateLinkResourceListResult
+from ._models_py3 import PrivateLinkServiceConnectionState
+from ._models_py3 import ProxyResource
 from ._models_py3 import Resource
 from ._models_py3 import SKUCapability
 from ._models_py3 import Sku
@@ -34,30 +41,40 @@ from ._models_py3 import VolumeGroupUpdate
 from ._models_py3 import VolumeList
 from ._models_py3 import VolumeUpdate
 
-from ._elastic_san_management_enums import CreatedByType
-from ._elastic_san_management_enums import EncryptionType
-from ._elastic_san_management_enums import OperationalStatus
-from ._elastic_san_management_enums import ProvisioningStates
-from ._elastic_san_management_enums import SkuName
-from ._elastic_san_management_enums import SkuTier
-from ._elastic_san_management_enums import State
-from ._elastic_san_management_enums import StorageTargetType
+from ._elastic_san_mgmt_client_enums import ActionType
+from ._elastic_san_mgmt_client_enums import CreatedByType
+from ._elastic_san_mgmt_client_enums import EncryptionType
+from ._elastic_san_mgmt_client_enums import OperationalStatus
+from ._elastic_san_mgmt_client_enums import Origin
+from ._elastic_san_mgmt_client_enums import PrivateEndpointServiceConnectionStatus
+from ._elastic_san_mgmt_client_enums import ProvisioningStates
+from ._elastic_san_mgmt_client_enums import SkuName
+from ._elastic_san_mgmt_client_enums import SkuTier
+from ._elastic_san_mgmt_client_enums import State
+from ._elastic_san_mgmt_client_enums import StorageTargetType
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "ElasticSan",
     "ElasticSanList",
-    "ElasticSanOperationDisplay",
-    "ElasticSanOperationListResult",
-    "ElasticSanRPOperation",
     "ElasticSanUpdate",
-    "Error",
     "ErrorAdditionalInfo",
+    "ErrorDetail",
     "ErrorResponse",
     "IscsiTargetInfo",
     "NetworkRuleSet",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "PrivateEndpoint",
+    "PrivateEndpointConnection",
+    "PrivateEndpointConnectionListResult",
+    "PrivateLinkResource",
+    "PrivateLinkResourceListResult",
+    "PrivateLinkServiceConnectionState",
+    "ProxyResource",
     "Resource",
     "SKUCapability",
     "Sku",
@@ -74,9 +91,12 @@ __all__ = [
     "VolumeGroupUpdate",
     "VolumeList",
     "VolumeUpdate",
+    "ActionType",
     "CreatedByType",
     "EncryptionType",
     "OperationalStatus",
+    "Origin",
+    "PrivateEndpointServiceConnectionStatus",
     "ProvisioningStates",
     "SkuName",
     "SkuTier",

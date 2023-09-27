@@ -4,7 +4,7 @@ import pytest
 import yaml
 
 from azure.ai.ml import Input, load_job
-from azure.ai.ml._restclient.v2023_02_01_preview.models import InputDeliveryMode, JobOutputType, OutputDeliveryMode
+from azure.ai.ml._restclient.v2023_04_01_preview.models import InputDeliveryMode, JobOutputType, OutputDeliveryMode
 from azure.ai.ml._schema import SparkJobSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities import SparkJob
@@ -38,7 +38,7 @@ class TestSparkJobSchema:
             internal_representation: SparkJob = SparkJob(**schema.load(cfg))
             with pytest.raises(ValidationException) as ve:
                 source = internal_representation._to_rest_object()
-                assert ve.message == "runtime version should be either 3.1 or 3.2"
+                assert ve.message == "runtime version should be either 3.2 or 3.3"
 
     def test_invalid_instance_type(self):
         test_path = "./tests/test_configs/spark_job/spark_job_invalid_instance_type.yml"
@@ -80,7 +80,7 @@ class TestSparkJobSchema:
             environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             resources={
                 "instance_type": "Standard_E8S_V3",
-                "runtime_version": "3.1.0",
+                "runtime_version": "3.2.0",
             },
         )
         assert isinstance(spark_job.inputs["input1"], Input)

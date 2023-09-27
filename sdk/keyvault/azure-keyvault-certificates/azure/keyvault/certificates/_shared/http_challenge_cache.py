@@ -3,12 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import threading
+from typing import TYPE_CHECKING
 from urllib import parse
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import
@@ -16,7 +12,7 @@ if TYPE_CHECKING:
     from .http_challenge import HttpChallenge
 
 
-_cache = {}  # type: Dict[str, HttpChallenge]
+_cache: "Dict[str, HttpChallenge]" = {}
 _lock = threading.Lock()
 
 
@@ -24,6 +20,9 @@ def get_challenge_for_url(url: str) -> "Optional[HttpChallenge]":
     """Gets the challenge for the cached URL.
 
     :param str url: the URL the challenge is cached for.
+
+    :returns: The challenge for the cached request URL, or None if the request URL isn't cached.
+    :rtype: HttpChallenge or None
     """
 
     if not url:
@@ -41,7 +40,13 @@ def _get_cache_key(url: str) -> str:
 
     This equivalency prevents an unnecessary challenge when using Key Vault's paging API. The Key Vault client doesn't
     specify ports, but Key Vault's next page links do, so a redundant challenge would otherwise be executed when the
-    client requests the next page."""
+    client requests the next page.
+
+    :param str url: The HTTP request URL.
+
+    :returns: The URL's `netloc`, minus any port attached to the URL.
+    :rtype: str
+    """
 
     parsed = parse.urlparse(url)
     if parsed.scheme == "https" and parsed.port == 443:

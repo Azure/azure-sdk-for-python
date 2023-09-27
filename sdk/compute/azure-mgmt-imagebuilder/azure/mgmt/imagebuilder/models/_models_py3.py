@@ -54,8 +54,8 @@ class CloudErrorBody(_serialization.Model):
         message: Optional[str] = None,
         target: Optional[str] = None,
         details: Optional[List["_models.CloudErrorBody"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically.
@@ -76,34 +76,88 @@ class CloudErrorBody(_serialization.Model):
         self.details = details
 
 
-class ComponentsVrq145SchemasImagetemplateidentityPropertiesUserassignedidentitiesAdditionalproperties(
-    _serialization.Model
-):
-    """ComponentsVrq145SchemasImagetemplateidentityPropertiesUserassignedidentitiesAdditionalproperties.
+class DistributeVersioner(_serialization.Model):
+    """Describes how to generate new x.y.z version number for distribution.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    DistributeVersionerLatest, DistributeVersionerSource
 
-    :ivar principal_id: The principal id of user assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client id of user assigned identity.
-    :vartype client_id: str
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar scheme: Version numbering scheme to be used. Required.
+    :vartype scheme: str
     """
 
     _validation = {
-        "principal_id": {"readonly": True},
-        "client_id": {"readonly": True},
+        "scheme": {"required": True},
     }
 
     _attribute_map = {
-        "principal_id": {"key": "principalId", "type": "str"},
-        "client_id": {"key": "clientId", "type": "str"},
+        "scheme": {"key": "scheme", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    _subtype_map = {"scheme": {"Latest": "DistributeVersionerLatest", "Source": "DistributeVersionerSource"}}
+
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
+        self.scheme: Optional[str] = None
+
+
+class DistributeVersionerLatest(DistributeVersioner):
+    """Generates version number that will be latest based on existing version numbers.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar scheme: Version numbering scheme to be used. Required.
+    :vartype scheme: str
+    :ivar major: Major version for the generated version number. Determine what is "latest" based
+     on versions with this value as the major version. -1 is equivalent to leaving it unset.
+    :vartype major: int
+    """
+
+    _validation = {
+        "scheme": {"required": True},
+        "major": {"minimum": -1},
+    }
+
+    _attribute_map = {
+        "scheme": {"key": "scheme", "type": "str"},
+        "major": {"key": "major", "type": "int"},
+    }
+
+    def __init__(self, *, major: int = -1, **kwargs: Any) -> None:
+        """
+        :keyword major: Major version for the generated version number. Determine what is "latest"
+         based on versions with this value as the major version. -1 is equivalent to leaving it unset.
+        :paramtype major: int
+        """
+        super().__init__(**kwargs)
+        self.scheme: str = "Latest"
+        self.major = major
+
+
+class DistributeVersionerSource(DistributeVersioner):
+    """Generates version number based on version number of source image.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar scheme: Version numbering scheme to be used. Required.
+    :vartype scheme: str
+    """
+
+    _validation = {
+        "scheme": {"required": True},
+    }
+
+    _attribute_map = {
+        "scheme": {"key": "scheme", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.scheme: str = "Source"
 
 
 class Resource(_serialization.Model):
@@ -138,7 +192,7 @@ class Resource(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -148,7 +202,8 @@ class Resource(_serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -188,7 +243,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -229,21 +284,23 @@ class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attri
     :ivar customize: Specifies the properties used to describe the customization steps of the
      image, like Image source etc.
     :vartype customize: list[~azure.mgmt.imagebuilder.models.ImageTemplateCustomizer]
+    :ivar optimize: Specifies optimization to be performed on image.
+    :vartype optimize: ~azure.mgmt.imagebuilder.models.ImageTemplatePropertiesOptimize
     :ivar validate: Configuration options and list of validations to be performed on the resulting
      image.
     :vartype validate: ~azure.mgmt.imagebuilder.models.ImageTemplatePropertiesValidate
     :ivar distribute: The distribution targets where the image output needs to go to.
     :vartype distribute: list[~azure.mgmt.imagebuilder.models.ImageTemplateDistributor]
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Creating",
-     "Updating", "Succeeded", "Failed", and "Deleting".
+     "Updating", "Succeeded", "Failed", "Deleting", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.imagebuilder.models.ProvisioningState
     :ivar provisioning_error: Provisioning error, if any.
     :vartype provisioning_error: ~azure.mgmt.imagebuilder.models.ProvisioningError
     :ivar last_run_status: State of 'run' that is currently executing or was last executed.
     :vartype last_run_status: ~azure.mgmt.imagebuilder.models.ImageTemplateLastRunStatus
     :ivar build_timeout_in_minutes: Maximum duration to wait while building the image template
-     (includes all customizations, validations, and distributions). Omit or specify 0 to use the
-     default (4 hours).
+     (includes all customizations, optimization, validations, and distributions). Omit or specify 0
+     to use the default (4 hours).
     :vartype build_timeout_in_minutes: int
     :ivar vm_profile: Describes how virtual machine is set up to build images.
     :vartype vm_profile: ~azure.mgmt.imagebuilder.models.ImageTemplateVmProfile
@@ -287,6 +344,7 @@ class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attri
         "identity": {"key": "identity", "type": "ImageTemplateIdentity"},
         "source": {"key": "properties.source", "type": "ImageTemplateSource"},
         "customize": {"key": "properties.customize", "type": "[ImageTemplateCustomizer]"},
+        "optimize": {"key": "properties.optimize", "type": "ImageTemplatePropertiesOptimize"},
         "validate": {"key": "properties.validate", "type": "ImageTemplatePropertiesValidate"},
         "distribute": {"key": "properties.distribute", "type": "[ImageTemplateDistributor]"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
@@ -306,13 +364,14 @@ class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attri
         tags: Optional[Dict[str, str]] = None,
         source: Optional["_models.ImageTemplateSource"] = None,
         customize: Optional[List["_models.ImageTemplateCustomizer"]] = None,
+        optimize: Optional["_models.ImageTemplatePropertiesOptimize"] = None,
         validate: Optional["_models.ImageTemplatePropertiesValidate"] = None,
         distribute: Optional[List["_models.ImageTemplateDistributor"]] = None,
         build_timeout_in_minutes: int = 0,
         vm_profile: Optional["_models.ImageTemplateVmProfile"] = None,
         staging_resource_group: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -325,14 +384,16 @@ class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attri
         :keyword customize: Specifies the properties used to describe the customization steps of the
          image, like Image source etc.
         :paramtype customize: list[~azure.mgmt.imagebuilder.models.ImageTemplateCustomizer]
+        :keyword optimize: Specifies optimization to be performed on image.
+        :paramtype optimize: ~azure.mgmt.imagebuilder.models.ImageTemplatePropertiesOptimize
         :keyword validate: Configuration options and list of validations to be performed on the
          resulting image.
         :paramtype validate: ~azure.mgmt.imagebuilder.models.ImageTemplatePropertiesValidate
         :keyword distribute: The distribution targets where the image output needs to go to.
         :paramtype distribute: list[~azure.mgmt.imagebuilder.models.ImageTemplateDistributor]
         :keyword build_timeout_in_minutes: Maximum duration to wait while building the image template
-         (includes all customizations, validations, and distributions). Omit or specify 0 to use the
-         default (4 hours).
+         (includes all customizations, optimization, validations, and distributions). Omit or specify 0
+         to use the default (4 hours).
         :paramtype build_timeout_in_minutes: int
         :keyword vm_profile: Describes how virtual machine is set up to build images.
         :paramtype vm_profile: ~azure.mgmt.imagebuilder.models.ImageTemplateVmProfile
@@ -350,6 +411,7 @@ class ImageTemplate(TrackedResource):  # pylint: disable=too-many-instance-attri
         self.identity = identity
         self.source = source
         self.customize = customize
+        self.optimize = optimize
         self.validate = validate
         self.distribute = distribute
         self.provisioning_state = None
@@ -396,7 +458,7 @@ class ImageTemplateCustomizer(_serialization.Model):
         }
     }
 
-    def __init__(self, *, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Friendly Name to provide context on what this customization step does.
         :paramtype name: str
@@ -443,7 +505,7 @@ class ImageTemplateDistributor(_serialization.Model):
         }
     }
 
-    def __init__(self, *, run_output_name: str, artifact_tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, run_output_name: str, artifact_tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword run_output_name: The name to be used for the associated RunOutput. Required.
         :paramtype run_output_name: str
@@ -496,13 +558,116 @@ class ImageTemplateFileCustomizer(ImageTemplateCustomizer):
         source_uri: Optional[str] = None,
         sha256_checksum: str = "",
         destination: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Friendly Name to provide context on what this customization step does.
         :paramtype name: str
         :keyword source_uri: The URI of the file to be uploaded for customizing the VM. It can be a
          github link, SAS URI for Azure Storage, etc.
+        :paramtype source_uri: str
+        :keyword sha256_checksum: SHA256 checksum of the file provided in the sourceUri field above.
+        :paramtype sha256_checksum: str
+        :keyword destination: The absolute path to a file (with nested directory structures already
+         created) where the file (from sourceUri) will be uploaded to in the VM.
+        :paramtype destination: str
+        """
+        super().__init__(name=name, **kwargs)
+        self.type: str = "File"
+        self.source_uri = source_uri
+        self.sha256_checksum = sha256_checksum
+        self.destination = destination
+
+
+class ImageTemplateInVMValidator(_serialization.Model):
+    """Describes a unit of in-VM validation of image.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ImageTemplateFileValidator, ImageTemplatePowerShellValidator, ImageTemplateShellValidator
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: The type of validation you want to use on the Image. For example, "Shell" can be
+     shell validation. Required.
+    :vartype type: str
+    :ivar name: Friendly Name to provide context on what this validation step does.
+    :vartype name: str
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    _subtype_map = {
+        "type": {
+            "File": "ImageTemplateFileValidator",
+            "PowerShell": "ImageTemplatePowerShellValidator",
+            "Shell": "ImageTemplateShellValidator",
+        }
+    }
+
+    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: Friendly Name to provide context on what this validation step does.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
+        self.name = name
+
+
+class ImageTemplateFileValidator(ImageTemplateInVMValidator):
+    """Uploads files required for validation to VMs (Linux, Windows). Corresponds to Packer file
+    provisioner.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: The type of validation you want to use on the Image. For example, "Shell" can be
+     shell validation. Required.
+    :vartype type: str
+    :ivar name: Friendly Name to provide context on what this validation step does.
+    :vartype name: str
+    :ivar source_uri: The URI of the file to be uploaded to the VM for validation. It can be a
+     github link, Azure Storage URI (authorized or SAS), etc.
+    :vartype source_uri: str
+    :ivar sha256_checksum: SHA256 checksum of the file provided in the sourceUri field above.
+    :vartype sha256_checksum: str
+    :ivar destination: The absolute path to a file (with nested directory structures already
+     created) where the file (from sourceUri) will be uploaded to in the VM.
+    :vartype destination: str
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "source_uri": {"key": "sourceUri", "type": "str"},
+        "sha256_checksum": {"key": "sha256Checksum", "type": "str"},
+        "destination": {"key": "destination", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        source_uri: Optional[str] = None,
+        sha256_checksum: str = "",
+        destination: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Friendly Name to provide context on what this validation step does.
+        :paramtype name: str
+        :keyword source_uri: The URI of the file to be uploaded to the VM for validation. It can be a
+         github link, Azure Storage URI (authorized or SAS), etc.
         :paramtype source_uri: str
         :keyword sha256_checksum: SHA256 checksum of the file provided in the sourceUri field above.
         :paramtype sha256_checksum: str
@@ -523,82 +688,40 @@ class ImageTemplateIdentity(_serialization.Model):
     :ivar type: The type of identity used for the image template. The type 'None' will remove any
      identities from the image template. Known values are: "UserAssigned" and "None".
     :vartype type: str or ~azure.mgmt.imagebuilder.models.ResourceIdentityType
-    :ivar user_assigned_identities: The list of user identities associated with the image template.
-     The user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+    :ivar user_assigned_identities: The set of user assigned identities associated with the
+     resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+     The dictionary values can be empty objects ({}) in requests.
     :vartype user_assigned_identities: dict[str,
-     ~azure.mgmt.imagebuilder.models.ComponentsVrq145SchemasImagetemplateidentityPropertiesUserassignedidentitiesAdditionalproperties]
+     ~azure.mgmt.imagebuilder.models.UserAssignedIdentity]
     """
 
     _attribute_map = {
         "type": {"key": "type", "type": "str"},
-        "user_assigned_identities": {
-            "key": "userAssignedIdentities",
-            "type": "{ComponentsVrq145SchemasImagetemplateidentityPropertiesUserassignedidentitiesAdditionalproperties}",
-        },
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
     }
 
     def __init__(
         self,
         *,
         type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[
-            Dict[
-                str,
-                "_models.ComponentsVrq145SchemasImagetemplateidentityPropertiesUserassignedidentitiesAdditionalproperties",
-            ]
-        ] = None,
-        **kwargs
-    ):
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of identity used for the image template. The type 'None' will remove
          any identities from the image template. Known values are: "UserAssigned" and "None".
         :paramtype type: str or ~azure.mgmt.imagebuilder.models.ResourceIdentityType
-        :keyword user_assigned_identities: The list of user identities associated with the image
-         template. The user identity dictionary key references will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+        :keyword user_assigned_identities: The set of user assigned identities associated with the
+         resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+         The dictionary values can be empty objects ({}) in requests.
         :paramtype user_assigned_identities: dict[str,
-         ~azure.mgmt.imagebuilder.models.ComponentsVrq145SchemasImagetemplateidentityPropertiesUserassignedidentitiesAdditionalproperties]
+         ~azure.mgmt.imagebuilder.models.UserAssignedIdentity]
         """
         super().__init__(**kwargs)
         self.type = type
         self.user_assigned_identities = user_assigned_identities
-
-
-class ImageTemplateInVMValidator(_serialization.Model):
-    """Describes a unit of in-VM validation of image.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ImageTemplatePowerShellValidator, ImageTemplateShellValidator
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar type: The type of validation you want to use on the Image. For example, "Shell" can be
-     shell validation. Required.
-    :vartype type: str
-    :ivar name: Friendly Name to provide context on what this validation step does.
-    :vartype name: str
-    """
-
-    _validation = {
-        "type": {"required": True},
-    }
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-    }
-
-    _subtype_map = {"type": {"PowerShell": "ImageTemplatePowerShellValidator", "Shell": "ImageTemplateShellValidator"}}
-
-    def __init__(self, *, name: Optional[str] = None, **kwargs):
-        """
-        :keyword name: Friendly Name to provide context on what this validation step does.
-        :paramtype name: str
-        """
-        super().__init__(**kwargs)
-        self.type: Optional[str] = None
-        self.name = name
 
 
 class ImageTemplateLastRunStatus(_serialization.Model):
@@ -612,7 +735,7 @@ class ImageTemplateLastRunStatus(_serialization.Model):
      "PartiallySucceeded", "Failed", and "Canceled".
     :vartype run_state: str or ~azure.mgmt.imagebuilder.models.RunState
     :ivar run_sub_state: Sub-state of the last run. Known values are: "Queued", "Building",
-     "Customizing", "Validating", and "Distributing".
+     "Customizing", "Optimizing", "Validating", and "Distributing".
     :vartype run_sub_state: str or ~azure.mgmt.imagebuilder.models.RunSubState
     :ivar message: Verbose information about the last run state.
     :vartype message: str
@@ -634,8 +757,8 @@ class ImageTemplateLastRunStatus(_serialization.Model):
         run_state: Optional[Union[str, "_models.RunState"]] = None,
         run_sub_state: Optional[Union[str, "_models.RunSubState"]] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword start_time: Start time of the last run (UTC).
         :paramtype start_time: ~datetime.datetime
@@ -645,7 +768,7 @@ class ImageTemplateLastRunStatus(_serialization.Model):
          "Succeeded", "PartiallySucceeded", "Failed", and "Canceled".
         :paramtype run_state: str or ~azure.mgmt.imagebuilder.models.RunState
         :keyword run_sub_state: Sub-state of the last run. Known values are: "Queued", "Building",
-         "Customizing", "Validating", and "Distributing".
+         "Customizing", "Optimizing", "Validating", and "Distributing".
         :paramtype run_sub_state: str or ~azure.mgmt.imagebuilder.models.RunSubState
         :keyword message: Verbose information about the last run state.
         :paramtype message: str
@@ -673,8 +796,8 @@ class ImageTemplateListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ImageTemplate"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.ImageTemplate"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: An array of image templates.
         :paramtype value: list[~azure.mgmt.imagebuilder.models.ImageTemplate]
@@ -726,8 +849,8 @@ class ImageTemplateManagedImageDistributor(ImageTemplateDistributor):
         image_id: str,
         location: str,
         artifact_tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword run_output_name: The name to be used for the associated RunOutput. Required.
         :paramtype run_output_name: str
@@ -775,14 +898,15 @@ class ImageTemplateSource(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type: Optional[str] = None
 
 
 class ImageTemplateManagedImageSource(ImageTemplateSource):
-    """Describes an image source that is a managed image in customer subscription. This image must reside in the same subscription and region as the Image Builder template.
+    """Describes an image source that is a managed image in customer subscription. This image must
+    reside in the same subscription and region as the Image Builder template.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -802,7 +926,7 @@ class ImageTemplateManagedImageSource(ImageTemplateSource):
         "image_id": {"key": "imageId", "type": "str"},
     }
 
-    def __init__(self, *, image_id: str, **kwargs):
+    def __init__(self, *, image_id: str, **kwargs: Any) -> None:
         """
         :keyword image_id: ARM resource id of the managed image in customer subscription. Required.
         :paramtype image_id: str
@@ -813,7 +937,8 @@ class ImageTemplateManagedImageSource(ImageTemplateSource):
 
 
 class ImageTemplatePlatformImageSource(ImageTemplateSource):
-    """Describes an image source from `Azure Gallery Images <https://docs.microsoft.com/en-us/rest/api/compute/virtualmachineimages>`_.
+    """Describes an image source from `Azure Gallery Images
+    <https://docs.microsoft.com/en-us/rest/api/compute/virtualmachineimages>`_.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -866,8 +991,8 @@ class ImageTemplatePlatformImageSource(ImageTemplateSource):
         sku: Optional[str] = None,
         version: Optional[str] = None,
         plan_info: Optional["_models.PlatformImagePurchasePlan"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword publisher: Image Publisher in `Azure Gallery Images
          <https://docs.microsoft.com/en-us/rest/api/compute/virtualmachineimages>`_.
@@ -897,7 +1022,8 @@ class ImageTemplatePlatformImageSource(ImageTemplateSource):
 
 
 class ImageTemplatePowerShellCustomizer(ImageTemplateCustomizer):
-    """Runs the specified PowerShell on the VM (Windows). Corresponds to Packer powershell provisioner. Exactly one of 'scriptUri' or 'inline' can be specified.
+    """Runs the specified PowerShell on the VM (Windows). Corresponds to Packer powershell
+    provisioner. Exactly one of 'scriptUri' or 'inline' can be specified.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -948,8 +1074,8 @@ class ImageTemplatePowerShellCustomizer(ImageTemplateCustomizer):
         run_elevated: bool = False,
         run_as_system: bool = False,
         valid_exit_codes: Optional[List[int]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Friendly Name to provide context on what this customization step does.
         :paramtype name: str
@@ -982,7 +1108,8 @@ class ImageTemplatePowerShellCustomizer(ImageTemplateCustomizer):
 
 
 class ImageTemplatePowerShellValidator(ImageTemplateInVMValidator):
-    """Runs the specified PowerShell script during the validation phase (Windows). Corresponds to Packer powershell provisioner. Exactly one of 'scriptUri' or 'inline' can be specified.
+    """Runs the specified PowerShell script during the validation phase (Windows). Corresponds to
+    Packer powershell provisioner. Exactly one of 'scriptUri' or 'inline' can be specified.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1033,8 +1160,8 @@ class ImageTemplatePowerShellValidator(ImageTemplateInVMValidator):
         run_elevated: bool = False,
         run_as_system: bool = False,
         valid_exit_codes: Optional[List[int]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Friendly Name to provide context on what this validation step does.
         :paramtype name: str
@@ -1064,6 +1191,50 @@ class ImageTemplatePowerShellValidator(ImageTemplateInVMValidator):
         self.run_elevated = run_elevated
         self.run_as_system = run_as_system
         self.valid_exit_codes = valid_exit_codes
+
+
+class ImageTemplatePropertiesOptimize(_serialization.Model):
+    """Specifies optimization to be performed on image.
+
+    :ivar vm_boot: Optimization is applied on the image for a faster VM boot.
+    :vartype vm_boot: ~azure.mgmt.imagebuilder.models.ImageTemplatePropertiesOptimizeVmBoot
+    """
+
+    _attribute_map = {
+        "vm_boot": {"key": "vmBoot", "type": "ImageTemplatePropertiesOptimizeVmBoot"},
+    }
+
+    def __init__(
+        self, *, vm_boot: Optional["_models.ImageTemplatePropertiesOptimizeVmBoot"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword vm_boot: Optimization is applied on the image for a faster VM boot.
+        :paramtype vm_boot: ~azure.mgmt.imagebuilder.models.ImageTemplatePropertiesOptimizeVmBoot
+        """
+        super().__init__(**kwargs)
+        self.vm_boot = vm_boot
+
+
+class ImageTemplatePropertiesOptimizeVmBoot(_serialization.Model):
+    """Optimization is applied on the image for a faster VM boot.
+
+    :ivar state: Enabling this field will improve VM boot time by optimizing the final customized
+     image output. Known values are: "Enabled" and "Disabled".
+    :vartype state: str or ~azure.mgmt.imagebuilder.models.VMBootOptimizationState
+    """
+
+    _attribute_map = {
+        "state": {"key": "state", "type": "str"},
+    }
+
+    def __init__(self, *, state: Optional[Union[str, "_models.VMBootOptimizationState"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword state: Enabling this field will improve VM boot time by optimizing the final
+         customized image output. Known values are: "Enabled" and "Disabled".
+        :paramtype state: str or ~azure.mgmt.imagebuilder.models.VMBootOptimizationState
+        """
+        super().__init__(**kwargs)
+        self.state = state
 
 
 class ImageTemplatePropertiesValidate(_serialization.Model):
@@ -1096,8 +1267,8 @@ class ImageTemplatePropertiesValidate(_serialization.Model):
         continue_distribute_on_failure: bool = False,
         source_validation_only: bool = False,
         in_vm_validations: Optional[List["_models.ImageTemplateInVMValidator"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword continue_distribute_on_failure: If validation fails and this field is set to false,
          output image(s) will not be distributed. This is the default behavior. If validation fails and
@@ -1120,7 +1291,8 @@ class ImageTemplatePropertiesValidate(_serialization.Model):
 
 
 class ImageTemplateRestartCustomizer(ImageTemplateCustomizer):
-    """Reboots a VM and waits for it to come back online (Windows). Corresponds to Packer windows-restart provisioner.
+    """Reboots a VM and waits for it to come back online (Windows). Corresponds to Packer
+    windows-restart provisioner.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1158,8 +1330,8 @@ class ImageTemplateRestartCustomizer(ImageTemplateCustomizer):
         restart_command: Optional[str] = None,
         restart_check_command: Optional[str] = None,
         restart_timeout: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Friendly Name to provide context on what this customization step does.
         :paramtype name: str
@@ -1180,7 +1352,7 @@ class ImageTemplateRestartCustomizer(ImageTemplateCustomizer):
 
 
 class ImageTemplateSharedImageDistributor(ImageTemplateDistributor):
-    """Distribute via Shared Image Gallery.
+    """Distribute via Azure Compute Gallery.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1191,24 +1363,33 @@ class ImageTemplateSharedImageDistributor(ImageTemplateDistributor):
     :ivar artifact_tags: Tags that will be applied to the artifact once it has been created/updated
      by the distributor.
     :vartype artifact_tags: dict[str, str]
-    :ivar gallery_image_id: Resource Id of the Shared Image Gallery image. Required.
+    :ivar gallery_image_id: Resource Id of the Azure Compute Gallery image. Required.
     :vartype gallery_image_id: str
-    :ivar replication_regions: A list of regions that the image will be replicated to. Required.
+    :ivar replication_regions: [Deprecated] A list of regions that the image will be replicated to.
+     This list can be specified only if targetRegions is not specified. This field is deprecated -
+     use targetRegions instead.
     :vartype replication_regions: list[str]
     :ivar exclude_from_latest: Flag that indicates whether created image version should be excluded
      from latest. Omit to use the default (false).
     :vartype exclude_from_latest: bool
-    :ivar storage_account_type: Storage account type to be used to store the shared image. Omit to
-     use the default (Standard_LRS). Known values are: "Standard_LRS" and "Standard_ZRS".
+    :ivar storage_account_type: [Deprecated] Storage account type to be used to store the shared
+     image. Omit to use the default (Standard_LRS). This field can be specified only if
+     replicationRegions is specified. This field is deprecated - use targetRegions instead. Known
+     values are: "Standard_LRS", "Standard_ZRS", and "Premium_LRS".
     :vartype storage_account_type: str or
      ~azure.mgmt.imagebuilder.models.SharedImageStorageAccountType
+    :ivar target_regions: The target regions where the distributed Image Version is going to be
+     replicated to. This object supersedes replicationRegions and can be specified only if
+     replicationRegions is not specified.
+    :vartype target_regions: list[~azure.mgmt.imagebuilder.models.TargetRegion]
+    :ivar versioning: Describes how to generate new x.y.z version number for distribution.
+    :vartype versioning: ~azure.mgmt.imagebuilder.models.DistributeVersioner
     """
 
     _validation = {
         "type": {"required": True},
         "run_output_name": {"required": True, "pattern": r"^[A-Za-z0-9-_.]{1,64}$"},
         "gallery_image_id": {"required": True},
-        "replication_regions": {"required": True},
     }
 
     _attribute_map = {
@@ -1219,6 +1400,8 @@ class ImageTemplateSharedImageDistributor(ImageTemplateDistributor):
         "replication_regions": {"key": "replicationRegions", "type": "[str]"},
         "exclude_from_latest": {"key": "excludeFromLatest", "type": "bool"},
         "storage_account_type": {"key": "storageAccountType", "type": "str"},
+        "target_regions": {"key": "targetRegions", "type": "[TargetRegion]"},
+        "versioning": {"key": "versioning", "type": "DistributeVersioner"},
     }
 
     def __init__(
@@ -1226,29 +1409,41 @@ class ImageTemplateSharedImageDistributor(ImageTemplateDistributor):
         *,
         run_output_name: str,
         gallery_image_id: str,
-        replication_regions: List[str],
         artifact_tags: Optional[Dict[str, str]] = None,
+        replication_regions: Optional[List[str]] = None,
         exclude_from_latest: bool = False,
         storage_account_type: Optional[Union[str, "_models.SharedImageStorageAccountType"]] = None,
-        **kwargs
-    ):
+        target_regions: Optional[List["_models.TargetRegion"]] = None,
+        versioning: Optional["_models.DistributeVersioner"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword run_output_name: The name to be used for the associated RunOutput. Required.
         :paramtype run_output_name: str
         :keyword artifact_tags: Tags that will be applied to the artifact once it has been
          created/updated by the distributor.
         :paramtype artifact_tags: dict[str, str]
-        :keyword gallery_image_id: Resource Id of the Shared Image Gallery image. Required.
+        :keyword gallery_image_id: Resource Id of the Azure Compute Gallery image. Required.
         :paramtype gallery_image_id: str
-        :keyword replication_regions: A list of regions that the image will be replicated to. Required.
+        :keyword replication_regions: [Deprecated] A list of regions that the image will be replicated
+         to. This list can be specified only if targetRegions is not specified. This field is deprecated
+         - use targetRegions instead.
         :paramtype replication_regions: list[str]
         :keyword exclude_from_latest: Flag that indicates whether created image version should be
          excluded from latest. Omit to use the default (false).
         :paramtype exclude_from_latest: bool
-        :keyword storage_account_type: Storage account type to be used to store the shared image. Omit
-         to use the default (Standard_LRS). Known values are: "Standard_LRS" and "Standard_ZRS".
+        :keyword storage_account_type: [Deprecated] Storage account type to be used to store the shared
+         image. Omit to use the default (Standard_LRS). This field can be specified only if
+         replicationRegions is specified. This field is deprecated - use targetRegions instead. Known
+         values are: "Standard_LRS", "Standard_ZRS", and "Premium_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.imagebuilder.models.SharedImageStorageAccountType
+        :keyword target_regions: The target regions where the distributed Image Version is going to be
+         replicated to. This object supersedes replicationRegions and can be specified only if
+         replicationRegions is not specified.
+        :paramtype target_regions: list[~azure.mgmt.imagebuilder.models.TargetRegion]
+        :keyword versioning: Describes how to generate new x.y.z version number for distribution.
+        :paramtype versioning: ~azure.mgmt.imagebuilder.models.DistributeVersioner
         """
         super().__init__(run_output_name=run_output_name, artifact_tags=artifact_tags, **kwargs)
         self.type: str = "SharedImage"
@@ -1256,43 +1451,56 @@ class ImageTemplateSharedImageDistributor(ImageTemplateDistributor):
         self.replication_regions = replication_regions
         self.exclude_from_latest = exclude_from_latest
         self.storage_account_type = storage_account_type
+        self.target_regions = target_regions
+        self.versioning = versioning
 
 
 class ImageTemplateSharedImageVersionSource(ImageTemplateSource):
-    """Describes an image source that is an image version in a shared image gallery.
+    """Describes an image source that is an image version in an Azure Compute Gallery or a Direct
+    Shared Gallery.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar type: Specifies the type of source image you want to start with. Required.
     :vartype type: str
-    :ivar image_version_id: ARM resource id of the image version in the shared image gallery.
-     Required.
+    :ivar image_version_id: ARM resource id of the image version. When image version name is
+     'latest', the version is evaluated when the image build takes place. Required.
     :vartype image_version_id: str
+    :ivar exact_version: Exact ARM resource id of the image version. This readonly field differs
+     from the image version Id in 'imageVersionId' only if the version name specified in
+     'imageVersionId' field is 'latest'.
+    :vartype exact_version: str
     """
 
     _validation = {
         "type": {"required": True},
         "image_version_id": {"required": True},
+        "exact_version": {"readonly": True},
     }
 
     _attribute_map = {
         "type": {"key": "type", "type": "str"},
         "image_version_id": {"key": "imageVersionId", "type": "str"},
+        "exact_version": {"key": "exactVersion", "type": "str"},
     }
 
-    def __init__(self, *, image_version_id: str, **kwargs):
+    def __init__(self, *, image_version_id: str, **kwargs: Any) -> None:
         """
-        :keyword image_version_id: ARM resource id of the image version in the shared image gallery.
-         Required.
+        :keyword image_version_id: ARM resource id of the image version. When image version name is
+         'latest', the version is evaluated when the image build takes place. Required.
         :paramtype image_version_id: str
         """
         super().__init__(**kwargs)
         self.type: str = "SharedImageVersion"
         self.image_version_id = image_version_id
+        self.exact_version = None
 
 
 class ImageTemplateShellCustomizer(ImageTemplateCustomizer):
-    """Runs a shell script during the customization phase (Linux). Corresponds to Packer shell provisioner. Exactly one of 'scriptUri' or 'inline' can be specified.
+    """Runs a shell script during the customization phase (Linux). Corresponds to Packer shell
+    provisioner. Exactly one of 'scriptUri' or 'inline' can be specified.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1329,8 +1537,8 @@ class ImageTemplateShellCustomizer(ImageTemplateCustomizer):
         script_uri: Optional[str] = None,
         sha256_checksum: str = "",
         inline: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Friendly Name to provide context on what this customization step does.
         :paramtype name: str
@@ -1350,7 +1558,8 @@ class ImageTemplateShellCustomizer(ImageTemplateCustomizer):
 
 
 class ImageTemplateShellValidator(ImageTemplateInVMValidator):
-    """Runs the specified shell script during the validation phase (Linux). Corresponds to Packer shell provisioner. Exactly one of 'scriptUri' or 'inline' can be specified.
+    """Runs the specified shell script during the validation phase (Linux). Corresponds to Packer
+    shell provisioner. Exactly one of 'scriptUri' or 'inline' can be specified.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1387,8 +1596,8 @@ class ImageTemplateShellValidator(ImageTemplateInVMValidator):
         script_uri: Optional[str] = None,
         sha256_checksum: str = "",
         inline: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Friendly Name to provide context on what this validation step does.
         :paramtype name: str
@@ -1426,8 +1635,8 @@ class ImageTemplateUpdateParameters(_serialization.Model):
         *,
         identity: Optional["_models.ImageTemplateIdentity"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: The identity of the image template, if configured.
         :paramtype identity: ~azure.mgmt.imagebuilder.models.ImageTemplateIdentity
@@ -1451,6 +1660,10 @@ class ImageTemplateVhdDistributor(ImageTemplateDistributor):
     :ivar artifact_tags: Tags that will be applied to the artifact once it has been created/updated
      by the distributor.
     :vartype artifact_tags: dict[str, str]
+    :ivar uri: Optional Azure Storage URI for the distributed VHD blob. Omit to use the default
+     (empty string) in which case VHD would be published to the storage account in the staging
+     resource group.
+    :vartype uri: str
     """
 
     _validation = {
@@ -1462,18 +1675,31 @@ class ImageTemplateVhdDistributor(ImageTemplateDistributor):
         "type": {"key": "type", "type": "str"},
         "run_output_name": {"key": "runOutputName", "type": "str"},
         "artifact_tags": {"key": "artifactTags", "type": "{str}"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
-    def __init__(self, *, run_output_name: str, artifact_tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        run_output_name: str,
+        artifact_tags: Optional[Dict[str, str]] = None,
+        uri: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword run_output_name: The name to be used for the associated RunOutput. Required.
         :paramtype run_output_name: str
         :keyword artifact_tags: Tags that will be applied to the artifact once it has been
          created/updated by the distributor.
         :paramtype artifact_tags: dict[str, str]
+        :keyword uri: Optional Azure Storage URI for the distributed VHD blob. Omit to use the default
+         (empty string) in which case VHD would be published to the storage account in the staging
+         resource group.
+        :paramtype uri: str
         """
         super().__init__(run_output_name=run_output_name, artifact_tags=artifact_tags, **kwargs)
         self.type: str = "VHD"
+        self.uri = uri
 
 
 class ImageTemplateVmProfile(_serialization.Model):
@@ -1513,8 +1739,8 @@ class ImageTemplateVmProfile(_serialization.Model):
         os_disk_size_gb: int = 0,
         user_assigned_identities: Optional[List[str]] = None,
         vnet_config: Optional["_models.VirtualNetworkConfig"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword vm_size: Size of the virtual machine used to build, customize and capture images. Omit
          or specify empty string to use the default (Standard_D1_v2 for Gen1 images and Standard_D2ds_v4
@@ -1539,7 +1765,8 @@ class ImageTemplateVmProfile(_serialization.Model):
 
 
 class ImageTemplateWindowsUpdateCustomizer(ImageTemplateCustomizer):
-    """Installs Windows Updates. Corresponds to Packer Windows Update Provisioner (https://github.com/rgl/packer-provisioner-windows-update).
+    """Installs Windows Updates. Corresponds to Packer Windows Update Provisioner
+    (https://github.com/rgl/packer-provisioner-windows-update).
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1579,9 +1806,9 @@ class ImageTemplateWindowsUpdateCustomizer(ImageTemplateCustomizer):
         name: Optional[str] = None,
         search_criteria: Optional[str] = None,
         filters: Optional[List[str]] = None,
-        update_limit: Optional[int] = None,
-        **kwargs
-    ):
+        update_limit: int = 0,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Friendly Name to provide context on what this customization step does.
         :paramtype name: str
@@ -1634,8 +1861,8 @@ class Operation(_serialization.Model):
         origin: Optional[str] = None,
         properties: Optional[JSON] = None,
         is_data_action: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: This is of the format {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -1683,8 +1910,8 @@ class OperationDisplay(_serialization.Model):
         operation: Optional[str] = None,
         resource: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Friendly name of the resource provider.
         :paramtype provider: str
@@ -1703,7 +1930,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """Result of the request to list REST API operations. It contains a list of operations and a URL nextLink to get the next set of results.
+    """Result of the request to list REST API operations. It contains a list of operations and a URL
+    nextLink to get the next set of results.
 
     :ivar value: The list of operations supported by the resource provider.
     :vartype value: list[~azure.mgmt.imagebuilder.models.Operation]
@@ -1716,7 +1944,9 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of operations supported by the resource provider.
         :paramtype value: list[~azure.mgmt.imagebuilder.models.Operation]
@@ -1753,7 +1983,7 @@ class PlatformImagePurchasePlan(_serialization.Model):
         "plan_publisher": {"key": "planPublisher", "type": "str"},
     }
 
-    def __init__(self, *, plan_name: str, plan_product: str, plan_publisher: str, **kwargs):
+    def __init__(self, *, plan_name: str, plan_product: str, plan_publisher: str, **kwargs: Any) -> None:
         """
         :keyword plan_name: Name of the purchase plan. Required.
         :paramtype plan_name: str
@@ -1791,8 +2021,8 @@ class ProvisioningError(_serialization.Model):
         *,
         provisioning_error_code: Optional[Union[str, "_models.ProvisioningErrorCode"]] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provisioning_error_code: Error code of the provisioning failure. Known values are:
          "BadSourceType", "BadPIRSource", "BadManagedImageSource", "BadSharedImageVersionSource",
@@ -1810,7 +2040,8 @@ class ProvisioningError(_serialization.Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1841,7 +2072,7 @@ class ProxyResource(Resource):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -1867,7 +2098,7 @@ class RunOutput(ProxyResource):
     :ivar artifact_uri: The location URI of the artifact.
     :vartype artifact_uri: str
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Creating",
-     "Updating", "Succeeded", "Failed", and "Deleting".
+     "Updating", "Succeeded", "Failed", "Deleting", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.imagebuilder.models.ProvisioningState
     """
 
@@ -1889,7 +2120,7 @@ class RunOutput(ProxyResource):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, artifact_id: Optional[str] = None, artifact_uri: Optional[str] = None, **kwargs):
+    def __init__(self, *, artifact_id: Optional[str] = None, artifact_uri: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword artifact_id: The resource id of the artifact.
         :paramtype artifact_id: str
@@ -1916,7 +2147,9 @@ class RunOutputCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.RunOutput"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.RunOutput"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: An array of run outputs.
         :paramtype value: list[~azure.mgmt.imagebuilder.models.RunOutput]
@@ -1926,6 +2159,81 @@ class RunOutputCollection(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
+
+
+class TriggerProperties(_serialization.Model):
+    """Describes the properties of a trigger.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    SourceImageTriggerProperties
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar kind: The kind of trigger. Required.
+    :vartype kind: str
+    :ivar status: Trigger status.
+    :vartype status: ~azure.mgmt.imagebuilder.models.TriggerStatus
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Creating",
+     "Updating", "Succeeded", "Failed", "Deleting", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.imagebuilder.models.ProvisioningState
+    """
+
+    _validation = {
+        "kind": {"required": True},
+        "status": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "status": {"key": "status", "type": "TriggerStatus"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    _subtype_map = {"kind": {"SourceImage": "SourceImageTriggerProperties"}}
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.kind: Optional[str] = None
+        self.status = None
+        self.provisioning_state = None
+
+
+class SourceImageTriggerProperties(TriggerProperties):
+    """Properties of SourceImage kind of trigger.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar kind: The kind of trigger. Required.
+    :vartype kind: str
+    :ivar status: Trigger status.
+    :vartype status: ~azure.mgmt.imagebuilder.models.TriggerStatus
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Creating",
+     "Updating", "Succeeded", "Failed", "Deleting", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.imagebuilder.models.ProvisioningState
+    """
+
+    _validation = {
+        "kind": {"required": True},
+        "status": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "kind": {"key": "kind", "type": "str"},
+        "status": {"key": "status", "type": "TriggerStatus"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.kind: str = "SourceImage"
 
 
 class SystemData(_serialization.Model):
@@ -1965,8 +2273,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -1992,6 +2300,205 @@ class SystemData(_serialization.Model):
         self.last_modified_at = last_modified_at
 
 
+class TargetRegion(_serialization.Model):
+    """Describes the target region information.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: The name of the region. Required.
+    :vartype name: str
+    :ivar replica_count: The number of replicas of the Image Version to be created in this region.
+     Omit to use the default (1).
+    :vartype replica_count: int
+    :ivar storage_account_type: Specifies the storage account type to be used to store the image in
+     this region. Omit to use the default (Standard_LRS). Known values are: "Standard_LRS",
+     "Standard_ZRS", and "Premium_LRS".
+    :vartype storage_account_type: str or
+     ~azure.mgmt.imagebuilder.models.SharedImageStorageAccountType
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "replica_count": {"minimum": 1},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "replica_count": {"key": "replicaCount", "type": "int"},
+        "storage_account_type": {"key": "storageAccountType", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        replica_count: int = 1,
+        storage_account_type: Optional[Union[str, "_models.SharedImageStorageAccountType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name of the region. Required.
+        :paramtype name: str
+        :keyword replica_count: The number of replicas of the Image Version to be created in this
+         region. Omit to use the default (1).
+        :paramtype replica_count: int
+        :keyword storage_account_type: Specifies the storage account type to be used to store the image
+         in this region. Omit to use the default (Standard_LRS). Known values are: "Standard_LRS",
+         "Standard_ZRS", and "Premium_LRS".
+        :paramtype storage_account_type: str or
+         ~azure.mgmt.imagebuilder.models.SharedImageStorageAccountType
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.replica_count = replica_count
+        self.storage_account_type = storage_account_type
+
+
+class Trigger(ProxyResource):
+    """Represents a trigger that can invoke an image template build.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.imagebuilder.models.SystemData
+    :ivar kind: The kind of trigger.
+    :vartype kind: str
+    :ivar status: Trigger status.
+    :vartype status: ~azure.mgmt.imagebuilder.models.TriggerStatus
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Creating",
+     "Updating", "Succeeded", "Failed", "Deleting", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.imagebuilder.models.ProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "status": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "kind": {"key": "properties.kind", "type": "str"},
+        "status": {"key": "properties.status", "type": "TriggerStatus"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.kind: Optional[str] = None
+        self.status = None
+        self.provisioning_state = None
+
+
+class TriggerCollection(_serialization.Model):
+    """The result of List triggers operation.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: An array of triggers. Required.
+    :vartype value: list[~azure.mgmt.imagebuilder.models.Trigger]
+    :ivar next_link: The continuation token.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Trigger]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: List["_models.Trigger"], next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: An array of triggers. Required.
+        :paramtype value: list[~azure.mgmt.imagebuilder.models.Trigger]
+        :keyword next_link: The continuation token.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class TriggerStatus(_serialization.Model):
+    """Describes the status of a trigger.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The status code.
+    :vartype code: str
+    :ivar message: The detailed status message, including for alerts and error messages.
+    :vartype message: str
+    :ivar time: The time of the status.
+    :vartype time: ~datetime.datetime
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "time": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "time": {"key": "time", "type": "iso-8601"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.time = None
+
+
+class UserAssignedIdentity(_serialization.Model):
+    """User assigned identity properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
+
+
 class VirtualNetworkConfig(_serialization.Model):
     """Virtual Network configuration.
 
@@ -2007,7 +2514,7 @@ class VirtualNetworkConfig(_serialization.Model):
         "proxy_vm_size": {"key": "proxyVmSize", "type": "str"},
     }
 
-    def __init__(self, *, subnet_id: Optional[str] = None, proxy_vm_size: str = "", **kwargs):
+    def __init__(self, *, subnet_id: Optional[str] = None, proxy_vm_size: str = "", **kwargs: Any) -> None:
         """
         :keyword subnet_id: Resource id of a pre-existing subnet.
         :paramtype subnet_id: str

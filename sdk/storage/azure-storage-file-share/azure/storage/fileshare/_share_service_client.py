@@ -105,14 +105,16 @@ class ShareServiceClient(StorageAccountHostsMixin):
             token_intent: Optional[Literal['backup']] = None,
             **kwargs: Any
         ) -> None:
+        if hasattr(credential, 'get_token') and not token_intent:
+            raise ValueError("'token_intent' keyword is required when 'credential' is an TokenCredential.")
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Account URL must be a string.") from exc
         parsed_url = urlparse(account_url.rstrip('/'))
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
+            raise ValueError(f"Invalid URL: {account_url}")
 
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
@@ -130,10 +132,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
         self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
 
     def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
-        return "{}://{}/{}".format(self.scheme, hostname, self._query_str)
+        return f"{self.scheme}://{hostname}/{self._query_str}"
 
     @classmethod
     def from_connection_string(
@@ -154,6 +153,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         :returns: A File Share service client.
         :rtype: ~azure.storage.fileshare.ShareServiceClient
 
@@ -343,6 +343,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
+        :return: A ShareClient for the newly created Share.
         :rtype: ~azure.storage.fileshare.ShareClient
 
         .. admonition:: Example:
@@ -422,6 +423,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
+        :return: A ShareClient for the undeleted Share.
         :rtype: ~azure.storage.fileshare.ShareClient
         """
         share = self.get_share_client(deleted_share_name)

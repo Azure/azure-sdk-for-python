@@ -26,6 +26,7 @@ service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
 index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
 key = os.getenv("AZURE_SEARCH_API_KEY")
 
+
 async def simple_analyze_text():
     # [START simple_analyze_text_async]
     from azure.core.credentials import AzureKeyCredential
@@ -41,5 +42,6 @@ async def simple_analyze_text():
         print(result.as_dict())
     # [END simple_analyze_text_async]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(simple_analyze_text())

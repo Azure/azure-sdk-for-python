@@ -39,12 +39,14 @@ def main():
                 "clientSecret": "x",
                 "displayName": "templateoidprovider3",
                 "metadataEndpoint": "https://oidprovider-template3.net",
+                "useInApiDocumentation": True,
+                "useInTestConsole": False,
             }
         },
     )
     print(response)
 
 
-# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2021-08-01/examples/ApiManagementCreateOpenIdConnectProvider.json
+# x-ms-original-file: specification/apimanagement/resource-manager/Microsoft.ApiManagement/stable/2022-08-01/examples/ApiManagementCreateOpenIdConnectProvider.json
 if __name__ == "__main__":
     main()

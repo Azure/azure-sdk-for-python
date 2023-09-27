@@ -1,0 +1,137 @@
+{
+    "chosen_version": "2023-01-01-preview",
+    "total_api_version_list": ["2023-01-01-preview"],
+    "client": {
+        "name": "AppPlatformManagementClient",
+        "filename": "_app_platform_management_client",
+        "description": "REST API for Azure Spring Apps.",
+        "host_value": "\"https://management.azure.com\"",
+        "parameterized_host_template": null,
+        "azure_arm": true,
+        "has_lro_operations": true,
+        "client_side_validation": false,
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"azurecore\": {\"azure.mgmt.core\": [\"ARMPipelineClient\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"AppPlatformManagementClientConfiguration\"], \".._serialization\": [\"Deserializer\", \"Serializer\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"azurecore\": {\"azure.mgmt.core\": [\"AsyncARMPipelineClient\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"AppPlatformManagementClientConfiguration\"], \"..._serialization\": [\"Deserializer\", \"Serializer\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+    },
+    "global_parameters": {
+        "sync": {
+            "credential": {
+                "signature": "credential: \"TokenCredential\",",
+                "description": "Credential needed for the client to connect to Azure. Required.",
+                "docstring_type": "~azure.core.credentials.TokenCredential",
+                "required": true,
+                "method_location": "positional"
+            },
+            "subscription_id": {
+                "signature": "subscription_id: str,",
+                "description": "Gets subscription ID which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call. Required.",
+                "docstring_type": "str",
+                "required": true,
+                "method_location": "positional"
+            }
+        },
+        "async": {
+            "credential": {
+                "signature": "credential: \"AsyncTokenCredential\",",
+                "description": "Credential needed for the client to connect to Azure. Required.",
+                "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
+                "required": true
+            },
+            "subscription_id": {
+                "signature": "subscription_id: str,",
+                "description": "Gets subscription ID which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call. Required.",
+                "docstring_type": "str",
+                "required": true
+            }
+        },
+        "constant": {
+        },
+        "call": "credential, subscription_id",
+        "service_client_specific": {
+            "sync": {
+                "api_version": {
+                    "signature": "api_version: Optional[str]=None,",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false,
+                    "method_location": "positional"
+                },
+                "base_url": {
+                    "signature": "base_url: str = \"https://management.azure.com\",",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false,
+                    "method_location": "positional"
+                },
+                "profile": {
+                    "signature": "profile: KnownProfiles=KnownProfiles.default,",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false,
+                    "method_location": "positional"
+                }
+            },
+            "async": {
+                "api_version": {
+                    "signature": "api_version: Optional[str] = None,",
+                    "description": "API version to use if no profile is provided, or if missing in profile.",
+                    "docstring_type": "str",
+                    "required": false,
+                    "method_location": "positional"
+                },
+                "base_url": {
+                    "signature": "base_url: str = \"https://management.azure.com\",",
+                    "description": "Service URL",
+                    "docstring_type": "str",
+                    "required": false,
+                    "method_location": "positional"
+                },
+                "profile": {
+                    "signature": "profile: KnownProfiles = KnownProfiles.default,",
+                    "description": "A profile definition, from KnownProfiles to dict.",
+                    "docstring_type": "azure.profiles.KnownProfiles",
+                    "required": false,
+                    "method_location": "positional"
+                }
+            }
+        }
+    },
+    "config": {
+        "credential": true,
+        "credential_scopes": ["https://management.azure.com/.default"],
+        "credential_call_sync": "ARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "credential_call_async": "AsyncARMChallengeAuthenticationPolicy(self.credential, *self.credential_scopes, **kwargs)",
+        "sync_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMChallengeAuthenticationPolicy\", \"ARMHttpLoggingPolicy\"]}, \"local\": {\"._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
+    },
+    "operation_groups": {
+        "services": "ServicesOperations",
+        "config_servers": "ConfigServersOperations",
+        "configuration_services": "ConfigurationServicesOperations",
+        "service_registries": "ServiceRegistriesOperations",
+        "application_live_views": "ApplicationLiveViewsOperations",
+        "dev_tool_portals": "DevToolPortalsOperations",
+        "build_service": "BuildServiceOperations",
+        "buildpack_binding": "BuildpackBindingOperations",
+        "build_service_builder": "BuildServiceBuilderOperations",
+        "build_service_agent_pool": "BuildServiceAgentPoolOperations",
+        "monitoring_settings": "MonitoringSettingsOperations",
+        "apps": "AppsOperations",
+        "bindings": "BindingsOperations",
+        "storages": "StoragesOperations",
+        "certificates": "CertificatesOperations",
+        "custom_domains": "CustomDomainsOperations",
+        "deployments": "DeploymentsOperations",
+        "operations": "Operations",
+        "runtime_versions": "RuntimeVersionsOperations",
+        "skus": "SkusOperations",
+        "gateways": "GatewaysOperations",
+        "gateway_route_configs": "GatewayRouteConfigsOperations",
+        "gateway_custom_domains": "GatewayCustomDomainsOperations",
+        "api_portals": "ApiPortalsOperations",
+        "api_portal_custom_domains": "ApiPortalCustomDomainsOperations",
+        "application_accelerators": "ApplicationAcceleratorsOperations",
+        "customized_accelerators": "CustomizedAcceleratorsOperations",
+        "predefined_accelerators": "PredefinedAcceleratorsOperations"
+    }
+}

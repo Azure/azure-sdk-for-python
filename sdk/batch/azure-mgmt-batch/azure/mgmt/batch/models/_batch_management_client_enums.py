@@ -13,45 +13,45 @@ from azure.core import CaseInsensitiveEnumMeta
 class AccountKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of account key to regenerate."""
 
-    #: The primary account key.
     PRIMARY = "Primary"
-    #: The secondary account key.
+    """The primary account key."""
     SECONDARY = "Secondary"
+    """The secondary account key."""
 
 
 class AllocationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether the pool is resizing."""
 
-    #: The pool is not resizing. There are no changes to the number of nodes in the pool in progress.
-    #: A pool enters this state when it is created and when no operations are being performed on the
-    #: pool to change the number of nodes.
     STEADY = "Steady"
-    #: The pool is resizing; that is, compute nodes are being added to or removed from the pool.
+    """The pool is not resizing. There are no changes to the number of nodes in the pool in progress.
+    #: A pool enters this state when it is created and when no operations are being performed on the
+    #: pool to change the number of nodes."""
     RESIZING = "Resizing"
-    #: The pool was resizing, but the user has requested that the resize be stopped, but the stop
-    #: request has not yet been completed.
+    """The pool is resizing; that is, compute nodes are being added to or removed from the pool."""
     STOPPING = "Stopping"
+    """The pool was resizing, but the user has requested that the resize be stopped, but the stop
+    #: request has not yet been completed."""
 
 
 class AuthenticationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The authentication mode for the Batch account."""
 
-    #: The authentication mode using shared keys.
     SHARED_KEY = "SharedKey"
-    #: The authentication mode using Azure Active Directory.
+    """The authentication mode using shared keys."""
     AAD = "AAD"
-    #: The authentication mode using task authentication tokens.
+    """The authentication mode using Azure Active Directory."""
     TASK_AUTHENTICATION_TOKEN = "TaskAuthenticationToken"
+    """The authentication mode using task authentication tokens."""
 
 
 class AutoStorageAuthenticationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The authentication mode which the Batch service will use to manage the auto-storage account."""
 
-    #: The Batch service will authenticate requests to auto-storage using storage account keys.
     STORAGE_KEYS = "StorageKeys"
-    #: The Batch service will authenticate requests to auto-storage using the managed identity
-    #: assigned to the Batch account.
+    """The Batch service will authenticate requests to auto-storage using storage account keys."""
     BATCH_ACCOUNT_MANAGED_IDENTITY = "BatchAccountManagedIdentity"
+    """The Batch service will authenticate requests to auto-storage using the managed identity
+    #: assigned to the Batch account."""
 
 
 class AutoUserScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -61,48 +61,48 @@ class AutoUserScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     which should not be accessible by normal tasks but should be accessible by start tasks.
     """
 
-    #: Specifies that the service should create a new user for the task.
     TASK = "Task"
-    #: Specifies that the task runs as the common auto user account which is created on every node in
-    #: a pool.
+    """Specifies that the service should create a new user for the task."""
     POOL = "Pool"
+    """Specifies that the task runs as the common auto user account which is created on every node in
+    #: a pool."""
 
 
 class CachingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of caching to enable for the disk."""
 
-    #: The caching mode for the disk is not enabled.
     NONE = "None"
-    #: The caching mode for the disk is read only.
+    """The caching mode for the disk is not enabled."""
     READ_ONLY = "ReadOnly"
-    #: The caching mode for the disk is read and write.
+    """The caching mode for the disk is read only."""
     READ_WRITE = "ReadWrite"
+    """The caching mode for the disk is read and write."""
 
 
 class CertificateFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The format of the certificate - either Pfx or Cer. If omitted, the default is Pfx."""
 
-    #: The certificate is a PFX (PKCS#12) formatted certificate or certificate chain.
     PFX = "Pfx"
-    #: The certificate is a base64-encoded X.509 certificate.
+    """The certificate is a PFX (PKCS#12) formatted certificate or certificate chain."""
     CER = "Cer"
+    """The certificate is a base64-encoded X.509 certificate."""
 
 
 class CertificateProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CertificateProvisioningState."""
 
-    #: The certificate is available for use in pools.
     SUCCEEDED = "Succeeded"
-    #: The user has requested that the certificate be deleted, but the delete operation has not yet
-    #: completed. You may not reference the certificate when creating or updating pools.
+    """The certificate is available for use in pools."""
     DELETING = "Deleting"
-    #: The user requested that the certificate be deleted, but there are pools that still have
+    """The user has requested that the certificate be deleted, but the delete operation has not yet
+    #: completed. You may not reference the certificate when creating or updating pools."""
+    FAILED = "Failed"
+    """The user requested that the certificate be deleted, but there are pools that still have
     #: references to the certificate, or it is still installed on one or more compute nodes. (The
     #: latter can occur if the certificate has been removed from the pool, but the node has not yet
     #: restarted. Nodes refresh their certificates only when they restart.) You may use the cancel
     #: certificate delete operation to cancel the delete, or the delete certificate operation to retry
-    #: the delete.
-    FAILED = "Failed"
+    #: the delete."""
 
 
 class CertificateStoreLocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -115,24 +115,24 @@ class CertificateStoreLocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     directory (e.g., /home/{user-name}/certs) and certificates are placed in that directory.
     """
 
-    #: Certificates should be installed to the CurrentUser certificate store.
     CURRENT_USER = "CurrentUser"
-    #: Certificates should be installed to the LocalMachine certificate store.
+    """Certificates should be installed to the CurrentUser certificate store."""
     LOCAL_MACHINE = "LocalMachine"
+    """Certificates should be installed to the LocalMachine certificate store."""
 
 
 class CertificateVisibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CertificateVisibility."""
 
-    #: The certificate should be visible to the user account under which the start task is run. Note
-    #: that if AutoUser Scope is Pool for both the StartTask and a Task, this certificate will be
-    #: visible to the Task as well.
     START_TASK = "StartTask"
-    #: The certificate should be visible to the user accounts under which job tasks are run.
+    """The certificate should be visible to the user account under which the start task is run. Note
+    #: that if AutoUser Scope is Pool for both the StartTask and a Task, this certificate will be
+    #: visible to the Task as well."""
     TASK = "Task"
-    #: The certificate should be visible to the user accounts under which users remotely access the
-    #: node.
+    """The certificate should be visible to the user accounts under which job tasks are run."""
     REMOTE_USER = "RemoteUser"
+    """The certificate should be visible to the user accounts under which users remotely access the
+    #: node."""
 
 
 class ComputeNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -140,29 +140,38 @@ class ComputeNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta
     deallocation.
     """
 
-    #: Terminate running task processes and requeue the tasks. The tasks will run again when a node is
-    #: available. Remove nodes as soon as tasks have been terminated.
     REQUEUE = "Requeue"
-    #: Terminate running tasks. The tasks will be completed with failureInfo indicating that they were
-    #: terminated, and will not run again. Remove nodes as soon as tasks have been terminated.
+    """Terminate running task processes and requeue the tasks. The tasks will run again when a node is
+    #: available. Remove nodes as soon as tasks have been terminated."""
     TERMINATE = "Terminate"
-    #: Allow currently running tasks to complete. Schedule no new tasks while waiting. Remove nodes
-    #: when all tasks have completed.
+    """Terminate running tasks. The tasks will be completed with failureInfo indicating that they were
+    #: terminated, and will not run again. Remove nodes as soon as tasks have been terminated."""
     TASK_COMPLETION = "TaskCompletion"
-    #: Allow currently running tasks to complete, then wait for all task data retention periods to
-    #: expire. Schedule no new tasks while waiting. Remove nodes when all task retention periods have
-    #: expired.
+    """Allow currently running tasks to complete. Schedule no new tasks while waiting. Remove nodes
+    #: when all tasks have completed."""
     RETAINED_DATA = "RetainedData"
+    """Allow currently running tasks to complete, then wait for all task data retention periods to
+    #: expire. Schedule no new tasks while waiting. Remove nodes when all task retention periods have
+    #: expired."""
 
 
 class ComputeNodeFillType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """How tasks should be distributed across compute nodes."""
 
-    #: Tasks should be assigned evenly across all nodes in the pool.
     SPREAD = "Spread"
-    #: As many tasks as possible (taskSlotsPerNode) should be assigned to each node in the pool before
-    #: any tasks are assigned to the next node in the pool.
+    """Tasks should be assigned evenly across all nodes in the pool."""
     PACK = "Pack"
+    """As many tasks as possible (taskSlotsPerNode) should be assigned to each node in the pool before
+    #: any tasks are assigned to the next node in the pool."""
+
+
+class ContainerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The container technology to be used."""
+
+    DOCKER_COMPATIBLE = "DockerCompatible"
+    """A Docker compatible container technology will be used to launch the containers."""
+    CRI_COMPATIBLE = "CriCompatible"
+    """A CRI based technology will be used to launch the containers."""
 
 
 class ContainerWorkingDirectory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -170,59 +179,59 @@ class ContainerWorkingDirectory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     'taskWorkingDirectory'.
     """
 
-    #: Use the standard Batch service task working directory, which will contain the Task resource
-    #: files populated by Batch.
     TASK_WORKING_DIRECTORY = "TaskWorkingDirectory"
-    #: Using container image defined working directory. Beware that this directory will not contain
-    #: the resource files downloaded by Batch.
+    """Use the standard Batch service task working directory, which will contain the Task resource
+    #: files populated by Batch."""
     CONTAINER_IMAGE_DEFAULT = "ContainerImageDefault"
+    """Using container image defined working directory. Beware that this directory will not contain
+    #: the resource files downloaded by Batch."""
 
 
 class DiskEncryptionTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """If omitted, no disks on the compute nodes in the pool will be encrypted."""
 
-    #: The OS Disk on the compute node is encrypted.
     OS_DISK = "OsDisk"
-    #: The temporary disk on the compute node is encrypted. On Linux this encryption applies to other
-    #: partitions (such as those on mounted data disks) when encryption occurs at boot time.
+    """The OS Disk on the compute node is encrypted."""
     TEMPORARY_DISK = "TemporaryDisk"
+    """The temporary disk on the compute node is encrypted. On Linux this encryption applies to other
+    #: partitions (such as those on mounted data disks) when encryption occurs at boot time."""
 
 
 class DynamicVNetAssignmentScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The scope of dynamic vnet assignment."""
 
-    #: No dynamic VNet assignment is enabled.
     NONE = "none"
-    #: Dynamic VNet assignment is done per-job. If this value is set, the network configuration subnet
-    #: ID must also be set. This feature requires approval before use, please contact support
+    """No dynamic VNet assignment is enabled."""
     JOB = "job"
+    """Dynamic VNet assignment is done per-job. If this value is set, the network configuration subnet
+    #: ID must also be set. This feature requires approval before use, please contact support"""
 
 
 class ElevationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The elevation level of the user."""
 
-    #: The user is a standard user without elevated access.
     NON_ADMIN = "NonAdmin"
-    #: The user is a user with elevated access and operates with full Administrator permissions.
+    """The user is a standard user without elevated access."""
     ADMIN = "Admin"
+    """The user is a user with elevated access and operates with full Administrator permissions."""
 
 
 class EndpointAccessDefaultAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Default action for endpoint access. It is only applicable when publicNetworkAccess is enabled."""
 
-    #: Allow client access.
     ALLOW = "Allow"
-    #: Deny client access.
+    """Allow client access."""
     DENY = "Deny"
+    """Deny client access."""
 
 
 class InboundEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The protocol of the endpoint."""
 
-    #: Use TCP for the endpoint.
     TCP = "TCP"
-    #: Use UDP for the endpoint.
+    """Use TCP for the endpoint."""
     UDP = "UDP"
+    """Use UDP for the endpoint."""
 
 
 class InterNodeCommunicationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -231,33 +240,33 @@ class InterNodeCommunicationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     specified, this value defaults to 'Disabled'.
     """
 
-    #: Enable network communication between virtual machines.
     ENABLED = "Enabled"
-    #: Disable network communication between virtual machines.
+    """Enable network communication between virtual machines."""
     DISABLED = "Disabled"
+    """Disable network communication between virtual machines."""
 
 
 class IPAddressProvisioningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning type for Public IP Addresses for the Batch Pool."""
 
-    #: A public IP will be created and managed by Batch. There may be multiple public IPs depending on
-    #: the size of the Pool.
     BATCH_MANAGED = "BatchManaged"
-    #: Public IPs are provided by the user and will be used to provision the Compute Nodes.
+    """A public IP will be created and managed by Batch. There may be multiple public IPs depending on
+    #: the size of the Pool."""
     USER_MANAGED = "UserManaged"
-    #: No public IP Address will be created for the Compute Nodes in the Pool.
+    """Public IPs are provided by the user and will be used to provision the Compute Nodes."""
     NO_PUBLIC_IP_ADDRESSES = "NoPublicIPAddresses"
+    """No public IP Address will be created for the Compute Nodes in the Pool."""
 
 
 class KeySource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of the key source."""
 
-    #: Batch creates and manages the encryption keys used to protect the account data.
     MICROSOFT_BATCH = "Microsoft.Batch"
-    #: The encryption keys used to protect the account data are stored in an external key vault. If
-    #: this is set then the Batch Account identity must be set to ``SystemAssigned`` and a valid Key
-    #: Identifier must also be supplied under the keyVaultProperties.
+    """Batch creates and manages the encryption keys used to protect the account data."""
     MICROSOFT_KEY_VAULT = "Microsoft.KeyVault"
+    """The encryption keys used to protect the account data are stored in an external key vault. If
+    #: this is set then the Batch Account identity must be set to ``SystemAssigned`` and a valid Key
+    #: Identifier must also be supplied under the keyVaultProperties."""
 
 
 class LoginMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -265,13 +274,13 @@ class LoginMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     interactive mode and for CloudServiceConfiguration pools is batch mode.
     """
 
-    #: The LOGON32_LOGON_BATCH Win32 login mode. The batch login mode is recommended for long running
-    #: parallel processes.
     BATCH = "Batch"
-    #: The LOGON32_LOGON_INTERACTIVE Win32 login mode. Some applications require having permissions
-    #: associated with the interactive login mode. If this is the case for an application used in your
-    #: task, then this option is recommended.
+    """The LOGON32_LOGON_BATCH Win32 login mode. The batch login mode is recommended for long running
+    #: parallel processes."""
     INTERACTIVE = "Interactive"
+    """The LOGON32_LOGON_INTERACTIVE Win32 login mode. Some applications require having permissions
+    #: associated with the interactive login mode. If this is the case for an application used in your
+    #: task, then this option is recommended."""
 
 
 class NameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -279,157 +288,157 @@ class NameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     returned if NameAvailable is false.
     """
 
-    #: The requested name is invalid.
     INVALID = "Invalid"
-    #: The requested name is already in use.
+    """The requested name is invalid."""
     ALREADY_EXISTS = "AlreadyExists"
+    """The requested name is already in use."""
 
 
 class NetworkSecurityGroupRuleAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The action that should be taken for a specified IP address, subnet range or tag."""
 
-    #: Allow access.
     ALLOW = "Allow"
-    #: Deny access.
+    """Allow access."""
     DENY = "Deny"
+    """Deny access."""
 
 
 class NodeCommunicationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Determines how a pool communicates with the Batch service."""
 
-    #: The node communication mode is automatically set by the Batch service.
     DEFAULT = "Default"
-    #: Nodes using the Classic communication mode require inbound TCP communication on ports 29876 and
-    #: 29877 from the "BatchNodeManagement.{region}" service tag and outbound TCP communication on
-    #: port 443 to the "Storage.region" and "BatchNodeManagement.{region}" service tags.
+    """The node communication mode is automatically set by the Batch service."""
     CLASSIC = "Classic"
-    #: Nodes using the Simplified communication mode require outbound TCP communication on port 443 to
-    #: the "BatchNodeManagement.{region}" service tag. No open inbound ports are required.
+    """Nodes using the Classic communication mode require inbound TCP communication on ports 29876 and
+    #: 29877 from the "BatchNodeManagement.{region}" service tag and outbound TCP communication on
+    #: port 443 to the "Storage.region" and "BatchNodeManagement.{region}" service tags."""
     SIMPLIFIED = "Simplified"
+    """Nodes using the Simplified communication mode require outbound TCP communication on port 443 to
+    #: the "BatchNodeManagement.{region}" service tag. No open inbound ports are required."""
 
 
 class NodePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The default value is regional."""
 
-    #: All nodes in the pool will be allocated in the same region.
     REGIONAL = "Regional"
-    #: Nodes in the pool will be spread across different zones with best effort balancing.
+    """All nodes in the pool will be allocated in the same region."""
     ZONAL = "Zonal"
+    """Nodes in the pool will be spread across different zones with best effort balancing."""
 
 
 class PackageState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current state of the application package."""
 
-    #: The application package has been created but has not yet been activated.
     PENDING = "Pending"
-    #: The application package is ready for use.
+    """The application package has been created but has not yet been activated."""
     ACTIVE = "Active"
+    """The application package is ready for use."""
 
 
 class PoolAllocationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The allocation mode for creating pools in the Batch account."""
 
-    #: Pools will be allocated in subscriptions owned by the Batch service.
     BATCH_SERVICE = "BatchService"
-    #: Pools will be allocated in a subscription owned by the user.
+    """Pools will be allocated in subscriptions owned by the Batch service."""
     USER_SUBSCRIPTION = "UserSubscription"
+    """Pools will be allocated in a subscription owned by the user."""
 
 
 class PoolIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity used for the Batch Pool."""
 
-    #: Batch pool has user assigned identities with it.
     USER_ASSIGNED = "UserAssigned"
-    #: Batch pool has no identity associated with it. Setting ``None`` in update pool will remove
-    #: existing identities.
+    """Batch pool has user assigned identities with it."""
     NONE = "None"
+    """Batch pool has no identity associated with it. Setting ``None`` in update pool will remove
+    #: existing identities."""
 
 
 class PoolProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current state of the pool."""
 
-    #: The pool is available to run tasks subject to the availability of compute nodes.
     SUCCEEDED = "Succeeded"
-    #: The user has requested that the pool be deleted, but the delete operation has not yet
-    #: completed.
+    """The pool is available to run tasks subject to the availability of compute nodes."""
     DELETING = "Deleting"
+    """The user has requested that the pool be deleted, but the delete operation has not yet
+    #: completed."""
 
 
 class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning state of the private endpoint connection."""
 
-    #: The connection is creating.
     CREATING = "Creating"
-    #: The user has requested that the connection status be updated, but the update operation has not
-    #: yet completed. You may not reference the connection when connecting the Batch account.
+    """The connection is creating."""
     UPDATING = "Updating"
-    #: The connection is deleting.
+    """The user has requested that the connection status be updated, but the update operation has not
+    #: yet completed. You may not reference the connection when connecting the Batch account."""
     DELETING = "Deleting"
-    #: The connection status is final and is ready for use if Status is Approved.
+    """The connection is deleting."""
     SUCCEEDED = "Succeeded"
-    #: The user requested that the connection be updated and it failed. You may retry the update
-    #: operation.
+    """The connection status is final and is ready for use if Status is Approved."""
     FAILED = "Failed"
-    #: The user has cancelled the connection creation.
+    """The user requested that the connection be updated and it failed. You may retry the update
+    #: operation."""
     CANCELLED = "Cancelled"
+    """The user has cancelled the connection creation."""
 
 
 class PrivateLinkServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the Batch private endpoint connection."""
 
-    #: The private endpoint connection is approved and can be used to access Batch account
     APPROVED = "Approved"
-    #: The private endpoint connection is pending and cannot be used to access Batch account
+    """The private endpoint connection is approved and can be used to access Batch account"""
     PENDING = "Pending"
-    #: The private endpoint connection is rejected and cannot be used to access Batch account
+    """The private endpoint connection is pending and cannot be used to access Batch account"""
     REJECTED = "Rejected"
-    #: The private endpoint connection is disconnected and cannot be used to access Batch account
+    """The private endpoint connection is rejected and cannot be used to access Batch account"""
     DISCONNECTED = "Disconnected"
+    """The private endpoint connection is disconnected and cannot be used to access Batch account"""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioned state of the resource."""
 
-    #: The account is in an invalid state.
     INVALID = "Invalid"
-    #: The account is being created.
+    """The account is in an invalid state."""
     CREATING = "Creating"
-    #: The account is being deleted.
+    """The account is being created."""
     DELETING = "Deleting"
-    #: The account has been created and is ready for use.
+    """The account is being deleted."""
     SUCCEEDED = "Succeeded"
-    #: The last operation for the account is failed.
+    """The account has been created and is ready for use."""
     FAILED = "Failed"
-    #: The last operation for the account is cancelled.
+    """The last operation for the account is failed."""
     CANCELLED = "Cancelled"
+    """The last operation for the account is cancelled."""
 
 
 class PublicNetworkAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The network access type for operating on the resources in the Batch account."""
 
-    #: Enables connectivity to Azure Batch through public DNS.
     ENABLED = "Enabled"
-    #: Disables public connectivity and enables private connectivity to Azure Batch Service through
-    #: private endpoint resource.
+    """Enables connectivity to Azure Batch through public DNS."""
     DISABLED = "Disabled"
+    """Disables public connectivity and enables private connectivity to Azure Batch Service through
+    #: private endpoint resource."""
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity used for the Batch account."""
 
-    #: Batch account has a system assigned identity with it.
     SYSTEM_ASSIGNED = "SystemAssigned"
-    #: Batch account has user assigned identities with it.
+    """Batch account has a system assigned identity with it."""
     USER_ASSIGNED = "UserAssigned"
-    #: Batch account has no identity associated with it. Setting ``None`` in update account will
-    #: remove existing identities.
+    """Batch account has user assigned identities with it."""
     NONE = "None"
+    """Batch account has no identity associated with it. Setting ``None`` in update account will
+    #: remove existing identities."""
 
 
 class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The storage account type for use in creating data disks."""
 
-    #: The data disk should use standard locally redundant storage.
     STANDARD_LRS = "Standard_LRS"
-    #: The data disk should use premium locally redundant storage.
+    """The data disk should use standard locally redundant storage."""
     PREMIUM_LRS = "Premium_LRS"
+    """The data disk should use premium locally redundant storage."""

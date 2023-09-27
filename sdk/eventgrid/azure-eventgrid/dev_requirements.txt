@@ -2,7 +2,7 @@
 -e ../../../tools/azure-sdk-tools
 -e ../../core/azure-core
 -e ../../identity/azure-identity
--e ../../resources/azure-mgmt-resource
+azure-mgmt-resource==22.0.0
 -e ../azure-mgmt-eventgrid
 azure-storage-queue
 cloudevents<=2.0.0; python_version >= "3.7"

@@ -4,10 +4,9 @@
 # ------------------------------------
 import abc
 import time
-from typing import Any, Callable, Dict, Optional, Tuple
+from typing import Any, Callable, Dict, Optional
 
 from msal import TokenCache
-import six
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, DecodeError
@@ -47,7 +46,7 @@ class ManagedIdentityClientBase(abc.ABC):
                     message = "Failed to deserialize JSON from response"
                 else:
                     message = 'Unexpected content type "{}"'.format(response.http_response.content_type)
-                six.raise_from(ClientAuthenticationError(message=message, response=response.http_response), ex)
+                raise ClientAuthenticationError(message=message, response=response.http_response) from ex
 
         if not content:
             raise ClientAuthenticationError(message="No token received.", response=response.http_response)
@@ -64,11 +63,6 @@ class ManagedIdentityClientBase(abc.ABC):
 
         expires_on = int(content.get("expires_on") or int(content["expires_in"]) + request_time)
         content["expires_on"] = expires_on
-        if "refresh_in" not in content:
-            refresh_in = expires_on - request_time
-            if refresh_in >= 60 * 60 * 2:  # 2 hours
-                refresh_in = int(refresh_in / 2)
-            content["refresh_in"] = refresh_in
 
         token = AccessToken(content["access_token"], content["expires_on"])
 
@@ -80,22 +74,14 @@ class ManagedIdentityClientBase(abc.ABC):
 
         return token
 
-    def get_cached_token(
-        self, *scopes: str
-    ) -> Tuple[Optional[AccessToken], Optional[int]]:
+    def get_cached_token(self, *scopes: str) -> Optional[AccessToken]:
         resource = _scopes_to_resource(*scopes)
-        tokens = self._cache.find(
-            TokenCache.CredentialType.ACCESS_TOKEN, target=[resource]
-        )
+        tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=[resource])
         for token in tokens:
             expires_on = int(token["expires_on"])
-            if "refresh_on" in token:
-                refresh_on = int(token["refresh_on"])
-            else:
-                refresh_on = expires_on
             if expires_on > time.time():
-                return AccessToken(token["secret"], expires_on), refresh_on
-        return None, None
+                return AccessToken(token["secret"], expires_on)
+        return None
 
     @abc.abstractmethod
     def request_token(self, *scopes, **kwargs):

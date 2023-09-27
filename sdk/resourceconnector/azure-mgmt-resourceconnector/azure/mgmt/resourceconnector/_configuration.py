@@ -6,7 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import sys
 from typing import Any, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
@@ -15,18 +14,13 @@ from azure.mgmt.core.policies import ARMChallengeAuthenticationPolicy, ARMHttpLo
 
 from ._version import VERSION
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
-
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class AppliancesConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
-    """Configuration for Appliances.
+class ResourceConnectorMgmtClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+    """Configuration for ResourceConnectorMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -41,8 +35,8 @@ class AppliancesConfiguration(Configuration):  # pylint: disable=too-many-instan
     """
 
     def __init__(self, credential: "TokenCredential", subscription_id: str, **kwargs: Any) -> None:
-        super(AppliancesConfiguration, self).__init__(**kwargs)
-        api_version: Literal["2022-10-27"] = kwargs.pop("api_version", "2022-10-27")
+        super(ResourceConnectorMgmtClientConfiguration, self).__init__(**kwargs)
+        api_version: str = kwargs.pop("api_version", "2022-10-27")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

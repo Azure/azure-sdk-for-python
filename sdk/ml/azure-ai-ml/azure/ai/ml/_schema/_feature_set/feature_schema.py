@@ -2,9 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 
-from marshmallow import fields, validate, post_load
+from marshmallow import fields, post_load
 
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
@@ -15,7 +15,6 @@ class FeatureSchema(metaclass=PatchedSchemaMeta):
         allow_none=False,
     )
     data_type = fields.Str(
-        validate=validate.OneOf(["string", "integer", "long", "float", "double", "binary", "datetime", "boolean"]),
         required=True,
         allow_none=False,
         data_key="type",
@@ -25,6 +24,6 @@ class FeatureSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._feature_set.feature import _Feature
+        from azure.ai.ml.entities._feature_set.feature import Feature
 
-        return _Feature(description=data.pop("description", None), **data)
+        return Feature(description=data.pop("description", None), **data)

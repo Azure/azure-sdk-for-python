@@ -7,7 +7,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import sys
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar, Union, cast
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -40,10 +39,6 @@ from ...operations._job_executions_operations import (
     build_list_by_job_request,
 )
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -118,9 +113,7 @@ class JobExecutionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2020-11-01-preview")
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))
         cls: ClsType[_models.JobExecutionListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -228,9 +221,7 @@ class JobExecutionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2020-11-01-preview")
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_cancel_request(
@@ -280,9 +271,7 @@ class JobExecutionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2020-11-01-preview")
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))
         cls: ClsType[Optional[_models.JobExecution]] = kwargs.pop("cls", None)
 
         request = build_create_request(
@@ -354,9 +343,7 @@ class JobExecutionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2020-11-01-preview")
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))
         cls: ClsType[_models.JobExecution] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -454,9 +441,7 @@ class JobExecutionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2020-11-01-preview")
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))
         cls: ClsType[_models.JobExecutionListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -565,9 +550,7 @@ class JobExecutionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2020-11-01-preview")
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))
         cls: ClsType[_models.JobExecution] = kwargs.pop("cls", None)
 
         request = build_get_request(
@@ -627,9 +610,7 @@ class JobExecutionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2020-11-01-preview")
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))
         cls: ClsType[Optional[_models.JobExecution]] = kwargs.pop("cls", None)
 
         request = build_create_or_update_request(
@@ -713,9 +694,7 @@ class JobExecutionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2020-11-01-preview")
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-11-01-preview"))
         cls: ClsType[_models.JobExecution] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)

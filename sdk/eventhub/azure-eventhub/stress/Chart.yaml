@@ -1,5 +1,5 @@
 apiVersion: v2
-name: stress-py-eventhubs
+name: stress-py-eh
 description: python event hubs stress test.
 version: 0.1.2
 appVersion: v0.2
@@ -9,5 +9,5 @@ annotations:
 
 dependencies:
 - name: stress-test-addons
-  version: 0.2.0
-  repository: https://stresstestcharts.blob.core.windows.net/helm/
+  version: ~0.2.0
+  repository: "@stress-test-charts"

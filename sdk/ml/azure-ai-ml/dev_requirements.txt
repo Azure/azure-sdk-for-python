@@ -2,6 +2,7 @@
 ../../core/azure-core
 -e ../../../tools/azure-devtools
 ../../identity/azure-identity
+marshmallow<3.20
 marshmallow-jsonschema==0.10.0
 mock
 pytest-cov

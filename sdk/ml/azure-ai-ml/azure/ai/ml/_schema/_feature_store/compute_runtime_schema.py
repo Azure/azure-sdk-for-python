@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 
 from marshmallow import fields, post_load
 
@@ -14,6 +14,6 @@ class ComputeRuntimeSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._workspace.compute_runtime import _ComputeRuntime
+        from azure.ai.ml.entities._workspace.compute_runtime import ComputeRuntime
 
-        return _ComputeRuntime(spark_runtime_version=data.pop("spark_runtime_version"))
+        return ComputeRuntime(spark_runtime_version=data.pop("spark_runtime_version"))

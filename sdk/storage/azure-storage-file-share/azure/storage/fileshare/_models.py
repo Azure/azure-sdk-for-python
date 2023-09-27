@@ -3,8 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-few-public-methods, too-many-instance-attributes
-# pylint: disable=super-init-not-called, too-many-lines
+# pylint: disable=too-few-public-methods, too-many-instance-attributes, super-init-not-called, too-many-lines
+
 from urllib.parse import unquote
 from enum import Enum
 
@@ -47,7 +47,7 @@ class Metrics(GeneratedMetrics):
     """
 
     def __init__(self, **kwargs):
-        self.version = kwargs.get('version', u'1.0')
+        self.version = kwargs.get('version', '1.0')
         self.enabled = kwargs.get('enabled', False)
         self.include_apis = kwargs.get('include_apis')
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
@@ -465,6 +465,8 @@ class Handle(DictMixin):
     :keyword ~datetime.datetime open_time: Required. Time when the session that previously opened
      the handle has last been reconnected. (UTC)
     :keyword ~datetime.datetime last_reconnect_time: Time handle was last connected to (UTC)
+    :keyword access_rights: Access rights of the handle.
+    :paramtype access_rights: Optional[List[Literal['Read', 'Write', 'Delete']]]
     """
 
     def __init__(self, **kwargs):
@@ -476,6 +478,7 @@ class Handle(DictMixin):
         self.client_ip = kwargs.get('client_ip')
         self.open_time = kwargs.get('open_time')
         self.last_reconnect_time = kwargs.get('last_reconnect_time')
+        self.access_rights = kwargs.get('access_right_list')
 
     @classmethod
     def _from_generated(cls, generated):
@@ -488,6 +491,7 @@ class Handle(DictMixin):
         handle.client_ip = generated.client_ip
         handle.open_time = generated.open_time
         handle.last_reconnect_time = generated.last_reconnect_time
+        handle.access_rights = generated.access_right_list
         return handle
 
 
@@ -1012,8 +1016,6 @@ class NTFSAttributes(object):
 
 
 def service_properties_deserialize(generated):
-    """Deserialize a ServiceProperties objects into a dict.
-    """
     return {
         'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
         'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access

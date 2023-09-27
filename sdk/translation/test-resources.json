@@ -136,6 +136,10 @@
         }
     },
     "variables": {
+        "txtUniqueSubDomainName": "[concat('text', parameters('baseName'))]",
+        "txtEndpointValue": "[format('https://api.cognitive.microsofttranslator.com')]",
+        "txtCustomEndpointValue": "[format('https://{0}.cognitiveservices.azure.com', parameters('baseName'))]",
+        "txtRegionValue": "[format('{0}', parameters('location'))]",
         "authorizationApiVersion": "2018-09-01-preview",
         "docTranslationBaseName": "[parameters('baseName')]",
         "docTranslationApiVersion": "2017-04-18",
@@ -161,6 +165,19 @@
         }
     },
     "resources": [
+        {
+            "type": "Microsoft.CognitiveServices/accounts",
+            "apiVersion": "2017-04-18",
+            "name": "[variables('txtUniqueSubDomainName')]",
+            "location": "[parameters('location')]",
+            "sku": {
+              "name": "S1"
+            },
+            "kind": "TextTranslation",
+            "properties": {
+              "customSubDomainName": "[variables('txtUniqueSubDomainName')]"
+            }
+          },
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "[variables('authorizationApiVersion')]",
@@ -346,6 +363,22 @@
             "condition": "[not(parameters('useStaticStorageResource'))]",
             "type": "string",
             "value": "[concat(reference(parameters('storageAccResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('targetContainerName_4'), '?', listServiceSas(parameters('storageAccResourceId'), '2019-06-01', parameters('targetContainerSasProperties_4')).serviceSasToken)]"
+        },
+        "TEXT_TRANSLATION_APIKEY": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('txtUniqueSubDomainName')), '2017-04-18').key1]"
+        },
+        "TEXT_TRANSLATION_ENDPOINT": {
+            "type": "string",
+            "value": "[variables('txtEndpointValue')]"
+        },
+        "TEXT_TRANSLATION_CUSTOM_ENDPOINT": {
+            "type": "string",
+            "value": "[variables('txtCustomEndpointValue')]"
+        },
+        "TEXT_TRANSLATION_REGION": {
+            "type": "string",
+            "value": "[variables('txtRegionValue')]"
         }
     }
 }

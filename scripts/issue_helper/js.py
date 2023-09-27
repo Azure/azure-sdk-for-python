@@ -1,6 +1,6 @@
 from common import Common
 
-_JS_OWNER = {'colawwj', 'qiaozha', 'lirenhe', 'dw511214992'}
+_JS_OWNER = {'colawwj', 'qiaozha', 'lirenhe', 'MaryGao', 'github-actions[bot]'}
 _JS_REPO = 'Azure/azure-sdk-for-js'
 _FILE_OUT_NAME_JS = 'sdk_issue_js.md'
 

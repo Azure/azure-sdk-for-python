@@ -7,9 +7,9 @@
 import logging
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import BlockedTransformers
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ColumnTransformer as RestColumnTransformer
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import BlockedTransformers
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ColumnTransformer as RestColumnTransformer
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     TableVerticalFeaturizationSettings as RestTabularFeaturizationSettings,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -42,11 +42,12 @@ class ColumnTransformer(RestTranslatableMixin):
         return RestColumnTransformer(fields=self.fields, parameters=self.parameters)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestColumnTransformer) -> "ColumnTransformer":
+    def _from_rest_object(cls, obj: RestColumnTransformer) -> Optional["ColumnTransformer"]:
         if obj:
             fields = obj.fields
             parameters = obj.parameters
             return ColumnTransformer(fields=fields, parameters=parameters)
+        return None
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ColumnTransformer):

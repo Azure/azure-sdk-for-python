@@ -29,13 +29,12 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.database_encryption_protectors.begin_revalidate(
+    client.database_encryption_protectors.begin_revalidate(
         resource_group_name="sqlcrudtest-7398",
         server_name="sqlcrudtest-4645",
         database_name="sqlcrudtestdb-2342",
         encryption_protector_name="current",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-08-01-preview/examples/DatabaseEncryptionProtectorRevalidate.json

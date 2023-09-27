@@ -31,18 +31,20 @@ from azure.search.documents.indexes.aio import SearchIndexerClient
 
 client = SearchIndexerClient(service_endpoint, AzureKeyCredential(key))
 
+
 async def create_data_source_connection():
     # [START create_data_source_connection_async]
-    container = SearchIndexerDataContainer(name='searchcontainer')
+    container = SearchIndexerDataContainer(name="searchcontainer")
     data_source = SearchIndexerDataSourceConnection(
         name="async-sample-data-source-connection",
         type="azureblob",
         connection_string=connection_string,
-        container=container
+        container=container,
     )
     result = await client.create_data_source_connection(data_source)
     print("Create new Data Source Connection - async-sample-data-source-connection")
     # [END create_data_source_connection_async]
+
 
 async def list_data_source_connections():
     # [START list_data_source_connection_async]
@@ -51,6 +53,7 @@ async def list_data_source_connections():
     print("Found {} Data Source Connections in the service: {}".format(len(result), ", ".join(names)))
     # [END list_data_source_connection_async]
 
+
 async def get_data_source_connection():
     # [START get_data_source_connection_async]
     result = await client.get_data_source_connection("async-sample-data-source-connection")
@@ -58,11 +61,13 @@ async def get_data_source_connection():
     return result
     # [END get_data_source_connection_async]
 
+
 async def delete_data_source_connection():
     # [START delete_data_source_connection_async]
     await client.delete_data_source_connection("async-sample-data-source-connection")
     print("Data Source Connection 'async-sample-data-source-connection' successfully deleted")
     # [END delete_data_source_connection_async]
+
 
 async def main():
     await create_data_source_connection()
@@ -71,5 +76,6 @@ async def main():
     await delete_data_source_connection()
     await client.close()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

@@ -4,7 +4,7 @@ We are excited to introduce the GA of Azure Machine Learning Python SDK v2. The 
 
 [Source code][source_code]
 | [Package (PyPI)][ml_pypi]
-| [Package (Conda)](https://anaconda.org/microsoft/azure-ai-ml/)
+| [Package (Conda)][ml_conda]
 | [API reference documentation][ml_ref_docs]
 | [Product documentation][product_documentation]
 | [Samples][ml_samples]
@@ -122,6 +122,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml
 [ml_pypi]: https://pypi.org/project/azure-ai-ml/
+[ml_conda]: https://anaconda.org/microsoft/azure-ai-ml/
 [ml_ref_docs]: https://learn.microsoft.com/python/api/overview/azure/ai-ml-readme?view=azure-python
 [ml_samples]: https://github.com/Azure/azureml-examples/tree/main/sdk/python
 [product_documentation]: https://docs.microsoft.com/azure/machine-learning/

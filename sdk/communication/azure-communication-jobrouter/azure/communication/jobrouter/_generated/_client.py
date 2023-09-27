@@ -14,7 +14,6 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import AzureCommunicationJobRouterServiceConfiguration
 from ._serialization import Deserializer, Serializer
-from .models import _models as models
 from .operations import JobRouterAdministrationOperations, JobRouterOperations
 
 
@@ -38,11 +37,10 @@ class AzureCommunicationJobRouterService:  # pylint: disable=client-accepts-api-
     ) -> None:
         _endpoint = "{endpoint}"
         self._config = AzureCommunicationJobRouterServiceConfiguration(endpoint=endpoint, **kwargs)
-        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._client: PipelineClient = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
         self.job_router_administration = JobRouterAdministrationOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -75,15 +73,12 @@ class AzureCommunicationJobRouterService:  # pylint: disable=client-accepts-api-
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> AzureCommunicationJobRouterService
+    def __enter__(self) -> "AzureCommunicationJobRouterService":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

@@ -94,19 +94,14 @@ class TestClientAsync(ACSSMSTestCase):
     async def test_send_sms_fake_to_phone_number_async(self):
         sms_client = self.create_client_from_connection_string()
 
-        async with sms_client:
-            # calling send() with sms values
-            sms_responses = await sms_client.send(
-                from_=self.phone_number,
-                to=["Ad155500000000000"],
-                message="Hello World via SMS")
+        with pytest.raises(HttpResponseError) as ex:
+            async with sms_client:
+                await sms_client.send(
+                    from_=self.phone_number,
+                    to=["Ad155500000000000"],
+                    message="Hello World via SMS")
 
-            assert len(sms_responses) == 1
-
-            assert sms_responses[0].message_id is None
-            assert sms_responses[0].http_status_code == 400
-            assert sms_responses[0].error_message == "Invalid To phone number format."
-            assert not sms_responses[0].successful
+        assert str(ex.value.status_code == "400")
 
     @recorded_by_proxy_async
     async def test_send_sms_unauthorized_from_phone_number_async(self):

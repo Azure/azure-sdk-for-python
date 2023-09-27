@@ -1,0 +1,31 @@
+source:
+  type: mltable
+  path: ../../../Datasources/driver
+  timestamp_column:
+    name: datetime
+    format: "%Y-%m-%d %H:%M:%S%z"
+  source_delay:
+    days: 2
+    hours: 0
+    minutes: 0
+feature_transformation_code:
+  path: ./code
+  transformer_class: driver_hourly_transform.DriverHourlyTransformer
+features:
+  - name: conv_rate
+    type: double
+  - name: acc_rate
+    type: double
+  - name: avg_daily_trips
+    type: double
+index_columns:
+  - name: driver_id
+    type: long
+source_lookback:
+    days: 30
+    hours: 0
+    minutes: 0
+temporal_join_lookback:
+    days: 2
+    hours: 0
+    minutes: 0

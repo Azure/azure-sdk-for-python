@@ -44,6 +44,9 @@ from ._models import (
     CurrencyValue,
     CustomDocumentModelsDetails,
     ModelBuildMode,
+    ClassifierDocumentTypeDetails,
+    BlobSource,
+    BlobFileListSource,
     DocumentClassifierDetails,
     DocumentField,
     DocumentKeyValuePair,
@@ -67,11 +70,9 @@ from ._models import (
     DocumentAnalysisError,
     DocumentAnalysisInnerError,
     TargetAuthorization,
-)
-from ._generated.models import (  # patched models
-    ClassifierDocumentTypeDetails,
-    AzureBlobFileListSource,
-    AzureBlobContentSource,
+    QuotaDetails,
+    DocumentFormula,
+    DocumentBarcode,
 )
 from ._api_versions import FormRecognizerApiVersion, DocumentAnalysisApiVersion
 
@@ -142,8 +143,11 @@ __all__ = [
     "DocumentAnalysisInnerError",
     "TargetAuthorization",
     "ClassifierDocumentTypeDetails",
-    "AzureBlobFileListSource",
-    "AzureBlobContentSource",
+    "BlobFileListSource",
+    "BlobSource",
+    "QuotaDetails",
+    "DocumentFormula",
+    "DocumentBarcode",
 ]
 
 __VERSION__ = VERSION

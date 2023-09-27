@@ -169,8 +169,7 @@ async def test_receive_connection_idle_timeout_and_reconnect_async(connstr_sende
                 assert consumer._handler._connection._state == uamqp.c_uamqp.ConnectionState.DISCARDING
                 await consumer.receive(batch=False, max_batch_size=1, max_wait_time=10)
             else:
-                with pytest.raises(error.AMQPConnectionError):
-                    await consumer._handler.do_work_async()
+                await consumer._handler.do_work_async()
                 assert consumer._handler._connection.state == constants.ConnectionState.END
                 try:
                     await asyncio.wait_for(consumer.receive(), timeout=10)

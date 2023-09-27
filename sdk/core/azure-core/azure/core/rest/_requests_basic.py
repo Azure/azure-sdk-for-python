@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import collections.abc as collections
-from requests.structures import CaseInsensitiveDict
+from requests.structures import CaseInsensitiveDict  # pylint: disable=networking-import-outside-azure-core-transport
 
 from ._http_response_impl import (
     _HttpResponseBaseImpl,
@@ -54,7 +54,11 @@ class _CaseInsensitiveDict(CaseInsensitiveDict):
     """
 
     def items(self):
-        """Return a new view of the dictionary's items."""
+        """Return a new view of the dictionary's items.
+
+        :rtype: ~collections.abc.ItemsView[str, str]
+        :returns: a view object that displays a list of (key, value) tuple pairs
+        """
         return _ItemsView(self)
 
 

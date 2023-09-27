@@ -15,6 +15,7 @@ steps:
     condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
 
   - script: |
+      python -m pip install setuptools==58.3.0
       python -m pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
 

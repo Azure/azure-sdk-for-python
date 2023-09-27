@@ -5,8 +5,7 @@
 
 # pylint: disable=unused-import,ungrouped-imports, super-init-not-called, W0212, C0302
 from typing import List, Optional, Union, NamedTuple
-from enum import Enum, EnumMeta
-from six import with_metaclass
+from enum import Enum
 import msrest.serialization
 
 from azure.core import CaseInsensitiveEnumMeta

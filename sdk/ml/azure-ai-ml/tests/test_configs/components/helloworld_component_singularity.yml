@@ -1,0 +1,7 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+name: helloworld_component_singularity
+display_name: Component for Singularity
+command: echo Hello World
+environment:
+  image: singularitybase.azurecr.io/base/job/deepspeed/0.4-pytorch-1.7.0-cuda11.0-cudnn8-devel:20221017T152225334

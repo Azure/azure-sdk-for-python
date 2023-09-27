@@ -1,5 +1,35 @@
 # Release History
 
+## 10.1.0 (2023-04-21)
+
+### Features Added
+
+  - Model Container has a new parameter security_context
+  - Model ContainerGroup has a new parameter confidential_compute_properties
+  - Model ContainerGroup has a new parameter extensions
+  - Model ContainerGroup has a new parameter priority
+  - Model ContainerGroupProperties has a new parameter confidential_compute_properties
+  - Model ContainerGroupProperties has a new parameter extensions
+  - Model ContainerGroupProperties has a new parameter priority
+  - Model EncryptionProperties has a new parameter identity
+  - Model InitContainerDefinition has a new parameter security_context
+
+## 10.1.0b2 (2023-04-20)
+
+### Features Added
+
+  - Model ContainerGroup has a new parameter is_custom_provisioning_timeout
+  - Model ContainerGroup has a new parameter provisioning_timeout_in_seconds
+  - Model ContainerGroupProperties has a new parameter is_custom_provisioning_timeout
+  - Model ContainerGroupProperties has a new parameter provisioning_timeout_in_seconds
+
+### Breaking Changes
+
+  - Model ContainerGroup no longer has parameter confidential_compute_properties
+  - Model ContainerGroup no longer has parameter priority
+  - Model ContainerGroupProperties no longer has parameter confidential_compute_properties
+  - Model ContainerGroupProperties no longer has parameter priority
+
 ## 10.1.0b1 (2022-12-26)
 
 ### Features Added

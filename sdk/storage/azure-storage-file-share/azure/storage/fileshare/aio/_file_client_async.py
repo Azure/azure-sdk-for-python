@@ -47,7 +47,8 @@ else:
     from typing_extensions import Literal  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+    from azure.core.credentials_async import AsyncTokenCredential
     from .._models import ContentSettings, FileProperties, Handle, NTFSAttributes
 
 
@@ -151,7 +152,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             share_name: str,
             file_path: str,
             snapshot: Optional[Union[str, Dict[str, Any]]] = None,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
             *,
             token_intent: Optional[Literal['backup']] = None,
             **kwargs: Any
@@ -163,11 +164,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             "APIs in Python 3.8 and is no longer supported.", DeprecationWarning)
         super(ShareFileClient, self).__init__(
             account_url, share_name=share_name, file_path=file_path, snapshot=snapshot,
-            credential=credential, **kwargs
+            credential=credential, token_intent=token_intent, **kwargs
         )
-        self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
-        self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
-        self.file_request_intent = token_intent
         self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline,
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
@@ -442,7 +440,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         elif hasattr(data, '__aiter__'):
             stream = AsyncIterStreamer(data, encoding=encoding)
         else:
-            raise TypeError("Unsupported data type: {}".format(type(data)))
+            raise TypeError(f"Unsupported data type: {type(data)}")
         return await _upload_file_helper(
             self,
             stream,
@@ -836,7 +834,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
             new_file_sas = self._query_str.strip('?')
 
         new_file_client = ShareFileClient(
-            '{}://{}'.format(self.scheme, self.primary_hostname), self.share_name, new_file_path,
+            f'{self.scheme}://{self.primary_hostname}', self.share_name, new_file_path,
             credential=new_file_sas or self.credential, api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
             _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot,
@@ -1108,7 +1106,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         if isinstance(data, str):
             data = data.encode(encoding)
         end_range = offset + length - 1  # Reformat to an inclusive range index
-        content_range = 'bytes={0}-{1}'.format(offset, end_range)
+        content_range = f'bytes={offset}-{end_range}'
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         try:
             return await self._client.file.upload_range(  # type: ignore
@@ -1339,7 +1337,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         if length is None or length % 512 != 0:
             raise ValueError("length must be an integer that aligns with 512 bytes file size")
         end_range = length + offset - 1  # Reformat to an inclusive range index
-        content_range = "bytes={0}-{1}".format(offset, end_range)
+        content_range = f"bytes={offset}-{end_range}"
         try:
             return await self._client.file.upload_range(  # type: ignore
                 timeout=timeout,
@@ -1396,7 +1394,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
     @distributed_trace
     def list_handles(self, **kwargs):
-        # type: (Any) -> AsyncItemPaged
+        # type: (Any) -> AsyncItemPaged[Handle]
         """Lists handles for file.
 
         :keyword int timeout:

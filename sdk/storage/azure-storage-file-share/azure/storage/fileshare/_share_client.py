@@ -101,16 +101,18 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             token_intent: Optional[Literal['backup']] = None,
             **kwargs: Any
         ) -> None:
+        if hasattr(credential, 'get_token') and not token_intent:
+            raise ValueError("'token_intent' keyword is required when 'credential' is an TokenCredential.")
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Account URL must be a string.") from exc
         parsed_url = urlparse(account_url.rstrip('/'))
         if not share_name:
             raise ValueError("Please specify a share name.")
         if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(account_url))
+            raise ValueError(f"Invalid URL: {account_url}")
 
         path_snapshot = None
         path_snapshot, sas_token = parse_query(parsed_url.query)
@@ -159,27 +161,24 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         :returns: A share client.
         :rtype: ~azure.storage.fileshare.ShareClient
         """
         try:
             if not share_url.lower().startswith('http'):
                 share_url = "https://" + share_url
-        except AttributeError:
-            raise ValueError("Share URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Share URL must be a string.") from exc
         parsed_url = urlparse(share_url.rstrip('/'))
         if not (parsed_url.path and parsed_url.netloc):
-            raise ValueError("Invalid URL: {}".format(share_url))
+            raise ValueError(f"Invalid URL: {share_url}")
 
         share_path = parsed_url.path.lstrip('/').split('/')
         account_path = ""
         if len(share_path) > 1:
             account_path = "/" + "/".join(share_path[:-1])
-        account_url = "{}://{}{}?{}".format(
-            parsed_url.scheme,
-            parsed_url.netloc.rstrip('/'),
-            account_path,
-            parsed_url.query)
+        account_url = f"{parsed_url.scheme}://{parsed_url.netloc.rstrip('/')}{account_path}?{parsed_url.query}"
 
         share_name = unquote(share_path[-1])
         path_snapshot, _ = parse_query(parsed_url.query)
@@ -197,17 +196,10 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         return cls(account_url, share_name, path_snapshot, credential, **kwargs)
 
     def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
         share_name = self.share_name
         if isinstance(share_name, str):
             share_name = share_name.encode('UTF-8')
-        return "{}://{}/{}{}".format(
-            self.scheme,
-            hostname,
-            quote(share_name),
-            self._query_str)
+        return f"{self.scheme}://{hostname}/{quote(share_name)}{self._query_str}"
 
     @classmethod
     def from_connection_string(
@@ -235,6 +227,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         :returns: A share client.
         :rtype: ~azure.storage.fileshare.ShareClient
 
@@ -871,6 +864,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
             #other-client--per-operation-configuration>`_.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
+        :rtype: Iterable[Dict[str,str]]
 
         .. admonition:: Example:
 

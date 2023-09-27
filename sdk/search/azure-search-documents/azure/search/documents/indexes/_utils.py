@@ -14,7 +14,7 @@ from azure.core.exceptions import (
 )
 
 
-def quote_etag(etag):
+def quote_etag(etag: Optional[str]) -> Optional[str]:
     if not etag or etag == "*":
         return etag
     if etag.startswith('"') and etag.endswith('"'):
@@ -24,7 +24,7 @@ def quote_etag(etag):
     return '"' + etag + '"'
 
 
-def prep_if_match(etag: str, match_condition: MatchConditions) -> Optional[str]:
+def prep_if_match(etag: Optional[str], match_condition: MatchConditions) -> Optional[str]:
     if match_condition == MatchConditions.IfNotModified:
         if_match = quote_etag(etag) if etag else None
         return if_match
@@ -43,9 +43,8 @@ def prep_if_none_match(etag: str, match_condition: MatchConditions) -> Optional[
 
 
 def get_access_conditions(
-        model: Any,
-        match_condition: MatchConditions = MatchConditions.Unconditionally
-) -> Tuple[Dict[int, Any], Dict[str, bool]]:
+    model: Any, match_condition: MatchConditions = MatchConditions.Unconditionally
+) -> Tuple[Dict[int, Any], Dict[str, Optional[str]]]:
     error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
 
     if isinstance(model, str):
@@ -66,8 +65,8 @@ def get_access_conditions(
         if match_condition == MatchConditions.IfMissing:
             error_map[412] = ResourceExistsError
         return error_map, dict(if_match=if_match, if_none_match=if_none_match)
-    except AttributeError:
-        raise ValueError("Unable to get e_tag from the model")
+    except AttributeError as ex:
+        raise ValueError("Unable to get e_tag from the model") from ex
 
 
 def normalize_endpoint(endpoint):
@@ -75,9 +74,7 @@ def normalize_endpoint(endpoint):
         if not endpoint.lower().startswith("http"):
             endpoint = "https://" + endpoint
         elif not endpoint.lower().startswith("https"):
-            raise ValueError(
-                "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
-            )
+            raise ValueError("Bearer token authentication is not permitted for non-TLS protected (non-https) URLs.")
         return endpoint
-    except AttributeError:
-        raise ValueError("Endpoint must be a string.")
+    except AttributeError as ex:
+        raise ValueError("Endpoint must be a string.") from ex

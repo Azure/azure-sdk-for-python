@@ -20,8 +20,7 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
@@ -36,10 +35,6 @@ if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -128,7 +123,7 @@ class MetricDefinitionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2018-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-01-01"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
@@ -174,6 +169,8 @@ class MetricDefinitionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -351,7 +348,7 @@ class MetricsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2018-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-01-01"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         request = build_metrics_list_request(
@@ -379,6 +376,8 @@ class MetricsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -441,9 +440,7 @@ class MetricNamespacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2017-12-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2017-12-01-preview")
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-12-01-preview"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
@@ -489,6 +486,8 @@ class MetricNamespacesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    await response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 

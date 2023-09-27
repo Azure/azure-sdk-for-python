@@ -4,7 +4,6 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import unicode_literals, annotations
 
-from contextlib import contextmanager
 import sys
 import platform
 import datetime
@@ -24,9 +23,6 @@ from typing import (
     Callable
 )
 
-from azure.core.settings import settings
-from azure.core.tracing import SpanKind, Link
-
 from .amqp import AmqpAnnotatedMessage, AmqpMessageHeader
 from ._version import VERSION
 from ._constants import (
@@ -36,7 +32,6 @@ from ._constants import (
     PROP_LAST_ENQUEUED_TIME_UTC,
     PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC,
     PROP_LAST_ENQUEUED_OFFSET,
-    PROP_TIMESTAMP,
 )
 
 
@@ -45,13 +40,8 @@ if TYPE_CHECKING:
     from ._transport._base import AmqpTransport
     try:
         from uamqp import types as uamqp_types
-        from uamqp import Message as uamqp_Message
     except ImportError:
         uamqp_types = None
-        uamqp_Message = None
-    from ._pyamqp import types
-    from ._pyamqp.message import Message
-    from azure.core.tracing import AbstractSpan
     from azure.core.credentials import AzureSasCredential
     from ._common import EventData
 
@@ -68,15 +58,27 @@ class UTC(datetime.tzinfo):
     """Time Zone info for handling UTC"""
 
     def utcoffset(self, dt):
-        """UTF offset for UTC is 0."""
+        """UTF offset for UTC is 0.
+        :param any dt: Ignored.
+        :return: Datetime offset.
+        :rtype: datetime.timedelta
+        """
         return datetime.timedelta(0)
 
     def tzname(self, dt):
-        """Timestamp representation."""
+        """ Timestamp representation.
+        :param any dt: Ignored.
+        :return: Timestamp representation.
+        :rtype: str
+        """
         return "Z"
 
     def dst(self, dt):
-        """No daylight saving for UTC."""
+        """ No daylight saving for UTC.
+        :param any dt: Ignored.
+        :return: Offset for daylight savings time.
+        :rtype: datetime.timedelta
+        """
         return datetime.timedelta(hours=1)
 
 
@@ -99,7 +101,10 @@ def create_properties(
     Format the properties with which to instantiate the connection.
     This acts like a user agent over HTTP.
 
+    :param str or None user_agent: The user agent string.
+    :keyword ~azure.eventhub._transport._base.AmqpTransport amqp_transport: The AMQP transport.
     :rtype: dict
+    :return: The properties.
     """
     properties: Dict[Any, str] = {}
     properties[amqp_transport.PRODUCT_SYMBOL] = USER_AGENT_PREFIX
@@ -120,17 +125,6 @@ def create_properties(
         )
     properties[amqp_transport.USER_AGENT_SYMBOL] = final_user_agent
     return properties
-
-
-@contextmanager
-def send_context_manager():
-    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
-
-    if span_impl_type is not None:
-        with span_impl_type(name="Azure.EventHubs.send", kind=SpanKind.CLIENT) as child:
-            yield child
-    else:
-        yield None
 
 
 def set_event_partition_key(
@@ -158,65 +152,15 @@ def set_event_partition_key(
         raw_message.header.durable = True
 
 
-def trace_message(
-    message: Union[uamqp_Message, Message],
-    amqp_transport: AmqpTransport,
-    parent_span: Optional[AbstractSpan] = None
-) -> Union[uamqp_Message, Message]:
-    """Add tracing information to the message and returns the updated message.
-
-    Will open and close a "Azure.EventHubs.message" span, and
-    add the "DiagnosticId" as app properties of the message.
-    """
-    try:
-        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
-        if span_impl_type is not None:
-            current_span = parent_span or span_impl_type(
-                span_impl_type.get_current_span()
-            )
-            link = Link({"traceparent": current_span.get_trace_parent()})
-            with current_span.span(
-                name="Azure.EventHubs.message", kind=SpanKind.PRODUCER, links=[link]
-            ) as message_span:
-                message_span.add_attribute("az.namespace", "Microsoft.EventHub")
-                message = amqp_transport.update_message_app_properties(
-                    message,
-                    b"Diagnostic-Id",
-                    message_span.get_trace_parent().encode("ascii")
-                )
-    except Exception as exp:  # pylint:disable=broad-except
-        _LOGGER.warning("trace_message had an exception %r", exp)
-
-    return message
-
-
-def get_event_links(events):
-    # pylint:disable=isinstance-second-argument-not-valid-type
-    trace_events = events if isinstance(events, Iterable) else (events,)
-    links = []
-    try:
-        for event in trace_events:  # type: ignore
-            if event.properties:
-                traceparent = event.properties.get(b"Diagnostic-Id", "").decode("ascii")
-                if traceparent:
-                    links.append(
-                        Link(
-                            {"traceparent": traceparent},
-                            attributes={
-                                "enqueuedTime": event.message.annotations.get(
-                                    PROP_TIMESTAMP
-                                )
-                            },
-                        )
-                    )
-    except AttributeError:
-        pass
-    return links
-
-
 def event_position_selector(value, inclusive=False):
     # type: (Union[int, str, datetime.datetime], bool) -> bytes
-    """Creates a selector expression of the offset."""
+    """Creates a selector expression of the offset.
+
+    :param int or str or datetime.datetime value: The offset value to use for the offset.
+    :param bool inclusive: Whether to include the value in the range.
+    :rtype: bytes
+    :return: The selector filter expression.
+    """
     operator = ">=" if inclusive else ">"
     if isinstance(value, datetime.datetime):  # pylint:disable=no-else-return
         timestamp = (calendar.timegm(value.utctimetuple()) * 1000) + (
@@ -238,7 +182,9 @@ def get_last_enqueued_event_properties(event_data):
     # type: (EventData) -> Optional[Dict[str, Any]]
     """Extracts the last enqueued event in from the received event delivery annotations.
 
-    :rtype: Dict[str, Any]
+    :param ~azure.eventhub.EventData event_data: The received Event Data.
+    :rtype: dict[str, any] or None
+    :return: The enqueued event properties dictionary.
     """
     # pylint: disable=protected-access
     if event_data._last_enqueued_event_properties:
@@ -294,9 +240,11 @@ def transform_outbound_single_message(message, message_type, to_outgoing_amqp_me
     2. transform the AmqpAnnotatedMessage to be EventData
     :param message: A single instance of message of type EventData
         or AmqpAnnotatedMessage.
-    :type message: ~azure.eventhub.common.EventData, ~azure.eventhub.amqp.AmqpAnnotatedMessage
-    :param Type[EventData] message_type: The class type to return the messages as.
-    :rtype: EventData
+    :type message: ~azure.eventhub.EventData or ~azure.eventhub.amqp.AmqpAnnotatedMessage
+    :param type[~azure.eventhub.EventData] message_type: The class type to return the messages as.
+    :param callable to_outgoing_amqp_message: A function to transform the message
+    :rtype:  ~azure.eventhub.EventData
+    :return: The transformed message.
     """
     try:
         # pylint: disable=protected-access
@@ -322,10 +270,11 @@ def decode_with_recurse(data, encoding="UTF-8"):
     """
     If data is of a compatible type, iterates through nested structure and decodes all binary
         strings with provided encoding.
-    :param Any data: The data object which, if compatible, will be iterated through to decode binary string.
-    :param encoding: The encoding to use for decoding data.
+    :param any data: The data object which, if compatible, will be iterated through to decode binary string.
+    :param str encoding: The encoding to use for decoding data.
         Default is 'UTF-8'
-    :rtype: Any
+    :rtype: any
+    :return: The decoded data object.
     """
 
     if isinstance(data, str):

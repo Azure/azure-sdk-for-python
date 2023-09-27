@@ -4,20 +4,22 @@ from pathlib import Path
 import pydash
 import pytest
 import yaml
+from dsl._util import get_predecessors
 from marshmallow import ValidationError
 from pytest_mock import MockFixture
 from test_utilities.utils import omit_with_wildcard, verify_entity_load_and_dump
 
 from azure.ai.ml import Input, MLClient, dsl, load_component, load_job
 from azure.ai.ml.dsl import pipeline
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase as RestJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase as RestJob
 from azure.ai.ml._schema.automl import AutoMLRegressionSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
 from azure.ai.ml.automl import classification
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.entities import PipelineJob
-from azure.ai.ml.entities._builders import Spark, DataTransfer
+from azure.ai.ml.entities._builders import DataTransfer, Spark
+from azure.ai.ml.entities._component.flow import FlowComponent
 from azure.ai.ml.entities._job.automl.image import (
     ImageClassificationJob,
     ImageClassificationMultilabelJob,
@@ -774,7 +776,7 @@ class TestPipelineJobEntity:
             "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
             "name": "add_greeting_column",
             "py_files": ["utils.zip"],
-            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
+            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
             "type": "spark",
         }
         assert actual_dict == expected_dict
@@ -800,7 +802,7 @@ class TestPipelineJobEntity:
             "jars": ["scalaproj.jar"],
             "name": "count_by_row",
             "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
-            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
+            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
             "type": "spark",
         }
         assert actual_dict == expected_dict
@@ -1341,7 +1343,7 @@ class TestPipelineJobEntity:
                         "input1": {"job_input_type": "literal", "value": "${{parent.jobs.sample_word.outputs.output1}}"}
                     },
                     "name": "count_word",
-                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
+                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
                     "type": "spark",
                 },
                 "sample_word": {
@@ -1367,7 +1369,7 @@ class TestPipelineJobEntity:
                     },
                     "name": "sample_word",
                     "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.output1}}"}},
-                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
+                    "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
                     "type": "spark",
                 },
             },
@@ -1381,12 +1383,11 @@ class TestPipelineJobEntity:
         self,
     ):
         test_path = "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_dynamic_allocation_disabled.yml"
-        job = load_job(test_path)
+        job: PipelineJob = load_job(test_path)
         result = job._validate()
         assert (
-            "jobs.hello_world" in result.error_messages
-            and "Should not specify min or max executors when dynamic allocation is disabled."
-            == result.error_messages["jobs.hello_world"]
+            result.error_messages["jobs.hello_world.conf"] == "Should not specify min or max executors when "
+            "dynamic allocation is disabled."
         )
 
     def test_spark_node_in_pipeline_with_invalid_code(
@@ -1432,7 +1433,7 @@ class TestPipelineJobEntity:
             "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
             "name": "kmeans_cluster",
             "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
-            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
+            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.2.0"},
             "type": "spark",
         }
         assert actual_dict == expected_dict
@@ -1440,38 +1441,46 @@ class TestPipelineJobEntity:
     @pytest.mark.parametrize(
         "test_path, error_messages",
         [
-            (
-                "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_input_mode.yml",
-                "Input 'file_input1' is using 'None' mode, only 'direct' is supported for Spark job",
-            ),
-            (
-                "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_component_input_mode.yml",
-                "Input 'input1' is using 'mount' mode, only 'direct' is supported for Spark job",
-            ),
-        ],
-    )
-    def test_spark_node_in_pipeline_with_invalid_input_mode(self, test_path, error_messages):
-        job = load_job(test_path)
-        result = job._validate()
-        assert error_messages == result.error_messages["jobs.hello_world"]
-
-    @pytest.mark.parametrize(
-        "test_path, error_messages",
-        [
-            (
+            pytest.param(
                 "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_output_mode.yml",
-                "Output 'output' is using 'None' mode, only 'direct' is supported for Spark job",
+                {
+                    "jobs.hello_world.outputs.output": "Output 'output' is using 'None' mode, "
+                    "only 'direct' is supported for Spark job"
+                },
+                id="none_mode_output",
             ),
-            (
+            pytest.param(
                 "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_component_output_mode.yml",
-                "Output 'output1' is using 'upload' mode, only 'direct' is supported for Spark job",
+                {
+                    "jobs.hello_world.outputs.output1": "Output 'output1' is using 'upload' mode, "
+                    "only 'direct' is supported for Spark job"
+                },
+                id="upload_mode_output",
+            ),
+            pytest.param(
+                "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_input_mode.yml",
+                {
+                    "jobs.hello_world.inputs.file_input1": "Input 'file_input1' is using 'None' mode, "
+                    "only 'direct' is supported for Spark job",
+                },
+                id="none_mode_input",
+            ),
+            pytest.param(
+                "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_component_input_mode.yml",
+                {
+                    "jobs.hello_world.inputs.input1": "Input 'input1' is using 'mount' mode, "
+                    "only 'direct' is supported for Spark job"
+                },
+                id="mount_mode_input",
             ),
         ],
     )
-    def test_spark_node_in_pipeline_with_invalid_output_mode(self, test_path, error_messages):
+    def test_spark_node_in_pipeline_with_invalid_input_outputs_mode(self, test_path: str, error_messages: dict):
         job = load_job(test_path)
         result = job._validate()
-        assert error_messages == result.error_messages["jobs.hello_world"]
+        for key, value in error_messages.items():
+            assert key in result.error_messages
+            assert result.error_messages[key] == value
 
     def test_infer_pipeline_output_type_as_node_type(
         self,
@@ -2112,3 +2121,65 @@ class TestPipelineJobEntity:
         pipeline_job = pipeline_with_duplicate_output(str_param=1, dataset=Input(path=component_path))
         assert "output1" in pipeline_job.outputs
         assert "output2" in pipeline_job.outputs
+
+    def test_get_predecessors_for_pipeline_job(self) -> None:
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_component_output.yml"
+        pipeline: PipelineJob = load_job(source=test_path)
+        # get_predecessors is not supported for YAML job
+        assert get_predecessors(pipeline.jobs["hello_world_component_1"]) == []
+        assert get_predecessors(pipeline.jobs["hello_world_component_2"]) == []
+        assert get_predecessors(pipeline.jobs["merge_component_outputs"]) == []
+
+    def test_pipeline_job_with_flow(self) -> None:
+        test_path = "./tests/test_configs/pipeline_jobs/pipeline_job_with_flow.yml"
+        pipeline: PipelineJob = load_job(source=test_path)
+
+        assert isinstance(pipeline.jobs["anonymous_parallel_flow"].component, FlowComponent)
+        assert pipeline.jobs["anonymous_parallel_flow"].component.additional_includes == [
+            "../additional_includes/convert_to_dict.py",
+            "../additional_includes/fetch_text_content_from_url.py",
+            "../additional_includes/summarize_text_content.jinja2",
+        ]
+
+        assert isinstance(pipeline.jobs["anonymous_parallel_flow_from_run"].component, FlowComponent)
+
+        dummy_component_arm_id = (
+            "/subscriptions/xxx/resourceGroups/xxx/providers/Microsoft.MachineLearningServices/"
+            "workspaces/xxx/components/xxx/versions/xxx"
+        )
+        # mock component resolution
+        for _, node in pipeline.jobs.items():
+            node._component = dummy_component_arm_id
+
+        pipeline_job_rest_object = pipeline._to_rest_object()
+        assert pipeline_job_rest_object.properties.jobs == {
+            "anonymous_parallel_flow": {
+                "_source": "YAML.COMPONENT",
+                "componentId": dummy_component_arm_id,
+                "inputs": {
+                    "connections.summarize_text_content.connection": {
+                        "job_input_type": "literal",
+                        "value": "azure_open_ai_connection",
+                    },
+                    "connections.summarize_text_content.deployment_name": {
+                        "job_input_type": "literal",
+                        "value": "text-davinci-003",
+                    },
+                    "data": {"job_input_type": "literal", "value": "${{parent.inputs.web_classification_input}}"},
+                    "url": {"job_input_type": "literal", "value": "${data.url}"},
+                },
+                "name": "anonymous_parallel_flow",
+                "outputs": {"flow_outputs": {"type": "literal", "value": "${{parent.outputs.output_data}}"}},
+                "type": "parallel",
+            },
+            "anonymous_parallel_flow_from_run": {
+                "_source": "YAML.COMPONENT",
+                "componentId": dummy_component_arm_id,
+                "inputs": {
+                    "data": {"job_input_type": "literal", "value": "${{parent.inputs.basic_input}}"},
+                    "text": {"job_input_type": "literal", "value": "${data.text}"},
+                },
+                "name": "anonymous_parallel_flow_from_run",
+                "type": "parallel",
+            },
+        }

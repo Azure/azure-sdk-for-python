@@ -92,6 +92,8 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AcsEmailEngagementTrackingReportReceivedEventName = 'Microsoft.Communication.EmailEngagementTrackingReportReceived'
 
+    AcsIncomingCallEventName = 'Microsoft.Communication.IncomingCall'
+
     AcsRecordingFileStatusUpdatedEventName = 'Microsoft.Communication.RecordingFileStatusUpdated'
 
     AcsSmsDeliveryReportReceivedEventName = 'Microsoft.Communication.SMSDeliveryReportReceived'
@@ -156,6 +158,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AppConfigurationKeyValueModifiedEventName = 'Microsoft.AppConfiguration.KeyValueModified'
 
+    AppConfigurationSnapshotCreatedEventName = 'Microsoft.AppConfiguration.SnapshotCreated'
+
+    AppConfigurationSnapshotModifiedEventName = 'Microsoft.AppConfiguration.SnapshotModified'
+
     ContainerRegistryChartDeletedEventName = 'Microsoft.ContainerRegistry.ChartDeleted'
 
     ContainerRegistryChartPushedEventName = 'Microsoft.ContainerRegistry.ChartPushed'
@@ -164,7 +170,17 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ContainerRegistryImagePushedEventName = 'Microsoft.ContainerRegistry.ImagePushed'
 
+    ContainerServiceClusterSupportEndedEventName = 'Microsoft.ContainerService.ClusterSupportEnded'
+
+    ContainerServiceClusterSupportEndingEventName = 'Microsoft.ContainerService.ClusterSupportEnding'
+
     ContainerServiceNewKubernetesVersionAvailableEventName = 'Microsoft.ContainerService.NewKubernetesVersionAvailable'
+
+    ContainerServiceNodePoolRollingFailedEventName = 'Microsoft.ContainerService.NodePoolRollingFailed'
+
+    ContainerServiceNodePoolRollingStartedEventName = 'Microsoft.ContainerService.NodePoolRollingStarted'
+
+    ContainerServiceNodePoolRollingSucceededEventName = 'Microsoft.ContainerService.NodePoolRollingSucceeded'
 
     DataBoxCopyCompletedEventName = 'Microsoft.DataBox.CopyCompleted'
 
@@ -172,14 +188,22 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DataBoxOrderCompletedEventName = 'Microsoft.DataBox.OrderCompleted'
 
+    EventGridMQTTClientCreatedOrUpdatedEventName = 'Microsoft.EventGrid.MQTTClientCreatedOrUpdated'
+
+    EventGridMQTTClientDeletedEventName = 'Microsoft.EventGrid.MQTTClientDeleted'
+
+    EventGridMQTTClientSessionConnectedEventName = 'Microsoft.EventGrid.MQTTClientSessionConnected'
+
+    EventGridMQTTClientSessionDisconnectedEventName = 'Microsoft.EventGrid.MQTTClientSessionDisconnected'
+
     EventHubCaptureFileCreatedEventName = 'Microsoft.EventHub.CaptureFileCreated'
 
-    # spell-checker:ignore Dicom
     HealthcareDicomImageCreatedEventName = 'Microsoft.HealthcareApis.DicomImageCreated'
 
     HealthcareDicomImageDeletedEventName = 'Microsoft.HealthcareApis.DicomImageDeleted'
 
-    # spell-checker:ignore Fhir
+    HealthcareDicomImageUpdatedEventName = 'Microsoft.HealthcareApis.DicomImageUpdated'
+
     HealthcareFhirResourceCreatedEventName = 'Microsoft.HealthcareApis.FhirResourceCreated'
 
     HealthcareFhirResourceDeletedEventName = 'Microsoft.HealthcareApis.FhirResourceDeleted'
@@ -236,7 +260,6 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     MediaJobCancelingEventName = 'Microsoft.Media.JobCanceling'
 
-    # spell-checker:ignore Errored
     MediaJobErroredEventName = 'Microsoft.Media.JobErrored'
 
     MediaJobFinishedEventName = 'Microsoft.Media.JobFinished'
@@ -346,6 +369,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     StorageDirectoryRenamedEventName = 'Microsoft.Storage.DirectoryRenamed'
 
     StorageLifecyclePolicyCompletedEventName = 'Microsoft.Storage.LifecyclePolicyCompleted'
+
+    StorageTaskCompletedEventName = 'Microsoft.Storage.StorageTaskCompleted'
+
+    StorageTaskQueuedEventName = 'Microsoft.Storage.StorageTaskQueued'
 
     SubscriptionDeletedEventName = 'Microsoft.EventGrid.SubscriptionDeletedEvent'
 

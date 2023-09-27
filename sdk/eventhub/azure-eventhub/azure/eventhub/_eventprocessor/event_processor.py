@@ -21,7 +21,12 @@ from typing import (
 )
 from functools import partial
 
-from .._utils import get_event_links
+from .._tracing import (
+    process_context_manager,
+    receive_context_manager,
+    get_span_links_from_received_events,
+    is_tracing_enabled,
+)
 from .partition_context import PartitionContext
 from .in_memory_checkpoint_store import InMemoryCheckpointStore
 from .ownership_manager import OwnershipManager
@@ -88,7 +93,7 @@ class EventProcessor(
         )  # type: Union[bool, Dict[str, bool]]
 
         self._load_balancing_interval = kwargs.get(
-            "load_balancing_interval", 10.0
+            "load_balancing_interval", 30.0
         )  # type: float
         self._load_balancing_strategy = (
             kwargs.get("load_balancing_strategy") or LoadBalancingStrategy.GREEDY
@@ -121,6 +126,8 @@ class EventProcessor(
             self._load_balancing_strategy,
             self._partition_id,
         )
+
+        self._last_received_time = time.time_ns()
 
     def __repr__(self) -> str:
         return "EventProcessor: id {}".format(self._id)
@@ -234,8 +241,18 @@ class EventProcessor(
                 partition_context._last_received_event = event[-1]  # type: ignore  #pylint:disable=protected-access
             except TypeError:
                 partition_context._last_received_event = event  # type: ignore  #pylint:disable=protected-access
-            links = get_event_links(event)
-            with self._context(links=links):
+
+            links = []
+            is_batch = False
+            if is_tracing_enabled():
+                links = get_span_links_from_received_events(event)
+                if isinstance(event, list):
+                    is_batch = True
+
+            with receive_context_manager(self._eventhub_client, links=links, start_time=self._last_received_time):  # pylint:disable=protected-access
+                self._last_received_time = time.time_ns()
+
+            with process_context_manager(self._eventhub_client, links=links, is_batch=is_batch):
                 self._event_handler(partition_context, event)
         else:
             self._event_handler(partition_context, event)
@@ -245,8 +262,6 @@ class EventProcessor(
 
         The EventProcessor will try to claim and balance partition ownership with other `EventProcessor`
         and start receiving EventData from EventHub and processing events.
-
-        :return: None
 
         """
         while self._running:
@@ -340,7 +355,11 @@ class EventProcessor(
         self._ownership_manager.release_ownership(partition_id)
 
     def _do_receive(self, partition_id: str, consumer: EventHubConsumer) -> None:
-        """Call the consumer.receive() and handle exceptions if any after it exhausts retries."""
+        """Call the consumer.receive() and handle exceptions if any after it exhausts retries.
+
+        :param str partition_id: The partition id.
+        :param ~azure.eventhub._consumer.EventHubConsumer consumer: The consumer object.
+        """
         try:
             consumer.receive(self._batch, self._max_batch_size, self._max_wait_time)
         except Exception as error:  # pylint:disable=broad-except
@@ -391,8 +410,6 @@ class EventProcessor(
         Other running EventProcessor will take over these released partitions.
 
         A stopped EventProcessor can be restarted by calling method `start` again.
-
-        :return: None
 
         """
         if not self._running:

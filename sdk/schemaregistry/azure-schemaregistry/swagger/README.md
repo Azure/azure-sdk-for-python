@@ -6,7 +6,7 @@
 ```ps
 cd C:\Work\SchemaRegistry\
 autorest --reset
-autorest --low-level-client --modelerfour.lenient-model-deduplication --show-operations --trace=false README.md
+autorest README.md
 ```
 ### Settings
 ``` yaml
@@ -19,5 +19,23 @@ clear-output-folder: true
 python: true
 add-credential: true
 credential-scopes: "https://eventhubs.azure.net/.default"
-package-version: "1.3.0b1"
+package-version: "1.3.0b2"
+trace: false
+```
+
+### Delete list operations
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["paths"]
+    transform: >
+      delete $["/$schemaGroups"]["get"];
+      delete $["/$schemaGroups/{groupName}/schemas/{schemaName}/versions"]["get"];
+
+  - from: swagger-document
+    where: $["definitions"]
+    transform: >
+      delete $["SchemaGroups"];
+      delete $["SchemaVersions"];
 ```

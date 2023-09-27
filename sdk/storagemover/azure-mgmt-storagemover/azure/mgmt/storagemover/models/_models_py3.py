@@ -30,18 +30,23 @@ class Resource(_serialization.Model):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storagemover.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -50,6 +55,7 @@ class Resource(_serialization.Model):
         self.id = None
         self.name = None
         self.type = None
+        self.system_data = None
 
 
 class ProxyResource(Resource):
@@ -66,18 +72,23 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storagemover.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -100,7 +111,8 @@ class Agent(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Resource system metadata.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.storagemover.models.SystemData
     :ivar description: A description for the Agent.
     :vartype description: str
@@ -180,7 +192,6 @@ class Agent(ProxyResource):  # pylint: disable=too-many-instance-attributes
         :paramtype arc_vm_uuid: str
         """
         super().__init__(**kwargs)
-        self.system_data = None
         self.description = description
         self.agent_version = None
         self.arc_resource_id = arc_resource_id
@@ -270,18 +281,89 @@ class AgentUpdateParameters(_serialization.Model):
         self.description = description
 
 
+class Credentials(_serialization.Model):
+    """The Credentials.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureKeyVaultSmbCredentials
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: The Credentials type. Required. "AzureKeyVaultSmb"
+    :vartype type: str or ~azure.mgmt.storagemover.models.CredentialType
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+    }
+
+    _subtype_map = {"type": {"AzureKeyVaultSmb": "AzureKeyVaultSmbCredentials"}}
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
+
+
+class AzureKeyVaultSmbCredentials(Credentials):
+    """The Azure Key Vault secret URIs which store the credentials.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: The Credentials type. Required. "AzureKeyVaultSmb"
+    :vartype type: str or ~azure.mgmt.storagemover.models.CredentialType
+    :ivar username_uri: The Azure Key Vault secret URI which stores the username. Use empty string
+     to clean-up existing value.
+    :vartype username_uri: str
+    :ivar password_uri: The Azure Key Vault secret URI which stores the password. Use empty string
+     to clean-up existing value.
+    :vartype password_uri: str
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "username_uri": {"key": "usernameUri", "type": "str"},
+        "password_uri": {"key": "passwordUri", "type": "str"},
+    }
+
+    def __init__(
+        self, *, username_uri: Optional[str] = None, password_uri: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword username_uri: The Azure Key Vault secret URI which stores the username. Use empty
+         string to clean-up existing value.
+        :paramtype username_uri: str
+        :keyword password_uri: The Azure Key Vault secret URI which stores the password. Use empty
+         string to clean-up existing value.
+        :paramtype password_uri: str
+        """
+        super().__init__(**kwargs)
+        self.type: str = "AzureKeyVaultSmb"
+        self.username_uri = username_uri
+        self.password_uri = password_uri
+
+
 class EndpointBaseProperties(_serialization.Model):
     """The resource specific properties for the Storage Mover resource.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureStorageBlobContainerEndpointProperties, NfsMountEndpointProperties
+    AzureStorageBlobContainerEndpointProperties, AzureStorageSmbFileShareEndpointProperties,
+    NfsMountEndpointProperties, SmbMountEndpointProperties
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar endpoint_type: The Endpoint resource type. Required. Known values are:
-     "AzureStorageBlobContainer" and "NfsMount".
+     "AzureStorageBlobContainer", "NfsMount", "AzureStorageSmbFileShare", and "SmbMount".
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.EndpointType
     :ivar description: A description for the Endpoint.
     :vartype description: str
@@ -303,7 +385,9 @@ class EndpointBaseProperties(_serialization.Model):
     _subtype_map = {
         "endpoint_type": {
             "AzureStorageBlobContainer": "AzureStorageBlobContainerEndpointProperties",
+            "AzureStorageSmbFileShare": "AzureStorageSmbFileShareEndpointProperties",
             "NfsMount": "NfsMountEndpointProperties",
+            "SmbMount": "SmbMountEndpointProperties",
         }
     }
 
@@ -319,14 +403,14 @@ class EndpointBaseProperties(_serialization.Model):
 
 
 class AzureStorageBlobContainerEndpointProperties(EndpointBaseProperties):
-    """AzureStorageBlobContainerEndpointProperties.
+    """The properties of Azure Storage blob container endpoint.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar endpoint_type: The Endpoint resource type. Required. Known values are:
-     "AzureStorageBlobContainer" and "NfsMount".
+     "AzureStorageBlobContainer", "NfsMount", "AzureStorageSmbFileShare", and "SmbMount".
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.EndpointType
     :ivar description: A description for the Endpoint.
     :vartype description: str
@@ -382,12 +466,36 @@ class AzureStorageBlobContainerEndpointProperties(EndpointBaseProperties):
 class EndpointBaseUpdateProperties(_serialization.Model):
     """The Endpoint resource, which contains information about file sources and targets.
 
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureStorageBlobContainerEndpointUpdateProperties,
+    AzureStorageSmbFileShareEndpointUpdateProperties, NfsMountEndpointUpdateProperties,
+    SmbMountEndpointUpdateProperties
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar endpoint_type: The Endpoint resource type. Required. Known values are:
+     "AzureStorageBlobContainer", "NfsMount", "AzureStorageSmbFileShare", and "SmbMount".
+    :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.EndpointType
     :ivar description: A description for the Endpoint.
     :vartype description: str
     """
 
+    _validation = {
+        "endpoint_type": {"required": True},
+    }
+
     _attribute_map = {
+        "endpoint_type": {"key": "endpointType", "type": "str"},
         "description": {"key": "description", "type": "str"},
+    }
+
+    _subtype_map = {
+        "endpoint_type": {
+            "AzureStorageBlobContainer": "AzureStorageBlobContainerEndpointUpdateProperties",
+            "AzureStorageSmbFileShare": "AzureStorageSmbFileShareEndpointUpdateProperties",
+            "NfsMount": "NfsMountEndpointUpdateProperties",
+            "SmbMount": "SmbMountEndpointUpdateProperties",
+        }
     }
 
     def __init__(self, *, description: Optional[str] = None, **kwargs: Any) -> None:
@@ -396,17 +504,28 @@ class EndpointBaseUpdateProperties(_serialization.Model):
         :paramtype description: str
         """
         super().__init__(**kwargs)
+        self.endpoint_type: Optional[str] = None
         self.description = description
 
 
 class AzureStorageBlobContainerEndpointUpdateProperties(EndpointBaseUpdateProperties):
     """AzureStorageBlobContainerEndpointUpdateProperties.
 
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar endpoint_type: The Endpoint resource type. Required. Known values are:
+     "AzureStorageBlobContainer", "NfsMount", "AzureStorageSmbFileShare", and "SmbMount".
+    :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.EndpointType
     :ivar description: A description for the Endpoint.
     :vartype description: str
     """
 
+    _validation = {
+        "endpoint_type": {"required": True},
+    }
+
     _attribute_map = {
+        "endpoint_type": {"key": "endpointType", "type": "str"},
         "description": {"key": "description", "type": "str"},
     }
 
@@ -416,6 +535,94 @@ class AzureStorageBlobContainerEndpointUpdateProperties(EndpointBaseUpdateProper
         :paramtype description: str
         """
         super().__init__(description=description, **kwargs)
+        self.endpoint_type: str = "AzureStorageBlobContainer"
+
+
+class AzureStorageSmbFileShareEndpointProperties(EndpointBaseProperties):
+    """The properties of Azure Storage SMB file share endpoint.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar endpoint_type: The Endpoint resource type. Required. Known values are:
+     "AzureStorageBlobContainer", "NfsMount", "AzureStorageSmbFileShare", and "SmbMount".
+    :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.EndpointType
+    :ivar description: A description for the Endpoint.
+    :vartype description: str
+    :ivar provisioning_state: The provisioning state of this resource. "Succeeded"
+    :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
+    :ivar storage_account_resource_id: The Azure Resource ID of the storage account. Required.
+    :vartype storage_account_resource_id: str
+    :ivar file_share_name: The name of the Azure Storage file share. Required.
+    :vartype file_share_name: str
+    """
+
+    _validation = {
+        "endpoint_type": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "storage_account_resource_id": {"required": True},
+        "file_share_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "endpoint_type": {"key": "endpointType", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "storage_account_resource_id": {"key": "storageAccountResourceId", "type": "str"},
+        "file_share_name": {"key": "fileShareName", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        storage_account_resource_id: str,
+        file_share_name: str,
+        description: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description: A description for the Endpoint.
+        :paramtype description: str
+        :keyword storage_account_resource_id: The Azure Resource ID of the storage account. Required.
+        :paramtype storage_account_resource_id: str
+        :keyword file_share_name: The name of the Azure Storage file share. Required.
+        :paramtype file_share_name: str
+        """
+        super().__init__(description=description, **kwargs)
+        self.endpoint_type: str = "AzureStorageSmbFileShare"
+        self.storage_account_resource_id = storage_account_resource_id
+        self.file_share_name = file_share_name
+
+
+class AzureStorageSmbFileShareEndpointUpdateProperties(EndpointBaseUpdateProperties):
+    """The properties of Azure Storage SMB file share endpoint to update.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar endpoint_type: The Endpoint resource type. Required. Known values are:
+     "AzureStorageBlobContainer", "NfsMount", "AzureStorageSmbFileShare", and "SmbMount".
+    :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.EndpointType
+    :ivar description: A description for the Endpoint.
+    :vartype description: str
+    """
+
+    _validation = {
+        "endpoint_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "endpoint_type": {"key": "endpointType", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+    }
+
+    def __init__(self, *, description: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword description: A description for the Endpoint.
+        :paramtype description: str
+        """
+        super().__init__(description=description, **kwargs)
+        self.endpoint_type: str = "AzureStorageSmbFileShare"
 
 
 class Endpoint(ProxyResource):
@@ -433,26 +640,27 @@ class Endpoint(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storagemover.models.SystemData
     :ivar properties: The resource specific properties for the Storage Mover resource. Required.
     :vartype properties: ~azure.mgmt.storagemover.models.EndpointBaseProperties
-    :ivar system_data: Resource system metadata.
-    :vartype system_data: ~azure.mgmt.storagemover.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "properties": {"required": True},
         "system_data": {"readonly": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "properties": {"key": "properties", "type": "EndpointBaseProperties"},
         "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "EndpointBaseProperties"},
     }
 
     def __init__(self, *, properties: "_models.EndpointBaseProperties", **kwargs: Any) -> None:
@@ -462,7 +670,6 @@ class Endpoint(ProxyResource):
         """
         super().__init__(**kwargs)
         self.properties = properties
-        self.system_data = None
 
 
 class EndpointBaseUpdateParameters(_serialization.Model):
@@ -623,7 +830,8 @@ class JobDefinition(ProxyResource):  # pylint: disable=too-many-instance-attribu
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Resource system metadata.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.storagemover.models.SystemData
     :ivar description: A description for the Job Definition.
     :vartype description: str
@@ -727,7 +935,6 @@ class JobDefinition(ProxyResource):  # pylint: disable=too-many-instance-attribu
         :paramtype agent_name: str
         """
         super().__init__(**kwargs)
-        self.system_data = None
         self.description = description
         self.copy_mode = copy_mode
         self.source_name = source_name
@@ -825,7 +1032,8 @@ class JobRun(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Resource system metadata.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.storagemover.models.SystemData
     :ivar status: The state of the job execution. Known values are: "Queued", "Started", "Running",
      "CancelRequested", "Canceling", "Canceled", "Failed", and "Succeeded".
@@ -972,7 +1180,6 @@ class JobRun(ProxyResource):  # pylint: disable=too-many-instance-attributes
     def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-locals
         """ """
         super().__init__(**kwargs)
-        self.system_data = None
         self.status = None
         self.scan_status = None
         self.agent_name = None
@@ -1090,14 +1297,14 @@ class JobRunResourceId(_serialization.Model):
 
 
 class NfsMountEndpointProperties(EndpointBaseProperties):
-    """NfsMountEndpointProperties.
+    """The properties of NFS share endpoint.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar endpoint_type: The Endpoint resource type. Required. Known values are:
-     "AzureStorageBlobContainer" and "NfsMount".
+     "AzureStorageBlobContainer", "NfsMount", "AzureStorageSmbFileShare", and "SmbMount".
     :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.EndpointType
     :ivar description: A description for the Endpoint.
     :vartype description: str
@@ -1157,11 +1364,21 @@ class NfsMountEndpointProperties(EndpointBaseProperties):
 class NfsMountEndpointUpdateProperties(EndpointBaseUpdateProperties):
     """NfsMountEndpointUpdateProperties.
 
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar endpoint_type: The Endpoint resource type. Required. Known values are:
+     "AzureStorageBlobContainer", "NfsMount", "AzureStorageSmbFileShare", and "SmbMount".
+    :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.EndpointType
     :ivar description: A description for the Endpoint.
     :vartype description: str
     """
 
+    _validation = {
+        "endpoint_type": {"required": True},
+    }
+
     _attribute_map = {
+        "endpoint_type": {"key": "endpointType", "type": "str"},
         "description": {"key": "description", "type": "str"},
     }
 
@@ -1171,6 +1388,7 @@ class NfsMountEndpointUpdateProperties(EndpointBaseUpdateProperties):
         :paramtype description: str
         """
         super().__init__(description=description, **kwargs)
+        self.endpoint_type: str = "NfsMount"
 
 
 class Operation(_serialization.Model):
@@ -1307,7 +1525,8 @@ class Project(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Resource system metadata.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.storagemover.models.SystemData
     :ivar description: A description for the Project.
     :vartype description: str
@@ -1338,7 +1557,6 @@ class Project(ProxyResource):
         :paramtype description: str
         """
         super().__init__(**kwargs)
-        self.system_data = None
         self.description = description
         self.provisioning_state = None
 
@@ -1392,6 +1610,116 @@ class ProjectUpdateParameters(_serialization.Model):
         self.description = description
 
 
+class SmbMountEndpointProperties(EndpointBaseProperties):
+    """The properties of SMB share endpoint.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar endpoint_type: The Endpoint resource type. Required. Known values are:
+     "AzureStorageBlobContainer", "NfsMount", "AzureStorageSmbFileShare", and "SmbMount".
+    :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.EndpointType
+    :ivar description: A description for the Endpoint.
+    :vartype description: str
+    :ivar provisioning_state: The provisioning state of this resource. "Succeeded"
+    :vartype provisioning_state: str or ~azure.mgmt.storagemover.models.ProvisioningState
+    :ivar host: The host name or IP address of the server exporting the file system. Required.
+    :vartype host: str
+    :ivar share_name: The name of the SMB share being exported from the server. Required.
+    :vartype share_name: str
+    :ivar credentials: The Azure Key Vault secret URIs which store the required credentials to
+     access the SMB share.
+    :vartype credentials: ~azure.mgmt.storagemover.models.AzureKeyVaultSmbCredentials
+    """
+
+    _validation = {
+        "endpoint_type": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "host": {"required": True},
+        "share_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "endpoint_type": {"key": "endpointType", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "host": {"key": "host", "type": "str"},
+        "share_name": {"key": "shareName", "type": "str"},
+        "credentials": {"key": "credentials", "type": "AzureKeyVaultSmbCredentials"},
+    }
+
+    def __init__(
+        self,
+        *,
+        host: str,
+        share_name: str,
+        description: Optional[str] = None,
+        credentials: Optional["_models.AzureKeyVaultSmbCredentials"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description: A description for the Endpoint.
+        :paramtype description: str
+        :keyword host: The host name or IP address of the server exporting the file system. Required.
+        :paramtype host: str
+        :keyword share_name: The name of the SMB share being exported from the server. Required.
+        :paramtype share_name: str
+        :keyword credentials: The Azure Key Vault secret URIs which store the required credentials to
+         access the SMB share.
+        :paramtype credentials: ~azure.mgmt.storagemover.models.AzureKeyVaultSmbCredentials
+        """
+        super().__init__(description=description, **kwargs)
+        self.endpoint_type: str = "SmbMount"
+        self.host = host
+        self.share_name = share_name
+        self.credentials = credentials
+
+
+class SmbMountEndpointUpdateProperties(EndpointBaseUpdateProperties):
+    """The properties of SMB share endpoint to update.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar endpoint_type: The Endpoint resource type. Required. Known values are:
+     "AzureStorageBlobContainer", "NfsMount", "AzureStorageSmbFileShare", and "SmbMount".
+    :vartype endpoint_type: str or ~azure.mgmt.storagemover.models.EndpointType
+    :ivar description: A description for the Endpoint.
+    :vartype description: str
+    :ivar credentials: The Azure Key Vault secret URIs which store the required credentials to
+     access the SMB share.
+    :vartype credentials: ~azure.mgmt.storagemover.models.AzureKeyVaultSmbCredentials
+    """
+
+    _validation = {
+        "endpoint_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "endpoint_type": {"key": "endpointType", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "credentials": {"key": "credentials", "type": "AzureKeyVaultSmbCredentials"},
+    }
+
+    def __init__(
+        self,
+        *,
+        description: Optional[str] = None,
+        credentials: Optional["_models.AzureKeyVaultSmbCredentials"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description: A description for the Endpoint.
+        :paramtype description: str
+        :keyword credentials: The Azure Key Vault secret URIs which store the required credentials to
+         access the SMB share.
+        :paramtype credentials: ~azure.mgmt.storagemover.models.AzureKeyVaultSmbCredentials
+        """
+        super().__init__(description=description, **kwargs)
+        self.endpoint_type: str = "SmbMount"
+        self.credentials = credentials
+
+
 class TrackedResource(Resource):
     """The resource model definition for an Azure Resource Manager tracked top level resource which
     has 'tags' and a 'location'.
@@ -1408,6 +1736,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storagemover.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -1418,6 +1749,7 @@ class TrackedResource(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
     }
 
@@ -1425,6 +1757,7 @@ class TrackedResource(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
     }
@@ -1457,12 +1790,13 @@ class StorageMover(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.storagemover.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
-    :ivar system_data: Resource system metadata.
-    :vartype system_data: ~azure.mgmt.storagemover.models.SystemData
     :ivar description: A description for the Storage Mover.
     :vartype description: str
     :ivar provisioning_state: The provisioning state of this resource. "Succeeded"
@@ -1473,8 +1807,8 @@ class StorageMover(TrackedResource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "location": {"required": True},
         "system_data": {"readonly": True},
+        "location": {"required": True},
         "provisioning_state": {"readonly": True},
     }
 
@@ -1482,9 +1816,9 @@ class StorageMover(TrackedResource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
         "description": {"key": "properties.description", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
@@ -1501,7 +1835,6 @@ class StorageMover(TrackedResource):
         :paramtype description: str
         """
         super().__init__(tags=tags, location=location, **kwargs)
-        self.system_data = None
         self.description = description
         self.provisioning_state = None
 

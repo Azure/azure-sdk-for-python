@@ -1,0 +1,6 @@
+stress
+stress.exe
+.env
+Dockerfile
+*.py
+*.txt

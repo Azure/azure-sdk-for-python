@@ -15,7 +15,7 @@ class BatchDeploymentOutputAction:
 
 class BatchDeploymentType:
     MODEL = "model"
-    COMPONENT = "component"
+    PIPELINE = "pipeline"
 
 
 class EndpointDeploymentLogContainerType(object):

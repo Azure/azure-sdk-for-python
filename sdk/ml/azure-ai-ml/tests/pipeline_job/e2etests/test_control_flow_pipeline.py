@@ -30,6 +30,7 @@ omit_fields = [
     "mock_asset_name",
     "mock_component_hash",
     "mock_set_headers_with_user_aml_token",
+    "mock_anon_component_version",
 )
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest

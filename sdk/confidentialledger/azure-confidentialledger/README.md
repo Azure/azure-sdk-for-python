@@ -107,6 +107,21 @@ After getting a receipt for a write transaction, Azure Confidential Ledger users
 
 Please refer to the following [article](https://learn.microsoft.com/azure/confidential-ledger/verify-write-transaction-receipts) for more information about the verification process for Azure Confidential Ledger write transaction receipts.
 
+### Application Claims
+Azure Confidential Ledger applications can attach arbitrary data, called application claims, to write transactions. These claims represent the actions executed during a write operation. When attached to a transaction, the SHA-256 digest of the claims object is included in the ledger and committed as part of the write transaction. This guarantees that the digest is signed in place and cannot be tampered with.
+
+Later, application claims can be revealed in their un-digested form in the receipt payload corresponding to the same transaction where they were added. This allows users to leverage the information in the receipt to re-compute the same claims digest that was attached and signed in place by the Azure Confidential Ledger instance during the transaction. The claims digest can be used as part of the write transaction receipt verification process, providing an offline way for users to fully verify the authenticity of the recorded claims.
+
+More details on the application claims format and the digest computation algorithm can be found at the following links:
+
+- [Azure Confidential Ledger application claims](https://learn.microsoft.com/azure/confidential-ledger/write-transaction-receipts#application-claims)
+- [Azure Confidential Ledger application claims digest verification](https://learn.microsoft.com/azure/confidential-ledger/verify-write-transaction-receipts#verify-application-claims-digest)
+
+Please refer to the following CCF documentation pages for more information about CCF Application claims:
+
+- [Application Claims](https://microsoft.github.io/CCF/main/use_apps/verify_tx.html#application-claims)
+- [User-Defined Claims in Receipts](https://microsoft.github.io/CCF/main/build_apps/example_cpp.html#user-defined-claims-in-receipts)
+
 ### Confidential computing
 [Azure Confidential Computing][azure_confidential_computing] allows you to isolate and protect your data while it is being processed in the cloud. Azure Confidential Ledger runs on Azure Confidential Computing virtual machines, thus providing stronger data protection with encryption of data in use.
 
@@ -411,7 +426,7 @@ get_receipt_result = get_receipt_poller.result()
 print(f"Write receipt for transaction id {transaction_id} was successfully retrieved: {get_receipt_result}")
 ```
 
-After fetching a receipt for a write transaction, it is possible to call the `verify_receipt` function to verify that the receipt is valid.
+After fetching a receipt for a write transaction, it is possible to call the `verify_receipt` function to verify that the receipt is valid. The function can accept an optional list of application claims to verify against the receipt claims digest.
 
 ```python
 from azure.confidentialledger.receipt import (
@@ -422,15 +437,18 @@ from azure.confidentialledger.receipt import (
 with open(ledger_tls_cert_file_name, "r") as service_cert_file:
     service_cert_content = service_cert_file.read()
 
+# Optionally read application claims, if any
+application_claims = get_receipt_result.get("applicationClaims", None) 
+
 try:
     # Verify the contents of the receipt.
-    verify_receipt(get_receipt_result["receipt"], service_cert_content)
+    verify_receipt(get_receipt_result["receipt"], service_cert_content, application_claims=application_claims)
     print(f"Receipt for transaction id {transaction_id} successfully verified")
 except ValueError:
     print(f"Receipt verification for transaction id {transaction_id} failed")
 ```
 
-A full sample Python program that shows how to append a new entry to a running Confidential Ledger instance, get a receipt for the committed transaction, and verify the receipt contents can be found under the [samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples) folder: [get_and_verify_receipt.py]<!--(TODO: add link once PR is merged)-->.
+A full sample Python program that shows how to append a new entry to a running Confidential Ledger instance, get a receipt for the committed transaction, and verify the receipt contents can be found under the [samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples) folder: [get_and_verify_receipt.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/confidentialledger/azure-confidentialledger/samples/get_and_verify_receipt.py).
 
 ### Async API
 This library includes a complete async API supported on Python 3.5+. To use it, you must first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp). See the [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport) for more information.

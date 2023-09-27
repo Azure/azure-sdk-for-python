@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.record_sets.delete(
+    client.record_sets.delete(
         resource_group_name="rg1",
         zone_name="zone1",
         relative_record_set_name="record1",
         record_type="AAAA",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/dns/resource-manager/Microsoft.Network/stable/2018-05-01/examples/DeleteAAAARecordset.json

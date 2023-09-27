@@ -31,7 +31,7 @@ def main():
 
     response = client.name_availability.check_local(
         location="useast",
-        body={"name": "myname", "type": "Microsoft.VoiceServices/CommunicationsGateway"},
+        body={"name": "myname", "type": "Microsoft.VoiceServices/CommunicationsGateways"},
     )
     print(response)
 

@@ -2,19 +2,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,no-value-for-parameter
 
 import os
+from contextlib import contextmanager
 from pathlib import Path
-from typing import Dict, List, Optional, Union, Iterable
+from typing import Dict, Iterable, List, Optional, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
-from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
-from azure.ai.ml.data_transfer import import_data as import_data_func
-from azure.ai.ml.entities._inputs_outputs import Output
-from azure.ai.ml.entities._inputs_outputs.external_data import Database
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
 from azure.ai.ml._artifacts._constants import (
     ASSET_PATH_ERROR,
@@ -22,20 +18,26 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ListViewType
-from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
-from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
-
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023_preview
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+    _ScopeDependentOperations,
+)
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
+    _check_or_modify_auto_delete_setting,
     _create_or_update_autoincrement,
     _get_latest_version_from_container,
     _resolve_label_to_asset,
+    _validate_auto_delete_setting_in_data_output,
+    _validate_workspace_managed_datastore,
 )
 from azure.ai.ml._utils._data_utils import (
     download_mltable_metadata_schema,
@@ -43,22 +45,28 @@ from azure.ai.ml._utils._data_utils import (
     read_remote_mltable_metadata_contents,
     validate_mltable_metadata,
 )
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import (
     get_asset_body_for_registry_storage,
+    get_registry_client,
     get_sas_uri_for_registry_asset,
 )
 from azure.ai.ml._utils.utils import is_url
 from azure.ai.ml.constants._common import (
+    ASSET_ID_FORMAT,
     MLTABLE_METADATA_SCHEMA_URL_FALLBACK,
     AssetTypes,
-    ASSET_ID_FORMAT,
     AzureMLResourceType,
 )
+from azure.ai.ml.data_transfer import import_data as import_data_func
+from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
 from azure.ai.ml.entities._assets import Data, WorkspaceAssetReference
-from azure.ai.ml.entities._data_import.data_import import DataImport
 from azure.ai.ml.entities._data.mltable_metadata import MLTableMetadata
+from azure.ai.ml.entities._data_import.data_import import DataImport
+from azure.ai.ml.entities._inputs_outputs import Output
+from azure.ai.ml.entities._inputs_outputs.external_data import Database
 from azure.ai.ml.exceptions import (
     AssetPathException,
     ErrorCategory,
@@ -67,24 +75,42 @@ from azure.ai.ml.exceptions import (
     ValidationException,
 )
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
-from azure.core.exceptions import ResourceNotFoundError
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class DataOperations(_ScopeDependentOperations):
+    """DataOperations.
+
+    You should not instantiate this class directly. Instead, you should
+    create an MLClient instance that instantiates it for you and
+    attaches it as an attribute.
+
+    :param operation_scope: Scope variables for the operations classes of an MLClient object.
+    :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
+    :param operation_config: Common configuration for operations classes of an MLClient object.
+    :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
+    :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace
+        resources (ServiceClient042023Preview or ServiceClient102021Dataplane).
+    :type service_client: typing.Union[
+        ~azure.ai.ml._restclient.v2023_04_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces,
+        ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.
+        AzureMachineLearningWorkspaces]
+    :param datastore_operations: Represents a client for performing operations on Datastores.
+    :type datastore_operations: ~azure.ai.ml.operations._datastore_operations.DatastoreOperations
+    """
+
     def __init__(
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient102022, ServiceClient102021Dataplane],
+        service_client: Union[ServiceClient042023_preview, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
-
         super(DataOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation = service_client.data_versions
@@ -93,6 +119,7 @@ class DataOperations(_ScopeDependentOperations):
         self._service_client = service_client
         self._init_kwargs = kwargs
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
+        self._all_operations: OperationsContainer = kwargs.pop("all_operations")
         # Maps a label to a function which given an asset name,
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
@@ -108,11 +135,20 @@ class DataOperations(_ScopeDependentOperations):
 
         :param name: Name of a specific data asset, optional.
         :type name: Optional[str]
-        :param list_view_type: View type for including/excluding (for example) archived data assets.
+        :keyword list_view_type: View type for including/excluding (for example) archived data assets.
             Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of Data objects
         :rtype: ~azure.core.paging.ItemPaged[Data]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_misc.py
+                :start-after: [START data_operations_list]
+                :end-before: [END data_operations_list]
+                :language: python
+                :dedent: 8
+                :caption: List data assets example.
         """
         if name:
             return (
@@ -197,6 +233,15 @@ class DataOperations(_ScopeDependentOperations):
             identified and retrieved. Details will be provided in the error message.
         :return: Data asset object.
         :rtype: ~azure.ai.ml.entities.Data
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_misc.py
+                :start-after: [START data_operations_get]
+                :end-before: [END data_operations_get]
+                :language: python
+                :dedent: 8
+                :caption: Get data assets example.
         """
         try:
             if version and label:
@@ -241,6 +286,15 @@ class DataOperations(_ScopeDependentOperations):
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: Data asset object.
         :rtype: ~azure.ai.ml.entities.Data
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_misc.py
+                :start-after: [START data_operations_create_or_update]
+                :end-before: [END data_operations_create_or_update]
+                :language: python
+                :dedent: 8
+                :caption: Create data assets example.
         """
         try:
             name = data.name
@@ -279,11 +333,16 @@ class DataOperations(_ScopeDependentOperations):
                             target=ErrorTarget.DATA,
                             error_category=ErrorCategory.USER_ERROR,
                         )
-                    data = data._to_rest_object()
+                    data_res_obj = data._to_rest_object()
                     result = self._service_client.resource_management_asset_reference.begin_import_method(
-                        resource_group_name=self._resource_group_name, registry_name=self._registry_name, body=data
-                    )
-                    return result
+                        resource_group_name=self._resource_group_name,
+                        registry_name=self._registry_name,
+                        body=data_res_obj,
+                    ).result()
+
+                    if not result:
+                        data_res_obj = self._get(name=data.name, version=data.version)
+                        return Data._from_rest_object(data_res_obj)
 
                 sas_uri = get_sas_uri_for_registry_asset(
                     service_client=self._service_client,
@@ -305,6 +364,9 @@ class DataOperations(_ScopeDependentOperations):
                 artifact_type=ErrorTarget.DATA,
                 show_progress=self._show_progress,
             )
+
+            _check_or_modify_auto_delete_setting(data.auto_delete_setting)
+
             data_version_resource = data._to_rest_object()
             auto_increment_version = data._auto_increment_version
 
@@ -352,7 +414,7 @@ class DataOperations(_ScopeDependentOperations):
                         tartget=ErrorTarget.DATA,
                         no_personal_data_message=CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
                         error_category=ErrorCategory.USER_ERROR,
-                    )
+                    ) from ex
             raise ex
 
     @monitor_with_activity(logger, "Data.ImportData", ActivityType.PUBLICAPI)
@@ -364,10 +426,26 @@ class DataOperations(_ScopeDependentOperations):
         :type data_import: azure.ai.ml.entities.DataImport
         :return: data import job object.
         :rtype: ~azure.ai.ml.entities.PipelineJob
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_misc.py
+                :start-after: [START data_operations_import_data]
+                :end-before: [END data_operations_import_data]
+                :language: python
+                :dedent: 8
+                :caption: Import data assets example.
         """
 
         experiment_name = "data_import_" + data_import.name
         data_import.type = AssetTypes.MLTABLE if isinstance(data_import.source, Database) else AssetTypes.URI_FOLDER
+
+        # avoid specifying auto_delete_setting in job output now
+        _validate_auto_delete_setting_in_data_output(data_import.auto_delete_setting)
+
+        # block cumtomer specified path on managed datastore
+        data_import.path = _validate_workspace_managed_datastore(data_import.path)
+
         if "${{name}}" not in data_import.path:
             data_import.path = data_import.path.rstrip("/") + "/${{name}}"
         import_job = import_data_func(
@@ -378,7 +456,10 @@ class DataOperations(_ScopeDependentOperations):
             source=data_import.source,
             outputs={
                 "sink": Output(
-                    type=data_import.type, path=data_import.path, name=data_import.name, version=data_import.version
+                    type=data_import.type,
+                    path=data_import.path,
+                    name=data_import.name,
+                    version=data_import.version,
                 )
             },
         )
@@ -392,7 +473,9 @@ class DataOperations(_ScopeDependentOperations):
             jobs={experiment_name: import_job},
         )
         import_pipeline.properties["azureml.materializationAssetName"] = data_import.name
-        return self._job_operation.create_or_update(job=import_pipeline, skip_validation=True, **kwargs)
+        return self._all_operations.all_operations[AzureMLResourceType.JOB].create_or_update(
+            job=import_pipeline, skip_validation=True, **kwargs
+        )
 
     @monitor_with_activity(logger, "Data.ListMaterializationStatus", ActivityType.PUBLICAPI)
     @experimental
@@ -407,13 +490,27 @@ class DataOperations(_ScopeDependentOperations):
 
         :param name: name of asset being created by the materialization jobs.
         :type name: str
-        :param list_view_type: View type for including/excluding (for example) archived jobs. Default: ACTIVE_ONLY.
-        :type list_view_type: Optional[ListViewType]
+        :keyword list_view_type: View type for including/excluding (for example) archived jobs. Default: ACTIVE_ONLY.
+        :paramtype list_view_type: Optional[ListViewType]
         :return: An iterator like instance of Job objects.
         :rtype: ~azure.core.paging.ItemPaged[PipelineJob]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_misc.py
+                :start-after: [START data_operations_list_materialization_status]
+                :end-before: [END data_operations_list_materialization_status]
+                :language: python
+                :dedent: 8
+                :caption: List materialization jobs example.
         """
 
-        return self._job_operation.list(job_type="Pipeline", asset_name=name, list_view_type=list_view_type, **kwargs)
+        return self._all_operations.all_operations[AzureMLResourceType.JOB].list(
+            job_type="Pipeline",
+            asset_name=name,
+            list_view_type=list_view_type,
+            **kwargs,
+        )
 
     @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
     def _validate(self, data: Data) -> Union[List[str], None]:
@@ -443,7 +540,7 @@ class DataOperations(_ScopeDependentOperations):
                 except Exception:  # pylint: disable=broad-except
                     # skip validation for remote MLTable when the contents cannot be read
                     module_logger.info("Unable to access MLTable metadata at path %s", asset_path)
-                    return
+                    return None
             else:
                 metadata_contents = read_local_mltable_metadata_contents(path=asset_path)
                 metadata_yaml_path = Path(asset_path, "MLTable")
@@ -458,13 +555,14 @@ class DataOperations(_ScopeDependentOperations):
 
         if is_url(asset_path):
             # skip validation for remote URI_FILE or URI_FOLDER
-            return
-
-        if os.path.isabs(asset_path):
+            pass
+        elif os.path.isabs(asset_path):
             _assert_local_path_matches_asset_type(asset_path, asset_type)
         else:
             abs_path = Path(base_path, asset_path).resolve()
             _assert_local_path_matches_asset_type(abs_path, asset_type)
+
+        return None
 
     def _try_get_mltable_metadata_jsonschema(self, mltable_schema_url: str) -> Union[Dict, None]:
         if mltable_schema_url is None:
@@ -473,7 +571,8 @@ class DataOperations(_ScopeDependentOperations):
             return download_mltable_metadata_schema(mltable_schema_url, self._requests_pipeline)
         except Exception:  # pylint: disable=broad-except
             module_logger.info(
-                'Failed to download MLTable metadata jsonschema from "%s", skipping validation', mltable_schema_url
+                'Failed to download MLTable metadata jsonschema from "%s", skipping validation',
+                mltable_schema_url,
             )
             return None
 
@@ -494,6 +593,15 @@ class DataOperations(_ScopeDependentOperations):
         :param label: Label of the data asset. (mutually exclusive with version)
         :type label: str
         :return: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_misc.py
+                :start-after: [START data_operations_archive]
+                :end-before: [END data_operations_archive]
+                :language: python
+                :dedent: 8
+                :caption: Archive data asset example.
         """
 
         _archive_or_restore(
@@ -523,6 +631,15 @@ class DataOperations(_ScopeDependentOperations):
         :param label: Label of the data asset. (mutually exclusive with version)
         :type label: str
         :return: None
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_misc.py
+                :start-after: [START data_operations_restore]
+                :end-before: [END data_operations_restore]
+                :language: python
+                :dedent: 8
+                :caption: Restore data asset example.
         """
 
         _archive_or_restore(
@@ -536,32 +653,65 @@ class DataOperations(_ScopeDependentOperations):
         )
 
     def _get_latest_version(self, name: str) -> Data:
-        """Returns the latest version of the asset with the given name.
+        """Returns the latest version of the asset with the given name. Latest is defined as the most recently created,
+         not the most recently updated.
 
-        Latest is defined as the most recently created, not the most recently updated.
+        :param name: The asset name
+        :type name: str
+        :return: The latest asset
+        :rtype: Data
         """
         latest_version = _get_latest_version_from_container(
-            name, self._container_operation, self._resource_group_name, self._workspace_name, self._registry_name
+            name,
+            self._container_operation,
+            self._resource_group_name,
+            self._workspace_name,
+            self._registry_name,
         )
         return self.get(name, version=latest_version)
 
-    # pylint: disable=no-self-use
-    def _prepare_to_copy(
-        self, data: Data, name: Optional[str] = None, version: Optional[str] = None
-    ) -> WorkspaceAssetReference:
+    @monitor_with_activity(logger, "data.Share", ActivityType.PUBLICAPI)
+    @experimental
+    def share(
+        self,
+        name,
+        version,
+        *,
+        share_with_name,
+        share_with_version,
+        registry_name,
+        **kwargs,
+    ) -> Data:
+        """Share a data asset from workspace to registry.
 
-        """Returns WorkspaceAssetReference to copy a registered data to registry given the asset id.
-
-        :param data: Registered data
-        :type data: Data
-        :param name: Destination name
+        :param name: Name of data asset.
         :type name: str
-        :param version: Destination version
+        :param version: Version of data asset.
         :type version: str
+        :keyword share_with_name: Name of data asset to share with.
+        :paramtype share_with_name: str
+        :keyword share_with_version: Version of data asset to share with.
+        :paramtype share_with_version: str
+        :keyword registry_name: Name of the destination registry.
+        :paramtype registry_name: str
+        :return: Data asset object.
+        :rtype: ~azure.ai.ml.entities.Data
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_misc.py
+                :start-after: [START data_operations_share]
+                :end-before: [END data_operations_share]
+                :language: python
+                :dedent: 8
+                :caption: Share data asset example.
         """
+
         #  Get workspace info to get workspace GUID
         workspace = self._service_client.workspaces.get(
-            resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
+            resource_group_name=self._resource_group_name,
+            workspace_name=self._workspace_name,
+            **kwargs,
         )
         workspace_guid = workspace.workspace_id
         workspace_location = workspace.location
@@ -571,15 +721,47 @@ class DataOperations(_ScopeDependentOperations):
             workspace_location,
             workspace_guid,
             AzureMLResourceType.DATA,
-            data.name,
-            data.version,
+            name,
+            version,
         )
 
-        return WorkspaceAssetReference(
-            name=name if name else data.name,
-            version=version if version else data.version,
+        data_ref = WorkspaceAssetReference(
+            name=share_with_name if share_with_name else name,
+            version=share_with_version if share_with_version else version,
             asset_id=asset_id,
         )
+
+        with self._set_registry_client(registry_name):
+            return self.create_or_update(data_ref)
+
+    @contextmanager
+    # pylint: disable-next=docstring-missing-return,docstring-missing-rtype
+    def _set_registry_client(self, registry_name: str) -> Iterable[None]:
+        """Sets the registry client for the data operations.
+
+        :param registry_name: Name of the registry.
+        :type registry_name: str
+        """
+        rg_ = self._operation_scope._resource_group_name
+        sub_ = self._operation_scope._subscription_id
+        registry_ = self._operation_scope.registry_name
+        client_ = self._service_client
+        data_versions_operation_ = self._operation
+
+        try:
+            _client, _rg, _sub = get_registry_client(self._service_client._config.credential, registry_name)
+            self._operation_scope.registry_name = registry_name
+            self._operation_scope._resource_group_name = _rg
+            self._operation_scope._subscription_id = _sub
+            self._service_client = _client
+            self._operation = _client.data_versions
+            yield
+        finally:
+            self._operation_scope.registry_name = registry_
+            self._operation_scope._resource_group_name = rg_
+            self._operation_scope._subscription_id = sub_
+            self._service_client = client_
+            self._operation = data_versions_operation_
 
 
 def _assert_local_path_matches_asset_type(

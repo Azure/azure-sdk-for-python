@@ -1,14 +1,16 @@
 # Release History
 
-## 1.2.0 (Unreleased)
+## 1.2.0b1 (Unreleased)
 
 ### Features Added
 - Added support for proactive refreshing of tokens
-  - `CommunicationTokenCredential` exposes a new boolean keyword argument `proactive_refresh` that defaults to `False`. If set to `True`, the refreshing of the token will be scheduled in the background ensuring continuous authentication state.
-  - Added disposal function `close` for `CommunicationTokenCredential`.
+- `CommunicationTokenCredential` exposes a new boolean keyword argument `proactive_refresh` that defaults to `False`. If set to `True`, the refreshing of the token will be scheduled in the background ensuring continuous authentication state.
+- Added disposal function `close` for `CommunicationTokenCredential`.
 - Added `identifier_from_raw_id` and ensured that `CommunicationIdentifier.raw_id` is populated on creation. Together, these can be used to translate between a `CommunicationIdentifier` and its underlying canonical raw ID representation. Developers can now use the raw ID as an encoded format for identifiers to store in their databases or as stable keys in general.
+- Added support for a new communication identifier `MicrosoftBotIdentifier`.
 
 ### Breaking Changes
+- Introduction of `MicrosoftBotIdentifier` is a breaking change. It will affect code that relied on using `UnknownIdentifier` with a raw_id starting with `28:` 
 
 ### Bugs Fixed
 

@@ -4,6 +4,7 @@ $ErrorActionPreference = 'Stop'
 $FailedCommands = New-Object Collections.Generic.List[hashtable]
 
 . (Join-Path $PSScriptRoot "../Helpers" PSModule-Helpers.ps1)
+. (Join-Path $PSScriptRoot "../SemVer.ps1")
 
 $limitRangeSpec = @"
 apiVersion: v1
@@ -17,6 +18,8 @@ spec:
       memory: 100Mi
     type: Container
 "@
+
+$MIN_HELM_VERSION = "3.11.0"
 
 # Powershell does not (at time of writing) treat exit codes from external binaries
 # as cause for stopping execution, so do this via a wrapper function.
@@ -40,7 +43,7 @@ function RunOrExitOnFailure()
     }
 }
 
-function Login([string]$subscription, [string]$clusterGroup, [switch]$pushImages)
+function Login([string]$subscription, [string]$clusterGroup, [switch]$skipPushImages)
 {
     Write-Host "Logging in to subscription, cluster and container registry"
     az account show *> $null
@@ -56,7 +59,7 @@ function Login([string]$subscription, [string]$clusterGroup, [switch]$pushImages
     $kubeContext = (RunOrExitOnFailure kubectl config view -o json) | ConvertFrom-Json -AsHashtable
     $defaultNamespace = $null
     $targetContext = $kubeContext.contexts.Where({ $_.name -eq $clusterName }) | Select -First 1
-    if ($targetContext -ne $null -and $targetContext.PSObject.Properties.Name -match "namespace") {
+    if ($targetContext -ne $null -and $targetContext.Contains('context') -and $targetContext.context.Contains('namespace')) {
         $defaultNamespace = $targetContext.context.namespace
     }
 
@@ -70,10 +73,10 @@ function Login([string]$subscription, [string]$clusterGroup, [switch]$pushImages
         RunOrExitOnFailure kubectl config set-context $clusterName --namespace $defaultNamespace
     }
 
-    if ($pushImages) {
+    if (!$skipPushImages) {
         $registry = RunOrExitOnFailure az acr list -g $clusterGroup --subscription $subscription -o json
         $registryName = ($registry | ConvertFrom-Json).name
-        RunOrExitOnFailure az acr login -n $registryName
+        RunOrExitOnFailure az acr login -n $registryName --subscription $subscription
     }
 }
 
@@ -83,10 +86,10 @@ function DeployStressTests(
     # Default to playground environment
     [string]$environment = 'pg',
     [string]$repository = '',
-    [switch]$pushImages,
+    [switch]$skipPushImages,
     [string]$clusterGroup = '',
     [string]$deployId = '',
-    [switch]$login,
+    [switch]$skipLogin,
     [string]$subscription = '',
     [switch]$CI,
     [string]$Namespace,
@@ -104,7 +107,8 @@ function DeployStressTests(
     [Parameter(Mandatory=$False)][string]$MatrixDisplayNameFilter,
     [Parameter(Mandatory=$False)][array]$MatrixFilters,
     [Parameter(Mandatory=$False)][array]$MatrixReplace,
-    [Parameter(Mandatory=$False)][array]$MatrixNonSparseParameters
+    [Parameter(Mandatory=$False)][array]$MatrixNonSparseParameters,
+    [Parameter(Mandatory=$False)][int]$LockDeletionForDays
 ) {
     if ($environment -eq 'pg') {
         if ($clusterGroup -or $subscription) {
@@ -122,8 +126,8 @@ function DeployStressTests(
         throw "clusterGroup and subscription parameters must be specified when deploying to an environment that is not pg or prod."
     }
 
-    if ($login) {
-        Login -subscription $subscription -clusterGroup $clusterGroup -pushImages:$pushImages
+    if (!$skipLogin) {
+        Login -subscription $subscription -clusterGroup $clusterGroup -skipPushImages:$skipPushImages
     }
 
     $chartRepoName = 'stress-test-charts'
@@ -159,13 +163,13 @@ function DeployStressTests(
             -deployId $deployer `
             -environment $environment `
             -repositoryBase $repository `
-            -pushImages:$pushImages `
-            -login:$login `
+            -skipPushImages:$skipPushImages `
+            -skipLogin:$skipLogin `
             -clusterGroup $clusterGroup `
             -subscription $subscription
     }
 
-    if ($FailedCommands.Count -lt $pkgs.Count) {
+    if ($FailedCommands.Count -lt $pkgs.Count -and !$Template) {
         Write-Host "Releases deployed by $deployer"
         Run helm list --all-namespaces -l deployId=$deployer
     }
@@ -186,8 +190,8 @@ function DeployStressPackage(
     [string]$deployId,
     [string]$environment,
     [string]$repositoryBase,
-    [switch]$pushImages,
-    [switch]$login,
+    [switch]$skipPushImages,
+    [switch]$skipLogin,
     [string]$clusterGroup,
     [string]$subscription
 ) {
@@ -208,12 +212,14 @@ function DeployStressPackage(
     }
     $imageTagBase += "/$($pkg.Namespace)/$($pkg.ReleaseName)"
 
-    Write-Host "Creating namespace $($pkg.Namespace) if it does not exist..."
-    kubectl create namespace $pkg.Namespace --dry-run=client -o yaml | kubectl apply -f -
-    if ($LASTEXITCODE) {exit $LASTEXITCODE}
-    Write-Host "Adding default resource requests to namespace/$($pkg.Namespace)"
-    $limitRangeSpec | kubectl apply -n $pkg.Namespace -f -
-    if ($LASTEXITCODE) {exit $LASTEXITCODE}
+    if (!$Template) {
+        Write-Host "Creating namespace $($pkg.Namespace) if it does not exist..."
+        kubectl create namespace $pkg.Namespace --dry-run=client -o yaml | kubectl apply -f -
+        if ($LASTEXITCODE) {exit $LASTEXITCODE}
+        Write-Host "Adding default resource requests to namespace/$($pkg.Namespace)"
+        $limitRangeSpec | kubectl apply -n $pkg.Namespace -f -
+        if ($LASTEXITCODE) {exit $LASTEXITCODE}
+    }
 
     $dockerBuildConfigs = @()
 
@@ -264,9 +270,12 @@ function DeployStressPackage(
         }
         $dockerfileName = ($dockerFilePath -split { $_ -in '\', '/' })[-1].ToLower()
         $imageTag = $imageTagBase + "/${dockerfileName}:${deployId}"
-        if ($pushImages) {
+        if (!$skipPushImages) {
             Write-Host "Building and pushing stress test docker image '$imageTag'"
             $dockerFile = Get-ChildItem $dockerFilePath
+
+            Write-Host "Setting DOCKER_BUILDKIT=1"
+            $env:DOCKER_BUILDKIT = 1
 
             $dockerBuildCmd = "docker", "build", "-t", $imageTag, "-f", $dockerFile
             foreach ($buildArg in $dockerBuildConfig.scenario.GetEnumerator()) {
@@ -287,8 +296,8 @@ function DeployStressPackage(
 
             Run docker push $imageTag
             if ($LASTEXITCODE) {
-                if ($login) {
-                    Write-Warning "If docker push is failing due to authentication issues, try calling this script with '-Login'"
+                if (!$skipLogin) {
+                    Write-Warning "If docker push is failing due to authentication issues, try calling this script without '-SkipLogin'"
                 }
             }
         }
@@ -311,8 +320,18 @@ function DeployStressPackage(
 
     $generatedConfigPath = Join-Path $pkg.Directory generatedValues.yaml
     $subCommand = $Template ? "template" : "upgrade"
-    $installFlag = $Template ? "" : "--install"
-    $helmCommandArg = "helm", $subCommand, $releaseName, $pkg.Directory, "-n", $pkg.Namespace, $installFlag, "--set", "stress-test-addons.env=$environment", "--values", $generatedConfigPath
+    $subCommandFlag = $Template ? "--debug" : "--install"
+    $helmCommandArg = "helm", $subCommand, $releaseName, $pkg.Directory, "-n", $pkg.Namespace, $subCommandFlag, "--values", $generatedConfigPath, "--set", "stress-test-addons.env=$environment"
+
+    if ($LockDeletionForDays) {
+        $date = (Get-Date).AddDays($LockDeletionForDays).ToUniversalTime()
+        $isoDate = $date.ToString("o")
+        # Tell kubernetes job to run only on this specific future time. Technically it will run once per year.
+        $cron = "$($date.Minute) $($date.Hour) $($date.Day) $($date.Month) *"
+
+        Write-Host "PodDisruptionBudget will be set to prevent deletion until $isoDate"
+        $helmCommandArg += "--set", "PodDisruptionBudgetExpiry=$($isoDate)", "--set", "PodDisruptionBudgetExpiryCron=$cron"
+    }
 
     $result = (Run @helmCommandArg) 2>&1 | Write-Host
 
@@ -336,7 +355,7 @@ function DeployStressPackage(
     # Helm 3 stores release information in kubernetes secrets. The only way to add extra labels around
     # specific releases (thereby enabling filtering on `helm list`) is to label the underlying secret resources.
     # There is not currently support for setting these labels via the helm cli.
-    if(!$Template) {
+    if (!$Template) {
         $helmReleaseConfig = RunOrExitOnFailure kubectl get secrets `
                                                 -n $pkg.Namespace `
                                                 -l "status=deployed,name=$releaseName" `
@@ -376,6 +395,29 @@ function CheckDependencies()
         }
     }
 
+    # helm version example: v3.11.2+g912ebc1
+    $helmVersionString = (helm version --short).substring(1) -replace '\+.*',''
+    $helmVersion = [AzureEngSemanticVersion]::new($helmVersionString)
+    $minHelmVersion = [AzureEngSemanticVersion]::new($MIN_HELM_VERSION)
+    if ($helmVersion.CompareTo($minHelmVersion) -lt 0) {
+        throw "Please update helm to version >= $MIN_HELM_VERSION (current version: $helmVersionString)`nAdditional information for updating helm version can be found here: https://helm.sh/docs/intro/install/"
+    }
+
+    # Ensure docker is running via command and handle command hangs
+    if (!$skipPushImages) {
+        $LastErrorActionPreference = $ErrorActionPreference
+        $ErrorActionPreference = 'Continue'
+        $job = Start-Job { docker ps; return $LASTEXITCODE }
+        $result = $job | Wait-Job -Timeout 5 | Receive-Job
+
+        $ErrorActionPreference = $LastErrorActionPreference
+        $job | Remove-Job -Force
+
+        if (($result -eq $null -and $job.State -ne "Completed") -or ($result | Select -Last 1) -ne 0) {
+            throw "Docker does not appear to be running. Start/restart docker or re-run this script with -SkipPushImages"
+        }
+    }
+
     if ($shouldError) {
         exit 1
     }
@@ -383,11 +425,11 @@ function CheckDependencies()
 }
 
 function generateRetryTestsHelmValues ($pkg, $releaseName, $generatedHelmValues) {
+
     $podOutput = RunOrExitOnFailure kubectl get pods -n $pkg.namespace -o json
     $pods = $podOutput | ConvertFrom-Json
 
     # Get all jobs within this helm release
-    
     $helmStatusOutput = RunOrExitOnFailure helm status -n $pkg.Namespace $pkg.ReleaseName --show-resources
     # -----Example output-----
     # NAME: <Release Name>

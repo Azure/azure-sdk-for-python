@@ -34,26 +34,29 @@ from azure.search.documents.indexes.models import (
     ComplexField,
     CorsOptions,
     ScoringProfile,
-    SearchAlias, 
-    SearchIndex, 
-    SimpleField, 
+    SearchAlias,
+    SearchIndex,
+    SimpleField,
     SearchableField,
-    SearchFieldDataType
+    SearchFieldDataType,
 )
 
 
 client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
 
+
 async def create_alias():
     # [START create_alias_async]
-    alias = SearchAlias(name = alias_name, indexes = [index_name])
+    alias = SearchAlias(name=alias_name, indexes=[index_name])
     result = await client.create_alias(alias)
     # [END create_alias_async]
+
 
 async def get_alias():
     # [START get_alias_async]
     result = await client.get_alias(alias_name)
     # [END get_alias_async]
+
 
 async def update_alias():
     # [START update_alias_async]
@@ -63,36 +66,38 @@ async def update_alias():
         SimpleField(name="baseRate", type=SearchFieldDataType.Double),
         SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
         SearchableField(name="hotelName", type=SearchFieldDataType.String),
-        ComplexField(name="address", fields=[
-            SimpleField(name="streetAddress", type=SearchFieldDataType.String),
-            SimpleField(name="city", type=SearchFieldDataType.String),
-            SimpleField(name="state", type=SearchFieldDataType.String),
-        ], collection=True)
+        ComplexField(
+            name="address",
+            fields=[
+                SimpleField(name="streetAddress", type=SearchFieldDataType.String),
+                SimpleField(name="city", type=SearchFieldDataType.String),
+                SimpleField(name="state", type=SearchFieldDataType.String),
+            ],
+            collection=True,
+        ),
     ]
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
-    scoring_profile = ScoringProfile(
-        name="MyProfile"
-    )
+    scoring_profile = ScoringProfile(name="MyProfile")
     scoring_profiles = []
     scoring_profiles.append(scoring_profile)
     index = SearchIndex(
-        name=new_index_name,
-        fields=fields,
-        scoring_profiles=scoring_profiles,
-        cors_options=cors_options)
+        name=new_index_name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options
+    )
 
     result_index = await client.create_or_update_index(index=index)
 
-    alias = SearchAlias(name = alias_name, indexes = [new_index_name])
+    alias = SearchAlias(name=alias_name, indexes=[new_index_name])
     result = await client.create_or_update_alias(alias)
 
     # [END update_alias_async]
+
 
 async def delete_alias():
     # [START delete_alias_async]
 
     await client.delete_alias(alias_name)
     # [END delete_alias_async]
+
 
 async def main():
     await create_alias()
@@ -101,5 +106,6 @@ async def main():
     await delete_alias()
     await client.close()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

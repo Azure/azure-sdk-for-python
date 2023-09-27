@@ -21,12 +21,11 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
     authentication challenges.
 
     :param credential: The credential.
-    :type credential: ~azure.core.AsyncTokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param str scopes: Lets you specify the type of access needed.
     :keyword bool discover_tenant: Determines if tenant discovery should be enabled. Defaults to True.
     :keyword bool discover_scopes: Determines if scopes from authentication challenges should be provided to token
         requests, instead of the scopes given to the policy's constructor, if any are present. Defaults to True.
-    :raises: :class:`~azure.core.exceptions.ServiceRequestError`
     """
 
     def __init__(
@@ -35,7 +34,7 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
         *scopes: str,
         discover_tenant: bool = True,
         discover_scopes: bool = True,
-        **kwargs
+        **kwargs,
     ) -> None:
         self._discover_tenant = discover_tenant
         self._discover_scopes = discover_scopes
@@ -49,6 +48,7 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
         :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
         :param ~azure.core.pipeline.PipelineResponse response: the resource provider's response
         :returns: a bool indicating whether the policy should send the request
+        :rtype: bool
         """
         if not self._discover_tenant and not self._discover_scopes:
             # We can't discover the tenant or use a different scope; the request will fail because it hasn't changed
@@ -75,43 +75,35 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
 def _configure_credential(credential: AzureNamedKeyCredential) -> SharedKeyCredentialPolicy:
     ...
 
+
 @overload
 def _configure_credential(credential: SharedKeyCredentialPolicy) -> SharedKeyCredentialPolicy:
     ...
+
 
 @overload
 def _configure_credential(credential: AzureSasCredential) -> AzureSasCredentialPolicy:
     ...
 
+
 @overload
 def _configure_credential(credential: AsyncTokenCredential) -> AsyncBearerTokenChallengePolicy:
     ...
+
 
 @overload
 def _configure_credential(credential: None) -> None:
     ...
 
+
 def _configure_credential(
     credential: Optional[
-        Union[
-            AzureNamedKeyCredential,
-            AzureSasCredential,
-            AsyncTokenCredential,
-            SharedKeyCredentialPolicy
-        ]
+        Union[AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential, SharedKeyCredentialPolicy]
     ]
-) -> Optional[
-    Union[
-        AsyncBearerTokenChallengePolicy,
-        AzureSasCredentialPolicy,
-        SharedKeyCredentialPolicy
-    ]
-]:
+) -> Optional[Union[AsyncBearerTokenChallengePolicy, AzureSasCredentialPolicy, SharedKeyCredentialPolicy]]:
     if hasattr(credential, "get_token"):
         credential = cast(AsyncTokenCredential, credential)
-        return AsyncBearerTokenChallengePolicy(
-            credential, STORAGE_OAUTH_SCOPE
-        )
+        return AsyncBearerTokenChallengePolicy(credential, STORAGE_OAUTH_SCOPE)
     if isinstance(credential, SharedKeyCredentialPolicy):
         return credential
     if isinstance(credential, AzureSasCredential):
@@ -119,5 +111,5 @@ def _configure_credential(
     if isinstance(credential, AzureNamedKeyCredential):
         return SharedKeyCredentialPolicy(credential)
     if credential is not None:
-        raise TypeError("Unsupported credential: {}".format(credential))
+        raise TypeError(f"Unsupported credential: {credential}")
     return None

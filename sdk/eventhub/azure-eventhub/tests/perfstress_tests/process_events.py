@@ -25,7 +25,7 @@ class ProcessEventsTest(_EventHubProcessorTest):
                     starttime = time.time()
                     while (time.time() - starttime) < delay_in_seconds:
                         pass
-            
+
             # Consume properties: this will load all the AMQP message application properties into
             # a decoded dictionary.
             _ = event.properties
@@ -53,7 +53,7 @@ class ProcessEventsTest(_EventHubProcessorTest):
                     starttime = time.time()
                     while (time.time() - starttime) < delay_in_seconds:
                         pass
-            
+
             # Consume properties: this will load all the AMQP message application properties into
             # a decoded dictionary.
             _ = event.properties

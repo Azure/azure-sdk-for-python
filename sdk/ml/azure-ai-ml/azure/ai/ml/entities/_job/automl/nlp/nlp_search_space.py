@@ -4,7 +4,7 @@
 
 from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import NlpLearningRateScheduler, NlpParameterSubspace
+from azure.ai.ml._restclient.v2023_04_01_preview.models import NlpLearningRateScheduler, NlpParameterSubspace
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import NlpModels
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace

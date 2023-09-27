@@ -810,7 +810,7 @@ class LeaseContainerRequest(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar action: Specifies the lease action. Can be one of the available actions. Required. Known
-     values are: "Acquire", "Renew", "Change", "Release", and "Break".
+     values are: "Acquire", "Renew", "Change", "Release", "Break", and "Break".
     :vartype action: str or
      ~azure.mgmt.storage.v2018_03_01_preview.models.LeaseContainerRequestAction
     :ivar lease_id: Identifies the lease. Can be specified in any valid GUID string format.
@@ -850,7 +850,7 @@ class LeaseContainerRequest(_serialization.Model):
     ) -> None:
         """
         :keyword action: Specifies the lease action. Can be one of the available actions. Required.
-         Known values are: "Acquire", "Renew", "Change", "Release", and "Break".
+         Known values are: "Acquire", "Renew", "Change", "Release", "Break", and "Break".
         :paramtype action: str or
          ~azure.mgmt.storage.v2018_03_01_preview.models.LeaseContainerRequestAction
         :keyword lease_id: Identifies the lease. Can be specified in any valid GUID string format.

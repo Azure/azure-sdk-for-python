@@ -6,14 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models_py3 import Alias
-from ._models_py3 import AliasPath
-from ._models_py3 import AliasPathMetadata
-from ._models_py3 import AliasPattern
-from ._models_py3 import DataEffect
-from ._models_py3 import DataManifestCustomResourceFunctionDefinition
-from ._models_py3 import DataPolicyManifest
-from ._models_py3 import DataPolicyManifestListResult
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorResponse
 from ._models_py3 import Identity
@@ -28,27 +20,13 @@ from ._models_py3 import PolicyDefinition
 from ._models_py3 import PolicyDefinitionGroup
 from ._models_py3 import PolicyDefinitionListResult
 from ._models_py3 import PolicyDefinitionReference
-from ._models_py3 import PolicyExemption
-from ._models_py3 import PolicyExemptionListResult
 from ._models_py3 import PolicySetDefinition
 from ._models_py3 import PolicySetDefinitionListResult
-from ._models_py3 import PolicyVariableColumn
-from ._models_py3 import PolicyVariableValueColumnValue
-from ._models_py3 import ResourceTypeAliases
 from ._models_py3 import SystemData
 from ._models_py3 import UserAssignedIdentitiesValue
-from ._models_py3 import Variable
-from ._models_py3 import VariableListResult
-from ._models_py3 import VariableValue
-from ._models_py3 import VariableValueListResult
 
-from ._policy_client_enums import AliasPathAttributes
-from ._policy_client_enums import AliasPathTokenType
-from ._policy_client_enums import AliasPatternType
-from ._policy_client_enums import AliasType
 from ._policy_client_enums import CreatedByType
 from ._policy_client_enums import EnforcementMode
-from ._policy_client_enums import ExemptionCategory
 from ._policy_client_enums import ParameterType
 from ._policy_client_enums import PolicyType
 from ._policy_client_enums import ResourceIdentityType
@@ -57,14 +35,6 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "Alias",
-    "AliasPath",
-    "AliasPathMetadata",
-    "AliasPattern",
-    "DataEffect",
-    "DataManifestCustomResourceFunctionDefinition",
-    "DataPolicyManifest",
-    "DataPolicyManifestListResult",
     "ErrorAdditionalInfo",
     "ErrorResponse",
     "Identity",
@@ -79,26 +49,12 @@ __all__ = [
     "PolicyDefinitionGroup",
     "PolicyDefinitionListResult",
     "PolicyDefinitionReference",
-    "PolicyExemption",
-    "PolicyExemptionListResult",
     "PolicySetDefinition",
     "PolicySetDefinitionListResult",
-    "PolicyVariableColumn",
-    "PolicyVariableValueColumnValue",
-    "ResourceTypeAliases",
     "SystemData",
     "UserAssignedIdentitiesValue",
-    "Variable",
-    "VariableListResult",
-    "VariableValue",
-    "VariableValueListResult",
-    "AliasPathAttributes",
-    "AliasPathTokenType",
-    "AliasPatternType",
-    "AliasType",
     "CreatedByType",
     "EnforcementMode",
-    "ExemptionCategory",
     "ParameterType",
     "PolicyType",
     "ResourceIdentityType",

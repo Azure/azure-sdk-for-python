@@ -14,3 +14,7 @@ try:
     patch_sdk()
 except ImportError:
     pass
+
+from ._version import VERSION
+
+__version__ = VERSION

@@ -1,10 +1,99 @@
 # Release History
 
-## 1.6.0 (Unreleased)
+## 1.11.0 (unreleased)
+
+### Features Added
+- Now, when you specify `delete_dependent_resources` as True when deleting a workspace, the log analytics resource
+  associated with the workspace application insights resource will also be deleted.
+
+### Bugs Fixed
+
+### Breaking Changes
+ - [Python 3.7 reached end-of-life on June 27th 2023](https://devguide.python.org/versions/). Consequently, 3.7 will be deprecated in azure-ai-ml starting in October 2023 and azure-ai-ml will end support for 3.7 in February 2024.
+
+### Other Changes
+
+## 1.10.1 (2023-09-17)
+
+### Bugs Fixed
+- Feature sets can now be registers after being dumped and reloaded.
+- SDK feature store create/update can now assign materialization identities to cross RG offline stores and online stores.
+
+## 1.10.0 (2023-09-07)
+
+### Features Added
+- Added support of features that are known into the future/at forecast time for dnn in AutoML Forecasting jobs.
+- Added support for new workspace connection types: azure_open_ai, cognitive_search, and cognitive_service.
+- Added support for new credential type: ApiKeyConfiguration.
+- Added support of `download` for component operations.
+
+### Bugs Fixed
+- Local job runs will no longer fail if Docker registry has no username/password
+- Fixed an issue that code asset doesn't work with relative symbol links.
+- Fixed [Issue 31319](https://github.com/Azure/azure-sdk-for-python/issues/31319): can't accept `PathLike` for `CommandComponent.code`.
+
+### Other Changes
+
+- `azure-ai-ml` now performs all file i/o on `utf-8` encoded files per Azure SDK guidance. 
+  (instead of the default behavior for python < 3.15, which uses locale specific encodings)
+- Removed references to deprecated "feature_store" workspace connection type.
+
+## 1.9.0 (2023-07-25)
+
+### Features Added
+- Added support to enable gpu access (local_enable_gpu) for local deployment.
+
+### Other Changes
+
+- Improved the output when printing a workspace object to be more clean and readable.
+- Log level of unknown field notifications for pipeline nodes raised from INFO to WARNING.
+## 1.8.0 (2023-06-12)
+
+### Features Added
+- Added support to enable set workspace connection secret expiry time.
+- Added support for `stage` on model version
+
+### Bugs Fixed
+
+- Fixed an issue affecting authentication to registry-related services in sovereign regions.
+- Made job_tier and priority values case insensitive
+
+## 1.7.2 (2023-05-18)
+
+### Features Added
+- Public preview support for new schedule type `MonitorSchedule`
+
+
+## 1.7.1 (2023-05-17)
+
+### Bugs Fixed
+- Fixed an issue where `OnlineDeployment.provisioning_state` was incorrectly deserialized and set as `None`
+
+
+## 1.7.0 (2023-05-15)
+
+### Features Added
+- Added data import schedule. The class added is `ImportDataSchedule`.
+- Added support to enable data isolation feature at workspace creation stage.
+- Added auto_delete_setting support for asset version in data import job.
+
+### Bugs Fixed
+
+### Breaking Changes
+
+### Other Changes
+
+
+## 1.6.0 (2023-05-01)
 
 ### Features Added
 - Added experimental scatter gather node to DSL package. This node has a unique mldesigner dependency.
 - Added support to make JobService and ServiceInstance objects serializable when printed
+- Support Singularity compute in pipeline job
+- Added purge operation support for workspace resource
+- Added Feature Store, its dedicated classes and updated the docstrings, now available in public interface. The classes added are `FeatureStoreOperations, FeatureSetOperations, FeatureStoreEntityOperations` with properties classes specific to the new features.
+- Support additional_includes in command component
+- Added experimental `distribution: ray` support in command job.
 
 ### Bugs Fixed
 
@@ -62,6 +151,7 @@
 - Added dedicated classes for each type of job service and updated the docstrings. The classes added are `JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService` with a few properties specific to the type.
 - Added Custom Applications Support to Compute Instances.
 - Update data asset list, show and create operations to support data assets in registry.
+- Added Managed Network features to workspace to include `ManagedNetwork`, `FqdnDestination`, `PrivateEndpointDestination`, `ServiceTagDestination` as well as relevant schema.
 
 ### Bugs Fixed
 - Fixed an issue where the ordering of `.amlignore` and `.gitignore` files are not respected.

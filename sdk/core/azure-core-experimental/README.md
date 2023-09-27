@@ -14,6 +14,7 @@ pip install azure-core-experimental
 ## Features list
 
 - pyodide transport
+- httpx transport
 
 ## Contributing
 

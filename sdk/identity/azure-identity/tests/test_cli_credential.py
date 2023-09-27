@@ -99,6 +99,16 @@ def test_not_logged_in():
                 AzureCliCredential().get_token("scope")
 
 
+def test_aadsts_error():
+    """When the CLI isn't logged in, the credential should raise CredentialUnavailableError"""
+
+    stderr = "ERROR: AADSTS70043: The refresh token has expired, Please run 'az login' to setup account."
+    with mock.patch("shutil.which", return_value="az"):
+        with mock.patch(CHECK_OUTPUT, raise_called_process_error(1, stderr=stderr)):
+            with pytest.raises(ClientAuthenticationError, match=stderr):
+                AzureCliCredential().get_token("scope")
+
+
 def test_unexpected_error():
     """When the CLI returns an unexpected error, the credential should raise an error containing the CLI's output"""
 
@@ -243,8 +253,6 @@ def test_multitenant_authentication_not_allowed():
             token = credential.get_token("scope")
             assert token.token == expected_token
 
-            with mock.patch.dict(
-                "os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}
-            ):
+            with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
                 token = credential.get_token("scope", tenant_id="un" + expected_tenant)
             assert token.token == expected_token

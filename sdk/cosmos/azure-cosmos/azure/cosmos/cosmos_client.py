@@ -74,26 +74,26 @@ def _build_auth(credential):
 def _build_connection_policy(kwargs):
     # type: (Dict[str, Any]) -> ConnectionPolicy
     # pylint: disable=protected-access
-    policy = kwargs.pop('connection_policy', None) or ConnectionPolicy()
+    policy = kwargs.pop('connection_policy', ConnectionPolicy())
 
     # Connection config
-    policy.RequestTimeout = kwargs.pop('request_timeout', None) or \
-        kwargs.pop('connection_timeout', None) or \
-        policy.RequestTimeout
-    policy.ConnectionMode = kwargs.pop('connection_mode', None) or policy.ConnectionMode
-    policy.ProxyConfiguration = kwargs.pop('proxy_config', None) or policy.ProxyConfiguration
-    policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery') \
-        if 'enable_endpoint_discovery' in kwargs.keys() else policy.EnableEndpointDiscovery
-    policy.PreferredLocations = kwargs.pop('preferred_locations', None) or policy.PreferredLocations
-    policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations', None) or \
-        policy.UseMultipleWriteLocations
+    # `request_timeout` is supported as a legacy parameter later replaced by `connection_timeout`
+    if 'request_timeout' in kwargs:
+        policy.RequestTimeout = kwargs.pop('request_timeout') / 1000.0
+    else:
+        policy.RequestTimeout = kwargs.pop('connection_timeout', policy.RequestTimeout)
+    policy.ConnectionMode = kwargs.pop('connection_mode', policy.ConnectionMode)
+    policy.ProxyConfiguration = kwargs.pop('proxy_config', policy.ProxyConfiguration)
+    policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', policy.EnableEndpointDiscovery)
+    policy.PreferredLocations = kwargs.pop('preferred_locations', policy.PreferredLocations)
+    policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations', policy.UseMultipleWriteLocations)
 
     # SSL config
     verify = kwargs.pop('connection_verify', None)
     policy.DisableSSLVerification = not bool(verify if verify is not None else True)
-    ssl = kwargs.pop('ssl_config', None) or policy.SSLConfiguration
+    ssl = kwargs.pop('ssl_config', policy.SSLConfiguration)
     if ssl:
-        ssl.SSLCertFile = kwargs.pop('connection_cert', None) or ssl.SSLCertFile
+        ssl.SSLCertFile = kwargs.pop('connection_cert', ssl.SSLCertFile)
         ssl.SSLCaCerts = verify or ssl.SSLCaCerts
         policy.SSLConfiguration = ssl
 
@@ -135,13 +135,19 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
     Use this client to configure and execute requests to the Azure Cosmos DB service.
 
+    Its recommended to maintain a single instance of CosmosClient per lifetime of the application which enables
+        efficient connection management and performance.
+
+    CosmosClient initialization is a heavy operation - don't use initialization CosmosClient instances as
+        credentials or network connectivity validations.
+
     :param str url: The URL of the Cosmos DB account.
     :param credential: Can be the account key, or a dictionary of resource tokens.
     :type credential: Union[str, Dict[str, str], ~azure.core.credentials.TokenCredential]
     :param str consistency_level: Consistency level to use for the session. The default value is None (Account level).
         More on consistency levels and possible values: https://aka.ms/cosmos-consistency-levels
     :keyword int timeout: An absolute timeout in seconds, for the combined HTTP request and response processing.
-    :keyword int request_timeout: The HTTP request timeout in milliseconds.
+    :keyword int connection_timeout: The HTTP request timeout in seconds.
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
     :keyword proxy_config: Connection proxy configuration.
     :paramtype proxy_config: ~azure.cosmos.ProxyConfiguration
@@ -386,7 +392,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     def query_databases(
         self,
         query=None,  # type: Optional[str]
-        parameters=None,  # type: Optional[List[str]]
+        parameters=None,  # type: Optional[List[Dict[str, Any]]]
         enable_cross_partition_query=None,  # type: Optional[bool]
         max_item_count=None,  # type:  Optional[int]
         populate_query_metrics=None,  # type: Optional[bool]
@@ -396,7 +402,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         """Query the databases in a Cosmos DB SQL database account.
 
         :param str query: The Azure Cosmos DB SQL query to execute.
-        :param list[str] parameters: Optional array of parameters to the query. Ignored if no query is provided.
+        :param List[Dict[str, Any]] parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param bool enable_cross_partition_query: Allow scan on the queries which couldn't be
             served as indexing was opted out on the requested paths.
         :param int max_item_count: Max number of items to be returned in the enumeration operation.

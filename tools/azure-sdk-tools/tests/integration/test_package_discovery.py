@@ -16,8 +16,9 @@ def test_toml_result():
     result = parsed_setup.get_build_config()
 
     expected = {
-        "type_check_samples": False,
-        "verifytypes": False,
+        "mypy": True,
+        "type_check_samples": True,
+        "verifytypes": True,
         "pyright": False,
     }
 
@@ -109,3 +110,4 @@ def test_discovery_honors_override():
         "azure-core-tracing-opentelemetry",
         "azure-mgmt-core",
     ]
+    

@@ -13,8 +13,6 @@ from devtools_testutils.sanitizers import (
     add_oauth_response_sanitizer,
     set_custom_default_matcher
 )
-
-
 collect_ignore = []
 
 @pytest.fixture(scope="session", autouse=True)

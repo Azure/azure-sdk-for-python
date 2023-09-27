@@ -107,6 +107,7 @@ async def test_cli_not_installed():
             credential = AzureCliCredential()
             await credential.get_token("scope")
 
+
 async def test_cannot_execute_shell():
     """The credential should raise CredentialUnavailableError when the subprocess doesn't start"""
 
@@ -124,6 +125,17 @@ async def test_not_logged_in():
     with mock.patch("shutil.which", return_value="az"):
         with mock.patch(SUBPROCESS_EXEC, mock_exec("", stderr, return_code=1)):
             with pytest.raises(CredentialUnavailableError, match=NOT_LOGGED_IN):
+                credential = AzureCliCredential()
+                await credential.get_token("scope")
+
+
+async def test_aadsts_error():
+    """When the CLI isn't logged in, the credential should raise CredentialUnavailableError"""
+
+    stderr = "ERROR: AADSTS70043: The refresh token has expired, Please run 'az login' to setup account."
+    with mock.patch("shutil.which", return_value="az"):
+        with mock.patch(SUBPROCESS_EXEC, mock_exec("", stderr, return_code=1)):
+            with pytest.raises(ClientAuthenticationError, match=stderr):
                 credential = AzureCliCredential()
                 await credential.get_token("scope")
 
@@ -215,6 +227,7 @@ async def test_multitenant_authentication():
             # should still default to the first tenant
             token = await credential.get_token("scope")
             assert token.token == first_token
+
 
 async def test_multitenant_authentication_not_allowed():
     expected_tenant = "expected-tenant"

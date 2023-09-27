@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -29,7 +29,7 @@ class AADAuthenticationSettings(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, *, client_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, client_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword client_id: The client Id of the Managed Identity to query Microsoft Graph API. An
          empty string must be used for the system assigned Managed Identity.
@@ -50,7 +50,7 @@ class AdditionalFeaturesServerConfigurations(_serialization.Model):
         "is_r_services_enabled": {"key": "isRServicesEnabled", "type": "bool"},
     }
 
-    def __init__(self, *, is_r_services_enabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, is_r_services_enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword is_r_services_enabled: Enable or disable R services (SQL 2016 onwards).
         :paramtype is_r_services_enabled: bool
@@ -70,7 +70,7 @@ class AgConfiguration(_serialization.Model):
         "replicas": {"key": "replicas", "type": "[AgReplica]"},
     }
 
-    def __init__(self, *, replicas: Optional[List["_models.AgReplica"]] = None, **kwargs):
+    def __init__(self, *, replicas: Optional[List["_models.AgReplica"]] = None, **kwargs: Any) -> None:
         """
         :keyword replicas: Replica configurations.
         :paramtype replicas: list[~azure.mgmt.sqlvirtualmachine.models.AgReplica]
@@ -113,8 +113,8 @@ class AgReplica(_serialization.Model):
         commit: Optional[Union[str, "_models.Commit"]] = None,
         failover: Optional[Union[str, "_models.Failover"]] = None,
         readable_secondary: Optional[Union[str, "_models.ReadableSecondary"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sql_virtual_machine_instance_id: Sql VirtualMachine Instance Id.
         :paramtype sql_virtual_machine_instance_id: str
@@ -161,8 +161,8 @@ class AssessmentSettings(_serialization.Model):
         enable: Optional[bool] = None,
         run_immediately: Optional[bool] = None,
         schedule: Optional["_models.Schedule"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enable: Enable or disable SQL best practices Assessment feature on SQL virtual
          machine.
@@ -249,8 +249,8 @@ class AutoBackupSettings(_serialization.Model):  # pylint: disable=too-many-inst
         full_backup_start_time: Optional[int] = None,
         full_backup_window_hours: Optional[int] = None,
         log_backup_frequency: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enable: Enable or disable autobackup on SQL virtual machine.
         :paramtype enable: bool
@@ -333,8 +333,8 @@ class AutoPatchingSettings(_serialization.Model):
         day_of_week: Optional[Union[str, "_models.DayOfWeek"]] = None,
         maintenance_window_starting_hour: Optional[int] = None,
         maintenance_window_duration: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enable: Enable or disable autopatching on SQL virtual machine.
         :paramtype enable: bool
@@ -379,7 +379,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -412,7 +412,7 @@ class ProxyResource(Resource):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -494,8 +494,8 @@ class AvailabilityGroupListener(ProxyResource):  # pylint: disable=too-many-inst
         create_default_availability_group_if_not_exist: Optional[bool] = None,
         port: Optional[int] = None,
         availability_group_configuration: Optional["_models.AgConfiguration"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword availability_group_name: Name of the availability group.
         :paramtype availability_group_name: str
@@ -548,7 +548,7 @@ class AvailabilityGroupListenerListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -576,7 +576,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -616,7 +616,7 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -627,7 +627,8 @@ class ErrorDetail(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.sqlvirtualmachine.models.ErrorDetail
@@ -637,7 +638,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.sqlvirtualmachine.models.ErrorDetail
@@ -677,8 +678,8 @@ class KeyVaultCredentialSettings(_serialization.Model):
         azure_key_vault_url: Optional[str] = None,
         service_principal_name: Optional[str] = None,
         service_principal_secret: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enable: Enable or disable key vault credential setting.
         :paramtype enable: bool
@@ -731,8 +732,8 @@ class LoadBalancerConfiguration(_serialization.Model):
         load_balancer_resource_id: Optional[str] = None,
         probe_port: Optional[int] = None,
         sql_virtual_machine_instances: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_ip_address: Private IP address.
         :paramtype private_ip_address: ~azure.mgmt.sqlvirtualmachine.models.PrivateIPAddress
@@ -776,7 +777,9 @@ class MultiSubnetIpConfiguration(_serialization.Model):
         "sql_virtual_machine_instance": {"key": "sqlVirtualMachineInstance", "type": "str"},
     }
 
-    def __init__(self, *, private_ip_address: "_models.PrivateIPAddress", sql_virtual_machine_instance: str, **kwargs):
+    def __init__(
+        self, *, private_ip_address: "_models.PrivateIPAddress", sql_virtual_machine_instance: str, **kwargs: Any
+    ) -> None:
         """
         :keyword private_ip_address: Private IP address. Required.
         :paramtype private_ip_address: ~azure.mgmt.sqlvirtualmachine.models.PrivateIPAddress
@@ -818,7 +821,7 @@ class Operation(_serialization.Model):
         "properties": {"key": "properties", "type": "{object}"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -857,7 +860,7 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provider = None
@@ -887,7 +890,7 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -908,7 +911,9 @@ class PrivateIPAddress(_serialization.Model):
         "subnet_resource_id": {"key": "subnetResourceId", "type": "str"},
     }
 
-    def __init__(self, *, ip_address: Optional[str] = None, subnet_resource_id: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, ip_address: Optional[str] = None, subnet_resource_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword ip_address: Private IP address bound to the availability group listener.
         :paramtype ip_address: str
@@ -946,7 +951,7 @@ class ResourceIdentity(_serialization.Model):
         "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Union[str, "_models.IdentityType"]] = None, **kwargs):
+    def __init__(self, *, type: Optional[Union[str, "_models.IdentityType"]] = None, **kwargs: Any) -> None:
         """
         :keyword type: The identity type. Set this to 'SystemAssigned' in order to automatically create
          and assign an Azure Active Directory principal for the resource. Known values are: "None" and
@@ -993,8 +998,8 @@ class Schedule(_serialization.Model):
         monthly_occurrence: Optional[int] = None,
         day_of_week: Optional[Union[str, "_models.AssessmentDayOfWeek"]] = None,
         start_time: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enable: Enable or disable assessment schedule on SQL virtual machine.
         :paramtype enable: bool
@@ -1070,8 +1075,8 @@ class ServerConfigurationsManagementSettings(_serialization.Model):
         additional_features_server_configurations: Optional["_models.AdditionalFeaturesServerConfigurations"] = None,
         sql_instance_settings: Optional["_models.SQLInstanceSettings"] = None,
         azure_ad_authentication_settings: Optional["_models.AADAuthenticationSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sql_connectivity_update_settings: SQL connectivity type settings.
         :paramtype sql_connectivity_update_settings:
@@ -1128,8 +1133,8 @@ class SqlConnectivityUpdateSettings(_serialization.Model):
         port: Optional[int] = None,
         sql_auth_update_user_name: Optional[str] = None,
         sql_auth_update_password: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword connectivity_type: SQL Server connectivity option. Known values are: "LOCAL",
          "PRIVATE", and "PUBLIC".
@@ -1187,8 +1192,8 @@ class SQLInstanceSettings(_serialization.Model):
         max_server_memory_mb: Optional[int] = None,
         is_lpim_enabled: Optional[bool] = None,
         is_ifi_enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword collation: SQL Server Collation.
         :paramtype collation: str
@@ -1229,7 +1234,9 @@ class SQLStorageSettings(_serialization.Model):
         "default_file_path": {"key": "defaultFilePath", "type": "str"},
     }
 
-    def __init__(self, *, luns: Optional[List[int]] = None, default_file_path: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, luns: Optional[List[int]] = None, default_file_path: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword luns: Logical Unit Numbers for the disks.
         :paramtype luns: list[int]
@@ -1266,8 +1273,8 @@ class SqlStorageUpdateSettings(_serialization.Model):
         disk_count: Optional[int] = None,
         starting_device_id: Optional[int] = None,
         disk_configuration_type: Optional[Union[str, "_models.DiskConfigurationType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_count: Virtual machine disk count.
         :paramtype disk_count: int
@@ -1331,8 +1338,8 @@ class SQLTempDbSettings(_serialization.Model):
         persist_folder_path: Optional[str] = None,
         luns: Optional[List[int]] = None,
         default_file_path: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_file_size: SQL Server tempdb data file size.
         :paramtype data_file_size: int
@@ -1399,7 +1406,7 @@ class TrackedResource(Resource):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -1552,8 +1559,8 @@ class SqlVirtualMachine(TrackedResource):  # pylint: disable=too-many-instance-a
         storage_configuration_settings: Optional["_models.StorageConfigurationSettings"] = None,
         assessment_settings: Optional["_models.AssessmentSettings"] = None,
         enable_automatic_upgrade: bool = False,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -1704,8 +1711,8 @@ class SqlVirtualMachineGroup(TrackedResource):  # pylint: disable=too-many-insta
         sql_image_offer: Optional[str] = None,
         sql_image_sku: Optional[Union[str, "_models.SqlVmGroupImageSku"]] = None,
         wsfc_domain_profile: Optional["_models.WsfcDomainProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -1750,7 +1757,7 @@ class SqlVirtualMachineGroupListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1768,7 +1775,7 @@ class SqlVirtualMachineGroupUpdate(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1798,7 +1805,7 @@ class SqlVirtualMachineListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1816,7 +1823,7 @@ class SqlVirtualMachineUpdate(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1862,8 +1869,8 @@ class SqlVmTroubleshooting(_serialization.Model):
         end_time_utc: Optional[datetime.datetime] = None,
         troubleshooting_scenario: Optional[Union[str, "_models.TroubleshootingScenario"]] = None,
         properties: Optional["_models.TroubleshootingAdditionalProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword start_time_utc: Start time in UTC timezone.
         :paramtype start_time_utc: ~datetime.datetime
@@ -1895,7 +1902,9 @@ class SqlWorkloadTypeUpdateSettings(_serialization.Model):
         "sql_workload_type": {"key": "sqlWorkloadType", "type": "str"},
     }
 
-    def __init__(self, *, sql_workload_type: Optional[Union[str, "_models.SqlWorkloadType"]] = None, **kwargs):
+    def __init__(
+        self, *, sql_workload_type: Optional[Union[str, "_models.SqlWorkloadType"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword sql_workload_type: SQL Server workload type. Known values are: "GENERAL", "OLTP", and
          "DW".
@@ -1943,8 +1952,8 @@ class StorageConfigurationSettings(_serialization.Model):
         sql_system_db_on_data_disk: Optional[bool] = None,
         disk_configuration_type: Optional[Union[str, "_models.DiskConfigurationType"]] = None,
         storage_workload_type: Optional[Union[str, "_models.StorageWorkloadType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sql_data_settings: SQL Server Data Storage Settings.
         :paramtype sql_data_settings: ~azure.mgmt.sqlvirtualmachine.models.SQLStorageSettings
@@ -2009,8 +2018,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -2047,7 +2056,9 @@ class TroubleshootingAdditionalProperties(_serialization.Model):
         "unhealthy_replica_info": {"key": "unhealthyReplicaInfo", "type": "UnhealthyReplicaInfo"},
     }
 
-    def __init__(self, *, unhealthy_replica_info: Optional["_models.UnhealthyReplicaInfo"] = None, **kwargs):
+    def __init__(
+        self, *, unhealthy_replica_info: Optional["_models.UnhealthyReplicaInfo"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword unhealthy_replica_info: The unhealthy replica information.
         :paramtype unhealthy_replica_info: ~azure.mgmt.sqlvirtualmachine.models.UnhealthyReplicaInfo
@@ -2094,7 +2105,7 @@ class TroubleshootingStatus(_serialization.Model):
         "properties": {"key": "properties", "type": "TroubleshootingAdditionalProperties"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.root_cause = None
@@ -2116,7 +2127,7 @@ class UnhealthyReplicaInfo(_serialization.Model):
         "availability_group_name": {"key": "availabilityGroupName", "type": "str"},
     }
 
-    def __init__(self, *, availability_group_name: Optional[str] = None, **kwargs):
+    def __init__(self, *, availability_group_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword availability_group_name: The name of the availability group.
         :paramtype availability_group_name: str
@@ -2148,8 +2159,8 @@ class WsfcDomainCredentials(_serialization.Model):
         cluster_bootstrap_account_password: Optional[str] = None,
         cluster_operator_account_password: Optional[str] = None,
         sql_service_account_password: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword cluster_bootstrap_account_password: Cluster bootstrap account password.
         :paramtype cluster_bootstrap_account_password: str
@@ -2215,8 +2226,8 @@ class WsfcDomainProfile(_serialization.Model):
         storage_account_url: Optional[str] = None,
         storage_account_primary_key: Optional[str] = None,
         cluster_subnet_type: Optional[Union[str, "_models.ClusterSubnetType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword domain_fqdn: Fully qualified name of the domain.
         :paramtype domain_fqdn: str

@@ -72,24 +72,28 @@ class IotHubClient:  # pylint: disable=client-accepts-api-version-keyword,too-ma
         **kwargs: Any
     ) -> None:
         self._config = IotHubClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.iot_hub_resource = IotHubResourceOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.resource_provider_common = ResourceProviderCommonOperations(
-            self._client, self._config, self._serialize, self._deserialize
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize, "2021-03-31")
+        self.iot_hub_resource = IotHubResourceOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-03-31"
         )
-        self.certificates = CertificatesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.iot_hub = IotHubOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.resource_provider_common = ResourceProviderCommonOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-03-31"
+        )
+        self.certificates = CertificatesOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2021-03-31"
+        )
+        self.iot_hub = IotHubOperations(self._client, self._config, self._serialize, self._deserialize, "2021-03-31")
         self.private_link_resources = PrivateLinkResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-03-31"
         )
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2021-03-31"
         )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:

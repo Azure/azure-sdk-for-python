@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+# cspell:ignore milli
 import uuid
 from datetime import datetime, timedelta
 import sys
@@ -42,7 +42,11 @@ class LogsTableRow:
         self._row_dict = {_columns[i]: self._row[i] for i in range(len(self._row))}
 
     def __iter__(self) -> Iterator[Any]:
-        """This will iterate over the row directly."""
+        """This will iterate over the row directly.
+
+        :return: An iterator over the row.
+        :rtype: Iterator
+        """
         return iter(self._row)
 
     def __len__(self) -> int:
@@ -57,6 +61,8 @@ class LogsTableRow:
 
         :param column: The name of the column or the index of the element in a row.
         :type column: str or int
+        :return: The value of the column or the element in the row.
+        :rtype: Any
         """
         try:
             return self._row_dict[column]
@@ -121,7 +127,6 @@ class MetricValue:
     """The number of samples in the time range. Can be used to determine the number of values that
     contributed to the average value."""
 
-
     def __init__(self, **kwargs: Any) -> None:
         self.timestamp = kwargs["timestamp"]
         self.average = kwargs.get("average", None)
@@ -162,11 +167,10 @@ class TimeSeriesElement:
         if not generated:
             return cls()
         return cls(
-            metadata_values={
-                obj["name"]["value"]: obj.get("value") for obj in generated.get("metadatavalues", [])
-            },
+            metadata_values={obj["name"]["value"]: obj.get("value") for obj in generated.get("metadatavalues", [])},
             data=[
-                MetricValue._from_generated(val) for val in generated.get("data", []) # pylint: disable=protected-access
+                MetricValue._from_generated(val)  # pylint: disable=protected-access
+                for val in generated.get("data", [])
             ],
         )
 
@@ -207,7 +211,7 @@ class Metric:
             name=generated.get("name", {}).get("value"),
             unit=generated.get("unit"),
             timeseries=[
-                TimeSeriesElement._from_generated(t) # pylint: disable=protected-access
+                TimeSeriesElement._from_generated(t)  # pylint: disable=protected-access
                 for t in generated.get("timeseries", [])
             ],
             display_description=generated.get("displayDescription"),
@@ -234,10 +238,9 @@ class MetricsQueryResult:
     cost: Optional[int] = None
     """The integer value representing the cost of the query, for data case."""
 
-
     def __init__(self, **kwargs: Any) -> None:
         self.timespan = kwargs["timespan"]
-        self.metrics= kwargs["metrics"]
+        self.metrics = kwargs["metrics"]
         self.granularity = kwargs.get("granularity", None)
         self.namespace = kwargs.get("namespace", None)
         self.resource_region = kwargs.get("resource_region", None)
@@ -250,23 +253,27 @@ class MetricsQueryResult:
         granularity = None
         if generated.get("interval"):
             granularity = Deserializer.deserialize_duration(generated.get("interval"))
+        if not generated.get("timespan"):
+            generated["timespan"] = f"{generated.get('starttime')}/{generated.get('endtime')}"
         return cls(
             cost=generated.get("cost"),
             timespan=generated.get("timespan"),
             granularity=granularity,
             namespace=generated.get("namespace"),
             resource_region=generated.get("resourceregion"),
-            metrics=MetricsList(metrics=[
-                Metric._from_generated(m) for m in generated.get("value", []) # pylint: disable=protected-access
-            ]),
+            metrics=MetricsList(
+                metrics=[
+                    Metric._from_generated(m) for m in generated.get("value", [])  # pylint: disable=protected-access
+                ]
+            ),
         )
 
 
 class MetricsList(list):
     """Custom list for metrics."""
 
-    def __init__(self, **kwargs: Any) -> None: # pylint: disable=super-init-not-called
-        self._metrics = kwargs['metrics']
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
+        self._metrics = kwargs["metrics"]
         self._metric_names = {val.name: ind for ind, val in enumerate(self._metrics)}
 
     def __iter__(self):
@@ -281,7 +288,7 @@ class MetricsList(list):
     def __getitem__(self, metric):
         try:
             return self._metrics[metric]
-        except TypeError: # TypeError: list indices must be integers or slices, not str
+        except TypeError:  # TypeError: list indices must be integers or slices, not str
             return self._metrics[self._metric_names[metric]]
 
 
@@ -317,10 +324,8 @@ class LogsBatchQuery:
         workspace_id: str,
         query: str,
         *,
-        timespan: Optional[Union[
-            timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]
-        ]],
-        **kwargs: Any
+        timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]],
+        **kwargs: Any,
     ) -> None:  # pylint: disable=super-init-not-called
         include_statistics = kwargs.pop("include_statistics", False)
         include_visualization = kwargs.pop("include_visualization", False)
@@ -356,7 +361,7 @@ class LogsBatchQuery:
             "headers": self.headers,
             "workspace": self.workspace,
             "path": "/query",
-            "method": "POST"
+            "method": "POST",
         }
 
 
@@ -392,8 +397,7 @@ class LogsQueryResult:
             generated = generated["body"]
         if generated.get("tables"):
             tables = [
-                LogsTable._from_generated(table)  # pylint: disable=protected-access
-                for table in generated["tables"]
+                LogsTable._from_generated(table) for table in generated["tables"]  # pylint: disable=protected-access
             ]
         return cls(
             tables=tables,
@@ -415,7 +419,6 @@ class MetricNamespace:
     """The fully qualified namespace name."""
     namespace_classification: Optional[Union[str, MetricNamespaceClassification]] = None
     """Kind of namespace. Possible values include "Platform", "Custom", "Qos"."""
-
 
     def __init__(self, **kwargs: Any) -> None:
         self.id = kwargs.get("id", None)
@@ -463,10 +466,7 @@ class MetricAvailability:
             granularity = Deserializer.deserialize_duration(generated["timeGrain"])
         if generated.get("retention"):
             retention = Deserializer.deserialize_duration(generated["retention"])
-        return cls(
-            granularity=granularity,
-            retention=retention
-        )
+        return cls(granularity=granularity, retention=retention)
 
 
 class MetricDefinition:  # pylint: disable=too-many-instance-attributes
@@ -499,7 +499,6 @@ class MetricDefinition:  # pylint: disable=too-many-instance-attributes
     dimensions: Optional[List[str]] = None
     """The name and the display name of the dimension, i.e. it is a localizable string."""
 
-
     def __init__(self, **kwargs: Any) -> None:
         self.dimension_required = kwargs.get("dimension_required", None)
         self.resource_id = kwargs.get("resource_id", None)
@@ -507,7 +506,7 @@ class MetricDefinition:  # pylint: disable=too-many-instance-attributes
         self.name = kwargs.get("name", None)
         self.unit = kwargs.get("unit", None)
         self.primary_aggregation_type = kwargs.get("primary_aggregation_type", None)
-        self.supported_aggregation_types =kwargs.get("supported_aggregation_types", None)
+        self.supported_aggregation_types = kwargs.get("supported_aggregation_types", None)
         self.metric_availabilities = kwargs.get("metric_availabilities", None)
         self.id = kwargs.get("id", None)
         self.dimensions = kwargs.get("dimensions", None)
@@ -532,9 +531,7 @@ class MetricDefinition:  # pylint: disable=too-many-instance-attributes
             supported_aggregation_types=generated.get("supportedAggregationTypes"),
             metric_class=metric_class,
             metric_availabilities=[
-                MetricAvailability._from_generated(  # pylint: disable=protected-access
-                    val
-                )
+                MetricAvailability._from_generated(val)  # pylint: disable=protected-access
                 for val in generated.get("metricAvailabilities", [])
             ],
             id=generated.get("id"),
@@ -560,7 +557,6 @@ class LogsQueryPartialResult:
     status: LogsQueryStatus
     """The status of the result. Always 'PartialError' for an instance of a LogsQueryPartialResult."""
 
-
     def __init__(self, **kwargs: Any) -> None:
         self.partial_data = kwargs.get("partial_data", [])
         self.partial_error = kwargs.get("partial_error", None)
@@ -580,12 +576,11 @@ class LogsQueryPartialResult:
             generated = generated["body"]
         if generated.get("tables"):
             partial_data = [
-                LogsTable._from_generated(table)  # pylint: disable=protected-access
-                for table in generated["tables"]
+                LogsTable._from_generated(table) for table in generated["tables"]  # pylint: disable=protected-access
             ]
         return cls(
             partial_data=partial_data,
-            partial_error=error._from_generated(generated.get("error")), # pylint: disable=protected-access
+            partial_error=error._from_generated(generated.get("error")),  # pylint: disable=protected-access
             statistics=generated.get("statistics"),
             visualization=generated.get("render"),
         )

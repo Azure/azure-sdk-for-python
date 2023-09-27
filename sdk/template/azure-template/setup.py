@@ -1,3 +1,11 @@
+#!/usr/bin/env python
+
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 from setuptools import setup, find_packages
 import os
 from io import open
@@ -8,7 +16,7 @@ import re
 # your package.
 
 # this setup.py is set up in a specific way to keep the azure* and azure-mgmt-* namespaces WORKING all the way
-# up from python 2.7. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
+# up from python 2.7. Reference here: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/packaging.md
 
 PACKAGE_NAME = "azure-template"
 PACKAGE_PPRINT_NAME = "Template Package"
@@ -49,6 +57,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "License :: OSI Approved :: MIT License",
     ],
     packages=find_packages(
@@ -63,7 +72,7 @@ setup(
     ),
     include_package_data=True,
     package_data={
-        'azure.template': ['py.typed'],
+        "azure.template": ["py.typed"],
     },
     install_requires=[
         "azure-core<2.0.0,>=1.10.0",

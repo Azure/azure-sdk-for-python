@@ -21,7 +21,7 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._registries_operations import build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_list_by_subscription_request, build_list_request, build_update_request_initial
+from ...operations._registries_operations import build_create_or_update_request_initial, build_delete_request_initial, build_get_request, build_list_by_subscription_request, build_list_request, build_remove_regions_request_initial, build_update_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -50,15 +50,12 @@ class RegistriesOperations:
     @distributed_trace
     def list_by_subscription(
         self,
-        skip: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.RegistryTrackedResourceArmPaginatedResult"]:
         """List registries by subscription.
 
         List registries by subscription.
 
-        :param skip: Continuation token for pagination.
-        :type skip: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RegistryTrackedResourceArmPaginatedResult or the
          result of cls(response)
@@ -79,7 +76,6 @@ class RegistriesOperations:
                 request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    skip=skip,
                     template_url=self.list_by_subscription.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -90,7 +86,6 @@ class RegistriesOperations:
                 request = build_list_by_subscription_request(
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
-                    skip=skip,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -132,7 +127,6 @@ class RegistriesOperations:
     def list(
         self,
         resource_group_name: str,
-        skip: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.RegistryTrackedResourceArmPaginatedResult"]:
         """List registries.
@@ -141,8 +135,6 @@ class RegistriesOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param skip: Continuation token for pagination.
-        :type skip: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RegistryTrackedResourceArmPaginatedResult or the
          result of cls(response)
@@ -164,7 +156,6 @@ class RegistriesOperations:
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     api_version=api_version,
-                    skip=skip,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -176,7 +167,6 @@ class RegistriesOperations:
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     api_version=api_version,
-                    skip=skip,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -276,7 +266,7 @@ class RegistriesOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of registry. This is case-insensitive.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -340,7 +330,7 @@ class RegistriesOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of registry. This is case-insensitive.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Registry, or the result of cls(response)
@@ -388,13 +378,29 @@ class RegistriesOperations:
     get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}"}  # type: ignore
 
 
-    async def _update_initial(
+    @distributed_trace_async
+    async def update(
         self,
         resource_group_name: str,
         registry_name: str,
         body: "_models.PartialRegistryPartialTrackedResource",
         **kwargs: Any
     ) -> "_models.Registry":
+        """Update tags.
+
+        Update tags.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
+        :type registry_name: str
+        :param body: Details required to create the registry.
+        :type body: ~azure.mgmt.machinelearningservices.models.PartialRegistryPartialTrackedResource
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: Registry, or the result of cls(response)
+        :rtype: ~azure.mgmt.machinelearningservices.models.Registry
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Registry"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -406,14 +412,14 @@ class RegistriesOperations:
 
         _json = self._serialize.body(body, 'PartialRegistryPartialTrackedResource')
 
-        request = build_update_request_initial(
+        request = build_update_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._update_initial.metadata['url'],
+            template_url=self.update.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -425,101 +431,20 @@ class RegistriesOperations:
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        response_headers = {}
-        if response.status_code == 200:
-            deserialized = self._deserialize('Registry', pipeline_response)
-
-        if response.status_code == 202:
-            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-            response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
-            
-            deserialized = self._deserialize('Registry', pipeline_response)
+        deserialized = self._deserialize('Registry', pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}"}  # type: ignore
+    update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}"}  # type: ignore
 
-
-    @distributed_trace_async
-    async def begin_update(
-        self,
-        resource_group_name: str,
-        registry_name: str,
-        body: "_models.PartialRegistryPartialTrackedResource",
-        **kwargs: Any
-    ) -> AsyncLROPoller["_models.Registry"]:
-        """Update tags.
-
-        Update tags.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param registry_name: Name of registry. This is case-insensitive.
-        :type registry_name: str
-        :param body: Details required to create the registry.
-        :type body: ~azure.mgmt.machinelearningservices.models.PartialRegistryPartialTrackedResource
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either Registry or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.Registry]
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Registry"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = await self._update_initial(
-                resource_group_name=resource_group_name,
-                registry_name=registry_name,
-                body=body,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x,y,z: x,
-                **kwargs
-            )
-        kwargs.pop('error_map', None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = self._deserialize('Registry', pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
-        elif polling is False: polling_method = AsyncNoPolling()
-        else: polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output
-            )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
-
-    begin_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}"}  # type: ignore
 
     async def _create_or_update_initial(
         self,
@@ -527,8 +452,8 @@ class RegistriesOperations:
         registry_name: str,
         body: "_models.Registry",
         **kwargs: Any
-    ) -> Optional["_models.Registry"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Registry"]]
+    ) -> "_models.Registry":
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Registry"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -558,11 +483,10 @@ class RegistriesOperations:
         )
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201, 202]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('Registry', pipeline_response)
 
@@ -591,7 +515,7 @@ class RegistriesOperations:
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name: Name of registry. This is case-insensitive.
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
         :type registry_name: str
         :param body: Details required to create the registry.
         :type body: ~azure.mgmt.machinelearningservices.models.Registry
@@ -650,3 +574,137 @@ class RegistriesOperations:
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}"}  # type: ignore
+
+    async def _remove_regions_initial(
+        self,
+        resource_group_name: str,
+        registry_name: str,
+        body: "_models.Registry",
+        **kwargs: Any
+    ) -> Optional["_models.Registry"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Registry"]]
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+        }
+        error_map.update(kwargs.pop('error_map', {}))
+
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+
+        _json = self._serialize.body(body, 'Registry')
+
+        request = build_remove_regions_request_initial(
+            subscription_id=self._config.subscription_id,
+            resource_group_name=resource_group_name,
+            registry_name=registry_name,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            template_url=self._remove_regions_initial.metadata['url'],
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request,
+            stream=False,
+            **kwargs
+        )
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = None
+        response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize('Registry', pipeline_response)
+
+        if response.status_code == 202:
+            response_headers['x-ms-async-operation-timeout']=self._deserialize('duration', response.headers.get('x-ms-async-operation-timeout'))
+            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
+            response_headers['Retry-After']=self._deserialize('int', response.headers.get('Retry-After'))
+            
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
+
+    _remove_regions_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/removeRegions"}  # type: ignore
+
+
+    @distributed_trace_async
+    async def begin_remove_regions(
+        self,
+        resource_group_name: str,
+        registry_name: str,
+        body: "_models.Registry",
+        **kwargs: Any
+    ) -> AsyncLROPoller["_models.Registry"]:
+        """Remove regions from registry.
+
+        Remove regions from registry.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param registry_name: Name of Azure Machine Learning registry. This is case-insensitive.
+        :type registry_name: str
+        :param body: Details required to create the registry.
+        :type body: ~azure.mgmt.machinelearningservices.models.Registry
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either Registry or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.Registry]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Registry"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = await self._remove_regions_initial(
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+                body=body,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = self._deserialize('Registry', pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
+        elif polling is False: polling_method = AsyncNoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_remove_regions.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/removeRegions"}  # type: ignore

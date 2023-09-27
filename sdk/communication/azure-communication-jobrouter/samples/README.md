@@ -13,7 +13,7 @@ description: Samples for the azure-communication-jobrouter client library
 # Azure Communication JobRouter client SDK Samples
 
 - Authentication
-  - [RouterClient and RouterAdministrationClient][sample_authentication]([async version][sample_authentication_async])
+  - [JobRouterClient and JobRouterAdministrationClient][sample_authentication]([async version][sample_authentication_async])
     - Create client from connection string
 
 - Crud operations
@@ -54,33 +54,33 @@ description: Samples for the azure-communication-jobrouter client library
 
 <!-- LINKS -->
 
-[//]: # ([sample_authentication]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/sample_authentication.py)
+[sample_authentication]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/sample_authentication.py
 
-[//]: # ([sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/sample_authentication_async.py)
+[sample_authentication_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/sample_authentication_async.py
 
-[//]: # ([classificationPolicyCrudOps]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/classification_policy_crud_ops.py)
+[classificationPolicyCrudOps]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/classification_policy_crud_ops.py
 
-[//]: # ([classificationPolicyCrudOpsAsync]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/classification_policy_crud_ops_async.py)
+[classificationPolicyCrudOpsAsync]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/classification_policy_crud_ops_async.py
 
-[//]: # ([distributionPolicyCrudOps]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/distribution_policy_crud_ops.py)
+[distributionPolicyCrudOps]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/distribution_policy_crud_ops.py
 
-[//]: # ([distributionPolicyCrudOpsAsync]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/classification_policy_crud_ops_async.py)
+[distributionPolicyCrudOpsAsync]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/classification_policy_crud_ops_async.py
 
-[//]: # ([exceptionPolicyCrudOps]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/exception_policy_crud_ops.py)
+[exceptionPolicyCrudOps]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/exception_policy_crud_ops.py
 
-[//]: # ([exceptionPolicyCrudOpsAsync]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/exception_policy_crud_ops_async.py)
+[exceptionPolicyCrudOpsAsync]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/exception_policy_crud_ops_async.py
 
-[//]: # ([jobQueueCrudOps]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/job_queue_crud_ops.py)
+[jobQueueCrudOps]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/job_queue_crud_ops.py
 
-[//]: # ([jobQueueCrudOpsAsync]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/job_queue_crud_ops_async.py)
+[jobQueueCrudOpsAsync]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/job_queue_crud_ops_async.py
 
-[//]: # ([routerWorkerCrudOps]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/router_worker_crud_ops.py)
+[routerWorkerCrudOps]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/router_worker_crud_ops.py
 
-[//]: # ([routerWorkerCrudOpsAsync]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/router_worker_crud_ops_async.py)
+[routerWorkerCrudOpsAsync]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/router_worker_crud_ops_async.py
 
-[//]: # ([routerJobCrudOps]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/router_job_crud_ops.py)
+[routerJobCrudOps]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/router_job_crud_ops.py
 
-[//]: # ([routerJobCrudOpsAsync]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/router_job_crud_ops_async.py)
+[routerJobCrudOpsAsync]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/communication/azure-communication-jobrouter/samples/router_job_crud_ops_async.py
 
 [//]: # ([basicScenario]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/communication/Azure.Communication.JobRouter/samples/Sample1_HelloWorld.md)
 

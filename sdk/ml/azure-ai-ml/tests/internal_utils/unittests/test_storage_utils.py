@@ -21,12 +21,12 @@ from azure.ai.ml.exceptions import ErrorTarget
 def mock_datastore_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config_no_progress: OperationConfig,
-    mock_aml_services_2022_10_01: Mock,
+    mock_aml_services_2023_04_01_preview: Mock,
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config_no_progress,
-        serviceclient_2022_10_01=mock_aml_services_2022_10_01,
+        serviceclient_2023_04_01_preview=mock_aml_services_2023_04_01_preview,
     )
 
 
@@ -74,6 +74,7 @@ def mock_data_operation(
         service_client=mock_aml_services_2022_10_01,
         datastore_operations=mock_datastore_operations,
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
+        all_operations=mock_machinelearning_client._operation_container,
     )
 
 
@@ -189,14 +190,18 @@ class TestStorageUtils:
         ) as mock_thing, patch(
             "azure.ai.ml.operations._code_operations.Code._from_rest_object",
             return_value=Code(),
+        ), patch(
+            "azure.ai.ml.operations._code_operations.get_storage_info_for_non_registry_asset",
+            return_value={"sas_uri": "sas_uri", "blob_uri": "blob_uri"},
         ):
             mock_code_operation.create_or_update(code)
             mock_thing.assert_called_once_with(
                 artifact=code,
                 asset_operations=mock_code_operation,
-                sas_uri=None,
                 artifact_type=ErrorTarget.CODE,
                 show_progress=False,
+                blob_uri="blob_uri",
+                sas_uri="sas_uri",
             )
 
     def test_show_progress_disabled_data(

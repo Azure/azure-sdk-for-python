@@ -2,6 +2,7 @@ import sys
 from pathlib import Path
 from typing import Callable, Union
 
+import pydash
 import pytest
 from marshmallow import ValidationError
 
@@ -117,7 +118,8 @@ class TestComponentFunc:
         assert component2._build_inputs() == {
             "component_in_number": 10,
             "component_in_path": Input(
-                path="${{parent.jobs.microsoftsamplesCommandComponentBasic.outputs.component_out_path}}",
+                # component's name changed to lower case when setting it
+                path="${{parent.jobs.microsoftsamplescommandcomponentbasic.outputs.component_out_path}}",
                 type="uri_folder",
                 mode=None,
             ),
@@ -334,4 +336,6 @@ class TestComponentFunc:
         base_dict["name"] = invalid_name
         base_rest_obj.name, base_rest_obj.properties.component_spec["name"] = invalid_name, invalid_name
         assert cmp_dict == base_dict
-        assert cmp_rest_obj.as_dict() == base_rest_obj.as_dict()
+        cmp_rest_obj = pydash.omit(cmp_rest_obj.as_dict(), "properties.properties.client_component_hash")
+        base_rest_obj = pydash.omit(base_rest_obj.as_dict(), "properties.properties.client_component_hash")
+        assert cmp_rest_obj == base_rest_obj

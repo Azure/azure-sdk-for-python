@@ -1,14 +1,41 @@
 # Release History
 
-## 12.12.0 (Unreleased)
+## 12.15.0b1 (Unreleased)
 
 ### Features Added
 
-### Breaking Changes
+
+## 12.14.1 (2023-09-13)
 
 ### Bugs Fixed
+- Fixed breaking `KeyError: 'sdk_moniker'` in `create_configuration`.
+NOTE: This is not an exported method and therefore should not be imported/called directly.
 
-### Other Changes
+## 12.14.0 (2023-09-12)
+
+### Features Added
+- Stable release of features from 12.14.0b1
+
+## 12.14.0b1 (2023-08-08)
+
+### Features Added
+- Added support for service versions 2023-05-03 and 2023-08-03.
+
+## 12.13.0 (2023-07-11)
+
+### Features Added
+- Stable release of features from 12.13.0b1
+
+## 12.13.0b1 (2023-05-30)
+
+### Features Added
+- Added support for service version 2023-01-03.
+- Added `access_rights` property to `Handle`.
+
+## 12.12.0 (2023-04-12)
+
+### Features Added
+- Stable release of features from 12.12.0b1
 
 ## 12.12.0b1 (2023-03-28)
 

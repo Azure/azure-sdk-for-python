@@ -15,7 +15,7 @@ class FakeTokenCredential(object):
     def __init__(self):
         self.token = AccessToken("Fake Token", 0)
 
-    async def get_token(self, *args):
+    async def get_token(self, *args, **kwargs):
         return self.token
 
 class TestSMSClientAsync(aiounittest.AsyncTestCase):
@@ -58,7 +58,7 @@ class TestSMSClientAsync(aiounittest.AsyncTestCase):
         self.assertEqual(202, sms_response.http_status_code)
         self.assertIsNotNone(sms_response.error_message)
         self.assertTrue(sms_response.successful)
-    
+
     @patch(
         "azure.communication.sms._generated.aio.operations._sms_operations.SmsOperations.send"
     )

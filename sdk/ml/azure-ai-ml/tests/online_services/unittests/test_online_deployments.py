@@ -120,7 +120,7 @@ def mock_local_deployment_helper() -> Mock:
 def mock_online_deployment_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2022_10_01: Mock,
+    mock_aml_services_2023_04_01_preview: Mock,
     mock_machinelearning_client: Mock,
 ) -> OnlineDeploymentOperations:
     mock_machinelearning_client._operation_container.add(AzureMLResourceType.WORKSPACE, mock_workspace_operations)
@@ -128,7 +128,7 @@ def mock_online_deployment_operations(
     yield OnlineDeploymentOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client_02_2022_preview=mock_aml_services_2022_10_01,
+        service_client_04_2023_preview=mock_aml_services_2023_04_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         local_deployment_helper=mock_local_deployment_helper,
     )

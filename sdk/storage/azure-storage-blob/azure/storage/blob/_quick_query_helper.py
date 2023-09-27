@@ -83,6 +83,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         If encoding has been configured - this will be used to decode individual
         records are they are received.
 
+        :returns: The query results.
         :rtype: Union[bytes, str]
         """
         stream = BytesIO()
@@ -96,7 +97,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         # type: (IO) -> None
         """Download the query result to a stream.
 
-        :param stream:
+        :param IO stream:
             The stream to download to. This can be an open file-handle,
             or any writable stream.
         :returns: None
@@ -112,6 +113,7 @@ class BlobQueryReader(object):  # pylint: disable=too-many-instance-attributes
         If encoding has been configured - this will be used to decode individual
         records are they are received.
 
+        :returns: A record generator for the query result.
         :rtype: Iterable[Union[bytes, str]]
         """
         delimiter = self.record_delimiter.encode('utf-8')
@@ -152,8 +154,6 @@ class QuickQueryStreamer(object):
         self._download_offset += len(next_part)
         return next_part
 
-    next = __next__  # Python 2 compatibility.
-
     def tell(self):
         return self._point
 
@@ -164,7 +164,7 @@ class QuickQueryStreamer(object):
             self._point += offset
         else:
             raise ValueError("whence must be 0, or 1")
-        if self._point < 0:
+        if self._point < 0:    # pylint: disable=consider-using-max-builtin
             self._point = 0  # XXX is this right?
 
     def read(self, size):

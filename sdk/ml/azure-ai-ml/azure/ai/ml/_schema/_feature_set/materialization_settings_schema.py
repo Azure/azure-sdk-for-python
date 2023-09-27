@@ -2,14 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 
 from marshmallow import fields, post_load
 
 from azure.ai.ml._schema import NestedField
+from azure.ai.ml._schema._notification.notification_schema import NotificationSchema
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._schema.schedule.trigger import RecurrenceTriggerSchema
-from azure.ai.ml._schema._notification.notification_schema import NotificationSchema
 
 
 class MaterializationComputeResourceSchema(metaclass=PatchedSchemaMeta):
@@ -17,9 +17,9 @@ class MaterializationComputeResourceSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._feature_set.materialization_compute_resource import _MaterializationComputeResource
+        from azure.ai.ml.entities._feature_set.materialization_compute_resource import MaterializationComputeResource
 
-        return _MaterializationComputeResource(instance_type=data.pop("instance_type"), **data)
+        return MaterializationComputeResource(instance_type=data.pop("instance_type"), **data)
 
 
 class MaterializationSettingsSchema(metaclass=PatchedSchemaMeta):
@@ -32,6 +32,6 @@ class MaterializationSettingsSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._feature_set.materialization_settings import _MaterializationSettings
+        from azure.ai.ml.entities._feature_set.materialization_settings import MaterializationSettings
 
-        return _MaterializationSettings(**data)
+        return MaterializationSettings(**data)

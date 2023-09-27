@@ -14,9 +14,7 @@ from azure.core.exceptions import (
     AzureError,
 )
 from azure.core.pipeline.policies import RetryMode
-from azure.core.pipeline.transport import(
-    AioHttpTransport
-)
+from azure.core.pipeline.transport import AioHttpTransport
 
 from azure.data.tables.aio import TableServiceClient
 
@@ -27,6 +25,7 @@ from async_preparers import tables_decorator_async
 
 class RetryAioHttpTransport(AioHttpTransport):
     """Transport to test retry"""
+
     def __init__(self, *args, **kwargs):
         super(RetryAioHttpTransport, self).__init__(*args, **kwargs)
         self.count = 0
@@ -39,13 +38,12 @@ class RetryAioHttpTransport(AioHttpTransport):
 
 # --Test Class -----------------------------------------------------------------
 class TestStorageRetryAsync(AzureRecordedTestCase, AsyncTableTestCase):
-
-    async def _set_up(self, tables_storage_account_name, tables_primary_storage_account_key, url='table', default_table=True, **kwargs):
-        self.table_name = self.get_resource_name('uttable')
+    async def _set_up(
+        self, tables_storage_account_name, tables_primary_storage_account_key, url="table", default_table=True, **kwargs
+    ):
+        self.table_name = self.get_resource_name("uttable")
         self.ts = TableServiceClient(
-            self.account_url(tables_storage_account_name, url),
-            credential=tables_primary_storage_account_key,
-            **kwargs
+            self.account_url(tables_storage_account_name, url), credential=tables_primary_storage_account_key, **kwargs
         )
         self.table = self.ts.get_table_client(self.table_name)
         if self.is_live and default_table:
@@ -64,7 +62,7 @@ class TestStorageRetryAsync(AzureRecordedTestCase, AsyncTableTestCase):
         try:
             callback = ResponseCallback(status=201, new_status=500).override_status
 
-            new_table_name = self.get_resource_name('uttable')
+            new_table_name = self.get_resource_name("uttable")
             # The initial create will return 201, but we overwrite it with 500 and retry.
             # The retry will then get a 409 conflict.
             with pytest.raises(ResourceExistsError):
@@ -81,7 +79,8 @@ class TestStorageRetryAsync(AzureRecordedTestCase, AsyncTableTestCase):
             tables_primary_storage_account_key,
             default_table=False,
             retry_mode=RetryMode.Exponential,
-            retry_backoff_factor=1)
+            retry_backoff_factor=1,
+        )
 
         callback = ResponseCallback(status=200, new_status=408).override_first_status
 
@@ -102,7 +101,8 @@ class TestStorageRetryAsync(AzureRecordedTestCase, AsyncTableTestCase):
             retry_mode=RetryMode.Fixed,
             retry_backoff_factor=1,
             transport=retry_transport,
-            default_table=False)
+            default_table=False,
+        )
 
         with pytest.raises(AzureError) as error:
             await self.ts.get_service_properties()
@@ -110,14 +110,16 @@ class TestStorageRetryAsync(AzureRecordedTestCase, AsyncTableTestCase):
         # 3 retries + 1 original == 4
         assert retry_transport.count == 4
         # This call should succeed on the server side, but fail on the client side due to socket timeout
-        assert 'Timeout on reading' in str(error.value), 'Expected socket timeout but got different exception.'
+        assert "Timeout on reading" in str(error.value), "Expected socket timeout but got different exception."
 
     @tables_decorator_async
     @recorded_by_proxy_async
     async def test_no_retry_async(self, tables_storage_account_name, tables_primary_storage_account_key):
-        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key, retry_total=0, default_table=False)
+        await self._set_up(
+            tables_storage_account_name, tables_primary_storage_account_key, retry_total=0, default_table=False
+        )
 
-        new_table_name = self.get_resource_name('uttable')
+        new_table_name = self.get_resource_name("uttable")
 
         # Force the create call to error with a 500
         callback = ResponseCallback(status=201, new_status=500).override_status
@@ -126,9 +128,11 @@ class TestStorageRetryAsync(AzureRecordedTestCase, AsyncTableTestCase):
             with pytest.raises(HttpResponseError) as error:
                 await self.ts.create_table(new_table_name, raw_response_hook=callback)
             assert error.value.response.status_code == 500
-            assert error.value.reason == 'Created'
+            assert error.value.reason == "Created"
 
         finally:
             await self.ts.delete_table(new_table_name)
             await self._tear_down()
+
+
 # ------------------------------------------------------------------------------

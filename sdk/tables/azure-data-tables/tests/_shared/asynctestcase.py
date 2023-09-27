@@ -5,8 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from __future__ import division
-from datetime import datetime
-from dateutil.tz import tzutc
+from datetime import datetime, timezone
 import uuid
 
 from azure.core.credentials import AccessToken
@@ -98,18 +97,18 @@ class AsyncTableTestCase(TableTestCase):
 
         partition, row = self._create_pk_rk(pk, rk)
         properties = {
-            "PartitionKey": partition + u"1",
-            "RowKey": row + u"1",
+            "PartitionKey": partition + "1",
+            "RowKey": row + "1",
             "age": 49,
-            "sex": u"female",
+            "sex": "female",
             "married": False,
             "deceased": True,
             "optional": None,
             "ratio": 5.2,
             "evenratio": 6.0,
             "large": 39999011,
-            "Birthday": datetime(1993, 4, 1, tzinfo=tzutc()),
-            "birthday": datetime(1990, 4, 1, tzinfo=tzutc()),
+            "Birthday": datetime(1993, 4, 1, tzinfo=timezone.utc),
+            "birthday": datetime(1990, 4, 1, tzinfo=timezone.utc),
             "binary": b"binary-binary",
             "other": EntityProperty(40, EdmType.INT32),
             "clsid": uuid.UUID("c8da6455-213e-42d9-9b79-3f9149a57833"),

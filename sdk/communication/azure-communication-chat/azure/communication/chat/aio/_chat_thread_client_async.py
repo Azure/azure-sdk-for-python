@@ -9,7 +9,6 @@ from urllib.parse import urlparse
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
 from datetime import datetime
 
-import six
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
@@ -86,7 +85,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
         except AttributeError:
-            raise ValueError("Host URL must be a string")
+            raise ValueError("Host URL must be a string") # pylint:disable=raise-missing-from
 
         parsed_url = urlparse(endpoint.rstrip('/'))
         if not parsed_url.netloc:
@@ -306,7 +305,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
             try:
                 chat_message_type = ChatMessageType.__getattr__(chat_message_type)  # pylint:disable=protected-access
             except Exception:
-                raise ValueError(
+                raise ValueError( # pylint:disable=raise-missing-from
                     "chat_message_type: {message_type} is not acceptable".format(message_type=chat_message_type))
 
         if chat_message_type not in [ChatMessageType.TEXT, ChatMessageType.HTML]:
@@ -402,7 +401,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
 
         :param message_id: Required. The message id.
         :type message_id: str
-        :keyword content: Chat message content
+        :param str content: Chat message content
         :keyword dict[str, str] metadata: Message metadata.
         :return: None
         :rtype: None
