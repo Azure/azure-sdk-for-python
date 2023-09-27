@@ -593,7 +593,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return AsyncItemPaged(get_next, extract_data)
 
     @overload
-    def update_repository_properties(
+    async def update_repository_properties(
         self, repository: str, properties: RepositoryProperties, **kwargs: Any
     ) -> RepositoryProperties:
         """Set the permission properties of a repository.
@@ -609,7 +609,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
 
     @overload
-    def update_repository_properties(
+    async def update_repository_properties(
         self,
         repository: str,
         *,
