@@ -19,12 +19,6 @@ from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import process_storage_error, parse_length_from_content_range
 from .._deserialize import deserialize_blob_properties, get_page_ranges_result
 from .._download import process_range_and_offset, _ChunkDownloader
-# from .._encryption import (
-#     adjust_blob_size_for_encryption,
-#     decrypt_blob,
-#     is_encryption_v2,
-#     parse_encryption_data
-# )
 
 T = TypeVar('T', bytes, str)
 
@@ -33,21 +27,6 @@ async def process_content(data, start_offset, end_offset, encryption):
     if data is None:
         raise ValueError("Response cannot be None.")
     content = data.response.body()
-    # if encryption.get('key') is not None or encryption.get('resolver') is not None:
-    #     try:
-    #         return decrypt_blob(
-    #             encryption.get('required'),
-    #             encryption.get('key'),
-    #             encryption.get('resolver'),
-    #             content,
-    #             start_offset,
-    #             end_offset,
-    #             data.response.headers)
-    #     except Exception as error:
-    #         raise HttpResponseError(
-    #             message="Decryption failed.",
-    #             response=data.response,
-    #             error=error) from error
     return content
 
 
@@ -262,15 +241,11 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         # This will return None if there is no encryption metadata or there are parsing errors.
         # That is acceptable here, the proper error will be caught and surfaced when attempting
         # to decrypt the blob.
-        #self._encryption_data = parse_encryption_data(properties.metadata)
 
         # Restore cls for download
         self._request_options['cls'] = download_cls
 
     async def _setup(self):
-        if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
-            await self._get_encryption_data_request()
-
         initial_request_start = self._start_range if self._start_range is not None else 0
         if self._end_range is not None and self._end_range - self._start_range < self._first_get_size:
             initial_request_end = self._end_range
@@ -317,10 +292,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         # If the file is small, the download is complete at this point.
         # If file size is large, download the rest of the file in chunks.
         # For encryption V2, calculate based on size of decrypted content, not download size.
-        if is_encryption_v2(self._encryption_data):
-            self._download_complete = len(self._current_content) >= self.size
-        else:
-            self._download_complete = initial_size >= self.size
+        self._download_complete = initial_size >= self.size
 
         if not self._download_complete and self._request_options.get("modified_access_conditions"):
             self._request_options["modified_access_conditions"].if_match = self._response.properties.etag
@@ -351,8 +323,6 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             self._file_size = parse_length_from_content_range(response.properties.content_range)
             if self._file_size is None:
                 raise ValueError("Required Content-Range response header is missing or malformed.")
-            # Remove any extra encryption data size from blob size
-            #self._file_size = adjust_blob_size_for_encryption(self._file_size, self._encryption_data)
 
             if self._end_range is not None:
                 # Use the length unless it is over the end of the file
@@ -395,9 +365,6 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
     def _get_downloader_start_with_offset(self):
         # Start where the initial request download ended
         start = self._initial_range[1] + 1
-        # For encryption V2 only, adjust start to the end of the fetched data rather than download size
-        if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
-            start = (self._start_range or 0) + len(self._current_content)
 
         # Adjust the start based on any data read past the current content
         start += (self._offset - len(self._current_content))
@@ -424,9 +391,6 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         else:
             data_end = self._file_size
             data_start = self._initial_range[1] + 1  # Start where the first download ended
-            # For encryption, adjust start to the end of the fetched data rather than download size
-            if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
-                data_start = (self._start_range or 0) + len(self._current_content)
 
             if self._end_range is not None:
                 # Use the length unless it is over the end of the file

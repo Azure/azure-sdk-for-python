@@ -17,26 +17,12 @@ from azure.core.tracing.common import with_current_context
 from ._shared.request_handlers import validate_and_format_range_headers
 from ._shared.response_handlers import process_storage_error, parse_length_from_content_range
 from ._deserialize import deserialize_blob_properties, get_page_ranges_result
-# from ._encryption import (
-#     adjust_blob_size_for_encryption,
-#     decrypt_blob,
-#     get_adjusted_download_range_and_offset,
-#     is_encryption_v2,
-#     parse_encryption_data
-# )
 
 T = TypeVar('T', bytes, str)
 
 
 def process_range_and_offset(start_range, end_range, length, encryption_options, encryption_data):
     start_offset, end_offset = 0, 0
-    # if encryption_options.get("key") is not None or encryption_options.get("resolver") is not None:
-    #     return get_adjusted_download_range_and_offset(
-    #         start_range,
-    #         end_range,
-    #         length,
-    #         encryption_data)
-
     return (start_range, end_range), (start_offset, end_offset)
 
 
@@ -45,20 +31,6 @@ def process_content(data, start_offset, end_offset, encryption):
         raise ValueError("Response cannot be None.")
 
     content = b"".join(list(data))
-
-    # if content and encryption.get("key") is not None or encryption.get("resolver") is not None:
-    #     try:
-    #         return decrypt_blob(
-    #             encryption.get("required"),
-    #             encryption.get("key"),
-    #             encryption.get("resolver"),
-    #             content,
-    #             start_offset,
-    #             end_offset,
-    #             data.response.headers,
-    #         )
-    #     except Exception as error:
-    #         raise HttpResponseError(message="Decryption failed.", response=data.response, error=error) from error
     return content
 
 
@@ -393,7 +365,6 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         # This will return None if there is no encryption metadata or there are parsing errors.
         # That is acceptable here, the proper error will be caught and surfaced when attempting
         # to decrypt the blob.
-        #self._encryption_data = parse_encryption_data(properties.metadata)
 
         # Restore cls for download
         self._request_options['cls'] = download_cls
@@ -429,8 +400,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 self._file_size = parse_length_from_content_range(response.properties.content_range)
                 if self._file_size is None:
                     raise ValueError("Required Content-Range response header is missing or malformed.")
-                # Remove any extra encryption data size from blob size
-                #self._file_size = adjust_blob_size_for_encryption(self._file_size, self._encryption_data)
+                
 
                 if self._end_range is not None:
                     # Use the end range index unless it is over the end of the file
@@ -492,10 +462,6 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         # If the file is small, the download is complete at this point.
         # If file size is large, download the rest of the file in chunks.
-        # For encryption V2, calculate based on size of decrypted content, not download size.
-        # if is_encryption_v2(self._encryption_data):
-        #     self._download_complete = len(self._current_content) >= self.size
-        # else:
         self._download_complete = response.properties.size >= self.size
 
         if not self._download_complete and self._request_options.get("modified_access_conditions"):
@@ -539,9 +505,6 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 data_end = min(self._file_size, self._end_range + 1)
 
             data_start = self._initial_range[1] + 1  # Start where the first download ended
-            # For encryption, adjust start to the end of the fetched data rather than download size
-            if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
-                data_start = (self._start_range or 0) + len(self._current_content)
 
             iter_downloader = _ChunkDownloader(
                 client=self._clients.blob,
