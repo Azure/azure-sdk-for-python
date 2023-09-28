@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime
+import json
 from typing import List, Optional, Union, Any
 import uuid
 from azure.core.credentials import AzureKeyCredential, TokenCredential
@@ -16,10 +17,12 @@ from azure.communication.rooms._models import (
 )
 from azure.communication.rooms._shared.models import CommunicationIdentifier
 from ._generated._client import AzureCommunicationRoomsService
+from ._generated._serialization import Serializer
 from ._shared.auth_policy_utils import get_authentication_policy
 from ._shared.utils import parse_connection_str
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
+
 
 class RoomsClient(object):
     """A client to interact with the AzureCommunicationService Rooms gateway.
@@ -120,14 +123,21 @@ class RoomsClient(object):
             create_room_request["participants"] ={
                 p.communication_identifier.raw_id: {"role": p.role} for p in participants
             }
+        _SERIALIZER = Serializer()
 
-        repeatability_request_id = uuid.uuid1()
-        repeatability_first_sent = datetime.utcnow()
+        #repeatability_request_id = uuid.uuid1()
+
+        now = datetime.utcnow()
+        repeatability_first_sent = _SERIALIZER.serialize_data(now, "rfc-1123")
+
         create_room_response = self._rooms_service_client.rooms.create(
+
             create_room_request=create_room_request,
-            ##repeatability_request_id=repeatability_request_id,
-            ##repeatability_first_sent=repeatability_first_sent,
-            **kwargs)
+            headers = {
+                       "Repeatability-First-Sent" : repeatability_first_sent
+                       },
+           **kwargs )
+
         return CommunicationRoom(create_room_response)
 
     @distributed_trace

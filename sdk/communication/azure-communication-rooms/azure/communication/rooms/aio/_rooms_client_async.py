@@ -18,6 +18,7 @@ from azure.communication.rooms._models import (
 )
 from azure.communication.rooms._shared.models import CommunicationIdentifier
 from .._generated.aio._client import AzureCommunicationRoomsService
+from .._generated._serialization import Serializer
 from .._shared.auth_policy_utils import get_authentication_policy
 from .._shared.utils import parse_connection_str
 from .._version import SDK_MONIKER
@@ -120,14 +121,10 @@ class RoomsClient(object):
             create_room_request["participants"] = {
                 p.communication_identifier.raw_id: {"role": p.role} for p in participants
             }
-
-        ##repeatability_request_id = uuid.uuid1()
-        ##repeatability_first_sent = datetime.utcnow()
+        _SERIALIZER = Serializer()
 
         create_room_response = await self._rooms_service_client.rooms.create(
             create_room_request=create_room_request,
-            ##repeatability_request_id=repeatability_request_id,
-            ##repeatability_first_sent=repeatability_first_sent,
             **kwargs)
         return CommunicationRoom(create_room_response)
 
