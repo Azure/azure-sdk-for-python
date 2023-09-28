@@ -31,3 +31,7 @@ Python 3.6 is no longer supported. Please use Python version 3.7 or later. For m
 ## 1.0.0b1 (2022-08-10)
 
 - Initial version
+
+## 1.1.0b1 (2023-10-31)
+
+- Added the ability to enable PSTN.
