@@ -891,14 +891,14 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             node: Command = self._component(*args, **kwargs)
             # merge inputs
             for name, original_input in self.inputs.items():
-                if name not in kwargs and isinstance(original_input, Input):
+                if name not in kwargs:
                     # use setattr here to make sure owner of input won't change
                     setattr(node.inputs, name, original_input._data)
                     node._job_inputs[name] = original_input._data
                 # get outputs
             for name, original_output in self.outputs.items():
                 # use setattr here to make sure owner of input won't change
-                if isinstance(original_output, Output):
+                if not isinstance(original_output, str):
                     setattr(node.outputs, name, original_output._data)
             self._refine_optional_inputs_with_no_value(node, kwargs)
             # set default values: compute, environment_variables, outputs
