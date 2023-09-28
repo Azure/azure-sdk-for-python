@@ -18,7 +18,7 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
 
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
-from azure.ai.ml.constants._monitoring import MonitorDatasetContext
+from azure.ai.ml.constants._monitoring import MonitorDatasetContext, MonitorInputDataType
 
 
 @experimental
@@ -54,11 +54,11 @@ class MonitorInputData(RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, obj: RestMonitorInputBase) -> Optional["MonitorInputData"]:
-        if obj.input_data_type == "Fixed":
+        if obj.input_data_type == MonitorInputDataType.FIXED:
             return FixedInputData._from_rest_object(obj)
-        if obj.input_data_type == "Trailing":
+        if obj.input_data_type == MonitorInputDataType.TRAILING:
             return TrailingInputData._from_rest_object(obj)
-        if obj.input_data_type == "Static":
+        if obj.input_data_type == MonitorInputDataType.STATIC:
             return StaticInputData._from_rest_object(obj)
 
         return None
@@ -75,7 +75,7 @@ class FixedInputData(MonitorInputData):
         uri: str = None,
     ):
         super().__init__(
-            input_type="Fixed",
+            input_type=MonitorInputDataType.FIXED,
             data_context=data_context,
             target_columns=target_columns,
             job_type=job_type,
@@ -114,7 +114,7 @@ class TrailingInputData(MonitorInputData):
         pre_processing_component_id: str = None,
     ):
         super().__init__(
-            input_type="Trailing",
+            input_type=MonitorInputDataType.TRAILING,
             data_context=data_context,
             target_columns=target_columns,
             job_type=job_type,
@@ -162,7 +162,7 @@ class StaticInputData(MonitorInputData):
         window_end: str = None,
     ):
         super().__init__(
-            input_type="Static",
+            input_type=MonitorInputDataType.STATIC,
             data_context=data_context,
             target_columns=target_columns,
             job_type=job_type,
