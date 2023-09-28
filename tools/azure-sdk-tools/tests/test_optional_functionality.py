@@ -6,7 +6,7 @@ from ci_tools.functions import get_config_setting
 integration_folder = os.path.join(os.path.dirname(__file__), 'integration')
 
 def test_toml_result():
-    package_with_toml = os.path.join(integration_folder, 'scenarios', 'optional_environment')
+    package_with_toml = os.path.join(integration_folder, 'scenarios', 'optional_environment_two_options')
     parsed_setup = ParsedSetup.from_path(package_with_toml)
     actual = parsed_setup.get_build_config()
 
@@ -37,7 +37,7 @@ def test_toml_result():
 
     
 def test_optional_specific_get():
-    package_with_toml = os.path.join(integration_folder, 'scenarios', 'optional_environment')
+    package_with_toml = os.path.join(integration_folder, 'scenarios', 'optional_environment_two_options')
     actual = get_config_setting(package_with_toml, 'optional')
     expected = [
                 {
@@ -53,5 +53,13 @@ def test_optional_specific_get():
                     'additional_pytest_args': []
                 }
             ]
+
+    assert expected == actual
+
+
+def test_optional_specific_get_no_result():
+    package_with_toml = os.path.join(integration_folder, 'scenarios', 'optional_environment_zero_options')
+    actual = get_config_setting(package_with_toml, 'optional', None)
+    expected = None
 
     assert expected == actual

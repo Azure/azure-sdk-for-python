@@ -10,6 +10,7 @@ except:
     import tomli as toml
 import tomli_w as tomlw
 import logging
+from typing import Namespace
 
 from ci_tools.environment_exclusions import (
     is_check_enabled
@@ -48,6 +49,32 @@ def create_scenario_file(package_folder: str, optional_config: str) -> str:
     """
     pass
 
+def main(mapped_args: Namespace) -> int:
+    parsed_package = ParsedSetup.from_path(mapped_args.target)
+
+    if in_ci():
+        if not is_check_enabled(mapped_args.target, "optional", False):
+            logging.info(
+                f"Package {parsed_package.package_name} opts-out of optional check."
+            )
+            return 0
+
+    optional_configs = get_config_setting(mapped_args.target, "optional")
+
+    if len(optional_configs) == 0:
+        logging.info(f"No optional environments detected in pyproject.toml within {mapped_args.target}.")
+        return 0
+
+    for config in optional_configs:
+        # clean if necessary
+        clean_environment(mapped_args.target)
+
+        # install package, dev_reqs, and any additional packages from optional configuration
+
+        # uninstall anything additional
+        breakpoint()
+
+
 def entrypoint():
     parser = argparse.ArgumentParser(
         description="""This entrypoint provides automatic invocation of the 'optional' requirements for a given package. View the pyproject.toml within the targeted package folder to see configuration.""",
@@ -69,26 +96,6 @@ def entrypoint():
         required=False
     )
 
-    args, unknown = parser.parse_known_args()
-    parsed_package = ParsedSetup.from_path(args.target)
-
-    if in_ci():
-        if not is_check_enabled(args.target, "optional"):
-            logging.info(
-                f"Package {parsed_package.package_name} opts-out of optional check."
-            )
-            exit(0)
-
-    optional_configs = get_config_setting(args.target, "optional")
-
-    if len(optional_configs) == 0:
-        logging.info(f"No optional environments detected in pyproject.toml within {args.target}.")
-        exit(0)
-
-    for config in optional_configs:
-        # clean if necessary
-
-        # install package, dev_reqs, and any additional packages from optional configuration
-
-        # uninstall anything additional
-        breakpoint()
+    args, _ = parser.parse_known_args()
+    exit(main(mapped_args=args))
+    
