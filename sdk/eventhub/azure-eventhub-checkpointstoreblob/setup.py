@@ -73,9 +73,9 @@ setup(
     },
     install_requires=[
         # dependencies for the vendored storage blob
-        "azure-core<2.0.0,>=1.20.1",
-        "msrest>=0.6.18",
-        "cryptography>=2.1.4",
+        "azure-core<2.0.0,>=1.28.0",
+        "typing-extensions>=4.3.0",
+        "isodate>=0.6.1"
         # end of dependencies for the vendored storage blob
         'azure-eventhub<6.0.0,>=5.0.0',
     ]
