@@ -78,7 +78,7 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
         :paramtype last_updated_on: ~datetime.datetime or None
         :keyword operating_system: Operating system for the artifact.
             Note: any value not listed in enum ArtifactOperatingSystem will be string type.
-        :paramtype operating_system: str or ~azure.containerregistry.ArtifactOperatingSystem] or None
+        :paramtype operating_system: str or ~azure.containerregistry.ArtifactOperatingSystem or None
         :keyword repository_name: Repository name the artifact belongs to.
         :paramtype repository_name: str or None
         :keyword registry: Registry name the artifact belongs to.
@@ -146,47 +146,65 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
 
     @property
     def architecture(self) -> ArtifactArchitecture:
-        """CPU Architecture of an artifact."""
+        """CPU Architecture of an artifact.
+        :rtype: ~azure.containerregistry.ArtifactArchitecture
+        """
         return self._architecture
 
     @property
     def created_on(self) -> datetime:
-        """Time and date an artifact was created."""
+        """Time and date an artifact was created.
+        :rtype: ~datetime.datetime
+        """
         return self._created_on
 
     @property
     def digest(self) -> str:
-        """Digest for the artifact."""
+        """Digest for the artifact.
+        :rtype: str or None
+        """
         return self._digest
 
     @property
     def last_updated_on(self) -> datetime:
-        """Time and date an artifact was last updated."""
+        """Time and date an artifact was last updated.
+        :rtype: ~datetime.datetime
+        """
         return self._last_updated_on
 
     @property
     def operating_system(self) -> ArtifactOperatingSystem:
-        """Operating system for the artifact."""
+        """Operating system for the artifact.
+        :rtype: ~azure.containerregistry.ArtifactOperatingSystem
+        """
         return self._operating_system
 
     @property
     def repository_name(self) -> str:
-        """Repository name the artifact belongs to."""
+        """Repository name the artifact belongs to.
+        :rtype: str
+        """
         return self._repository_name
 
     @property
     def size_in_bytes(self) -> int:
-        """Size of the artifact."""
+        """Size of the artifact.
+        :rtype: int
+        """
         return self._size_in_bytes
 
     @property
     def tags(self) -> List[str]:
-        """Tags associated with a registry artifact."""
+        """Tags associated with a registry artifact.
+        :rtype: list[str]
+        """
         return self._tags
 
     @property
     def fully_qualified_reference(self) -> str:
-        """The fully qualified name of this artifact."""
+        """The fully qualified name of this artifact.
+        :rtype: str
+        """
         return f"{_host_only(self._registry)}/{self._repository_name}{':' if _is_tag(self._digest) else '@'}{_strip_alg(self._digest)}"  # pylint: disable=line-too-long
 
 
@@ -266,27 +284,37 @@ class RepositoryProperties:
 
     @property
     def created_on(self) -> datetime:
-        """Time and date the repository was created."""
+        """Time and date the repository was created.
+        :rtype: ~datetime.datetime
+        """
         return self._created_on
 
     @property
     def last_updated_on(self) -> datetime:
-        """Time and date the repository was last updated."""
+        """Time and date the repository was last updated.
+        :rtype: ~datetime.datetime
+        """
         return self._last_updated_on
 
     @property
     def manifest_count(self) -> int:
-        """Number of manifest in the repository."""
+        """Number of manifest in the repository.
+        :rtype: int
+        """
         return self._manifest_count
 
     @property
     def name(self) -> str:
-        """Name of the repository."""
+        """Name of the repository.
+        :rtype: str
+        """
         return self._name
 
     @property
     def tag_count(self) -> int:
-        """Number of tags associated with the repository."""
+        """Number of tags associated with the repository.
+        :rtype: int
+        """
         return self._tag_count
 
 
@@ -357,27 +385,37 @@ class ArtifactTagProperties:
 
     @property
     def created_on(self) -> datetime:
-        """Time and date the tag was created."""
+        """Time and date the tag was created.
+        :rtype: ~datetime.datetime
+        """
         return self._created_on
 
     @property
     def digest(self) -> str:
-        """Digest for the tag."""
+        """Digest for the tag.
+        :rtype: str
+        """
         return self._digest
 
     @property
     def last_updated_on(self) -> datetime:
-        """Time and date the tag was last updated."""
+        """Time and date the tag was last updated.
+        :rtype: ~datetime.datetime
+        """
         return self._last_updated_on
 
     @property
     def name(self) -> str:
-        """Name of the tag."""
+        """Name of the tag.
+        :rtype: str
+        """
         return self._name
 
     @property
     def repository_name(self) -> str:
-        """Repository name the tag belongs to."""
+        """Repository name the tag belongs to.
+        :rtype: str
+        """
         return self._repository_name
 
 
