@@ -20,7 +20,8 @@ from ._models_py3 import BackupInformation
 from ._models_py3 import BackupPolicy
 from ._models_py3 import BackupPolicyMigrationState
 from ._models_py3 import BackupResource
-from ._models_py3 import BackupResourceProperties
+from ._models_py3 import BackupSchedule
+from ._models_py3 import BaseCosmosDataTransferDataSourceSink
 from ._models_py3 import Capability
 from ._models_py3 import Capacity
 from ._models_py3 import CassandraClusterDataCenterNodeItem
@@ -336,8 +337,10 @@ from ._cosmos_db_management_client_enums import ApiType
 from ._cosmos_db_management_client_enums import AuthenticationMethod
 from ._cosmos_db_management_client_enums import BackupPolicyMigrationStatus
 from ._cosmos_db_management_client_enums import BackupPolicyType
+from ._cosmos_db_management_client_enums import BackupState
 from ._cosmos_db_management_client_enums import BackupStorageRedundancy
 from ._cosmos_db_management_client_enums import CheckNameAvailabilityReason
+from ._cosmos_db_management_client_enums import ClusterType
 from ._cosmos_db_management_client_enums import CompositePathSortOrder
 from ._cosmos_db_management_client_enums import ConflictResolutionMode
 from ._cosmos_db_management_client_enums import ConnectionState
@@ -345,10 +348,12 @@ from ._cosmos_db_management_client_enums import ConnectorOffer
 from ._cosmos_db_management_client_enums import ContinuousTier
 from ._cosmos_db_management_client_enums import CreateMode
 from ._cosmos_db_management_client_enums import CreatedByType
+from ._cosmos_db_management_client_enums import CustomerManagedKeyStatus
 from ._cosmos_db_management_client_enums import DataTransferComponent
 from ._cosmos_db_management_client_enums import DataType
 from ._cosmos_db_management_client_enums import DatabaseAccountKind
 from ._cosmos_db_management_client_enums import DefaultConsistencyLevel
+from ._cosmos_db_management_client_enums import DefaultPriorityLevel
 from ._cosmos_db_management_client_enums import EnableFullTextQuery
 from ._cosmos_db_management_client_enums import IndexKind
 from ._cosmos_db_management_client_enums import IndexingMode
@@ -402,7 +407,8 @@ __all__ = [
     "BackupPolicy",
     "BackupPolicyMigrationState",
     "BackupResource",
-    "BackupResourceProperties",
+    "BackupSchedule",
+    "BaseCosmosDataTransferDataSourceSink",
     "Capability",
     "Capacity",
     "CassandraClusterDataCenterNodeItem",
@@ -717,8 +723,10 @@ __all__ = [
     "AuthenticationMethod",
     "BackupPolicyMigrationStatus",
     "BackupPolicyType",
+    "BackupState",
     "BackupStorageRedundancy",
     "CheckNameAvailabilityReason",
+    "ClusterType",
     "CompositePathSortOrder",
     "ConflictResolutionMode",
     "ConnectionState",
@@ -726,10 +734,12 @@ __all__ = [
     "ContinuousTier",
     "CreateMode",
     "CreatedByType",
+    "CustomerManagedKeyStatus",
     "DataTransferComponent",
     "DataType",
     "DatabaseAccountKind",
     "DefaultConsistencyLevel",
+    "DefaultPriorityLevel",
     "EnableFullTextQuery",
     "IndexKind",
     "IndexingMode",

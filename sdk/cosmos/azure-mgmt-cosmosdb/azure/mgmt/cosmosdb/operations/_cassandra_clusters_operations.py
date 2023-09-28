@@ -30,7 +30,7 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -43,7 +43,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -54,7 +54,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -69,7 +69,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -84,7 +84,7 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -99,7 +99,7 @@ def build_get_request(resource_group_name: str, cluster_name: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -117,7 +117,7 @@ def build_get_request(resource_group_name: str, cluster_name: str, subscription_
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -134,7 +134,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -152,7 +152,7 @@ def build_delete_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -169,7 +169,7 @@ def build_create_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -188,7 +188,7 @@ def build_create_update_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -207,7 +207,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -226,7 +226,7 @@ def build_update_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -245,7 +245,7 @@ def build_invoke_command_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -264,7 +264,7 @@ def build_invoke_command_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -283,7 +283,7 @@ def build_list_backups_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -301,7 +301,7 @@ def build_list_backups_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -318,7 +318,7 @@ def build_get_backup_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -337,7 +337,7 @@ def build_get_backup_request(
         "backupId": _SERIALIZER.url("backup_id", backup_id, "str", max_length=15, min_length=1, pattern=r"^[0-9]+$"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -349,12 +349,17 @@ def build_get_backup_request(
 
 
 def build_deallocate_request(
-    resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
+    resource_group_name: str,
+    cluster_name: str,
+    subscription_id: str,
+    *,
+    x_ms_force_deallocate: Optional[bool] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -372,12 +377,14 @@ def build_deallocate_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    if x_ms_force_deallocate is not None:
+        _headers["x-ms-force-deallocate"] = _SERIALIZER.header("x_ms_force_deallocate", x_ms_force_deallocate, "bool")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
@@ -389,7 +396,7 @@ def build_start_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -407,7 +414,7 @@ def build_start_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -424,7 +431,7 @@ def build_status_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -442,7 +449,7 @@ def build_status_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1624,7 +1631,7 @@ class CassandraClustersOperations:
     }
 
     def _deallocate_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, cluster_name: str, **kwargs: Any
+        self, resource_group_name: str, cluster_name: str, x_ms_force_deallocate: Optional[bool] = None, **kwargs: Any
     ) -> None:
         error_map = {
             401: ClientAuthenticationError,
@@ -1644,6 +1651,7 @@ class CassandraClustersOperations:
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             subscription_id=self._config.subscription_id,
+            x_ms_force_deallocate=x_ms_force_deallocate,
             api_version=api_version,
             template_url=self._deallocate_initial.metadata["url"],
             headers=_headers,
@@ -1671,7 +1679,9 @@ class CassandraClustersOperations:
     }
 
     @distributed_trace
-    def begin_deallocate(self, resource_group_name: str, cluster_name: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_deallocate(
+        self, resource_group_name: str, cluster_name: str, x_ms_force_deallocate: Optional[bool] = None, **kwargs: Any
+    ) -> LROPoller[None]:
         """Deallocate the Managed Cassandra Cluster and Associated Data Centers. Deallocation will
         deallocate the host virtual machine of this cluster, and reserved the data disk. This won't do
         anything on an already deallocated cluster. Use Start to restart the cluster.
@@ -1681,6 +1691,10 @@ class CassandraClustersOperations:
         :type resource_group_name: str
         :param cluster_name: Managed Cassandra cluster name. Required.
         :type cluster_name: str
+        :param x_ms_force_deallocate: Force to deallocate a cluster of Cluster Type Production. Force
+         to deallocate a cluster of Cluster Type Production might cause data loss. Default value is
+         None.
+        :type x_ms_force_deallocate: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -1705,6 +1719,7 @@ class CassandraClustersOperations:
             raw_result = self._deallocate_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 cluster_name=cluster_name,
+                x_ms_force_deallocate=x_ms_force_deallocate,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,

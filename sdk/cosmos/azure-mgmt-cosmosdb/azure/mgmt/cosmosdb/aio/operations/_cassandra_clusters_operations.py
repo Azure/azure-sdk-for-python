@@ -1223,7 +1223,7 @@ class CassandraClustersOperations:
     }
 
     async def _deallocate_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, cluster_name: str, **kwargs: Any
+        self, resource_group_name: str, cluster_name: str, x_ms_force_deallocate: Optional[bool] = None, **kwargs: Any
     ) -> None:
         error_map = {
             401: ClientAuthenticationError,
@@ -1243,6 +1243,7 @@ class CassandraClustersOperations:
             resource_group_name=resource_group_name,
             cluster_name=cluster_name,
             subscription_id=self._config.subscription_id,
+            x_ms_force_deallocate=x_ms_force_deallocate,
             api_version=api_version,
             template_url=self._deallocate_initial.metadata["url"],
             headers=_headers,
@@ -1271,7 +1272,7 @@ class CassandraClustersOperations:
 
     @distributed_trace_async
     async def begin_deallocate(
-        self, resource_group_name: str, cluster_name: str, **kwargs: Any
+        self, resource_group_name: str, cluster_name: str, x_ms_force_deallocate: Optional[bool] = None, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deallocate the Managed Cassandra Cluster and Associated Data Centers. Deallocation will
         deallocate the host virtual machine of this cluster, and reserved the data disk. This won't do
@@ -1282,6 +1283,10 @@ class CassandraClustersOperations:
         :type resource_group_name: str
         :param cluster_name: Managed Cassandra cluster name. Required.
         :type cluster_name: str
+        :param x_ms_force_deallocate: Force to deallocate a cluster of Cluster Type Production. Force
+         to deallocate a cluster of Cluster Type Production might cause data loss. Default value is
+         None.
+        :type x_ms_force_deallocate: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -1306,6 +1311,7 @@ class CassandraClustersOperations:
             raw_result = await self._deallocate_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 cluster_name=cluster_name,
+                x_ms_force_deallocate=x_ms_force_deallocate,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,
