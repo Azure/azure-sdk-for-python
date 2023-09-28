@@ -81,7 +81,7 @@ class FqdnDestination(OutboundRule):
     :type destination: str
     :ivar type: Type of the outbound rule. Set to "FQDN" for this class.
     :vartype type: str
-    
+
     .. literalinclude:: ../../../../../samples/ml_samples_workspace.py
             :start-after: [START fqdn_outboundrule]
             :end-before: [END fqdn_outboundrule]
