@@ -23,11 +23,11 @@ USAGE:
     5) STORAGE_ACCOUNT_KEY - the blob storage account key
 """
 
-
 import asyncio
 import copy
 import json
 import os
+from typing import cast
 from azure.storage.blob.aio import BlobServiceClient
 from azure.data.tables.aio import TableServiceClient
 from datetime import datetime
@@ -41,20 +41,12 @@ class CopyTableSamples(object):
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
         self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.table_connection_string = (
-            "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-                self.account_name, self.access_key, self.endpoint_suffix
-            )
-        )
-        self.copy_to_blob_table_name = "copytoblobtablenameasync" + uuid4().hex
-        self.copy_to_table_table_name = "copytotabletablenameasync" + uuid4().hex
+        self.table_connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
+        self.copy_to_blob_table_name = "copytoblobtablename" + uuid4().hex
+        self.copy_to_table_table_name = "copytotabletablename" + uuid4().hex
         self.blob_account_name = os.getenv("STORAGE_ACCOUNT_NAME")
         self.blob_account_key = os.getenv("STORAGE_ACCOUNT_KEY")
-        self.blob_connection_string = (
-            "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix=core.windows.net".format(
-                self.blob_account_name, self.blob_account_key
-            )
-        )
+        self.blob_connection_string = f"DefDefaultEndpointsProtocol=https;AccountName={self.blob_account_name};AccountKey={self.blob_account_key};EndpointSuffix=core.windows.net"
         self.blob_service_client = BlobServiceClient.from_connection_string(self.blob_connection_string)
         self.entity = {
             "PartitionKey": "color",
@@ -69,7 +61,7 @@ class CopyTableSamples(object):
 
     async def copy_table_from_table_to_blob(self):
         print("Start to copy table from Tables table to Storage blob.")
-        print("Table name: " + self.copy_to_blob_table_name)
+        print(f"Table name: {self.copy_to_blob_table_name}")
         await self._setup_table()
         try:
             self.container_client = await self.blob_service_client.create_container(self.copy_to_blob_table_name)
@@ -79,7 +71,7 @@ class CopyTableSamples(object):
                 entity["last_updated"] = entity["last_updated"].isoformat()
                 entity["product_id"] = entity["product_id"].hex
                 entity["barcode"] = entity["barcode"].decode("utf-8")
-                blob_name = entity["PartitionKey"] + entity["RowKey"]
+                blob_name = f"{entity['PartitionKey']}{entity['RowKey']}"
                 blob_client = self.blob_service_client.get_blob_client(self.copy_to_blob_table_name, blob_name)
                 await blob_client.upload_blob(json.dumps(entity))
             print("Done!")
@@ -127,12 +119,12 @@ class CopyTableSamples(object):
         self.container_client = await self.blob_service_client.create_container(self.copy_to_table_table_name)
         entity = copy.deepcopy(self.entity)
         # Convert type datetime, bytes, UUID values to string as they're not JSON serializable
-        entity["last_updated"] = entity["last_updated"].isoformat()  # type: ignore[attr-defined]
-        entity["product_id"] = entity["product_id"].hex  # type: ignore[attr-defined]
-        entity["barcode"] = entity["barcode"].decode("utf-8")  # type: ignore[attr-defined]
+        entity["last_updated"] = cast(datetime, entity["last_updated"]).isoformat()
+        entity["product_id"] = UUID(str(entity["product_id"])).hex
+        entity["barcode"] = cast(bytes, entity["barcode"]).decode("utf-8")
         for i in range(10):
             entity["RowKey"] = str(i)
-            blob_name = entity["PartitionKey"] + entity["RowKey"]  # type: ignore[operator]
+            blob_name = f"{entity['PartitionKey']}{entity['RowKey']}"
             blob_client = self.blob_service_client.get_blob_client(self.copy_to_table_table_name, blob_name)
             await blob_client.upload_blob(json.dumps(entity))
 

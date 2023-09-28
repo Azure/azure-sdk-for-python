@@ -31,12 +31,10 @@ from uuid import uuid4
 class TableEntitySamples(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
-        self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name, self.access_key, self.endpoint_suffix
-        )
+        self.access_key = os.environ["TABLES_PRIMARY_STORAGE_ACCOUNT_KEY"]
+        self.endpoint_suffix = os.environ["TABLES_STORAGE_ENDPOINT_SUFFIX"]
+        self.account_name = os.environ["TABLES_STORAGE_ACCOUNT_NAME"]
+        self.connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
         self.table_base = "SampleUpdateUpsertMerge"
 
     def create_and_get_entities(self):
@@ -62,13 +60,15 @@ class TableEntitySamples(object):
             try:
                 # [START create_entity]
                 created_entity = table.create_entity(entity=my_entity)
-                print("Created entity: {}".format(created_entity))
+                print(f"Created entity: {created_entity}")
                 # [END create_entity]
 
                 # [START get_entity]
                 # Get Entity by partition and row key
-                got_entity = table.get_entity(partition_key=my_entity["PartitionKey"], row_key=my_entity["RowKey"])  # type: ignore[arg-type]
-                print("Received entity: {}".format(got_entity))
+                got_entity = table.get_entity(
+                    partition_key=str(my_entity["PartitionKey"]), row_key=str(my_entity["RowKey"])
+                )
+                print(f"Received entity: {got_entity}")
                 # [END get_entity]
 
             finally:
@@ -111,7 +111,7 @@ class TableEntitySamples(object):
                 # Query the entities in the table
                 entities = list(table.list_entities())
                 for i, entity in enumerate(entities):
-                    print("Entity #{}: {}".format(entity, i))
+                    print(f"Entity #{entity}: {i}")
                 # [END list_entities]
 
             finally:
@@ -150,16 +150,16 @@ class TableEntitySamples(object):
             try:
                 # Create entities
                 table.create_entity(entity=entity)
-                created = table.get_entity(partition_key=entity["PartitionKey"], row_key=entity["RowKey"])  # type: ignore[arg-type]
+                created = table.get_entity(partition_key=str(entity["PartitionKey"]), row_key=str(entity["RowKey"]))
 
                 # [START upsert_entity]
                 # Try Replace and insert on fail
                 insert_entity = table.upsert_entity(mode=UpdateMode.REPLACE, entity=entity1)
-                print("Inserted entity: {}".format(insert_entity))
+                print(f"Inserted entity: {insert_entity}")
 
                 created["text"] = "NewMarker"
                 merged_entity = table.upsert_entity(mode=UpdateMode.MERGE, entity=entity)
-                print("Merged entity: {}".format(merged_entity))
+                print(f"Merged entity: {merged_entity}")
                 # [END upsert_entity]
 
                 # [START update_entity]
@@ -168,16 +168,16 @@ class TableEntitySamples(object):
                 table.update_entity(mode=UpdateMode.REPLACE, entity=created)
 
                 # Get the replaced entity
-                replaced = table.get_entity(partition_key=created["PartitionKey"], row_key=created["RowKey"])
-                print("Replaced entity: {}".format(replaced))
+                replaced = table.get_entity(partition_key=str(created["PartitionKey"]), row_key=str(created["RowKey"]))
+                print(f"Replaced entity: {replaced}")
 
                 # Merge the entity
                 replaced["color"] = "Blue"
                 table.update_entity(mode=UpdateMode.MERGE, entity=replaced)
 
                 # Get the merged entity
-                merged = table.get_entity(partition_key=replaced["PartitionKey"], row_key=replaced["RowKey"])
-                print("Merged entity: {}".format(merged))
+                merged = table.get_entity(partition_key=str(replaced["PartitionKey"]), row_key=str(replaced["RowKey"]))
+                print(f"Merged entity: {merged}")
                 # [END update_entity]
 
             finally:

@@ -32,13 +32,11 @@ from dotenv import find_dotenv, load_dotenv
 class InsertDeleteEntity(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
-        self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
-        self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
-        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-            self.account_name, self.access_key, self.endpoint_suffix
-        )
+        self.access_key = os.environ["TABLES_PRIMARY_STORAGE_ACCOUNT_KEY"]
+        self.endpoint_suffix = os.environ["TABLES_STORAGE_ENDPOINT_SUFFIX"]
+        self.account_name = os.environ["TABLES_STORAGE_ACCOUNT_NAME"]
+        self.endpoint = f"{self.account_name}.table.{self.endpoint_suffix}"
+        self.connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
         self.table_name = "InsertDeleteAsync"
 
         self.entity = {
@@ -78,7 +76,7 @@ class InsertDeleteEntity(object):
         from azure.core.exceptions import ResourceExistsError
         from azure.core.credentials import AzureNamedKeyCredential
 
-        credential = AzureNamedKeyCredential(self.account_name, self.access_key)  # type: ignore[arg-type]
+        credential = AzureNamedKeyCredential(self.account_name, self.access_key)
         table_client = TableClient(endpoint=self.endpoint, table_name=self.table_name, credential=credential)
 
         # [START delete_entity]
@@ -88,15 +86,16 @@ class InsertDeleteEntity(object):
             except ResourceExistsError:
                 print("Entity already exists!")
 
-            await table_client.delete_entity(row_key=self.entity["RowKey"], partition_key=self.entity["PartitionKey"])  # type: ignore[call-overload]
+            await table_client.delete_entity(
+                row_key=str(self.entity["RowKey"]), partition_key=str(self.entity["PartitionKey"])
+            )
             print("Successfully deleted!")
         # [END delete_entity]
 
     async def clean_up(self):
         from azure.data.tables.aio import TableServiceClient
 
-        tsc = TableServiceClient.from_connection_string(self.connection_string)
-        async with tsc:
+        async with TableServiceClient.from_connection_string(self.connection_string) as tsc:
             async for table in tsc.list_tables():
                 await tsc.delete_table(table.name)
 
