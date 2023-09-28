@@ -85,10 +85,6 @@ class TableClient(AsyncTablesBaseClient):
         self.table_name: str = table_name
         super(TableClient, self).__init__(endpoint, credential=credential, **kwargs)
 
-    async def __aenter__(self) -> "TableClient":
-        await self._client.__aenter__()
-        return self
-    
     @classmethod
     def from_connection_string(cls, conn_str: str, table_name: str, **kwargs: Any) -> "TableClient":
         """Create TableClient from a Connection string.
@@ -674,7 +670,7 @@ class TableClient(AsyncTablesBaseClient):
             **kwargs,
         )
         try:
-            async for operation in operations:
+            for operation in operations:  # type: ignore[attr-defined]
                 batched_requests.add_operation(operation)
         except TypeError:
             try:

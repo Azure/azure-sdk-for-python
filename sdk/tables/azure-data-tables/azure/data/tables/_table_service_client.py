@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
@@ -68,20 +68,6 @@ class TableServiceClient(TablesBaseClient):
             :dedent: 8
             :caption: Authenticating a TableServiceClient from a Shared Account Key
     """
-    
-    def __enter__(self) -> "TableServiceClient":
-        self._client.__enter__()
-        return self
-
-    def _format_url(self, hostname: str) -> str:
-        """Format the endpoint URL according to the current location
-        mode hostname.
-
-        :param str hostname: The current location mode hostname.
-        :returns: The full URL to the Tables account.
-        :rtype: str
-        """
-        return f"{self.scheme}://{hostname}{self._query_str}"
 
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "TableServiceClient":
@@ -155,12 +141,12 @@ class TableServiceClient(TablesBaseClient):
         :return: None
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        cors: Optional[List[TableCorsRule]] = kwargs.pop("cors", None)
+        cors = kwargs.pop("cors", None)
         props = TableServiceProperties(
             logging=kwargs.pop("analytics_logging", None),
             hour_metrics=kwargs.pop("hour_metrics", None),
             minute_metrics=kwargs.pop("minute_metrics", None),
-            cors=[c._to_generated() for c in cors] if cors else None,  # pylint:disable=protected-access
+            cors=[c._to_generated() for c in cors] if cors is not None else cors,  # pylint:disable=protected-access
         )
         try:
             self._client.service.set_properties(props, **kwargs)

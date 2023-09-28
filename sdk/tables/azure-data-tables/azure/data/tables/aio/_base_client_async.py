@@ -3,8 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any, List, Mapping, Optional, Union
 from uuid import uuid4
+from typing import Any, List, Mapping, Optional, Union
+from typing_extensions import Self
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -72,6 +73,10 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         super(AsyncTablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)
         self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), **kwargs)
         self._client._config.version = get_api_version(kwargs, self._client._config.version)  # type: ignore[assignment] # pylint: disable=protected-access
+
+    async def __aenter__(self) -> Self:
+        await self._client.__aenter__()
+        return self
 
     async def __aexit__(self, *args: Any) -> None:
         await self._client.__aexit__(*args)

@@ -73,20 +73,6 @@ class TableServiceClient(AsyncTablesBaseClient):
             :caption: Creating the tableServiceClient with Shared Access Signature.
     """
 
-    async def __aenter__(self) -> "TableServiceClient":
-        await self._client.__aenter__()
-        return self
-    
-    def _format_url(self, hostname: str) -> str:
-        """Format the endpoint URL according to the current location
-        mode hostname.
-
-        :param str hostname: The current location mode hostname.
-        :returns: The full URL to the Tables account.
-        :rtype: str
-        """
-        return f"{self.scheme}://{hostname}{self._query_str}"
-
     @classmethod
     def from_connection_string(cls, conn_str: str, **kwargs: Any) -> "TableServiceClient":
         """Create TableServiceClient from a Connection String.
@@ -175,7 +161,7 @@ class TableServiceClient(AsyncTablesBaseClient):
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=[c._to_generated() for c in cors] if cors else None,  # pylint:disable=protected-access
+            cors=[c._to_generated() for c in cors] if cors is not None else cors,  # pylint:disable=protected-access
         )
         try:
             await self._client.service.set_properties(props, **kwargs)

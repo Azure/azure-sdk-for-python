@@ -50,9 +50,6 @@ class TableClient(TablesBaseClient):
         AzureSasCredential (azure-core), or a TokenCredential implementation from azure-identity.
     """
 
-    # scheme: str
-    # """The scheme component in the full URL to the Tables account."""
-
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,
         endpoint: str,
@@ -83,10 +80,6 @@ class TableClient(TablesBaseClient):
         self.table_name: str = table_name
         super(TableClient, self).__init__(endpoint, credential=credential, **kwargs)
 
-    def __enter__(self) -> "TableClient":
-        self._client.__enter__()
-        return self
-    
     @classmethod
     def from_connection_string(cls, conn_str: str, table_name: str, **kwargs: Any) -> "TableClient":
         """Create TableClient from a Connection String.

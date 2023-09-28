@@ -8,6 +8,7 @@ import os
 from uuid import uuid4
 from urllib.parse import parse_qs, quote, urlparse
 from typing import Any, Dict, List, Optional, Mapping, Union
+from typing_extensions import Self
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential, TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -258,6 +259,10 @@ class TablesBaseClient(AccountHostsMixin):
         super(TablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)
         self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), **kwargs)
         self._client._config.version = get_api_version(kwargs, self._client._config.version)  # type: ignore[assignment] # pylint: disable=protected-access
+
+    def __enter__(self) -> Self:
+        self._client.__enter__()
+        return self
 
     def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)
