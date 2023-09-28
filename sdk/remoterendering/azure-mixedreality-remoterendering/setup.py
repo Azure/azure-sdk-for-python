@@ -65,7 +65,8 @@ setup(
     install_requires=[
         'azure-core<2.0.0,>=1.6.0',
         'azure-mixedreality-authentication>=1.0.0b1',
-        'msrest>=0.6.21'
+        'msrest>=0.6.21',
+        'six>=1.12.0',
     ],
     project_urls={
         'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',

@@ -76,6 +76,7 @@ setup(
         "azure-core<2.0.0,>=1.20.1",
         "msrest>=0.6.18",
         "cryptography>=2.1.4",
+        "six>=1.12.0",
         # end of dependencies for the vendored storage blob
         'azure-eventhub<6.0.0,>=5.0.0',
         'aiohttp<4.0,>=3.8.3',
