@@ -56,8 +56,8 @@ class WorkspaceOutboundRuleOperations:
         .. admonition:: Example:
 
             .. literalinclude:: ../../../../samples/ml_samples_workspace.py
-                :start-after: [START obrule_get]
-                :end-before: [END obrule_get]
+                :start-after: [START outbound_rule_get]
+                :end-before: [END outbound_rule_get]
                 :language: python
                 :dedent: 8
                 :caption: Get the outbound rule for a workspace with the given name.
@@ -83,11 +83,12 @@ class WorkspaceOutboundRuleOperations:
         .. admonition:: Example:
 
             .. literalinclude:: ../../../../samples/ml_samples_workspace.py
-                :start-after: [START obrule_begin_create]
-                :end-before: [END obrule_begin_create]
+                :start-after: [START outbound_rule_begin_create]
+                :end-before: [END outbound_rule_begin_create]
                 :language: python
                 :dedent: 8
-                :caption: Create an FQDN outbound rule for a workspace with the given name, similar can be done for PrivateEndpointDestination or ServiceTagDestination.
+                :caption: Create an FQDN outbound rule for a workspace with the given name,
+                similar can be done for PrivateEndpointDestination or ServiceTagDestination.
         """
 
         workspace_name = self._check_workspace_name(workspace_name)
@@ -126,11 +127,12 @@ class WorkspaceOutboundRuleOperations:
         .. admonition:: Example:
 
             .. literalinclude:: ../../../../samples/ml_samples_workspace.py
-                :start-after: [START obrule_begin_update]
-                :end-before: [END obrule_begin_update]
+                :start-after: [START outbound_rule_begin_update]
+                :end-before: [END outbound_rule_begin_update]
                 :language: python
                 :dedent: 8
-                :caption: Update an FQDN outbound rule for a workspace with the given name, similar can be done for PrivateEndpointDestination or ServiceTagDestination
+                :caption: Update an FQDN outbound rule for a workspace with the given name,
+                similar can be done for PrivateEndpointDestination or ServiceTagDestination.
         """
 
         workspace_name = self._check_workspace_name(workspace_name)
@@ -167,8 +169,8 @@ class WorkspaceOutboundRuleOperations:
         .. admonition:: Example:
 
             .. literalinclude:: ../../../../samples/ml_samples_workspace.py
-                :start-after: [START obrule_list]
-                :end-before: [END obrule_list]
+                :start-after: [START outbound_rule_list]
+                :end-before: [END outbound_rule_list]
                 :language: python
                 :dedent: 8
                 :caption: List the outbound rule for a workspace with the given name.
@@ -199,8 +201,8 @@ class WorkspaceOutboundRuleOperations:
         .. admonition:: Example:
 
             .. literalinclude:: ../../../../samples/ml_samples_workspace.py
-                :start-after: [START obrule_begin_remove]
-                :end-before: [END obrule_begin_remove]
+                :start-after: [START outbound_rule_begin_remove]
+                :end-before: [END outbound_rule_begin_remove]
                 :language: python
                 :dedent: 8
                 :caption: Remove the outbound rule for a workspace with the given name.

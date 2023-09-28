@@ -87,8 +87,8 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
         .. admonition:: Example:
 
             .. literalinclude:: ../../../../samples/ml_samples_workspace.py
-                :start-after: [START createorupdate_connection]
-                :end-before: [END createorupdate_connection]
+                :start-after: [START create_or_update_connection]
+                :end-before: [END create_or_update_connection]
                 :language: python
                 :dedent: 8
                 :caption: Create or update a workspace connection, this example shows snowflake.

@@ -60,7 +60,7 @@ class WorkspaceConfigurationOptions(object):
 
         cmk = CustomerManagedKey(
             key_vault="/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/test-rg/providers/Microsoft.KeyVault/vaults/vault-name",
-            key_uri="https://vault-name.vault.azure.net/keys/key-name/key-version"
+            key_uri="https://vault-name.vault.azure.net/keys/key-name/key-version",
         )
 
         # special bring your own scenario
@@ -69,15 +69,10 @@ class WorkspaceConfigurationOptions(object):
             key_uri="https://vault-name.vault.azure.net/keys/key-name/key-version",
             cosmosdb_id="/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/test-rg/providers/Microsoft.DocumentDB/databaseAccounts/cosmos-name",
             storage_id="/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/storage-name",
-            search_id="/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/test-rg/providers/Microsoft.Search/searchServices/search-name"
+            search_id="/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/test-rg/providers/Microsoft.Search/searchServices/search-name",
         )
 
-        ws = Workspace(
-            name="ws-name",
-            location="eastus",
-            display_name="My workspace",
-            customer_managed_key=cmk
-        )
+        ws = Workspace(name="ws-name", location="eastus", display_name="My workspace", customer_managed_key=cmk)
         # [END customermanagedkey]
 
         # [START workspace_managed_network]
@@ -87,63 +82,50 @@ class WorkspaceConfigurationOptions(object):
             IsolationMode,
             ServiceTagDestination,
             PrivateEndpointDestination,
-            FqdnDestination
+            FqdnDestination,
         )
 
         # Example private endpoint outbound to a blob
-        perule = PrivateEndpointDestination(
-            name="perule", 
-            service_resource_id="/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/storage-name", 
-            subresource_target="blob", 
-            spark_enabled=False
+        blobrule = PrivateEndpointDestination(
+            name="blobrule",
+            service_resource_id="/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/storage-name",
+            subresource_target="blob",
+            spark_enabled=False,
         )
 
         # Example service tag rule
         datafactoryrule = ServiceTagDestination(
-            name="datafactory", 
-            service_tag="DataFactory", 
-            protocol="TCP", 
-            port_ranges="80, 8080-8089"
+            name="datafactory", service_tag="DataFactory", protocol="TCP", port_ranges="80, 8080-8089"
         )
 
         # Example FQDN rule
-        pypirule = FqdnDestination(
-            name="fqdnrule", 
-            destination="pypi.org"
-        )
+        pypirule = FqdnDestination(name="pypirule", destination="pypi.org")
 
         network = ManagedNetwork(
             isolation_mode=IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND,
-            outbound_rules=[perule, datafactoryrule, pypirule]
+            outbound_rules=[blobrule, datafactoryrule, pypirule],
         )
 
         # Workspace configuration
-        ws = Workspace(
-            name="ws-name",
-            location="eastus",
-            managed_network=network
-        )
+        ws = Workspace(name="ws-name", location="eastus", managed_network=network)
         # [END workspace_managed_network]
 
         # [START fqdn_outboundrule]
         from azure.ai.ml.entities import FqdnDestination
 
         # Example FQDN rule
-        pypirule = FqdnDestination(
-            name="fqdnrule", 
-            destination="pypi.org"
-        )
+        pypirule = FqdnDestination(name="rulename", destination="pypi.org")
         # [END fqdn_outboundrule]
 
         # [START private_endpoint_outboundrule]
         from azure.ai.ml.entities import PrivateEndpointDestination
 
         # Example private endpoint outbound to a blob
-        perule = PrivateEndpointDestination(
-            name="perule", 
-            service_resource_id="/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/storage-name", 
-            subresource_target="blob", 
-            spark_enabled=False
+        blobrule = PrivateEndpointDestination(
+            name="blobrule",
+            service_resource_id="/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/test-rg/providers/Microsoft.Storage/storageAccounts/storage-name",
+            subresource_target="blob",
+            spark_enabled=False,
         )
         # [END private_endpoint_outboundrule]
 
@@ -152,31 +134,20 @@ class WorkspaceConfigurationOptions(object):
 
         # Example service tag rule
         datafactoryrule = ServiceTagDestination(
-            name="datafactory", 
-            service_tag="DataFactory", 
-            protocol="TCP", 
-            port_ranges="80, 8080-8089"
+            name="datafactory", service_tag="DataFactory", protocol="TCP", port_ranges="80, 8080-8089"
         )
         # [END service_tag_outboundrule]
 
         # [START workspace]
         from azure.ai.ml.entities import Workspace
 
-        ws = Workspace(
-            name="sample-ws",
-            location="eastus",
-            description="a sample workspace object"
-        )
+        ws = Workspace(name="sample-ws", location="eastus", description="a sample workspace object")
         # [END workspace]
 
         # [START workspace_hub]
         from azure.ai.ml.entities import WorkspaceHub
 
-        ws = WorkspaceHub(
-            name="sample-ws",
-            location="eastus",
-            description="a sample workspace hub object"
-        )
+        ws = WorkspaceHub(name="sample-ws", location="eastus", description="a sample workspace hub object")
         # [END workspace_hub]
 
     @handle_resource_exists_error
@@ -216,7 +187,7 @@ class WorkspaceConfigurationOptions(object):
             description="a test workspace",
             tags={"purpose": "demo"},
             location="eastus",
-            resource_group=resource_group
+            resource_group=resource_group,
         )
         ws = ml_client.workspaces.begin_create(workspace=ws).result()
         # [END workspace_begin_create]
@@ -242,7 +213,7 @@ class WorkspaceConfigurationOptions(object):
         connection = ml_client.connections.get(name="test-ws1")
         # [END get_connection]
 
-        # [START createorupdate_connection]
+        # [START create_or_update_connection]
         from azure.ai.ml import MLClient
         from azure.ai.ml.entities import WorkspaceConnection
         from azure.ai.ml.entities import UsernamePasswordConfiguration
@@ -251,11 +222,11 @@ class WorkspaceConfigurationOptions(object):
         wps_connection = WorkspaceConnection(
             name="connection-1",
             type="snowflake",
-            target="jdbc:snowflake://<myaccount>.snowflakecomputing.com/?db=<mydb>&warehouse=<mywarehouse>&role=<myrole>",
+            target="jdbc:snowflake://<myaccount>.snowflakecomputing.com/?db=<mydb>&warehouse=<mywarehouse>&role=<myrole>",  # cspell:disable-line
             credentials=UsernamePasswordConfiguration(username="XXXXX", password="XXXXXX"),
         )
         connection = ml_client_ws.connections.create_or_update(workspace_connection=wps_connection)
-        # [END createorupdate_connection]
+        # [END create_or_update_connection]
 
         # [START delete_connection]
         from azure.ai.ml import MLClient
@@ -294,7 +265,7 @@ class WorkspaceConfigurationOptions(object):
             description="a test hub",
             tags={"purpose": "demo"},
             location="eastus",
-            resource_group=resource_group
+            resource_group=resource_group,
         )
         hub = ml_client.workspace_hubs.begin_create(workspace_hub=hub).result()
         # [END hub_begin_create]
@@ -306,32 +277,37 @@ class WorkspaceConfigurationOptions(object):
         # [END hub_begin_update]
 
         # [START hub_begin_delete]
-        ml_client.workspace_hubs.begin_delete(name="test-hub1", delete_dependent_resources=True, permanently_delete=True)
+        ml_client.workspace_hubs.begin_delete(
+            name="test-hub1", delete_dependent_resources=True, permanently_delete=True
+        )
         # [END hub_begin_delete]
 
-        # [START obrule_list]
+        # [START outbound_rule_list]
         rules = ml_client.workspace_outbound_rules.list(workspace_name="test-ws")
-        # [END obrule_list]
+        # [END outbound_rule_list]
 
-        # [START obrule_get]
+        # [START outbound_rule_get]
         rule = ml_client.workspace_outbound_rules.get(workspace_name="test-ws", outbound_rule_name="sample-rule")
-        # [END obrule_get]
+        # [END outbound_rule_get]
 
-        # [START obrule_begin_create]
+        # [START outbound_rule_begin_create]
         from azure.ai.ml.entities import FqdnDestination
-        fqdn_rule = FqdnDestination(name="fqdnrule", destination="google.com")
+
+        fqdn_rule = FqdnDestination(name="rulename", destination="google.com")
         rule = ml_client.workspace_outbound_rules.begin_create(workspace_name="test-ws", rule=fqdn_rule).result()
-        # [END obrule_begin_create]
+        # [END outbound_rule_begin_create]
 
-        # [START obrule_begin_update]
+        # [START outbound_rule_begin_update]
         from azure.ai.ml.entities import FqdnDestination
-        fqdn_rule = FqdnDestination(name="fqdnrule", destination="linkedin.com")
-        rule = ml_client.workspace_outbound_rules.begin_update(workspace_name="test-ws", rule=fqdn_rule).result()
-        # [END obrule_begin_update]
 
-        # [START obrule_begin_remove]
-        ml_client.workspace_outbound_rules.begin_remove(workspace_name="test-ws", outbound_rule_name="fqdnrule")        
-        # [END obrule_begin_remove]
+        fqdn_rule = FqdnDestination(name="rulename", destination="linkedin.com")
+        rule = ml_client.workspace_outbound_rules.begin_update(workspace_name="test-ws", rule=fqdn_rule).result()
+        # [END outbound_rule_begin_update]
+
+        # [START outbound_rule_begin_remove]
+        ml_client.workspace_outbound_rules.begin_remove(workspace_name="test-ws", outbound_rule_name="rulename")
+        # [END outbound_rule_begin_remove]
+
 
 if __name__ == "__main__":
     sample = WorkspaceConfigurationOptions()
