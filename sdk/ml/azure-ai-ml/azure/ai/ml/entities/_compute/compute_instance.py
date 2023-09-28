@@ -193,7 +193,7 @@ class ComputeInstance(Compute):
         kwargs[TYPE] = ComputeType.COMPUTEINSTANCE
         self._state: str = kwargs.pop("state", None)
         self._last_operation: dict = kwargs.pop("last_operation", None)
-        self._os_image_metadata = kwargs.pop("os_image_metadata", None)
+        self._os_image_metadata: ImageMetadata = kwargs.pop("os_image_metadata", None)
         self._services: list = kwargs.pop("services", None)
         super().__init__(
             name=name,
