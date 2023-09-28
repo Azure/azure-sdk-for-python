@@ -207,7 +207,7 @@ class WorkspaceOperationsBase:
 
         managed_network = kwargs.get("managed_network", workspace.managed_network)
         if isinstance(managed_network, str):
-            managed_network = ManagedNetwork(managed_network)._to_rest_object()
+            managed_network = ManagedNetwork(isolation_mode=managed_network)._to_rest_object()
         elif isinstance(managed_network, ManagedNetwork):
             managed_network = workspace.managed_network._to_rest_object()
 
@@ -601,7 +601,7 @@ class WorkspaceOperationsBase:
         if workspace.managed_network:
             managed_network = workspace.managed_network._to_rest_object()
         else:
-            managed_network = ManagedNetwork(IsolationMode.DISABLED)._to_rest_object()
+            managed_network = ManagedNetwork(isolation_mode=IsolationMode.DISABLED)._to_rest_object()
         _set_val(param["managedNetwork"], managed_network)
         if workspace.enable_data_isolation:
             _set_val(param["enable_data_isolation"], "true")

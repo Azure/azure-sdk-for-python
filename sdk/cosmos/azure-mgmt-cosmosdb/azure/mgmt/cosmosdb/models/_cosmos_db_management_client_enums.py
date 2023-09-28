@@ -63,13 +63,6 @@ class BackupStorageRedundancy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ZONE = "Zone"
 
 
-class CheckNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The reason why the given name is not available."""
-
-    INVALID = "Invalid"
-    ALREADY_EXISTS = "AlreadyExists"
-
-
 class CompositePathSortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Sort order for composite paths."""
 
@@ -122,7 +115,26 @@ class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DEFAULT = "Default"
     RESTORE = "Restore"
-    POINT_IN_TIME_RESTORE = "PointInTimeRestore"
+
+
+class CustomerManagedKeyStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the status of the Customer Managed Key feature on the account. In case there are
+    errors, the property provides troubleshooting guidance.
+    """
+
+    ACCESS_TO_YOUR_ACCOUNT_IS_CURRENTLY_REVOKED_BECAUSE_THE_AZURE_COSMOS_DB_SERVICE_IS_UNABLE_TO_OBTAIN_THE_AAD_AUTHENTICATION_TOKEN_FOR_THE_ACCOUNT_S_DEFAULT_IDENTITY_FOR_MORE_DETAILS_ABOUT_THIS_ERROR_AND_HOW_TO_RESTORE_ACCESS_TO_YOUR_ACCOUNT_PLEASE_VISIT_HTTPS_LEARN_MICROSOFT_COM_EN_US_AZURE_COSMOS_DB_CMK_TROUBLESHOOTING_GUIDE_AZURE_ACTIVE_DIRECTORY_TOKEN_ACQUISITION_ERROR4000_ = "Access to your account is currently revoked because the Azure Cosmos DB service is unable to obtain the AAD authentication token for the account's default identity; for more details about this error and how to restore access to your account please visit https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#azure-active-directory-token-acquisition-error (4000)."
+    ACCESS_TO_YOUR_ACCOUNT_IS_CURRENTLY_REVOKED_BECAUSE_THE_AZURE_COSMOS_DB_ACCOUNT_S_KEY_VAULT_KEY_URI_DOES_NOT_FOLLOW_THE_EXPECTED_FORMAT_FOR_MORE_DETAILS_ABOUT_THIS_ERROR_AND_HOW_TO_RESTORE_ACCESS_TO_YOUR_ACCOUNT_PLEASE_VISIT_HTTPS_LEARN_MICROSOFT_COM_EN_US_AZURE_COSMOS_DB_CMK_TROUBLESHOOTING_GUIDE_IMPROPER_SYNTAX_DETECTED_ON_THE_KEY_VAULT_URI_PROPERTY4006_ = "Access to your account is currently revoked because the Azure Cosmos DB account's key vault key URI does not follow the expected format; for more details about this error and how to restore access to your account please visit https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#improper-syntax-detected-on-the-key-vault-uri-property (4006)."
+    ACCESS_TO_YOUR_ACCOUNT_IS_CURRENTLY_REVOKED_BECAUSE_THE_CURRENT_DEFAULT_IDENTITY_NO_LONGER_HAS_PERMISSION_TO_THE_ASSOCIATED_KEY_VAULT_KEY_FOR_MORE_DETAILS_ABOUT_THIS_ERROR_AND_HOW_TO_RESTORE_ACCESS_TO_YOUR_ACCOUNT_PLEASE_VISIT_HTTPS_LEARN_MICROSOFT_COM_EN_US_AZURE_COSMOS_DB_CMK_TROUBLESHOOTING_GUIDE_DEFAULT_IDENTITY_IS_UNAUTHORIZED_TO_ACCESS_THE_AZURE_KEY_VAULT_KEY4002_ = "Access to your account is currently revoked because the current default identity no longer has permission to the associated Key Vault key; for more details about this error and how to restore access to your account please visit https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#default-identity-is-unauthorized-to-access-the-azure-key-vault-key (4002)."
+    ACCESS_TO_YOUR_ACCOUNT_IS_CURRENTLY_REVOKED_BECAUSE_THE_AZURE_KEY_VAULT_DNS_NAME_SPECIFIED_BY_THE_ACCOUNT_S_KEYVAULTKEYURI_PROPERTY_COULD_NOT_BE_RESOLVED_FOR_MORE_DETAILS_ABOUT_THIS_ERROR_AND_HOW_TO_RESTORE_ACCESS_TO_YOUR_ACCOUNT_PLEASE_VISIT_HTTPS_LEARN_MICROSOFT_COM_EN_US_AZURE_COSMOS_DB_CMK_TROUBLESHOOTING_GUIDE_UNABLE_TO_RESOLVE_THE_KEY_VAULTS_DNS4009_ = "Access to your account is currently revoked because the Azure Key Vault DNS name specified by the account's keyvaultkeyuri property could not be resolved; for more details about this error and how to restore access to your account please visit https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#unable-to-resolve-the-key-vaults-dns (4009)."
+    ACCESS_TO_YOUR_ACCOUNT_IS_CURRENTLY_REVOKED_BECAUSE_THE_CORRESPONDENT_KEY_IS_NOT_FOUND_ON_THE_SPECIFIED_KEY_VAULT_FOR_MORE_DETAILS_ABOUT_THIS_ERROR_AND_HOW_TO_RESTORE_ACCESS_TO_YOUR_ACCOUNT_PLEASE_VISIT_HTTPS_LEARN_MICROSOFT_COM_EN_US_AZURE_COSMOS_DB_CMK_TROUBLESHOOTING_GUIDE_AZURE_KEY_VAULT_RESOURCE_NOT_FOUND4003_ = "Access to your account is currently revoked because the correspondent key is not found on the specified Key Vault; for more details about this error and how to restore access to your account please visit https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#azure-key-vault-resource-not-found (4003)."
+    ACCESS_TO_YOUR_ACCOUNT_IS_CURRENTLY_REVOKED_BECAUSE_THE_AZURE_COSMOS_DB_SERVICE_IS_UNABLE_TO_WRAP_OR_UNWRAP_THE_KEY_FOR_MORE_DETAILS_ABOUT_THIS_ERROR_AND_HOW_TO_RESTORE_ACCESS_TO_YOUR_ACCOUNT_PLEASE_VISIT_HTTPS_LEARN_MICROSOFT_COM_EN_US_AZURE_COSMOS_DB_CMK_TROUBLESHOOTING_GUIDE_INTERNAL_UNWRAPPING_PROCEDURE_ERROR4005_ = "Access to your account is currently revoked because the Azure Cosmos DB service is unable to wrap or unwrap the key; for more details about this error and how to restore access to your account please visit https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#internal-unwrapping-procedure-error (4005)."
+    ACCESS_TO_YOUR_ACCOUNT_IS_CURRENTLY_REVOKED_BECAUSE_THE_AZURE_COSMOS_DB_ACCOUNT_HAS_AN_UNDEFINED_DEFAULT_IDENTITY_FOR_MORE_DETAILS_ABOUT_THIS_ERROR_AND_HOW_TO_RESTORE_ACCESS_TO_YOUR_ACCOUNT_PLEASE_VISIT_HTTPS_LEARN_MICROSOFT_COM_EN_US_AZURE_COSMOS_DB_CMK_TROUBLESHOOTING_GUIDE_INVALID_AZURE_COSMOS_DB_DEFAULT_IDENTITY4015_ = "Access to your account is currently revoked because the Azure Cosmos DB account has an undefined default identity; for more details about this error and how to restore access to your account please visit https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#invalid-azure-cosmos-db-default-identity (4015)."
+    ACCESS_TO_YOUR_ACCOUNT_IS_CURRENTLY_REVOKED_BECAUSE_THE_ACCESS_RULES_ARE_BLOCKING_OUTBOUND_REQUESTS_TO_THE_AZURE_KEY_VAULT_SERVICE_FOR_MORE_DETAILS_ABOUT_THIS_ERROR_AND_HOW_TO_RESTORE_ACCESS_TO_YOUR_ACCOUNT_PLEASE_VISIT_HTTPS_LEARN_MICROSOFT_COM_EN_US_AZURE_COSMOS_DB_CMK_TROUBLESHOOTING_GUIDE4016_ = "Access to your account is currently revoked because the access rules are blocking outbound requests to the Azure Key Vault service; for more details about this error and how to restore access to your account please visit https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide (4016)."
+    ACCESS_TO_YOUR_ACCOUNT_IS_CURRENTLY_REVOKED_BECAUSE_THE_CORRESPONDENT_AZURE_KEY_VAULT_WAS_NOT_FOUND_FOR_MORE_DETAILS_ABOUT_THIS_ERROR_AND_HOW_TO_RESTORE_ACCESS_TO_YOUR_ACCOUNT_PLEASE_VISIT_HTTPS_LEARN_MICROSOFT_COM_EN_US_AZURE_COSMOS_DB_CMK_TROUBLESHOOTING_GUIDE_AZURE_KEY_VAULT_RESOURCE_NOT_FOUND4017_ = "Access to your account is currently revoked because the correspondent Azure Key Vault was not found; for more details about this error and how to restore access to your account please visit https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#azure-key-vault-resource-not-found (4017)."
+    ACCESS_TO_YOUR_ACCOUNT_IS_CURRENTLY_REVOKED_FOR_MORE_DETAILS_ABOUT_THIS_ERROR_AND_HOW_TO_RESTORE_ACCESS_TO_YOUR_ACCOUNT_PLEASE_VISIT_HTTPS_LEARN_MICROSOFT_COM_EN_US_AZURE_COSMOS_DB_CMK_TROUBLESHOOTING_GUIDE = "Access to your account is currently revoked; for more details about this error and how to restore access to your account please visit https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide"
+    ACCESS_TO_THE_CONFIGURED_CUSTOMER_MANAGED_KEY_CONFIRMED_ = (
+        "Access to the configured customer managed key confirmed."
+    )
 
 
 class DatabaseAccountKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -131,15 +143,6 @@ class DatabaseAccountKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GLOBAL_DOCUMENT_DB = "GlobalDocumentDB"
     MONGO_DB = "MongoDB"
     PARSE = "Parse"
-
-
-class DataTransferComponent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """DataTransferComponent."""
-
-    COSMOS_DB_CASSANDRA = "CosmosDBCassandra"
-    COSMOS_DB_MONGO = "CosmosDBMongo"
-    COSMOS_DB_SQL = "CosmosDBSql"
-    AZURE_BLOB_STORAGE = "AzureBlobStorage"
 
 
 class DataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -161,14 +164,6 @@ class DefaultConsistencyLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BOUNDED_STALENESS = "BoundedStaleness"
     STRONG = "Strong"
     CONSISTENT_PREFIX = "ConsistentPrefix"
-
-
-class EnableFullTextQuery(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describe the level of detail with which queries are to be logged."""
-
-    NONE = "None"
-    TRUE = "True"
-    FALSE = "False"
 
 
 class IndexingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -224,25 +219,13 @@ class ManagedCassandraResourceIdentityType(str, Enum, metaclass=CaseInsensitiveE
 
 
 class MinimalTlsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates the minimum allowed Tls version. The default is Tls 1.0, except for Cassandra and
-    Mongo API's, which only work with Tls 1.2.
+    """Indicates the minimum allowed Tls version. The default value is Tls 1.2. Cassandra and Mongo
+    APIs only work with Tls 1.2.
     """
 
     TLS = "Tls"
     TLS11 = "Tls11"
     TLS12 = "Tls12"
-
-
-class MongoClusterStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the resource at the time the operation was called."""
-
-    READY = "Ready"
-    PROVISIONING = "Provisioning"
-    UPDATING = "Updating"
-    STARTING = "Starting"
-    STOPPING = "Stopping"
-    STOPPED = "Stopped"
-    DROPPING = "Dropping"
 
 
 class MongoRoleDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -257,12 +240,6 @@ class NetworkAclBypass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     NONE = "None"
     AZURE_SERVICES = "AzureServices"
-
-
-class NodeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of a node in the mongo cluster."""
-
-    SHARD = "Shard"
 
 
 class NodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -294,7 +271,6 @@ class OperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CREATE = "Create"
     REPLACE = "Replace"
     DELETE = "Delete"
-    RECREATE = "Recreate"
     SYSTEM_OPERATION = "SystemOperation"
 
 
@@ -319,22 +295,12 @@ class PrimaryAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LAST = "Last"
 
 
-class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state of the resource."""
-
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
-    IN_PROGRESS = "InProgress"
-    UPDATING = "Updating"
-    DROPPING = "Dropping"
-
-
 class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether requests from Public Network are allowed."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+    SECURED_BY_PERIMETER = "SecuredByPerimeter"
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -416,14 +382,6 @@ class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INTERNALLY_READY = "InternallyReady"
     ONLINE = "Online"
     DELETING = "Deleting"
-
-
-class ThroughputPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ThroughputPolicy to apply for throughput redistribution."""
-
-    NONE = "none"
-    EQUAL = "equal"
-    CUSTOM = "custom"
 
 
 class TriggerOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
