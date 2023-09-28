@@ -209,7 +209,7 @@ def get_registry_client(credential, registry_name, workspace_location=None, **kw
     if workspace_location:
         workspace_kwargs = {"workspace_location": workspace_location}
         kwargs.update(workspace_kwargs)
-    
+
     registry_discovery = RegistryDiscovery(
         credential, registry_name, service_client_registry_discovery_client, **kwargs
     )
