@@ -88,9 +88,10 @@ class TestBulk:
         assert container.client_connection.last_response_headers.get(HttpHeaders.ThrottleRetryCount) > 0
 
         # create all 100 items with more RUs
-        bulk_container = await self.test_database.create_container_if_not_exists(id="throughput_bulk_container" + str(uuid.uuid4()),
-                                                                                 partition_key=PartitionKey(path="/id"),
-                                                                                 offer_throughput=1000)
+        bulk_container = await self.test_database.create_container_if_not_exists(
+            id="throughput_bulk_container" + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/id"),
+            offer_throughput=1000)
         bulk_result = await bulk_container.bulk(operations=operations)
         assert len(bulk_result) == 100
         assert container.client_connection.last_response_headers.get(HttpHeaders.ThrottleRetryCount) is None
@@ -130,12 +131,12 @@ class TestBulk:
         bulk_result = await container.bulk(operations=operations)
 
         assert int(lsn) == int(container.client_connection.last_response_headers.get(HttpHeaders.LSN)) - 1
-        assert bulk_result[1][0].get(HttpHeaders.ItemCount) == "5"
-        assert bulk_result[0][1][0].get("statusCode") == StatusCodes.CREATED
-        assert bulk_result[0][1][1].get("statusCode") == StatusCodes.OK
-        assert bulk_result[0][1][2].get("statusCode") == StatusCodes.CREATED
-        assert bulk_result[0][1][3].get("statusCode") == StatusCodes.OK
-        assert bulk_result[0][1][4].get("statusCode") == StatusCodes.NO_CONTENT
+        assert container.client_connection.last_response_headers.get(HttpHeaders.ItemCount) == "5"
+        assert bulk_result[0][1].get("statusCode") == StatusCodes.CREATED
+        assert bulk_result[1][1].get("statusCode") == StatusCodes.OK
+        assert bulk_result[2][1].get("statusCode") == StatusCodes.CREATED
+        assert bulk_result[3][1].get("statusCode") == StatusCodes.OK
+        assert bulk_result[4][1].get("statusCode") == StatusCodes.NO_CONTENT
 
     @pytest.mark.asyncio
     async def test_bulk_invalid_create_async(self):
@@ -177,7 +178,7 @@ class TestBulk:
     async def test_bulk_create_conflict_async(self):
         await self._set_up()
         container = await self.test_database.create_container_if_not_exists(id="errors_bulk_container" + str(uuid.uuid4()),
-                                                                            partition_key=PartitionKey(path="/pk"))
+                                                                            partition_key=PartitionKey(path="/id"))
         operations = [{"operationType": "Create",
                        "resourceBody": {"id": "create_item", "name": str(uuid.uuid4())},
                        "partitionKey": "create_item"},
