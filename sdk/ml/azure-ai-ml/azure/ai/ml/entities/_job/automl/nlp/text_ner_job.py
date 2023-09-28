@@ -28,7 +28,14 @@ from azure.ai.ml.entities._util import load_from_dict
 
 
 class TextNerJob(AutoMLNLPJob):
-    """Configuration for AutoML Text NER Job."""
+    """Configuration for AutoML Text NER Job.
+    
+    :param training_data: Training data to be used for training
+    :param validation_data: Validation data to be used for evaluating the trained model
+    :param primary_metric: The primary metric to be displayed.
+    :param log_verbosity: Log verbosity level
+    :param kwargs: Job-specific arguments
+    """
 
     _DEFAULT_PRIMARY_METRIC = ClassificationPrimaryMetrics.ACCURACY
 
@@ -41,14 +48,6 @@ class TextNerJob(AutoMLNLPJob):
         log_verbosity: Optional[str] = None,
         **kwargs
     ):
-        """Initializes a new AutoML Text NER task.
-
-        :param training_data: Training data to be used for training
-        :param validation_data: Validation data to be used for evaluating the trained model
-        :param primary_metric: The primary metric to be displayed.
-        :param log_verbosity: Log verbosity level
-        :param kwargs: Job-specific arguments
-        """
         super(TextNerJob, self).__init__(
             task_type=TaskType.TEXT_NER,
             primary_metric=primary_metric or TextNerJob._DEFAULT_PRIMARY_METRIC,

@@ -27,7 +27,15 @@ from azure.ai.ml.entities._util import load_from_dict
 
 
 class TextClassificationMultilabelJob(AutoMLNLPJob):
-    """Configuration for AutoML Text Classification Multilabel Job."""
+    """Configuration for AutoML Text Classification Multilabel Job.
+
+    :param target_column_name: The name of the target column
+    :param training_data: Training data to be used for training
+    :param validation_data: Validation data to be used for evaluating the trained model
+    :param primary_metric: The primary metric to be displayed.
+    :param log_verbosity: Log verbosity level
+    :param kwargs: Job-specific arguments
+    """
 
     _DEFAULT_PRIMARY_METRIC = ClassificationMultilabelPrimaryMetrics.ACCURACY
 
@@ -41,15 +49,6 @@ class TextClassificationMultilabelJob(AutoMLNLPJob):
         log_verbosity: Optional[str] = None,
         **kwargs
     ):
-        """Initializes a new AutoML Text Classification Multilabel task.
-
-        :param target_column_name: The name of the target column
-        :param training_data: Training data to be used for training
-        :param validation_data: Validation data to be used for evaluating the trained model
-        :param primary_metric: The primary metric to be displayed.
-        :param log_verbosity: Log verbosity level
-        :param kwargs: Job-specific arguments
-        """
         super().__init__(
             task_type=TaskType.TEXT_CLASSIFICATION_MULTILABEL,
             primary_metric=primary_metric or TextClassificationMultilabelJob._DEFAULT_PRIMARY_METRIC,

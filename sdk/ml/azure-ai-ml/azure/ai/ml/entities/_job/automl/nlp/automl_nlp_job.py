@@ -25,6 +25,34 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 # pylint: disable=too-many-instance-attributes,protected-access
 class AutoMLNLPJob(AutoMLVertical, ABC):
+    """Base class for AutoML NLP jobs.
+
+    You should not instantiate this class directly. Instead you should
+    create classes for specific NLP Jobs.
+
+    :param task_type: _description_
+    :type task_type: str
+    :param primary_metric: _description_
+    :type primary_metric: str
+    :param training_data: _description_
+    :type training_data: Input
+    :param validation_data: _description_
+    :type validation_data: Input
+    :param target_column_name: _description_, defaults to None
+    :type target_column_name: Optional[str], optional
+    :param log_verbosity: _description_, defaults to None
+    :type log_verbosity: Optional[str], optional
+    :param featurization: _description_, defaults to None
+    :type featurization: Optional[NlpFeaturizationSettings], optional
+    :param limits: _description_, defaults to None
+    :type limits: Optional[NlpLimitSettings], optional
+    :param sweep: _description_, defaults to None
+    :type sweep: Optional[NlpSweepSettings], optional
+    :param training_parameters: _description_, defaults to None
+    :type training_parameters: Optional[NlpFixedParameters], optional
+    :param search_space: _description_, defaults to None
+    :type search_space: Optional[List[NlpSearchSpace]], optional
+    """
     def __init__(
         self,
         *,
@@ -179,6 +207,15 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
             self.set_featurization(**value)
 
     def set_data(self, *, training_data: Input, target_column_name: str, validation_data: Input) -> None:
+        """Set properties for NLP
+
+        :param training_data: _description_
+        :type training_data: Input
+        :param target_column_name: _description_
+        :type target_column_name: str
+        :param validation_data: _description_
+        :type validation_data: Input
+        """
         # Properties for NlpVerticalDataSettings
         self.target_column_name = target_column_name
         self.training_data = training_data
@@ -193,6 +230,19 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         timeout_minutes: Optional[int] = None,
         trial_timeout_minutes: Optional[int] = None,
     ) -> None:
+        """Set limits for this AutoML NLP job
+
+        :param max_trials: _description_, defaults to 1
+        :type max_trials: int, optional
+        :param max_concurrent_trials: _description_, defaults to 1
+        :type max_concurrent_trials: int, optional
+        :param max_nodes: _description_, defaults to 1
+        :type max_nodes: int, optional
+        :param timeout_minutes: _description_, defaults to None
+        :type timeout_minutes: Optional[int], optional
+        :param trial_timeout_minutes: _description_, defaults to None
+        :type trial_timeout_minutes: Optional[int], optional
+        """
         self._limits = NlpLimitSettings(
             max_trials=max_trials,
             max_concurrent_trials=max_concurrent_trials,
@@ -207,12 +257,13 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         sampling_algorithm: Union[str, SamplingAlgorithmType],
         early_termination: Optional[EarlyTerminationPolicy] = None,
     ):
-        """Sweep settings for all AutoML NLP tasks.
+        """_summary_
 
-        :keyword sampling_algorithm: Required. Specifies type of hyperparameter sampling algorithm.
+        :param sampling_algorithm: Required. Specifies type of hyperparameter sampling algorithm.
             Possible values include: "Grid", "Random", and "Bayesian".
-        :keyword early_termination: Optional early termination policy to end poorly performing training candidates.
-        :return: None
+        :type sampling_algorithm: Union[str, SamplingAlgorithmType]
+        :param early_termination:Optional early termination policy to end poorly performing training candidates, defaults to None.
+        :type early_termination: Optional[EarlyTerminationPolicy], optional
         """
         if self._sweep:
             self._sweep.sampling_algorithm = sampling_algorithm

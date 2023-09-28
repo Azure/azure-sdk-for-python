@@ -28,7 +28,15 @@ from azure.ai.ml.entities._util import load_from_dict
 
 
 class TextClassificationJob(AutoMLNLPJob):
-    """Configuration for AutoML Text Classification Job."""
+    """Configuration for AutoML Text Classification Job.
+
+    :param target_column_name: The name of the target column
+    :param training_data: Training data to be used for training
+    :param validation_data: Validation data to be used for evaluating the trained model
+    :param primary_metric: The primary metric to be displayed
+    :param log_verbosity: Log verbosity level
+    :param kwargs: Job-specific arguments
+    """
 
     _DEFAULT_PRIMARY_METRIC = ClassificationPrimaryMetrics.ACCURACY
 
@@ -42,15 +50,7 @@ class TextClassificationJob(AutoMLNLPJob):
         log_verbosity: Optional[str] = None,
         **kwargs
     ):
-        """Initializes a new AutoML Text Classification task.
 
-        :param target_column_name: The name of the target column
-        :param training_data: Training data to be used for training
-        :param validation_data: Validation data to be used for evaluating the trained model
-        :param primary_metric: The primary metric to be displayed
-        :param log_verbosity: Log verbosity level
-        :param kwargs: Job-specific arguments
-        """
         super().__init__(
             task_type=TaskType.TEXT_CLASSIFICATION,
             primary_metric=primary_metric or TextClassificationJob._DEFAULT_PRIMARY_METRIC,
@@ -63,6 +63,11 @@ class TextClassificationJob(AutoMLNLPJob):
 
     @AutoMLNLPJob.primary_metric.setter
     def primary_metric(self, value: Union[str, ClassificationPrimaryMetrics]):
+        """setter for primary metric
+
+        :param value: _description_
+        :type value: Union[str, ClassificationPrimaryMetrics]
+        """
         if is_data_binding_expression(str(value), ["parent"]):
             self._primary_metric = value
             return
