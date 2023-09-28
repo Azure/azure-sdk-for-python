@@ -4,7 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 from enum import Enum
-from typing import Any, Dict, List, Optional, Callable
+from datetime import datetime
+from typing import Any, Dict, List, Optional, Callable, Union
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.exceptions import HttpResponseError
@@ -49,28 +50,28 @@ class TableAccessPolicy(GenAccessPolicy):
     request will fail with status code 400 (Bad Request).
     """
 
-    start: str
+    start: Optional[Union[datetime, str]]  # type: ignore[assignment]
     """The time at which the shared access signature becomes valid.
         If omitted, start time for this call is assumed to be the time when the storage service receives the request.
         Azure will always convert values to UTC. If a date is passed in without timezone info, it is assumed to be UTC.
     """
-    expiry: str
+    expiry: Optional[Union[datetime, str]]  # type: ignore[assignment]
     """The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy which contains this field.
         This field must be omitted if it has been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it is assumed to be UTC.
     """
-    permission: str
+    permission: Optional[str]  # type: ignore[assignment]
     """The permissions associated with the shared access signature.
         The user is restricted to operations allowed by the permissions. Required unless an id is given referencing
         a stored access policy which contains this field. This field must be omitted if it has been specified in
         an associated stored access policy.
     """
 
-    def __init__(self, *, start: str, expiry: str, permission: str) -> None:  # pylint: disable=super-init-not-called
-        self.start = start
-        self.expiry = expiry
-        self.permission = permission
+    def __init__(self, **kwargs) -> None:  # pylint: disable=super-init-not-called
+        self.start = kwargs.get("start")
+        self.expiry = kwargs.get("expiry")
+        self.permission = kwargs.get("permission")
 
     def __repr__(self) -> str:
         return f"TableAccessPolicy(start={self.start}, expiry={self.expiry}, permission={self.permission})"[1024:]
@@ -430,8 +431,8 @@ def service_stats_deserialize(generated: GenTableServiceStats) -> Dict[str, Any]
     """
     return {
         "geo_replication": {
-            "status": None if not generated.geo_replication else generated.geo_replication.status,
-            "last_sync_time": None if not generated.geo_replication else generated.geo_replication.last_sync_time,
+            "status": generated.geo_replication.status if generated.geo_replication else None,
+            "last_sync_time": generated.geo_replication.last_sync_time if generated.geo_replication else None,
         }
     }
 
@@ -450,9 +451,9 @@ def service_properties_deserialize(generated: GenTableServiceProperties) -> Dict
         ),
         "hour_metrics": TableMetrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
         "minute_metrics": TableMetrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
-        "cors": None
-        if not generated.cors
-        else [TableCorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
+        "cors": [TableCorsRule._from_generated(cors) for cors in generated.cors]  # pylint: disable=protected-access
+        if generated.cors
+        else generated.cors,
     }
 
 
