@@ -1832,6 +1832,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         response = []
         for batch in micro_batches:
             if len(batch.get("operations")) > 0:
+                print(batch.get("range_id"))
                 result = self._Bulk(
                     batch.get("operations"),
                     batch.get("range_id"),
@@ -1852,9 +1853,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         zipped_list = list(zip(all_responses, all_indexes))
         sorted_results = sorted(zipped_list, key=lambda x: x[1])
         ordered_responses = [item[0] for item in sorted_results]
-        operation_to_response_tuple = list(zip(operations, ordered_responses))
-        final_response = (operation_to_response_tuple, response_headers)
-        return final_response
+        operation_to_response_tuples = list(zip(operations, ordered_responses))
+        self.last_response_headers = base._merge_headers(response_headers)
+        return operation_to_response_tuples
 
     def _Bulk(self, operations, pk_range_id, path, collection_id, options, **kwargs):
         if options is None:

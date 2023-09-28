@@ -760,3 +760,33 @@ def _populate_bulk_headers(current_headers, pk_range_id):
     current_headers.update({http_constants.HttpHeaders.PartitionKeyRangeID: pk_range_id})
     current_headers.update({http_constants.HttpHeaders.IsBatchAtomic: False})
     current_headers.update({http_constants.HttpHeaders.ShouldBatchContinueOnError: True})
+
+def _merge_headers(headers):
+    if len(headers) == 1:
+        return headers[0]
+    else:
+        initial_headers = headers.pop()
+        partition_key_range_ids = [initial_headers.get(http_constants.HttpHeaders.PartitionKeyRangeID)]
+        activity_ids = [initial_headers.get(http_constants.HttpHeaders.ActivityId)]
+        for current_header in headers:
+            initial_headers.update({http_constants.HttpHeaders.RequestCharge: str(
+                float(initial_headers.get(http_constants.HttpHeaders.RequestCharge)) + float(
+                    current_header.get(http_constants.HttpHeaders.RequestCharge)))})
+            initial_headers.update({http_constants.HttpHeaders.RequestDurationMs: str(
+                float(initial_headers.get(http_constants.HttpHeaders.RequestDurationMs)) + float(
+                    current_header.get(http_constants.HttpHeaders.RequestDurationMs)))})
+            initial_headers.update({http_constants.HttpHeaders.ItemCount:
+                                        initial_headers.get(http_constants.HttpHeaders.ItemCount, '0') +
+                                        current_header.get(http_constants.HttpHeaders.ItemCount, '0')})
+            initial_headers.update({http_constants.HttpHeaders.ContentLength:
+                                        initial_headers.get(http_constants.HttpHeaders.ContentLength, '0') +
+                                        current_header.get(http_constants.HttpHeaders.ContentLength, '0')})
+            initial_headers.update({http_constants.HttpHeaders.ThrottleRetryCount:
+                                        initial_headers.get(http_constants.HttpHeaders.ThrottleRetryCount, '0') +
+                                        current_header.get(http_constants.HttpHeaders.ThrottleRetryCount, '0')})
+            partition_key_range_ids.append(current_header.get(http_constants.HttpHeaders.PartitionKeyRangeID))
+            activity_ids.append(current_header.get(http_constants.HttpHeaders.ActivityId))
+        initial_headers.update({http_constants.HttpHeaders.PartitionKeyRangeID: partition_key_range_ids})
+        initial_headers.update({http_constants.HttpHeaders.PhysicalPartitionID: partition_key_range_ids})
+        initial_headers.update({http_constants.HttpHeaders.ActivityId: activity_ids})
+        return initial_headers
