@@ -486,13 +486,13 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         return dict(convert_ordered_dict_to_dict(rest_obj))
 
     @property
-    def inputs(self) -> Dict[str, Union[Input, str, bool, int, float]]:
+    def inputs(self) -> Dict:
         """Get the inputs for the object.
 
         :return: A dictionary containing the inputs for the object.
         :rtype: Dict[str, Union[Input, str, bool, int, float]]
         """
-        return cast(Dict[str, Union[Input, str, bool, int, float]], self._inputs)
+        return cast(Dict, self._inputs)
 
     @property
     def outputs(self) -> Dict[str, Union[str, Output]]:
@@ -567,13 +567,12 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         :type kwargs: dict
         """
         for key, value in node.inputs.items():
-            if isinstance(value, Input):
-                meta = value._data
-                if (
-                    isinstance(meta, Input)
-                    and meta._is_primitive_type is False
-                    and meta.optional is True
-                    and not meta.path
-                    and key not in kwargs
-                ):
-                    value._data = None
+            meta = value._data
+            if (
+                isinstance(meta, Input)
+                and meta._is_primitive_type is False
+                and meta.optional is True
+                and not meta.path
+                and key not in kwargs
+            ):
+                value._data = None
