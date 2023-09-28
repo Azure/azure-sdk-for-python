@@ -64,12 +64,12 @@ class BulkTests(unittest.TestCase):
                                "resourceBody": {"id": "item-" + str(i), "name": str(uuid.uuid4())},
                                "partitionKey": "item-" + str(i)})
         container.bulk(operations=operations)
-        assert len(container.client_connection.last_response_headers.get[HttpHeaders.ActivityId]) == 3
+        assert len(container.client_connection.last_response_headers.get(HttpHeaders.ActivityId)) == 3
 
         # Remove one operation and try request again - check there's only 2 batches
         operations.pop()
         container.bulk(operations=operations)
-        assert len(container.client_connection.last_response_headers.get[HttpHeaders.ActivityId]) == 2
+        assert len(container.client_connection.last_response_headers.get(HttpHeaders.ActivityId)) == 2
 
     def test_bulk_throttle(self):
         # Try with default container (400 RUs)

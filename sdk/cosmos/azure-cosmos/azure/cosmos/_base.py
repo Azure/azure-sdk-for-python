@@ -782,8 +782,8 @@ def _merge_headers(headers):
                                         initial_headers.get(http_constants.HttpHeaders.ContentLength, '0') +
                                         current_header.get(http_constants.HttpHeaders.ContentLength, '0')})
             initial_headers.update({http_constants.HttpHeaders.ThrottleRetryCount:
-                                        initial_headers.get(http_constants.HttpHeaders.ThrottleRetryCount, '0') +
-                                        current_header.get(http_constants.HttpHeaders.ThrottleRetryCount, '0')})
+                                        int(initial_headers.get(http_constants.HttpHeaders.ThrottleRetryCount, 0)) +
+                                        int(current_header.get(http_constants.HttpHeaders.ThrottleRetryCount, 0))})
             partition_key_range_ids.append(current_header.get(http_constants.HttpHeaders.PartitionKeyRangeID))
             activity_ids.append(current_header.get(http_constants.HttpHeaders.ActivityId))
         initial_headers.update({http_constants.HttpHeaders.PartitionKeyRangeID: partition_key_range_ids})

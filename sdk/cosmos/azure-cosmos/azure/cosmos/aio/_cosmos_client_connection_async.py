@@ -1290,7 +1290,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if options is None:
             options = {}
 
-        initial_headers = self.default_headers
+        initial_headers = self.default_headers.copy()
         base._populate_bulk_headers(initial_headers, pk_range_id)
         headers = base.GetHeaders(self, initial_headers, "post", path, collection_id, "docs", options)
 
