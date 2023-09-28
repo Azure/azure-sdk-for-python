@@ -40,13 +40,13 @@ class MonitorInputData(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        input_type: str = None,
+        type: MonitorInputDataType = None,
         data_context: MonitorDatasetContext = None,
         target_columns: Dict = None,
         job_type: str = None,
         uri: str = None,
     ):
-        self.input_type = input_type
+        self.type = type
         self.data_context = data_context
         self.target_columns = target_columns
         self.job_type = job_type
@@ -75,7 +75,7 @@ class FixedInputData(MonitorInputData):
         uri: str = None,
     ):
         super().__init__(
-            input_type=MonitorInputDataType.FIXED,
+            type=MonitorInputDataType.FIXED,
             data_context=data_context,
             target_columns=target_columns,
             job_type=job_type,
@@ -114,7 +114,7 @@ class TrailingInputData(MonitorInputData):
         pre_processing_component_id: str = None,
     ):
         super().__init__(
-            input_type=MonitorInputDataType.TRAILING,
+            type=MonitorInputDataType.TRAILING,
             data_context=data_context,
             target_columns=target_columns,
             job_type=job_type,
@@ -162,7 +162,7 @@ class StaticInputData(MonitorInputData):
         window_end: str = None,
     ):
         super().__init__(
-            input_type=MonitorInputDataType.STATIC,
+            type=MonitorInputDataType.STATIC,
             data_context=data_context,
             target_columns=target_columns,
             job_type=job_type,
