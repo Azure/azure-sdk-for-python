@@ -372,7 +372,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          `max_message_count` (if provided) within its request to the service.
          **WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
          the in-memory prefetch buffer until they're received into the application. If the application ends before
-         the messages are received into the application, those messages are irrecoverable (lost).
+         the messages are received into the application, those messages will be lost and unable to be recovered.
         :keyword str client_identifier: A string-based identifier to uniquely identify the receiver instance.
          Service Bus will associate it with some error messages for easier correlation of errors.
          If not specified, a unique id will be generated.
@@ -553,7 +553,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          `max_message_count` (if provided) within its request to the service.
          **WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
          the in-memory prefetch buffer until they're received into the application. If the application ends before
-         the messages are received into the application, those messages are irrecoverable (lost).
+         the messages are received into the application, those messages will be lost and unable to be recovered.
         :keyword str client_identifier: A string-based identifier to uniquely identify the receiver instance.
          Service Bus will associate it with some error messages for easier correlation of errors.
          If not specified, a unique id will be generated.
