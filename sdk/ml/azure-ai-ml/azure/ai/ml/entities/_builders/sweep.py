@@ -121,7 +121,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         **kwargs: Any,
     ) -> None:
         # TODO: get rid of self._job_inputs, self._job_outputs once we have general Input
-        self._job_inputs, self._job_outputs = inputs, outputs
+        self._job_inputs, self._job_outputs = inputs, outputs  # type: ignore
 
         kwargs.pop("type", None)
         BaseNode.__init__(
