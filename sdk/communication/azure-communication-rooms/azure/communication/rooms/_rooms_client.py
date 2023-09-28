@@ -125,15 +125,14 @@ class RoomsClient(object):
             }
         _SERIALIZER = Serializer()
 
-        #repeatability_request_id = uuid.uuid1()
-
-        now = datetime.utcnow()
-        repeatability_first_sent = _SERIALIZER.serialize_data(now, "rfc-1123")
+        repeatability_request_id =  str(uuid.uuid1())
+        repeatability_first_sent = _SERIALIZER.serialize_data(datetime.utcnow(), "rfc-1123")
 
         create_room_response = self._rooms_service_client.rooms.create(
 
             create_room_request=create_room_request,
             headers = {
+                       "Repeatability-Request-Id" : repeatability_request_id,
                        "Repeatability-First-Sent" : repeatability_first_sent
                        },
            **kwargs )
@@ -163,9 +162,9 @@ class RoomsClient(object):
         self,
         *,
         room_id: str,
-        valid_from: Optional[datetime],
-        valid_until: Optional[datetime],
-        pstnDialOutEnabled: Optional[bool] = False,
+        valid_from: Optional[datetime] = None,
+        valid_until: Optional[datetime]= None,
+        pstnDialOutEnabled: Optional[bool] = None,
         **kwargs: Any
     ) -> CommunicationRoom:
         """Update a valid room's attributes. For any argument that is passed

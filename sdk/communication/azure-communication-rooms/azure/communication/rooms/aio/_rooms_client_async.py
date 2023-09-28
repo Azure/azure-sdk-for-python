@@ -124,7 +124,6 @@ class RoomsClient(object):
         _SERIALIZER = Serializer()
 
         repeatability_request_id =  str(uuid.uuid1())
-
         repeatability_first_sent = Serializer().serialize_data(datetime.utcnow(), "rfc-1123")
 
         create_room_response = await self._rooms_service_client.rooms.create(
@@ -158,9 +157,9 @@ class RoomsClient(object):
         self,
         *,
         room_id: str,
-        valid_from: Optional[datetime],
-        valid_until: Optional[datetime],
-        pstnDialOutEnabled: Optional[bool] = False,
+        valid_from: Optional[datetime] = None,
+        valid_until: Optional[datetime] = None,
+        pstnDialOutEnabled: Optional[bool] = None,
         **kwargs: Any
     ) -> CommunicationRoom:
         """Update a valid room's attributes. For any argument that is passed
