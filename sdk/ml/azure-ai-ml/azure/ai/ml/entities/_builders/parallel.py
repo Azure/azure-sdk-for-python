@@ -153,7 +153,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
 
         if mini_batch_size is not None and not isinstance(mini_batch_size, int):
             # pylint: disable=pointless-string-statement
-            """Convert str to int."""  # type: ignore
+            """Convert str to int."""
             pattern = re.compile(r"^\d+([kKmMgG][bB])*$")
             if not pattern.match(mini_batch_size):
                 raise ValueError(r"Parameter mini_batch_size must follow regex rule ^\d+([kKmMgG][bB])*$")
@@ -271,12 +271,12 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         :type value: ~azure.ai.ml.entities._job.parallel.parallel_task.ParallelTask or dict
         """
         # base path should be reset if task is set via sdk
-        self._base_path = None
+        self._base_path: Optional[Union[str, os.PathLike]] = None
         if isinstance(value, dict):
             value = ParallelTask(**value)
         self._task = value
 
-    def _set_base_path(self, base_path: Union[str, os.PathLike]) -> None:
+    def _set_base_path(self, base_path: Optional[Union[str, os.PathLike]]) -> None:
         if self._base_path:
             return
         super(Parallel, self)._set_base_path(base_path)
@@ -371,7 +371,8 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
                 rest_attr = parallel_attr
             else:
                 raise Exception(f"Expecting {base_type} for {attr}, got {type(parallel_attr)} instead.")
-        return convert_ordered_dict_to_dict(rest_attr)
+        res: dict = convert_ordered_dict_to_dict(rest_attr)
+        return res
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
@@ -461,7 +462,8 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
                 # get outputs
             for name, original_output in self.outputs.items():
                 # use setattr here to make sure owner of input won't change
-                setattr(node.outputs, name, original_output._data)
+                if not isinstance(original_output, str):
+                    setattr(node.outputs, name, original_output._data)
             self._refine_optional_inputs_with_no_value(node, kwargs)
             # set default values: compute, environment_variables, outputs
             node._name = self.name

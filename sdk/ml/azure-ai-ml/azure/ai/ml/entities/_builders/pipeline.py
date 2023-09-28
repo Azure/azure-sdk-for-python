@@ -116,7 +116,7 @@ class Pipeline(BaseNode):
         self._settings = value
 
     @classmethod
-    def _get_supported_inputs_types(cls) -> None:
+    def _get_supported_inputs_types(cls) -> None:  # type: ignore
         # Return None here to skip validation,
         # as input could be custom class object(parameter group).
         return None
