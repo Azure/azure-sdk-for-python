@@ -209,6 +209,7 @@ class ServiceTagDestination(OutboundRule):
 class ManagedNetwork:
     def __init__(
         self,
+        *,
         isolation_mode: str = IsolationMode.DISABLED,
         outbound_rules: Optional[List[OutboundRule]] = None,
         network_id: Optional[str] = None,
