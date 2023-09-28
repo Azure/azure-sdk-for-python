@@ -167,7 +167,9 @@ class SetGetImage(object):
                 "schemaVersion": 2,
             }
             # Set the image with one custom media type
-            client.set_manifest(repository_name, docker_manifest, tag="sample", media_type=str(docker_manifest["mediaType"]))
+            client.set_manifest(
+                repository_name, docker_manifest, tag="sample", media_type=str(docker_manifest["mediaType"])
+            )
 
             # Get the image
             get_manifest_result = client.get_manifest(repository_name, "sample")
