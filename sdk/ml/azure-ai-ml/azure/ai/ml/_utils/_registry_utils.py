@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import Tuple
+from typing import Tuple, Optional
 
 from typing_extensions import Literal
 
