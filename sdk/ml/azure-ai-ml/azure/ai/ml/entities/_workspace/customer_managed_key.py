@@ -25,7 +25,7 @@ class CustomerManagedKey:
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_workspace.py
+        .. literalinclude:: ../samples/ml_samples_workspace.py
             :start-after: [START customermanagedkey]
             :end-before: [END customermanagedkey]
             :language: python

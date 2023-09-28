@@ -66,7 +66,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START workspace_list]
                 :end-before: [END workspace_list]
                 :language: python
@@ -96,7 +96,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START workspace_get]
                 :end-before: [END workspace_get]
                 :language: python
@@ -119,7 +119,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START workspace_get_keys]
                 :end-before: [END workspace_get_keys]
                 :language: python
@@ -145,7 +145,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START workspace_sync_keys]
                 :end-before: [END workspace_sync_keys]
                 :language: python
@@ -174,7 +174,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START workspace_provision_network]
                 :end-before: [END workspace_provision_network]
                 :language: python
@@ -216,7 +216,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START workspace_begin_create]
                 :end-before: [END workspace_begin_create]
                 :language: python
@@ -245,7 +245,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START workspace_begin_update]
                 :end-before: [END workspace_begin_update]
                 :language: python
@@ -275,7 +275,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START workspace_begin_delete]
                 :end-before: [END workspace_begin_delete]
                 :language: python
@@ -303,7 +303,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START workspace_begin_diagnose]
                 :end-before: [END workspace_begin_diagnose]
                 :language: python

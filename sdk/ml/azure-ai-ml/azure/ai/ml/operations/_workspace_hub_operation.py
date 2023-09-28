@@ -60,7 +60,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START hub_list]
                 :end-before: [END hub_list]
                 :language: python
@@ -96,7 +96,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START hub_get]
                 :end-before: [END hub_get]
                 :language: python
@@ -135,7 +135,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START hub_begin_create]
                 :end-before: [END hub_begin_create]
                 :language: python
@@ -174,7 +174,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START hub_begin_update]
                 :end-before: [END hub_begin_update]
                 :language: python
@@ -232,7 +232,7 @@ class WorkspaceHubOperations(WorkspaceOperationsBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START hub_begin_delete]
                 :end-before: [END hub_begin_delete]
                 :language: python

@@ -82,7 +82,7 @@ class FqdnDestination(OutboundRule):
     :ivar type: Type of the outbound rule. Set to "FQDN" for this class.
     :vartype type: str
 
-    .. literalinclude:: ../../../../../samples/ml_samples_workspace.py
+    .. literalinclude:: ../samples/ml_samples_workspace.py
             :start-after: [START fqdn_outboundrule]
             :end-before: [END fqdn_outboundrule]
             :language: python
@@ -121,7 +121,7 @@ class PrivateEndpointDestination(OutboundRule):
     :ivar type: Type of the outbound rule. Set to "PrivateEndpoint" for this class.
     :vartype type: str
 
-    .. literalinclude:: ../../../../../samples/ml_samples_workspace.py
+    .. literalinclude:: ../samples/ml_samples_workspace.py
             :start-after: [START private_endpoint_outboundrule]
             :end-before: [END private_endpoint_outboundrule]
             :language: python
@@ -183,7 +183,7 @@ class ServiceTagDestination(OutboundRule):
     :ivar type: Type of the outbound rule. Set to "ServiceTag" for this class.
     :vartype type: str
 
-    .. literalinclude:: ../../../../../samples/ml_samples_workspace.py
+    .. literalinclude:: ../samples/ml_samples_workspace.py
             :start-after: [START service_tag_outboundrule]
             :end-before: [END service_tag_outboundrule]
             :language: python
@@ -238,7 +238,7 @@ class ManagedNetwork:
     :param network_id: Network id for the managed network, not meant to be set by user.
     :type network_id: str
 
-    .. literalinclude:: ../../../../../samples/ml_samples_workspace.py
+    .. literalinclude:: ../samples/ml_samples_workspace.py
             :start-after: [START workspace_managed_network]
             :end-before: [END workspace_managed_network]
             :language: python

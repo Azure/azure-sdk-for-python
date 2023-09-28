@@ -224,7 +224,7 @@ def load_workspace(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+        .. literalinclude:: ../samples/ml_samples_workspace.py
             :start-after: [START load_workspace]
             :end-before: [END load_workspace]
             :language: python
@@ -729,7 +729,7 @@ def load_workspace_connection(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+        .. literalinclude:: ../samples/ml_samples_workspace.py
             :start-after: [START load_workspace_connection]
             :end-before: [END load_workspace_connection]
             :language: python
@@ -887,7 +887,7 @@ def load_workspace_hub(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+        .. literalinclude:: ../samples/ml_samples_workspace.py
             :start-after: [START load_workspace_hub]
             :end-before: [END load_workspace_hub]
             :language: python

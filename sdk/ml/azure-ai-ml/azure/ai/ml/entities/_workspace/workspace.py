@@ -79,7 +79,7 @@ class Workspace(Resource):
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
-    .. literalinclude:: ../../../../../samples/ml_samples_workspace.py
+    .. literalinclude:: ../samples/ml_samples_workspace.py
             :start-after: [START workspace]
             :end-before: [END workspace]
             :language: python

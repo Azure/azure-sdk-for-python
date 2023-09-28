@@ -57,7 +57,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START get_connection]
                 :end-before: [END get_connection]
                 :language: python
@@ -86,7 +86,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START create_or_update_connection]
                 :end-before: [END create_or_update_connection]
                 :language: python
@@ -113,7 +113,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START delete_connection]
                 :end-before: [END delete_connection]
                 :language: python
@@ -141,7 +141,7 @@ class WorkspaceConnectionsOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START list_connection]
                 :end-before: [END list_connection]
                 :language: python

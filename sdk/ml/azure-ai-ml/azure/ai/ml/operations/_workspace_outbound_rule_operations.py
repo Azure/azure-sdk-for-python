@@ -55,7 +55,7 @@ class WorkspaceOutboundRuleOperations:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START outbound_rule_get]
                 :end-before: [END outbound_rule_get]
                 :language: python
@@ -82,7 +82,7 @@ class WorkspaceOutboundRuleOperations:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START outbound_rule_begin_create]
                 :end-before: [END outbound_rule_begin_create]
                 :language: python
@@ -126,7 +126,7 @@ class WorkspaceOutboundRuleOperations:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START outbound_rule_begin_update]
                 :end-before: [END outbound_rule_begin_update]
                 :language: python
@@ -168,7 +168,7 @@ class WorkspaceOutboundRuleOperations:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START outbound_rule_list]
                 :end-before: [END outbound_rule_list]
                 :language: python
@@ -200,7 +200,7 @@ class WorkspaceOutboundRuleOperations:
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_workspace.py
+            .. literalinclude:: ../samples/ml_samples_workspace.py
                 :start-after: [START outbound_rule_begin_remove]
                 :end-before: [END outbound_rule_begin_remove]
                 :language: python

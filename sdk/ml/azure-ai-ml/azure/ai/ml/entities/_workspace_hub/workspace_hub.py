@@ -42,7 +42,7 @@ class WorkspaceHub(Workspace):
     :param resource_group: Name of resource group to create the WorkspaceHub in.
     :type resource_group: str
     :param managed_network: WorkspaceHub's Managed Network configuration
-    :type managed_network: ManagedNetwork
+    :type managed_network: ~azure.ai.ml.entities.ManagedNetwork
     :param storage_account: The resource ID of an existing storage account to use instead of creating a new one.
     :type storage_account: str
     :param key_vault: The resource ID of an existing key vault to use instead of creating a new one.
@@ -54,12 +54,12 @@ class WorkspaceHub(Workspace):
     :type existing_workspaces: List[str]
     :param customer_managed_key: Key vault details for encrypting data with customer-managed keys.
         If not specified, Microsoft-managed keys will be used by default.
-    :type customer_managed_key: CustomerManagedKey
+    :type customer_managed_key: ~azure.ai.ml.entities.CustomerManagedKey
     :param image_build_compute: The name of the compute target to use for building environment
         Docker images with the container registry is behind a VNet.
     :type public_network_access: str
     :param identity: workspaceHub's Managed Identity (user assigned, or system assigned)
-    :type identity: IdentityConfiguration
+    :type identity: ~azure.ai.ml.entities.IdentityConfiguration
     :param primary_user_assigned_identity: The workspaceHub's primary user assigned identity
     :type primary_user_assigned_identity: str
     :param enable_data_isolation: A flag to determine if workspace has data isolation enabled.
@@ -68,7 +68,7 @@ class WorkspaceHub(Workspace):
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
 
-    .. literalinclude:: ../../../../../samples/ml_samples_workspace.py
+    .. literalinclude:: ../samples/ml_samples_workspace.py
             :start-after: [START workspace_hub]
             :end-before: [END workspace_hub]
             :language: python
