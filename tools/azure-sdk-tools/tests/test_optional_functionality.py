@@ -1,7 +1,9 @@
 import os
+import pytest
 
 from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import get_config_setting
+from ci_tools.scenario.generator import create_scenario_file
 
 integration_folder = os.path.join(os.path.dirname(__file__), 'integration')
 
@@ -63,3 +65,43 @@ def test_optional_specific_get_no_result():
     expected = None
 
     assert expected == actual
+
+ZERO_OPTION_EXPECTED_INSTALL_FILE = """blah
+blah2
+blah3
+"""
+
+ONE_OPTION_EXPECTED_INSTALL_FILE = """blah
+blah2
+blah3
+"""
+
+TWO_OPTION_EXPECTED_INSTALL_FILE = """blah
+blah2
+blah3
+"""
+
+@pytest.mark.parametrize("path,env,expected", [
+    ("optional_environment_zero_options", "no_requests", ZERO_OPTION_EXPECTED_INSTALL_FILE),
+    ("optional_environment_one_option", "no_requests", ONE_OPTION_EXPECTED_INSTALL_FILE),
+    ("optional_environment_two_options", "no_requests", TWO_OPTION_EXPECTED_INSTALL_FILE),
+    ("optional_environment_zero_options", "no_aiohttp", ZERO_OPTION_EXPECTED_INSTALL_FILE),
+    ("optional_environment_one_option", "no_aiohttp", ONE_OPTION_EXPECTED_INSTALL_FILE),
+    ("optional_environment_two_options", "no_aiohttp", TWO_OPTION_EXPECTED_INSTALL_FILE),
+])
+def test_file_generation(path: str, env: str, expected: str):
+    scenario_folder = os.path.join(integration_folder, 'scenarios', path)
+
+    scenario_file = create_scenario_file(scenario_folder, env)
+    assert scenario_file is not None
+
+    exists = os.path.exists(scenario_file)
+    assert exists
+
+    with open(scenario_file, 'r', encoding='utf-8') as f:
+        content = f.read()
+    try:
+        os.remove(scenario_file)
+    except:
+        pass
+    assert content == expected

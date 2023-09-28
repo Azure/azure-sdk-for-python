@@ -10,7 +10,6 @@ except:
     import tomli as toml
 import tomli_w as tomlw
 import logging
-from typing import Namespace
 
 from ci_tools.environment_exclusions import (
     is_check_enabled
@@ -49,7 +48,7 @@ def create_scenario_file(package_folder: str, optional_config: str) -> str:
     """
     pass
 
-def main(mapped_args: Namespace) -> int:
+def main(mapped_args: argparse.Namespace) -> int:
     parsed_package = ParsedSetup.from_path(mapped_args.target)
 
     if in_ci():
