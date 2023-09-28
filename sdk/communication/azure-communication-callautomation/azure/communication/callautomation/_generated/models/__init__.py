@@ -124,6 +124,8 @@ from ._enums import RecordingFormat
 from ._enums import RecordingState
 from ._enums import RecordingStorage
 from ._enums import RecordingType
+from ._enums import TranscriptionStatus
+from ._enums import TranscriptionStatusDetails
 from ._enums import TranscriptionTransportType
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -247,6 +249,8 @@ __all__ = [
     "RecordingState",
     "RecordingStorage",
     "RecordingType",
+    "TranscriptionStatus",
+    "TranscriptionStatusDetails",
     "TranscriptionTransportType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
