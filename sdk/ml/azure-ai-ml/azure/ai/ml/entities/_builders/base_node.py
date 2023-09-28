@@ -271,7 +271,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         # TODO: replace this hack
         return self._init
 
-    def _set_base_path(self, base_path: Union[str, os.PathLike]) -> None:
+    def _set_base_path(self, base_path: Optional[Union[str, os.PathLike]]) -> None:
         """Set the base path for the node.
 
         Will be used for schema validation. If not set, will use Path.cwd() as the base path
@@ -567,12 +567,13 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         :type kwargs: dict
         """
         for key, value in node.inputs.items():
-            meta = value._data
-            if (
-                isinstance(meta, Input)
-                and meta._is_primitive_type is False
-                and meta.optional is True
-                and not meta.path
-                and key not in kwargs
-            ):
-                value._data = None
+            if isinstance(value, Input):
+                meta = value._data
+                if (
+                    isinstance(meta, Input)
+                    and meta._is_primitive_type is False
+                    and meta.optional is True
+                    and not meta.path
+                    and key not in kwargs
+                ):
+                    value._data = None

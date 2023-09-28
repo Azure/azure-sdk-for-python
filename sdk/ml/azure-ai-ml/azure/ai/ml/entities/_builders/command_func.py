@@ -66,7 +66,7 @@ def _parse_input(input_value: Union[Input, Dict, SweepDistribution, str, bool, i
         component_input = ComponentTranslatableMixin._to_input_builder_function(input_value)
         job_input = input_value
     else:
-        msg = f"Unsupported input type: {type(input_value)}"  # type: ignore
+        msg = f"Unsupported input type: {type(input_value)}"
         msg += ", only Input, dict, str, bool, int and float are supported."
         raise ValidationException(
             message=msg,

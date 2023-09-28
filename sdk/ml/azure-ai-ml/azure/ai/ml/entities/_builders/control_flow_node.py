@@ -46,7 +46,7 @@ class ControlFlowNode(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, AB
             self._register_in_current_pipeline_component_builder()
 
     @property
-    def type(self):
+    def type(self) -> Any:
         """Get the type of the control flow node.
 
         :return: The type of the control flow node.
@@ -65,7 +65,8 @@ class ControlFlowNode(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, AB
         """
         rest_obj = self._to_dict()
         rest_obj["_source"] = self._source
-        return convert_ordered_dict_to_dict(rest_obj)
+        res: dict = convert_ordered_dict_to_dict(rest_obj)
+        return res
 
     def _register_in_current_pipeline_component_builder(self) -> None:
         """Register this node in current pipeline component builder by adding self to a global stack."""
