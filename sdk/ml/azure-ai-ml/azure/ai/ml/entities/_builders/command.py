@@ -175,7 +175,7 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         # resolve normal dict to dict[str, JobService]
         services = _resolve_job_services(services)
         kwargs.pop("type", None)
-        self._parameters = kwargs.pop("parameters", {})
+        self._parameters: dict = kwargs.pop("parameters", {})
         BaseNode.__init__(
             self,
             type=NodeType.COMMAND,
@@ -765,7 +765,8 @@ class Command(BaseNode, NodeWithGroupInputMixin):
         }.items():
             if value is not None:
                 rest_obj[key] = value
-        return convert_ordered_dict_to_dict(rest_obj)
+        res: dict = convert_ordered_dict_to_dict(rest_obj)
+        return res
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "Command":
@@ -890,14 +891,15 @@ class Command(BaseNode, NodeWithGroupInputMixin):
             node: Command = self._component(*args, **kwargs)
             # merge inputs
             for name, original_input in self.inputs.items():
-                if name not in kwargs:
+                if name not in kwargs and isinstance(original_input, Input):
                     # use setattr here to make sure owner of input won't change
                     setattr(node.inputs, name, original_input._data)
                     node._job_inputs[name] = original_input._data
                 # get outputs
             for name, original_output in self.outputs.items():
                 # use setattr here to make sure owner of input won't change
-                setattr(node.outputs, name, original_output._data)
+                if isinstance(original_output, Output):
+                    setattr(node.outputs, name, original_output._data)
             self._refine_optional_inputs_with_no_value(node, kwargs)
             # set default values: compute, environment_variables, outputs
             # won't copy name to be able to distinguish if a node's name is assigned by user
@@ -958,7 +960,7 @@ def _resolve_job_services(
         return None
 
     if not isinstance(services, dict):
-        msg = f"Services must be a dict, got {type(services)} instead."  # type: ignore
+        msg = f"Services must be a dict, got {type(services)} instead."
         raise ValidationException(
             message=msg,
             no_personal_data_message=msg,
