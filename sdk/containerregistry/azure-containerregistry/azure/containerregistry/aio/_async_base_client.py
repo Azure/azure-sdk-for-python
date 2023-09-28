@@ -4,6 +4,7 @@
 # ------------------------------------
 from enum import Enum
 from typing import Any, Optional
+from typing_extensions import Self
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.credentials_async import AsyncTokenCredential
@@ -43,6 +44,11 @@ class ContainerRegistryBaseClient(object):
             authentication_policy=self._auth_policy,
             **kwargs
         )
+
+    async def __aenter__(self) -> Self:
+        await self._auth_policy.__aenter__()
+        await self._client.__aenter__()
+        return self
 
     async def __aexit__(self, *args: Any) -> None:
         await self._auth_policy.__aexit__(*args)

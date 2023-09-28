@@ -31,7 +31,7 @@ from utilities import get_authority, get_credential
 class SetGetImageAsync(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.endpoint: str = os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT")  # type: ignore[assignment]
+        self.endpoint = os.environ["CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT"]
         self.authority = get_authority(self.endpoint)
         self.credential = get_credential(self.authority, is_async=True)
 
@@ -147,7 +147,7 @@ class SetGetImageAsync(object):
             }
             # Set the image with one custom media type
             await client.set_manifest(
-                repository_name, docker_manifest, tag="sample", media_type=docker_manifest["mediaType"]  # type: ignore[arg-type]
+                repository_name, docker_manifest, tag="sample", media_type=str(docker_manifest["mediaType"])
             )
 
             # Get the image

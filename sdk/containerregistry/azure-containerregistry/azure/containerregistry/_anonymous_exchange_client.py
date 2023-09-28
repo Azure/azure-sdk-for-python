@@ -6,7 +6,6 @@
 from typing import Any, Optional, Union
 
 from azure.core.credentials import TokenCredential, AccessToken
-from azure.core.tracing.decorator import distributed_trace
 
 from ._exchange_client import ExchangeClientAuthenticationPolicy
 from ._generated import ContainerRegistry
@@ -45,8 +44,9 @@ class AnonymousACRExchangeClient(object):
             **kwargs
         )
 
-    @distributed_trace
-    def get_acr_access_token(self, challenge: str, **kwargs) -> Optional[str]:
+    def get_acr_access_token(  # pylint:disable=client-method-missing-tracing-decorator
+        self, challenge: str, **kwargs
+    ) -> Optional[str]:
         parsed_challenge = _parse_challenge(challenge)
         return self.exchange_refresh_token_for_access_token(
             "",
@@ -56,8 +56,7 @@ class AnonymousACRExchangeClient(object):
             **kwargs
         )
 
-    @distributed_trace
-    def exchange_refresh_token_for_access_token(
+    def exchange_refresh_token_for_access_token(  # pylint:disable=client-method-missing-tracing-decorator
         self, refresh_token: str, service: str, scope: str, grant_type: Union[str, TokenGrantType], **kwargs
     ) -> Optional[str]:
         access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(  # type: ignore[attr-defined] # pylint: disable=line-too-long

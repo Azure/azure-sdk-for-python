@@ -112,11 +112,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             endpoint=endpoint, credential=credential, credential_scopes=defaultScope, **kwargs
         )
 
-    async def __aenter__(self) -> "ContainerRegistryClient":
-        await self._auth_policy.__aenter__()
-        await self._client.__aenter__()
-        return self
-
     async def _get_digest_from_tag(self, repository: str, tag: str) -> str:
         tag_props = await self.get_tag_properties(repository, tag)
         return tag_props.digest

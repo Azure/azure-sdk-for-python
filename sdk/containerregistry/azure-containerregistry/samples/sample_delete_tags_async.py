@@ -37,7 +37,7 @@ from utilities import load_registry, get_authority, get_credential
 class DeleteTagsAsync(object):
     def __init__(self):
         load_dotenv(find_dotenv())
-        self.endpoint: str = os.environ.get("CONTAINERREGISTRY_ENDPOINT")  # type: ignore[assignment]
+        self.endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
         self.authority = get_authority(self.endpoint)
         self.credential = get_credential(self.authority, is_async=True)
 
