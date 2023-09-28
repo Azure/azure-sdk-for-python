@@ -376,7 +376,7 @@ class MLClient:
             self._operation_config,
             self._service_client_06_2023_preview,
         )
-        self._operation_container.add(AzureMLResourceType.COMPUTE, self._policies)
+        self._operation_container.add(AzureMLResourceType.POLICIES, self._policies)
 
         self._workspace_outbound_rules = WorkspaceOutboundRuleOperations(
             self._operation_scope,

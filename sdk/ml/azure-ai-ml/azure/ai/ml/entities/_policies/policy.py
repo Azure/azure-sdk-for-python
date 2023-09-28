@@ -8,36 +8,40 @@ from typing import Dict, Optional, Any
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ComputePolicyRequest, ComputePolicyDto
-
+from os import PathLike
+from pathlib import Path
+from typing import IO, AnyStr, Dict, Optional, Union
 from enum import Enum
 
-
-class PolicyDefinition(Enum):
-    MaxJobInstanceCount = 'MaxJobInstanceCount'
-    MaxJobExecutionTime = 'MaxJobExecutionTime'
-    MaxTotalVcpuUsage = 'MaxTotalVcpuUsage'
-    MaxPerUserVcpuUsage = 'MaxPerUserVcpuUsage'
-    CiIdleShutdown = 'CiIdleShutdown'
-    RequireCiLatestSoftware = 'RequireCiLatestSoftware'
-
-
-class PolicyEffect(Enum):
-    Deny = 'Deny'
-    Audit = 'Audit'
+@experimental
+class PolicyList(Resource):
+    pass
 
 
 @experimental
-class Policy(object):
+class Policy(Resource):
+
+    class Definition(Enum):
+        MaxJobInstanceCount = 'MaxJobInstanceCount'
+        MaxJobExecutionTime = 'MaxJobExecutionTime'
+        MaxTotalVcpuUsage = 'MaxTotalVcpuUsage'
+        MaxPerUserVcpuUsage = 'MaxPerUserVcpuUsage'
+        CiIdleShutdown = 'CiIdleShutdown'
+        RequireCiLatestSoftware = 'RequireCiLatestSoftware'
+
+
+    class Effect(Enum):
+        Deny = 'Deny'
+        Audit = 'Audit'
     
     def __init__(self,
                  name: str,
                  arm_scope: str,
-                 definition: PolicyDefinition,
+                 definition: Definition,
                  parameters: Dict[str, Any],
-                 effect: PolicyEffect,
+                 effect: Effect,
                  id: Optional[str] = None) -> None:
-        self.id = id
-        self.name = name
+        super().__init__(name=name)
         self.arm_scope = arm_scope
         self.definition = definition
         self.parameters = parameters
@@ -57,8 +61,8 @@ class Policy(object):
             name=obj.name,
             arm_scope=obj.arm_scope,
             parameters=obj.parameters,
-            effect=PolicyEffect[obj.effect],
-            definition=PolicyDefinition[obj.definition],
+            effect=Policy.Effect[obj.effect],
+            definition=Policy.Definition[obj.definition],
             id=obj.id,
         )
 
@@ -71,3 +75,23 @@ class Policy(object):
             "parameters": self.parameters,
             "effect": self.effect,
         }
+
+    @classmethod
+    def _load(
+        cls,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
+        **kwargs,
+    ) -> "Policy":
+        pass
+
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+        """Dump the object content into a file.
+
+        :param dest: The local path or file stream to write the YAML content to.
+            If dest is a file path, a new file will be created.
+            If dest is an open file, the file will be written to directly.
+        :type dest: Union[PathLike, str, IO[AnyStr]]
+        """
+        pass

@@ -204,6 +204,7 @@ class HubPolicyOperations(object):
     @distributed_trace
     def list(
         self,
+        subscription_id,  # type: str
         resource_group_name,  # type: str
         workspace_name,  # type: str
         **kwargs  # type: Any
@@ -232,7 +233,7 @@ class HubPolicyOperations(object):
 
         
         request = build_list_request(
-            subscription_id=self._config.subscription_id,
+            subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             api_version=api_version,
@@ -265,6 +266,7 @@ class HubPolicyOperations(object):
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
         self,
+        subscription_id,  # type: str
         resource_group_name,  # type: str
         workspace_name,  # type: str
         policy_name,  # type: str
@@ -296,7 +298,7 @@ class HubPolicyOperations(object):
 
         
         request = build_delete_request(
-            subscription_id=self._config.subscription_id,
+            subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             policy_name=policy_name,
@@ -326,6 +328,7 @@ class HubPolicyOperations(object):
     @distributed_trace
     def get(
         self,
+        subscription_id,  # type: str
         resource_group_name,  # type: str
         policy_name,  # type: str
         workspace_name,  # type: str
@@ -357,7 +360,7 @@ class HubPolicyOperations(object):
 
         
         request = build_get_request(
-            subscription_id=self._config.subscription_id,
+            subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             policy_name=policy_name,
             workspace_name=workspace_name,
@@ -391,6 +394,7 @@ class HubPolicyOperations(object):
     @distributed_trace
     def create_or_update(  # pylint: disable=inconsistent-return-statements
         self,
+        subscription_id,  # type: str
         resource_group_name,  # type: str
         workspace_name,  # type: str
         policy_name,  # type: str
@@ -427,7 +431,7 @@ class HubPolicyOperations(object):
         _json = self._serialize.body(body, 'object')
 
         request = build_create_or_update_request(
-            subscription_id=self._config.subscription_id,
+            subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             policy_name=policy_name,
