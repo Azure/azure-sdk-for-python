@@ -12,10 +12,10 @@ pyright = false
 name = "no_requests"
 install = []
 uninstall = ["requests"]
-additional_pytest_args = []
+additional_pytest_args = ["-k", "*_async.py"]
 
 [[tool.azure-sdk-build.optional]]
 name = "no_aiohttp"
 install = []
 uninstall = ["aiohttp"]
-additional_pytest_args = []
+additional_pytest_args = ["-k", "not *_async.py"]

@@ -11,9 +11,7 @@ except:
 import tomli_w as tomlw
 import logging
 
-from ci_tools.environment_exclusions import (
-    is_check_enabled
-)
+from ci_tools.environment_exclusions import is_check_enabled
 from ci_tools.variables import in_ci
 from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import get_config_setting
@@ -46,16 +44,14 @@ def create_scenario_file(package_folder: str, optional_config: str) -> str:
 
     This file will be dropped into the package root, but gitignored. It is regenerated with every invocation of the `optional` env.
     """
-    pass
+
 
 def main(mapped_args: argparse.Namespace) -> int:
     parsed_package = ParsedSetup.from_path(mapped_args.target)
 
     if in_ci():
         if not is_check_enabled(mapped_args.target, "optional", False):
-            logging.info(
-                f"Package {parsed_package.package_name} opts-out of optional check."
-            )
+            logging.info(f"Package {parsed_package.package_name} opts-out of optional check.")
             return 0
 
     optional_configs = get_config_setting(mapped_args.target, "optional")
@@ -79,22 +75,15 @@ def entrypoint():
         description="""This entrypoint provides automatic invocation of the 'optional' requirements for a given package. View the pyproject.toml within the targeted package folder to see configuration.""",
     )
 
-    parser.add_argument(
-        "-t",
-        "--target",
-        dest="target",
-        help="The target package path",
-        required=True
-    )
+    parser.add_argument("-t", "--target", dest="target", help="The target package path", required=True)
 
     parser.add_argument(
         "-o",
         "--optional",
         dest="optional",
         help="The target environment. If not matched to any of the named optional environments, hard exit. If not provided, all optional environments will be run.",
-        required=False
+        required=False,
     )
 
     args, _ = parser.parse_known_args()
     exit(main(mapped_args=args))
-    
