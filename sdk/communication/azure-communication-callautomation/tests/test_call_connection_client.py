@@ -29,6 +29,7 @@ class TestCallConnectionClient(unittest.TestCase):
         "identifier": {"rawId": communication_user_id, "communicationUser": {"id": communication_user_id}},
         "isMuted": False
     }
+    invitation_id = "invitationId"
 
     def test_hangup(self):
         def mock_send(_, **kwargs):
@@ -214,4 +215,22 @@ class TestCallConnectionClient(unittest.TestCase):
             transport=Mock(send=mock_send))
         user = CommunicationUserIdentifier(self.communication_user_id)
         response = call_connection.mute_participants(user)
+        self.assertEqual(self.operation_context, response.operation_context)
+
+    def test_cancel_add_participant(self):
+        def mock_send(_, **kwargs):
+            kwargs.pop("stream", None)
+            if kwargs:
+                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
+            return mock_response(status_code=202, json_payload={
+                "invitationId": self.invitation_id,
+                "operationContext": self.operation_context})
+
+        call_connection = CallConnectionClient(
+            endpoint="https://endpoint",
+            credential=AzureKeyCredential("fakeCredential=="),
+            call_connection_id=self.call_connection_id,
+            transport=Mock(send=mock_send))
+        response = call_connection.cancel_add_participant(self.invitation_id)
+        self.assertEqual(self.invitation_id, response.invitation_id)
         self.assertEqual(self.operation_context, response.operation_context)
