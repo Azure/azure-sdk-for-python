@@ -185,7 +185,7 @@ def load_job(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START load_job]
             :end-before: [END load_job]
             :language: python
@@ -346,7 +346,7 @@ def load_compute(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../samples/ml_samples_compute.py
+        .. literalinclude:: ../samples/ml_samples_compute.py
             :start-after: [START load_compute]
             :end-before: [END load_compute]
             :language: python
@@ -384,7 +384,7 @@ def load_component(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../samples/ml_samples_component_configurations.py
+        .. literalinclude:: ../samples/ml_samples_component_configurations.py
             :start-after: [START configure_load_component]
             :end-before: [END configure_load_component]
             :language: python
@@ -438,7 +438,7 @@ def load_model(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START load_model]
             :end-before: [END load_model]
             :language: python
@@ -848,6 +848,7 @@ def load_workspace_hub(
     **kwargs,
 ) -> WorkspaceHub:
     """Load a WorkspaceHub object from a yaml file.
+
     :param source: The local yaml source of a WorkspaceHub. Must be either a
         path to a local file, or an already-open file.
         If the source is a path, it will be open and read.
@@ -895,7 +896,7 @@ def load_model_package(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START load_model_package]
             :end-before: [END load_model_package]
             :language: python

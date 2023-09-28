@@ -193,7 +193,7 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START job_schedule_configuration]
             :end-before: [END job_schedule_configuration]
             :language: python

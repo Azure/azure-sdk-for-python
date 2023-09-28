@@ -31,13 +31,12 @@ def main():
         resource_name="vault1",
     )
 
-    response = client.replication_protection_containers.begin_delete(
+    client.replication_protection_containers.begin_delete(
         fabric_name="cloud1",
         protection_container_name="cloud_6d224fc6-f326-5d35-96de-fbf51efb3179",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2022-10-01/examples/ReplicationProtectionContainers_Delete.json
+# x-ms-original-file: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/stable/2023-06-01/examples/ReplicationProtectionContainers_Delete.json
 if __name__ == "__main__":
     main()

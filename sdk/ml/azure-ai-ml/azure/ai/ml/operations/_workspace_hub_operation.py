@@ -17,7 +17,6 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._workspace_utils import delete_resource_by_arm_id
 
 from azure.ai.ml.constants._common import Scope, ArmConstants
@@ -28,7 +27,6 @@ ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-@experimental
 class WorkspaceHubOperations(WorkspaceOperationsBase):
     """_HubOperations.
 

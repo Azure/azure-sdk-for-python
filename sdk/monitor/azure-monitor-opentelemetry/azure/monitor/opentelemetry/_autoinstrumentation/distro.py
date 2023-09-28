@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import logging
 from os import environ
 from warnings import warn
 
@@ -27,17 +26,12 @@ from azure.monitor.opentelemetry._constants import (
 )
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
     AzureDiagnosticLogging,
+    _ATTACH_FAILURE_DISTRO,
+    _ATTACH_SUCCESS_DISTRO,
 )
 from azure.monitor.opentelemetry._diagnostics.status_logger import (
     AzureStatusLogger,
 )
-
-_CONFIG_FAILED_MSG = "Azure Monitor OpenTelemetry Distro failed during configuration: %s"
-
-_logger = logging.getLogger(__name__)
-_opentelemetry_logger = logging.getLogger("opentelemetry")
-# TODO: Enabled when duplicate logging issue is solved
-# _exporter_logger = logging.getLogger("azure.monitor.opentelemetry.exporter")
 
 
 class AzureMonitorDistro(BaseDistro):
@@ -46,36 +40,31 @@ class AzureMonitorDistro(BaseDistro):
             warn(_PREVIEW_ENTRY_POINT_WARNING)
         try:
             _configure_auto_instrumentation()
-        except Exception as ex:
-            _logger.exception(
-                ("Error occurred auto-instrumenting AzureMonitorDistro")
+            AzureStatusLogger.log_status(True)
+            AzureDiagnosticLogging.info(
+                "Azure Monitor OpenTelemetry Distro configured successfully.",
+                _ATTACH_SUCCESS_DISTRO
             )
-            raise ex
+        except Exception as e:
+            AzureStatusLogger.log_status(False, reason=str(e))
+            AzureDiagnosticLogging.error(
+                "Azure Monitor OpenTelemetry Distro failed during configuration: %s" % str(e),
+                _ATTACH_FAILURE_DISTRO,
+            )
+            raise e
 
 
 def _configure_auto_instrumentation() -> None:
-    try:
-        AzureStatusLogger.log_status(False, "Distro being configured.")
-        AzureDiagnosticLogging.enable(_logger)
-        AzureDiagnosticLogging.enable(_opentelemetry_logger)
-        environ.setdefault(
-            OTEL_METRICS_EXPORTER, "azure_monitor_opentelemetry_exporter"
-        )
-        environ.setdefault(
-            OTEL_TRACES_EXPORTER, "azure_monitor_opentelemetry_exporter"
-        )
-        environ.setdefault(
-            OTEL_LOGS_EXPORTER, "azure_monitor_opentelemetry_exporter"
-        )
-        environ.setdefault(
-            _OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED, "true"
-        )
-        settings.tracing_implementation = OpenTelemetrySpan
-        AzureStatusLogger.log_status(True)
-        _logger.info(
-            "Azure Monitor OpenTelemetry Distro configured successfully."
-        )
-    except Exception as exc:
-        AzureStatusLogger.log_status(False, reason=exc)
-        _logger.error(_CONFIG_FAILED_MSG, exc)
-        raise exc
+    environ.setdefault(
+        OTEL_METRICS_EXPORTER, "azure_monitor_opentelemetry_exporter"
+    )
+    environ.setdefault(
+        OTEL_TRACES_EXPORTER, "azure_monitor_opentelemetry_exporter"
+    )
+    environ.setdefault(
+        OTEL_LOGS_EXPORTER, "azure_monitor_opentelemetry_exporter"
+    )
+    environ.setdefault(
+        _OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED, "true"
+    )
+    settings.tracing_implementation = OpenTelemetrySpan

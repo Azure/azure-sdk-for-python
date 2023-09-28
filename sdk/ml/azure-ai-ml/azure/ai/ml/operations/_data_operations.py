@@ -143,7 +143,7 @@ class DataOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START data_operations_list]
                 :end-before: [END data_operations_list]
                 :language: python
@@ -236,7 +236,7 @@ class DataOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START data_operations_get]
                 :end-before: [END data_operations_get]
                 :language: python
@@ -289,7 +289,7 @@ class DataOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START data_operations_create_or_update]
                 :end-before: [END data_operations_create_or_update]
                 :language: python
@@ -429,7 +429,7 @@ class DataOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START data_operations_import_data]
                 :end-before: [END data_operations_import_data]
                 :language: python
@@ -497,7 +497,7 @@ class DataOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START data_operations_list_materialization_status]
                 :end-before: [END data_operations_list_materialization_status]
                 :language: python
@@ -596,7 +596,7 @@ class DataOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START data_operations_archive]
                 :end-before: [END data_operations_archive]
                 :language: python
@@ -634,7 +634,7 @@ class DataOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START data_operations_restore]
                 :end-before: [END data_operations_restore]
                 :language: python
@@ -699,7 +699,7 @@ class DataOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START data_operations_share]
                 :end-before: [END data_operations_share]
                 :language: python
