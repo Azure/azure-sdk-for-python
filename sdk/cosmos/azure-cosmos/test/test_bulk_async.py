@@ -54,7 +54,7 @@ class TestBulk:
     @pytest.mark.asyncio
     async def test_bulk_batch_creation_async(self):
         await self._set_up()
-        container = await self.test_database.create_container_if_not_exists(id="default_bulk_container",
+        container = await self.test_database.create_container_if_not_exists(id="default_bulk_container" + str(uuid.uuid4()),
                                                                             partition_key=PartitionKey(path="/id"))
         # Verify there is one batch/ 100 operations
         operations = []
@@ -74,7 +74,7 @@ class TestBulk:
     async def test_bulk_throttle_async(self):
         await self._set_up()
         # Try with default container (400 RUs)
-        container = await self.test_database.create_container_if_not_exists(id="default_bulk_container",
+        container = await self.test_database.create_container_if_not_exists(id="default_bulk_container" + str(uuid.uuid4()),
                                                                             partition_key=PartitionKey(path="/id"))
         operations = []
         for i in range(100):
@@ -88,7 +88,7 @@ class TestBulk:
         assert container.client_connection.last_response_headers.get(HttpHeaders.ThrottleRetryCount) > 0
 
         # create all 100 items with more RUs
-        bulk_container = await self.test_database.create_container_if_not_exists(id="throughput_bulk_container",
+        bulk_container = await self.test_database.create_container_if_not_exists(id="throughput_bulk_container" + str(uuid.uuid4()),
                                                                                  partition_key=PartitionKey(path="/id"),
                                                                                  offer_throughput=1000)
         bulk_result = await bulk_container.bulk(operations=operations)
@@ -98,7 +98,7 @@ class TestBulk:
     @pytest.mark.asyncio
     async def test_bulk_lsn_async(self):
         await self._set_up()
-        container = await self.test_database.create_container_if_not_exists(id="lsn_bulk_container",
+        container = await self.test_database.create_container_if_not_exists(id="lsn_bulk_container" + str(uuid.uuid4()),
                                                                             partition_key=PartitionKey(path="/id"))
         # Create test items
         await container.create_item({"id": "read_item", "name": str(uuid.uuid4())})
@@ -140,7 +140,7 @@ class TestBulk:
     @pytest.mark.asyncio
     async def test_bulk_invalid_create_async(self):
         await self._set_up()
-        container = await self.test_database.create_container_if_not_exists(id="errors_bulk_container",
+        container = await self.test_database.create_container_if_not_exists(id="errors_bulk_container" + str(uuid.uuid4()),
                                                                             partition_key=PartitionKey(path="/pk"))
         operations = [{"operationType": "Create",
                        "resourceBody": {"id": "create_item", "name": str(uuid.uuid4())},
@@ -152,7 +152,7 @@ class TestBulk:
     @pytest.mark.asyncio
     async def test_bulk_read_non_existent_async(self):
         await self._set_up()
-        container = await self.test_database.create_container_if_not_exists(id="errors_bulk_container",
+        container = await self.test_database.create_container_if_not_exists(id="errors_bulk_container" + str(uuid.uuid4()),
                                                                             partition_key=PartitionKey(path="/pk"))
         operations = [{"operationType": "Read",
                        "id": "read_item",
@@ -164,7 +164,7 @@ class TestBulk:
     @pytest.mark.asyncio
     async def test_bulk_delete_non_existent_async(self):
         await self._set_up()
-        container = await self.test_database.create_container_if_not_exists(id="errors_bulk_container",
+        container = await self.test_database.create_container_if_not_exists(id="errors_bulk_container" + str(uuid.uuid4()),
                                                                             partition_key=PartitionKey(path="/pk"))
         operations = [{"operationType": "Delete",
                        "id": "delete_item",
@@ -176,7 +176,7 @@ class TestBulk:
     @pytest.mark.asyncio
     async def test_bulk_create_conflict_async(self):
         await self._set_up()
-        container = await self.test_database.create_container_if_not_exists(id="errors_bulk_container",
+        container = await self.test_database.create_container_if_not_exists(id="errors_bulk_container" + str(uuid.uuid4()),
                                                                             partition_key=PartitionKey(path="/pk"))
         operations = [{"operationType": "Create",
                        "resourceBody": {"id": "create_item", "name": str(uuid.uuid4())},
@@ -186,7 +186,7 @@ class TestBulk:
                        "partitionKey": "create_item"},
                       {"operationType": "Create",
                        "resourceBody": {"id": "create_item2", "name": str(uuid.uuid4())},
-                       "partitionKey": "create_item"}]
+                       "partitionKey": "create_item2"}]
 
         bulk_result = await container.bulk(operations=operations)
         assert bulk_result[0][1].get("statusCode") == StatusCodes.CREATED

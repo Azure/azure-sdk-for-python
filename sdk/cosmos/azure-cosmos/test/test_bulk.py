@@ -55,7 +55,7 @@ class BulkTests(unittest.TestCase):
         cls.test_database = cls.configs.create_database_if_not_exist(cls.client)
 
     def test_bulk_batch_creation(self):
-        container = self.test_database.create_container_if_not_exists(id="default_bulk_container",
+        container = self.test_database.create_container_if_not_exists(id="default_bulk_container" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/id"))
         # Verify there is one batch/ 100 operations
         operations = []
@@ -73,7 +73,7 @@ class BulkTests(unittest.TestCase):
 
     def test_bulk_throttle(self):
         # Try with default container (400 RUs)
-        container = self.test_database.create_container_if_not_exists(id="default_bulk_container",
+        container = self.test_database.create_container_if_not_exists(id="default_bulk_container" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/id"))
         operations = []
         for i in range(100):
@@ -87,15 +87,15 @@ class BulkTests(unittest.TestCase):
         assert container.client_connection.last_response_headers.get(HttpHeaders.ThrottleRetryCount) > 0
 
         # create all 100 items with more RUs
-        bulk_container = self.test_database.create_container_if_not_exists(id="throughput_bulk_container",
-                                                                           partition_key=PartitionKey(path="/id"),
-                                                                           offer_throughput=1000)
+        bulk_container = self.test_database.create_container_if_not_exists(
+            id="throughput_bulk_container" + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/id"), offer_throughput=1000)
         bulk_result = bulk_container.bulk(operations=operations)
         assert len(bulk_result[0]) == 100
         assert container.client_connection.last_response_headers.get(HttpHeaders.ThrottleRetryCount) is None
 
     def test_bulk_lsn(self):
-        container = self.test_database.create_container_if_not_exists(id="lsn_bulk_container",
+        container = self.test_database.create_container_if_not_exists(id="lsn_bulk_container" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/id"))
         # Create test items
         container.create_item({"id": "read_item", "name": str(uuid.uuid4())})
@@ -135,7 +135,7 @@ class BulkTests(unittest.TestCase):
         assert bulk_result[4][1].get("statusCode") == StatusCodes.NO_CONTENT
 
     def test_bulk_invalid_create(self):
-        container = self.test_database.create_container_if_not_exists(id="errors_bulk_container",
+        container = self.test_database.create_container_if_not_exists(id="errors_bulk_container" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/pk"))
         operations = [{"operationType": "Create",
                        "resourceBody": {"id": "create_item", "name": str(uuid.uuid4())},
@@ -145,7 +145,7 @@ class BulkTests(unittest.TestCase):
         assert bulk_result[0][1].get("statusCode") == StatusCodes.BAD_REQUEST
 
     def test_bulk_read_non_existent(self):
-        container = self.test_database.create_container_if_not_exists(id="errors_bulk_container",
+        container = self.test_database.create_container_if_not_exists(id="errors_bulk_container" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/id"))
         operations = [{"operationType": "Read",
                        "id": "read_item",
@@ -155,7 +155,7 @@ class BulkTests(unittest.TestCase):
         assert bulk_result[0][1].get("statusCode") == StatusCodes.NOT_FOUND
 
     def test_bulk_delete_non_existent(self):
-        container = self.test_database.create_container_if_not_exists(id="errors_bulk_container",
+        container = self.test_database.create_container_if_not_exists(id="errors_bulk_container" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/id"))
         operations = [{"operationType": "Delete",
                        "id": "delete_item",
@@ -165,7 +165,7 @@ class BulkTests(unittest.TestCase):
         assert bulk_result[0][1].get("statusCode") == StatusCodes.NOT_FOUND
 
     def test_bulk_create_conflict(self):
-        container = self.test_database.create_container_if_not_exists(id="errors_bulk_container",
+        container = self.test_database.create_container_if_not_exists(id="errors_bulk_container" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/id"))
         operations = [{"operationType": "Create",
                        "resourceBody": {"id": "create_item", "name": str(uuid.uuid4())},
@@ -175,7 +175,7 @@ class BulkTests(unittest.TestCase):
                        "partitionKey": "create_item"},
                       {"operationType": "Create",
                        "resourceBody": {"id": "create_item2", "name": str(uuid.uuid4())},
-                       "partitionKey": "create_item"}]
+                       "partitionKey": "create_item2"}]
 
         bulk_result = container.bulk(operations=operations)
         assert bulk_result[0][1].get("statusCode") == StatusCodes.CREATED
