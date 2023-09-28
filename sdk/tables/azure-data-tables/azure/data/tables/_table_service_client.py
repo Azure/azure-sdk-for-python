@@ -15,7 +15,6 @@ from ._generated.models import TableServiceProperties
 from ._models import (
     TableItem,
     LocationMode,
-    TableCorsRule,
     TablePropertiesPaged,
     service_stats_deserialize,
     service_properties_deserialize,
