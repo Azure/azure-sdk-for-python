@@ -215,6 +215,7 @@ from azure.keyvault.administration import KeyVaultRoleScope
 
 role_assignments = client.list_role_assignments(KeyVaultRoleScope.GLOBAL)
 for assignment in role_assignments:
+    assert assignment.properties
     print(f"Role assignment name: {assignment.name}")
     print(f"Principal ID associated with this assignment: {assignment.properties.principal_id}")
 ```
@@ -246,6 +247,7 @@ specified scope and unique name.
 
 ```python
 fetched_assignment = client.get_role_assignment(scope=scope, name=role_assignment.name)
+assert fetched_assignment.properties
 print(f"Role assignment for principal {fetched_assignment.properties.principal_id} fetched successfully.")
 ```
 
@@ -276,7 +278,7 @@ to the library's [credential documentation][sas_docs]. Alternatively, it is poss
 CONTAINER_URL = os.environ["CONTAINER_URL"]
 SAS_TOKEN = os.environ["SAS_TOKEN"]
 
-backup_result = client.begin_backup(CONTAINER_URL, SAS_TOKEN).result()
+backup_result: KeyVaultBackupResult = client.begin_backup(CONTAINER_URL, SAS_TOKEN).result()
 print(f"Azure Storage Blob URL of the backup: {backup_result.folder_url}")
 ```
 
@@ -301,7 +303,7 @@ to the library's [credential documentation][sas_docs]. Alternatively, it is poss
 CONTAINER_URL = os.environ["CONTAINER_URL"]
 SAS_TOKEN = os.environ["SAS_TOKEN"]
 
-backup_result = client.begin_backup(CONTAINER_URL, SAS_TOKEN).result()
+backup_result: KeyVaultBackupResult = client.begin_backup(CONTAINER_URL, SAS_TOKEN).result()
 print(f"Azure Storage Blob URL of the backup: {backup_result.folder_url}")
 ```
 

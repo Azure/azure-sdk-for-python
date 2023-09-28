@@ -16,8 +16,6 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
 )
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory, OutboundRuleType
 
-from azure.ai.ml._utils._experimental import experimental
-
 
 class OutboundRule(ABC):
     """Base class for Outbound Rules, cannot be instantiated directly. Please see FqdnDestination,
@@ -73,7 +71,6 @@ class OutboundRule(ABC):
         return None
 
 
-@experimental
 class FqdnDestination(OutboundRule):
     """Class representing a FQDN outbound rule.
 
@@ -82,7 +79,9 @@ class FqdnDestination(OutboundRule):
     :param destination: Fully qualified domain name to which outbound connections are allowed.
         For example: “*.contoso.com”.
     :type destination: str
-
+    :ivar type: Type of the outbound rule. Set to "FQDN" for this class.
+    :vartype type: str
+    
     .. literalinclude:: ../../../../../samples/ml_samples_workspace.py
             :start-after: [START fqdn_outboundrule]
             :end-before: [END fqdn_outboundrule]
@@ -108,7 +107,6 @@ class FqdnDestination(OutboundRule):
         }
 
 
-@experimental
 class PrivateEndpointDestination(OutboundRule):
     """Class representing a Private Endpoint outbound rule.
 
@@ -120,6 +118,8 @@ class PrivateEndpointDestination(OutboundRule):
     :type subresource_target: str
     :param spark_enabled: Indicates if the private endpoint can be used for Spark jobs, default is “false”.
     :type spark_enabled: bool
+    :ivar type: Type of the outbound rule. Set to "PrivateEndpoint" for this class.
+    :vartype type: str
 
     .. literalinclude:: ../../../../../samples/ml_samples_workspace.py
             :start-after: [START private_endpoint_outboundrule]
@@ -168,7 +168,6 @@ class PrivateEndpointDestination(OutboundRule):
         }
 
 
-@experimental
 class ServiceTagDestination(OutboundRule):
     """Class representing a Service Tag outbound rule.
 
@@ -181,6 +180,8 @@ class ServiceTagDestination(OutboundRule):
     :param port_ranges: A comma-separated list of single ports and/or range of ports, such as "80,1024-65535".
         Traffics should be allowed to these port ranges.
     :type port_ranges: str
+    :ivar type: Type of the outbound rule. Set to "ServiceTag" for this class.
+    :vartype type: str
 
     .. literalinclude:: ../../../../../samples/ml_samples_workspace.py
             :start-after: [START service_tag_outboundrule]
@@ -227,7 +228,6 @@ class ServiceTagDestination(OutboundRule):
         }
 
 
-@experimental
 class ManagedNetwork:
     """Managed Network settings for a workspace.
 
@@ -287,7 +287,6 @@ class ManagedNetwork:
         )
 
 
-@experimental
 class ManagedNetworkProvisionStatus:
     """ManagedNetworkProvisionStatus.
 

@@ -9,21 +9,13 @@ from typing import Any, Iterable, Optional, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
-from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml._artifacts._artifact_utilities import (
-    _check_and_upload_env_build_context,
-)
+from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    EnvironmentVersion,
-    ListViewType,
-)
-from azure.ai.ml._restclient.v2023_04_01_preview import (
-    AzureMachineLearningWorkspaces as ServiceClient042023Preview,
-)
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_04_01_preview.models import EnvironmentVersion, ListViewType
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -37,27 +29,17 @@ from azure.ai.ml._utils._asset_utils import (
     _get_next_version_from_container,
     _resolve_label_to_asset,
 )
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import (
     get_asset_body_for_registry_storage,
-    get_sas_uri_for_registry_asset,
     get_registry_client,
+    get_sas_uri_for_registry_asset,
 )
-
-from azure.ai.ml.constants._common import (
-    ARM_ID_PREFIX,
-    AzureMLResourceType,
-    ASSET_ID_FORMAT,
-)
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ID_FORMAT, AzureMLResourceType
 from azure.ai.ml.entities._assets import Environment, WorkspaceAssetReference
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.core.exceptions import ResourceNotFoundError
-from azure.ai.ml.exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-)
-
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
@@ -119,7 +101,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START env_operations_create_or_update]
                 :end-before: [END env_operations_create_or_update]
                 :language: python
@@ -274,7 +256,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START env_operations_get]
                 :end-before: [END env_operations_get]
                 :language: python
@@ -327,7 +309,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START env_operations_list]
                 :end-before: [END env_operations_list]
                 :language: python
@@ -389,7 +371,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START env_operations_archive]
                 :end-before: [END env_operations_archive]
                 :language: python
@@ -426,7 +408,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START env_operations_restore]
                 :end-before: [END env_operations_restore]
                 :language: python
