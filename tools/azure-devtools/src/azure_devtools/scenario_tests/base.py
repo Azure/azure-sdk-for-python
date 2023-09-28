@@ -11,9 +11,6 @@ import tempfile
 import shutil
 import logging
 import threading
-import six
-# We don't vcrpy anymore, if this code is loaded, fail
-# import vcr
 
 from .config import TestConfig
 from .const import ENV_TEST_DIAGNOSE
@@ -197,7 +194,7 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
 
             body = response["body"]["string"]
             response = _decompress_response_body(response)
-            if is_text_payload(response) and body and not isinstance(body, six.string_types):
+            if is_text_payload(response) and body and not isinstance(body, str):
                 try:
                     response["body"]["string"] = body.decode("utf-8")
                 except UnicodeDecodeError:
@@ -218,7 +215,7 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
     @classmethod
     def _custom_request_query_matcher(cls, r1, r2):
         """ Ensure method, path, and query parameters match. """
-        from six.moves.urllib_parse import urlparse, parse_qs  # pylint: disable=import-error,relative-import
+        from urllib.parse import urlparse, parse_qs
 
         url1 = urlparse(r1.uri)
         url2 = urlparse(r2.uri)

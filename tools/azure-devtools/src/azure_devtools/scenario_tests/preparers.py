@@ -237,7 +237,7 @@ You must specify use_cache=True in the preparer decorator""".format(
 class SingleValueReplacer(RecordingProcessor):
     # pylint: disable=no-member
     def process_request(self, request):
-        from six.moves.urllib_parse import quote_plus  # pylint: disable=import-error,import-outside-toplevel
+        from urllib.parse import quote_plus  # pylint: disable=import-error,import-outside-toplevel
 
         if self.random_name in request.uri:
             request.uri = request.uri.replace(self.random_name, self.moniker)

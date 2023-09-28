@@ -4,7 +4,6 @@
 # --------------------------------------------------------------------------------------------
 from copy import deepcopy
 from zlib import decompress
-import six
 
 from .utilities import is_text_payload, is_json_payload, is_batch_payload, replace_subscription_id
 
@@ -106,13 +105,12 @@ class LargeResponseBodyProcessor(RecordingProcessor):
 class LargeResponseBodyReplacer(RecordingProcessor):
     def process_response(self, response):
         if is_text_payload(response) and not is_json_payload(response):
-            import six
 
             body = response["body"]["string"]
 
             # backward compatibility. under 2.7 response body is unicode, under 3.5 response body is
             # bytes. when set the value back, the same type must be used.
-            body_is_string = isinstance(body, six.string_types)
+            body_is_string = isinstance(body, str)
 
             content_in_string = (response["body"]["string"] or b"").decode("utf-8")
             index = content_in_string.find(LargeResponseBodyProcessor.control_flag)
@@ -197,14 +195,14 @@ class GeneralNameReplacer(RecordingProcessor):
                 if isinstance(request.body, dict):
                     request.body = self._process_body_as_dict(request.body)
                 else:
-                    body = six.ensure_str(request.body)
+                    body = request.body.decode("utf-8")
                     if old in body:
                         request.body = body.replace(old, new)
 
             if request.body and request.uri and is_batch_payload(request):
                 import re
 
-                body = six.ensure_str(request.body)
+                body = request.body.decode("utf-8")
                 matched_objects = set(re.findall(old, body))
                 for matched_object in matched_objects:
                     request.body = body.replace(matched_object, new)

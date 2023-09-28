@@ -6,7 +6,6 @@
 import functools
 import os
 import os.path
-import six
 import sys
 import time
 from typing import Dict
@@ -82,7 +81,7 @@ class AzureRecordedTestCase(object):
             try:
                 key_value = getattr(self.settings, key)
             except Exception as ex:
-                six.raise_from(ValueError("Could not get {}".format(key)), ex)
+                raise ValueError(f"Could not get {key}") from ex
         return key_value
 
     def get_credential(self, client_class, **kwargs):

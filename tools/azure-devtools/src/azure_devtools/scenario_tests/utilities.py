@@ -9,7 +9,6 @@ import inspect
 import math
 import os
 import re
-import six
 import zlib
 
 
@@ -98,7 +97,7 @@ def is_preparer_func(fn):
 def _decompress_response_body(response):
     if "content-encoding" in response["headers"]:
         enc = response["headers"]["content-encoding"].lower()
-        if enc in ["gzip", "deflate"] and isinstance(response["body"]["string"], six.binary_type):
+        if enc in ["gzip", "deflate"] and isinstance(response["body"]["string"], bytes):
             zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
             decompressor = zlib.decompressobj(wbits=zlib_mode)
             decompressed = decompressor.decompress(response["body"]["string"])

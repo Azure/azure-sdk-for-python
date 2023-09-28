@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import logging
-import six
 import os
 from typing import TYPE_CHECKING
 import urllib.parse as url_parse
@@ -82,7 +81,7 @@ def start_record_or_playback(test_id: str) -> "Tuple[str, Dict[str, str]]":
             body=encoded_payload,
         )
         if result.status != 200:
-            message = six.ensure_str(result.data)
+            message = result.data.decode("utf-8")
             raise HttpResponseError(message=message)
         recording_id = result.headers["x-recording-id"]
 
@@ -93,21 +92,18 @@ def start_record_or_playback(test_id: str) -> "Tuple[str, Dict[str, str]]":
             body=encoded_payload,
         )
         if result.status != 200:
-            message = six.ensure_str(result.data)
+            message = result.data.decode("utf-8")
             raise HttpResponseError(message=message)
 
         try:
             recording_id = result.headers["x-recording-id"]
         except KeyError as ex:
-            six.raise_from(ValueError("No recording file found for {}".format(test_id)), ex)
+            raise ValueError(f"No recording ID found for {test_id}") from ex
         if result.data:
             try:
                 variables = json.loads(result.data.decode("utf-8"))
             except ValueError as ex:  # would be a JSONDecodeError on Python 3, which subclasses ValueError
-                six.raise_from(
-                    ValueError("The response body returned from starting playback did not contain valid JSON"),
-                    ex,
-                )
+                raise ValueError("The response body returned from starting playback did not contain valid JSON") from ex
 
     # set recording ID in a module-level variable so that sanitizers can access it
     set_recording_id(test_id, recording_id)
@@ -233,8 +229,7 @@ def recorded_by_proxy(test_func: "Callable") -> None:
         except ResourceNotFoundError as error:
             error_body = ContentDecodePolicy.deserialize_from_http_generics(error.response)
             message = error_body.get("message") or error_body.get("Message")
-            error_with_message = ResourceNotFoundError(message=message, response=error.response)
-            six.raise_from(error_with_message, error)
+            raise ResourceNotFoundError(message=message, response=error.response) from error
 
         finally:
             RequestsTransport.send = original_transport_func

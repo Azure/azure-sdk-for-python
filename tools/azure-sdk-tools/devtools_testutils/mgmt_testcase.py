@@ -6,7 +6,6 @@
 from collections import namedtuple
 import inspect
 import re
-import six
 import os.path
 import zlib
 
@@ -185,7 +184,7 @@ class RENameReplacer(GeneralNameReplacer):
                 if isinstance(request.body, dict):
                     continue
 
-                body = six.ensure_str(request.body)
+                body = request.body.decode("utf-8")
                 for old in re.findall(expr, body):
                     request.body = body.replace(old, new)
         return request
