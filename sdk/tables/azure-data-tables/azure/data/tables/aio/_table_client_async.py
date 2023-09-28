@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import AsyncIterable, List, Union, Any, Optional, Mapping, Dict, overload, cast, Tuple
+from typing import AsyncIterable, List, Union, Any, Optional, Mapping, Iterable, Dict, overload, cast, Tuple
 from urllib.parse import urlparse, unquote
 
 from azure.core import MatchConditions
@@ -633,7 +633,7 @@ class TableClient(AsyncTablesBaseClient):
 
     @distributed_trace_async
     async def submit_transaction(
-        self, operations: AsyncIterable[TransactionOperationType], **kwargs
+        self, operations: Union[Iterable[TransactionOperationType], AsyncIterable[TransactionOperationType]], **kwargs
     ) -> List[Mapping[str, Any]]:
         """Commit a list of operations as a single transaction.
 
@@ -670,11 +670,11 @@ class TableClient(AsyncTablesBaseClient):
             **kwargs,
         )
         try:
-            for operation in operations:  # type: ignore[attr-defined]
+            for operation in operations:  # type: ignore[union-attr]
                 batched_requests.add_operation(operation)
         except TypeError:
             try:
-                async for operation in operations:
+                async for operation in operations:  # type: ignore[union-attr]
                     batched_requests.add_operation(operation)
             except TypeError as exc:
                 raise TypeError(

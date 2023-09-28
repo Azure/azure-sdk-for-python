@@ -25,6 +25,12 @@ USAGE:
 import os
 import asyncio
 from dotenv import find_dotenv, load_dotenv
+from typing import Any, List, Mapping, Tuple, Union
+from azure.data.tables import TableEntity, TransactionOperation
+
+EntityType = Union[TableEntity, Mapping[str, Any]]
+OperationType = Union[TransactionOperation, str]
+TransactionOperationType = Union[Tuple[OperationType, EntityType], Tuple[OperationType, EntityType, Mapping[str, Any]]]
 
 
 class CreateClients(object):
@@ -73,14 +79,14 @@ class CreateClients(object):
 
         await self._create_entities()
 
-        operations = [
+        operations: List[TransactionOperationType] = [
             ("create", self.entity1),
             ("delete", self.entity2),
             ("upsert", self.entity3),
             ("update", self.entity4, {"mode": "replace"}),
         ]
         try:
-            await self.table_client.submit_transaction(operations)  # type: ignore[arg-type]
+            await self.table_client.submit_transaction(operations)
         except TableTransactionError as e:
             print("There was an error with the transaction operation")
             print(f"Error: {e}")
