@@ -308,7 +308,7 @@ class DoWhile(LoopNode):
         # pylint disable=protected-access
         validation_result = self._create_empty_validation_result()
         if not isinstance(self.mapping, dict):
-            validation_result.append_error(  # type: ignore
+            validation_result.append_error(
                 yaml_path="mapping", message=f"Mapping expects a dict type but passes in a {type(self.mapping)} type."
             )
         else:

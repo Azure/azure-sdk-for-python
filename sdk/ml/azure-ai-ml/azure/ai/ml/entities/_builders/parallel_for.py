@@ -70,6 +70,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         )
         # loop body is incomplete in submission time, so won't validate required inputs
         self.body._validate_required_input_not_provided = False
+        self._outputs: dict = {}
 
         actual_outputs = kwargs.get("outputs", {})
         # parallel for node shares output meta with body
@@ -176,7 +177,8 @@ class ParallelFor(LoopNode, NodeIOMixin):
         # convert items to rest object
         rest_items = self._to_rest_items(items=self.items)
         rest_node.update({"items": rest_items, "outputs": self._to_rest_outputs()})
-        return convert_ordered_dict_to_dict(rest_node)
+        res: dict = convert_ordered_dict_to_dict(rest_node)
+        return res
 
     @classmethod
     # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
@@ -288,7 +290,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
                 else:
                     validation_result.append_error(yaml_path="items", message="Items is an empty list/dict.")
         else:
-            validation_result.append_error(  # type: ignore
+            validation_result.append_error(
                 yaml_path="items",
                 message="Items is required for parallel_for node",
             )
@@ -330,7 +332,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         supported_types = (Input, str, bool, int, float, PipelineInput)
         for _, val in item.items():
             if not isinstance(val, supported_types):
-                validation_result.append_error(  # type: ignore
+                validation_result.append_error(
                     yaml_path="items",
                     message="Unsupported type {} in parallel_for items. Supported types are: {}".format(
                         type(val), supported_types

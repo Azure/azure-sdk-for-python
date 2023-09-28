@@ -22,6 +22,7 @@ from azure.ai.ml.entities._job.import_job import ImportJob, ImportSource
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
 
 from ..._schema import PathAwareSchema
+from .._inputs_outputs import Output
 from .._util import convert_ordered_dict_to_dict, load_from_dict, validate_attribute_type
 from .base_node import BaseNode
 
@@ -55,7 +56,7 @@ class Import(BaseNode):
         self,
         *,
         component: Union[str, ImportComponent],
-        inputs: Optional[Dict[str, str]] = None,
+        inputs: Optional[Dict[str, Any]] = None,
         outputs: Optional[Dict[str, Output]] = None,
         **kwargs: Any,
     ) -> None:
@@ -184,7 +185,8 @@ class Import(BaseNode):
                 # get outputs
             for name, original_output in self.outputs.items():
                 # use setattr here to make sure owner of input won't change
-                setattr(node.outputs, name, original_output._data)
+                if not isinstance(original_output, str):
+                    setattr(node.outputs, name, original_output._data)
             self._refine_optional_inputs_with_no_value(node, kwargs)
             # set default values: compute, environment_variables, outputs
             node._name = self.name
