@@ -25,6 +25,8 @@ from azure.ai.ml.constants._monitoring import MonitorDatasetContext, MonitorInpu
 class MonitorInputData(RestTranslatableMixin):
     """Monitor input data.
 
+    :keyword type: Specifies the type of monitoring input data.
+    :paramtype type: MonitorInputDataType
     :keyword input_dataset: Input data used by the monitor
     :paramtype input_dataset: Optional[~azure.ai.ml.Input]
     :keyword dataset_context: The context of the input dataset. Accepted values are "model_inputs",
@@ -66,6 +68,11 @@ class MonitorInputData(RestTranslatableMixin):
 
 @experimental
 class FixedInputData(MonitorInputData):
+    """
+    :ivar type: Specifies the type of monitoring input data. Set automatically to "Fixed" for this class.
+    :var type: MonitorInputDataType
+    """
+
     def __init__(
         self,
         *,
@@ -102,6 +109,11 @@ class FixedInputData(MonitorInputData):
 
 @experimental
 class TrailingInputData(MonitorInputData):
+    """
+    :ivar type: Specifies the type of monitoring input data. Set automatically to "Trailing" for this class.
+    :var type: MonitorInputDataType
+    """
+
     def __init__(
         self,
         *,
@@ -150,6 +162,11 @@ class TrailingInputData(MonitorInputData):
 
 @experimental
 class StaticInputData(MonitorInputData):
+    """
+    :ivar type: Specifies the type of monitoring input data. Set automatically to "Static" for this class.
+    :var type: MonitorInputDataType
+    """
+
     def __init__(
         self,
         *,
