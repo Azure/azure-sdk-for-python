@@ -401,15 +401,16 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                 # Current step is probably not the root of the graph
                 # its outputs should be anchored to the internal_datastore.
                 for name, output in pipeline_step.outputs.items():
-                    if output.type in ANCHORABLE_OUTPUT_TYPES:
-                        validation_result.merge_with(
-                            cls._check_or_set_datastore(
-                                name=name,
-                                output=output,
-                                target_datastore=orchestrator_datastore,
-                                iteration_num=iteration,
+                    if not isinstance(output, str):
+                        if output.type in ANCHORABLE_OUTPUT_TYPES:
+                            validation_result.merge_with(
+                                cls._check_or_set_datastore(
+                                    name=name,
+                                    output=output,
+                                    target_datastore=orchestrator_datastore,
+                                    iteration_num=iteration,
+                                )
                             )
-                        )
 
                 # then we need to anchor the internal component of this step
                 # The outputs of this sub-component are a deep copy of the outputs of this step
@@ -427,15 +428,16 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                 # This is a pipeline step with multiple jobs beneath it.
                 # Anchor its outputs...
                 for name, output in pipeline_step.outputs.items():
-                    if output.type in ANCHORABLE_OUTPUT_TYPES:
-                        validation_result.merge_with(
-                            cls._check_or_set_datastore(
-                                name=name,
-                                output=output,
-                                target_datastore=orchestrator_datastore,
-                                iteration_num=iteration,
+                    if not isinstance(output, str):
+                        if output.type in ANCHORABLE_OUTPUT_TYPES:
+                            validation_result.merge_with(
+                                cls._check_or_set_datastore(
+                                    name=name,
+                                    output=output,
+                                    target_datastore=orchestrator_datastore,
+                                    iteration_num=iteration,
+                                )
                             )
-                        )
                 # ...then recursively anchor each job inside the pipeline
                 for job_key in pipeline_step.jobs:
                     job = pipeline_step.jobs[job_key]
@@ -457,15 +459,16 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                 pipeline_step.compute = compute
             # then anchor each of the job's outputs
             for name, output in pipeline_step.outputs.items():
-                if output.type in ANCHORABLE_OUTPUT_TYPES:
-                    validation_result.merge_with(
-                        cls._check_or_set_datastore(
-                            name=name,
-                            output=output,
-                            target_datastore=orchestrator_datastore,
-                            iteration_num=iteration,
+                if not isinstance(output, str):
+                    if output.type in ANCHORABLE_OUTPUT_TYPES:
+                        validation_result.merge_with(
+                            cls._check_or_set_datastore(
+                                name=name,
+                                output=output,
+                                target_datastore=orchestrator_datastore,
+                                iteration_num=iteration,
+                            )
                         )
-                    )
         else:
             # TODO revisit this and add support for anchoring more things
             raise NotImplementedError(f"under path={_path}: step type={pipeline_step.type} is not supported")
@@ -577,7 +580,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
         # validate silos configs
         if silo_configs is None:
-            validation_result.append_error(  # type: ignore
+            validation_result.append_error(
                 yaml_path="silo_configs",
                 message="silo_configs is a required argument for the scatter gather node.",
             )
@@ -872,4 +875,5 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         """
         rest_node = super(FLScatterGather, self)._to_rest_object(**kwargs)
         rest_node.update({"outputs": self._to_rest_outputs()})
-        return convert_ordered_dict_to_dict(rest_node)
+        res: dict = convert_ordered_dict_to_dict(rest_node)
+        return res
