@@ -222,7 +222,8 @@ class DataTransferCopy(DataTransfer):
         }.items():
             if value is not None:
                 rest_obj[key] = value
-        return convert_ordered_dict_to_dict(rest_obj)
+        res: dict = convert_ordered_dict_to_dict(rest_obj)
+        return res
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> Any:
@@ -267,7 +268,8 @@ class DataTransferCopy(DataTransfer):
                 # get outputs
             for name, original_output in self.outputs.items():
                 # use setattr here to make sure owner of input won't change
-                setattr(node.outputs, name, original_output._data)
+                if not isinstance(original_output, str):
+                    setattr(node.outputs, name, original_output._data)
             self._refine_optional_inputs_with_no_value(node, kwargs)
             # set default values: compute, environment_variables, outputs
             node._name = self.name
@@ -371,7 +373,11 @@ class DataTransferImport(DataTransfer):
                 yaml_path="outputs.sink",
                 message="Outputs field only support one output called sink in import task",
             )
-        if "sink" in self.outputs and isinstance(self.outputs["sink"]._data, Output):
+        if (
+            "sink" in self.outputs
+            and not isinstance(self.outputs["sink"], str)
+            and isinstance(self.outputs["sink"]._data, Output)
+        ):
             sink_output = self.outputs["sink"]._data
             if self.source is not None:
 
@@ -396,7 +402,8 @@ class DataTransferImport(DataTransfer):
         }.items():
             if value is not None:
                 rest_obj[key] = value
-        return convert_ordered_dict_to_dict(rest_obj)
+        res: dict = convert_ordered_dict_to_dict(rest_obj)
+        return res
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "DataTransferImport":
@@ -546,7 +553,8 @@ class DataTransferExport(DataTransfer):
         }.items():
             if value is not None:
                 rest_obj[key] = value
-        return convert_ordered_dict_to_dict(rest_obj)
+        res: dict = convert_ordered_dict_to_dict(rest_obj)
+        return res
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "DataTransferExport":
