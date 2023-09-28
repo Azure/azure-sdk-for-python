@@ -241,7 +241,7 @@ class ServiceBusReceiver(
         return self._iter_contextual_wrapper()
 
     def _inner_next(
-        self, wait_time: Optional[int] = None
+        self, wait_time: Optional[float] = None
     ) -> "ServiceBusReceivedMessage":
         # We do this weird wrapping such that an imperitive next() call, and a generator-based iter both trace sanely.
         self._check_live()

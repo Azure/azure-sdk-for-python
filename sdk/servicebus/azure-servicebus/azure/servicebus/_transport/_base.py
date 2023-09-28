@@ -247,8 +247,8 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         from the Service Bus entity.
 
         :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object.
-        :param ~pyamqp.AttachFrame frame: Required if pyamqp.
-        :param ~uamqp.Message or ~pyamqp.Message message: The received message.
+        :param ~pyamqp.performatives.AttachFrame frame: Required if pyamqp.
+        :param ~uamqp.Message or ~pyamqp.message.Message message: The received message.
         """
 
     @staticmethod

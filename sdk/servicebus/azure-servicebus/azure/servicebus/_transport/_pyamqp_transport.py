@@ -680,8 +680,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         from the Service Bus entity.
 
         :param ~azure.servicebus.ServiceBusReceiver receiver: The receiver object.
-        :param ~pyamqp.AttachFrame frame: Required.
-        :param ~pyamqp.Message message: The received message.
+        :param ~pyamqp.performatives.AttachFrame frame: The attach frame.
+        :param ~pyamqp.message.Message message: The received message.
         """
         # pylint: disable=protected-access
         receiver._handler._last_activity_timestamp = time.time()

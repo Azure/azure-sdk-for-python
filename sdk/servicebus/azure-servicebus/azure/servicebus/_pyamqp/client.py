@@ -881,7 +881,6 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         self, max_batch_size=None, on_message_received=None, timeout=0
     ):
         self._message_received_callback = on_message_received
-        # if max_batch_size is None and prefetch = 0, receive at least 1
         max_batch_size = max_batch_size or self._link_credit
         timeout = time.time() + timeout if timeout else 0
         receiving = True

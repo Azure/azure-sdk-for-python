@@ -237,7 +237,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     def __aiter__(self):
         return self._iter_contextual_wrapper()
 
-    async def _inner_anext(self, wait_time: Optional[int] = None) -> ServiceBusReceivedMessage:
+    async def _inner_anext(self, wait_time: Optional[float] = None) -> ServiceBusReceivedMessage:
         # We do this weird wrapping such that an imperitive next() call, and a generator-based iter both trace sanely.
         self._check_live()
         while True:
