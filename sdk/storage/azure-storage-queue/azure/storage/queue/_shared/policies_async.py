@@ -246,7 +246,7 @@ class LinearRetry(AsyncStorageRetryPolicy):
 class AsyncStorageBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
     """ Custom Bearer token credential policy for following Storage Bearer challenges """
 
-    def __init__(self, credential: AsyncTokenCredential, **kwargs: Any) -> None:
+    def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         super(AsyncStorageBearerTokenCredentialPolicy, self).__init__(credential, STORAGE_OAUTH_SCOPE, **kwargs)
 
     async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:

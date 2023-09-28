@@ -23,7 +23,7 @@ class MessageEncodePolicy(object):
     """Indicates the version of encryption being used."""
     key_encryption_key: Optional[KeyEncryptionKey] = None
     """The user-provided key-encryption-key."""
-    resolver: Optional[Callable[[str], bytes]] = None
+    resolver: Optional[Callable[[str], KeyEncryptionKey]] = None
     """The user-provided key resolver."""
 
     def __init__(self) -> None:
@@ -42,7 +42,7 @@ class MessageEncodePolicy(object):
     def configure(
         self, require_encryption: bool,
         key_encryption_key: Optional[KeyEncryptionKey],
-        resolver: Optional[Callable[[str], bytes]],
+        resolver: Optional[Callable[[str], KeyEncryptionKey]],
         encryption_version: str = _ENCRYPTION_PROTOCOL_V1
     ) -> None:
         self.require_encryption = require_encryption
@@ -58,11 +58,11 @@ class MessageEncodePolicy(object):
 
 class MessageDecodePolicy(object):
 
-    require_encryption: Optional[bool] = None
+    require_encryption: bool = False
     """Indicates whether encryption is required or not."""
     key_encryption_key: Optional[KeyEncryptionKey] = None
     """The user-provided key-encryption-key."""
-    resolver: Optional[Callable[[str], bytes]] = None
+    resolver: Optional[Callable[[str], KeyEncryptionKey]] = None
     """The user-provided key resolver."""
 
     def __init__(self) -> None:
@@ -87,7 +87,7 @@ class MessageDecodePolicy(object):
     def configure(
         self, require_encryption: bool,
         key_encryption_key: Optional[KeyEncryptionKey],
-        resolver: Optional[Callable[[str], bytes]]
+        resolver: Optional[Callable[[str], KeyEncryptionKey]]
     ) -> None:
         self.require_encryption = require_encryption
         self.key_encryption_key = key_encryption_key
