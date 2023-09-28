@@ -62,13 +62,13 @@ class TestBulk:
             operations.append({"operationType": "Create",
                                "resourceBody": {"id": "item-" + str(i), "name": str(uuid.uuid4())},
                                "partitionKey": "item-" + str(i)})
-        bulk_result = await container.bulk(operations=operations)
-        assert len(bulk_result[1]) == 3
+        await container.bulk(operations=operations)
+        assert len(container.client_connection.last_response_headers.get(HttpHeaders.ActivityId)) == 3
 
         # Remove one operation and try request again - check there's only 2 batches
         operations.pop()
-        bulk_result = await container.bulk(operations=operations)
-        assert len(bulk_result[1]) == 2
+        await container.bulk(operations=operations)
+        assert len(container.client_connection.last_response_headers.get(HttpHeaders.ActivityId)) == 2
 
     @pytest.mark.asyncio
     async def test_bulk_throttle_async(self):
@@ -84,18 +84,16 @@ class TestBulk:
 
         # check requests were throttled due to lack of RUs on default container
         bulk_result = await container.bulk(operations=operations)
-        assert len(bulk_result[0]) == 100
-        batch_response_headers = bulk_result[1][0]
-        assert batch_response_headers.get(HttpHeaders.ThrottleRetryCount) > 0
+        assert len(bulk_result) == 100
+        assert container.client_connection.last_response_headers.get(HttpHeaders.ThrottleRetryCount) > 0
 
         # create all 100 items with more RUs
         bulk_container = await self.test_database.create_container_if_not_exists(id="throughput_bulk_container",
                                                                                  partition_key=PartitionKey(path="/id"),
                                                                                  offer_throughput=1000)
         bulk_result = await bulk_container.bulk(operations=operations)
-        assert len(bulk_result[0]) == 100
-        batch_response_headers = bulk_result[1][0]
-        assert batch_response_headers.get(HttpHeaders.ThrottleRetryCount) is None
+        assert len(bulk_result) == 100
+        assert container.client_connection.last_response_headers.get(HttpHeaders.ThrottleRetryCount) is None
 
     @pytest.mark.asyncio
     async def test_bulk_lsn_async(self):
@@ -130,15 +128,14 @@ class TestBulk:
                            "partitionKey": "delete_item"})
 
         bulk_result = await container.bulk(operations=operations)
-        batch_result = bulk_result[0]
 
-        assert int(lsn) == int(batch_result[1][0].get(HttpHeaders.LSN)) - 1
-        assert batch_result[1][0].get(HttpHeaders.ItemCount) == "5"
-        assert batch_result[0][1][0].get("statusCode") == StatusCodes.CREATED
-        assert batch_result[0][1][1].get("statusCode") == StatusCodes.OK
-        assert batch_result[0][1][2].get("statusCode") == StatusCodes.CREATED
-        assert batch_result[0][1][3].get("statusCode") == StatusCodes.OK
-        assert batch_result[0][1][4].get("statusCode") == StatusCodes.NO_CONTENT
+        assert int(lsn) == int(container.client_connection.last_response_headers.get(HttpHeaders.LSN)) - 1
+        assert bulk_result[1][0].get(HttpHeaders.ItemCount) == "5"
+        assert bulk_result[0][1][0].get("statusCode") == StatusCodes.CREATED
+        assert bulk_result[0][1][1].get("statusCode") == StatusCodes.OK
+        assert bulk_result[0][1][2].get("statusCode") == StatusCodes.CREATED
+        assert bulk_result[0][1][3].get("statusCode") == StatusCodes.OK
+        assert bulk_result[0][1][4].get("statusCode") == StatusCodes.NO_CONTENT
 
     @pytest.mark.asyncio
     async def test_bulk_invalid_create_async(self):
@@ -150,7 +147,7 @@ class TestBulk:
                        "partitionKey": "create_item"}]
 
         bulk_result = await container.bulk(operations=operations)
-        assert bulk_result[0][1][0].get("statusCode") == StatusCodes.BAD_REQUEST
+        assert bulk_result[0][1].get("statusCode") == StatusCodes.BAD_REQUEST
 
     @pytest.mark.asyncio
     async def test_bulk_read_non_existent_async(self):
@@ -162,7 +159,7 @@ class TestBulk:
                        "partitionKey": "read_item"}]
 
         bulk_result = await container.bulk(operations=operations)
-        assert bulk_result[0][1][0].get("statusCode") == StatusCodes.NOT_FOUND
+        assert bulk_result[0][1].get("statusCode") == StatusCodes.NOT_FOUND
 
     @pytest.mark.asyncio
     async def test_bulk_delete_non_existent_async(self):
@@ -174,7 +171,7 @@ class TestBulk:
                        "partitionKey": "delete_item"}]
 
         bulk_result = await container.bulk(operations=operations)
-        assert bulk_result[0][1][0].get("statusCode") == StatusCodes.NOT_FOUND
+        assert bulk_result[0][1].get("statusCode") == StatusCodes.NOT_FOUND
 
     @pytest.mark.asyncio
     async def test_bulk_create_conflict_async(self):
@@ -192,6 +189,6 @@ class TestBulk:
                        "partitionKey": "create_item"}]
 
         bulk_result = await container.bulk(operations=operations)
-        assert bulk_result[0][1][0].get("statusCode") == StatusCodes.CREATED
-        assert bulk_result[0][1][1].get("statusCode") == StatusCodes.CONFLICT
-        assert bulk_result[0][1][2].get("statusCode") == StatusCodes.CREATED
+        assert bulk_result[0][1].get("statusCode") == StatusCodes.CREATED
+        assert bulk_result[1][1].get("statusCode") == StatusCodes.CONFLICT
+        assert bulk_result[2][1].get("statusCode") == StatusCodes.CREATED

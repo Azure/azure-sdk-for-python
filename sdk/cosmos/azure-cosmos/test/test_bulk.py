@@ -125,15 +125,14 @@ class BulkTests(unittest.TestCase):
                            "partitionKey": "delete_item"})
 
         bulk_result = container.bulk(operations=operations)
-        batch_result = bulk_result[0]
 
         assert int(lsn) == int(container.client_connection.last_response_headers.get(HttpHeaders.LSN)) - 1
         assert container.client_connection.last_response_headers.get(HttpHeaders.ItemCount) == "5"
-        assert batch_result[0][1].get("statusCode") == StatusCodes.CREATED
-        assert batch_result[1][1].get("statusCode") == StatusCodes.OK
-        assert batch_result[2][1].get("statusCode") == StatusCodes.CREATED
-        assert batch_result[3][1].get("statusCode") == StatusCodes.OK
-        assert batch_result[4][1].get("statusCode") == StatusCodes.NO_CONTENT
+        assert bulk_result[0][1].get("statusCode") == StatusCodes.CREATED
+        assert bulk_result[1][1].get("statusCode") == StatusCodes.OK
+        assert bulk_result[2][1].get("statusCode") == StatusCodes.CREATED
+        assert bulk_result[3][1].get("statusCode") == StatusCodes.OK
+        assert bulk_result[4][1].get("statusCode") == StatusCodes.NO_CONTENT
 
     def test_bulk_invalid_create(self):
         container = self.test_database.create_container_if_not_exists(id="errors_bulk_container",
