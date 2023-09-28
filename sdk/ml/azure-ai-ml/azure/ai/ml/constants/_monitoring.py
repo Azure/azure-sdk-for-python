@@ -94,6 +94,15 @@ class MonitorTargetTasks(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     QUESTION_ANSWERING = "QuestionAnswering"
 
 
+class MonitorInputDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    #: An input data with a fixed window size.
+    STATIC = "Static"
+    #: An input data which trailing relatively to the monitor's current run.
+    TRAILING = "Trailing"
+    #: An input data with tabular format which doesn't require preprocessing.
+    FIXED = "Fixed"
+
+
 class FADColumnNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PREDICTION = "prediction"
     PREDICTION_PROBABILITY = "prediction_probability"
