@@ -98,7 +98,7 @@ class RoomsClient(object):
         *,
         valid_from: Optional[datetime] = None,
         valid_until: Optional[datetime] = None,
-        pstnDialOutEnabled: Optional[bool] = None,
+        pstnDialOutEnabled: Optional[bool] = False,
         participants:Optional[List[RoomParticipant]] = None,
         **kwargs
     ) -> CommunicationRoom:
@@ -106,7 +106,7 @@ class RoomsClient(object):
 
         :keyword datetime valid_from: The timestamp from when the room is open for joining. Optional.
         :keyword datetime valid_until: The timestamp from when the room can no longer be joined. Optional.
-        :keyword bool pstnDialOutEnabled: Set this flag to true if, at the time of the call, dial out to a PSTN number is enabled in a particular room. By default, this flag is set to false. Optional.
+        :keyword bool pstnDialOutEnabled: Set this flag to true if, at the time of the call, dial out to a PSTN number is enabled in a particular room. Optional.
         :keyword List[RoomParticipant] participants: Collection of identities invited to the room. Optional.
         :returns: Created room.
         :rtype: ~azure.communication.rooms.CommunicationRoom
@@ -115,7 +115,7 @@ class RoomsClient(object):
         create_room_request = {
             "validFrom": valid_from,
             "validUntil": valid_until,
-            "pstnDialOutEnabled": bool
+            "pstnDialOutEnabled": pstnDialOutEnabled,
         }
         if participants:
             create_room_request["participants"] = {
@@ -123,9 +123,18 @@ class RoomsClient(object):
             }
         _SERIALIZER = Serializer()
 
+        repeatability_request_id =  str(uuid.uuid1())
+
+        repeatability_first_sent = Serializer().serialize_data(datetime.utcnow(), "rfc-1123")
+
         create_room_response = await self._rooms_service_client.rooms.create(
             create_room_request=create_room_request,
+            headers = {
+                    "Repeatability-Request-Id" : repeatability_request_id,
+                    "Repeatability-First-Sent" : repeatability_first_sent
+                },
             **kwargs)
+
         return CommunicationRoom(create_room_response)
 
     @distributed_trace_async
@@ -149,17 +158,17 @@ class RoomsClient(object):
         self,
         *,
         room_id: str,
-        valid_from: datetime,
-        valid_until: datetime,
-        pstnDialOutEnabled: bool,
+        valid_from: Optional[datetime],
+        valid_until: Optional[datetime],
+        pstnDialOutEnabled: Optional[bool] = False,
         **kwargs: Any
     ) -> CommunicationRoom:
         """Update a valid room's attributes. For any argument that is passed
         in, the corresponding room property will be replaced with the new value.
 
         :keyword str room_id: Required. Id of room to be updated
-        :keyword datetime valid_from: Required. The timestamp from when the room is open for joining.
-        :keyword datetime valid_until: Required. The timestamp from when the room can no longer be joined.
+        :keyword datetime valid_from: The timestamp from when the room is open for joining. Optional.
+        :keyword datetime valid_until: The timestamp from when the room can no longer be joined. Optional.
         :keyword bool pstnDialOutEnabled: Optional. Set this flag to true if, at the time of the call, dial out to a PSTN number is enabled in a particular room. By default, this flag is set to false.
         :returns: Updated room.
         :rtype: ~azure.communication.rooms.CommunicationRoom
