@@ -78,6 +78,8 @@ class FqdnDestination(OutboundRule):
     :param destination: Fully qualified domain name to which outbound connections are allowed.
         For example: “*.contoso.com”.
     :type destination: str
+    :ivar type: Type of the outbound rule. Set to "FQDN" for this class.
+    :vartype type: str
     """
 
     def __init__(self, *, name: str, destination: str, **kwargs) -> None:
@@ -108,6 +110,8 @@ class PrivateEndpointDestination(OutboundRule):
     :type subresource_target: str
     :param spark_enabled: Indicates if the private endpoint can be used for Spark jobs, default is “false”.
     :type spark_enabled: bool
+    :ivar type: Type of the outbound rule. Set to "PrivateEndpoint" for this class.
+    :vartype type: str
     """
 
     def __init__(
@@ -161,6 +165,8 @@ class ServiceTagDestination(OutboundRule):
     :param port_ranges: A comma-separated list of single ports and/or range of ports, such as "80,1024-65535".
         Traffics should be allowed to these port ranges.
     :type port_ranges: str
+    :ivar type: Type of the outbound rule. Set to "ServiceTag" for this class.
+    :vartype type: str
     """
 
     def __init__(
