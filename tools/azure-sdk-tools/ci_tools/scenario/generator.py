@@ -85,5 +85,12 @@ def entrypoint():
         required=False,
     )
 
+    parser.add_argument(
+        "--temp",
+        dest="temp_dir",
+        help="The target environment. If not matched to any of the named optional environments, hard exit. If not provided, all optional environments will be run.",
+        required=False,
+    )
+
     args, _ = parser.parse_known_args()
     exit(main(mapped_args=args))
