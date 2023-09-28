@@ -22,6 +22,7 @@ from tox_helper_tasks import get_pip_list_output
 from ci_tools.parsing import ParsedSetup, parse_require
 from ci_tools.build import create_package
 from ci_tools.functions import get_package_from_repo, find_whl, find_sdist, discover_prebuilt_package
+from ci_tools.variables import in_ci
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -63,10 +64,6 @@ def discover_packages(setuppy_path, args):
             args.package_type,
         )
     return packages
-
-
-def in_ci():
-    return os.getenv("TF_BUILD", False)
 
 
 def build_and_discover_package(setuppy_path, dist_dir, target_setup, package_type):
