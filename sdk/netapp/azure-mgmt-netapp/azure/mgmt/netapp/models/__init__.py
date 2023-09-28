@@ -16,7 +16,11 @@ from ._models_py3 import BackupPolicy
 from ._models_py3 import BackupPolicyPatch
 from ._models_py3 import BackupRestoreFiles
 from ._models_py3 import BackupStatus
+from ._models_py3 import BackupVault
+from ._models_py3 import BackupVaultPatch
+from ._models_py3 import BackupVaultsList
 from ._models_py3 import BackupsList
+from ._models_py3 import BackupsMigrationRequest
 from ._models_py3 import BreakFileLocksRequest
 from ._models_py3 import BreakReplicationRequest
 from ._models_py3 import CapacityPool
@@ -151,7 +155,11 @@ __all__ = [
     "BackupPolicyPatch",
     "BackupRestoreFiles",
     "BackupStatus",
+    "BackupVault",
+    "BackupVaultPatch",
+    "BackupVaultsList",
     "BackupsList",
+    "BackupsMigrationRequest",
     "BreakFileLocksRequest",
     "BreakReplicationRequest",
     "CapacityPool",

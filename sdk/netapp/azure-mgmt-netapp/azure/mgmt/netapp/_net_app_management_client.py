@@ -19,7 +19,11 @@ from .operations import (
     AccountBackupsOperations,
     AccountsOperations,
     BackupPoliciesOperations,
+    BackupVaultsOperations,
     BackupsOperations,
+    BackupsUnderAccountOperations,
+    BackupsUnderBackupVaultOperations,
+    BackupsUnderVolumeOperations,
     NetAppResourceOperations,
     NetAppResourceQuotaLimitsOperations,
     Operations,
@@ -69,14 +73,23 @@ class NetAppManagementClient:  # pylint: disable=client-accepts-api-version-keyw
     :vartype volume_groups: azure.mgmt.netapp.operations.VolumeGroupsOperations
     :ivar subvolumes: SubvolumesOperations operations
     :vartype subvolumes: azure.mgmt.netapp.operations.SubvolumesOperations
+    :ivar backup_vaults: BackupVaultsOperations operations
+    :vartype backup_vaults: azure.mgmt.netapp.operations.BackupVaultsOperations
+    :ivar backups_under_backup_vault: BackupsUnderBackupVaultOperations operations
+    :vartype backups_under_backup_vault:
+     azure.mgmt.netapp.operations.BackupsUnderBackupVaultOperations
+    :ivar backups_under_volume: BackupsUnderVolumeOperations operations
+    :vartype backups_under_volume: azure.mgmt.netapp.operations.BackupsUnderVolumeOperations
+    :ivar backups_under_account: BackupsUnderAccountOperations operations
+    :vartype backups_under_account: azure.mgmt.netapp.operations.BackupsUnderAccountOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-11-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-11-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -118,6 +131,16 @@ class NetAppManagementClient:  # pylint: disable=client-accepts-api-version-keyw
         )
         self.volume_groups = VolumeGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.subvolumes = SubvolumesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.backup_vaults = BackupVaultsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.backups_under_backup_vault = BackupsUnderBackupVaultOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backups_under_volume = BackupsUnderVolumeOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backups_under_account = BackupsUnderAccountOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

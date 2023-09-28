@@ -1,5 +1,54 @@
 # Release History
 
+## 11.0.0b1 (2023-09-28)
+
+### Features Added
+
+  - Added operation AccountBackupsOperations.list_by_net_app_account
+  - Added operation BackupsOperations.get_latest_status
+  - Added operation BackupsOperations.list_by_vault
+  - Added operation group BackupVaultsOperations
+  - Added operation group BackupsUnderAccountOperations
+  - Added operation group BackupsUnderBackupVaultOperations
+  - Added operation group BackupsUnderVolumeOperations
+  - Model Backup has a new parameter snapshot_name
+  - Model BackupStatus has a new parameter transfer_progress_bytes
+  - Model BackupsList has a new parameter next_link
+  - Model VolumeBackupProperties has a new parameter backup_vault_id
+  - Model VolumePatch has a new parameter smb_access_based_enumeration
+  - Model VolumePatch has a new parameter smb_non_browsable
+
+### Breaking Changes
+
+  - Model Backup has a new required parameter volume_resource_id
+  - Model Backup no longer has parameter location
+  - Model Backup no longer has parameter volume_name
+  - Model BackupPatch no longer has parameter backup_id
+  - Model BackupPatch no longer has parameter backup_type
+  - Model BackupPatch no longer has parameter creation_date
+  - Model BackupPatch no longer has parameter failure_reason
+  - Model BackupPatch no longer has parameter provisioning_state
+  - Model BackupPatch no longer has parameter size
+  - Model BackupPatch no longer has parameter tags
+  - Model BackupPatch no longer has parameter use_existing_snapshot
+  - Model BackupPatch no longer has parameter volume_name
+  - Operation BackupsOperations.begin_create has a new required parameter backup_vault_name
+  - Operation BackupsOperations.begin_create no longer has parameter pool_name
+  - Operation BackupsOperations.begin_create no longer has parameter volume_name
+  - Operation BackupsOperations.begin_delete has a new required parameter backup_vault_name
+  - Operation BackupsOperations.begin_delete no longer has parameter pool_name
+  - Operation BackupsOperations.begin_delete no longer has parameter volume_name
+  - Operation BackupsOperations.begin_update has a new required parameter backup_vault_name
+  - Operation BackupsOperations.begin_update no longer has parameter pool_name
+  - Operation BackupsOperations.begin_update no longer has parameter volume_name
+  - Operation BackupsOperations.get has a new required parameter backup_vault_name
+  - Operation BackupsOperations.get no longer has parameter pool_name
+  - Operation BackupsOperations.get no longer has parameter volume_name
+  - Removed operation AccountBackupsOperations.list
+  - Removed operation BackupsOperations.begin_restore_files
+  - Removed operation BackupsOperations.get_status
+  - Removed operation BackupsOperations.list
+
 ## 10.1.0 (2023-07-21)
 
 ### Features Added

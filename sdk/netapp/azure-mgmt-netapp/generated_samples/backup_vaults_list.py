@@ -14,7 +14,7 @@ from azure.mgmt.netapp import NetAppManagementClient
     pip install azure-identity
     pip install azure-mgmt-netapp
 # USAGE
-    python backups_single_file_restore.py
+    python backup_vaults_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,19 +29,14 @@ def main():
         subscription_id="D633CC2E-722B-4AE1-B636-BBD9E4C60ED9",
     )
 
-    client.backups.begin_restore_files(
+    response = client.backup_vaults.list_by_net_app_account(
         resource_group_name="myRG",
         account_name="account1",
-        pool_name="pool1",
-        volume_name="volume1",
-        backup_name="backup1",
-        body={
-            "destinationVolumeId": "/subscriptions/D633CC2E-722B-4AE1-B636-BBD9E4C60ED9/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1/volumes/volume1",
-            "fileList": ["/dir1/customer1.db", "/dir1/customer2.db"],
-        },
-    ).result()
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/stable/2022-11-01/examples/Backups_SingleFileRestore.json
+# x-ms-original-file: specification/netapp/resource-manager/Microsoft.NetApp/preview/2022-11-01-preview/examples/BackupVaults_List.json
 if __name__ == "__main__":
     main()

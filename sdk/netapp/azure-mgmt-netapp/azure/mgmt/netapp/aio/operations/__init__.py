@@ -20,6 +20,10 @@ from ._backup_policies_operations import BackupPoliciesOperations
 from ._volume_quota_rules_operations import VolumeQuotaRulesOperations
 from ._volume_groups_operations import VolumeGroupsOperations
 from ._subvolumes_operations import SubvolumesOperations
+from ._backup_vaults_operations import BackupVaultsOperations
+from ._backups_under_backup_vault_operations import BackupsUnderBackupVaultOperations
+from ._backups_under_volume_operations import BackupsUnderVolumeOperations
+from ._backups_under_account_operations import BackupsUnderAccountOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -40,6 +44,10 @@ __all__ = [
     "VolumeQuotaRulesOperations",
     "VolumeGroupsOperations",
     "SubvolumesOperations",
+    "BackupVaultsOperations",
+    "BackupsUnderBackupVaultOperations",
+    "BackupsUnderVolumeOperations",
+    "BackupsUnderAccountOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

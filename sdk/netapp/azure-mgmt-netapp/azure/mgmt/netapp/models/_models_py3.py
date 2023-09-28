@@ -387,7 +387,7 @@ class ProxyResource(Resource):
 
 
 class Backup(ProxyResource):  # pylint: disable=too-many-instance-attributes
-    """Backup of a Volume.
+    """Backup under a Backup Vault.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -404,15 +404,13 @@ class Backup(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.netapp.models.SystemData
-    :ivar location: Resource location. Required.
-    :vartype location: str
     :ivar backup_id: UUID v4 used to identify the Backup.
     :vartype backup_id: str
     :ivar creation_date: The creation date of the backup.
     :vartype creation_date: ~datetime.datetime
     :ivar provisioning_state: Azure lifecycle management.
     :vartype provisioning_state: str
-    :ivar size: Size of backup.
+    :ivar size: Size of backup in bytes.
     :vartype size: int
     :ivar label: Label for backup.
     :vartype label: str
@@ -421,11 +419,13 @@ class Backup(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :vartype backup_type: str or ~azure.mgmt.netapp.models.BackupType
     :ivar failure_reason: Failure reason.
     :vartype failure_reason: str
-    :ivar volume_name: Volume name.
-    :vartype volume_name: str
+    :ivar volume_resource_id: ResourceId used to identify the Volume. Required.
+    :vartype volume_resource_id: str
     :ivar use_existing_snapshot: Manual backup an already existing snapshot. This will always be
      false for scheduled backups and true/false for manual backups.
     :vartype use_existing_snapshot: bool
+    :ivar snapshot_name: The name of the snapshot.
+    :vartype snapshot_name: str
     """
 
     _validation = {
@@ -433,7 +433,6 @@ class Backup(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "name": {"readonly": True},
         "type": {"readonly": True},
         "system_data": {"readonly": True},
-        "location": {"required": True},
         "backup_id": {
             "readonly": True,
             "max_length": 36,
@@ -445,7 +444,7 @@ class Backup(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "size": {"readonly": True},
         "backup_type": {"readonly": True},
         "failure_reason": {"readonly": True},
-        "volume_name": {"readonly": True},
+        "volume_resource_id": {"required": True},
     }
 
     _attribute_map = {
@@ -453,7 +452,6 @@ class Backup(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "location": {"key": "location", "type": "str"},
         "backup_id": {"key": "properties.backupId", "type": "str"},
         "creation_date": {"key": "properties.creationDate", "type": "iso-8601"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
@@ -461,111 +459,32 @@ class Backup(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "label": {"key": "properties.label", "type": "str"},
         "backup_type": {"key": "properties.backupType", "type": "str"},
         "failure_reason": {"key": "properties.failureReason", "type": "str"},
-        "volume_name": {"key": "properties.volumeName", "type": "str"},
+        "volume_resource_id": {"key": "properties.volumeResourceId", "type": "str"},
         "use_existing_snapshot": {"key": "properties.useExistingSnapshot", "type": "bool"},
-    }
-
-    def __init__(
-        self, *, location: str, label: Optional[str] = None, use_existing_snapshot: bool = False, **kwargs: Any
-    ) -> None:
-        """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
-        :keyword label: Label for backup.
-        :paramtype label: str
-        :keyword use_existing_snapshot: Manual backup an already existing snapshot. This will always be
-         false for scheduled backups and true/false for manual backups.
-        :paramtype use_existing_snapshot: bool
-        """
-        super().__init__(**kwargs)
-        self.location = location
-        self.backup_id = None
-        self.creation_date = None
-        self.provisioning_state = None
-        self.size = None
-        self.label = label
-        self.backup_type = None
-        self.failure_reason = None
-        self.volume_name = None
-        self.use_existing_snapshot = use_existing_snapshot
-
-
-class BackupPatch(_serialization.Model):
-    """Backup patch.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar backup_id: UUID v4 used to identify the Backup.
-    :vartype backup_id: str
-    :ivar creation_date: The creation date of the backup.
-    :vartype creation_date: ~datetime.datetime
-    :ivar provisioning_state: Azure lifecycle management.
-    :vartype provisioning_state: str
-    :ivar size: Size of backup.
-    :vartype size: int
-    :ivar label: Label for backup.
-    :vartype label: str
-    :ivar backup_type: Type of backup Manual or Scheduled. Known values are: "Manual" and
-     "Scheduled".
-    :vartype backup_type: str or ~azure.mgmt.netapp.models.BackupType
-    :ivar failure_reason: Failure reason.
-    :vartype failure_reason: str
-    :ivar volume_name: Volume name.
-    :vartype volume_name: str
-    :ivar use_existing_snapshot: Manual backup an already existing snapshot. This will always be
-     false for scheduled backups and true/false for manual backups.
-    :vartype use_existing_snapshot: bool
-    """
-
-    _validation = {
-        "backup_id": {
-            "readonly": True,
-            "max_length": 36,
-            "min_length": 36,
-            "pattern": r"^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$",
-        },
-        "creation_date": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "size": {"readonly": True},
-        "backup_type": {"readonly": True},
-        "failure_reason": {"readonly": True},
-        "volume_name": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-        "backup_id": {"key": "properties.backupId", "type": "str"},
-        "creation_date": {"key": "properties.creationDate", "type": "iso-8601"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "size": {"key": "properties.size", "type": "int"},
-        "label": {"key": "properties.label", "type": "str"},
-        "backup_type": {"key": "properties.backupType", "type": "str"},
-        "failure_reason": {"key": "properties.failureReason", "type": "str"},
-        "volume_name": {"key": "properties.volumeName", "type": "str"},
-        "use_existing_snapshot": {"key": "properties.useExistingSnapshot", "type": "bool"},
+        "snapshot_name": {"key": "properties.snapshotName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        volume_resource_id: str,
         label: Optional[str] = None,
         use_existing_snapshot: bool = False,
+        snapshot_name: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
         :keyword label: Label for backup.
         :paramtype label: str
+        :keyword volume_resource_id: ResourceId used to identify the Volume. Required.
+        :paramtype volume_resource_id: str
         :keyword use_existing_snapshot: Manual backup an already existing snapshot. This will always be
          false for scheduled backups and true/false for manual backups.
         :paramtype use_existing_snapshot: bool
+        :keyword snapshot_name: The name of the snapshot.
+        :paramtype snapshot_name: str
         """
         super().__init__(**kwargs)
-        self.tags = tags
         self.backup_id = None
         self.creation_date = None
         self.provisioning_state = None
@@ -573,8 +492,29 @@ class BackupPatch(_serialization.Model):
         self.label = label
         self.backup_type = None
         self.failure_reason = None
-        self.volume_name = None
+        self.volume_resource_id = volume_resource_id
         self.use_existing_snapshot = use_existing_snapshot
+        self.snapshot_name = snapshot_name
+
+
+class BackupPatch(_serialization.Model):
+    """Backup patch.
+
+    :ivar label: Label for backup.
+    :vartype label: str
+    """
+
+    _attribute_map = {
+        "label": {"key": "properties.label", "type": "str"},
+    }
+
+    def __init__(self, *, label: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword label: Label for backup.
+        :paramtype label: str
+        """
+        super().__init__(**kwargs)
+        self.label = label
 
 
 class BackupPoliciesList(_serialization.Model):
@@ -919,19 +859,53 @@ class BackupsList(_serialization.Model):
 
     :ivar value: A list of Backups.
     :vartype value: list[~azure.mgmt.netapp.models.Backup]
+    :ivar next_link: URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
         "value": {"key": "value", "type": "[Backup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Backup"]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: Optional[List["_models.Backup"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of Backups.
         :paramtype value: list[~azure.mgmt.netapp.models.Backup]
+        :keyword next_link: URL to get the next set of results.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
+        self.next_link = next_link
+
+
+class BackupsMigrationRequest(_serialization.Model):
+    """Migrate Backups Request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar backup_vault_id: The ResourceId of the Backup Vault. Required.
+    :vartype backup_vault_id: str
+    """
+
+    _validation = {
+        "backup_vault_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "backup_vault_id": {"key": "backupVaultId", "type": "str"},
+    }
+
+    def __init__(self, *, backup_vault_id: str, **kwargs: Any) -> None:
+        """
+        :keyword backup_vault_id: The ResourceId of the Backup Vault. Required.
+        :paramtype backup_vault_id: str
+        """
+        super().__init__(**kwargs)
+        self.backup_vault_id = backup_vault_id
 
 
 class BackupStatus(_serialization.Model):
@@ -957,6 +931,9 @@ class BackupStatus(_serialization.Model):
     :vartype last_transfer_type: str
     :ivar total_transfer_bytes: Displays the total bytes transferred.
     :vartype total_transfer_bytes: int
+    :ivar transfer_progress_bytes: Displays the total number of bytes transferred for the ongoing
+     operation.
+    :vartype transfer_progress_bytes: int
     """
 
     _validation = {
@@ -968,6 +945,7 @@ class BackupStatus(_serialization.Model):
         "last_transfer_size": {"readonly": True},
         "last_transfer_type": {"readonly": True},
         "total_transfer_bytes": {"readonly": True},
+        "transfer_progress_bytes": {"readonly": True},
     }
 
     _attribute_map = {
@@ -979,6 +957,7 @@ class BackupStatus(_serialization.Model):
         "last_transfer_size": {"key": "lastTransferSize", "type": "int"},
         "last_transfer_type": {"key": "lastTransferType", "type": "str"},
         "total_transfer_bytes": {"key": "totalTransferBytes", "type": "int"},
+        "transfer_progress_bytes": {"key": "transferProgressBytes", "type": "int"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -992,6 +971,111 @@ class BackupStatus(_serialization.Model):
         self.last_transfer_size = None
         self.last_transfer_type = None
         self.total_transfer_bytes = None
+        self.transfer_progress_bytes = None
+
+
+class BackupVault(TrackedResource):
+    """Backup Vault information.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.netapp.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar provisioning_state: Azure lifecycle management.
+    :vartype provisioning_state: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.provisioning_state = None
+
+
+class BackupVaultPatch(_serialization.Model):
+    """Backup Vault information.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+
+
+class BackupVaultsList(_serialization.Model):
+    """List of Backup Vaults.
+
+    :ivar value: A list of Backup Vaults.
+    :vartype value: list[~azure.mgmt.netapp.models.BackupVault]
+    :ivar next_link: URL to get the next set of results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[BackupVault]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.BackupVault"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: A list of Backup Vaults.
+        :paramtype value: list[~azure.mgmt.netapp.models.BackupVault]
+        :keyword next_link: URL to get the next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class BreakFileLocksRequest(_serialization.Model):
@@ -4614,12 +4698,15 @@ class VolumeBackupProperties(_serialization.Model):
     :vartype policy_enforced: bool
     :ivar backup_enabled: Backup Enabled.
     :vartype backup_enabled: bool
+    :ivar backup_vault_id: Backup Vault Resource ID.
+    :vartype backup_vault_id: str
     """
 
     _attribute_map = {
         "backup_policy_id": {"key": "backupPolicyId", "type": "str"},
         "policy_enforced": {"key": "policyEnforced", "type": "bool"},
         "backup_enabled": {"key": "backupEnabled", "type": "bool"},
+        "backup_vault_id": {"key": "backupVaultId", "type": "str"},
     }
 
     def __init__(
@@ -4628,6 +4715,7 @@ class VolumeBackupProperties(_serialization.Model):
         backup_policy_id: Optional[str] = None,
         policy_enforced: Optional[bool] = None,
         backup_enabled: Optional[bool] = None,
+        backup_vault_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4637,11 +4725,14 @@ class VolumeBackupProperties(_serialization.Model):
         :paramtype policy_enforced: bool
         :keyword backup_enabled: Backup Enabled.
         :paramtype backup_enabled: bool
+        :keyword backup_vault_id: Backup Vault Resource ID.
+        :paramtype backup_vault_id: str
         """
         super().__init__(**kwargs)
         self.backup_policy_id = backup_policy_id
         self.policy_enforced = policy_enforced
         self.backup_enabled = backup_enabled
+        self.backup_vault_id = backup_vault_id
 
 
 class VolumeBackups(_serialization.Model):
@@ -5462,6 +5553,14 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
     :ivar coolness_period: Specifies the number of days after which data that is not accessed by
      clients will be tiered.
     :vartype coolness_period: int
+    :ivar smb_access_based_enumeration: Enables access based enumeration share property for SMB
+     Shares. Only applicable for SMB/DualProtocol volume. Known values are: "Disabled" and
+     "Enabled".
+    :vartype smb_access_based_enumeration: str or
+     ~azure.mgmt.netapp.models.SmbAccessBasedEnumeration
+    :ivar smb_non_browsable: Enables non browsable property for SMB Shares. Only applicable for
+     SMB/DualProtocol volume. Known values are: "Disabled" and "Enabled".
+    :vartype smb_non_browsable: str or ~azure.mgmt.netapp.models.SmbNonBrowsable
     :ivar snapshot_directory_visible: If enabled (true) the volume will contain a read-only
      snapshot directory which provides access to each of the volume's snapshots.
     :vartype snapshot_directory_visible: bool
@@ -5493,6 +5592,8 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
         "unix_permissions": {"key": "properties.unixPermissions", "type": "str"},
         "cool_access": {"key": "properties.coolAccess", "type": "bool"},
         "coolness_period": {"key": "properties.coolnessPeriod", "type": "int"},
+        "smb_access_based_enumeration": {"key": "properties.smbAccessBasedEnumeration", "type": "str"},
+        "smb_non_browsable": {"key": "properties.smbNonBrowsable", "type": "str"},
         "snapshot_directory_visible": {"key": "properties.snapshotDirectoryVisible", "type": "bool"},
     }
 
@@ -5512,6 +5613,8 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
         unix_permissions: Optional[str] = None,
         cool_access: Optional[bool] = None,
         coolness_period: Optional[int] = None,
+        smb_access_based_enumeration: Optional[Union[str, "_models.SmbAccessBasedEnumeration"]] = None,
+        smb_non_browsable: Optional[Union[str, "_models.SmbNonBrowsable"]] = None,
         snapshot_directory_visible: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
@@ -5555,6 +5658,14 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
         :keyword coolness_period: Specifies the number of days after which data that is not accessed by
          clients will be tiered.
         :paramtype coolness_period: int
+        :keyword smb_access_based_enumeration: Enables access based enumeration share property for SMB
+         Shares. Only applicable for SMB/DualProtocol volume. Known values are: "Disabled" and
+         "Enabled".
+        :paramtype smb_access_based_enumeration: str or
+         ~azure.mgmt.netapp.models.SmbAccessBasedEnumeration
+        :keyword smb_non_browsable: Enables non browsable property for SMB Shares. Only applicable for
+         SMB/DualProtocol volume. Known values are: "Disabled" and "Enabled".
+        :paramtype smb_non_browsable: str or ~azure.mgmt.netapp.models.SmbNonBrowsable
         :keyword snapshot_directory_visible: If enabled (true) the volume will contain a read-only
          snapshot directory which provides access to each of the volume's snapshots.
         :paramtype snapshot_directory_visible: bool
@@ -5576,6 +5687,8 @@ class VolumePatch(_serialization.Model):  # pylint: disable=too-many-instance-at
         self.unix_permissions = unix_permissions
         self.cool_access = cool_access
         self.coolness_period = coolness_period
+        self.smb_access_based_enumeration = smb_access_based_enumeration
+        self.smb_non_browsable = smb_non_browsable
         self.snapshot_directory_visible = snapshot_directory_visible
 
 

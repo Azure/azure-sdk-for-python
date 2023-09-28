@@ -30,7 +30,7 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -45,7 +45,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -59,14 +59,14 @@ def build_list_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
         ),
         "poolName": _SERIALIZER.url(
             "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -83,7 +83,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -97,7 +97,7 @@ def build_get_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
         ),
         "poolName": _SERIALIZER.url(
             "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
@@ -107,7 +107,7 @@ def build_get_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -124,7 +124,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -139,7 +139,7 @@ def build_create_or_update_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
         ),
         "poolName": _SERIALIZER.url(
             "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
@@ -149,7 +149,7 @@ def build_create_or_update_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -168,7 +168,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -183,7 +183,7 @@ def build_update_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
         ),
         "poolName": _SERIALIZER.url(
             "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
@@ -193,7 +193,7 @@ def build_update_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -218,7 +218,7 @@ def build_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -230,7 +230,7 @@ def build_delete_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
         ),
         "poolName": _SERIALIZER.url(
             "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
@@ -240,7 +240,7 @@ def build_delete_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if force_delete is not None:
@@ -256,7 +256,7 @@ def build_revert_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     # Construct URL
     _url = kwargs.pop(
@@ -269,7 +269,7 @@ def build_revert_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
         ),
         "poolName": _SERIALIZER.url(
             "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
@@ -279,7 +279,7 @@ def build_revert_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -296,7 +296,7 @@ def build_reset_cifs_password_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -308,7 +308,7 @@ def build_reset_cifs_password_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
         ),
         "poolName": _SERIALIZER.url(
             "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
@@ -318,7 +318,7 @@ def build_reset_cifs_password_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -332,7 +332,7 @@ def build_break_file_locks_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     # Construct URL
     _url = kwargs.pop(
@@ -345,7 +345,7 @@ def build_break_file_locks_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
         ),
         "poolName": _SERIALIZER.url(
             "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
@@ -355,7 +355,7 @@ def build_break_file_locks_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -373,7 +373,7 @@ def build_list_get_group_id_list_for_ldap_user_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -388,7 +388,7 @@ def build_list_get_group_id_list_for_ldap_user_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
         ),
         "poolName": _SERIALIZER.url(
             "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
@@ -398,7 +398,7 @@ def build_list_get_group_id_list_for_ldap_user_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -417,7 +417,7 @@ def build_break_replication_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     # Construct URL
     _url = kwargs.pop(
@@ -430,7 +430,7 @@ def build_break_replication_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
         ),
         "poolName": _SERIALIZER.url(
             "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
@@ -440,7 +440,7 @@ def build_break_replication_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -458,7 +458,7 @@ def build_reestablish_replication_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     # Construct URL
     _url = kwargs.pop(
@@ -471,7 +471,7 @@ def build_reestablish_replication_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
         ),
         "poolName": _SERIALIZER.url(
             "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
@@ -481,7 +481,7 @@ def build_reestablish_replication_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -499,7 +499,7 @@ def build_replication_status_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -513,7 +513,7 @@ def build_replication_status_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
         ),
         "poolName": _SERIALIZER.url(
             "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
@@ -523,7 +523,7 @@ def build_replication_status_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -540,7 +540,7 @@ def build_list_replications_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -554,7 +554,7 @@ def build_list_replications_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
         ),
         "poolName": _SERIALIZER.url(
             "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
@@ -564,7 +564,7 @@ def build_list_replications_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -580,7 +580,7 @@ def build_resync_replication_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -592,7 +592,7 @@ def build_resync_replication_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
         ),
         "poolName": _SERIALIZER.url(
             "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
@@ -602,7 +602,7 @@ def build_resync_replication_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -615,7 +615,7 @@ def build_delete_replication_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -627,7 +627,7 @@ def build_delete_replication_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
         ),
         "poolName": _SERIALIZER.url(
             "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
@@ -637,7 +637,7 @@ def build_delete_replication_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -651,7 +651,7 @@ def build_authorize_replication_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     # Construct URL
     _url = kwargs.pop(
@@ -664,7 +664,7 @@ def build_authorize_replication_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
         ),
         "poolName": _SERIALIZER.url(
             "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
@@ -674,7 +674,7 @@ def build_authorize_replication_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -691,7 +691,7 @@ def build_re_initialize_replication_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -703,7 +703,7 @@ def build_re_initialize_replication_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
         ),
         "poolName": _SERIALIZER.url(
             "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
@@ -713,7 +713,7 @@ def build_re_initialize_replication_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -727,7 +727,7 @@ def build_pool_change_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     # Construct URL
     _url = kwargs.pop(
@@ -740,7 +740,7 @@ def build_pool_change_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
         ),
         "poolName": _SERIALIZER.url(
             "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
@@ -750,7 +750,7 @@ def build_pool_change_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -768,7 +768,7 @@ def build_relocate_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     # Construct URL
     _url = kwargs.pop(
@@ -781,7 +781,7 @@ def build_relocate_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
         ),
         "poolName": _SERIALIZER.url(
             "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
@@ -791,7 +791,7 @@ def build_relocate_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -808,7 +808,7 @@ def build_finalize_relocation_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -820,7 +820,7 @@ def build_finalize_relocation_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
         ),
         "poolName": _SERIALIZER.url(
             "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
@@ -830,7 +830,7 @@ def build_finalize_relocation_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -843,7 +843,7 @@ def build_revert_relocation_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -855,7 +855,7 @@ def build_revert_relocation_request(
             "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
         "accountName": _SERIALIZER.url(
-            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
+            "account_name", account_name, "str", pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,127}$"
         ),
         "poolName": _SERIALIZER.url(
             "pool_name", pool_name, "str", max_length=64, min_length=1, pattern=r"^[a-zA-Z0-9][a-zA-Z0-9\-_]{0,63}$"
@@ -865,7 +865,7 @@ def build_revert_relocation_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
