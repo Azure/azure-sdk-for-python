@@ -429,7 +429,7 @@ class GetManifestResult:
     digest: str
     """The manifest's digest, calculated by the registry."""
 
-    def __init__(self, ** kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         self.manifest = cast(Mapping[str, Any], kwargs.get("manifest"))
         self.media_type = str(kwargs.get("media_type"))
         self.digest = str(kwargs.get("digest"))
