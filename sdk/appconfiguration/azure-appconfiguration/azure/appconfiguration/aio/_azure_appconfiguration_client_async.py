@@ -29,7 +29,7 @@ from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolic
 from .._azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from .._generated.aio import AzureAppConfiguration
 from .._generated.models import SnapshotUpdateParameters, SnapshotStatus
-from .._models import ConfigurationSetting, SnapshotSettingFilter, Snapshot
+from .._models import ConfigurationSetting, SnapshotSettingFilter, ConfigurationSnapshot
 from .._user_agent import USER_AGENT
 from .._utils import (
     get_endpoint_from_connection_string,
@@ -570,39 +570,39 @@ class AzureAppConfigurationClient:
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
-    ) -> AsyncLROPoller[Snapshot]:
+    ) -> AsyncLROPoller[ConfigurationSnapshot]:
         """Create a snapshot of the configuration settings.
 
-        :param name: The name of the snapshot to create.
+        :param name: The name of the configuration snapshot to create.
         :type name: str
         :param filters: A list of filters used to filter the configuration settings by key field and label field
-            included in the snapshot.
+            included in the configuration snapshot.
         :type filters: list[~azure.appconfiguration.SnapshotSettingFilter]
-        :keyword composition_type: The composition type describes how the key-values
-            within the snapshot are composed. Known values are: "key" and "key_label". The "key" composition type
+        :keyword composition_type: The composition type describes how the key-values within the configuration
+            snapshot are composed. Known values are: "key" and "key_label". The "key" composition type
             ensures there are no two key-values containing the same key. The 'key_label' composition type ensures
             there are no two key-values containing the same key and label.
         :type composition_type: str or None
-        :keyword retention_period: The amount of time, in seconds, that a snapshot will remain in the
-            archived state before expiring. This property is only writable during the creation of a
+        :keyword retention_period: The amount of time, in seconds, that a configuration snapshot will remain in the
+            archived state before expiring. This property is only writable during the creation of a configuration
             snapshot. If not specified, will set to 2592000(30 days). If specified, should be
             in range 3600(1 hour) to 7776000(90 days).
         :type retention_period: int or None
-        :keyword tags: The tags of the snapshot.
+        :keyword tags: The tags of the configuration snapshot.
         :type tags: dict[str, str] or None
-        :return: An async poller for create snapshot operation. Call `result()` on this object to wait for the
+        :return: A poller for create configuration snapshot operation. Call `result()` on this object to wait for the
             operation to complete and get the created snapshot.
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.appconfiguration.Snapshot]
+        :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.ConfigurationSnapshot]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        snapshot = Snapshot(
+        snapshot = ConfigurationSnapshot(
             filters=filters, composition_type=composition_type, retention_period=retention_period, tags=tags
         )
         try:
             return cast(
-                AsyncLROPoller[Snapshot],
+                AsyncLROPoller[ConfigurationSnapshot],
                 await self._impl.begin_create_snapshot(
-                    name=name, entity=snapshot._to_generated(), cls=Snapshot._from_deserialized, **kwargs
+                    name=name, entity=snapshot._to_generated(), cls=ConfigurationSnapshot._from_deserialized, **kwargs
                 ),
             )
         except binascii.Error:
@@ -616,7 +616,7 @@ class AzureAppConfigurationClient:
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         etag: Optional[str] = None,
         **kwargs
-    ) -> Snapshot:
+    ) -> ConfigurationSnapshot:
         """Archive a configuration setting snapshot. It will update the status of a snapshot from "ready" to "archived".
         The retention period will start to count, the snapshot will expire when the entire retention period elapses.
 
@@ -624,10 +624,10 @@ class AzureAppConfigurationClient:
         :type name: str
         :keyword match_condition: The match condition to use upon the etag.
         :type match_condition: ~azure.core.MatchConditions
-        :keyword etag: Check if the Snapshot is changed. Set None to skip checking etag.
+        :keyword etag: Check if the ConfigurationSnapshot is changed. Set None to skip checking etag.
         :type etag: str or None
-        :return: The Snapshot returned from the service.
-        :rtype: ~azure.appconfiguration.Snapshot
+        :return: The ConfigurationSnapshot returned from the service.
+        :rtype: ~azure.appconfiguration.ConfigurationSnapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         error_map = {}  # type: Dict[int, Any]
@@ -648,7 +648,7 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
                 **kwargs
             )
-            return Snapshot._from_generated(generated_snapshot)
+            return ConfigurationSnapshot._from_generated(generated_snapshot)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
 
@@ -660,17 +660,17 @@ class AzureAppConfigurationClient:
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         etag: Optional[str] = None,
         **kwargs
-    ) -> Snapshot:
+    ) -> ConfigurationSnapshot:
         """Recover a configuration setting snapshot. It will update the status of a snapshot from "archived" to "ready".
 
         :param name: The name of the configuration setting snapshot to recover.
         :type name: str
         :keyword match_condition: The match condition to use upon the etag.
         :type match_condition: ~azure.core.MatchConditions
-        :keyword etag: Check if the Snapshot is changed. Set None to skip checking etag.
+        :keyword etag: Check if the ConfigurationSnapshot is changed. Set None to skip checking etag.
         :type etag: str or None
-        :return: The Snapshot returned from the service.
-        :rtype: ~azure.appconfiguration.Snapshot
+        :return: The ConfigurationSnapshot returned from the service.
+        :rtype: ~azure.appconfiguration.ConfigurationSnapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         error_map = {}  # type: Dict[int, Any]
@@ -691,7 +691,7 @@ class AzureAppConfigurationClient:
                 error_map=error_map,
                 **kwargs
             )
-            return Snapshot._from_generated(generated_snapshot)
+            return ConfigurationSnapshot._from_generated(generated_snapshot)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
 
@@ -703,15 +703,15 @@ class AzureAppConfigurationClient:
         :type name: str
         :keyword fields: Specify which fields to include in the results. Leave None to include all fields.
         :type fields: list[str] or None
-        :return: The Snapshot returned from the service.
-        :rtype: ~azure.appconfiguration.Snapshot
+        :return: The ConfigurationSnapshot returned from the service.
+        :rtype: ~azure.appconfiguration.ConfigurationSnapshot
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         try:
             generated_snapshot = await self._impl.get_snapshot(
                 name=name, if_match=None, if_none_match=None, select=fields, **kwargs
             )
-            return Snapshot._from_generated(generated_snapshot)
+            return ConfigurationSnapshot._from_generated(generated_snapshot)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
 
@@ -723,7 +723,7 @@ class AzureAppConfigurationClient:
         fields: Optional[List[str]] = None,
         status: Optional[List[Union[str, SnapshotStatus]]] = None,
         **kwargs
-    ) -> AsyncItemPaged[Snapshot]:
+    ) -> AsyncItemPaged[ConfigurationSnapshot]:
         """List the configuration setting snapshots stored in the configuration service, optionally filtered by
         snapshot name, snapshot status and fields to present in return.
 
@@ -733,8 +733,8 @@ class AzureAppConfigurationClient:
         :type fields: list[str] or None
         :keyword status: Filter results based on snapshot keys.
         :type status: list[str] or list[~azure.appconfiguration.SnapshotStatus] or None
-        :return: An async iterator of :class:`~azure.appconfiguration.Snapshot`
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.Snapshot]
+        :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSnapshot`
+        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.ConfigurationSnapshot]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         try:
@@ -742,7 +742,7 @@ class AzureAppConfigurationClient:
                 name=name,
                 select=fields,
                 status=status,
-                cls=lambda objs: [Snapshot._from_generated(x) for x in objs],
+                cls=lambda objs: [ConfigurationSnapshot._from_generated(x) for x in objs],
                 **kwargs
             )
         except binascii.Error:

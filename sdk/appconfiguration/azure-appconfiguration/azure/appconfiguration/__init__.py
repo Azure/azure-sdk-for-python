@@ -15,7 +15,7 @@ from ._models import (
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
-    Snapshot,
+    ConfigurationSnapshot,
     SnapshotSettingFilter,
 )
 from ._generated.models import SnapshotStatus
@@ -29,7 +29,7 @@ __all__ = [
     "ResourceReadOnlyError",
     "FeatureFlagConfigurationSetting",
     "SecretReferenceConfigurationSetting",
-    "Snapshot",
+    "ConfigurationSnapshot",
     "SnapshotStatus",
     "SnapshotSettingFilter",
     "FILTER_PERCENTAGE",
