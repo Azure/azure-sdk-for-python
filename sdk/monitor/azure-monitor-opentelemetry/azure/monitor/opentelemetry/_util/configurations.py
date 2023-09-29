@@ -128,6 +128,8 @@ def _default_instrumentation_options(configurations):
 
 
 def _is_instrumentation_enabled(configurations, lib_name):
+    if INSTRUMENTATION_OPTIONS_ARG not in configurations:
+        return False
     instrumentation_options = configurations[INSTRUMENTATION_OPTIONS_ARG]
     if not lib_name in instrumentation_options:
         return False

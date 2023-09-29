@@ -50,16 +50,6 @@ from azure.monitor.opentelemetry._util.configurations import (
 )
 
 
-_SUPPORTED_INSTRUMENTED_LIBRARIES = (
-    "django",
-    "fastapi",
-    "flask",
-    "psycopg2",
-    "requests",
-    "urllib",
-    "urllib3",
-)
-
 _SUPPORTED_RESOURCE_DETECTORS = (
     "azure_app_service",
     "azure_vm",

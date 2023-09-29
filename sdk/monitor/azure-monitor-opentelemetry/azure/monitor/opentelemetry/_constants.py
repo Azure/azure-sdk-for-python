@@ -94,6 +94,7 @@ _EXTENSION_VERSION = _env_var_or_default(
 # Opt-out
 _AZURE_SDK_INSTRUMENTATION_NAME = "azure_sdk"
 _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES = (
+    _AZURE_SDK_INSTRUMENTATION_NAME,
     "django",
     "fastapi",
     "flask",
@@ -101,7 +102,6 @@ _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES = (
     "requests",
     "urllib",
     "urllib3",
-    _AZURE_SDK_INSTRUMENTATION_NAME,
 )
 # Opt-in
 _PREVIEW_INSTRUMENTED_LIBRARIES = ()
