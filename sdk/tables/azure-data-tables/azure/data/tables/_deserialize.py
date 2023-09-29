@@ -172,12 +172,8 @@ def _convert_to_entity(entry_element):
                 mtype = EdmType.INT64
 
         # Add type for String
-        try:
-            if isinstance(value, unicode) and mtype is None:  # type: ignore
-                mtype = EdmType.STRING
-        except NameError:
-            if isinstance(value, str) and mtype is None:
-                mtype = EdmType.STRING
+        if isinstance(value, str) and mtype is None:
+            mtype = EdmType.STRING
 
         # no type info, property should parse automatically
         if not mtype:

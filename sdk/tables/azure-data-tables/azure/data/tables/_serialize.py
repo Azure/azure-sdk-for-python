@@ -152,21 +152,13 @@ _PYTHON_TO_ENTITY_CONVERSIONS = {
     UUID: _to_entity_guid,
     Enum: _to_entity_str,
 }
-try:
-    _PYTHON_TO_ENTITY_CONVERSIONS.update(
-        {
-            unicode: _to_entity_str,  # type: ignore[name-defined]
-            str: _to_entity_binary,
-            long: _to_entity_int32,  # type: ignore[name-defined]
-        }
-    )
-except NameError:
-    _PYTHON_TO_ENTITY_CONVERSIONS.update(
-        {
-            str: _to_entity_str,
-            bytes: _to_entity_binary,
-        }
-    )
+
+_PYTHON_TO_ENTITY_CONVERSIONS.update(
+    {
+        str: _to_entity_str,
+        bytes: _to_entity_binary,
+    }
+)
 
 # cspell:ignore Odatatype
 
@@ -223,10 +215,7 @@ def _add_entity_properties(source):
         mtype = ""
 
         if isinstance(value, Enum):
-            try:
-                convert = _PYTHON_TO_ENTITY_CONVERSIONS.get(unicode)  # type: ignore
-            except NameError:
-                convert = _PYTHON_TO_ENTITY_CONVERSIONS.get(str)
+            convert = _PYTHON_TO_ENTITY_CONVERSIONS.get(str)
             mtype, value = convert(value)
         elif isinstance(value, datetime):
             mtype, value = _to_entity_datetime(value)
