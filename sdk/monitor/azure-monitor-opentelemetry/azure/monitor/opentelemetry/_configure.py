@@ -8,6 +8,7 @@ import os
 from logging import getLogger
 from typing import Dict, cast
 
+from importlib_metadata import entry_points
 from opentelemetry._logs import get_logger_provider, set_logger_provider
 from opentelemetry.instrumentation.dependencies import (
     get_dist_dependency_conflicts,
@@ -24,7 +25,6 @@ from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.trace import get_tracer_provider, set_tracer_provider
-from pkg_resources import iter_entry_points  # type: ignore
 
 from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
@@ -147,9 +147,8 @@ def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
 
 
 def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
-    # use pkg_resources for now until https://github.com/open-telemetry/opentelemetry-python/pull/3168 is merged
-    for entry_point in iter_entry_points(
-        "opentelemetry_instrumentor"
+    for entry_point in entry_points(
+        group="opentelemetry_instrumentor"
     ):
         lib_name = entry_point.name
         if lib_name not in _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES:
