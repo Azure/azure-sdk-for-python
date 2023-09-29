@@ -27,7 +27,6 @@ from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from ._workspace_operations_base import WorkspaceOperationsBase
-from .._utils._experimental import experimental
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
@@ -122,14 +121,13 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         workspace_name = self._check_workspace_name(name)
         return self._operation.begin_resync_keys(self._resource_group_name, workspace_name)
 
-    @experimental
     @monitor_with_activity(logger, "Workspace.BeginProvisionNetwork", ActivityType.PUBLICAPI)
     @distributed_trace
     def begin_provision_network(
         self,
         *,
         workspace_name: Optional[str] = None,
-        include_spark: Optional[bool] = False,
+        include_spark: bool = False,
         **kwargs,
     ) -> LROPoller[ManagedNetworkProvisionStatus]:
         """Triggers the workspace to provision the managed network. Specifying spark enabled
@@ -137,6 +135,8 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
         :keyword workspace_name: Name of the workspace.
         :paramtype workspace_name: str
+        :keyword include spark: Whether the workspae managed network should prepare to support SPark
+        :paramtype include_space: bool
         :return: An instance of LROPoller.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.ManagedNetworkProvisionStatus]
         """

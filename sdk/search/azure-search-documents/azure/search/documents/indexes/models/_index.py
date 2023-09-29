@@ -20,7 +20,7 @@ from ._models import (
 )
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, List
+    from typing import Any, Dict
 
 __all__ = ("ComplexField", "SearchableField", "SimpleField")
 
@@ -167,8 +167,8 @@ class SearchField(_serialization.Model):
      Collection(Edm.ComplexType). Must be null or empty for simple fields.
     :paramtype fields: list[~azure.search.documents.models.SearchField]
     :keyword int vector_search_dimensions: The dimensionality of the vector field.
-    :keyword str vector_search_configuration: The name of the vector search algorithm configuration
-     that specifies the algorithm and optional parameters for searching the vector field.
+    :keyword str vector_search_profile: The name of the vector search profile that specifies the algorithm
+     and vectorizer to use when searching the vector field.
     """
 
     _validation = {
@@ -192,7 +192,10 @@ class SearchField(_serialization.Model):
         "synonym_map_names": {"key": "synonymMapNames", "type": "[str]"},
         "fields": {"key": "fields", "type": "[SearchField]"},
         "vector_search_dimensions": {"key": "vectorSearchDimensions", "type": "int"},
-        "vector_search_configuration": {"key": "vectorSearchConfiguration", "type": "str"},
+        "vector_search_profile": {
+            "key": "vectorSearchProfile",
+            "type": "str",
+        },
     }
 
     def __init__(self, **kwargs):
@@ -212,9 +215,9 @@ class SearchField(_serialization.Model):
         self.synonym_map_names = kwargs.get("synonym_map_names", None)
         self.fields = kwargs.get("fields", None)
         self.vector_search_dimensions = kwargs.get("vector_search_dimensions", None)
-        self.vector_search_configuration = kwargs.get("vector_search_configuration", None)
+        self.vector_search_profile = kwargs.get("vector_search_profile", None)
 
-    def _to_generated(self):
+    def _to_generated(self) -> _SearchField:
         fields = [pack_search_field(x) for x in self.fields] if self.fields else None
         retrievable = not self.hidden if self.hidden is not None else None
         return _SearchField(
@@ -233,7 +236,7 @@ class SearchField(_serialization.Model):
             synonym_maps=self.synonym_map_names,
             fields=fields,
             dimensions=self.vector_search_dimensions,
-            vector_search_configuration=self.vector_search_configuration,
+            vector_search_profile=self.vector_search_profile,
         )
 
     @classmethod
@@ -263,7 +266,7 @@ class SearchField(_serialization.Model):
             synonym_map_names=search_field.synonym_maps,
             fields=fields,
             vector_search_dimensions=search_field.dimensions,
-            vector_search_configuration=search_field.vector_search_configuration,
+            vector_search_profile=search_field.vector_search_profile,
         )
 
 
@@ -529,6 +532,8 @@ class SearchIndex(_serialization.Model):
     :paramtype similarity: ~azure.search.documents.indexes.models.SimilarityAlgorithm
     :keyword semantic_settings: Defines parameters for a search index that influence semantic capabilities.
     :paramtype semantic_settings: ~azure.search.documents.indexes.models.SemanticSettings
+    :keyword vector_search: Defines parameters for a search index that influence scoring in a vector space.
+    :paramtype vector_search: ~azure.search.documents.indexes.models.VectorSearch
     :keyword e_tag: The ETag of the index.
     :paramtype e_tag: str
     """
@@ -579,7 +584,7 @@ class SearchIndex(_serialization.Model):
         self.vector_search = kwargs.get("vector_search", None)
         self.e_tag = kwargs.get("e_tag", None)
 
-    def _to_generated(self):
+    def _to_generated(self) -> _SearchIndex:
         if self.analyzers:
             analyzers = [pack_analyzer(x) for x in self.analyzers]  # type: ignore  # mypy: ignore
         else:
@@ -594,7 +599,7 @@ class SearchIndex(_serialization.Model):
         if self.fields:
             fields = [pack_search_field(x) for x in self.fields]
         else:
-            fields = None
+            fields = []
         return _SearchIndex(
             name=self.name,
             fields=fields,
@@ -616,9 +621,7 @@ class SearchIndex(_serialization.Model):
         )
 
     @classmethod
-    def _from_generated(cls, search_index):
-        if not search_index:
-            return None
+    def _from_generated(cls, search_index) -> "SearchIndex":
         if search_index.analyzers:
             analyzers = [unpack_analyzer(x) for x in search_index.analyzers]  # type: ignore
         else:
@@ -661,13 +664,12 @@ class SearchIndex(_serialization.Model):
         )
 
 
-def pack_search_field(search_field):
-    # type: (SearchField) -> _SearchField
-    if not search_field:
-        return None
+def pack_search_field(search_field: SearchField) -> _SearchField:
     if isinstance(search_field, dict):
         name = search_field.get("name")
+        assert name is not None  # Hint for mypy
         field_type = search_field.get("type")
+        assert field_type is not None  # Hint for mypy
         key = search_field.get("key")
         hidden = search_field.get("hidden")
         searchable = search_field.get("searchable")
@@ -681,6 +683,8 @@ def pack_search_field(search_field):
         synonym_map_names = search_field.get("synonym_map_names")
         fields = search_field.get("fields")
         fields = [pack_search_field(x) for x in fields] if fields else None
+        vector_search_dimensions = search_field.get("vector_search_dimensions")
+        vector_search_profile = search_field.get("vector_search_profile")
         return _SearchField(
             name=name,
             type=field_type,
@@ -696,5 +700,7 @@ def pack_search_field(search_field):
             normalizer=normalizer,
             synonym_maps=synonym_map_names,
             fields=fields,
+            vector_search_dimensions=vector_search_dimensions,
+            vector_search_profile=vector_search_profile,
         )
     return search_field._to_generated()  # pylint:disable=protected-access

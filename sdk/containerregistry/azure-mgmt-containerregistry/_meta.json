@@ -1,11 +1,30 @@
 {
-  "commit": "2c4244e5bcb8939167b79f633cdc17a1f0eae9be",
+  "commit": "c320f58d8643a309c126dd4ec5fdc6737fccd981",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.9.2",
+  "autorest": "3.9.7",
   "use": [
-    "@autorest/python@6.2.16",
-    "@autorest/modelerfour@4.24.3"
+    "@autorest/python@6.7.1",
+    "@autorest/modelerfour@4.26.2"
   ],
-  "autorest_command": "autorest specification/containerregistry/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.2.16 --use=@autorest/modelerfour@4.24.3 --version=3.9.2 --version-tolerant=False",
-  "readme": "specification/containerregistry/resource-manager/readme.md"
+  "autorest_command": "autorest specification/containerregistry/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --use=@autorest/python@6.7.1 --use=@autorest/modelerfour@4.26.2 --version=3.9.7 --version-tolerant=False",
+  "readme": "specification/containerregistry/resource-manager/readme.md",
+  "package-2023-08-preview-only": "2023-08-29 18:41:57 -0700 3e3098d6b9302e166b611ce72b3392786d3ea0f7 Microsoft.ContainerRegistry/preview/2023-08-01-preview/containerregistry.json",
+  "package-2023-07-only": "2023-08-16 14:55:49 -0700 d5631d7fbffb672434457b5f2f16cdc6691356f9 Microsoft.ContainerRegistry/stable/2023-07-01/containerregistry.json",
+  "package-2023-01-preview-only": "2023-01-13 01:31:48 -0800 891dd18a70057c2fee388573117683e6d0081bda Microsoft.ContainerRegistry/preview/2023-01-01-preview/containerregistry.json",
+  "package-2022-12-only": "2022-12-21 18:51:39 -0800 0a2eb0d14f5132fcfd30222d584acf67713332ea Microsoft.ContainerRegistry/stable/2022-12-01/containerregistry.json",
+  "package-2022-02-preview-only": "2022-11-22 12:51:29 +0530 15500dab95367e97a14609c361164b69c44e79b9 Microsoft.ContainerRegistry/preview/2022-02-01-preview/containerregistry.json",
+  "package-2021-12-preview-only": "2022-02-10 00:49:22 +0100 c858f22f4bcc7e0c0e6a1c235cc01ca880b6c4ec Microsoft.ContainerRegistry/preview/2021-12-01-preview/containerregistry.json",
+  "package-2021-09-only": "2022-02-10 00:49:22 +0100 c858f22f4bcc7e0c0e6a1c235cc01ca880b6c4ec Microsoft.ContainerRegistry/stable/2021-09-01/containerregistry.json",
+  "package-2021-08-preview-only": "2021-11-17 21:24:55 -0600 017671a81d01c5dbb1b2cb5ec410574ccf3d4c1a Microsoft.ContainerRegistry/preview/2021-08-01-preview/containerregistry.json",
+  "package-2021-06-preview-only": "2021-11-17 21:24:55 -0600 017671a81d01c5dbb1b2cb5ec410574ccf3d4c1a Microsoft.ContainerRegistry/preview/2021-06-01-preview/containerregistry.json",
+  "package-2020-11-preview-only": "2021-11-17 21:24:55 -0600 017671a81d01c5dbb1b2cb5ec410574ccf3d4c1a Microsoft.ContainerRegistry/preview/2020-11-01-preview/containerregistry.json",
+  "package-2019-12-preview-only": "2021-02-16 15:37:36 -0800 118ae927818c4c2f523c300f944d2847419a26c5 Microsoft.ContainerRegistry/preview/2019-12-01-preview/containerregistry.json",
+  "package-2019-06-preview-only": "2022-02-10 00:49:22 +0100 c858f22f4bcc7e0c0e6a1c235cc01ca880b6c4ec Microsoft.ContainerRegistry/preview/2019-06-01-preview/containerregistry_build.json",
+  "package-2019-05-only": "2021-02-01 18:15:02 -0800 7b3e3d4e09b727489a3181f1d68586cd304b6437 Microsoft.ContainerRegistry/stable/2019-05-01/containerregistry.json",
+  "package-2019-05-preview-only": "2020-11-18 18:08:48 -0800 1ac125f6d76df2e1328938ab6201cf178b7c25b0 Microsoft.ContainerRegistry/preview/2019-05-01-preview/containerregistry_scopemap.json",
+  "package-2019-04-only": "2021-04-21 00:30:00 -0700 c318f87abae92d38a223b3d168a75dd5d239d28b Microsoft.ContainerRegistry/stable/2019-04-01/containerregistry_build.json",
+  "package-2018-09-only": "2019-05-20 13:19:22 -0400 4637caf2022035c4d51eca3314589a25060d20af Microsoft.ContainerRegistry/stable/2018-09-01/containerregistry_build.json",
+  "package-2018-02-preview-only": "2019-05-20 13:19:22 -0400 4637caf2022035c4d51eca3314589a25060d20af Microsoft.ContainerRegistry/preview/2018-02-01-preview/containerregistry_build.json",
+  "package-2017-10": "2021-02-01 18:15:02 -0800 7b3e3d4e09b727489a3181f1d68586cd304b6437 Microsoft.ContainerRegistry/stable/2017-10-01/containerregistry.json",
+  "package-2017-03": "2019-05-20 13:19:22 -0400 4637caf2022035c4d51eca3314589a25060d20af Microsoft.ContainerRegistry/stable/2017-03-01/containerregistry.json"
 }

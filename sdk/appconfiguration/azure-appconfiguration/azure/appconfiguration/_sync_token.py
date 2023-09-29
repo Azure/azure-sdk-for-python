@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 from threading import Lock
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -67,10 +67,10 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
 
     def __init__(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self._sync_token_header = "Sync-Token"
-        self._sync_tokens = {}  # type: Dict[str, Any]
+        self._sync_tokens: Dict[str, Any] = {}
         self._lock = Lock()
 
-    def on_request(self, request: PipelineRequest) -> None:  # type: ignore # pylint: disable=arguments-differ
+    def on_request(self, request: PipelineRequest) -> None:
         """This is executed before sending the request to the next policy.
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
@@ -80,7 +80,7 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
             if sync_token_header:
                 request.http_request.headers.update({self._sync_token_header: sync_token_header})
 
-    def on_response(self, request: PipelineRequest, response: PipelineResponse) -> None:  # type: ignore # pylint: disable=arguments-differ
+    def on_response(self, request: PipelineRequest, response: PipelineResponse) -> None:
         """This is executed after the request comes back from the policy.
 
         :param request: The PipelineRequest object.
@@ -104,7 +104,7 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
             sync_token = SyncToken.from_sync_token_string(raw_token)
             self._update_sync_token(sync_token)
 
-    def _update_sync_token(self, sync_token: SyncToken) -> None:
+    def _update_sync_token(self, sync_token: Optional[SyncToken]) -> None:
         if not sync_token:
             return
         with self._lock:

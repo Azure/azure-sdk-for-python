@@ -29,15 +29,15 @@ def main():
         subscription_id="subid1",
     )
 
-    response = client.fleet_members.update(
+    response = client.fleet_members.begin_update(
         resource_group_name="rg1",
         fleet_name="fleet1",
         fleet_member_name="member-1",
         properties={"properties": {"group": "staging"}},
-    )
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/fleet/preview/2023-03-15-preview/examples/FleetMembers_Update.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/fleet/preview/2023-06-15-preview/examples/FleetMembers_Update.json
 if __name__ == "__main__":
     main()

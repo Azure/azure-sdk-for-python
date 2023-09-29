@@ -1,5 +1,17 @@
 # Release History
 
+## 1.15.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- `ManagedIdentityCredential` will now correctly retry when the instance metadata endpoint returns a 410 response.  ([#32200](https://github.com/Azure/azure-sdk-for-python/pull/32200))
+
+### Other Changes
+
 ## 1.15.0b1 (2023-09-12)
 
 ### Features Added

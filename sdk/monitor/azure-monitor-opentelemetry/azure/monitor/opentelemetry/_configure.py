@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import os
+
 from logging import getLogger
 from typing import Dict, cast
 
@@ -14,6 +16,7 @@ from opentelemetry.instrumentation.instrumentor import (
     BaseInstrumentor,
 )
 from opentelemetry.metrics import set_meter_provider
+from opentelemetry.sdk.environment_variables import OTEL_EXPERIMENTAL_RESOURCE_DETECTORS
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.metrics import MeterProvider
@@ -31,6 +34,7 @@ from azure.monitor.opentelemetry._constants import (
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
     DISABLED_INSTRUMENTATIONS_ARG,
+    LOGGER_NAME_ARG,
     SAMPLING_RATIO_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
@@ -54,6 +58,11 @@ _SUPPORTED_INSTRUMENTED_LIBRARIES = (
     "urllib3",
 )
 
+_SUPPORTED_RESOURCE_DETECTORS = (
+    "azure_app_service",
+    "azure_vm",
+)
+
 
 def configure_azure_monitor(**kwargs) -> None:
     """This function works as a configuration layer that allows the
@@ -68,6 +77,7 @@ def configure_azure_monitor(**kwargs) -> None:
      telemetry records for retry. Defaults to `False`.
     :keyword str storage_directory: Storage directory in which to store retry files. Defaults to
      `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
+    :keyword str logger_name: The name of the Python logger that telemetry will be collected.
     :rtype: None
     """
 
@@ -76,6 +86,9 @@ def configure_azure_monitor(**kwargs) -> None:
     disable_tracing = configurations[DISABLE_TRACING_ARG]
     disable_logging = configurations[DISABLE_LOGGING_ARG]
     disable_metrics = configurations[DISABLE_METRICS_ARG]
+
+    # Setup resources
+    _setup_resources()
 
     # Setup tracing pipeline
     if not disable_tracing:
@@ -93,6 +106,13 @@ def configure_azure_monitor(**kwargs) -> None:
     # Instrumentations need to be setup last so to use the global providers
     # instanstiated in the other setup steps
     _setup_instrumentations(configurations)
+
+def _setup_resources():
+    detectors = os.environ.get(OTEL_EXPERIMENTAL_RESOURCE_DETECTORS, "")
+    if detectors:
+        detectors = detectors + ","
+    detectors += ",".join(_SUPPORTED_RESOURCE_DETECTORS)
+    os.environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS] = detectors
 
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
@@ -120,7 +140,8 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     )
     get_logger_provider().add_log_record_processor(log_record_processor)
     handler = LoggingHandler(logger_provider=get_logger_provider())
-    getLogger().addHandler(handler)
+    logger_name = configurations[LOGGER_NAME_ARG]
+    getLogger(logger_name).addHandler(handler)
 
 
 def _setup_metrics(configurations: Dict[str, ConfigurationValue]):

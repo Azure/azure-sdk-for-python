@@ -8,3 +8,5 @@ extends:
       Public:
         SubscriptionConfiguration: $(python-ml-core-sdk-sub-scope)
         Location: eastus2euap
+        MatrixReplace:
+          - TestSamples=.*/true

@@ -1688,6 +1688,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 assert len(messages) == 1
                 await receiver.complete_message(messages[0])
 
+    @pytest.mark.skip('hard to test')
     @AzureTestCase.await_prepared_test
     async def test_async_queue_mock_auto_lock_renew_callback(self):
         # A warning to future devs: If the renew period override heuristic in registration

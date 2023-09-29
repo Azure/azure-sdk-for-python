@@ -485,6 +485,9 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
             entity, _ = await self._insert_random_entity(rk="")
             await self.table.delete_entity(entity)
             entity, _ = await self._insert_random_entity(pk="", rk="")
+            result = await self.table.get_entity("", "")
+            assert result["PartitionKey"] == ""
+            assert result["RowKey"] == ""
             await self.table.delete_entity(partition_key="", row_key="")
             count = 0
             async for entity in self.table.list_entities():
