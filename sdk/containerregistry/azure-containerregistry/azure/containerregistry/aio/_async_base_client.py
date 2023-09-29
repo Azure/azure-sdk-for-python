@@ -3,8 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
-from typing import Any, Optional
-from typing_extensions import Self
+from typing import Any, Optional, TypeVar
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.credentials_async import AsyncTokenCredential
@@ -14,6 +13,8 @@ from ._async_authentication_policy import ContainerRegistryChallengePolicy
 from ._async_anonymous_exchange_client import AsyncAnonymousAccessCredential
 from .._generated.aio import ContainerRegistry
 from .._user_agent import USER_AGENT
+
+ClientType = TypeVar("ClientType", bound="ContainerRegistryBaseClient")
 
 
 class ContainerRegistryApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -45,7 +46,7 @@ class ContainerRegistryBaseClient(object):
             **kwargs
         )
 
-    async def __aenter__(self) -> Self:
+    async def __aenter__(self: ClientType) -> ClientType:
         await self._auth_policy.__aenter__()
         await self._client.__aenter__()
         return self
