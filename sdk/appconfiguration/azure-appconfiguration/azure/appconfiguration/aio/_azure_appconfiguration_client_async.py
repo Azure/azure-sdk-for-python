@@ -159,7 +159,7 @@ class AzureAppConfigurationClient:
             async for item in filtered_listed:
                 pass  # do something
         """
-    
+
     @overload
     def list_configuration_settings(
         self, *, snapshot_name: str, fields: Optional[List[str]] = None, **kwargs
@@ -174,14 +174,14 @@ class AzureAppConfigurationClient:
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.appconfiguration.ConfigurationSetting]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-    
+
     @distributed_trace
     def list_configuration_settings(self, **kwargs) -> AsyncItemPaged[ConfigurationSetting]:
         select = kwargs.pop("fields", None)
         if select:
             select = ["locked" if x == "read_only" else x for x in select]
         snapshot_name = kwargs.pop("snapshot_name", None)
-        
+
         try:
             if snapshot_name is not None:
                 return self._impl.get_key_values(  # type: ignore
