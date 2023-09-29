@@ -134,9 +134,9 @@ class FormRecognizerClientBase:
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.rest.HttpResponse
         """
-        request_copy = _format_api_version(request, self.api_version)
+        request_copy = _format_api_version(request, self._api_version)
         path_format_arguments = {
-            "vaultBaseUrl": _SERIALIZER.url("vault_base_url", self._vault_url, "str", skip_quote=True),
+            "vaultBaseUrl": _SERIALIZER.url("vault_base_url", self._endpoint, "str", skip_quote=True),
         }
-        request_copy.url = self._client._client.format_url(request_copy.url, **path_format_arguments)
-        return self._client._client.send_request(request_copy, stream=stream, **kwargs)
+        request_copy.url = self._client._client.format_url(request_copy.url, **path_format_arguments)  # pylint:disable=protected-access
+        return self._client._client.send_request(request_copy, stream=stream, **kwargs)  # pylint:disable=protected-access
