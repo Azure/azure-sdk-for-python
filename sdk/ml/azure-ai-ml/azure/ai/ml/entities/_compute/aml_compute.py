@@ -38,7 +38,7 @@ class AmlComputeSshSettings:
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../../../../../samples/ml_samples_compute.py
+    .. literalinclude:: ../samples/ml_samples_compute.py
         :start-after: [START aml_compute_ssh_settings]
         :end-before: [END aml_compute_ssh_settings]
         :language: python
@@ -114,7 +114,7 @@ class AmlCompute(Compute):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_compute.py
+        .. literalinclude:: ../samples/ml_samples_compute.py
             :start-after: [START amlcompute]
             :end-before: [END amlcompute]
             :language: python

@@ -60,7 +60,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START model_entity_create]
             :end-before: [END model_entity_create]
             :language: python

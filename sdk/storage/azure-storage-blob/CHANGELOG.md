@@ -5,6 +5,12 @@
 ### Features Added
 
 
+## 12.18.2 (2023-09-25)
+
+### Bugs Fixed
+- Fixed an issue where `user_agent` was being ignored on `upload_blob` or `download_blob` if client was configured
+for encryption.
+
 ## 12.18.1 (2023-09-13)
 
 ### Bugs Fixed

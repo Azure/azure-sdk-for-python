@@ -42,7 +42,7 @@ def main():
                 },
                 "backup": {"backupRetentionDays": 20},
                 "createMode": "Update",
-                "storage": {"autoGrow": "Disabled", "iopsTier": "P30", "storageSizeGB": 1024},
+                "storage": {"autoGrow": "Disabled", "storageSizeGB": 1024, "tier": "P30"},
             },
             "sku": {"name": "Standard_D8s_v3", "tier": "GeneralPurpose"},
         },

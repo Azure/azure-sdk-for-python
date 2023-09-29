@@ -220,7 +220,7 @@ class NetworkSettings:
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_compute.py
+        .. literalinclude:: ../samples/ml_samples_compute.py
             :start-after: [START network_settings]
             :end-before: [END network_settings]
             :language: python
