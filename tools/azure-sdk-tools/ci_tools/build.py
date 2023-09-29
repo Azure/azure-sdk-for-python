@@ -106,7 +106,12 @@ def build() -> None:
         target_dir = repo_root
 
     targeted_packages = discover_targeted_packages(
-        args.glob_string, target_dir, args.package_filter_string, filter_type="Build", compatibility_filter=True, include_inactive=args.inactive
+        args.glob_string,
+        target_dir,
+        args.package_filter_string,
+        filter_type="Build",
+        compatibility_filter=True,
+        include_inactive=args.inactive,
     )
     artifact_directory = get_artifact_directory(args.distribution_directory)
 

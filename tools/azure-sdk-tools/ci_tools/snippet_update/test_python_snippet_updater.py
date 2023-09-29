@@ -2,6 +2,7 @@ import os
 import tempfile
 from .python_snippet_updater import get_snippet, update_snippet, check_snippets, check_not_up_to_date
 
+
 def test_update_snippet():
     temp_sample = tempfile.NamedTemporaryFile(delete=False)
     snippets = """
@@ -12,7 +13,7 @@ def test_update_snippet():
                      return await pipeline.run(request)
                  # [END trio]
     """
-    temp_sample.write(snippets.encode('utf-8'))
+    temp_sample.write(snippets.encode("utf-8"))
     temp_sample.close()
     full_path_sample = temp_sample.name
     get_snippet(full_path_sample)
@@ -23,8 +24,11 @@ def test_update_snippet():
     snippet_name = list(keys)[0]
 
     temp_readme = tempfile.NamedTemporaryFile(delete=False)
-    readme = """
-<!-- SNIPPET:""" + snippet_name + """ -->
+    readme = (
+        """
+<!-- SNIPPET:"""
+        + snippet_name
+        + """ -->
 
 ```python
 import os
@@ -38,10 +42,11 @@ text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
 
 <!-- END SNIPPET -->
         """
-    temp_readme.write(readme.encode('utf-8'))
+    )
+    temp_readme.write(readme.encode("utf-8"))
     temp_readme.close()
     update_snippet(temp_readme.name)
-    with open(temp_readme.name, 'rb') as file:
+    with open(temp_readme.name, "rb") as file:
         content = file.read()
         print(content)
 

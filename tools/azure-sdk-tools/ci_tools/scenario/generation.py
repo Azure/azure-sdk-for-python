@@ -48,22 +48,23 @@ def create_scenario_file(package_folder: str, optional_config: str) -> str:
     This file will be dropped into the package root, but gitignored. It is regenerated with every invocation of the `optional` env.
     """
 
+
 def clean_test_environment(freeze_file: str) -> None:
     """
     Removes all packages within a freeze_file from a pip environment.
     """
 
-    with open(freeze_file, 'r', encoding='utf-8') as f:
+    with open(freeze_file, "r", encoding="utf-8") as f:
         f.readlines()
 
 
 def replace_dev_reqs(file: str, pkg_root: str) -> None:
     """Takes a target requirements file, replaces all local relative install locations with wheels assembled from whatever that target path was.
     This is an extremely important step that runs on every dev_requirements.txt file before invoking any tox runs.
-    
+
     This is due to the fact that pip isn't multi-process-safe with the activity of installing a local relative requirement. .pyc files are updated
     and removed in place, possibly causing a hang in the install process. When in_ci() is true, this function is run against every single requirement file.
-    
+
     :param str file: the absolute path to the dev_requirements.txt file
     :param str pkg_root: the absolute path to the package's root
     :return: None
@@ -215,7 +216,6 @@ def main(mapped_args: argparse.Namespace) -> int:
         clean_environment(mapped_args.target)
 
         # install package, dev_reqs, and any additional packages from optional configuration
-
 
         # uninstall anything additional
         breakpoint()

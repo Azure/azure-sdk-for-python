@@ -122,7 +122,7 @@ def compare_python_version(version_spec: str) -> bool:
     # we want to be loud if we can't parse out a major version from the version string, not silently
     # fail and skip running samples on a platform we really should be
     if parsed_version is None:
-        raise InvalidVersion(f"Unable to parse the platform version. Unparsed value was \"{platform_version}\".")
+        raise InvalidVersion(f'Unable to parse the platform version. Unparsed value was "{platform_version}".')
     else:
         current_sys_version = parse(parsed_version[0])
         spec_set = SpecifierSet(version_spec)
@@ -493,4 +493,3 @@ def discover_prebuilt_package(dist_directory: str, setup_path: str, package_type
     if prebuilt_package is not None:
         packages.append(prebuilt_package)
     return packages
-

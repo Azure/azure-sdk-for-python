@@ -45,7 +45,7 @@ class ParsedSetup:
         package_data: Dict[str, Any],
         include_package_data: bool,
         classifiers: List[str],
-        keywords: List[str]
+        keywords: List[str],
     ):
         self.name: str = name
         self.version: str = version
@@ -74,7 +74,7 @@ class ParsedSetup:
             package_data,
             include_package_data,
             classifiers,
-            keywords
+            keywords,
         ) = parse_setup(parse_directory_or_file)
 
         return cls(
@@ -88,11 +88,12 @@ class ParsedSetup:
             package_data,
             include_package_data,
             classifiers,
-            keywords
+            keywords,
         )
 
     def get_build_config(self) -> Dict[str, Any]:
         return get_build_config(self.folder)
+
 
 def get_build_config(package_path: str) -> Dict[str, Any]:
     if package_path.lower().endswith("setup.py"):
@@ -121,7 +122,9 @@ def read_setup_py_content(setup_filename: str) -> str:
         return content
 
 
-def parse_setup(setup_filename: str) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str]]:
+def parse_setup(
+    setup_filename: str,
+) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str]]:
     """
     Used to evaluate a setup.py (or a directory containing a setup.py) and return a tuple containing:
     (
@@ -225,7 +228,7 @@ def parse_setup(setup_filename: str) -> Tuple[str, str, str, List[str], bool, st
         package_data,
         include_package_data,
         classifiers,
-        keywords
+        keywords,
     )
 
 
