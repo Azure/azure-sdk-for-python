@@ -105,8 +105,10 @@ class ServiceBusReceiver(
      the client connects to.
     :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
-    :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
-     receiver will automatically stop receiving. The default value is None, meaning no timeout.
+    :keyword Optional[float] max_wait_time: The timeout in seconds to wait for the first and subsequent
+     messages to arrive after which the receiver will automatically stop receiving. If no messages arrive,
+     and no timeout is specified, this call will not return until the connection is closed.
+     The default value is None, meaning no timeout.
     :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
      are PEEK_LOCK and RECEIVE_AND_DELETE. Messages received with PEEK_LOCK must be settled within a given
      lock period before they will be removed from the queue. Messages received with RECEIVE_AND_DELETE
@@ -280,9 +282,10 @@ class ServiceBusReceiver(
          if the client fails to process the message.
          The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
-        :keyword Optional[float] max_wait_time: The timeout in seconds to wait for the first message to arrive.
-         If no messages arrive, and no timeout is specified, this call will not return
-         until the connection is closed. The default value is None, meaning no timeout.
+        :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
+         messages to arrive after which the receiver will automatically stop receiving. If no messages arrive,
+         and no timeout is specified, this call will not return until the connection is closed.
+         The default value is None, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Service Bus service. Default is `TransportType.Amqp`.
