@@ -430,7 +430,7 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
         snapshot. If not specified, the default lifetime of key-value revisions will be used."""
     size: Optional[int]
     """The size in bytes of the snapshot."""
-    item_count: Optional[int]
+    items_count: Optional[int]
     """The amount of key-values in the snapshot."""
     tags: Optional[Dict[str, str]]
     """The tags of the snapshot."""
@@ -469,7 +469,7 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
         self.expires = None
         self.retention_period = retention_period
         self.size = None
-        self.item_count = None
+        self.items_count = None
         self.tags = tags
         self.etag = None
 
@@ -495,7 +495,7 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
         snapshot.created = generated.created
         snapshot.expires = generated.expires
         snapshot.size = generated.size
-        snapshot.item_count = generated.items_count
+        snapshot.items_count = generated.items_count
         snapshot.etag = generated.etag
 
         return snapshot
@@ -526,7 +526,7 @@ class Snapshot:  # pylint: disable=too-many-instance-attributes
         snapshot.created = deserialized.created
         snapshot.expires = deserialized.expires
         snapshot.size = deserialized.size
-        snapshot.item_count = deserialized.items_count
+        snapshot.items_count = deserialized.items_count
         snapshot.etag = deserialized.etag
 
         return snapshot
