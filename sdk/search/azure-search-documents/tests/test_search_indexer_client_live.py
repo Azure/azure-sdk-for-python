@@ -104,7 +104,10 @@ class TestSearchIndexerClientTest(AzureRecordedTestCase):
         indexer = self._prepare_indexer(client, index_client, storage_cs, name, container_name)
         client.create_indexer(indexer)
         client.reset_indexer(name)
-        assert (client.get_indexer_status(name)).last_result.status.lower() in ("inprogress", "reset")
+        assert (client.get_indexer_status(name)).last_result.status.lower() in (
+            "inprogress",
+            "reset",
+        )
 
     def _test_run_indexer(self, client, index_client, storage_cs, container_name):
         name = "run"
