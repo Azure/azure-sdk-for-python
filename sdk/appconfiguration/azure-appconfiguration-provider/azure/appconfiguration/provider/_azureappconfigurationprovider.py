@@ -75,7 +75,7 @@ def load(
     :paramtype selects: Optional[List[~azure.appconfiguration.provider.SettingSelector]]
     :keyword trim_prefixes: List of prefixes to trim from configuration keys
     :paramtype trim_prefixes: Optional[List[str]]
-    :keyword keyvault_credential: A credential for authenticating with the key vault. This is optional if secret_clients
+    :keyword keyvault_credential: A credential for authenticating with the key vault. This is optional if keyvault_client_configs
      is provided.
     :paramtype keyvault_credential: ~azure.core.credentials.TokenCredential
     :keyword keyvault_client_configs: A Mapping of SecretClient endpoints to client configurations from
