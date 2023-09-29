@@ -71,8 +71,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         :paramtype api_version: str or None
         """
         super(AsyncTablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)
-        self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), **kwargs)
-        self._client._config.version = get_api_version(kwargs, self._client._config.version)  # type: ignore[assignment] # pylint: disable=protected-access
+        self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), version=self._api_version, **kwargs)
 
     async def __aenter__(self) -> Self:
         await self._client.__aenter__()

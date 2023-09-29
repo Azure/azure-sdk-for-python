@@ -130,6 +130,8 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         self._policies = self._configure_policies(hosts=self._hosts, **kwargs)
         if self._cosmos_endpoint:
             self._policies.insert(0, CosmosPatchTransformPolicy())
+        
+        self._api_version =  get_api_version(kwargs, "2019-02-02")
 
     def _format_url(self, hostname):
         """Format the endpoint URL according to the current location
@@ -223,7 +225,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         :return: The Storage API version.
         :type: str
         """
-        return self._client._config.version  # type: ignore # pylint: disable=protected-access
+        return self._api_version
 
 
 class TablesBaseClient(AccountHostsMixin):
@@ -258,8 +260,7 @@ class TablesBaseClient(AccountHostsMixin):
         :paramtype api_version: str or None
         """
         super(TablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)
-        self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), **kwargs)
-        self._client._config.version = get_api_version(kwargs, self._client._config.version)  # type: ignore[assignment] # pylint: disable=protected-access
+        self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), version=self._api_version, **kwargs)
 
     def __enter__(self) -> Self:
         self._client.__enter__()
