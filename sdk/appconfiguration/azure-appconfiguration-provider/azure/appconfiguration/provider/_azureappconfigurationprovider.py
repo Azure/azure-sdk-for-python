@@ -79,7 +79,7 @@ def load(
      is provided.
     :paramtype keyvault_credential: ~azure.core.credentials.TokenCredential
     :keyword keyvault_client_configs: A Mapping of SecretClient endpoints to client configurations from
-     azure-keyvault-secrets. This is optional if credential is provided. If a credential isn't provided a credential
+     azure-keyvault-secrets. This is optional if keyvault_credential is provided. If a credential isn't provided a credential
      will need to be in each set for each.
     :paramtype keyvault_client_configs: Mapping[Url, Mapping]
     :keyword secret_resolver: A function that takes a URI and returns a value.
