@@ -6,7 +6,7 @@
 import warnings
 from datetime import datetime
 from enum import Enum
-from typing import Any, List, Mapping, Optional, Union
+from typing import Any, List, Mapping, Optional, Union, cast
 
 from azure.core import CaseInsensitiveEnumMeta
 from ._generated.models import (
@@ -429,10 +429,10 @@ class GetManifestResult:
     digest: str
     """The manifest's digest, calculated by the registry."""
 
-    def __init__(self, *, manifest: Mapping[str, Any], media_type: str, digest: str) -> None:
-        self.manifest = manifest
-        self.media_type = media_type
-        self.digest = digest
+    def __init__(self, ** kwargs) -> None:
+        self.manifest = cast(Mapping[str, Any], kwargs.get("manifest"))
+        self.media_type = str(kwargs.get("media_type"))
+        self.digest = str(kwargs.get("digest"))
 
 
 class DigestValidationError(ValueError):
