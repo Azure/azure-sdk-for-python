@@ -117,10 +117,10 @@ def _default_instrumentation_options(configurations):
     for lib_name in _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES:
         disabled_by_env_var = lib_name in disabled_instrumentation
         default = {"enabled": not disabled_by_env_var}
-        merged_instrumentation_options[lib_name] = instrumentation_options.get(lib_name, {}) | default
+        merged_instrumentation_options[lib_name] = default | instrumentation_options.get(lib_name, {})
     for lib_name in _PREVIEW_INSTRUMENTED_LIBRARIES:
         default = {"enabled": False}
-        merged_instrumentation_options[lib_name] = instrumentation_options.get(lib_name, {}) | default
+        merged_instrumentation_options[lib_name] = default | instrumentation_options.get(lib_name, {})
 
     configurations[INSTRUMENTATION_OPTIONS_ARG] = merged_instrumentation_options
 
