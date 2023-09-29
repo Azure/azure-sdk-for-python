@@ -31,7 +31,7 @@ class MonitoringTarget:
     def __init__(
         self,
         *,
-        ml_task: Union[str, MonitorTargetTasks],
+        ml_task: Optional[Union[str, MonitorTargetTasks]] = None,
         endpoint_deployment_id: Optional[str] = None,
         model_id: Optional[str] = None,
     ):
@@ -41,7 +41,7 @@ class MonitoringTarget:
 
     def _to_rest_object(self) -> RestMonitoringTarget:
         return RestMonitoringTarget(
-            task_type=self.ml_task,
+            task_type=self.ml_task if self.ml_task else "classification",
             deployment_id=self.endpoint_deployment_id,
             model_id=self.model_id,
         )

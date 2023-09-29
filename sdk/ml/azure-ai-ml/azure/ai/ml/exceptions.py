@@ -89,6 +89,7 @@ class ErrorTarget:
     FEATURE_SET = "FeatureSet"
     FEATURE_STORE_ENTITY = "FeatureStoreEntity"
     POLICY = "Policy"
+    MODEL_MONITORING = "ModelMonitoring"
 
 
 class MlException(AzureError):

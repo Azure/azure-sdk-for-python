@@ -6,6 +6,10 @@
 
 ### Breaking Changes
 
+> These changes do not impact the API of stable versions such as 11.3.0.
+> Only code written against a beta version such as 11.4.0b6 may be affected.
+- Renamed `vector_search_configuration` to `vector_search_profile` in `SearchField`.
+
 ### Bugs Fixed
 
 ### Other Changes

@@ -27,7 +27,7 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import MySQLManagementClientMixinABC, _convert_request, _format_url_section
+from .._vendor import MySQLManagementClientMixinABC, _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -36,7 +36,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_reset_query_performance_insight_data_request(  # pylint: disable=name-too-long
+def build_reset_query_performance_insight_data_request(
     resource_group_name: str, server_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -58,7 +58,7 @@ def build_reset_query_performance_insight_data_request(  # pylint: disable=name-
         "serverName": _SERIALIZER.url("server_name", server_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -69,7 +69,7 @@ def build_reset_query_performance_insight_data_request(  # pylint: disable=name-
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_create_recommended_action_session_request(  # pylint: disable=name-too-long
+def build_create_recommended_action_session_request(
     resource_group_name: str,
     server_name: str,
     advisor_name: str,
@@ -95,7 +95,7 @@ def build_create_recommended_action_session_request(  # pylint: disable=name-too
         "advisorName": _SERIALIZER.url("advisor_name", advisor_name, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -169,7 +169,7 @@ class MySQLManagementClientOperationsMixin(MySQLManagementClientMixinABC):
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforMySQL/servers/{serverName}/resetQueryPerformanceInsightData"
     }
 
-    def _create_recommended_action_session_initial(  # pylint: disable=inconsistent-return-statements,name-too-long
+    def _create_recommended_action_session_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, server_name: str, advisor_name: str, database_name: str, **kwargs: Any
     ) -> None:
         error_map = {

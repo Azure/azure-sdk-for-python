@@ -73,10 +73,12 @@ async def run_sample():
     print("\n.. Create a role assignment")
     principal_id = os.environ["AZURE_CLIENT_ID"]
     definition_id = updated_definition.id
+    assert definition_id
     role_assignment = await client.create_role_assignment(
         scope=scope, definition_id=definition_id, principal_id=principal_id
     )
-    print("Role assignment created successfully.")
+    assert role_assignment.name
+    print(f"Role assignment {role_assignment.name} created successfully.")
 
     # Let's delete the role assignment.
     print("\n.. Delete a role assignment")

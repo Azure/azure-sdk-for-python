@@ -34,6 +34,7 @@ from azure.monitor.opentelemetry._constants import (
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
     DISABLED_INSTRUMENTATIONS_ARG,
+    LOGGER_NAME_ARG,
     SAMPLING_RATIO_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
@@ -76,6 +77,7 @@ def configure_azure_monitor(**kwargs) -> None:
      telemetry records for retry. Defaults to `False`.
     :keyword str storage_directory: Storage directory in which to store retry files. Defaults to
      `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
+    :keyword str logger_name: The name of the Python logger that telemetry will be collected.
     :rtype: None
     """
 
@@ -138,7 +140,8 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     )
     get_logger_provider().add_log_record_processor(log_record_processor)
     handler = LoggingHandler(logger_provider=get_logger_provider())
-    getLogger().addHandler(handler)
+    logger_name = configurations[LOGGER_NAME_ARG]
+    getLogger(logger_name).addHandler(handler)
 
 
 def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
