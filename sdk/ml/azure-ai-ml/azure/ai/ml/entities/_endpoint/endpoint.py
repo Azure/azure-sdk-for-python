@@ -82,10 +82,6 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
         super().__init__(name, description, tags, properties, **kwargs)
         self.auth_mode = auth_mode
         self.location = location
-        self.description: Optional[str] = None
-        self.traffic: Any = None
-        self.mirror_traffic: Any = None
-        self.defaults: Any = None
 
     @property
     def scoring_uri(self) -> Optional[str]:
