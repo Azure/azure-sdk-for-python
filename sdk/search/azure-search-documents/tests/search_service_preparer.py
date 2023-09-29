@@ -162,6 +162,7 @@ def search_decorator(*, schema, index_batch):
             return func(*args, **trimmed_kwargs)
 
         return wrapper
+
     return decorator
 
 
