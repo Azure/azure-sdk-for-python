@@ -4,7 +4,7 @@
 
 # pylint: disable=redefined-builtin,disable=unused-argument
 
-from typing import Dict
+from typing import Any, Dict, Optional
 
 from azure.ai.ml.entities._feature_set.source_process_code_metadata import SourceProcessCodeMetadata
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
@@ -19,11 +19,11 @@ class SourceMetadata(object):
         *,
         type: str,
         timestamp_column: TimestampColumnMetadata,
-        path: str = None,
-        source_delay: DelayMetadata = None,
-        source_process_code: SourceProcessCodeMetadata = None,
-        dict: Dict = None,
-        **kwargs,
+        path: Optional[str] = None,
+        source_delay: Optional[DelayMetadata] = None,
+        source_process_code: Optional[SourceProcessCodeMetadata] = None,
+        dict: Optional[Dict] = None,
+        **kwargs: Any,
     ):
         if type != "custom":
             if not (path and not dict and not source_process_code):

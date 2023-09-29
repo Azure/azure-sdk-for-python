@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 from enum import Enum
+from typing import Any
 
 from azure.ai.ml._utils._experimental import experimental
 from azure.core import CaseInsensitiveEnumMeta
@@ -31,5 +32,5 @@ class DataColumnType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DATETIME = "datetime"
     BOOLEAN = "boolean"
 
-    def __str__(self):
+    def __str__(self) -> Any:
         return self.value

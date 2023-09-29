@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from datetime import datetime, timedelta
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import FeaturesetJob as RestFeaturesetJob
 from azure.ai.ml._utils._experimental import experimental
@@ -47,7 +47,8 @@ class FeatureSetMaterializationMetadata(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        type: MaterializationType,  # pylint: disable=redefined-builtin
+        # pylint: disable=redefined-builtin
+        type: Optional[MaterializationType],
         feature_window_start_time: Optional[datetime],
         feature_window_end_time: Optional[datetime],
         name: Optional[str],
@@ -56,8 +57,9 @@ class FeatureSetMaterializationMetadata(RestTranslatableMixin):
         duration: Optional[timedelta],
         status: Optional[str],
         tags: Optional[Dict[str, str]],
-        **kwargs  # pylint: disable=unused-argument
-    ) -> None:
+        # pylint: disable=unused-argument
+        **kwargs: Any,
+    ):
         self.type = type
         self.feature_window_start_time = feature_window_start_time
         self.feature_window_end_time = feature_window_end_time
@@ -69,7 +71,7 @@ class FeatureSetMaterializationMetadata(RestTranslatableMixin):
         self.tags = tags
 
     @classmethod
-    def _from_rest_object(cls, obj: RestFeaturesetJob) -> "FeatureSetMaterializationMetadata":
+    def _from_rest_object(cls, obj: RestFeaturesetJob) -> Optional["FeatureSetMaterializationMetadata"]:
         if not obj:
             return None
         return FeatureSetMaterializationMetadata(
