@@ -18,9 +18,19 @@ from ci_tools.variables import in_ci
 from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import get_config_setting, discover_prebuilt_package
 from ci_tools.build import cleanup_build_artifacts, create_package
+from ci_tools.parsing import ParsedSetup, parse_require
+from ci_tools.functions import get_package_from_repo, find_whl, get_pip_list_output
 
 
-def clean_environment():
+def clean_environment(
+    package_folder: str, excluded_packages: List[str] = ["azure-sdk-tools", "azure-devtools"]
+) -> None:
+    """
+    Takes an existing temp directory which contains a scenario_<scenarioname>_pin file. This file is the result of a pip freeze()
+    operation _after_ the scenario file has been installed.
+    """
+    # find a previous scenario file
+    # uninstall each package within it (TODO: excluding azure-sdk-tools?)
     pass
 
 
@@ -56,6 +66,136 @@ def clean_test_environment(freeze_file: str) -> None:
 
     with open(freeze_file, "r", encoding="utf-8") as f:
         f.readlines()
+
+
+def create_package_and_install(
+    distribution_directory: str,
+    target_setup: str,
+    skip_install: bool,
+    cache_dir: str,
+    work_dir: str,
+    force_create: bool,
+    package_type: str,
+    pre_download_disabled: bool,
+) -> None:
+    """
+    Workhorse for singular package installation given a package and a possible prebuilt wheel directory. Handles installation of both package AND dependencies, handling compatibility
+    issues where possible.
+    """
+    commands_options = []
+    built_pkg_path = ""
+    setup_py_path = os.path.join(target_setup, "setup.py")
+    additional_downloaded_reqs = []
+
+    if not os.path.exists(distribution_directory):
+        os.mkdir(distribution_directory)
+
+    tmp_dl_folder = os.path.join(distribution_directory, "dl")
+    if not os.path.exists(tmp_dl_folder):
+        os.mkdir(tmp_dl_folder)
+
+    # preview version is enabled when installing dev build so pip will install dev build version from devpos feed
+    if os.getenv("SetDevVersion", "false") == "true":
+        commands_options.append("--pre")
+
+    if cache_dir:
+        commands_options.extend(["--cache-dir", cache_dir])
+
+    discovered_packages = discover_packages(
+        setup_py_path, distribution_directory, target_setup, package_type, force_create
+    )
+    breakpoint()
+    if skip_install:
+        logging.info("Flag to skip install whl is passed. Skipping package installation")
+    else:
+        for built_package in discovered_packages:
+            if os.getenv("PREBUILT_WHEEL_DIR") is not None and not force_create:
+                # find the prebuilt package in the set of prebuilt wheels
+                package_path = os.path.join(os.environ["PREBUILT_WHEEL_DIR"], built_package)
+                if os.path.isfile(package_path):
+                    built_pkg_path = package_path
+                    logging.info("Installing {w} from directory".format(w=built_package))
+                # it does't exist, so we need to error out
+                else:
+                    logging.error("{w} not present in the prebuilt package directory. Exiting.".format(w=built_package))
+                    exit(1)
+            else:
+                built_pkg_path = os.path.abspath(os.path.join(distribution_directory, built_package))
+                logging.info("Installing {w} from fresh built package.".format(w=built_package))
+
+            if not pre_download_disabled:
+                requirements = ParsedSetup.from_path(os.path.join(os.path.abspath(target_setup), "setup.py")).requires
+                azure_requirements = [req.split(";")[0] for req in requirements if req.startswith("azure")]
+
+                if azure_requirements:
+                    logging.info(
+                        "Found {} azure requirement(s): {}".format(len(azure_requirements), azure_requirements)
+                    )
+
+                    download_command = [
+                        sys.executable,
+                        "-m",
+                        "pip",
+                        "download",
+                        "-d",
+                        tmp_dl_folder,
+                        "--no-deps",
+                    ]
+
+                    installation_additions = []
+
+                    # only download a package if the requirement is not already met, so walk across
+                    # direct install_requires
+                    for req in azure_requirements:
+                        addition_necessary = True
+                        # get all installed packages
+                        installed_pkgs = get_pip_list_output()
+
+                        # parse the specifier
+                        req_name, req_specifier = parse_require(req)
+
+                        # if we have the package already present...
+                        if req_name in installed_pkgs:
+                            # if there is no specifier for the requirement, we can ignore it
+                            if req_specifier is None:
+                                addition_necessary = False
+
+                            # ...do we need to install the new version? if the existing specifier matches, we're fine
+                            if req_specifier is not None and installed_pkgs[req_name] in req_specifier:
+                                addition_necessary = False
+
+                        if addition_necessary:
+                            # we only want to add an additional rec for download if it actually exists
+                            # in the upstream feed (either dev or pypi)
+                            # if it doesn't, we should just install the relative dep if its an azure package
+                            installation_additions.append(req)
+
+                    if installation_additions:
+                        non_present_reqs = []
+                        for addition in installation_additions:
+                            try:
+                                subprocess.check_call(
+                                    download_command + [addition] + commands_options,
+                                    env=dict(os.environ, PIP_EXTRA_INDEX_URL=""),
+                                )
+                            except subprocess.CalledProcessError as e:
+                                req_name, req_specifier = parse_require(addition)
+                                non_present_reqs.append(req_name)
+
+                        additional_downloaded_reqs = [
+                            os.path.abspath(os.path.join(tmp_dl_folder, pth)) for pth in os.listdir(tmp_dl_folder)
+                        ] + [get_package_from_repo(relative_req).folder for relative_req in non_present_reqs]
+
+            commands = [sys.executable, "-m", "pip", "install", built_pkg_path]
+            commands.extend(additional_downloaded_reqs)
+            commands.extend(commands_options)
+
+            if work_dir and os.path.exists(work_dir):
+                logging.info("Executing command from {0}:{1}".format(work_dir, commands))
+                subprocess.check_call(commands, cwd=work_dir)
+            else:
+                subprocess.check_call(commands)
+            logging.info("Installed {w}".format(w=built_package))
 
 
 def replace_dev_reqs(file: str, pkg_root: str) -> None:
@@ -95,10 +235,12 @@ def replace_dev_reqs(file: str, pkg_root: str) -> None:
         f.write("\n".join(adjusted_req_lines))
 
 
-def discover_packages(setuppy_path, args):
+def discover_packages(
+    setuppy_path: str, distribution_directory: str, target_setup: str, package_type: str, force_create: bool
+):
     packages = []
-    if os.getenv("PREBUILT_WHEEL_DIR") is not None and not args.force_create:
-        packages = discover_prebuilt_package(os.getenv("PREBUILT_WHEEL_DIR"), setuppy_path, args.package_type)
+    if os.getenv("PREBUILT_WHEEL_DIR") is not None and not force_create:
+        packages = discover_prebuilt_package(os.getenv("PREBUILT_WHEEL_DIR"), setuppy_path, package_type)
         pkg = ParsedSetup.from_path(setuppy_path)
 
         if not packages:
@@ -111,9 +253,9 @@ def discover_packages(setuppy_path, args):
     else:
         packages = build_and_discover_package(
             setuppy_path,
-            args.distribution_directory,
-            args.target_setup,
-            args.package_type,
+            distribution_directory,
+            target_setup,
+            package_type,
         )
     return packages
 
@@ -159,7 +301,6 @@ def build_whl_for_req(req: str, package_path: str) -> str:
     :param str package_path: the absolute path to the package's root
     :return: The absolute path to the whl built or the requirement if a third-party package
     """
-    from ci_tools.build import create_package
 
     if ".." in req:
         # Create temp path if it doesn't exist

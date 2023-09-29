@@ -55,7 +55,7 @@ def test_optional_specific_get():
             'additional_pytest_args': ['-k', 'not *_async.py']
         }
     ]
-    
+
     assert expected == actual
 
 
@@ -66,7 +66,11 @@ def test_optional_specific_get_no_result():
 
     assert expected == actual
 
-ZERO_OPTION_EXPECTED_INSTALL_FILE_NR = """blah
+ZERO_OPTION_EXPECTED_INSTALL_FILE_NR = """-e ../../../../../../tools/azure-sdk-tools
+../../../../../../sdk/core/azure-core
+-e ../../../../../../tools/azure-devtools
+aiohttp
+requests
 blah2
 blah3
 """
@@ -120,3 +124,24 @@ def test_file_generation(path: str, env: str, expected: str):
     except:
         pass
     assert content == expected
+
+
+def test_invocation_errors_on_incompatible_uninstall():
+    # need to ensure that we actually fail a situation where we break imports by uninstalling a dependency of azure-core
+    pass
+
+def test_empty_environment_cleanup():
+    scenario_folder = os.path.join(integration_folder, 'scenarios', 'no_existing_scenario_file')
+    pass
+
+def test_standard_scenario_cleanup():
+    scenario_folder = os.path.join(integration_folder, 'scenarios', 'single_existing_scenario_file')
+    pass
+
+def test_earlyexit_scenario_cleanup():
+    """
+    Normally the scenario file from a previous invocation is _immediately_ cleaned up by the next optional run. The only way it would
+    not be is if we had messed something up. In that case, we should just take a simple join() of the pip_freeze() results.
+    """
+    scenario_folder = os.path.join(integration_folder, 'scenarios', 'multiple_existing_scenario_file')
+    pass
