@@ -7,7 +7,7 @@ import hashlib
 from typing import AsyncIterator, AsyncContextManager, Awaitable, cast, Tuple, Dict, Any
 from typing_extensions import Protocol
 from azure.core.pipeline import PipelineResponse
-from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.rest import HttpRequest, AsyncHttpResponse
 from .._models import DigestValidationError
 
 
@@ -25,7 +25,7 @@ class AsyncDownloadBlobStream(
     def __init__(
         self,
         *,
-        response: PipelineResponse[HttpRequest, HttpResponse],
+        response: PipelineResponse[HttpRequest, AsyncHttpResponse],
         get_next: AsyncGetNext,
         blob_size: int,
         downloaded: int,
