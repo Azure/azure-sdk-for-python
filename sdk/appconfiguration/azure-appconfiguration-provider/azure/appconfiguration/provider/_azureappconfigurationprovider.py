@@ -163,11 +163,13 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
 
     # Removing use of AzureAppConfigurationKeyVaultOptions
     if (
-        "keyvault_credential" not in kwargs
-        and "secret_resolver" not in kwargs
-        and "keyvault_client_configs" not in kwargs
+        ("keyvault_credential" in kwargs
+        or "secret_resolver" in kwargs
+        or "keyvault_client_configs" in kwargs) 
         and key_vault_options
     ):
+        raise ValueError("Key Vault configurations should only be set by either the key_vault_options or kwargs not both.")
+    if key_vault_options:
         if "keyvault_credential" not in kwargs:
             kwargs["keyvault_credential"] = key_vault_options.credential
         if "secret_resolver" not in kwargs:
