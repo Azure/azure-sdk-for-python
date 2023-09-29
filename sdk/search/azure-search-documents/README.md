@@ -310,7 +310,7 @@ endpoint = os.environ["SEARCH_ENDPOINT"]
 key = os.environ["SEARCH_API_KEY"]
 credential = DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_CHINA)
 
-search_client = SearchClient(endpoint, index_name, crdential=credential, audience="https://search.azure.cn")
+search_client = SearchClient(endpoint, index_name, credential=credential, audience="https://search.azure.cn")
 ```
 
 ### Retrieving a specific document from your index

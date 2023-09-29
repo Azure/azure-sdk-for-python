@@ -18,7 +18,7 @@ class ComputeRuntime(RestTranslatableMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_compute.py
+        .. literalinclude:: ../samples/ml_samples_compute.py
             :start-after: [START compute_runtime]
             :end-before: [END compute_runtime]
             :language: python
