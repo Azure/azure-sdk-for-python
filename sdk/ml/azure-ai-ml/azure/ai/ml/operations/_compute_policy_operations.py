@@ -35,7 +35,7 @@ class ComputePolicyOperations(_ScopeDependentOperations):
     @distributed_trace
     @monitor_with_activity(logger, "Policy.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, policy: Policy) -> Policy:
-        scope = policy.arm_scope
+        scope = policy.scope
         subscription_id, resource_group_name, workspace_name = self.__get_scope_values(scope)
 
         policy_rest_obj = policy._to_rest_object()
@@ -51,13 +51,13 @@ class ComputePolicyOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "Policy.List", ActivityType.PUBLICAPI)
-    def list(self, workspace=None, scope=None) -> Iterable[Policy]:
+    def list(self, workspace_name=None, scope=None) -> Iterable[Policy]:
         if scope is not None:
             subscription_id, resource_group_name, workspace_name = self.__get_scope_values(scope)
         else:
             subscription_id = self._operation_scope.subscription_id
             resource_group_name = self._operation_scope.resource_group_name
-            workspace_name = workspace or self._workspace_name
+            workspace_name = workspace_name or self._workspace_name
         
         if subscription_id is None or resource_group_name is None or workspace_name is None:
             raise ValueError("Please provide a valid scope or workspace_name or use a MLClient with a workspace set")
@@ -72,13 +72,13 @@ class ComputePolicyOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "Policy.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, workspace=None, scope=None) -> Policy:
+    def get(self, name: str, workspace_name=None, scope=None) -> Policy:
         if scope is not None:
             subscription_id, resource_group_name, workspace_name = self.__get_scope_values(scope)
         else:
             subscription_id = self._operation_scope.subscription_id
             resource_group_name = self._operation_scope.resource_group_name
-            workspace_name = workspace or self._workspace_name
+            workspace_name = workspace_name or self._workspace_name
         
         if subscription_id is None or resource_group_name is None or workspace_name is None:
             raise ValueError("Please provide a valid scope or workspace_name or use a MLClient with a workspace set")
@@ -94,13 +94,13 @@ class ComputePolicyOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "Policy.Delete", ActivityType.PUBLICAPI)
-    def delete(self, name: str, workspace=None, scope=None) -> None:
+    def delete(self, name: str, workspace_name=None, scope=None) -> None:
         if scope is not None:
             subscription_id, resource_group_name, workspace_name = self.__get_scope_values(scope)
         else:
             subscription_id = self._operation_scope.subscription_id
             resource_group_name = self._operation_scope.resource_group_name
-            workspace_name = workspace or self._workspace_name
+            workspace_name = workspace_name or self._workspace_name
         
         if subscription_id is None or resource_group_name is None or workspace_name is None:
             raise ValueError("Please provide a valid scope or workspace_name or use a MLClient with a workspace set")
@@ -114,7 +114,7 @@ class ComputePolicyOperations(_ScopeDependentOperations):
     
     def __get_scope_values(self, scope: str):
         scope = scope.split('/')
-        subscription_id = scope[2]
-        resource_group_name = scope[4]
-        workspace_name = scope[8]
+        subscription_id = scope[2] if len(scope) > 2 else None
+        resource_group_name = scope[4] if len(scope) > 4 else None
+        workspace_name = scope[8] if len(scope) > 8 else None
         return subscription_id, resource_group_name, workspace_name

@@ -14,13 +14,7 @@ from typing import IO, AnyStr, Dict, Optional, Union
 from enum import Enum
 
 @experimental
-class PolicyList(Resource):
-    pass
-
-
-@experimental
-class Policy(Resource):
-
+class Policy(object):
     class Definition(Enum):
         MaxJobInstanceCount = 'MaxJobInstanceCount'
         MaxJobExecutionTime = 'MaxJobExecutionTime'
@@ -29,6 +23,14 @@ class Policy(Resource):
         CiIdleShutdown = 'CiIdleShutdown'
         RequireCiLatestSoftware = 'RequireCiLatestSoftware'
 
+        @staticmethod
+        def get(name: str) -> "Policy.Definition":
+            try:
+                # by default try PascalCase
+                return Policy.Definition[name]
+            except KeyError:
+                # fall back to snake case
+                return Policy.Definition[name.replace("_", " ").title().replace(" ", "")]
 
     class Effect(Enum):
         Deny = 'Deny'
@@ -36,20 +38,19 @@ class Policy(Resource):
     
     def __init__(self,
                  name: str,
-                 arm_scope: str,
+                 scope: str,
                  definition: Definition,
-                 parameters: Dict[str, Any],
-                 effect: Effect,
-                 id: Optional[str] = None) -> None:
-        super().__init__(name=name)
-        self.arm_scope = arm_scope
+                 parameters: Dict[str, Any] = None,
+                 effect: Effect = None) -> None:
+        self.name = name
+        self.scope = scope
         self.definition = definition
-        self.parameters = parameters
-        self.effect = effect
+        self.parameters = parameters or {}
+        self.effect = effect or Effect.Deny
 
     def _to_rest_object(self) -> ComputePolicyRequest:
         return ComputePolicyRequest(
-            arm_scope=self.arm_scope,
+            arm_scope=self.scope,
             definition=self.definition.value,
             parameters=self.parameters,
             effect=self.effect.value,
@@ -59,39 +60,20 @@ class Policy(Resource):
     def _from_rest_object(cls, obj: ComputePolicyDto) -> "Policy":
         return Policy(
             name=obj.name,
-            arm_scope=obj.arm_scope,
+            scope=obj.arm_scope,
             parameters=obj.parameters,
             effect=Policy.Effect[obj.effect],
-            definition=Policy.Definition[obj.definition],
-            id=obj.id,
+            definition=Policy.Definition[obj.definition]
         )
 
     def __dict__(self):
         return {
-            "id": self.id,
             "name": self.name,
-            "arm_scope": self.arm_scope,
+            "scope": self.scope,
             "definition": self.definition,
             "parameters": self.parameters,
             "effect": self.effect,
         }
 
-    @classmethod
-    def _load(
-        cls,
-        data: Optional[Dict] = None,
-        yaml_path: Optional[Union[PathLike, str]] = None,
-        params_override: Optional[list] = None,
-        **kwargs,
-    ) -> "Policy":
-        pass
-
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
-        """Dump the object content into a file.
-
-        :param dest: The local path or file stream to write the YAML content to.
-            If dest is a file path, a new file will be created.
-            If dest is an open file, the file will be written to directly.
-        :type dest: Union[PathLike, str, IO[AnyStr]]
-        """
-        pass
+    def _to_dict(self):
+        return self.__dict__()
