@@ -1,3 +1,3 @@
-from .generator import entrypoint
+from .generation import entrypoint
 
 __all__ = ["entrypoint"]

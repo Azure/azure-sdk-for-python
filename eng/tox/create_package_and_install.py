@@ -20,66 +20,12 @@ from pkg_resources import parse_version
 
 from tox_helper_tasks import get_pip_list_output
 from ci_tools.parsing import ParsedSetup, parse_require
-from ci_tools.build import create_package
-from ci_tools.functions import get_package_from_repo, find_whl, find_sdist, discover_prebuilt_package
-from ci_tools.variables import in_ci
+from ci_tools.functions import get_package_from_repo
 
 logging.getLogger().setLevel(logging.INFO)
 
 from ci_tools.parsing import ParsedSetup
-
-
-def cleanup_build_artifacts(build_folder):
-    # clean up egginfo
-    results = glob.glob(os.path.join(build_folder, "*.egg-info"))
-
-    if results:
-        print(results[0])
-        shutil.rmtree(results[0])
-
-    # clean up build results
-    build_path = os.path.join(build_folder, "build")
-    if os.path.exists(build_path):
-        shutil.rmtree(build_path)
-
-
-def discover_packages(setuppy_path, args):
-    packages = []
-    if os.getenv("PREBUILT_WHEEL_DIR") is not None and not args.force_create:
-        packages = discover_prebuilt_package(os.getenv("PREBUILT_WHEEL_DIR"), setuppy_path, args.package_type)
-        pkg = ParsedSetup.from_path(setuppy_path)
-
-        if not packages:
-            logging.error(
-                "Package is missing in prebuilt directory {0} for package {1} and version {2}".format(
-                    os.getenv("PREBUILT_WHEEL_DIR"), pkg.name, pkg.version
-                )
-            )
-            exit(1)
-    else:
-        packages = build_and_discover_package(
-            setuppy_path,
-            args.distribution_directory,
-            args.target_setup,
-            args.package_type,
-        )
-    return packages
-
-
-def build_and_discover_package(setuppy_path, dist_dir, target_setup, package_type):
-    if package_type == "wheel":
-        create_package(setuppy_path, dist_dir, enable_sdist=False)
-    else:
-        create_package(setuppy_path, dist_dir, enable_wheel=False)
-
-    prebuilt_packages = [
-        f for f in os.listdir(args.distribution_directory) if f.endswith(".whl" if package_type == "wheel" else ".tar.gz")
-    ]
-
-    if not in_ci():
-        logging.info("Cleaning up build directories and files")
-        cleanup_build_artifacts(target_setup)
-    return prebuilt_packages
+from ci_tools.scenario.generation import discover_packages
 
 
 if __name__ == "__main__":

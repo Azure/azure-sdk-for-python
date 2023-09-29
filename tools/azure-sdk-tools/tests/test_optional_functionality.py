@@ -3,7 +3,7 @@ import pytest
 
 from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import get_config_setting
-from ci_tools.scenario.generator import create_scenario_file
+from ci_tools.scenario.generation import create_scenario_file
 
 integration_folder = os.path.join(os.path.dirname(__file__), 'integration')
 
@@ -24,13 +24,13 @@ def test_toml_result():
                 'name': 'no_requests',
                 'install': [],
                 'uninstall': ['requests'],
-                'additional_pytest_args': []
+                'additional_pytest_args': ['-k', '*_async.py']
             },
             {
                 'name': 'no_aiohttp', 
                 'install': [], 
                 'uninstall': ['aiohttp'], 
-                'additional_pytest_args': []
+                'additional_pytest_args': ['-k', 'not *_async.py']
             }
         ]
     }
@@ -41,20 +41,28 @@ def test_toml_result():
 def test_optional_specific_get():
     package_with_toml = os.path.join(integration_folder, 'scenarios', 'optional_environment_two_options')
     actual = get_config_setting(package_with_toml, 'optional')
-    expected = [
-                {
-                    'name': 'no_requests',
-                    'install': [],
-                    'uninstall': ['requests'],
-                    'additional_pytest_args': []
-                },
-                {
-                    'name': 'no_aiohttp', 
-                    'install': [], 
-                    'uninstall': ['aiohttp'], 
-                    'additional_pytest_args': []
-                }
-            ]
+    expected = {
+        'mypy': True,
+        'type_check_samples': True,
+        'verifytypes': True,
+        'pyright': True,
+        'pylint': True,
+        'black': True,
+        'optional':[
+            {
+                'name': 'no_requests',
+                'install': [],
+                'uninstall': ['requests'],
+                'additional_pytest_args': ['-k', '*_async.py']
+            },
+            {
+                'name': 'no_aiohttp', 
+                'install': [], 
+                'uninstall': ['aiohttp'], 
+                'additional_pytest_args': ['-k', 'not *_async.py']
+            }
+        ]
+    }
 
     assert expected == actual
 
@@ -66,28 +74,43 @@ def test_optional_specific_get_no_result():
 
     assert expected == actual
 
-ZERO_OPTION_EXPECTED_INSTALL_FILE = """blah
+ZERO_OPTION_EXPECTED_INSTALL_FILE_NR = """blah
 blah2
 blah3
 """
 
-ONE_OPTION_EXPECTED_INSTALL_FILE = """blah
+ONE_OPTION_EXPECTED_INSTALL_FILE_NR = """blah
 blah2
 blah3
 """
 
-TWO_OPTION_EXPECTED_INSTALL_FILE = """blah
+TWO_OPTION_EXPECTED_INSTALL_FILE_NR = """blah
+blah2
+blah3
+"""
+
+ZERO_OPTION_EXPECTED_INSTALL_FILE_NA = """blah
+blah2
+blah3
+"""
+
+ONE_OPTION_EXPECTED_INSTALL_FILE_NA = """blah
+blah2
+blah3
+"""
+
+TWO_OPTION_EXPECTED_INSTALL_FILE_NA = """blah
 blah2
 blah3
 """
 
 @pytest.mark.parametrize("path,env,expected", [
-    ("optional_environment_zero_options", "no_requests", ZERO_OPTION_EXPECTED_INSTALL_FILE),
-    ("optional_environment_one_option", "no_requests", ONE_OPTION_EXPECTED_INSTALL_FILE),
-    ("optional_environment_two_options", "no_requests", TWO_OPTION_EXPECTED_INSTALL_FILE),
-    ("optional_environment_zero_options", "no_aiohttp", ZERO_OPTION_EXPECTED_INSTALL_FILE),
-    ("optional_environment_one_option", "no_aiohttp", ONE_OPTION_EXPECTED_INSTALL_FILE),
-    ("optional_environment_two_options", "no_aiohttp", TWO_OPTION_EXPECTED_INSTALL_FILE),
+    ("optional_environment_zero_options", "no_requests", ZERO_OPTION_EXPECTED_INSTALL_FILE_NR),
+    ("optional_environment_one_option", "no_requests", ONE_OPTION_EXPECTED_INSTALL_FILE_NR),
+    ("optional_environment_two_options", "no_requests", TWO_OPTION_EXPECTED_INSTALL_FILE_NR),
+    ("optional_environment_zero_options", "no_aiohttp", ZERO_OPTION_EXPECTED_INSTALL_FILE_NA),
+    ("optional_environment_one_option", "no_aiohttp", ONE_OPTION_EXPECTED_INSTALL_FILE_NA),
+    ("optional_environment_two_options", "no_aiohttp", TWO_OPTION_EXPECTED_INSTALL_FILE_NA),
 ])
 def test_file_generation(path: str, env: str, expected: str):
     scenario_folder = os.path.join(integration_folder, 'scenarios', path)
