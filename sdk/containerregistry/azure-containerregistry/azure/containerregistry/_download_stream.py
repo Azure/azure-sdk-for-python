@@ -5,7 +5,7 @@
 # ------------------------------------
 import hashlib
 from typing import Iterator, ContextManager, cast, Tuple, Dict, Any
-from typing_extensions import Protocol, Self
+from typing_extensions import Protocol
 from azure.core.pipeline import PipelineResponse
 from ._models import DigestValidationError
 
@@ -40,13 +40,13 @@ class DownloadBlobStream(
         self._chunk_size = chunk_size
         self._hasher = hashlib.sha256()
 
-    def __enter__(self) -> Self:
+    def __enter__(self) -> "DownloadBlobStream":
         return self
 
     def __exit__(self, *args: Any) -> None:
         self.close()
 
-    def __iter__(self) -> Self:
+    def __iter__(self) -> "DownloadBlobStream":
         return self
 
     def _yield_data(self) -> bytes:

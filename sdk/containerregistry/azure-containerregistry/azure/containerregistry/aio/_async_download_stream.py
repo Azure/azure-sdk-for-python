@@ -5,7 +5,7 @@
 # ------------------------------------
 import hashlib
 from typing import AsyncIterator, AsyncContextManager, Awaitable, cast, Tuple, Dict, Any
-from typing_extensions import Protocol, Self
+from typing_extensions import Protocol
 from azure.core.pipeline import PipelineResponse
 from .._models import DigestValidationError
 
@@ -40,13 +40,13 @@ class AsyncDownloadBlobStream(
         self._chunk_size = chunk_size
         self._hasher = hashlib.sha256()
 
-    async def __aenter__(self) -> Self:
+    async def __aenter__(self) -> "AsyncDownloadBlobStream":
         return self
 
     async def __aexit__(self, *args: Any) -> None:
         await self.close()
 
-    def __aiter__(self) -> Self:
+    def __aiter__(self) -> "AsyncDownloadBlobStream":
         return self
 
     async def _yield_data(self) -> bytes:
