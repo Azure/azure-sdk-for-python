@@ -65,7 +65,7 @@ def main():
         print("")
 
         # [START list_configuration_settings_for_snapshot]
-        for config_setting in client.list_configuration_settings_for_snapshot(snapshot_name=snapshot_name):
+        for config_setting in client.list_configuration_settings(snapshot_name=snapshot_name):
             print_configuration_setting(config_setting)
         # [END list_configuration_settings_for_snapshot]
 

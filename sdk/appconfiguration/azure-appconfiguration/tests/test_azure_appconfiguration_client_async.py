@@ -970,7 +970,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         created_snapshot = await response.result()
         assert created_snapshot.status == "ready"
 
-        items = await self.convert_to_list(self.client.list_configuration_settings_for_snapshot(snapshot_name))
+        items = await self.convert_to_list(self.client.list_configuration_settings(snapshot_name=snapshot_name))
         assert len(items) == 1
 
         await self.tear_down()

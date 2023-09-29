@@ -10,7 +10,7 @@
 - Rename model `Snapshot` property `items_count` to `item_count`.
 - Publish enum `SnapshotStatus`, and accept the type for `status` parameter in `list_snapshots()` and `status` property in `Snapshot` model.
 - Rename model `ConfigurationSettingFilter` to `ConfigurationSettingsFilter`.
-- Rename operation `list_snapshot_configuration_settings()` to `list_configuration_settings_for_snapshot()`.
+- Change operation `list_snapshot_configuration_settings()` to an overload of `list_configuration_settings()`, and change the parameter `snapshot_name` to keyword.
 
 ### Bugs Fixed
 

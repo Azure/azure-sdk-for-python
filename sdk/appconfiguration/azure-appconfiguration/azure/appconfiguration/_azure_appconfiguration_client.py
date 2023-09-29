@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import binascii
 import sys
-from typing import Any, Dict, List, Mapping, Optional, Union, cast
+from typing import Any, Dict, List, Mapping, Optional, Union, cast, overload
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.credentials import TokenCredential
@@ -152,9 +152,9 @@ class AzureAppConfigurationClient:
 
         return Pipeline(transport, policies)
 
-    @distributed_trace
+    @overload
     def list_configuration_settings(
-        self, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs
+        self, *, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs
     ) -> ItemPaged[ConfigurationSetting]:
         """List the configuration settings stored in the configuration service, optionally filtered by
         key, label and accept_datetime.
@@ -190,20 +190,47 @@ class AzureAppConfigurationClient:
             for item in filtered_listed:
                 pass  # do something
         """
+    
+    @overload
+    def list_configuration_settings(
+        self, *, snapshot_name: str, fields: Optional[List[str]] = None, **kwargs
+    ) -> ItemPaged[ConfigurationSetting]:
+        """List the configuration settings stored under a snapshot in the configuration service, optionally filtered by
+        fields to present in return.
+
+        :param str snapshot_name: The snapshot name.
+        :keyword fields: Specify which fields to include in the results. Leave None to include all fields.
+        :type fields: list[str] or None
+        :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
+        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.ConfigurationSetting]
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        """
+    
+    @distributed_trace
+    def list_configuration_settings(self, **kwargs) -> ItemPaged[ConfigurationSetting]:
         select = kwargs.pop("fields", None)
         if select:
             select = ["locked" if x == "read_only" else x for x in select]
-
+        snapshot_name = kwargs.pop("snapshot_name", None)
+        
         try:
-            return self._impl.get_key_values(  # type: ignore
-                label=label_filter,
-                key=key_filter,
-                select=select,
-                cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
-                **kwargs
-            )
+            if snapshot_name is not None:
+                return self._impl.get_key_values(  # type: ignore
+                    snapshot=snapshot_name,
+                    select=select,
+                    cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
+                    **kwargs
+                )
+            else:
+                return self._impl.get_key_values(  # type: ignore
+                    key=kwargs.pop("key_filter", None),
+                    label=kwargs.pop("label_filter", None),
+                    select=select,
+                    cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
+                    **kwargs
+                )
         except binascii.Error as exc:
-            raise binascii.Error("Connection string secret has incorrect padding") from exc
+            raise binascii.Error("Connection string secret has incorrect padding") from exc    
 
     @distributed_trace
     def get_configuration_setting(
@@ -727,33 +754,6 @@ class AzureAppConfigurationClient:
                 select=fields,
                 status=status,
                 cls=lambda objs: [Snapshot._from_generated(x) for x in objs],
-                **kwargs
-            )
-        except binascii.Error:
-            raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
-
-    @distributed_trace
-    def list_configuration_settings_for_snapshot(
-        self, snapshot_name: str, *, fields: Optional[List[str]] = None, **kwargs
-    ) -> ItemPaged[ConfigurationSetting]:
-        """List the configuration settings stored under a snapshot in the configuration service, optionally filtered by
-        accept_datetime and fields to present in return.
-
-        :param str snapshot_name: The snapshot name.
-        :keyword fields: Specify which fields to include in the results. Leave None to include all fields.
-        :type fields: list[str] or None
-        :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
-        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.ConfigurationSetting]
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
-        """
-        if fields:
-            fields = ["locked" if x == "read_only" else x for x in fields]
-
-        try:
-            return self._impl.get_key_values(  # type: ignore
-                select=fields,
-                snapshot=snapshot_name,
-                cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                 **kwargs
             )
         except binascii.Error:
