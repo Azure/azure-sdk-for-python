@@ -19,8 +19,13 @@ class AppConfigTestCase(AzureRecordedTestCase):
         keyvault_secret_url=None,
         refresh_on=None,
         refresh_interval=30,
+        secret_resolver=None,
     ):
         cred = self.get_credential(AzureAppConfigurationClient)
+        if not secret_resolver and keyvault_secret_url:
+            keyvault_cred = cred
+        else:
+            keyvault_cred = None
 
         client = AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
         setup_configs(client, keyvault_secret_url)
@@ -32,6 +37,8 @@ class AppConfigTestCase(AzureRecordedTestCase):
             refresh_on=refresh_on,
             refresh_interval=refresh_interval,
             user_agent="SDK/Integration",
+            keyvault_credential=keyvault_cred,
+            secret_resolver=secret_resolver,
         )
 
     def create_client(
@@ -42,9 +49,16 @@ class AppConfigTestCase(AzureRecordedTestCase):
         keyvault_secret_url=None,
         refresh_on=None,
         refresh_interval=30,
+        secret_resolver=None,
     ):
         client = AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
         setup_configs(client, keyvault_secret_url)
+
+        if not secret_resolver and keyvault_secret_url:
+            keyvault_cred = self.get_credential(AzureAppConfigurationClient)
+        else:
+            keyvault_cred = None
+
         return load(
             connection_string=appconfiguration_connection_string,
             trim_prefixes=trim_prefixes,
@@ -52,6 +66,8 @@ class AppConfigTestCase(AzureRecordedTestCase):
             refresh_on=refresh_on,
             refresh_interval=refresh_interval,
             user_agent="SDK/Integration",
+            keyvault_credential=keyvault_cred,
+            secret_resolver=secret_resolver,
         )
 
 
@@ -76,14 +92,15 @@ def get_configs(keyvault_secret_url):
             "application/vnd.microsoft.appconfig.ff+json;charset=utf-8",
         )
     )
-    configs.append(
-        create_config_setting(
-            "secret",
-            "prod",
-            '{"uri":"' + keyvault_secret_url + '"}',
-            "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8",
+    if keyvault_secret_url:
+        configs.append(
+            create_config_setting(
+                "secret",
+                "prod",
+                '{"uri":"' + keyvault_secret_url + '"}',
+                "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8",
+            )
         )
-    )
     return configs
 
 
