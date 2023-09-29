@@ -345,7 +345,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          messages to arrive after which the receiver will automatically stop receiving. If no messages arrive,
          and no timeout is specified, this call will not return until the connection is closed.
          The default value is None, meaning no timeout. If connection errors are occurring due to write timing out,
-         the connection timeout value may need to be adjusted. See the `socket_timeout` optional parameter for more details.
+         the connection timeout value may need to be adjusted. See the `socket_timeout`
+         optional parameter for more details.
         :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An
          ~azure.servicebus.aio.AutoLockRenewer can be provided such that messages are automatically registered on
          receipt. If the receiver is a session receiver, it will apply to the session instead.
@@ -521,7 +522,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          messages to arrive after which the receiver will automatically stop receiving. If no messages arrive,
          and no timeout is specified, this call will not return until the connection is closed.
          The default value is None, meaning no timeout. If connection errors are occurring due to write timing out,
-         the connection timeout value may need to be adjusted. See the `socket_timeout` optional parameter for more details.
+         the connection timeout value may need to be adjusted. See the `socket_timeout`
+         optional parameter for more details.
         :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An
          ~azure.servicebus.aio.AutoLockRenewer can be provided such that messages are automatically registered on
          receipt. If the receiver is a session receiver, it will apply to the session instead.
