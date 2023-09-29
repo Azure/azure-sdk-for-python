@@ -165,20 +165,14 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
         raise ValueError("Please pass either endpoint and credential, or a connection string.")
 
     # Removing use of AzureAppConfigurationKeyVaultOptions
-    if (
-        ("keyvault_credential" in kwargs
-        or "secret_resolver" in kwargs
-        or "keyvault_client_configs" in kwargs) 
-        and key_vault_options
-    ):
-        raise ValueError("Key Vault configurations should only be set by either the key_vault_options or kwargs not both.")
     if key_vault_options:
-        if "keyvault_credential" not in kwargs:
-            kwargs["keyvault_credential"] = key_vault_options.credential
-        if "secret_resolver" not in kwargs:
-            kwargs["secret_resolver"] = key_vault_options.secret_resolver
-        if "keyvault_client_configs" not in kwargs:
-            kwargs["keyvault_client_configs"] = key_vault_options.client_options
+        if "keyvault_credential" in kwargs or "secret_resolver" in kwargs or "keyvault_client_configs" in kwargs:
+            raise ValueError(
+                "Key Vault configurations should only be set by either the key_vault_options or kwargs not both."
+            )
+        kwargs["keyvault_credential"] = key_vault_options.credential
+        kwargs["secret_resolver"] = key_vault_options.secret_resolver
+        kwargs["keyvault_client_configs"] = key_vault_options.client_options
 
     if kwargs.get("keyvault_credential") is not None and kwargs.get("secret_resolver") is not None:
         raise ValueError("A keyvault credential and secret resolver can't both be configured.")
