@@ -641,10 +641,10 @@ class ServiceBusReceiver(
         :param Optional[int] max_message_count: Maximum number of messages in the batch. Actual number
          returned will depend on prefetch_count and incoming stream rate.
          Setting to None will fully depend on the prefetch config. The default value is 1.
-        :param Optional[float] max_wait_time: DEPRECATED. It is not advised to use this parameter. 
+        :param Optional[float] max_wait_time: DEPRECATED. It is not advised to use this parameter.
          If you want to set the timeout in seconds to wait for the first message to arrive
          you may specify the max_wait_time on the ServiceBusReceiver. If this parameter is specified it
-         will override the max_wait_time set on the receiver. When specified, this parameter interacts with 
+         will override the max_wait_time set on the receiver. When specified, this parameter interacts with
          the absolute operation timeout and will impact the amount of time alloted to retry the receive operation.
         :return: A list of messages received. If no messages are available, this will be an empty list.
         :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
