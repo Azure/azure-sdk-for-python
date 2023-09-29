@@ -91,7 +91,7 @@ class BulkTests(unittest.TestCase):
             id="throughput_bulk_container" + str(uuid.uuid4()),
             partition_key=PartitionKey(path="/id"), offer_throughput=1000)
         bulk_result = bulk_container.bulk(operations=operations)
-        assert len(bulk_result[0]) == 100
+        assert len(bulk_result) == 100
         assert container.client_connection.last_response_headers.get(HttpHeaders.ThrottleRetryCount) is None
 
     def test_bulk_lsn(self):
