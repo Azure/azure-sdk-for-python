@@ -691,7 +691,7 @@ class AzureAppConfigurationClient:
             raise binascii.Error("Connection string secret has incorrect padding")  # pylint: disable=raise-missing-from
 
     @distributed_trace_async
-    async def get_snapshot(self, name: str, *, fields: Optional[List[str]] = None, **kwargs) -> Snapshot:
+    async def get_snapshot(self, name: str, *, fields: Optional[List[str]] = None, **kwargs) -> ConfigurationSnapshot:
         """Get a configuration setting snapshot.
 
         :param name: The name of the configuration setting snapshot to retrieve.
