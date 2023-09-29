@@ -119,6 +119,7 @@ class TestQueryAsync:
         for pageSize in [1, 100]:
             # verify iterator
             query_iterable = created_collection.query_items_change_feed(
+                is_start_from_beginning=True,
                 continuation=continuation2,
                 max_item_count=pageSize,
                 partition_key=partition_key
@@ -133,6 +134,7 @@ class TestQueryAsync:
             # verify by_page
             # the options is not copied, therefore it need to be restored
             query_iterable = created_collection.query_items_change_feed(
+                is_start_from_beginning=True,
                 continuation=continuation2,
                 max_item_count=pageSize,
                 partition_key=partition_key
