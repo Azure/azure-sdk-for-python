@@ -83,7 +83,7 @@ class OnlineEndpoint(Endpoint):
         openapi_uri: Optional[str] = None,
         provisioning_state: Optional[str] = None,
         kind: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         """Online endpoint entity.
 
@@ -201,7 +201,10 @@ class OnlineEndpoint(Endpoint):
         return switcher.get(rest_auth_mode, rest_auth_mode)
 
     @classmethod
-    def _yaml_auth_mode_to_rest_auth_mode(cls, yaml_auth_mode: str) -> str:
+    def _yaml_auth_mode_to_rest_auth_mode(cls, yaml_auth_mode: Optional[str]) -> str:
+        if yaml_auth_mode is None:
+            return ""
+
         yaml_auth_mode = yaml_auth_mode.lower()
 
         switcher = {
@@ -260,6 +263,8 @@ class OnlineEndpoint(Endpoint):
             return NotImplemented
         if not other:
             return False
+        if self.auth_mode is None or other.auth_mode is None:
+            return False
         # only compare mutable fields
         return (
             self.name.lower() == other.name.lower()
@@ -278,7 +283,7 @@ class OnlineEndpoint(Endpoint):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "Endpoint":
         data = data or {}
         params_override = params_override or []
@@ -288,9 +293,11 @@ class OnlineEndpoint(Endpoint):
         }
 
         if data.get(EndpointYamlFields.COMPUTE) or is_compute_in_override(params_override):
-            return load_from_dict(KubernetesOnlineEndpointSchema, data, context)
+            res_kub: Endpoint = load_from_dict(KubernetesOnlineEndpointSchema, data, context)
+            return res_kub
 
-        return load_from_dict(ManagedOnlineEndpointSchema, data, context)
+        res_managed: Endpoint = load_from_dict(ManagedOnlineEndpointSchema, data, context)
+        return res_managed
 
 
 class KubernetesOnlineEndpoint(OnlineEndpoint):
@@ -334,7 +341,7 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
         compute: Optional[str] = None,
         identity: Optional[IdentityConfiguration] = None,
         kind: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         """K8s Online endpoint entity.
 
@@ -382,10 +389,11 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
     def dump(
         self,
         dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None,  # pylint: disable=unused-argument
-        **kwargs,  # pylint: disable=unused-argument
-    ) -> Dict[str, Any]:
+        **kwargs: Any,  # pylint: disable=unused-argument
+    ) -> Dict:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
-        return KubernetesOnlineEndpointSchema(context=context).dump(self)
+        res: dict = KubernetesOnlineEndpointSchema(context=context).dump(self)
+        return res
 
     def _to_rest_online_endpoint(self, location: str) -> OnlineEndpointData:
         resource = super()._to_rest_online_endpoint(location)
@@ -412,7 +420,8 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
             self.compute = other.compute or self.compute
 
     def _to_dict(self) -> Dict:
-        return KubernetesOnlineEndpointSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = KubernetesOnlineEndpointSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
 
 class ManagedOnlineEndpoint(OnlineEndpoint):
@@ -457,7 +466,7 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
         identity: Optional[IdentityConfiguration] = None,
         kind: Optional[str] = None,
         public_network_access: Optional[str] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         """Managed Online endpoint entity.
 
@@ -506,13 +515,15 @@ class ManagedOnlineEndpoint(OnlineEndpoint):
     def dump(
         self,
         dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None,  # pylint: disable=unused-argument
-        **kwargs,  # pylint: disable=unused-argument
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
-        return ManagedOnlineEndpointSchema(context=context).dump(self)
+        res: dict = ManagedOnlineEndpointSchema(context=context).dump(self)
+        return res
 
     def _to_dict(self) -> Dict:
-        return ManagedOnlineEndpointSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = ManagedOnlineEndpointSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
 
 class EndpointAuthKeys(RestTranslatableMixin):
@@ -524,7 +535,7 @@ class EndpointAuthKeys(RestTranslatableMixin):
     :vartype secondary_key: str
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any):
         """Constructor for keys for endpoint authentication.
 
         :keyword primary_key: The primary key.
@@ -556,7 +567,7 @@ class EndpointAuthToken(RestTranslatableMixin):
     :vartype token_type: str
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any):
         """Constuctor for Endpoint authentication token.
 
         :keyword access_token: Access token for endpoint authentication.
