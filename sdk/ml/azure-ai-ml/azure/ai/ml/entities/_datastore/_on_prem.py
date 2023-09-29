@@ -57,7 +57,7 @@ class HdfsDatastore(Datastore):
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
-        credentials: Union[KerberosKeytabCredentials, KerberosPasswordCredentials],
+        credentials: Optional[Union[KerberosKeytabCredentials, KerberosPasswordCredentials]],
         **kwargs: Any
     ):
         kwargs[TYPE] = DatastoreType.HDFS
