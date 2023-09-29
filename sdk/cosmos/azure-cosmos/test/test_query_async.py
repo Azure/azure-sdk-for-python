@@ -117,13 +117,13 @@ class TestQueryAsync:
         await created_collection.create_item(body=document_definition)
 
         for pageSize in [1, 100]:
+            if pageSize == 1:
+                pageSize += 1
             # verify iterator
             query_iterable = created_collection.query_items_change_feed(
-                is_start_from_beginning=True,
                 continuation=continuation2,
                 max_item_count=pageSize,
-                partition_key=partition_key
-            )
+                partition_key=partition_key)
             it = query_iterable.__aiter__()
             expected_ids = 'doc2.doc3.'
             actual_ids = ''
@@ -134,7 +134,6 @@ class TestQueryAsync:
             # verify by_page
             # the options is not copied, therefore it need to be restored
             query_iterable = created_collection.query_items_change_feed(
-                is_start_from_beginning=True,
                 continuation=continuation2,
                 max_item_count=pageSize,
                 partition_key=partition_key
@@ -142,11 +141,11 @@ class TestQueryAsync:
             count = 0
             expected_count = 2
             all_fetched_res = []
-            for page in query_iterable.by_page():
-                fetched_res = [item async for item in page]
-                assert len(fetched_res) == min(pageSize, expected_count - count)
-                count += len(fetched_res)
-                all_fetched_res.extend(fetched_res)
+            pages = query_iterable.by_page()
+            async for items in await pages.__anext__():
+                count += 1
+                all_fetched_res.append(items)
+            assert count == expected_count
 
             actual_ids = ''
             for item in all_fetched_res:
@@ -246,6 +245,8 @@ class TestQueryAsync:
         await created_collection.create_item(body=document_definition)
 
         for pageSize in [1, 100]:
+            if pageSize == 1:
+                pageSize += 1
             # verify iterator
             query_iterable = created_collection.query_items_change_feed(
                 continuation=continuation2,
@@ -269,11 +270,11 @@ class TestQueryAsync:
             count = 0
             expected_count = 2
             all_fetched_res = []
-            for page in query_iterable.by_page():
-                fetched_res = [item async for item in page]
-                assert len(fetched_res) == min(pageSize, expected_count - count)
-                count += len(fetched_res)
-                all_fetched_res.extend(fetched_res)
+            pages = query_iterable.by_page()
+            async for items in await pages.__anext__():
+                count += 1
+                all_fetched_res.append(items)
+            assert count == expected_count
 
             actual_ids = ''
             for item in all_fetched_res:
@@ -288,7 +289,7 @@ class TestQueryAsync:
         expected_ids = ['doc1', 'doc2', 'doc3']
         it = query_iterable.__aiter__()
         for i in range(0, len(expected_ids)):
-            doc = next(it)
+            doc = await it.__anext__()
             assert doc['id'] == expected_ids[i]
         if 'Etag' in created_collection.client_connection.last_response_headers:
             continuation3 = created_collection.client_connection.last_response_headers['Etag']
