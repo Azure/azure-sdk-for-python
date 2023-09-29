@@ -18,12 +18,12 @@ class DevcenterTest(AzureRecordedTestCase):
 DevcenterPowerShellPreparer = functools.partial(
     PowerShellPreparer,
     "devcenter", 
-    devcenter_endpoint="https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-dc-sdk-tests.centraluseuap.devcenter.azure.com",
-    devcenter_project_name="proj-sdk-tests",
-    devcenter_pool_name="sdk-default-pool",
-    devcenter_test_user_id="df428e89-1bc2-4e72-b736-032c31a6cd97",
-    devcenter_environment_type_name="sdk-default-environment-type",
-    devcenter_catalog_name="sdk-default-catalog",
-    devcenter_environment_definition_name="Sandbox",
-    devcenter_devbox_name="PythonDevBox",
-    devcenter_environment_name="pythonenvironment")
+    devcenter_endpoint="https://dddd3333-d3d3-3333-d3d3-dddddd333333-fake-dev-center.location.devcenter.azure.com",
+    devcenter_project_name="fake-proj",
+    devcenter_pool_name="fake-pool",
+    devcenter_test_user_id="11111111-1111-1111-1111-111111111111",
+    devcenter_environment_type_name="fake-environment-type",
+    devcenter_catalog_name="fake-catalog",
+    devcenter_environment_definition_name="fake-sandbox",
+    devcenter_devbox_name="fake-devbox",
+    devcenter_environment_name="fake-environment")
