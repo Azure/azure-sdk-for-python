@@ -6,7 +6,7 @@
 import warnings
 from datetime import datetime
 from enum import Enum
-from typing import Any, List, Mapping, Optional
+from typing import Any, List, Mapping, Optional, Union
 
 from azure.core import CaseInsensitiveEnumMeta
 from ._generated.models import (
@@ -145,9 +145,9 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
         )
 
     @property
-    def architecture(self) -> ArtifactArchitecture:
+    def architecture(self) -> Optional[Union[ArtifactArchitecture, str]]:
         """CPU Architecture of an artifact.
-        :rtype: ~azure.containerregistry.ArtifactArchitecture
+        :rtype: ~azure.containerregistry.ArtifactArchitecture or str or None
         """
         return self._architecture
 
@@ -161,7 +161,7 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
     @property
     def digest(self) -> str:
         """Digest for the artifact.
-        :rtype: str or None
+        :rtype: str
         """
         return self._digest
 
@@ -173,30 +173,30 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
         return self._last_updated_on
 
     @property
-    def operating_system(self) -> ArtifactOperatingSystem:
+    def operating_system(self) -> Optional[Union[ArtifactOperatingSystem, str]]:
         """Operating system for the artifact.
-        :rtype: ~azure.containerregistry.ArtifactOperatingSystem
+        :rtype: ~azure.containerregistry.ArtifactOperatingSystem or str or None
         """
         return self._operating_system
 
     @property
-    def repository_name(self) -> str:
+    def repository_name(self) -> Optional[str]:
         """Repository name the artifact belongs to.
-        :rtype: str
+        :rtype: str or None
         """
         return self._repository_name
 
     @property
-    def size_in_bytes(self) -> int:
+    def size_in_bytes(self) -> Optional[int]:
         """Size of the artifact.
-        :rtype: int
+        :rtype: int or None
         """
         return self._size_in_bytes
 
     @property
-    def tags(self) -> List[str]:
+    def tags(self) -> Optional[List[str]]:
         """Tags associated with a registry artifact.
-        :rtype: list[str]
+        :rtype: list[str] or None
         """
         return self._tags
 
@@ -412,9 +412,9 @@ class ArtifactTagProperties:
         return self._name
 
     @property
-    def repository_name(self) -> str:
+    def repository_name(self) -> Optional[str]:
         """Repository name the tag belongs to.
-        :rtype: str
+        :rtype: str or None
         """
         return self._repository_name
 
