@@ -45,10 +45,11 @@ class ListTagsAsync(object):
         # [START list_tags_anonymous]
         async with ContainerRegistryClient(endpoint) as anon_client:
             manifest = await anon_client.get_manifest_properties("library/hello-world", "latest")
-            print(f"Tags of {manifest.repository_name}: ")
-            # Iterate through all the tags
-            for tag in manifest.tags:
-                print(tag)
+            if manifest.tags:
+                print(f"Tags of {manifest.repository_name}: ")
+                # Iterate through all the tags
+                for tag in manifest.tags:
+                    print(tag)
         # [END list_tags_anonymous]
 
 
