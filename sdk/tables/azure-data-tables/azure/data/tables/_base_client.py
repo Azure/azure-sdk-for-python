@@ -83,7 +83,6 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
             raise ValueError("You need to provide either an AzureSasCredential or AzureNamedKeyCredential")
         self._query_str, credential = format_query_string(sas_token, credential)
         self._location_mode: str = kwargs.get("location_mode", LocationMode.PRIMARY)
-        self._hosts = kwargs.get("_hosts")
         self.scheme: str = parsed_url.scheme
         self._cosmos_endpoint = _is_cosmos_endpoint(parsed_url)
         self.account_name: Optional[str] = None
@@ -113,7 +112,8 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
             endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
             secondary_hostname = f"{self.account_name}-secondary.table.{endpoint_suffix}"
 
-        if not self._hosts:
+        _hosts = kwargs.get("_hosts")
+        if not _hosts:
             if len(account) > 1:
                 secondary_hostname = parsed_url.netloc.replace(
                     account[0], account[0] + "-secondary"
@@ -121,10 +121,11 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
             if kwargs.get("secondary_hostname"):
                 secondary_hostname = kwargs["secondary_hostname"]
             primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
-            self._hosts = {
+            _hosts = {
                 LocationMode.PRIMARY: primary_hostname,
                 LocationMode.SECONDARY: secondary_hostname,
             }
+        self._hosts = _hosts
 
         self._policies = self._configure_policies(hosts=self._hosts, **kwargs)
         if self._cosmos_endpoint:
@@ -168,7 +169,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         :return: The full endpoint URL including SAS token if used.
         :rtype: str
         """
-        return self._format_url(self._hosts[self._location_mode])  # type: ignore[index]
+        return self._format_url(self._hosts[self._location_mode])
 
     @property
     def _primary_endpoint(self):
