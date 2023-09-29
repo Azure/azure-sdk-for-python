@@ -8,7 +8,7 @@
 - Rename parameter `name` in `list_snapshot_configuration_settings()` to `snapshot_name`.
 - Remove keyword argument `accept_datetime` in `list_snapshot_configuration_settings()`.
 - Publish enum `SnapshotStatus`, and accept the type for `status` parameter in `list_snapshots()` and `status` property in `Snapshot` model.
-- Rename model `ConfigurationSettingFilter` to `ConfigurationSettingsFilter`.
+- Rename model `ConfigurationSettingFilter` to `SnapshotSettingFilter`.
 - Change operation `list_snapshot_configuration_settings()` to an overload of `list_configuration_settings()`, and change the parameter `snapshot_name` to keyword.
 
 ### Bugs Fixed

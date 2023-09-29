@@ -253,9 +253,9 @@ for item in config_settings:
 <!-- SNIPPET:snapshot_samples.create_snapshot -->
 
 ```python
-from azure.appconfiguration import ConfigurationSettingsFilter
+from azure.appconfiguration import SnapshotSettingFilter
 
-filters = [ConfigurationSettingsFilter(key="my_key1", label="my_label1")]
+filters = [SnapshotSettingFilter(key="my_key1", label="my_label1")]
 response = client.begin_create_snapshot(name=snapshot_name, filters=filters)
 created_snapshot = response.result()
 print_snapshot(created_snapshot)
@@ -362,9 +362,9 @@ async for item in config_settings:
 <!-- SNIPPET:snapshot_samples_async.create_snapshot -->
 
 ```python
-from azure.appconfiguration import ConfigurationSettingsFilter
+from azure.appconfiguration import SnapshotSettingFilter
 
-filters = [ConfigurationSettingsFilter(key="my_key1", label="my_label1")]
+filters = [SnapshotSettingFilter(key="my_key1", label="my_label1")]
 response = await client.begin_create_snapshot(name=snapshot_name, filters=filters)
 created_snapshot = await response.result()
 print_snapshot(created_snapshot)
