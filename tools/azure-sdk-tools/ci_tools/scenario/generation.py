@@ -22,8 +22,10 @@ from ci_tools.parsing import ParsedSetup, parse_require
 from ci_tools.functions import get_package_from_repo, find_whl, get_pip_list_output
 
 
+PACKAGES_EXCLUDED_FROM_CLEANUP: List[str] = ["azure-sdk-tools", "certifi", "cffi", "azure-devtools", "packaging", "pip", "pluggy", "typing-extensions", "tomli", "tomli-w", "wheel", "wrapt", "six", "urllib3"]
+
 def clean_environment(
-    package_folder: str, excluded_packages: List[str] = ["azure-sdk-tools", "azure-devtools"]
+    package_folder: str, excluded_packages: List[str] = PACKAGES_EXCLUDED_FROM_CLEANUP
 ) -> None:
     """
     Takes an existing temp directory which contains a scenario_<scenarioname>_pin file. This file is the result of a pip freeze()
@@ -57,6 +59,7 @@ def create_scenario_file(package_folder: str, optional_config: str) -> str:
 
     This file will be dropped into the package root, but gitignored. It is regenerated with every invocation of the `optional` env.
     """
+    pass
 
 
 def clean_test_environment(freeze_file: str) -> None:
@@ -356,7 +359,24 @@ def main(mapped_args: argparse.Namespace) -> int:
         # clean if necessary
         clean_environment(mapped_args.target)
 
-        # install package, dev_reqs, and any additional packages from optional configuration
+        # install package
+        create_package_and_install(
+            distribution_directory=mapped_args.temp_dir,
+            target_setup=mapped_args.target,
+            skip_install=False,
+            cache_dir=None, # todo, resolve this for CI builds
+            work_dir=mapped_args.temp_dir,
+            force_create=False,
+            package_type="wheel",
+            pre_download_disabled=False
+        )
+
+        # install the dev requirements
+
+        # install any additional requirements
+
+        # dev_reqs, and any additional packages from optional configuration
+
 
         # uninstall anything additional
         breakpoint()
