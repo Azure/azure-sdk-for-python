@@ -10,7 +10,7 @@ from collections import OrderedDict
 from enum import Enum as PyEnum
 from enum import EnumMeta
 from inspect import Parameter, getmro, signature
-from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar, Union, cast
 
 from typing_extensions import Annotated, Literal, TypeAlias
 
@@ -20,10 +20,10 @@ from azure.ai.ml.exceptions import UserErrorException
 SUPPORTED_RETURN_TYPES_PRIMITIVE = list(IOConstants.PRIMITIVE_TYPE_2_STR.keys())
 
 
-Annotation: TypeAlias = Union[str, Type, Annotated, None]
+Annotation: TypeAlias = Union[str, Type, Annotated, None]  # type: ignore
 
 
-def is_group(obj) -> bool:
+def is_group(obj: object) -> bool:
     """Return True if obj is a group or an instance of a parameter group class.
 
     :param obj: The object to check.
@@ -34,12 +34,12 @@ def is_group(obj) -> bool:
     return hasattr(obj, IOConstants.GROUP_ATTR_NAME)
 
 
-def _get_annotation_by_value(val) -> Union["Input", Type["Input"]]:
+def _get_annotation_by_value(val: Any) -> Union["Input", Type["Input"]]:
     # TODO: we'd better remove this potential recursive import
     from .enum_input import EnumInput
     from .input import Input
 
-    def _is_dataset(data):
+    def _is_dataset(data: Any) -> bool:
         from azure.ai.ml.entities._job.job_io_mixin import JobIOMixin
 
         DATASET_TYPES = JobIOMixin
@@ -55,10 +55,12 @@ def _get_annotation_by_value(val) -> Union["Input", Type["Input"]]:
         # Handle enum values
         annotation = EnumInput(enum=val.__class__)
     else:
-        annotation = _get_annotation_cls_by_type(type(val), raise_error=False)
-        if not annotation:
+        _new_annotation = _get_annotation_cls_by_type(type(val), raise_error=False)
+        if not _new_annotation:
             # Fall back to default
             annotation = Input._get_default_unknown_input()
+        else:
+            return _new_annotation
     return annotation
 
 
@@ -94,17 +96,15 @@ def _get_param_with_standard_annotation(
     from .input import Input
     from .output import Output
 
-    def _is_dsl_type_cls(t: type):
+    def _is_dsl_type_cls(t: type) -> bool:
         if type(t) is not type:  # pylint: disable=unidiomatic-typecheck
             return False
         return issubclass(t, (Input, Output))
 
-    def _is_dsl_types(o: object):
+    def _is_dsl_types(o: object) -> bool:
         return _is_dsl_type_cls(type(o))
 
-    def _get_fields(
-        annotations: Dict[str, Union[Annotation, Input, Output]]
-    ) -> Dict[str, Union[Annotation, Input, Output]]:
+    def _get_fields(annotations: Dict) -> Dict:
         """Return field names to annotations mapping in class.
 
         :param annotations: The annotations
@@ -124,11 +124,11 @@ def _get_param_with_standard_annotation(
                 annotation = EnumInput(type="string", enum=annotation)
             # Handle Group annotation
             if is_group(annotation):
-                annotation: GroupInput = copy.deepcopy(getattr(annotation, IOConstants.GROUP_ATTR_NAME))
+                annotation = cast(GroupInput, copy.deepcopy(getattr(annotation, IOConstants.GROUP_ATTR_NAME)))
             # Try creating annotation by type when got like 'param: int'
             if not _is_dsl_type_cls(annotation) and not _is_dsl_types(annotation):
                 origin_annotation = annotation
-                annotation: Input = _get_annotation_cls_by_type(annotation, raise_error=False)
+                annotation = cast(Input, _get_annotation_cls_by_type(annotation, raise_error=False))
                 if not annotation:
                     msg = f"Unsupported annotation type {origin_annotation!r} for parameter {name!r}."
                     raise UserErrorException(msg)
