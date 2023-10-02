@@ -2712,7 +2712,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         token_credential = self.generate_oauth_token()
         cc = ContainerClient(
             self.account_url(storage_account_name, "blob"), 'testcont', credential=token_credential,
-            audience=storage_account_name
+            audience=f'https://{storage_account_name}.blob.core.windows.net'
         )
 
         # Assert

@@ -136,13 +136,9 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         if not parsed_url.netloc:
             raise ValueError(f"Invalid URL: {account_url}")
 
-        audience: Optional[str] = None
-        if kwargs.get("audience"):
-            audience = f'https://{kwargs.pop("audience")}.blob.core.windows.net/.default'
-
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(BlobServiceClient, self).__init__(parsed_url, service='blob', credential=credential, audience=audience, **kwargs)
+        super(BlobServiceClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._configure_encryption(kwargs)

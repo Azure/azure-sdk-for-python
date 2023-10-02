@@ -177,10 +177,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         if not parsed_url.netloc:
             raise ValueError(f"Invalid URL: {account_url}")
 
-        audience: Optional[str] = None
-        if kwargs.get("audience"):
-            audience = f'https://{kwargs.pop("audience")}.blob.core.windows.net/.default'
-
         path_snapshot, sas_token = parse_query(parsed_url.query)
 
         self.container_name = container_name
@@ -197,7 +193,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         # This parameter is used for the hierarchy traversal. Give precedence to credential.
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
-        super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, audience=audience, **kwargs)
+        super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._configure_encryption(kwargs)

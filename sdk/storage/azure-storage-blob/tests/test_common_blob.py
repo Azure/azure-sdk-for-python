@@ -3305,7 +3305,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         token_credential = self.generate_oauth_token()
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"), credential=token_credential,
-            audience=storage_account_name
+            audience=f'https://{storage_account_name}.blob.core.windows.net'
         )
 
         # Assert
@@ -3328,7 +3328,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         token_credential = self.generate_oauth_token()
         blob = BlobClient(
             self.bsc.url, container_name=self.container_name, blob_name=blob_name,
-            credential=token_credential, audience=storage_account_name
+            credential=token_credential, audience=f'https://{storage_account_name}.blob.core.windows.net'
         )
 
         # Assert

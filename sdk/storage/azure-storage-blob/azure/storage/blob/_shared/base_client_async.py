@@ -23,7 +23,7 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.transport import AsyncHttpTransport
 
-from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, STORAGE_OAUTH_SCOPE
+from .constants import CONNECTION_TIMEOUT, DEFAULT_OAUTH_SCOPE, READ_TIMEOUT, STORAGE_OAUTH_SCOPE
 from .authentication import SharedKeyCredentialPolicy
 from .base_client import create_configuration
 from .policies import (
@@ -65,11 +65,13 @@ class AsyncStorageAccountHostsMixin(object):
         """
         await self._client.close()
 
-    def _create_pipeline(self, credential, audience, **kwargs):
+    def _create_pipeline(self, credential, **kwargs):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
         if hasattr(credential, "get_token"):
-            if not audience:
+            if kwargs.get('audience'):
+                audience = kwargs.pop('audience') + DEFAULT_OAUTH_SCOPE
+            else:
                 audience = STORAGE_OAUTH_SCOPE
             self._credential_policy = AsyncStorageBearerTokenCredentialPolicy(credential, audience)
         elif isinstance(credential, SharedKeyCredentialPolicy):
