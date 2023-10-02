@@ -128,12 +128,12 @@ class AzureAppConfigurationClient:
         """List the configuration settings stored in the configuration service, optionally filtered by
         key, label and accept_datetime.
 
-        :param key_filter: filter results based on their keys. '*' can be
+        :keyword key_filter: filter results based on their keys. '*' can be
             used as wildcard in the beginning or end of the filter
-        :type key_filter: str
-        :param label_filter: filter results based on their label. '*' can be
+        :paramtype key_filter: str
+        :keyword label_filter: filter results based on their label. '*' can be
             used as wildcard in the beginning or end of the filter
-        :type label_filter: str
+        :paramtype label_filter: str
         :keyword str accept_datetime: retrieve ConfigurationSetting existed at this datetime
         :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An async iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
@@ -167,7 +167,7 @@ class AzureAppConfigurationClient:
         """List the configuration settings stored under a snapshot in the configuration service, optionally filtered by
         accept_datetime and fields to present in return.
 
-        :param str snapshot_name: The snapshot name.
+        :keyword str snapshot_name: The snapshot name.
         :keyword fields: Specify which fields to include in the results. Leave None to include all fields.
         :type fields: list[str] or None
         :return: An async iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
@@ -190,14 +190,13 @@ class AzureAppConfigurationClient:
                     cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
                     **kwargs
                 )
-            else:
-                return self._impl.get_key_values(  # type: ignore
-                    key=kwargs.pop("key_filter", None),
-                    label=kwargs.pop("label_filter", None),
-                    select=select,
-                    cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
-                    **kwargs
-                )
+            return self._impl.get_key_values(  # type: ignore
+                key=kwargs.pop("key_filter", None),
+                label=kwargs.pop("label_filter", None),
+                select=select,
+                cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
+                **kwargs
+            )
         except binascii.Error as exc:
             raise binascii.Error("Connection string secret has incorrect padding") from exc
 
