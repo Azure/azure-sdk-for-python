@@ -62,25 +62,20 @@ class EnumIntOptions(enum.IntEnum):
     THREE = 3
 
 
-class VerificationSuccessful(Exception):
-    """Raise from test transport in the case that the body was serialized as expected."""
-
-
 class EncoderVerificationTransport(RequestsTransport):
-
     def send(self, request, **kwargs):
         if "verify_payload" in kwargs:
-            verification = kwargs["verify_payload"]
+            verification = kwargs.pop("verify_payload")
             assert (
                 request.body == verification
             ), f"Request body '{request.body}' does not match expected: '{verification}'."
         if "verify_url" in kwargs:
-            verification = kwargs["verify_url"]
+            verification = kwargs.pop("verify_url")
             assert request.url.endswith(
                 kwargs["verify_url"]
             ), f"Request URL '{request.url}' does not match expected: '{verification}'."
         if "verify_headers" in kwargs:
-            verification = kwargs["verify_headers"]
+            verification = kwargs.pop("verify_headers")
             for key, value in verification.items():
                 try:
                     assert (
@@ -88,22 +83,13 @@ class EncoderVerificationTransport(RequestsTransport):
                     ), f"Request header '{key}' with value '{request.headers[key]}' does not match expected: '{value}'."
                 except KeyError:
                     raise AssertionError(f"Request missing expected header '{key}' from set: '{request.headers}'.")
-        raise VerificationSuccessful()
-
-    def open(self):
-        pass
-
-    def close(self):
-        pass
-
-    def __exit__(self, *args):
-        self.close()
+        return super().send(request, **kwargs)
 
 
 class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
     @tables_decorator
     @recorded_by_proxy
-    def test_encoder_create_entity_keys(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_custom_encoder_entity_keys(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Test basic string, int32, float and bool type in PartitionKey or RowKey.
         table_name = self.get_resource_name("uttable")
         url = self.account_url(tables_storage_account_name, "table")
@@ -198,7 +184,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_encoder_create_entity_type_conversion(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_custom_encoder_entity_type_conversion(self, tables_storage_account_name, tables_primary_storage_account_key):
         table_name = self.get_resource_name("uttable")
         url = self.account_url(tables_storage_account_name, "table")
         # All automatically detected data types
@@ -240,7 +226,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_encoder_create_entity_tuples(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_custom_encoder_entity_tuples(self, tables_storage_account_name, tables_primary_storage_account_key):
         table_name = self.get_resource_name("uttable")
         url = self.account_url(tables_storage_account_name, "table")
         # Explicit datatypes using Tuple definition
@@ -317,7 +303,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_encoder_create_entity_raw(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_custom_encoder_entity_raw(self, tables_storage_account_name, tables_primary_storage_account_key):
         table_name = self.get_resource_name("uttable")
         url = self.account_url(tables_storage_account_name, "table")
         # Raw payload with existing EdmTypes
@@ -371,7 +357,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
-    def test_encoder_create_entity_atypical_values(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_custom_encoder_entity_atypical_values(self, tables_storage_account_name, tables_primary_storage_account_key):
         table_name = self.get_resource_name("uttable")
         url = self.account_url(tables_storage_account_name, "table")
         # Non-UTF8 characters in both keys and properties
@@ -514,12 +500,17 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             client.delete_entity(entity9, encoder=MyEncoder())
             client.delete_table()
 
-
-class TestTableEncoderUnitTests(TableTestCase):
-    def test_encoder_create_entity_basic(self):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_create_entity_basic(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
         # Test basic string, int32 and bool data
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING, table_name="foo", transport=EncoderVerificationTransport()
+        client = TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport()
         )
 
         test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data1": 1, "Data2": True}
@@ -531,49 +522,53 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data1": 1,
             "Data2": True,
         }
-        verification = json.dumps(expected_entity)
+        resp = client.create_entity(
+            test_entity,
+            verify_payload=json.dumps(expected_entity),
+            verify_url="/foo",
+            verify_headers={"Content-Type": "application/json;odata=nometadata"},
+        )
 
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                test_entity,
-                verify_payload=verification,
-                verify_url="/foo",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
-            )
         expected_entity = {"PartitionKey": "PK", "PartitionKey@odata.type": "Edm.String", "RowKey": 1}
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                {"PartitionKey": "PK", "RowKey": 1},
-                verify_payload=json.dumps(expected_entity),
-                verify_url="/foo",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
-            )
+        resp = client.create_entity(
+            {"PartitionKey": "PK", "RowKey": 1},
+            verify_payload=json.dumps(expected_entity),
+            verify_url="/foo",
+            verify_headers={"Content-Type": "application/json;odata=nometadata"},
+        )
+
         expected_entity = {"PartitionKey": "PK", "PartitionKey@odata.type": "Edm.String", "RowKey": True}
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                {"PartitionKey": "PK", "RowKey": True},
-                verify_payload=json.dumps(expected_entity),
-                verify_url="/foo",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
-            )
+        resp = client.create_entity(
+            {"PartitionKey": "PK", "RowKey": True},
+            verify_payload=json.dumps(expected_entity),
+            verify_url="/foo",
+            verify_headers={"Content-Type": "application/json;odata=nometadata"},
+        )
+
         expected_entity = {
             "PartitionKey": "PK",
             "PartitionKey@odata.type": "Edm.String",
             "RowKey": 3.14,
             "RowKey@odata.type": "Edm.Double",
         }
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                {"PartitionKey": "PK", "RowKey": 3.14},
-                verify_payload=json.dumps(expected_entity),
-                verify_url="/foo",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
-            )
+        resp = client.create_entity(
+            {"PartitionKey": "PK", "RowKey": 3.14},
+            verify_payload=json.dumps(expected_entity),
+            verify_url="/foo",
+            verify_headers={"Content-Type": "application/json;odata=nometadata"},
+        )
 
-    def test_encoder_create_entity_complex_keys(self):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_create_entity_complex_keys(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
         # Test complex PartitionKey and RowKey (datetime, GUID and binary)
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING, table_name="foo", transport=EncoderVerificationTransport()
+        client = TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport()
         )
 
         test_entity = {
@@ -586,15 +581,13 @@ class TestTableEncoderUnitTests(TableTestCase):
             "RowKey": str(test_entity["RowKey"]),
             "RowKey@odata.type": "Edm.Guid",
         }
-        verification = json.dumps(expected_entity)
+        resp = client.create_entity(
+            test_entity,
+            verify_payload=json.dumps(expected_entity),
+            verify_url="/foo",
+            verify_headers={"Content-Type": "application/json;odata=nometadata"},
+        )
 
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                test_entity,
-                verify_payload=verification,
-                verify_url="/foo",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
-            )
         test_entity = {
             "PartitionKey": b"binarydata",
             "RowKey": 1234,
@@ -604,20 +597,24 @@ class TestTableEncoderUnitTests(TableTestCase):
             "PartitionKey@odata.type": "Edm.Binary",
             "RowKey": 1234,
         }
-        verification = json.dumps(expected_entity)
+        resp = client.create_entity(
+            test_entity,
+            verify_payload=json.dumps(expected_entity),
+            verify_url="/foo",
+            verify_headers={"Content-Type": "application/json;odata=nometadata"},
+        )
 
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                test_entity,
-                verify_payload=verification,
-                verify_url="/foo",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
-            )
-
-    def test_encoder_create_entity_type_conversion(self):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_create_entity_type_conversion(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
         # All automatically detected data types
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING, table_name="foo", transport=EncoderVerificationTransport()
+        client = TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport()
         )
 
         test_entity = {
@@ -649,20 +646,24 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data7": 3.14,
             "Data7@odata.type": "Edm.Double",
         }
-        verification = json.dumps(expected_entity)
+        resp = client.create_entity(
+            test_entity,
+            verify_payload=json.dumps(expected_entity),
+            verify_url="/foo",
+            verify_headers={"Content-Type": "application/json;odata=nometadata"},
+        )
 
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                test_entity,
-                verify_payload=verification,
-                verify_url="/foo",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
-            )
-
-    def test_encoder_create_entity_tuples(self):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_create_entity_tuples(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
         # Explicit datatypes using Tuple definition
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING, table_name="foo", transport=EncoderVerificationTransport()
+        client = TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport()
         )
 
         test_entity = {
@@ -702,14 +703,13 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data8@odata.type": "Edm.Int64",
         }
         verification = json.dumps(expected_entity)
+        resp = client.create_entity(
+            test_entity,
+            verify_payload=verification,
+            verify_url="/foo",
+            verify_headers={"Content-Type": "application/json;odata=nometadata"},
+        )
 
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                test_entity,
-                verify_payload=verification,
-                verify_url="/foo",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
-            )
         test_entity = {
             "PartitionKey": "PK",
             "RowKey": "RK",
@@ -722,19 +722,24 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data7": EntityProperty(3.14, "Edm.Double"),
             "Data8": ("1152921504606846976", "Edm.Int64"),
         }
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                test_entity,
-                verify_payload=verification,
-                verify_url="/foo",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
-            )
+        resp = client.create_entity(
+            test_entity,
+            verify_payload=verification,
+            verify_url="/foo",
+            verify_headers={"Content-Type": "application/json;odata=nometadata"},
+        )
 
-    @pytest.mark.xfail()  # Not supported yet
-    def test_encoder_create_entity_raw(self):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_create_entity_raw(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
         # Raw payload with existing EdmTypes
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING, table_name="foo", transport=EncoderVerificationTransport()
+        client = TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport()
         )
 
         test_entity = {
@@ -759,18 +764,23 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data8": "1152921504606846976",
             "Data8@odata.type": "Edm.Int64",
         }
-        verification = json.dumps(test_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                test_entity,
-                verify_payload=verification,
-                verify_url="/foo",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
-            )
+        resp = client.create_entity(
+            test_entity,
+            verify_payload=json.dumps(test_entity),
+            verify_url="/foo",
+            verify_headers={"Content-Type": "application/json;odata=nometadata"},
+        )
 
-    def test_encoder_create_entity_atypical_values(self):
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING, table_name="foo", transport=EncoderVerificationTransport()
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_create_entity_atypical_values(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
+        client = TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport()
         )
 
         # Non-UTF8 characters in both keys and properties
@@ -783,14 +793,12 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data": "你好",
             "Data@odata.type": "Edm.String",
         }
-        verification = json.dumps(expected_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                test_entity,
-                verify_payload=verification,
-                verify_url="/foo",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
-            )
+        resp = client.create_entity(
+            test_entity,
+            verify_payload=json.dumps(expected_entity),
+            verify_url="/foo",
+            verify_headers={"Content-Type": "application/json;odata=nometadata"},
+        )
 
         # Invalid int32 and int64 values
         # TODO: This will likely change if we move to post-request validation.
@@ -821,14 +829,12 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data3": "-Infinity",
             "Data3@odata.type": "Edm.Double",
         }
-        verification = json.dumps(expected_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                test_entity,
-                verify_payload=verification,
-                verify_url="/foo",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
-            )
+        resp = client.create_entity(
+            test_entity,
+            verify_payload=json.dumps(expected_entity),
+            verify_url="/foo",
+            verify_headers={"Content-Type": "application/json;odata=nometadata"},
+        )
 
         # Non-string keys
         # TODO: This seems broken? Not sure what the live service will do with a non-string key.
@@ -840,15 +846,13 @@ class TestTableEncoderUnitTests(TableTestCase):
             "RowKey@odata.type": "Edm.String",
             123: 456,
         }
-        verification = json.dumps(expected_entity)
         # TODO: The code introduced to serialize to support odata types raises a TypeError here. Need to investigate the best approach.
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                test_entity,
-                verify_payload=verification,
-                verify_url="/foo",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
-            )
+        resp = client.create_entity(
+            test_entity,
+            verify_payload=json.dumps(expected_entity),
+            verify_url="/foo",
+            verify_headers={"Content-Type": "application/json;odata=nometadata"},
+        )
 
         # Test enums
         test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
@@ -861,14 +865,12 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data": "EnumBasicOptions.TWO",
             "Data@odata.type": "Edm.String",
         }
-        verification = json.dumps(expected_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                test_entity,
-                verify_payload=verification,
-                verify_url="/foo",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
-            )
+        resp = client.create_entity(
+            test_entity,
+            verify_payload=json.dumps(expected_entity),
+            verify_url="/foo",
+            verify_headers={"Content-Type": "application/json;odata=nometadata"},
+        )
         test_entity = {"PartitionKey": "PK", "RowKey": EnumIntOptions.ONE, "Data": EnumIntOptions.TWO}
         # TODO: This is a bit weird
         expected_entity = {
@@ -879,15 +881,13 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data": "2",
             "Data@odata.type": "Edm.String",
         }
-        verification = json.dumps(expected_entity)
         # TODO: This changes between Python 3.10 and 3.11
-        # with pytest.raises(VerificationSuccessful):
-        #     client.create_entity(
-        #         test_entity,
-        #         verify_payload=verification,
-        #         verify_url="/foo",
-        #         verify_headers={"Content-Type":"application/json;odata=nometadata"}
-        #     )
+        resp = client.create_entity(
+            test_entity,
+            verify_payload=json.dumps(expected_entity),
+            verify_url="/foo",
+            verify_headers={"Content-Type":"application/json;odata=nometadata"}
+        )
 
         test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.ONE, "Data": EnumStrOptions.TWO}
         # TODO: This looks like it was always broken
@@ -899,19 +899,24 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data": "EnumStrOptions.TWO",
             "Data@odata.type": "Edm.String",
         }
-        verification = json.dumps(expected_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                test_entity,
-                verify_payload=verification,
-                verify_url="/foo",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
-            )
+        resp = client.create_entity(
+            test_entity,
+            verify_payload=json.dumps(expected_entity),
+            verify_url="/foo",
+            verify_headers={"Content-Type": "application/json;odata=nometadata"},
+        )
 
-    def test_encoder_upsert_entity_basic(self):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_upsert_entity_basic(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
         # Test basic string, int32 and bool data
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING, table_name="foo", transport=EncoderVerificationTransport()
+        client = TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport()
         )
 
         test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data1": 1, "Data2": True}
@@ -924,29 +929,26 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data2": True,
         }
         verification = json.dumps(expected_entity)
-
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
         with pytest.raises(TypeError):
             client.upsert_entity({"PartitionKey": "foo", "RowKey": 1}, mode=UpdateMode.MERGE)
         with pytest.raises(TypeError):
@@ -960,10 +962,17 @@ class TestTableEncoderUnitTests(TableTestCase):
         with pytest.raises(TypeError):
             client.upsert_entity({"PartitionKey": "foo", "RowKey": 3.14}, mode=UpdateMode.REPLACE)
 
-    def test_encoder_upsert_entity_complex_keys(self):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_upsert_entity_complex_keys(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
         # Test complex PartitionKey and RowKey (datetime, GUID and binary)
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING, table_name="foo", transport=EncoderVerificationTransport()
+        client = TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport()
         )
 
         test_entity = {
@@ -977,28 +986,27 @@ class TestTableEncoderUnitTests(TableTestCase):
             "RowKey@odata.type": "Edm.Guid",
         }
         verification = json.dumps(expected_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url=f"/foo(PartitionKey='{quote(expected_entity['PartitionKey'])}',RowKey='{expected_entity['RowKey']}')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url=f"/foo(PartitionKey='{quote(expected_entity['PartitionKey'])}',RowKey='{expected_entity['RowKey']}')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url=f"/foo(PartitionKey='{quote(expected_entity['PartitionKey'])}',RowKey='{expected_entity['RowKey']}')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url=f"/foo(PartitionKey='{quote(expected_entity['PartitionKey'])}',RowKey='{expected_entity['RowKey']}')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+
         test_entity = {
             "PartitionKey": "foo",
             "RowKey": b"foo",
@@ -1010,33 +1018,38 @@ class TestTableEncoderUnitTests(TableTestCase):
             "RowKey@odata.type": "Edm.Binary",
         }
         verification = json.dumps(expected_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url=f"/foo(PartitionKey='{quote(expected_entity['PartitionKey'])}',RowKey='{expected_entity['RowKey']}')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url=f"/foo(PartitionKey='{quote(expected_entity['PartitionKey'])}',RowKey='{expected_entity['RowKey']}')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url=f"/foo(PartitionKey='{quote(expected_entity['PartitionKey'])}',RowKey='{expected_entity['RowKey']}')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url=f"/foo(PartitionKey='{quote(expected_entity['PartitionKey'])}',RowKey='{expected_entity['RowKey']}')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
 
-    def test_encoder_upsert_entity_type_conversion(self):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_upsert_entity_type_conversion(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
         # All automatically detected data types
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING, table_name="foo", transport=EncoderVerificationTransport()
+        client = TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport()
         )
 
         test_entity = {
@@ -1069,34 +1082,38 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data7@odata.type": "Edm.Double",
         }
         verification = json.dumps(expected_entity)
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
 
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
-
-    def test_encoder_upsert_entity_tuples(self):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_upsert_entity_tuples(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
         # Explicit datatypes using Tuple definition
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING, table_name="foo", transport=EncoderVerificationTransport()
+        client = TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport()
         )
 
         test_entity = {
@@ -1136,28 +1153,27 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data8@odata.type": "Edm.Int64",
         }
         verification = json.dumps(expected_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+
         test_entity = {
             "PartitionKey": "PK",
             "RowKey": "RK",
@@ -1170,34 +1186,38 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data7": EntityProperty(3.14, "Edm.Double"),
             "Data8": ("1152921504606846976", "Edm.Int64"),
         }
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
 
-    @pytest.mark.xfail()  # Not supported yet
-    def test_encoder_upsert_entity_raw(self):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_upsert_entity_raw(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
         # Raw payload with existing EdmTypes
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING, table_name="foo", transport=EncoderVerificationTransport()
+        client = TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport()
         )
 
         test_entity = {
@@ -1223,37 +1243,42 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data8@odata.type": "Edm.Int64",
         }
         verification = json.dumps(test_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
 
-    def test_encoder_upsert_entity_atypical_values(self):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_upsert_entity_atypical_values(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
         # Non-UTF8 characters in both keys and properties
         # Invalid int32 and int64 values
         # Infinite float values
         # Non-string keys
         # Test enums
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING, table_name="foo", transport=EncoderVerificationTransport()
+        client = TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport()
         )
 
         # Non-UTF8 characters in both keys and properties
@@ -1267,28 +1292,26 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data@odata.type": "Edm.String",
         }
         verification = json.dumps(expected_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='%E4%BD%A0%E5%A5%BD')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='%E4%BD%A0%E5%A5%BD')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='%E4%BD%A0%E5%A5%BD')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='%E4%BD%A0%E5%A5%BD')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
 
         # Invalid int32 and int64 values
         # TODO: This will likely change if we move to post-request validation.
@@ -1324,28 +1347,26 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data3@odata.type": "Edm.Double",
         }
         verification = json.dumps(expected_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
 
         # Non-string keys
         # TODO: This seems broken? Not sure what the live service will do with a non-string key.
@@ -1359,28 +1380,26 @@ class TestTableEncoderUnitTests(TableTestCase):
         }
         verification = json.dumps(expected_entity)
         # TODO: The code introduced to serialize to support odata types raises a TypeError here. Need to investigate the best approach.
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
 
         # Test enums
         test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
@@ -1394,28 +1413,26 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data@odata.type": "Edm.String",
         }
         verification = json.dumps(expected_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='EnumBasicOptions.ONE')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='EnumBasicOptions.ONE')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='EnumBasicOptions.ONE')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='EnumBasicOptions.ONE')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
         test_entity = {"PartitionKey": "PK", "RowKey": EnumIntOptions.ONE, "Data": EnumIntOptions.TWO}
         # TODO: This is a bit weird
         expected_entity = {
@@ -1428,28 +1445,26 @@ class TestTableEncoderUnitTests(TableTestCase):
         }
         verification = json.dumps(expected_entity)
         # TODO: This changes between Python 3.10 and 3.11
-        # with pytest.raises(VerificationSuccessful):
-        #     client.upsert_entity(
-        #         test_entity,
-        #         mode=UpdateMode.MERGE,
-        #         verify_payload=verification,
-        #         verify_url="/foo(PartitionKey='PK',RowKey='1')",
-        #         verify_headers={
-        #             "Content-Type":"application/json",
-        #             "Accept":"application/json",
-        #         }
-        #     )
-        # with pytest.raises(VerificationSuccessful):
-        #     client.upsert_entity(
-        #         test_entity,
-        #         mode=UpdateMode.REPLACE,
-        #         verify_payload=verification,
-        #         verify_url="/foo(PartitionKey='PK',RowKey='1')",
-        #         verify_headers={
-        #             "Content-Type":"application/json",
-        #             "Accept":"application/json",
-        #         }
-        #     )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='1')",
+            verify_headers={
+                "Content-Type":"application/json",
+                "Accept":"application/json",
+            }
+        )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='1')",
+            verify_headers={
+                "Content-Type":"application/json",
+                "Accept":"application/json",
+            }
+        )
 
         test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.ONE, "Data": EnumStrOptions.TWO}
         # TODO: This looks like it was always broken
@@ -1462,33 +1477,38 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data@odata.type": "Edm.String",
         }
         verification = json.dumps(expected_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='EnumStrOptions.ONE')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='EnumStrOptions.ONE')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='EnumStrOptions.ONE')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+        resp = client.upsert_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='EnumStrOptions.ONE')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
 
-    def test_encoder_update_entity_basic(self):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_update_entity_basic(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
         # Test basic string, int32 and bool data
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING, table_name="foo", transport=EncoderVerificationTransport()
+        client = TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport()
         )
 
         test_entity = {"PartitionKey": "PK", "RowKey": "RK", "Data1": 1, "Data2": True}
@@ -1501,23 +1521,20 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data2": True,
         }
         verification = json.dumps(expected_entity)
-
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-            )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+        )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+        )
         with pytest.raises(TypeError):
             client.update_entity({"PartitionKey": "foo", "RowKey": 1}, mode=UpdateMode.MERGE)
         with pytest.raises(TypeError):
@@ -1531,10 +1548,17 @@ class TestTableEncoderUnitTests(TableTestCase):
         with pytest.raises(TypeError):
             client.update_entity({"PartitionKey": "foo", "RowKey": 3.14}, mode=UpdateMode.REPLACE)
 
-    def test_encoder_update_entity_complex_keys(self):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_update_entity_complex_keys(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
         # Test complex PartitionKey and RowKey (datetime, GUID and binary)
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING, table_name="foo", transport=EncoderVerificationTransport()
+        client = TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport()
         )
 
         test_entity = {
@@ -1548,22 +1572,21 @@ class TestTableEncoderUnitTests(TableTestCase):
             "RowKey@odata.type": "Edm.Guid",
         }
         verification = json.dumps(expected_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url=f"/foo(PartitionKey='{quote(expected_entity['PartitionKey'])}',RowKey='{expected_entity['RowKey']}')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url=f"/foo(PartitionKey='{quote(expected_entity['PartitionKey'])}',RowKey='{expected_entity['RowKey']}')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-            )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url=f"/foo(PartitionKey='{quote(expected_entity['PartitionKey'])}',RowKey='{expected_entity['RowKey']}')",
+            verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+        )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url=f"/foo(PartitionKey='{quote(expected_entity['PartitionKey'])}',RowKey='{expected_entity['RowKey']}')",
+            verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+        )
+
         test_entity = {
             "PartitionKey": "foo",
             "RowKey": b"foo",
@@ -1575,27 +1598,32 @@ class TestTableEncoderUnitTests(TableTestCase):
             "RowKey@odata.type": "Edm.Binary",
         }
         verification = json.dumps(expected_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url=f"/foo(PartitionKey='{quote(expected_entity['PartitionKey'])}',RowKey='{expected_entity['RowKey']}')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url=f"/foo(PartitionKey='{quote(expected_entity['PartitionKey'])}',RowKey='{expected_entity['RowKey']}')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-            )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url=f"/foo(PartitionKey='{quote(expected_entity['PartitionKey'])}',RowKey='{expected_entity['RowKey']}')",
+            verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+        )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url=f"/foo(PartitionKey='{quote(expected_entity['PartitionKey'])}',RowKey='{expected_entity['RowKey']}')",
+            verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+        )
 
-    def test_encoder_update_entity_type_conversion(self):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_update_entity_type_conversion(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
         # All automatically detected data types
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING, table_name="foo", transport=EncoderVerificationTransport()
+        client = TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport()
         )
 
         test_entity = {
@@ -1628,28 +1656,32 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data7@odata.type": "Edm.Double",
         }
         verification = json.dumps(expected_entity)
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+        )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+        )
 
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-            )
-
-    def test_encoder_update_entity_tuples(self):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_update_entity_tuples(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
         # Explicit datatypes using Tuple definition
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING, table_name="foo", transport=EncoderVerificationTransport()
+        client = TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport()
         )
 
         test_entity = {
@@ -1689,22 +1721,21 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data8@odata.type": "Edm.Int64",
         }
         verification = json.dumps(expected_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-            )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+        )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+        )
+
         test_entity = {
             "PartitionKey": "PK",
             "RowKey": "RK",
@@ -1717,28 +1748,32 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data7": EntityProperty(3.14, "Edm.Double"),
             "Data8": ("1152921504606846976", "Edm.Int64"),
         }
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-            )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+        )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+        )
 
-    @pytest.mark.xfail()  # Not supported yet
-    def test_encoder_update_entity_raw(self):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_update_entity_raw(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
         # Raw payload with existing EdmTypes
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING, table_name="foo", transport=EncoderVerificationTransport()
+        client = TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport()
         )
 
         test_entity = {
@@ -1764,31 +1799,36 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data8@odata.type": "Edm.Int64",
         }
         verification = json.dumps(test_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
-            )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+        )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+        )
 
-    def test_encoder_update_entity_atypical_values(self):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_update_entity_atypical_values(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
         # Non-UTF8 characters in both keys and properties
         # Invalid int32 and int64 values
         # Infinite float values
         # Non-string keys
         # Test enums
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING, table_name="foo", transport=EncoderVerificationTransport()
+        client = TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport()
         )
 
         # Non-UTF8 characters in both keys and properties
@@ -1802,28 +1842,26 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data@odata.type": "Edm.String",
         }
         verification = json.dumps(expected_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='%E4%BD%A0%E5%A5%BD')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='%E4%BD%A0%E5%A5%BD')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='%E4%BD%A0%E5%A5%BD')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='%E4%BD%A0%E5%A5%BD')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
 
         # Invalid int32 and int64 values
         # TODO: This will likely change if we move to post-request validation.
@@ -1859,28 +1897,26 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data3@odata.type": "Edm.Double",
         }
         verification = json.dumps(expected_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
 
         # Non-string keys
         # TODO: This seems broken? Not sure what the live service will do with a non-string key.
@@ -1894,28 +1930,26 @@ class TestTableEncoderUnitTests(TableTestCase):
         }
         verification = json.dumps(expected_entity)
         # TODO: The code introduced to serialize to support odata types raises a TypeError here. Need to investigate the best approach.
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='RK')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='RK')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
 
         # Test enums
         test_entity = {"PartitionKey": "PK", "RowKey": EnumBasicOptions.ONE, "Data": EnumBasicOptions.TWO}
@@ -1929,28 +1963,27 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data@odata.type": "Edm.String",
         }
         verification = json.dumps(expected_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='EnumBasicOptions.ONE')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='EnumBasicOptions.ONE')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='EnumBasicOptions.ONE')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='EnumBasicOptions.ONE')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+
         test_entity = {"PartitionKey": "PK", "RowKey": EnumIntOptions.ONE, "Data": EnumIntOptions.TWO}
         # TODO: This is a bit weird
         expected_entity = {
@@ -1963,28 +1996,26 @@ class TestTableEncoderUnitTests(TableTestCase):
         }
         verification = json.dumps(expected_entity)
         # TODO: This changes between Python 3.10 and 3.11
-        # with pytest.raises(VerificationSuccessful):
-        #     client.update_entity(
-        #         test_entity,
-        #         mode=UpdateMode.MERGE,
-        #         verify_payload=verification,
-        #         verify_url="/foo(PartitionKey='PK',RowKey='1')",
-        #         verify_headers={
-        #             "Content-Type":"application/json",
-        #             "Accept":"application/json",
-        #         }
-        #     )
-        # with pytest.raises(VerificationSuccessful):
-        #     client.update_entity(
-        #         test_entity,
-        #         mode=UpdateMode.REPLACE,
-        #         verify_payload=verification,
-        #         verify_url="/foo(PartitionKey='PK',RowKey='1')",
-        #         verify_headers={
-        #             "Content-Type":"application/json",
-        #             "Accept":"application/json",
-        #         }
-        #     )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='1')",
+            verify_headers={
+                "Content-Type":"application/json",
+                "Accept":"application/json",
+            }
+        )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='1')",
+            verify_headers={
+                "Content-Type":"application/json",
+                "Accept":"application/json",
+            }
+        )
 
         test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.ONE, "Data": EnumStrOptions.TWO}
         # TODO: This looks like it was always broken
@@ -1997,65 +2028,66 @@ class TestTableEncoderUnitTests(TableTestCase):
             "Data@odata.type": "Edm.String",
         }
         verification = json.dumps(expected_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='EnumStrOptions.ONE')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.update_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url="/foo(PartitionKey='PK',RowKey='EnumStrOptions.ONE')",
-                verify_headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            )
-
-    def test_encoder_delete_entity_basic(self):
-        # Test basic string, int32 and bool data
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING, table_name="foo", transport=EncoderVerificationTransport()
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.MERGE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='EnumStrOptions.ONE')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+        )
+        resp = client.update_entity(
+            test_entity,
+            mode=UpdateMode.REPLACE,
+            verify_payload=verification,
+            verify_url="/foo(PartitionKey='PK',RowKey='EnumStrOptions.ONE')",
+            verify_headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
         )
 
-        with pytest.raises(VerificationSuccessful):
-            client.delete_entity(
-                "foo",
-                "bar",
-                verify_payload=None,
-                verify_url="/foo(PartitionKey='foo',RowKey='bar')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.delete_entity(
-                {"PartitionKey": "foo", "RowKey": "bar"},
-                verify_payload=None,
-                verify_url="/foo(PartitionKey='foo',RowKey='bar')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.delete_entity(
-                "foo",
-                "bar'baz",  # cspell:disable-line
-                verify_payload=None,
-                verify_url="/foo(PartitionKey='foo',RowKey='bar%27%27baz')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.delete_entity(
-                {"PartitionKey": "foo", "RowKey": "bar'baz"},  # cspell:disable-line
-                verify_payload=None,
-                verify_url="/foo(PartitionKey='foo',RowKey='bar%27%27baz')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
-            )
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_delete_entity_basic(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
+        # Test basic string, int32 and bool data
+        client = TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport()
+        )
+
+        client.delete_entity(
+            "foo",
+            "bar",
+            verify_payload=None,
+            verify_url="/foo(PartitionKey='foo',RowKey='bar')",
+            verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+        )
+        client.delete_entity(
+            {"PartitionKey": "foo", "RowKey": "bar"},
+            verify_payload=None,
+            verify_url="/foo(PartitionKey='foo',RowKey='bar')",
+            verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+        )
+        client.delete_entity(
+            "foo",
+            "bar'baz",  # cspell:disable-line
+            verify_payload=None,
+            verify_url="/foo(PartitionKey='foo',RowKey='bar%27%27baz')",
+            verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+        )
+        client.delete_entity(
+            {"PartitionKey": "foo", "RowKey": "bar'baz"},  # cspell:disable-line
+            verify_payload=None,
+            verify_url="/foo(PartitionKey='foo',RowKey='bar%27%27baz')",
+            verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+        )
         with pytest.raises(TypeError):
             client.delete_entity("foo", 1)
         with pytest.raises(TypeError):
@@ -2069,10 +2101,17 @@ class TestTableEncoderUnitTests(TableTestCase):
         with pytest.raises(TypeError):
             client.delete_entity({"PartitionKey": "foo", "RowKey": 3.14})
 
-    def test_encoder_delete_entity_complex_keys(self):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_delete_entity_complex_keys(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
         # Test complex PartitionKey and RowKey (datetime, GUID and binary)
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING, table_name="foo", transport=EncoderVerificationTransport()
+        client = TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport()
         )
 
         with pytest.raises(TypeError):
@@ -2088,10 +2127,17 @@ class TestTableEncoderUnitTests(TableTestCase):
         with pytest.raises(TypeError):
             client.delete_entity({"PartitionKey": "foo", "RowKey": b"binarydata"})
 
-    def test_encoder_delete_entity_tuples(self):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_delete_entity_tuples(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
         # Explicit datatypes using Tuple definition
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING, table_name="foo", transport=EncoderVerificationTransport()
+        client = TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport()
         )
 
         with pytest.raises(TypeError):
@@ -2099,29 +2145,34 @@ class TestTableEncoderUnitTests(TableTestCase):
         with pytest.raises(TypeError):
             client.delete_entity({"PartitionKey": "foo", "RowKey": ("bar", EdmType.STRING)})
 
-    def test_encoder_delete_entity_atypical_values(self):
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_delete_entity_atypical_values(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
         # Non-UTF8 characters in both keys and properties
         # Test enums in both keys and properties
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING, table_name="foo", transport=EncoderVerificationTransport()
+        client = TableClient(
+            url,
+            table_name,
+            credential=tables_primary_storage_account_key,
+            transport=EncoderVerificationTransport()
         )
 
         # Non-UTF8 characters in both keys and properties
-        with pytest.raises(VerificationSuccessful):
-            client.delete_entity(
-                "PK",
-                "你好",
-                verify_payload=None,
-                verify_url="/foo(PartitionKey='PK',RowKey='%E4%BD%A0%E5%A5%BD')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.delete_entity(
-                {"PartitionKey": "PK", "RowKey": "你好"},
-                verify_payload=None,
-                verify_url="/foo(PartitionKey='PK',RowKey='%E4%BD%A0%E5%A5%BD')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
-            )
+        client.delete_entity(
+            "PK",
+            "你好",
+            verify_payload=None,
+            verify_url="/foo(PartitionKey='PK',RowKey='%E4%BD%A0%E5%A5%BD')",
+            verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+        )
+        client.delete_entity(
+            {"PartitionKey": "PK", "RowKey": "你好"},
+            verify_payload=None,
+            verify_url="/foo(PartitionKey='PK',RowKey='%E4%BD%A0%E5%A5%BD')",
+            verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+        )
 
         with pytest.raises(TypeError):
             client.delete_entity("foo", EnumBasicOptions.ONE)
@@ -2131,18 +2182,17 @@ class TestTableEncoderUnitTests(TableTestCase):
             client.delete_entity("foo", EnumIntOptions.ONE)
         with pytest.raises(TypeError):
             client.delete_entity({"PartitionKey": "foo", "RowKey": EnumIntOptions.ONE})
-        with pytest.raises(VerificationSuccessful):
-            client.delete_entity(
-                "foo",
-                EnumStrOptions.ONE,
-                verify_payload=None,
-                verify_url="/foo(PartitionKey='foo',RowKey='One')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
-            )
-        with pytest.raises(VerificationSuccessful):
-            client.delete_entity(
-                {"PartitionKey": "foo", "RowKey": EnumStrOptions.ONE},
-                verify_payload=None,
-                verify_url="/foo(PartitionKey='foo',RowKey='One')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
-            )
+
+        client.delete_entity(
+            "foo",
+            EnumStrOptions.ONE,
+            verify_payload=None,
+            verify_url="/foo(PartitionKey='foo',RowKey='One')",
+            verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+        )
+        client.delete_entity(
+            {"PartitionKey": "foo", "RowKey": EnumStrOptions.ONE},
+            verify_payload=None,
+            verify_url="/foo(PartitionKey='foo',RowKey='One')",
+            verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+        )
