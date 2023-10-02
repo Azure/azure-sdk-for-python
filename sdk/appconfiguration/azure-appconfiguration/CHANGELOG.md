@@ -10,7 +10,7 @@
 - Moved operation `list_snapshot_configuration_settings()` to an overload of `list_configuration_settings()`, and moved the parameter `snapshot_name` to keyword.
 - Published enum `SnapshotStatus`, and accepted the type for `status` parameter in `list_snapshots()` and `status` property in `Snapshot` model.
 - Renamed model `Snapshot` tp `ConfigurationSnapshot`.
-- Renamed model `ConfigurationSettingFilter` to `SnapshotSettingFilter`.
+- Renamed model `ConfigurationSettingFilter` to `ConfigurationSettingsFilter`.
 
 ### Bugs Fixed
 

@@ -16,7 +16,7 @@ from ._models import (
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
     ConfigurationSnapshot,
-    SnapshotSettingFilter,
+    ConfigurationSettingsFilter,
 )
 from ._generated.models import SnapshotStatus
 from ._version import VERSION
@@ -31,7 +31,7 @@ __all__ = [
     "SecretReferenceConfigurationSetting",
     "ConfigurationSnapshot",
     "SnapshotStatus",
-    "SnapshotSettingFilter",
+    "ConfigurationSettingsFilter",
     "FILTER_PERCENTAGE",
     "FILTER_TARGETING",
     "FILTER_TIME_WINDOW",

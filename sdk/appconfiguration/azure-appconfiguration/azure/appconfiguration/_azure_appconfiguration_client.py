@@ -36,7 +36,7 @@ from ._azure_appconfiguration_credential import AppConfigConnectionStringCredent
 from ._generated import AzureAppConfiguration
 from ._generated._configuration import AzureAppConfigurationConfiguration
 from ._generated.models import SnapshotUpdateParameters, SnapshotStatus
-from ._models import ConfigurationSetting, SnapshotSettingFilter, ConfigurationSnapshot
+from ._models import ConfigurationSetting, ConfigurationSettingsFilter, ConfigurationSnapshot
 from ._utils import (
     get_endpoint_from_connection_string,
     prep_if_match,
@@ -568,7 +568,7 @@ class AzureAppConfigurationClient:
     def begin_create_snapshot(
         self,
         name: str,
-        filters: List[SnapshotSettingFilter],
+        filters: List[ConfigurationSettingsFilter],
         *,
         composition_type: Optional[Literal["key", "key_label"]] = None,
         retention_period: Optional[int] = None,
@@ -581,7 +581,7 @@ class AzureAppConfigurationClient:
         :type name: str
         :param filters: A list of filters used to filter the configuration settings by key field and label field
             included in the configuration snapshot.
-        :type filters: list[~azure.appconfiguration.SnapshotSettingFilter]
+        :type filters: list[~azure.appconfiguration.ConfigurationSettingsFilter]
         :keyword composition_type: The composition type describes how the key-values within the configuration
             snapshot are composed. Known values are: "key" and "key_label". The "key" composition type
             ensures there are no two key-values containing the same key. The 'key_label' composition type ensures

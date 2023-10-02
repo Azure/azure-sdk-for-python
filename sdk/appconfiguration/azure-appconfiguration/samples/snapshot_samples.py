@@ -33,9 +33,9 @@ def main():
         client.add_configuration_setting(config_setting2)
 
         # [START create_snapshot]
-        from azure.appconfiguration import SnapshotSettingFilter
+        from azure.appconfiguration import ConfigurationSettingsFilter
 
-        filters = [SnapshotSettingFilter(key="my_key1", label="my_label1")]
+        filters = [ConfigurationSettingsFilter(key="my_key1", label="my_label1")]
         response = client.begin_create_snapshot(name=snapshot_name, filters=filters)
         created_snapshot = response.result()
         print_snapshot(created_snapshot)
