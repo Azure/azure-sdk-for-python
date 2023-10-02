@@ -62,10 +62,9 @@ class FileSystemClient(StorageAccountHostsMixin):
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
-    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory authentication.
-        Only has an effect when credential is of type TokenCredential. Specify your Storage Account name to use
-        the https://account.blob.core.windows.net audience. Otherwise, if not specified, the default audience
-        of https://storage.azure.com/ will be used.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
 
     .. admonition:: Example:
 
@@ -95,11 +94,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         blob_account_url = convert_dfs_url_to_blob_url(account_url)
         # TODO: add self.account_url to base_client and remove _blob_account_url
-        self._blob_account_url = blob_account_url\
-
-        audience: Optional[str] = None
-        if kwargs.get("audience"):
-            audience = f'https://{kwargs.get("audience")}.blob.core.windows.net/.default'
+        self._blob_account_url = blob_account_url
 
         datalake_hosts = kwargs.pop('_hosts', None)
         blob_hosts = None
@@ -113,9 +108,8 @@ class FileSystemClient(StorageAccountHostsMixin):
         self.file_system_name = file_system_name
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
 
-        kwargs.pop('audience', None)
         super(FileSystemClient, self).__init__(parsed_url, service='dfs', credential=self._raw_credential,
-                                               _hosts=datalake_hosts, audience=audience, **kwargs)
+                                               _hosts=datalake_hosts, **kwargs)
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
         self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url,
@@ -170,10 +164,9 @@ class FileSystemClient(StorageAccountHostsMixin):
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory authentication.
-            Only has an effect when credential is of type TokenCredential. Specify your Storage Account name to use
-            the https://account.blob.core.windows.net audience. Otherwise, if not specified, the default audience
-            of https://storage.azure.com/ will be used.
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
         :return a FileSystemClient
         :rtype ~azure.storage.filedatalake.FileSystemClient
 

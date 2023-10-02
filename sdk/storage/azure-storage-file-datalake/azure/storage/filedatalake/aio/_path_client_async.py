@@ -65,16 +65,12 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
 
-        audience: Optional[str] = kwargs.get('audience')
-
         super(PathClient, self).__init__(account_url,  # pylint: disable=specify-parameter-names-in-call
                                          file_system_name, path_name,
                                          credential=credential,
                                          **kwargs)  # type: ignore
 
         kwargs.pop('_hosts', None)
-        if audience:
-            kwargs['audience'] = audience
 
         self._blob_client = BlobClient(account_url=self._blob_account_url, container_name=self.file_system_name,
                                        blob_name=self.path_name,

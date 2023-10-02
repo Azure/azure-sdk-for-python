@@ -1575,33 +1575,7 @@ class TestDirectory(StorageRecordedTestCase):
         directory_client = DataLakeDirectoryClient(
             self.dsc.url, self.file_system_name, directory_name,
             credential=token_credential,
-            audience=datalake_storage_account_name
-        )
-
-        # Assert
-        response1 = directory_client.exists()
-        response2 = directory_client.create_sub_directory('testsubdir')
-        assert response1 is not None
-        assert response2 is not None
-
-    @DataLakePreparer()
-    @recorded_by_proxy
-    def test_storage_account_audience_dir_client(self, **kwargs):
-        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
-        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
-
-        # Arrange
-        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        directory_name = self._get_directory_reference()
-        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
-        directory_client.create_directory()
-
-        # Act
-        token_credential = self.generate_oauth_token()
-        directory_client = DataLakeDirectoryClient(
-            self.dsc.url, self.file_system_name, directory_name,
-            credential=token_credential,
-            audience=datalake_storage_account_name
+            audience=f'https://{datalake_storage_account_name}.blob.core.windows.net/'
         )
 
         # Assert
@@ -1626,7 +1600,7 @@ class TestDirectory(StorageRecordedTestCase):
         token_credential = self.generate_oauth_token()
         directory_client = DataLakeDirectoryClient(
             self.dsc.url, self.file_system_name, directory_name,
-            credential=token_credential, audience="badaudience"
+            credential=token_credential, audience=f'https://badaudience.blob.core.windows.net/'
         )
 
         # Assert

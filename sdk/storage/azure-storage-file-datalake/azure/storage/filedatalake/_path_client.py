@@ -64,10 +64,9 @@ class PathClient(StorageAccountHostsMixin):
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
-    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory authentication.
-        Only has an effect when credential is of type TokenCredential. Specify your Storage Account name to use
-        the https://account.blob.core.windows.net audience. Otherwise, if not specified, the default audience
-        of https://storage.azure.com/ will be used.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
     """
     def __init__(
             self, account_url: str,
@@ -98,10 +97,6 @@ class PathClient(StorageAccountHostsMixin):
         blob_account_url = convert_dfs_url_to_blob_url(account_url)
         self._blob_account_url = blob_account_url
 
-        audience: Optional[str] = None
-        if kwargs.get("audience"):
-            audience = f'https://{kwargs.get("audience")}.blob.core.windows.net/.default'
-
         datalake_hosts = kwargs.pop('_hosts', None)
         blob_hosts = None
         if datalake_hosts:
@@ -116,9 +111,8 @@ class PathClient(StorageAccountHostsMixin):
 
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
 
-        kwargs.pop('audience', None)
         super(PathClient, self).__init__(parsed_url, service='dfs', credential=self._raw_credential,
-                                         _hosts=datalake_hosts, audience=audience, **kwargs)
+                                         _hosts=datalake_hosts, **kwargs)
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
         api_version = get_api_version(kwargs)

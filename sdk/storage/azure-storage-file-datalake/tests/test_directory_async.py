@@ -1524,7 +1524,7 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         directory_client = DataLakeDirectoryClient(
             self.dsc.url, self.file_system_name, directory_name,
             credential=token_credential,
-            audience=datalake_storage_account_name
+            audience=f'https://{datalake_storage_account_name}.blob.core.windows.net/'
         )
 
         # Assert
@@ -1550,7 +1550,7 @@ class TestDirectoryAsync(AsyncStorageRecordedTestCase):
         token_credential = self.generate_oauth_token()
         directory_client = DataLakeDirectoryClient(
             self.dsc.url, self.file_system_name, directory_name,
-            credential=token_credential, audience="badaudience"
+            credential=token_credential, audience=f'https://badaudience.blob.core.windows.net/'
         )
 
         # Assert

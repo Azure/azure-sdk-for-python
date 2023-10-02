@@ -70,10 +70,9 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
      :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
-    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory authentication.
-        Only has an effect when credential is of type TokenCredential. Specify your Storage Account name to use
-        the https://account.blob.core.windows.net audience. Otherwise, if not specified, the default audience
-        of https://storage.azure.com/ will be used.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
 
     .. admonition:: Example:
 
@@ -92,7 +91,6 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
         **kwargs: Any
     ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
-        audience = kwargs.get('audience')
         super(FileSystemClient, self).__init__(
             account_url,
             file_system_name=file_system_name,
@@ -100,8 +98,6 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             **kwargs)
         # to override the class field _container_client sync version
         kwargs.pop('_hosts', None)
-        if audience:
-            kwargs['audience'] = audience
         self._container_client = ContainerClient(self._blob_account_url, self.file_system_name,
                                                  credential=credential,
                                                  _hosts=self._container_client._hosts,# pylint: disable=protected-access

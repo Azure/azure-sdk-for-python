@@ -1494,7 +1494,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
             file_client.file_system_name + '/',
             '/' + file_client.path_name,
             credential=token_credential,
-            audience=datalake_storage_account_name
+            audience=f'https://{datalake_storage_account_name}.blob.core.windows.net/'
         )
 
         # Assert
@@ -1521,7 +1521,7 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
             file_client.file_system_name + '/',
             '/' + file_client.path_name,
             credential=token_credential,
-            audience="badaudience"
+            audience=f'https://badaudience.blob.core.windows.net/'
         )
 
         # Assert

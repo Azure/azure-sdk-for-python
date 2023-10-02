@@ -55,10 +55,9 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
-    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory authentication.
-        Only has an effect when credential is of type TokenCredential. Specify your Storage Account name to use
-        the https://account.blob.core.windows.net audience. Otherwise, if not specified, the default audience
-        of https://storage.azure.com/ will be used.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
 
 
     .. admonition:: Example:
@@ -92,10 +91,6 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         if not parsed_url.netloc:
             raise ValueError(f"Invalid URL: {account_url}")
 
-        audience: Optional[str] = None
-        if kwargs.get("audience"):
-            audience = f'https://{kwargs.get("audience")}.blob.core.windows.net/.default'
-
         blob_account_url = convert_dfs_url_to_blob_url(account_url)
         self._blob_account_url = blob_account_url
         self._blob_service_client = BlobServiceClient(blob_account_url, credential, **kwargs)
@@ -104,9 +99,8 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
 
-        kwargs.pop('audience', None)
         super(DataLakeServiceClient, self).__init__(parsed_url, service='dfs',
-                                                    credential=self._raw_credential, audience=audience, **kwargs)
+                                                    credential=self._raw_credential, **kwargs)
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
 
@@ -157,10 +151,9 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
         :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
-        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory authentication.
-            Only has an effect when credential is of type TokenCredential. Specify your Storage Account name to use
-            the https://account.blob.core.windows.net audience. Otherwise, if not specified, the default audience
-            of https://storage.azure.com/ will be used.
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
         :return a DataLakeServiceClient
         :rtype ~azure.storage.filedatalake.DataLakeServiceClient
 

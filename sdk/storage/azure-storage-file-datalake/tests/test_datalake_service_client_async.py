@@ -469,7 +469,7 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         dsc = DataLakeServiceClient(
             self.account_url(datalake_storage_account_name, "blob"),
             credential=token_credential,
-            audience=datalake_storage_account_name
+            audience=f'https://{datalake_storage_account_name}.blob.core.windows.net/'
         )
 
         # Assert
@@ -492,7 +492,7 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         dsc = DataLakeServiceClient(
             self.account_url(datalake_storage_account_name, "blob"),
             credential=token_credential,
-            audience="badaudience"
+            audience=f'https://badaudience.blob.core.windows.net/'
         )
 
         # Assert
