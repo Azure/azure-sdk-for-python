@@ -362,7 +362,7 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
             if self._prefetch_count != 0
             else 5,
             shutdown_after_timeout=False,
-            link_properties = {CONSUMER_IDENTIFIER: self._name}
+            link_properties = {CONSUMER_IDENTIFIER:self._name}
         )
         # When prefetch is 0 and receive mode is PEEK_LOCK, release messages when they're received.
         # This will stop messages from expiring in the buffer and incrementing delivery count of a message.
