@@ -135,7 +135,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
 
         :keyword workspace_name: Name of the workspace.
         :paramtype workspace_name: str
-        :keyword include spark: Whether the workspae managed network should prepare to support SPark
+        :keyword include_spark: Whether the workspace managed network should prepare to support Spark.
         :paramtype include_space: bool
         :return: An instance of LROPoller.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.ManagedNetworkProvisionStatus]
