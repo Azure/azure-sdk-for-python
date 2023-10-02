@@ -4,7 +4,7 @@
 
 # pylint: disable=redefined-builtin, too-many-instance-attributes
 import re
-from typing import Dict, overload
+from typing import Any, Dict, Optional, overload
 
 from typing_extensions import Literal
 
@@ -21,7 +21,13 @@ class Output(_InputOutputBase):
     _IO_KEYS = ["name", "version", "path", "type", "mode", "description", "early_available"]
 
     @overload
-    def __init__(self, type: Literal["uri_folder"] = "uri_folder", path=None, mode=None, description=None) -> None:
+    def __init__(
+        self,
+        type: Literal["uri_folder"] = "uri_folder",
+        path: Optional[str] = None,
+        mode: Optional[str] = None,
+        description: Optional[str] = None,
+    ) -> None:
         # pylint: disable=line-too-long
         """Define an output.
 
@@ -64,7 +70,13 @@ class Output(_InputOutputBase):
         """
 
     @overload
-    def __init__(self, type: Literal["uri_file"] = "uri_file", path=None, mode=None, description=None):
+    def __init__(
+        self,
+        type: Literal["uri_file"] = "uri_file",
+        path: Optional[str] = None,
+        mode: Optional[str] = None,
+        description: Optional[str] = None,
+    ):
         """Define a URI file output.
 
         :keyword type: The type of the data output. Can only be set to 'uri_file'.
@@ -86,7 +98,14 @@ class Output(_InputOutputBase):
         :paramtype version: str
         """
 
-    def __init__(self, *, type=AssetTypes.URI_FOLDER, path=None, mode=None, description=None, **kwargs) -> None:
+    def __init__(
+        self,
+        type: str = AssetTypes.URI_FOLDER,
+        path: Optional[str] = None,
+        mode: Optional[str] = None,
+        description: Optional[str] = None,
+        **kwargs: Any,
+    ) -> None:
         super(Output, self).__init__(type=type)
         # As an annotation, it is not allowed to initialize the _port_name.
         self._port_name = None
