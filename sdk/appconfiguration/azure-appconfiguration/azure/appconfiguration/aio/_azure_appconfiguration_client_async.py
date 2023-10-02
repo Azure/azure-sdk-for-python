@@ -122,7 +122,7 @@ class AzureAppConfigurationClient:
 
     @overload
     def list_configuration_settings(
-        self, *, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs
+        self, *, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs: Any
     ) -> AsyncItemPaged[ConfigurationSetting]:
 
         """List the configuration settings stored in the configuration service, optionally filtered by
@@ -162,7 +162,7 @@ class AzureAppConfigurationClient:
 
     @overload
     def list_configuration_settings(
-        self, *, snapshot_name: str, fields: Optional[List[str]] = None, **kwargs
+        self, *, snapshot_name: str, fields: Optional[List[str]] = None, **kwargs: Any
     ) -> AsyncItemPaged[ConfigurationSetting]:
         """List the configuration settings stored under a snapshot in the configuration service, optionally filtered by
         accept_datetime and fields to present in return.
