@@ -3,13 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Type, Union, List
+from typing import Type, Union, List, cast
 from ._generated.models import AutocompleteRequest, SearchRequest, SuggestRequest
 
 
 class _QueryBase:
 
-    _request_type: Union[Type[AutocompleteRequest], Type[SearchRequest], Type[SuggestRequest]] = None
+    _request_type: Union[Type[AutocompleteRequest], Type[SearchRequest], Type[SuggestRequest]] = cast(
+        Union[Type[AutocompleteRequest], Type[SearchRequest], Type[SuggestRequest]],
+        None,
+    )
 
     def __init__(self, **kwargs) -> None:
         self._request = self._request_type(**kwargs)  # pylint:disable=not-callable
@@ -67,7 +70,8 @@ class SearchQuery(_QueryBase):
                 selects.append(",".join(field))
             else:
                 selects.append(field)
-        self._request.order_by = ",".join(selects)
+        request = cast(SearchRequest, self._request)
+        request.order_by = ",".join(selects)
 
     def select(self, *fields: Union[str, List[str]]) -> None:
         """Update the `select` property for the search results.
@@ -84,7 +88,8 @@ class SearchQuery(_QueryBase):
                 selects.append(",".join(field))
             else:
                 selects.append(field)
-        self._request.select = ",".join(selects)
+        request = cast(SearchRequest, self._request)
+        request.select = ",".join(selects)
 
 
 class SuggestQuery(_QueryBase):
@@ -111,7 +116,8 @@ class SuggestQuery(_QueryBase):
                 selects.append(",".join(field))
             else:
                 selects.append(field)
-        self._request.order_by = ",".join(selects)
+        request = cast(SuggestRequest, self._request)
+        request.order_by = ",".join(selects)
 
     def select(self, *fields: Union[str, List[str]]) -> None:
         """Update the `select` property for the search results.
@@ -129,4 +135,5 @@ class SuggestQuery(_QueryBase):
                 selects.append(",".join(field))
             else:
                 selects.append(field)
-        self._request.select = ",".join(selects)
+        request = cast(SuggestRequest, self._request)
+        request.select = ",".join(selects)

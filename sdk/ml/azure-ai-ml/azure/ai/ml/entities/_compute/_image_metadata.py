@@ -15,7 +15,7 @@ class ImageMetadata:
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_compute.py
+        .. literalinclude:: ../samples/ml_samples_compute.py
             :start-after: [START image_metadata]
             :end-before: [END image_metadata]
             :language: python

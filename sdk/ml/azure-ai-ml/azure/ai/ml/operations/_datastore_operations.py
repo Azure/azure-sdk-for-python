@@ -62,7 +62,7 @@ class DatastoreOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START datastore_operations_list]
                 :end-before: [END datastore_operations_list]
                 :language: python
@@ -101,7 +101,7 @@ class DatastoreOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START datastore_operations_delete]
                 :end-before: [END datastore_operations_delete]
                 :language: python
@@ -129,7 +129,7 @@ class DatastoreOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START datastore_operations_get]
                 :end-before: [END datastore_operations_get]
                 :language: python
@@ -167,7 +167,7 @@ class DatastoreOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START datastore_operations_get_default]
                 :end-before: [END datastore_operations_get_default]
                 :language: python
@@ -198,7 +198,7 @@ class DatastoreOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START datastore_operations_create_or_update]
                 :end-before: [END datastore_operations_create_or_update]
                 :language: python

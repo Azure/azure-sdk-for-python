@@ -16,11 +16,10 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
 )
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory, OutboundRuleType
 
-from azure.ai.ml._utils._experimental import experimental
-
 
 class OutboundRule(ABC):
-    """Base class for Outbound Rules, cannot be instantiated directly.
+    """Base class for Outbound Rules, cannot be instantiated directly. Please see FqdnDestination,
+    PrivateEndpointDestination, and ServiceTagDestination objects to create outbound rules.
 
     :param name: Name of the outbound rule.
     :type name: str
@@ -72,7 +71,6 @@ class OutboundRule(ABC):
         return None
 
 
-@experimental
 class FqdnDestination(OutboundRule):
     """Class representing a FQDN outbound rule.
 
@@ -81,6 +79,15 @@ class FqdnDestination(OutboundRule):
     :param destination: Fully qualified domain name to which outbound connections are allowed.
         For example: “*.contoso.com”.
     :type destination: str
+    :ivar type: Type of the outbound rule. Set to "FQDN" for this class.
+    :vartype type: str
+
+    .. literalinclude:: ../samples/ml_samples_workspace.py
+            :start-after: [START fqdn_outboundrule]
+            :end-before: [END fqdn_outboundrule]
+            :language: python
+            :dedent: 8
+            :caption: Creating a FqdnDestination outbound rule object.
     """
 
     def __init__(self, *, name: str, destination: str, **kwargs) -> None:
@@ -100,7 +107,6 @@ class FqdnDestination(OutboundRule):
         }
 
 
-@experimental
 class PrivateEndpointDestination(OutboundRule):
     """Class representing a Private Endpoint outbound rule.
 
@@ -112,6 +118,15 @@ class PrivateEndpointDestination(OutboundRule):
     :type subresource_target: str
     :param spark_enabled: Indicates if the private endpoint can be used for Spark jobs, default is “false”.
     :type spark_enabled: bool
+    :ivar type: Type of the outbound rule. Set to "PrivateEndpoint" for this class.
+    :vartype type: str
+
+    .. literalinclude:: ../samples/ml_samples_workspace.py
+            :start-after: [START private_endpoint_outboundrule]
+            :end-before: [END private_endpoint_outboundrule]
+            :language: python
+            :dedent: 8
+            :caption: Creating a PrivateEndpointDestination outbound rule object.
     """
 
     def __init__(
@@ -153,7 +168,6 @@ class PrivateEndpointDestination(OutboundRule):
         }
 
 
-@experimental
 class ServiceTagDestination(OutboundRule):
     """Class representing a Service Tag outbound rule.
 
@@ -166,6 +180,15 @@ class ServiceTagDestination(OutboundRule):
     :param port_ranges: A comma-separated list of single ports and/or range of ports, such as "80,1024-65535".
         Traffics should be allowed to these port ranges.
     :type port_ranges: str
+    :ivar type: Type of the outbound rule. Set to "ServiceTag" for this class.
+    :vartype type: str
+
+    .. literalinclude:: ../samples/ml_samples_workspace.py
+            :start-after: [START service_tag_outboundrule]
+            :end-before: [END service_tag_outboundrule]
+            :language: python
+            :dedent: 8
+            :caption: Creating a ServiceTagDestination outbound rule object.
     """
 
     def __init__(
@@ -205,10 +228,27 @@ class ServiceTagDestination(OutboundRule):
         }
 
 
-@experimental
 class ManagedNetwork:
+    """Managed Network settings for a workspace.
+
+    :param isolation_mode: Isolation of the managed network, defaults to Disabled.
+    :type isolation_mode: str
+    :param outbound_rules: List of outbound rules for the managed network.
+    :type outbound_rules: List[~azure.ai.ml.entities.OutboundRule]
+    :param network_id: Network id for the managed network, not meant to be set by user.
+    :type network_id: str
+
+    .. literalinclude:: ../samples/ml_samples_workspace.py
+            :start-after: [START workspace_managed_network]
+            :end-before: [END workspace_managed_network]
+            :language: python
+            :dedent: 8
+            :caption: Creating a ManagedNetwork object with one of each rule type.
+    """
+
     def __init__(
         self,
+        *,
         isolation_mode: str = IsolationMode.DISABLED,
         outbound_rules: Optional[List[OutboundRule]] = None,
         network_id: Optional[str] = None,
@@ -248,7 +288,6 @@ class ManagedNetwork:
         )
 
 
-@experimental
 class ManagedNetworkProvisionStatus:
     """ManagedNetworkProvisionStatus.
 

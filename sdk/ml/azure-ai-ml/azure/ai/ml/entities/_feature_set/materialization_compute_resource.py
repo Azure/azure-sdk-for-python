@@ -15,10 +15,12 @@ class MaterializationComputeResource(RestTranslatableMixin):
 
     :keyword instance_type: The compute instance type.
     :paramtype instance_type: str
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_compute.py
+        .. literalinclude:: ../samples/ml_samples_compute.py
             :start-after: [START materialization_compute_resource]
             :end-before: [END materialization_compute_resource]
             :language: python
@@ -26,7 +28,7 @@ class MaterializationComputeResource(RestTranslatableMixin):
             :caption: Creating a MaterializationComputeResource object.
     """
 
-    def __init__(self, *, instance_type: str, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, *, instance_type: str, **kwargs) -> None:  # pylint: disable=unused-argument
         self.instance_type = instance_type
 
     def _to_rest_object(self) -> RestMaterializationComputeResource:

@@ -8,8 +8,6 @@
 # This script is intended to be executed from within a tox script. It takes care of of unzipping
 # an package sdist and prepping for a sphinx execution.
 
-from m2r import parse_from_file
-
 import glob
 import logging
 import shutil
@@ -30,19 +28,21 @@ logging.getLogger().setLevel(logging.INFO)
 
 RST_EXTENSION_FOR_INDEX = """
 
-Indices and tables
-------------------
+## Indices and tables
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+- {{ref}}`genindex`
+- {{ref}}`modindex`
+- {{ref}}`search`
 
-.. toctree::
-  :maxdepth: 5
-  :glob:
-  :caption: Developer Documentation
+```{{toctree}}
+:caption: Developer Documentation
+:glob: true
+:maxdepth: 5
 
-  {}
+{}
+
+```
+
 """
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
@@ -50,14 +50,12 @@ sphinx_conf = os.path.join(root_dir, "doc", "sphinx", "individual_build_conf.py"
 
 
 def should_build_docs(package_name):
-    return not ("nspkg" in package_name or package_name in ["azure", "azure-mgmt", "azure-keyvault", "azure-documentdb", "azure-mgmt-documentdb", "azure-servicemanagement-legacy"])
+    return not ("nspkg" in package_name or package_name in ["azure", "azure-mgmt", "azure-keyvault", "azure-documentdb", "azure-mgmt-documentdb", "azure-servicemanagement-legacy", "azure-core-tracing-opencensus"])
 
 def create_index_file(readme_location, package_rst):
     readme_ext = os.path.splitext(readme_location)[1]
 
     if readme_ext == ".md":
-        output = parse_from_file(readme_location)
-    elif readme_ext == ".rst":
         with open(readme_location, "r") as file:
             output = file.read()
     else:
@@ -83,20 +81,17 @@ def create_index(doc_folder, source_location, namespace):
     index_content = ""
 
     package_rst = "{}.rst".format(namespace)
-    content_destination = os.path.join(doc_folder, "index.rst")
+    content_destination = os.path.join(doc_folder, "index.md")
 
     if not os.path.exists(doc_folder):
         os.mkdir(doc_folder)
 
     # grep all content
     markdown_readmes = glob.glob(os.path.join(source_location, "README.md"))
-    rst_readmes = glob.glob(os.path.join(source_location, "README.rst"))
 
     # if markdown, take that, otherwise rst
     if markdown_readmes:
         index_content = create_index_file(markdown_readmes[0], package_rst)
-    elif rst_readmes:
-        index_content = create_index_file(rst_readmes[0], package_rst)
     else:
         logging.warning("No readmes detected for this namespace {}".format(namespace))
         index_content = RST_EXTENSION_FOR_INDEX.format(package_rst)
