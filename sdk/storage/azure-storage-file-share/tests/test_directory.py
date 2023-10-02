@@ -1338,7 +1338,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
             share_client.share_name, 'dir1.',
             credential=token_credential,
             token_intent=TEST_INTENT,
-            audience=storage_account_name
+            audience=f'https://{storage_account_name}.file.core.windows.net'
         )
 
         # Assert
@@ -1368,7 +1368,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
             share_client.share_name, 'dir1.',
             credential=token_credential,
             token_intent=TEST_INTENT,
-            audience="badaudience"
+            audience=f'https://badaudience.file.core.windows.net'
         )
 
         # Assert

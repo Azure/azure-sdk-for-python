@@ -91,10 +91,9 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
-    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory authentication.
-        Only has an effect when credential is of type TokenCredential. Specify your Storage Account name to use
-        the https://account.blob.core.windows.net audience. Otherwise, if not specified, the default audience
-        of https://storage.azure.com/ will be used.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
     """
     def __init__(
             self, account_url: str,
@@ -131,15 +130,11 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             except TypeError:
                 self.snapshot = snapshot or path_snapshot
 
-        audience: Optional[str] = None
-        if kwargs.get("audience"):
-            audience = f'https://{kwargs.pop("audience")}.file-share.core.windows.net/.default'
-
         self.share_name = share_name
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
         super(ShareClient, self).__init__(
-            parsed_url, service='file-share', credential=credential, audience=audience, **kwargs)
+            parsed_url, service='file-share', credential=credential, **kwargs)
         self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
         self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
         self.file_request_intent = token_intent
@@ -171,10 +166,9 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory authentication.
-            Only has an effect when credential is of type TokenCredential. Specify your Storage Account name to use
-            the https://account.blob.core.windows.net audience. Otherwise, if not specified, the default audience
-            of https://storage.azure.com/ will be used.
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
         :returns: A share client.
         :rtype: ~azure.storage.fileshare.ShareClient
         """
@@ -241,10 +235,9 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory authentication.
-            Only has an effect when credential is of type TokenCredential. Specify your Storage Account name to use
-            the https://account.blob.core.windows.net audience. Otherwise, if not specified, the default audience
-            of https://storage.azure.com/ will be used.
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
         :returns: A share client.
         :rtype: ~azure.storage.fileshare.ShareClient
 
