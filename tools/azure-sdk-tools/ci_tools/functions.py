@@ -401,25 +401,20 @@ def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> str:
     return packages[0]
 
 
-def pip_install(requirements: List[str]) -> bool:
+def pip_install(requirements: List[str], include_dependencies: bool = True) -> bool:
     """
     Attempts to invoke an install operation using the invoking python's pip. Empty requirements are auto-success.
     """
-    command = [sys.executable, "-m", "pip", "install", "-y"]
+    command = [sys.executable, "-m", "pip", "install"]
 
     if requirements:
-        command.extend(requirements)
+        command.extend([req.strip() for req in requirements])
     else:
         return True
 
     try:
-        result = subprocess.check_call(
-            command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-        )
+        result = subprocess.check_call(command)
     except subprocess.CalledProcessError as f:
-        logging.error(f)
         return False
 
 
@@ -430,29 +425,18 @@ def pip_uninstall(requirements: List[str]) -> bool:
     command = [sys.executable, "-m", "pip", "uninstall", "-y"]
 
     if requirements:
-        command.extend(requirements)
+        command.extend([req.strip() for req in requirements])
     else:
         return True
 
     try:
-        result = subprocess.check_call(
-            command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-        )
+        result = subprocess.check_call(command)
     except subprocess.CalledProcessError as f:
-        logging.error(f)
         return False
 
 
 def pip_install_requirements_file(requirements_file: str) -> bool:
-    if os.path.exists(requirements_file):
-        with open(requirements_file, 'r', encoding='utf-8') as f:
-            requirements = f.readlines()
-    else:
-        return False
-
-    return pip_install(requirements)
+    return pip_install(["-r", requirements_file])
 
 
 def get_pip_list_output():
@@ -477,6 +461,26 @@ def get_pip_list_output():
         raise Exception(stderr)
 
     return collected_output
+
+
+def pytest(args: [], cwd: str = None) -> bool:
+    """
+    Invokes a set of tests, returns true if successful, false otherwise.
+    """
+
+    commands = [
+        sys.executable,
+        "-m",
+        "pytest",
+    ].extend(args)
+
+    breakpoint()
+    if cwd:
+        result = subprocess.run(commands, cwd=cwd)
+    else:
+        result = subprocess.run(commands)
+
+    return result.returncode == 0
 
 
 def get_interpreter_compatible_tags() -> List[str]:

@@ -16,31 +16,73 @@ import logging
 from ci_tools.environment_exclusions import is_check_enabled
 from ci_tools.variables import in_ci
 from ci_tools.parsing import ParsedSetup
-from ci_tools.functions import get_config_setting, discover_prebuilt_package
+from ci_tools.functions import (
+    get_config_setting,
+    discover_prebuilt_package,
+    pip_install_requirements_file,
+    pip_install,
+    pip_uninstall,
+)
 from ci_tools.build import cleanup_build_artifacts, create_package
-from ci_tools.parsing import ParsedSetup, parse_require
-from ci_tools.functions import get_package_from_repo, find_whl, get_pip_list_output
+from ci_tools.parsing import ParsedSetup, parse_require, parse_freeze_output
+from ci_tools.functions import get_package_from_repo, find_whl, get_pip_list_output, pytest
 
 
-PACKAGES_EXCLUDED_FROM_CLEANUP: List[str] = ["azure-sdk-tools", "certifi", "cffi", "azure-devtools", "packaging", "pip", "pluggy", "typing-extensions", "tomli", "tomli-w", "wheel", "wrapt", "six", "urllib3"]
+PACKAGES_EXCLUDED_FROM_CLEANUP: List[str] = [
+    "azure-sdk-tools",
+    "certifi",
+    "cffi",
+    "azure-devtools",
+    "packaging",
+    "pip",
+    "pluggy",
+    "typing-extensions",
+    "tomli",
+    "tomli-w",
+    "wheel",
+    "wrapt",
+    "six",
+    "urllib3",
+    "setuptools",
+    "pyproject-api",
+    "pytest",
+    "pytest-asyncio",
+    "pytest-cov",
+    "pytest-custom-exit-code",
+    "pytest-xdist",
+    "python-dotenv",
+]
+
 
 def clean_environment(
-    package_folder: str, excluded_packages: List[str] = PACKAGES_EXCLUDED_FROM_CLEANUP
+    package_folder: str, config: str, excluded_packages: List[str] = PACKAGES_EXCLUDED_FROM_CLEANUP
 ) -> None:
     """
     Takes an existing temp directory which contains a scenario_<scenarioname>_pin file. This file is the result of a pip freeze()
     operation _after_ the scenario file has been installed.
     """
-    # find a previous scenario file
-    # uninstall each package within it (TODO: excluding azure-sdk-tools?)
-    pass
+    freeze_file = os.path.join(package_folder, f"scenario_{config}_freeze.txt")
+
+    if not os.path.exists(freeze_file):
+        return
+
+    all = list(parse_freeze_output(freeze_file).keys())
+    remainder = list(set(all) - set(excluded_packages))
+
+    pip_uninstall(remainder)
+
+
+def freeze_environment(package_folder: str, config: str) -> List[str]:
+    freeze_file = os.path.join(package_folder, f"scenario_{config}_freeze.txt")
+    packages = get_pip_list_output()
+
+    with open(freeze_file, "w", encoding="utf-8") as f:
+        f.write("\n".join([f"{key}=={packages[key]}" for key in packages.keys()]))
+
+    return packages
 
 
 def create_requirements_file(package_folder: str, optional_definition: str):
-    pass
-
-
-def install_requirements_file(package_folder: str):
     pass
 
 
@@ -107,7 +149,7 @@ def create_package_and_install(
     discovered_packages = discover_packages(
         setup_py_path, distribution_directory, target_setup, package_type, force_create
     )
-    breakpoint()
+
     if skip_install:
         logging.info("Flag to skip install whl is passed. Skipping package installation")
     else:
@@ -341,7 +383,7 @@ def build_and_discover_package(setuppy_path: str, dist_dir: str, target_setup: s
     return prebuilt_packages
 
 
-def main(mapped_args: argparse.Namespace) -> int:
+def prepare_and_test(mapped_args: argparse.Namespace) -> int:
     parsed_package = ParsedSetup.from_path(mapped_args.target)
 
     if in_ci():
@@ -355,54 +397,64 @@ def main(mapped_args: argparse.Namespace) -> int:
         logging.info(f"No optional environments detected in pyproject.toml within {mapped_args.target}.")
         return 0
 
+    config_results = []
+
     for config in optional_configs:
+        env_name = config.get("name")
+
         # clean if necessary
-        clean_environment(mapped_args.target)
+        clean_environment(mapped_args.target, env_name)
 
         # install package
         create_package_and_install(
             distribution_directory=mapped_args.temp_dir,
             target_setup=mapped_args.target,
             skip_install=False,
-            cache_dir=None, # todo, resolve this for CI builds
+            cache_dir=None,  # todo, resolve this for CI builds
             work_dir=mapped_args.temp_dir,
             force_create=False,
             package_type="wheel",
-            pre_download_disabled=False
+            pre_download_disabled=False,
         )
 
         # install the dev requirements
+        pip_install_requirements_file(os.path.join(mapped_args.target, "dev_requirements.txt"))
+
+        # todo: handle failed install
 
         # install any additional requirements
-
-        # dev_reqs, and any additional packages from optional configuration
-
+        pip_install(config.get("install", []))
+        # todo: handle failed install
 
         # uninstall anything additional
-        breakpoint()
+        pip_uninstall(config.get("uninstall", []))
+        # todo: handle failed uninstall
 
+        packages = freeze_environment(mapped_args.target, env_name)
 
-def entrypoint():
-    parser = argparse.ArgumentParser(
-        description="""This entrypoint provides automatic invocation of the 'optional' requirements for a given package. View the pyproject.toml within the targeted package folder to see configuration.""",
-    )
+        # invoke tests with custom arguments if need be
+        pytest_args = [
+            "-rsfE",
+            f"--junitxml={mapped_args.target}/test-junit-optional-{env_name}.xml",
+            "--verbose",
+            "--durations=10",
+            "--ignore=azure",
+            "--ignore=.tox",
+            "--ignore=build",
+            "--ignore=.eggs",
+            mapped_args.target,
+        ]
 
-    parser.add_argument("-t", "--target", dest="target", help="The target package path", required=True)
+        pytest_args.extend(config.get("additional_pytest_args", []))
 
-    parser.add_argument(
-        "-o",
-        "--optional",
-        dest="optional",
-        help="The target environment. If not matched to any of the named optional environments, hard exit. If not provided, all optional environments will be run.",
-        required=False,
-    )
+        logging.info(f"Invoking tests for package {parsed_package.name} and optional environment {env_name}")
+        config_results.append(pytest(pytest_args))
 
-    parser.add_argument(
-        "--temp",
-        dest="temp_dir",
-        help="The target environment. If not matched to any of the named optional environments, hard exit. If not provided, all optional environments will be run.",
-        required=False,
-    )
-
-    args, _ = parser.parse_known_args()
-    exit(main(mapped_args=args))
+    if all(config_results, lambda x: x):
+        logging.info("All optional environment(s) for {parsed_package.name} completed successfully.")
+        sys.exit(0)
+    else:
+        logging.error(
+            "An optional environment for {parsed_package.name} completed with non-zero exit-code. Check test results above."
+        )
+        sys.exit(1)
