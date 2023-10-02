@@ -148,9 +148,9 @@ def _try_load_yaml(source: Union[str, PathLike, IO[AnyStr]], data_type: Type[T])
     if not isinstance(yaml_obj, data_type):
         msg = "Expect {} but get {} after parsing yaml file"
         raise ValidationException(
-            message=msg.format(data_type, type(yaml_obj)),
+            message=msg.format(data_type.__name__, type(yaml_obj)),
             target=ErrorTarget.COMPONENT,
-            no_personal_data_message=msg.format(data_type, type(yaml_obj)),
+            no_personal_data_message=msg.format(data_type.__name__, type(yaml_obj)),
             error_category=ErrorCategory.USER_ERROR,
             error_type=ValidationErrorType.CANNOT_PARSE,
         )
