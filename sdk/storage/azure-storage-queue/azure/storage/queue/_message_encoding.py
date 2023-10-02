@@ -17,25 +17,25 @@ if TYPE_CHECKING:
 
 class MessageEncodePolicy(object):
 
-    require_encryption: Optional[bool] = None
+    require_encryption: bool
     """Indicates whether encryption is required or not."""
-    encryption_version: Optional[str] = None
+    encryption_version: str
     """Indicates the version of encryption being used."""
-    key_encryption_key: Optional[KeyEncryptionKey] = None
+    key_encryption_key: Optional[KeyEncryptionKey]
     """The user-provided key-encryption-key."""
-    resolver: Optional[Callable[[str], KeyEncryptionKey]] = None
+    resolver: Optional[Callable[[str], KeyEncryptionKey]]
     """The user-provided key resolver."""
 
     def __init__(self) -> None:
         self.require_encryption = False
-        self.encryption_version = None
+        self.encryption_version = _ENCRYPTION_PROTOCOL_V1
         self.key_encryption_key = None
         self.resolver = None
 
     def __call__(self, content: Any) -> str:
         if content:
             content = self.encode(content)
-            if self.key_encryption_key is not None and isinstance(self.encryption_version, str):
+            if self.key_encryption_key is not None:
                 content = encrypt_queue_message(content, self.key_encryption_key, self.encryption_version)
         return content
 

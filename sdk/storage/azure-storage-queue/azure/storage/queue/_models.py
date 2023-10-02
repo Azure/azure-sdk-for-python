@@ -312,12 +312,12 @@ class AccessPolicy(GenAccessPolicy):
         be UTC.
     """
 
-    permission: Optional[QueueSasPermissions] = None  # type: ignore [assignment]
+    permission: Optional[QueueSasPermissions]
     """The permissions associated with the shared access signature. The user is restricted to
         operations allowed by the permissions."""
-    expiry: Optional[Union["datetime", str]] = None  # type: ignore [assignment]
+    expiry: Optional[Union["datetime", str]]
     """The time at which the shared access signature becomes invalid."""
-    start: Optional[Union["datetime", str]] = None  # type: ignore [assignment]
+    start: Optional[Union["datetime", str]]
     """The time at which the shared access signature becomes valid."""
 
     def __init__(
@@ -345,7 +345,7 @@ class QueueMessage(DictMixin):
     dequeue_count: Optional[int]
     """Begins with a value of 1 the first time the message is received. This
         value is incremented each time the message is subsequently received."""
-    content: Any
+    content: Optional[Any]
     """The message content. Type is determined by the decode_function set on
         the service. Default is str."""
     pop_receipt: Optional[str]
@@ -368,7 +368,7 @@ class QueueMessage(DictMixin):
         inserted_on: Optional["datetime"] = None,
         expires_on: Optional["datetime"] = None,
         dequeue_count: Optional[int] = None,
-        content: Any = None,
+        content: Optional[Any] = None,
         pop_receipt: Optional[str] = None,
         next_visible_on: Optional["datetime"] = None
     ) -> None:
@@ -380,7 +380,7 @@ class QueueMessage(DictMixin):
         inserted_on: Optional["datetime"] = None,
         expires_on: Optional["datetime"] = None,
         dequeue_count: Optional[int] = None,
-        content: Any = None,
+        content: Optional[Any] = None,
         pop_receipt: Optional[str] = None,
         next_visible_on: Optional["datetime"] = None
     ) -> None:
@@ -475,6 +475,8 @@ class QueueProperties(DictMixin):
     """The name of the queue."""
     metadata: Optional[Dict[str, str]]
     """A dict containing name-value pairs associated with the queue as metadata."""
+    approximate_message_count: int
+    """The approximate number of messages contained in the queue."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.metadata = kwargs.get('metadata')

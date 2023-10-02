@@ -14,12 +14,7 @@ from typing import (
     TYPE_CHECKING,
     Union,
 )
-
-try:
-    from urllib.parse import parse_qs, quote
-except ImportError:
-    from urlparse import parse_qs # type: ignore [no-redef]
-    from urllib2 import quote # type: ignore [no-redef]
+from urllib.parse import parse_qs, quote
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import HttpResponseError
@@ -74,7 +69,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self,
         parsed_url: Any,
         service: str,
-        credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]] = None, # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential", "TokenCredential"]] = None, # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
         self._location_mode = kwargs.get("_location_mode", LocationMode.PRIMARY)
@@ -96,7 +91,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             raise ValueError("Token credential is only supported with HTTPS.")
 
         secondary_hostname = None
-        if hasattr(self.credential, "account_name") and self.credential is not None:
+        if hasattr(self.credential, "account_name"):
             self.account_name = self.credential.account_name
             secondary_hostname = f"{self.credential.account_name}-secondary.{service_name}.{SERVICE_HOST_BASE}"
 
@@ -205,10 +200,10 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
 
     def _format_query_string(
         self, sas_token: Optional[str],
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential", "AsyncTokenCredential"]],  # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]],  # pylint: disable=line-too-long
         snapshot: Optional[str] = None,
         share_snapshot: Optional[str] = None
-    ) -> Tuple[str, Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential", "AsyncTokenCredential"]]]:  # pylint: disable=line-too-long
+    ) -> Tuple[str, Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]]:  # pylint: disable=line-too-long
         query_str = "?"
         if snapshot:
             query_str += f"snapshot={snapshot}&"
@@ -225,12 +220,12 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         return query_str.rstrip("?&"), credential
 
     def _create_pipeline(
-        self, credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]] = None, # pylint: disable=line-too-long
+        self, credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] = None, # pylint: disable=line-too-long
         **kwargs: Any
     ) -> Tuple[StorageConfiguration, Pipeline]:
         self._credential_policy: Any = None
         if hasattr(credential, "get_token"):
-            self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)  # type: ignore [arg-type]  # pylint: disable=line-too-long
+            self._credential_policy = BearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)  # type: ignore
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
@@ -361,7 +356,7 @@ class TransportWrapper(HttpTransport):
 
 def _format_shared_key_credential(
     account_name: str,
-    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]] = None, # pylint: disable=line-too-long
+    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential", "TokenCredential"]] = None, # pylint: disable=line-too-long
 ) -> Any:
     if isinstance(credential, str):
         if not account_name:
@@ -380,9 +375,9 @@ def _format_shared_key_credential(
 
 def parse_connection_str(
     conn_str: str,
-    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]], # pylint: disable=line-too-long
+    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential", "TokenCredential"]], # pylint: disable=line-too-long
     service: str
-) -> Tuple[Optional[str], Optional[str], Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]]]: # pylint: disable=line-too-long
+) -> Tuple[Optional[str], Optional[str], Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential", "TokenCredential"]]]: # pylint: disable=line-too-long
     conn_str = conn_str.rstrip(";")
     conn_settings_list = [s.split("=", 1) for s in conn_str.split(";")]
     if any(len(tup) != 2 for tup in conn_settings_list):

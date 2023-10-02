@@ -13,21 +13,13 @@ import uuid
 from io import SEEK_SET, UnsupportedOperation
 from time import time
 from typing import Any, Dict, Optional, TYPE_CHECKING, Union
-from wsgiref.handlers import format_date_time
-try:
-    from urllib.parse import (
+from urllib.parse import (
         parse_qsl,
         urlencode,
         urlparse,
         urlunparse,
-    )
-except ImportError:
-    from urllib import urlencode # type: ignore
-    from urlparse import ( # type: ignore
-        parse_qsl,
-        urlparse,
-        urlunparse
-    )
+)
+from wsgiref.handlers import format_date_time
 
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import (
@@ -195,9 +187,6 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
 
     This accepts both global configuration, and per-request level with "enable_http_logger"
     """
-
-    logging_enable: bool = False
-    """Whether logging should be enabled or not."""
 
     def __init__(self, logging_enable: bool = False, **kwargs) -> None:
         self.logging_body = kwargs.pop("logging_body", False)
@@ -478,8 +467,10 @@ class StorageRetryPolicy(HTTPPolicy):
         transport.sleep(backoff)
 
     def increment(
-        self, settings: Dict[str, Any],
-        request: "PipelineRequest", response: Optional["PipelineResponse"] = None,
+        self,
+        settings: Dict[str, Any],
+        request: "PipelineRequest",
+        response: Optional["PipelineResponse"] = None,
         error: Optional[Union[ServiceRequestError, ServiceResponseError]] = None
     ) -> bool:
         """Increment the retry counters.
@@ -510,7 +501,7 @@ class StorageRetryPolicy(HTTPPolicy):
         else:
             # Incrementing because of a server error like a 500 in
             # status_forcelist and a the given method is in the allowlist
-            if response is not None:
+            if response:
                 settings['status'] -= 1
                 settings['history'].append(RequestHistory(request, http_response=response))
 
@@ -576,9 +567,12 @@ class ExponentialRetry(StorageRetryPolicy):
     """Exponential retry."""
 
     def __init__(
-        self, initial_backoff: int = 15,
-        increment_base: int = 3, retry_total: int = 3,
-        retry_to_secondary: bool = False, random_jitter_range: int = 3, **kwargs
+        self,
+        initial_backoff: int = 15,
+        increment_base: int = 3,
+        retry_total: int = 3,
+        retry_to_secondary: bool = False,
+        random_jitter_range: int = 3, **kwargs
     ) -> None:
         """
         Constructs an Exponential retry object. The initial_backoff is used for

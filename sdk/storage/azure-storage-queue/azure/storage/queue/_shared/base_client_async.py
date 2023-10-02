@@ -5,11 +5,9 @@
 # --------------------------------------------------------------------------
 # mypy: disable-error-code="attr-defined"
 
-from typing import (
-    Any, Dict, Iterator, Optional,
-    Tuple, TYPE_CHECKING, Union
-)
 import logging
+from typing import Any, Dict, Optional, Tuple, TYPE_CHECKING, Union
+from urllib.parse import parse_qs
 
 from azure.core.async_paging import AsyncList
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -38,6 +36,7 @@ from .policies import (
 )
 from .policies_async import AsyncStorageResponseHook
 from .response_handlers import PartialBatchErrorException, process_storage_error
+from .shared_access_signature import QueryStringConstants
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -67,13 +66,37 @@ class AsyncStorageAccountHostsMixin(object):
         """
         await self._client.close()
 
+    def _format_query_string(
+        self, sas_token: Optional[str],
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]],  # pylint: disable=line-too-long
+        snapshot: Optional[str] = None,
+        share_snapshot: Optional[str] = None
+    ) -> Tuple[str, Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]]]:  # pylint: disable=line-too-long
+        query_str = "?"
+        if snapshot:
+            query_str += f"snapshot={snapshot}&"
+        if share_snapshot:
+            query_str += f"sharesnapshot={share_snapshot}&"
+        if sas_token and isinstance(credential, AzureSasCredential):
+            raise ValueError(
+                "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
+        if is_credential_sastoken(credential):
+            query_str += credential.lstrip("?")  # type: ignore [union-attr]
+            credential = None
+        elif sas_token:
+            query_str += sas_token
+        return query_str.rstrip("?&"), credential
+
     def _create_pipeline(
-        self, credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]] = None, # pylint: disable=line-too-long
+        self, credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential"]] = None, # pylint: disable=line-too-long
         **kwargs: Any
     ) -> Tuple[StorageConfiguration, AsyncPipeline]:
-        self._credential_policy: Optional[Union[AsyncBearerTokenCredentialPolicy, SharedKeyCredentialPolicy, AzureSasCredentialPolicy]] = None # pylint: disable=line-too-long
+        self._credential_policy: Optional[
+            Union[AsyncBearerTokenCredentialPolicy,
+            SharedKeyCredentialPolicy,
+            AzureSasCredentialPolicy]] = None
         if hasattr(credential, 'get_token'):
-            self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)  #type: ignore [arg-type] # pylint: disable=line-too-long
+            self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)  #type: ignore
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
@@ -176,6 +199,16 @@ class AsyncStorageAccountHostsMixin(object):
             return parts
         except HttpResponseError as error:
             process_storage_error(error)
+
+def is_credential_sastoken(credential: Any) -> bool:
+    if not credential or not isinstance(credential, str):
+        return False
+
+    sas_values = QueryStringConstants.to_list()
+    parsed_query = parse_qs(credential.lstrip("?"))
+    if parsed_query and all(k in sas_values for k in parsed_query.keys()):
+        return True
+    return False
 
 
 class AsyncTransportWrapper(AsyncHttpTransport):

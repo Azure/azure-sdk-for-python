@@ -277,7 +277,12 @@ class ResourceTypes(object):
     object: bool = False
     _str: str
 
-    def __init__(self, service=False, container=False, object=False):  # pylint: disable=redefined-builtin
+    def __init__(
+        self,
+        service: bool = False,
+        container: bool = False,
+        object: bool = False  # pylint: disable=redefined-builtin
+    ) -> None:
         self.service = service
         self.container = container
         self.object = object
@@ -368,10 +373,16 @@ class AccountSasPermissions(object):
     permanent_delete: bool = False
 
     def __init__(
-        self, read: bool = False, write: bool = False,
-        delete: bool = False, list: bool = False,  # pylint: disable=redefined-builtin
-        add:bool = False, create:bool = False, update:bool =False,
-        process:bool = False, delete_previous_version:bool = False,
+        self,
+        read: bool = False,
+        write: bool = False,
+        delete: bool = False,
+        list: bool = False,  # pylint: disable=redefined-builtin
+        add: bool = False,
+        create: bool = False,
+        update: bool = False,
+        process: bool = False,
+        delete_previous_version: bool = False,
         **kwargs
     ) -> None:
         self.read = read

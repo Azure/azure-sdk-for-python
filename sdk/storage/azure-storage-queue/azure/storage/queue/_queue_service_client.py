@@ -62,6 +62,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
+    :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] # pylint: disable=line-too-long
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -87,7 +88,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     def __init__(
         self, account_url: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
         parsed_url, sas_token = _parse_url(account_url=account_url, credential=credential)
@@ -110,7 +111,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     @classmethod
     def from_connection_string(
         cls, conn_str: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> Self:
         """Create QueueServiceClient from a Connection String.
@@ -126,7 +127,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential", "AsyncTokenCredential"]] # pylint: disable=line-too-long
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential, AsyncTokenCredential]] # pylint: disable=line-too-long
         :returns: A Queue service client.
         :rtype: ~azure.storage.queue.QueueClient
 
@@ -413,7 +414,6 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :caption: Get the queue client.
         """
         if isinstance(queue, QueueProperties):
-            if queue.name is not None:
                 queue_name = queue.name
         else:
             queue_name = queue

@@ -57,6 +57,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
+    :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -81,7 +82,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def __init__(
         self, account_url: str,
         queue_name: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
         parsed_url, sas_token = _parse_url(account_url=account_url, queue_name=queue_name, credential=credential)
@@ -102,7 +103,11 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :returns: The formatted endpoint URL according to the specified location mode hostname.
         :rtype: str
         """
-        return _format_url_helper(queue_name=self.queue_name, hostname=hostname, scheme=self.scheme, query_str=self._query_str)  # pylint: disable=line-too-long
+        return _format_url_helper(
+            queue_name=self.queue_name,
+            hostname=hostname,
+            scheme=self.scheme,
+            query_str=self._query_str)
 
     @classmethod
     def from_queue_url(
@@ -133,7 +138,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def from_connection_string(
         cls, conn_str: str,
         queue_name: str,
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential", "AsyncTokenCredential"]] = None,  # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
         **kwargs: Any
     ) -> Self:
         """Create QueueClient from a Connection String.
@@ -151,7 +156,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
-        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential", "AsyncTokenCredential"]] # pylint: disable=line-too-long
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
 

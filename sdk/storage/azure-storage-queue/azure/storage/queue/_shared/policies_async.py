@@ -85,7 +85,7 @@ class AsyncStorageResponseHook(AsyncHTTPPolicy):
                 pipeline_obj.context['upload_stream_current'] = upload_stream_current
         if response_callback:
             if asyncio.iscoroutine(response_callback):
-                await response_callback(response) #type: ignore
+                await response_callback(response) # type: ignore
             else:
                 response_callback(response)
             request.context['response_callback'] = response_callback
@@ -145,9 +145,12 @@ class ExponentialRetry(AsyncStorageRetryPolicy):
     """Exponential retry."""
 
     def __init__(
-        self, initial_backoff: int = 15,
-        increment_base: int = 3, retry_total: int = 3,
-        retry_to_secondary: bool = False, random_jitter_range: int = 3, **kwargs
+        self,
+        initial_backoff: int = 15,
+        increment_base: int = 3,
+        retry_total: int = 3,
+        retry_to_secondary: bool = False,
+        random_jitter_range: int = 3, **kwargs
     ) -> None:
         """
         Constructs an Exponential retry object. The initial_backoff is used for
