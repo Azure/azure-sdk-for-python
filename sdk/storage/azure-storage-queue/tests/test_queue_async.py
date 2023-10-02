@@ -1393,7 +1393,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         token_credential = self.generate_oauth_token()
         qsc = QueueServiceClient(
             self.account_url(storage_account_name, "queue"), credential=token_credential,
-            audience=storage_account_name
+            audience=f'https://{storage_account_name}.queue.core.windows.net'
         )
 
         # Assert
@@ -1414,7 +1414,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         token_credential = self.generate_oauth_token()
         qsc = QueueServiceClient(
             self.account_url(storage_account_name, "queue"), credential=token_credential,
-            audience="badaudience"
+            audience=f'https://badaudience.queue.core.windows.net'
         )
 
         # Assert
@@ -1435,7 +1435,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         token_credential = self.generate_oauth_token()
         queue = QueueClient(
             self.account_url(storage_account_name, "queue"), 'testqueue1', credential=token_credential,
-            audience=storage_account_name
+            audience=f'https://{storage_account_name}.queue.core.windows.net'
         )
 
         # Assert
@@ -1454,10 +1454,9 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
 
         # Act
         token_credential = self.generate_oauth_token()
-        audience_str = f'https://badaudience.blob.core.windows.net/'
         queue = QueueClient(
             self.account_url(storage_account_name, "queue"), 'testqueue2', credential=token_credential,
-            audience="badaudience"
+            audience=f'https://badaudience.queue.core.windows.net'
         )
 
         # Assert

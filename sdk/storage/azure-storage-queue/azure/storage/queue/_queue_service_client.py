@@ -70,10 +70,9 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
-    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory authentication.
-        Only has an effect when credential is of type TokenCredential. Specify your Storage Account name to use
-        the https://account.blob.core.windows.net audience. Otherwise, if not specified, the default audience
-        of https://storage.azure.com/ will be used.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.queue.core.windows.net.
 
     .. admonition:: Example:
 
@@ -106,15 +105,11 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         if not parsed_url.netloc:
             raise ValueError(f"Invalid URL: {account_url}")
 
-        audience: Optional[str] = None
-        if kwargs.get("audience"):
-            audience = f'https://{kwargs.pop("audience")}.queue.core.windows.net/.default'
-
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
             raise ValueError("You need to provide either a SAS token or an account shared key to authenticate.")
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(QueueServiceClient, self).__init__(parsed_url, service='queue', credential=credential, audience=audience, **kwargs)
+        super(QueueServiceClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._configure_encryption(kwargs)
@@ -142,10 +137,9 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory authentication.
-            Only has an effect when credential is of type TokenCredential. Specify your Storage Account name to use
-            the https://account.blob.core.windows.net audience. Otherwise, if not specified, the default audience
-            of https://storage.azure.com/ will be used.
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.queue.core.windows.net.
         :returns: A Queue service client.
         :rtype: ~azure.storage.queue.QueueClient
 
