@@ -169,7 +169,7 @@ class TableBatchOperations(object):
         accept = "application/json;odata=minimalmetadata"
 
         # Construct URL
-        url = self._batch_create_entity.metadata["url"]  # type: ignore[attr-defined]
+        url = "/{table}"
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
             "table": self._serialize.url("table", table, "str"),
@@ -208,8 +208,6 @@ class TableBatchOperations(object):
             url, query_parameters, header_parameters, **body_content_kwargs
         )
         self.requests.append(request)
-
-    _batch_create_entity.metadata = {"url": "/{table}"}  # type: ignore[attr-defined]
 
     def update(self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs) -> None:
         """Adds an update operation to the current batch.
@@ -315,7 +313,7 @@ class TableBatchOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self._batch_update_entity.metadata["url"]  # type: ignore[attr-defined]
+        url = "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
             "table": self._serialize.url("table", table, "str"),
@@ -356,10 +354,6 @@ class TableBatchOperations(object):
             url, query_parameters, header_parameters, **body_content_kwargs
         )
         self.requests.append(request)
-
-    _batch_update_entity.metadata = {  # type: ignore[attr-defined]
-        "url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
-    }
 
     def _batch_merge_entity(
         self,
@@ -404,7 +398,7 @@ class TableBatchOperations(object):
         accept = "application/json"
 
         # Construct URL
-        url = self._batch_merge_entity.metadata["url"]  # type: ignore[attr-defined]
+        url = "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
             "table": self._serialize.url("table", table, "str"),
@@ -447,10 +441,6 @@ class TableBatchOperations(object):
         if self._is_cosmos_endpoint:
             _transform_patch_to_cosmos_post(request)
         self.requests.append(request)
-
-    _batch_merge_entity.metadata = {  # type: ignore[attr-defined]
-        "url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
-    }
 
     def delete(self, entity: EntityType, **kwargs) -> None:
         """Deletes the specified entity in a table.
@@ -529,7 +519,7 @@ class TableBatchOperations(object):
         accept = "application/json;odata=minimalmetadata"
 
         # Construct URL
-        url = self._batch_delete_entity.metadata["url"]  # type: ignore[attr-defined]
+        url = "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
             "table": self._serialize.url("table", table, "str"),
@@ -562,10 +552,6 @@ class TableBatchOperations(object):
             url, query_parameters, header_parameters
         )
         self.requests.append(request)
-
-    _batch_delete_entity.metadata = {  # type: ignore[attr-defined]
-        "url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
-    }
 
     def upsert(self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs) -> None:
         """Update/Merge or Insert entity into table.

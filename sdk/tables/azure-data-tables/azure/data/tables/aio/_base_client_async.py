@@ -27,7 +27,7 @@ from azure.core.pipeline.transport import (
 
 from ._authentication_async import _configure_credential
 from .._generated.aio import AzureTable
-from .._base_client import AccountHostsMixin, get_api_version, extract_batch_part_metadata
+from .._base_client import AccountHostsMixin, extract_batch_part_metadata
 from .._error import (
     RequestTooLargeError,
     TableTransactionError,
@@ -71,7 +71,9 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         :paramtype api_version: str or None
         """
         super(AsyncTablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)
-        self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), version=self._api_version, **kwargs)
+        self._client = AzureTable(
+            self.url, policies=kwargs.pop("policies", self._policies), version=self._api_version, **kwargs
+        )
 
     async def __aenter__(self) -> Self:
         await self._client.__aenter__()

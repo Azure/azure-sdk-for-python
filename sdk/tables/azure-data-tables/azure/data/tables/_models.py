@@ -50,18 +50,18 @@ class TableAccessPolicy(GenAccessPolicy):
     request will fail with status code 400 (Bad Request).
     """
 
-    start: Optional[Union[datetime, str]]  # type: ignore[assignment]
+    start: Optional[Union[datetime, str]]  # type: ignore[assignment] # Base class defined the class as "str"
     """The time at which the shared access signature becomes valid.
         If omitted, start time for this call is assumed to be the time when the storage service receives the request.
         Azure will always convert values to UTC. If a date is passed in without timezone info, it is assumed to be UTC.
     """
-    expiry: Optional[Union[datetime, str]]  # type: ignore[assignment]
+    expiry: Optional[Union[datetime, str]]  # type: ignore[assignment] # Base class defined the class as "str"
     """The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy which contains this field.
         This field must be omitted if it has been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it is assumed to be UTC.
     """
-    permission: Optional[str]  # type: ignore[assignment]
+    permission: Optional[str]  # type: ignore[assignment] # Base class defined the class as "str"
     """The permissions associated with the shared access signature.
         The user is restricted to operations allowed by the permissions. Required unless an id is given referencing
         a stored access policy which contains this field. This field must be omitted if it has been specified in
@@ -320,7 +320,7 @@ class TableEntityPropertiesPaged(PageIterator):
         super(TableEntityPropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
-            continuation_token=kwargs.get("continuation_token") or {},  # type: ignore[arg-type]
+            continuation_token=kwargs.get("continuation_token"),
         )
         self._command = command
         self._headers = None

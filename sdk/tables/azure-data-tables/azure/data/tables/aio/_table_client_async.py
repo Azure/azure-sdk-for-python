@@ -196,8 +196,8 @@ class TableClient(AsyncTablesBaseClient):
             payload = None
             if value:
                 payload = TableAccessPolicy(
-                    start=serialize_iso(value.start),  # type: ignore[arg-type]
-                    expiry=serialize_iso(value.expiry),  # type: ignore[arg-type]
+                    start=serialize_iso(value.start),
+                    expiry=serialize_iso(value.expiry),
                     permission=value.permission,
                 )
             identifiers.append(SignedIdentifier(id=key, access_policy=payload))
