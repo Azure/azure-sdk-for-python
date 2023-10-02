@@ -36,11 +36,12 @@ class PolicyEffect(Enum):
 @experimental
 class Policy(object):
     def __init__(
-        self, name: str,
+        self,
+        name: str,
         scope: str,
         definition: PolicyDefinition,
         parameters: Dict[str, Any] = None,
-        effect: PolicyEffect = None
+        effect: PolicyEffect = None,
     ) -> None:
         self.name = name
         self.scope = scope
