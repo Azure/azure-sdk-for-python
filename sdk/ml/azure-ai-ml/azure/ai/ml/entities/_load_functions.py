@@ -42,7 +42,7 @@ from azure.ai.ml.entities._validation import PathAwareSchemaValidatableMixin, Va
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 from azure.ai.ml.entities._workspace.workspace import Workspace
 from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
-from azure.ai.ml.entities._policies.policy import Policy
+from azure.ai.ml.entities._policies.policy import Policy, PolicyDefinition, PolicyEffect
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 T = TypeVar("T")
@@ -953,8 +953,8 @@ def load_policies(source: Union[str, PathLike, IO[AnyStr]]) -> [Policy]:
         scope = item["scope"]
         rules = item["policies"]
         for rule in rules:
-            rule["definition"] = Policy.Definition.get(rule["definition"])
-            rule["effect"] = Policy.Effect[rule["effect"].title()]
+            rule["definition"] = PolicyDefinition.get(rule["definition"])
+            rule["effect"] = PolicyEffect[rule["effect"].title()]
             rule["scope"] = scope
             policies.append(Policy(**rule))
     return policies

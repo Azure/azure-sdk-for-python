@@ -10,37 +10,39 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ComputePolicyRequest, ComputePolicyDto
 
 
+class PolicyDefinition(Enum):
+    MaxJobInstanceCount = "MaxJobInstanceCount"
+    MaxJobExecutionTime = "MaxJobExecutionTime"
+    MaxTotalVcpuUsage = "MaxTotalVcpuUsage"
+    MaxPerUserVcpuUsage = "MaxPerUserVcpuUsage"
+    CiIdleShutdown = "CiIdleShutdown"
+    RequireCiLatestSoftware = "RequireCiLatestSoftware"
+
+    @staticmethod
+    def get(name: str) -> "PolicyDefinition":
+        try:
+            # by default try PascalCase
+            return PolicyDefinition[name]
+        except KeyError:
+            # fall back to snake case
+            return PolicyDefinition[name.replace("_", " ").title().replace(" ", "")]
+
+
+class PolicyEffect(Enum):
+    Deny = "Deny"
+    Audit = "Audit"
+
+
 @experimental
 class Policy(object):
-    class Definition(Enum):
-        MaxJobInstanceCount = "MaxJobInstanceCount"
-        MaxJobExecutionTime = "MaxJobExecutionTime"
-        MaxTotalVcpuUsage = "MaxTotalVcpuUsage"
-        MaxPerUserVcpuUsage = "MaxPerUserVcpuUsage"
-        CiIdleShutdown = "CiIdleShutdown"
-        RequireCiLatestSoftware = "RequireCiLatestSoftware"
-
-        @staticmethod
-        def get(name: str) -> "Policy.Definition":
-            try:
-                # by default try PascalCase
-                return Policy.Definition[name]
-            except KeyError:
-                # fall back to snake case
-                return Policy.Definition[name.replace("_", " ").title().replace(" ", "")]
-
-    class Effect(Enum):
-        Deny = "Deny"
-        Audit = "Audit"
-
     def __init__(
-        self, name: str, scope: str, definition: Definition, parameters: Dict[str, Any] = None, effect: Effect = None
+        self, name: str, scope: str, definition: PolicyDefinition, parameters: Dict[str, Any] = None, effect: PolicyEffect = None
     ) -> None:
         self.name = name
         self.scope = scope
         self.definition = definition
         self.parameters = parameters or {}
-        self.effect = effect or Policy.Effect.Deny
+        self.effect = effect or PolicyEffect.Deny
 
     def _to_rest_object(self) -> ComputePolicyRequest:
         return ComputePolicyRequest(
@@ -56,8 +58,8 @@ class Policy(object):
             name=obj.name,
             scope=obj.arm_scope,
             parameters=obj.parameters,
-            effect=Policy.Effect[obj.effect],
-            definition=Policy.Definition[obj.definition],
+            effect=PolicyEffect[obj.effect],
+            definition=PolicyDefinition[obj.definition],
         )
 
     def _to_dict(self):
