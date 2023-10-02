@@ -7,9 +7,17 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
+
 from six import with_metaclass
+
 from azure.core import CaseInsensitiveEnumMeta
 
+
+class ActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
+    """
+
+    INTERNAL = "Internal"
 
 class AllocationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Allocation state of the compute. Possible values are: steady - Indicates that the compute is
@@ -1288,6 +1296,15 @@ class OrderString(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CREATED_AT_ASC = "CreatedAtAsc"
     UPDATED_AT_DESC = "UpdatedAtDesc"
     UPDATED_AT_ASC = "UpdatedAtAsc"
+
+class Origin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+    logs UX. Default value is "user,system"
+    """
+
+    USER = "user"
+    SYSTEM = "system"
+    USER_SYSTEM = "user,system"
 
 class OsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Compute OS Type

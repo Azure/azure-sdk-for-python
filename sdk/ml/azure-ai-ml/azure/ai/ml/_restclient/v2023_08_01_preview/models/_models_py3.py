@@ -9,8 +9,9 @@
 import datetime
 from typing import Any, Dict, List, Optional, Union
 
-from azure.core.exceptions import HttpResponseError
 import msrest.serialization
+
+from azure.core.exceptions import HttpResponseError
 
 from ._azure_machine_learning_workspaces_enums import *
 
@@ -20,6 +21,8 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AccessKeyAuthTypeWorkspaceConnectionProperties, ApiKeyAuthWorkspaceConnectionProperties, CustomKeysWorkspaceConnectionProperties, ManagedIdentityAuthTypeWorkspaceConnectionProperties, NoneAuthTypeWorkspaceConnectionProperties, PATAuthTypeWorkspaceConnectionProperties, SASAuthTypeWorkspaceConnectionProperties, ServicePrincipalAuthTypeWorkspaceConnectionProperties, UsernamePasswordAuthTypeWorkspaceConnectionProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -32,8 +35,13 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
      "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
      "CognitiveSearch", "CognitiveService", "CustomKeys".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+    :ivar created_by_workspace_arm_id: The arm id of the workspace which created this connection.
+    :vartype created_by_workspace_arm_id: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
+    :ivar is_shared_to_all: whether this connection will be shared to all the project workspace
+     under the hub.
+    :vartype is_shared_to_all: bool
     :ivar metadata: Any object.
     :vartype metadata: any
     :ivar target:
@@ -42,12 +50,15 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
 
     _validation = {
         'auth_type': {'required': True},
+        'created_by_workspace_arm_id': {'readonly': True},
     }
 
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
+        'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'metadata': {'key': 'metadata', 'type': 'object'},
         'target': {'key': 'target', 'type': 'str'},
     }
@@ -61,6 +72,7 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
         *,
         category: Optional[Union[str, "ConnectionCategory"]] = None,
         expiry_time: Optional[datetime.datetime] = None,
+        is_shared_to_all: Optional[bool] = None,
         metadata: Optional[Any] = None,
         target: Optional[str] = None,
         **kwargs
@@ -73,6 +85,9 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
+        :keyword is_shared_to_all: whether this connection will be shared to all the project workspace
+         under the hub.
+        :paramtype is_shared_to_all: bool
         :keyword metadata: Any object.
         :paramtype metadata: any
         :keyword target:
@@ -81,13 +96,17 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
         super(WorkspaceConnectionPropertiesV2, self).__init__(**kwargs)
         self.auth_type = None  # type: Optional[str]
         self.category = category
+        self.created_by_workspace_arm_id = None
         self.expiry_time = expiry_time
+        self.is_shared_to_all = is_shared_to_all
         self.metadata = metadata
         self.target = target
 
 
 class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     """AccessKeyAuthTypeWorkspaceConnectionProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -100,8 +119,13 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
      "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
      "CognitiveSearch", "CognitiveService", "CustomKeys".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+    :ivar created_by_workspace_arm_id: The arm id of the workspace which created this connection.
+    :vartype created_by_workspace_arm_id: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
+    :ivar is_shared_to_all: whether this connection will be shared to all the project workspace
+     under the hub.
+    :vartype is_shared_to_all: bool
     :ivar metadata: Any object.
     :vartype metadata: any
     :ivar target:
@@ -112,12 +136,15 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
 
     _validation = {
         'auth_type': {'required': True},
+        'created_by_workspace_arm_id': {'readonly': True},
     }
 
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
+        'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'metadata': {'key': 'metadata', 'type': 'object'},
         'target': {'key': 'target', 'type': 'str'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionAccessKey'},
@@ -128,6 +155,7 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
         *,
         category: Optional[Union[str, "ConnectionCategory"]] = None,
         expiry_time: Optional[datetime.datetime] = None,
+        is_shared_to_all: Optional[bool] = None,
         metadata: Optional[Any] = None,
         target: Optional[str] = None,
         credentials: Optional["WorkspaceConnectionAccessKey"] = None,
@@ -141,6 +169,9 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
+        :keyword is_shared_to_all: whether this connection will be shared to all the project workspace
+         under the hub.
+        :paramtype is_shared_to_all: bool
         :keyword metadata: Any object.
         :paramtype metadata: any
         :keyword target:
@@ -148,7 +179,7 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
         :keyword credentials:
         :paramtype credentials: ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionAccessKey
         """
-        super(AccessKeyAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, metadata=metadata, target=target, **kwargs)
+        super(AccessKeyAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, is_shared_to_all=is_shared_to_all, metadata=metadata, target=target, **kwargs)
         self.auth_type = 'AccessKey'  # type: str
         self.credentials = credentials
 
@@ -1352,79 +1383,6 @@ class AmlComputeProperties(msrest.serialization.Model):
         self.property_bag = property_bag
 
 
-class AmlOperation(msrest.serialization.Model):
-    """Azure Machine Learning team account REST API operation.
-
-    :ivar display: Gets or sets display name of operation.
-    :vartype display: ~azure.mgmt.machinelearningservices.models.OperationDisplay
-    :ivar is_data_action: Indicates whether the operation applies to data-plane.
-    :vartype is_data_action: bool
-    :ivar name: Gets or sets operation name: {provider}/{resource}/{operation}.
-    :vartype name: str
-    :ivar origin: The intended executor of the operation: user/system.
-    :vartype origin: str
-    """
-
-    _attribute_map = {
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'name': {'key': 'name', 'type': 'str'},
-        'origin': {'key': 'origin', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        display: Optional["OperationDisplay"] = None,
-        is_data_action: Optional[bool] = None,
-        name: Optional[str] = None,
-        origin: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword display: Gets or sets display name of operation.
-        :paramtype display: ~azure.mgmt.machinelearningservices.models.OperationDisplay
-        :keyword is_data_action: Indicates whether the operation applies to data-plane.
-        :paramtype is_data_action: bool
-        :keyword name: Gets or sets operation name: {provider}/{resource}/{operation}.
-        :paramtype name: str
-        :keyword origin: The intended executor of the operation: user/system.
-        :paramtype origin: str
-        """
-        super(AmlOperation, self).__init__(**kwargs)
-        self.display = display
-        self.is_data_action = is_data_action
-        self.name = name
-        self.origin = origin
-
-
-class AmlOperationListResult(msrest.serialization.Model):
-    """An array of operations supported by the resource provider.
-
-    :ivar value: Gets or sets list of AML team account operations supported by the
-     AML team account resource provider.
-    :vartype value: list[~azure.mgmt.machinelearningservices.models.AmlOperation]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[AmlOperation]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["AmlOperation"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword value: Gets or sets list of AML team account operations supported by the
-         AML team account resource provider.
-        :paramtype value: list[~azure.mgmt.machinelearningservices.models.AmlOperation]
-        """
-        super(AmlOperationListResult, self).__init__(**kwargs)
-        self.value = value
-
-
 class IdentityConfiguration(msrest.serialization.Model):
     """Base definition for identity configuration.
 
@@ -1616,6 +1574,8 @@ CognitiveSearch:
 
 Use Metadata property bag for ApiType, ApiVersion, Kind and other metadata fields.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :ivar auth_type: Required. Authentication type of the connection target.Constant filled by
@@ -1627,8 +1587,13 @@ Use Metadata property bag for ApiType, ApiVersion, Kind and other metadata field
      "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
      "CognitiveSearch", "CognitiveService", "CustomKeys".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+    :ivar created_by_workspace_arm_id: The arm id of the workspace which created this connection.
+    :vartype created_by_workspace_arm_id: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
+    :ivar is_shared_to_all: whether this connection will be shared to all the project workspace
+     under the hub.
+    :vartype is_shared_to_all: bool
     :ivar metadata: Any object.
     :vartype metadata: any
     :ivar target:
@@ -1639,12 +1604,15 @@ Use Metadata property bag for ApiType, ApiVersion, Kind and other metadata field
 
     _validation = {
         'auth_type': {'required': True},
+        'created_by_workspace_arm_id': {'readonly': True},
     }
 
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
+        'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'metadata': {'key': 'metadata', 'type': 'object'},
         'target': {'key': 'target', 'type': 'str'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionApiKey'},
@@ -1655,6 +1623,7 @@ Use Metadata property bag for ApiType, ApiVersion, Kind and other metadata field
         *,
         category: Optional[Union[str, "ConnectionCategory"]] = None,
         expiry_time: Optional[datetime.datetime] = None,
+        is_shared_to_all: Optional[bool] = None,
         metadata: Optional[Any] = None,
         target: Optional[str] = None,
         credentials: Optional["WorkspaceConnectionApiKey"] = None,
@@ -1668,6 +1637,9 @@ Use Metadata property bag for ApiType, ApiVersion, Kind and other metadata field
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
+        :keyword is_shared_to_all: whether this connection will be shared to all the project workspace
+         under the hub.
+        :paramtype is_shared_to_all: bool
         :keyword metadata: Any object.
         :paramtype metadata: any
         :keyword target:
@@ -1675,7 +1647,7 @@ Use Metadata property bag for ApiType, ApiVersion, Kind and other metadata field
         :keyword credentials: Api key object for workspace connection credential.
         :paramtype credentials: ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionApiKey
         """
-        super(ApiKeyAuthWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, metadata=metadata, target=target, **kwargs)
+        super(ApiKeyAuthWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, is_shared_to_all=is_shared_to_all, metadata=metadata, target=target, **kwargs)
         self.auth_type = 'ApiKey'  # type: str
         self.credentials = credentials
 
@@ -8832,6 +8804,8 @@ Credentials:= {CustomKeys} as Microsoft.MachineLearning.AccountRP.Contracts.Work
 Target:= {any value}
 Use Metadata property bag for ApiVersion and other metadata fields.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :ivar auth_type: Required. Authentication type of the connection target.Constant filled by
@@ -8843,8 +8817,13 @@ Use Metadata property bag for ApiVersion and other metadata fields.
      "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
      "CognitiveSearch", "CognitiveService", "CustomKeys".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+    :ivar created_by_workspace_arm_id: The arm id of the workspace which created this connection.
+    :vartype created_by_workspace_arm_id: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
+    :ivar is_shared_to_all: whether this connection will be shared to all the project workspace
+     under the hub.
+    :vartype is_shared_to_all: bool
     :ivar metadata: Any object.
     :vartype metadata: any
     :ivar target:
@@ -8855,12 +8834,15 @@ Use Metadata property bag for ApiVersion and other metadata fields.
 
     _validation = {
         'auth_type': {'required': True},
+        'created_by_workspace_arm_id': {'readonly': True},
     }
 
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
+        'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'metadata': {'key': 'metadata', 'type': 'object'},
         'target': {'key': 'target', 'type': 'str'},
         'credentials': {'key': 'credentials', 'type': 'CustomKeys'},
@@ -8871,6 +8853,7 @@ Use Metadata property bag for ApiVersion and other metadata fields.
         *,
         category: Optional[Union[str, "ConnectionCategory"]] = None,
         expiry_time: Optional[datetime.datetime] = None,
+        is_shared_to_all: Optional[bool] = None,
         metadata: Optional[Any] = None,
         target: Optional[str] = None,
         credentials: Optional["CustomKeys"] = None,
@@ -8884,6 +8867,9 @@ Use Metadata property bag for ApiVersion and other metadata fields.
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
+        :keyword is_shared_to_all: whether this connection will be shared to all the project workspace
+         under the hub.
+        :paramtype is_shared_to_all: bool
         :keyword metadata: Any object.
         :paramtype metadata: any
         :keyword target:
@@ -8891,7 +8877,7 @@ Use Metadata property bag for ApiVersion and other metadata fields.
         :keyword credentials: Custom Keys credential object.
         :paramtype credentials: ~azure.mgmt.machinelearningservices.models.CustomKeys
         """
-        super(CustomKeysWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, metadata=metadata, target=target, **kwargs)
+        super(CustomKeysWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, is_shared_to_all=is_shared_to_all, metadata=metadata, target=target, **kwargs)
         self.auth_type = 'CustomKeys'  # type: str
         self.credentials = credentials
 
@@ -11212,6 +11198,9 @@ class DiagnoseRequestProperties(msrest.serialization.Model):
     :vartype nsg: dict[str, any]
     :ivar others: Setting for diagnosing unclassified category of problems.
     :vartype others: dict[str, any]
+    :ivar required_resource_providers: Setting for diagnosing the presence of required resource
+     providers in the workspace.
+    :vartype required_resource_providers: dict[str, any]
     :ivar resource_lock: Setting for diagnosing resource lock.
     :vartype resource_lock: dict[str, any]
     :ivar storage_account: Setting for diagnosing dependent storage account.
@@ -11227,6 +11216,7 @@ class DiagnoseRequestProperties(msrest.serialization.Model):
         'key_vault': {'key': 'keyVault', 'type': '{object}'},
         'nsg': {'key': 'nsg', 'type': '{object}'},
         'others': {'key': 'others', 'type': '{object}'},
+        'required_resource_providers': {'key': 'requiredResourceProviders', 'type': '{object}'},
         'resource_lock': {'key': 'resourceLock', 'type': '{object}'},
         'storage_account': {'key': 'storageAccount', 'type': '{object}'},
         'udr': {'key': 'udr', 'type': '{object}'},
@@ -11241,6 +11231,7 @@ class DiagnoseRequestProperties(msrest.serialization.Model):
         key_vault: Optional[Dict[str, Any]] = None,
         nsg: Optional[Dict[str, Any]] = None,
         others: Optional[Dict[str, Any]] = None,
+        required_resource_providers: Optional[Dict[str, Any]] = None,
         resource_lock: Optional[Dict[str, Any]] = None,
         storage_account: Optional[Dict[str, Any]] = None,
         udr: Optional[Dict[str, Any]] = None,
@@ -11259,6 +11250,9 @@ class DiagnoseRequestProperties(msrest.serialization.Model):
         :paramtype nsg: dict[str, any]
         :keyword others: Setting for diagnosing unclassified category of problems.
         :paramtype others: dict[str, any]
+        :keyword required_resource_providers: Setting for diagnosing the presence of required resource
+         providers in the workspace.
+        :paramtype required_resource_providers: dict[str, any]
         :keyword resource_lock: Setting for diagnosing resource lock.
         :paramtype resource_lock: dict[str, any]
         :keyword storage_account: Setting for diagnosing dependent storage account.
@@ -11273,6 +11267,7 @@ class DiagnoseRequestProperties(msrest.serialization.Model):
         self.key_vault = key_vault
         self.nsg = nsg
         self.others = others
+        self.required_resource_providers = required_resource_providers
         self.resource_lock = resource_lock
         self.storage_account = storage_account
         self.udr = udr
@@ -14544,20 +14539,20 @@ class FQDNEndpointsPropertyBag(msrest.serialization.Model):
 
 
 class OutboundRule(msrest.serialization.Model):
-    """Outbound Rule for the managed network of a machine learning workspace.
+    """Outbound rule for the managed network of a machine learning workspace.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: FqdnOutboundRule, PrivateEndpointOutboundRule, ServiceTagOutboundRule.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar category: Category of a managed network Outbound Rule of a machine learning workspace.
+    :ivar category: Category of a managed network outbound rule of a machine learning workspace.
      Possible values include: "Required", "Recommended", "UserDefined".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.RuleCategory
-    :ivar status: Type of a managed network Outbound Rule of a machine learning workspace. Possible
+    :ivar status: Type of a managed network outbound rule of a machine learning workspace. Possible
      values include: "Inactive", "Active".
     :vartype status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
-    :ivar type: Required. Type of a managed network Outbound Rule of a machine learning
+    :ivar type: Required. Type of a managed network outbound rule of a machine learning
      workspace.Constant filled by server. Possible values include: "FQDN", "PrivateEndpoint",
      "ServiceTag".
     :vartype type: str or ~azure.mgmt.machinelearningservices.models.RuleType
@@ -14585,10 +14580,10 @@ class OutboundRule(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword category: Category of a managed network Outbound Rule of a machine learning workspace.
+        :keyword category: Category of a managed network outbound rule of a machine learning workspace.
          Possible values include: "Required", "Recommended", "UserDefined".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.RuleCategory
-        :keyword status: Type of a managed network Outbound Rule of a machine learning workspace.
+        :keyword status: Type of a managed network outbound rule of a machine learning workspace.
          Possible values include: "Inactive", "Active".
         :paramtype status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
         """
@@ -14603,13 +14598,13 @@ class FqdnOutboundRule(OutboundRule):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar category: Category of a managed network Outbound Rule of a machine learning workspace.
+    :ivar category: Category of a managed network outbound rule of a machine learning workspace.
      Possible values include: "Required", "Recommended", "UserDefined".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.RuleCategory
-    :ivar status: Type of a managed network Outbound Rule of a machine learning workspace. Possible
+    :ivar status: Type of a managed network outbound rule of a machine learning workspace. Possible
      values include: "Inactive", "Active".
     :vartype status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
-    :ivar type: Required. Type of a managed network Outbound Rule of a machine learning
+    :ivar type: Required. Type of a managed network outbound rule of a machine learning
      workspace.Constant filled by server. Possible values include: "FQDN", "PrivateEndpoint",
      "ServiceTag".
     :vartype type: str or ~azure.mgmt.machinelearningservices.models.RuleType
@@ -14637,10 +14632,10 @@ class FqdnOutboundRule(OutboundRule):
         **kwargs
     ):
         """
-        :keyword category: Category of a managed network Outbound Rule of a machine learning workspace.
+        :keyword category: Category of a managed network outbound rule of a machine learning workspace.
          Possible values include: "Required", "Recommended", "UserDefined".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.RuleCategory
-        :keyword status: Type of a managed network Outbound Rule of a machine learning workspace.
+        :keyword status: Type of a managed network outbound rule of a machine learning workspace.
          Possible values include: "Inactive", "Active".
         :paramtype status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
         :keyword destination:
@@ -20402,6 +20397,8 @@ class ManagedIdentity(IdentityConfiguration):
 class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     """ManagedIdentityAuthTypeWorkspaceConnectionProperties.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :ivar auth_type: Required. Authentication type of the connection target.Constant filled by
@@ -20413,8 +20410,13 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
      "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
      "CognitiveSearch", "CognitiveService", "CustomKeys".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+    :ivar created_by_workspace_arm_id: The arm id of the workspace which created this connection.
+    :vartype created_by_workspace_arm_id: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
+    :ivar is_shared_to_all: whether this connection will be shared to all the project workspace
+     under the hub.
+    :vartype is_shared_to_all: bool
     :ivar metadata: Any object.
     :vartype metadata: any
     :ivar target:
@@ -20426,12 +20428,15 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
 
     _validation = {
         'auth_type': {'required': True},
+        'created_by_workspace_arm_id': {'readonly': True},
     }
 
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
+        'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'metadata': {'key': 'metadata', 'type': 'object'},
         'target': {'key': 'target', 'type': 'str'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionManagedIdentity'},
@@ -20442,6 +20447,7 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
         *,
         category: Optional[Union[str, "ConnectionCategory"]] = None,
         expiry_time: Optional[datetime.datetime] = None,
+        is_shared_to_all: Optional[bool] = None,
         metadata: Optional[Any] = None,
         target: Optional[str] = None,
         credentials: Optional["WorkspaceConnectionManagedIdentity"] = None,
@@ -20455,6 +20461,9 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
+        :keyword is_shared_to_all: whether this connection will be shared to all the project workspace
+         under the hub.
+        :paramtype is_shared_to_all: bool
         :keyword metadata: Any object.
         :paramtype metadata: any
         :keyword target:
@@ -20463,7 +20472,7 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionManagedIdentity
         """
-        super(ManagedIdentityAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, metadata=metadata, target=target, **kwargs)
+        super(ManagedIdentityAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, is_shared_to_all=is_shared_to_all, metadata=metadata, target=target, **kwargs)
         self.auth_type = 'ManagedIdentity'  # type: str
         self.credentials = credentials
 
@@ -20542,10 +20551,15 @@ class ManagedNetworkSettings(msrest.serialization.Model):
     :ivar status: Status of the Provisioning for the managed network of a machine learning
      workspace.
     :vartype status: ~azure.mgmt.machinelearningservices.models.ManagedNetworkProvisionStatus
+    :ivar changeable_isolation_modes: Detail isolation modes for the managed network of a machine
+     learning workspace.
+    :vartype changeable_isolation_modes: list[str or
+     ~azure.mgmt.machinelearningservices.models.IsolationMode]
     """
 
     _validation = {
         'network_id': {'readonly': True},
+        'changeable_isolation_modes': {'readonly': True},
     }
 
     _attribute_map = {
@@ -20553,6 +20567,7 @@ class ManagedNetworkSettings(msrest.serialization.Model):
         'network_id': {'key': 'networkId', 'type': 'str'},
         'outbound_rules': {'key': 'outboundRules', 'type': '{OutboundRule}'},
         'status': {'key': 'status', 'type': 'ManagedNetworkProvisionStatus'},
+        'changeable_isolation_modes': {'key': 'changeableIsolationModes', 'type': '[str]'},
     }
 
     def __init__(
@@ -20579,6 +20594,7 @@ class ManagedNetworkSettings(msrest.serialization.Model):
         self.network_id = None
         self.outbound_rules = outbound_rules
         self.status = status
+        self.changeable_isolation_modes = None
 
 
 class ManagedOnlineDeployment(OnlineDeploymentProperties):
@@ -22678,6 +22694,8 @@ class NodeStateCounts(msrest.serialization.Model):
 class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     """NoneAuthTypeWorkspaceConnectionProperties.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :ivar auth_type: Required. Authentication type of the connection target.Constant filled by
@@ -22689,8 +22707,13 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
      "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
      "CognitiveSearch", "CognitiveService", "CustomKeys".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+    :ivar created_by_workspace_arm_id: The arm id of the workspace which created this connection.
+    :vartype created_by_workspace_arm_id: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
+    :ivar is_shared_to_all: whether this connection will be shared to all the project workspace
+     under the hub.
+    :vartype is_shared_to_all: bool
     :ivar metadata: Any object.
     :vartype metadata: any
     :ivar target:
@@ -22699,12 +22722,15 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
 
     _validation = {
         'auth_type': {'required': True},
+        'created_by_workspace_arm_id': {'readonly': True},
     }
 
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
+        'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'metadata': {'key': 'metadata', 'type': 'object'},
         'target': {'key': 'target', 'type': 'str'},
     }
@@ -22714,6 +22740,7 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
         *,
         category: Optional[Union[str, "ConnectionCategory"]] = None,
         expiry_time: Optional[datetime.datetime] = None,
+        is_shared_to_all: Optional[bool] = None,
         metadata: Optional[Any] = None,
         target: Optional[str] = None,
         **kwargs
@@ -22726,12 +22753,15 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
+        :keyword is_shared_to_all: whether this connection will be shared to all the project workspace
+         under the hub.
+        :paramtype is_shared_to_all: bool
         :keyword metadata: Any object.
         :paramtype metadata: any
         :keyword target:
         :paramtype target: str
         """
-        super(NoneAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, metadata=metadata, target=target, **kwargs)
+        super(NoneAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, is_shared_to_all=is_shared_to_all, metadata=metadata, target=target, **kwargs)
         self.auth_type = 'None'  # type: str
 
 
@@ -23701,52 +23731,137 @@ class OnlineRequestSettings(msrest.serialization.Model):
         self.request_timeout = request_timeout
 
 
-class OperationDisplay(msrest.serialization.Model):
-    """Display name of operation.
+class Operation(msrest.serialization.Model):
+    """Details of a REST API operation, returned from the Resource Provider Operations API.
 
-    :ivar description: Gets or sets the description for the operation.
-    :vartype description: str
-    :ivar operation: Gets or sets the operation that users can perform.
-    :vartype operation: str
-    :ivar provider: Gets or sets the resource provider name:
-     Microsoft.MachineLearningExperimentation.
-    :vartype provider: str
-    :ivar resource: Gets or sets the resource on which the operation is performed.
-    :vartype resource: str
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
+     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
+    :vartype name: str
+    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
+     data-plane operations and "false" for ARM/control-plane operations.
+    :vartype is_data_action: bool
+    :ivar display: Localized display information for this particular operation.
+    :vartype display: ~azure.mgmt.machinelearningservices.models.OperationDisplay
+    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
+     (RBAC) and audit logs UX. Default value is "user,system". Possible values include: "user",
+     "system", "user,system".
+    :vartype origin: str or ~azure.mgmt.machinelearningservices.models.Origin
+    :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
+     internal only APIs. Possible values include: "Internal".
+    :vartype action_type: str or ~azure.mgmt.machinelearningservices.models.ActionType
     """
 
+    _validation = {
+        'name': {'readonly': True},
+        'is_data_action': {'readonly': True},
+        'origin': {'readonly': True},
+        'action_type': {'readonly': True},
+    }
+
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        'origin': {'key': 'origin', 'type': 'str'},
+        'action_type': {'key': 'actionType', 'type': 'str'},
     }
 
     def __init__(
         self,
         *,
-        description: Optional[str] = None,
-        operation: Optional[str] = None,
-        provider: Optional[str] = None,
-        resource: Optional[str] = None,
+        display: Optional["OperationDisplay"] = None,
         **kwargs
     ):
         """
-        :keyword description: Gets or sets the description for the operation.
-        :paramtype description: str
-        :keyword operation: Gets or sets the operation that users can perform.
-        :paramtype operation: str
-        :keyword provider: Gets or sets the resource provider name:
-         Microsoft.MachineLearningExperimentation.
-        :paramtype provider: str
-        :keyword resource: Gets or sets the resource on which the operation is performed.
-        :paramtype resource: str
+        :keyword display: Localized display information for this particular operation.
+        :paramtype display: ~azure.mgmt.machinelearningservices.models.OperationDisplay
+        """
+        super(Operation, self).__init__(**kwargs)
+        self.name = None
+        self.is_data_action = None
+        self.display = display
+        self.origin = None
+        self.action_type = None
+
+
+class OperationDisplay(msrest.serialization.Model):
+    """Localized display information for this particular operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
+     Monitoring Insights" or "Microsoft Compute".
+    :vartype provider: str
+    :ivar resource: The localized friendly name of the resource type related to this operation.
+     E.g. "Virtual Machines" or "Job Schedule Collections".
+    :vartype resource: str
+    :ivar operation: The concise, localized friendly name for the operation; suitable for
+     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
+    :vartype operation: str
+    :ivar description: The short, localized friendly description of the operation; suitable for
+     tool tips and detailed views.
+    :vartype description: str
+    """
+
+    _validation = {
+        'provider': {'readonly': True},
+        'resource': {'readonly': True},
+        'operation': {'readonly': True},
+        'description': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'provider': {'key': 'provider', 'type': 'str'},
+        'resource': {'key': 'resource', 'type': 'str'},
+        'operation': {'key': 'operation', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
         """
         super(OperationDisplay, self).__init__(**kwargs)
-        self.description = description
-        self.operation = operation
-        self.provider = provider
-        self.resource = resource
+        self.provider = None
+        self.resource = None
+        self.operation = None
+        self.description = None
+
+
+class OperationListResult(msrest.serialization.Model):
+    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of operations supported by the resource provider.
+    :vartype value: list[~azure.mgmt.machinelearningservices.models.Operation]
+    :ivar next_link: URL to get the next set of operation list results (if there are any).
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[Operation]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        """
+        super(OperationListResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class OsPatchingStatus(msrest.serialization.Model):
@@ -23800,7 +23915,7 @@ class OsPatchingStatus(msrest.serialization.Model):
 
 
 class OutboundRuleBasicResource(Resource):
-    """Outbound Rule Basic Resource for the managed network of a machine learning workspace.
+    """OutboundRuleBasicResource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -24720,6 +24835,8 @@ class Password(msrest.serialization.Model):
 class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     """PATAuthTypeWorkspaceConnectionProperties.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :ivar auth_type: Required. Authentication type of the connection target.Constant filled by
@@ -24731,8 +24848,13 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
      "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
      "CognitiveSearch", "CognitiveService", "CustomKeys".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+    :ivar created_by_workspace_arm_id: The arm id of the workspace which created this connection.
+    :vartype created_by_workspace_arm_id: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
+    :ivar is_shared_to_all: whether this connection will be shared to all the project workspace
+     under the hub.
+    :vartype is_shared_to_all: bool
     :ivar metadata: Any object.
     :vartype metadata: any
     :ivar target:
@@ -24744,12 +24866,15 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
 
     _validation = {
         'auth_type': {'required': True},
+        'created_by_workspace_arm_id': {'readonly': True},
     }
 
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
+        'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'metadata': {'key': 'metadata', 'type': 'object'},
         'target': {'key': 'target', 'type': 'str'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionPersonalAccessToken'},
@@ -24760,6 +24885,7 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         *,
         category: Optional[Union[str, "ConnectionCategory"]] = None,
         expiry_time: Optional[datetime.datetime] = None,
+        is_shared_to_all: Optional[bool] = None,
         metadata: Optional[Any] = None,
         target: Optional[str] = None,
         credentials: Optional["WorkspaceConnectionPersonalAccessToken"] = None,
@@ -24773,6 +24899,9 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
+        :keyword is_shared_to_all: whether this connection will be shared to all the project workspace
+         under the hub.
+        :paramtype is_shared_to_all: bool
         :keyword metadata: Any object.
         :paramtype metadata: any
         :keyword target:
@@ -24781,7 +24910,7 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionPersonalAccessToken
         """
-        super(PATAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, metadata=metadata, target=target, **kwargs)
+        super(PATAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, is_shared_to_all=is_shared_to_all, metadata=metadata, target=target, **kwargs)
         self.auth_type = 'PAT'  # type: str
         self.credentials = credentials
 
@@ -25234,7 +25363,6 @@ class PrivateEndpointConnection(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
@@ -25260,6 +25388,7 @@ class PrivateEndpointConnection(Resource):
         tags: Optional[Dict[str, str]] = None,
         private_endpoint: Optional["WorkspacePrivateEndpointResource"] = None,
         private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
+        provisioning_state: Optional[Union[str, "PrivateEndpointConnectionProvisioningState"]] = None,
         **kwargs
     ):
         """
@@ -25278,6 +25407,10 @@ class PrivateEndpointConnection(Resource):
         :keyword private_link_service_connection_state: The connection state.
         :paramtype private_link_service_connection_state:
          ~azure.mgmt.machinelearningservices.models.PrivateLinkServiceConnectionState
+        :keyword provisioning_state: The current provisioning state. Possible values include:
+         "Succeeded", "Creating", "Deleting", "Failed".
+        :paramtype provisioning_state: str or
+         ~azure.mgmt.machinelearningservices.models.PrivateEndpointConnectionProvisioningState
         """
         super(PrivateEndpointConnection, self).__init__(**kwargs)
         self.identity = identity
@@ -25286,7 +25419,7 @@ class PrivateEndpointConnection(Resource):
         self.tags = tags
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
-        self.provisioning_state = None
+        self.provisioning_state = provisioning_state
 
 
 class PrivateEndpointConnectionListResult(msrest.serialization.Model):
@@ -25367,13 +25500,13 @@ class PrivateEndpointOutboundRule(OutboundRule):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar category: Category of a managed network Outbound Rule of a machine learning workspace.
+    :ivar category: Category of a managed network outbound rule of a machine learning workspace.
      Possible values include: "Required", "Recommended", "UserDefined".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.RuleCategory
-    :ivar status: Type of a managed network Outbound Rule of a machine learning workspace. Possible
+    :ivar status: Type of a managed network outbound rule of a machine learning workspace. Possible
      values include: "Inactive", "Active".
     :vartype status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
-    :ivar type: Required. Type of a managed network Outbound Rule of a machine learning
+    :ivar type: Required. Type of a managed network outbound rule of a machine learning
      workspace.Constant filled by server. Possible values include: "FQDN", "PrivateEndpoint",
      "ServiceTag".
     :vartype type: str or ~azure.mgmt.machinelearningservices.models.RuleType
@@ -25402,10 +25535,10 @@ class PrivateEndpointOutboundRule(OutboundRule):
         **kwargs
     ):
         """
-        :keyword category: Category of a managed network Outbound Rule of a machine learning workspace.
+        :keyword category: Category of a managed network outbound rule of a machine learning workspace.
          Possible values include: "Required", "Recommended", "UserDefined".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.RuleCategory
-        :keyword status: Type of a managed network Outbound Rule of a machine learning workspace.
+        :keyword status: Type of a managed network outbound rule of a machine learning workspace.
          Possible values include: "Inactive", "Active".
         :paramtype status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
         :keyword destination: Private Endpoint destination for a Private Endpoint Outbound Rule for the
@@ -27202,6 +27335,8 @@ class Route(msrest.serialization.Model):
 class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     """SASAuthTypeWorkspaceConnectionProperties.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :ivar auth_type: Required. Authentication type of the connection target.Constant filled by
@@ -27213,8 +27348,13 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
      "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
      "CognitiveSearch", "CognitiveService", "CustomKeys".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+    :ivar created_by_workspace_arm_id: The arm id of the workspace which created this connection.
+    :vartype created_by_workspace_arm_id: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
+    :ivar is_shared_to_all: whether this connection will be shared to all the project workspace
+     under the hub.
+    :vartype is_shared_to_all: bool
     :ivar metadata: Any object.
     :vartype metadata: any
     :ivar target:
@@ -27226,12 +27366,15 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
 
     _validation = {
         'auth_type': {'required': True},
+        'created_by_workspace_arm_id': {'readonly': True},
     }
 
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
+        'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'metadata': {'key': 'metadata', 'type': 'object'},
         'target': {'key': 'target', 'type': 'str'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionSharedAccessSignature'},
@@ -27242,6 +27385,7 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         *,
         category: Optional[Union[str, "ConnectionCategory"]] = None,
         expiry_time: Optional[datetime.datetime] = None,
+        is_shared_to_all: Optional[bool] = None,
         metadata: Optional[Any] = None,
         target: Optional[str] = None,
         credentials: Optional["WorkspaceConnectionSharedAccessSignature"] = None,
@@ -27255,6 +27399,9 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
+        :keyword is_shared_to_all: whether this connection will be shared to all the project workspace
+         under the hub.
+        :paramtype is_shared_to_all: bool
         :keyword metadata: Any object.
         :paramtype metadata: any
         :keyword target:
@@ -27263,7 +27410,7 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionSharedAccessSignature
         """
-        super(SASAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, metadata=metadata, target=target, **kwargs)
+        super(SASAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, is_shared_to_all=is_shared_to_all, metadata=metadata, target=target, **kwargs)
         self.auth_type = 'SAS'  # type: str
         self.credentials = credentials
 
@@ -27775,6 +27922,43 @@ class SecretConfiguration(msrest.serialization.Model):
         self.workspace_secret_name = workspace_secret_name
 
 
+class ServerlessComputeSettings(msrest.serialization.Model):
+    """ServerlessComputeSettings.
+
+    :ivar serverless_compute_custom_subnet: The resource ID of an existing virtual network subnet
+     in which serverless compute nodes should be deployed.
+    :vartype serverless_compute_custom_subnet: str
+    :ivar serverless_compute_no_public_ip: The flag to signal if serverless compute nodes deployed
+     in custom vNet would have no public IP addresses for a workspace with private endpoint.
+    :vartype serverless_compute_no_public_ip: bool
+    """
+
+    _attribute_map = {
+        'serverless_compute_custom_subnet': {'key': 'serverlessComputeCustomSubnet', 'type': 'str'},
+        'serverless_compute_no_public_ip': {'key': 'serverlessComputeNoPublicIP', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        serverless_compute_custom_subnet: Optional[str] = None,
+        serverless_compute_no_public_ip: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword serverless_compute_custom_subnet: The resource ID of an existing virtual network
+         subnet in which serverless compute nodes should be deployed.
+        :paramtype serverless_compute_custom_subnet: str
+        :keyword serverless_compute_no_public_ip: The flag to signal if serverless compute nodes
+         deployed in custom vNet would have no public IP addresses for a workspace with private
+         endpoint.
+        :paramtype serverless_compute_no_public_ip: bool
+        """
+        super(ServerlessComputeSettings, self).__init__(**kwargs)
+        self.serverless_compute_custom_subnet = serverless_compute_custom_subnet
+        self.serverless_compute_no_public_ip = serverless_compute_no_public_ip
+
+
 class ServerlessEndpoint(TrackedResource):
     """ServerlessEndpoint.
 
@@ -27973,6 +28157,8 @@ class ServiceManagedResourcesSettings(msrest.serialization.Model):
 class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     """ServicePrincipalAuthTypeWorkspaceConnectionProperties.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :ivar auth_type: Required. Authentication type of the connection target.Constant filled by
@@ -27984,8 +28170,13 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
      "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
      "CognitiveSearch", "CognitiveService", "CustomKeys".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+    :ivar created_by_workspace_arm_id: The arm id of the workspace which created this connection.
+    :vartype created_by_workspace_arm_id: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
+    :ivar is_shared_to_all: whether this connection will be shared to all the project workspace
+     under the hub.
+    :vartype is_shared_to_all: bool
     :ivar metadata: Any object.
     :vartype metadata: any
     :ivar target:
@@ -27997,12 +28188,15 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
 
     _validation = {
         'auth_type': {'required': True},
+        'created_by_workspace_arm_id': {'readonly': True},
     }
 
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
+        'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'metadata': {'key': 'metadata', 'type': 'object'},
         'target': {'key': 'target', 'type': 'str'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionServicePrincipal'},
@@ -28013,6 +28207,7 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         *,
         category: Optional[Union[str, "ConnectionCategory"]] = None,
         expiry_time: Optional[datetime.datetime] = None,
+        is_shared_to_all: Optional[bool] = None,
         metadata: Optional[Any] = None,
         target: Optional[str] = None,
         credentials: Optional["WorkspaceConnectionServicePrincipal"] = None,
@@ -28026,6 +28221,9 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
+        :keyword is_shared_to_all: whether this connection will be shared to all the project workspace
+         under the hub.
+        :paramtype is_shared_to_all: bool
         :keyword metadata: Any object.
         :paramtype metadata: any
         :keyword target:
@@ -28034,7 +28232,7 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionServicePrincipal
         """
-        super(ServicePrincipalAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, metadata=metadata, target=target, **kwargs)
+        super(ServicePrincipalAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, is_shared_to_all=is_shared_to_all, metadata=metadata, target=target, **kwargs)
         self.auth_type = 'ServicePrincipal'  # type: str
         self.credentials = credentials
 
@@ -28206,13 +28404,13 @@ class ServiceTagOutboundRule(OutboundRule):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar category: Category of a managed network Outbound Rule of a machine learning workspace.
+    :ivar category: Category of a managed network outbound rule of a machine learning workspace.
      Possible values include: "Required", "Recommended", "UserDefined".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.RuleCategory
-    :ivar status: Type of a managed network Outbound Rule of a machine learning workspace. Possible
+    :ivar status: Type of a managed network outbound rule of a machine learning workspace. Possible
      values include: "Inactive", "Active".
     :vartype status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
-    :ivar type: Required. Type of a managed network Outbound Rule of a machine learning
+    :ivar type: Required. Type of a managed network outbound rule of a machine learning
      workspace.Constant filled by server. Possible values include: "FQDN", "PrivateEndpoint",
      "ServiceTag".
     :vartype type: str or ~azure.mgmt.machinelearningservices.models.RuleType
@@ -28241,10 +28439,10 @@ class ServiceTagOutboundRule(OutboundRule):
         **kwargs
     ):
         """
-        :keyword category: Category of a managed network Outbound Rule of a machine learning workspace.
+        :keyword category: Category of a managed network outbound rule of a machine learning workspace.
          Possible values include: "Required", "Recommended", "UserDefined".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.RuleCategory
-        :keyword status: Type of a managed network Outbound Rule of a machine learning workspace.
+        :keyword status: Type of a managed network outbound rule of a machine learning workspace.
          Possible values include: "Inactive", "Active".
         :paramtype status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
         :keyword destination: Service Tag destination for a Service Tag Outbound Rule for the managed
@@ -32079,6 +32277,8 @@ class UserIdentity(IdentityConfiguration):
 class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     """UsernamePasswordAuthTypeWorkspaceConnectionProperties.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :ivar auth_type: Required. Authentication type of the connection target.Constant filled by
@@ -32090,8 +32290,13 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
      "AzureMySqlDb", "AzurePostgresDb", "ADLSGen2", "Redis", "ApiKey", "AzureOpenAI",
      "CognitiveSearch", "CognitiveService", "CustomKeys".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
+    :ivar created_by_workspace_arm_id: The arm id of the workspace which created this connection.
+    :vartype created_by_workspace_arm_id: str
     :ivar expiry_time:
     :vartype expiry_time: ~datetime.datetime
+    :ivar is_shared_to_all: whether this connection will be shared to all the project workspace
+     under the hub.
+    :vartype is_shared_to_all: bool
     :ivar metadata: Any object.
     :vartype metadata: any
     :ivar target:
@@ -32103,12 +32308,15 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
 
     _validation = {
         'auth_type': {'required': True},
+        'created_by_workspace_arm_id': {'readonly': True},
     }
 
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
+        'created_by_workspace_arm_id': {'key': 'createdByWorkspaceArmId', 'type': 'str'},
         'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        'is_shared_to_all': {'key': 'isSharedToAll', 'type': 'bool'},
         'metadata': {'key': 'metadata', 'type': 'object'},
         'target': {'key': 'target', 'type': 'str'},
         'credentials': {'key': 'credentials', 'type': 'WorkspaceConnectionUsernamePassword'},
@@ -32119,6 +32327,7 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         *,
         category: Optional[Union[str, "ConnectionCategory"]] = None,
         expiry_time: Optional[datetime.datetime] = None,
+        is_shared_to_all: Optional[bool] = None,
         metadata: Optional[Any] = None,
         target: Optional[str] = None,
         credentials: Optional["WorkspaceConnectionUsernamePassword"] = None,
@@ -32132,6 +32341,9 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword expiry_time:
         :paramtype expiry_time: ~datetime.datetime
+        :keyword is_shared_to_all: whether this connection will be shared to all the project workspace
+         under the hub.
+        :paramtype is_shared_to_all: bool
         :keyword metadata: Any object.
         :paramtype metadata: any
         :keyword target:
@@ -32140,7 +32352,7 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         :paramtype credentials:
          ~azure.mgmt.machinelearningservices.models.WorkspaceConnectionUsernamePassword
         """
-        super(UsernamePasswordAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, metadata=metadata, target=target, **kwargs)
+        super(UsernamePasswordAuthTypeWorkspaceConnectionProperties, self).__init__(category=category, expiry_time=expiry_time, is_shared_to_all=is_shared_to_all, metadata=metadata, target=target, **kwargs)
         self.auth_type = 'UsernamePassword'  # type: str
         self.credentials = credentials
 
@@ -32779,6 +32991,9 @@ class Workspace(Resource):
      include: "Enabled", "Disabled".
     :vartype public_network_access: str or
      ~azure.mgmt.machinelearningservices.models.PublicNetworkAccessType
+    :ivar serverless_compute_settings: Settings for serverless compute created in the workspace.
+    :vartype serverless_compute_settings:
+     ~azure.mgmt.machinelearningservices.models.ServerlessComputeSettings
     :ivar service_managed_resources_settings: The service managed resource settings.
     :vartype service_managed_resources_settings:
      ~azure.mgmt.machinelearningservices.models.ServiceManagedResourcesSettings
@@ -32864,6 +33079,7 @@ class Workspace(Resource):
         'private_link_count': {'key': 'properties.privateLinkCount', 'type': 'int'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'serverless_compute_settings': {'key': 'properties.serverlessComputeSettings', 'type': 'ServerlessComputeSettings'},
         'service_managed_resources_settings': {'key': 'properties.serviceManagedResourcesSettings', 'type': 'ServiceManagedResourcesSettings'},
         'service_provisioned_resource_group': {'key': 'properties.serviceProvisionedResourceGroup', 'type': 'str'},
         'shared_private_link_resources': {'key': 'properties.sharedPrivateLinkResources', 'type': '[SharedPrivateLinkResource]'},
@@ -32906,6 +33122,7 @@ class Workspace(Resource):
         managed_network: Optional["ManagedNetworkSettings"] = None,
         primary_user_assigned_identity: Optional[str] = None,
         public_network_access: Optional[Union[str, "PublicNetworkAccessType"]] = None,
+        serverless_compute_settings: Optional["ServerlessComputeSettings"] = None,
         service_managed_resources_settings: Optional["ServiceManagedResourcesSettings"] = None,
         shared_private_link_resources: Optional[List["SharedPrivateLinkResource"]] = None,
         soft_delete_retention_in_days: Optional[int] = None,
@@ -32977,6 +33194,9 @@ class Workspace(Resource):
          values include: "Enabled", "Disabled".
         :paramtype public_network_access: str or
          ~azure.mgmt.machinelearningservices.models.PublicNetworkAccessType
+        :keyword serverless_compute_settings: Settings for serverless compute created in the workspace.
+        :paramtype serverless_compute_settings:
+         ~azure.mgmt.machinelearningservices.models.ServerlessComputeSettings
         :keyword service_managed_resources_settings: The service managed resource settings.
         :paramtype service_managed_resources_settings:
          ~azure.mgmt.machinelearningservices.models.ServiceManagedResourcesSettings
@@ -33032,6 +33252,7 @@ class Workspace(Resource):
         self.private_link_count = None
         self.provisioning_state = None
         self.public_network_access = public_network_access
+        self.serverless_compute_settings = serverless_compute_settings
         self.service_managed_resources_settings = service_managed_resources_settings
         self.service_provisioned_resource_group = None
         self.shared_private_link_resources = shared_private_link_resources
@@ -33508,6 +33729,9 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
      include: "Enabled", "Disabled".
     :vartype public_network_access: str or
      ~azure.mgmt.machinelearningservices.models.PublicNetworkAccessType
+    :ivar serverless_compute_settings: Settings for serverless compute created in the workspace.
+    :vartype serverless_compute_settings:
+     ~azure.mgmt.machinelearningservices.models.ServerlessComputeSettings
     :ivar service_managed_resources_settings: The service managed resource settings.
     :vartype service_managed_resources_settings:
      ~azure.mgmt.machinelearningservices.models.ServiceManagedResourcesSettings
@@ -33533,6 +33757,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         'managed_network': {'key': 'properties.managedNetwork', 'type': 'ManagedNetworkSettings'},
         'primary_user_assigned_identity': {'key': 'properties.primaryUserAssignedIdentity', 'type': 'str'},
         'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        'serverless_compute_settings': {'key': 'properties.serverlessComputeSettings', 'type': 'ServerlessComputeSettings'},
         'service_managed_resources_settings': {'key': 'properties.serviceManagedResourcesSettings', 'type': 'ServiceManagedResourcesSettings'},
         'soft_delete_retention_in_days': {'key': 'properties.softDeleteRetentionInDays', 'type': 'int'},
         'v1_legacy_mode': {'key': 'properties.v1LegacyMode', 'type': 'bool'},
@@ -33555,6 +33780,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         managed_network: Optional["ManagedNetworkSettings"] = None,
         primary_user_assigned_identity: Optional[str] = None,
         public_network_access: Optional[Union[str, "PublicNetworkAccessType"]] = None,
+        serverless_compute_settings: Optional["ServerlessComputeSettings"] = None,
         service_managed_resources_settings: Optional["ServiceManagedResourcesSettings"] = None,
         soft_delete_retention_in_days: Optional[int] = None,
         v1_legacy_mode: Optional[bool] = None,
@@ -33595,6 +33821,9 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
          values include: "Enabled", "Disabled".
         :paramtype public_network_access: str or
          ~azure.mgmt.machinelearningservices.models.PublicNetworkAccessType
+        :keyword serverless_compute_settings: Settings for serverless compute created in the workspace.
+        :paramtype serverless_compute_settings:
+         ~azure.mgmt.machinelearningservices.models.ServerlessComputeSettings
         :keyword service_managed_resources_settings: The service managed resource settings.
         :paramtype service_managed_resources_settings:
          ~azure.mgmt.machinelearningservices.models.ServiceManagedResourcesSettings
@@ -33620,6 +33849,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         self.managed_network = managed_network
         self.primary_user_assigned_identity = primary_user_assigned_identity
         self.public_network_access = public_network_access
+        self.serverless_compute_settings = serverless_compute_settings
         self.service_managed_resources_settings = service_managed_resources_settings
         self.soft_delete_retention_in_days = soft_delete_retention_in_days
         self.v1_legacy_mode = v1_legacy_mode

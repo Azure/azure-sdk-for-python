@@ -7,583 +7,586 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import AKS
-    from ._models_py3 import AKSSchema
-    from ._models_py3 import AKSSchemaProperties
-    from ._models_py3 import AccessKeyAuthTypeWorkspaceConnectionProperties
-    from ._models_py3 import AccountKeyDatastoreCredentials
-    from ._models_py3 import AccountKeyDatastoreSecrets
-    from ._models_py3 import AcrDetails
-    from ._models_py3 import AksComputeSecrets
-    from ._models_py3 import AksComputeSecretsProperties
-    from ._models_py3 import AksNetworkingConfiguration
-    from ._models_py3 import AllFeatures
-    from ._models_py3 import AllNodes
-    from ._models_py3 import AmlCompute
-    from ._models_py3 import AmlComputeNodeInformation
-    from ._models_py3 import AmlComputeNodesInformation
-    from ._models_py3 import AmlComputeProperties
-    from ._models_py3 import AmlComputeSchema
-    from ._models_py3 import AmlOperation
-    from ._models_py3 import AmlOperationListResult
-    from ._models_py3 import AmlToken
-    from ._models_py3 import AmlTokenComputeIdentity
-    from ._models_py3 import AmlUserFeature
-    from ._models_py3 import ApiKeyAuthWorkspaceConnectionProperties
-    from ._models_py3 import ArmResourceId
-    from ._models_py3 import AssetBase
-    from ._models_py3 import AssetContainer
-    from ._models_py3 import AssetJobInput
-    from ._models_py3 import AssetJobOutput
-    from ._models_py3 import AssetReferenceBase
-    from ._models_py3 import AssignedUser
-    from ._models_py3 import AutoDeleteSetting
-    from ._models_py3 import AutoForecastHorizon
-    from ._models_py3 import AutoMLJob
-    from ._models_py3 import AutoMLVertical
-    from ._models_py3 import AutoNCrossValidations
-    from ._models_py3 import AutoPauseProperties
-    from ._models_py3 import AutoScaleProperties
-    from ._models_py3 import AutoSeasonality
-    from ._models_py3 import AutoTargetLags
-    from ._models_py3 import AutoTargetRollingWindowSize
-    from ._models_py3 import AutologgerSettings
-    from ._models_py3 import AzMonMonitoringAlertNotificationSettings
-    from ._models_py3 import AzureBlobDatastore
-    from ._models_py3 import AzureDataLakeGen1Datastore
-    from ._models_py3 import AzureDataLakeGen2Datastore
-    from ._models_py3 import AzureDatastore
-    from ._models_py3 import AzureDevOpsWebhook
-    from ._models_py3 import AzureFileDatastore
-    from ._models_py3 import AzureMLBatchInferencingServer
-    from ._models_py3 import AzureMLOnlineInferencingServer
-    from ._models_py3 import BanditPolicy
-    from ._models_py3 import BaseEnvironmentId
-    from ._models_py3 import BaseEnvironmentSource
-    from ._models_py3 import BatchDeployment
-    from ._models_py3 import BatchDeploymentConfiguration
-    from ._models_py3 import BatchDeploymentProperties
-    from ._models_py3 import BatchDeploymentTrackedResourceArmPaginatedResult
-    from ._models_py3 import BatchEndpoint
-    from ._models_py3 import BatchEndpointDefaults
-    from ._models_py3 import BatchEndpointProperties
-    from ._models_py3 import BatchEndpointTrackedResourceArmPaginatedResult
-    from ._models_py3 import BatchPipelineComponentDeploymentConfiguration
-    from ._models_py3 import BatchRetrySettings
-    from ._models_py3 import BayesianSamplingAlgorithm
-    from ._models_py3 import BindOptions
-    from ._models_py3 import BlobReferenceForConsumptionDto
-    from ._models_py3 import BuildContext
-    from ._models_py3 import CategoricalDataDriftMetricThreshold
-    from ._models_py3 import CategoricalDataQualityMetricThreshold
-    from ._models_py3 import CategoricalPredictionDriftMetricThreshold
-    from ._models_py3 import CertificateDatastoreCredentials
-    from ._models_py3 import CertificateDatastoreSecrets
-    from ._models_py3 import Classification
-    from ._models_py3 import ClassificationModelPerformanceMetricThreshold
-    from ._models_py3 import ClassificationTrainingSettings
-    from ._models_py3 import ClusterUpdateParameters
-    from ._models_py3 import CocoExportSummary
-    from ._models_py3 import CodeConfiguration
-    from ._models_py3 import CodeContainer
-    from ._models_py3 import CodeContainerProperties
-    from ._models_py3 import CodeContainerResourceArmPaginatedResult
-    from ._models_py3 import CodeVersion
-    from ._models_py3 import CodeVersionProperties
-    from ._models_py3 import CodeVersionResourceArmPaginatedResult
-    from ._models_py3 import Collection
-    from ._models_py3 import ColumnTransformer
-    from ._models_py3 import CommandJob
-    from ._models_py3 import CommandJobLimits
-    from ._models_py3 import ComponentConfiguration
-    from ._models_py3 import ComponentContainer
-    from ._models_py3 import ComponentContainerProperties
-    from ._models_py3 import ComponentContainerResourceArmPaginatedResult
-    from ._models_py3 import ComponentVersion
-    from ._models_py3 import ComponentVersionProperties
-    from ._models_py3 import ComponentVersionResourceArmPaginatedResult
-    from ._models_py3 import Compute
-    from ._models_py3 import ComputeInstance
-    from ._models_py3 import ComputeInstanceApplication
-    from ._models_py3 import ComputeInstanceAutologgerSettings
-    from ._models_py3 import ComputeInstanceConnectivityEndpoints
-    from ._models_py3 import ComputeInstanceContainer
-    from ._models_py3 import ComputeInstanceCreatedBy
-    from ._models_py3 import ComputeInstanceDataDisk
-    from ._models_py3 import ComputeInstanceDataMount
-    from ._models_py3 import ComputeInstanceEnvironmentInfo
-    from ._models_py3 import ComputeInstanceLastOperation
-    from ._models_py3 import ComputeInstanceProperties
-    from ._models_py3 import ComputeInstanceSchema
-    from ._models_py3 import ComputeInstanceSshSettings
-    from ._models_py3 import ComputeInstanceVersion
-    from ._models_py3 import ComputeResource
-    from ._models_py3 import ComputeResourceSchema
-    from ._models_py3 import ComputeRuntimeDto
-    from ._models_py3 import ComputeSchedules
-    from ._models_py3 import ComputeSecrets
-    from ._models_py3 import ComputeStartStopSchedule
-    from ._models_py3 import ContainerResourceRequirements
-    from ._models_py3 import ContainerResourceSettings
-    from ._models_py3 import CosmosDbSettings
-    from ._models_py3 import CreateMonitorAction
-    from ._models_py3 import Cron
-    from ._models_py3 import CronTrigger
-    from ._models_py3 import CsvExportSummary
-    from ._models_py3 import CustomForecastHorizon
-    from ._models_py3 import CustomInferencingServer
-    from ._models_py3 import CustomKeys
-    from ._models_py3 import CustomKeysWorkspaceConnectionProperties
-    from ._models_py3 import CustomMetricThreshold
-    from ._models_py3 import CustomModelJobInput
-    from ._models_py3 import CustomModelJobOutput
-    from ._models_py3 import CustomMonitoringSignal
-    from ._models_py3 import CustomNCrossValidations
-    from ._models_py3 import CustomSeasonality
-    from ._models_py3 import CustomService
-    from ._models_py3 import CustomTargetLags
-    from ._models_py3 import CustomTargetRollingWindowSize
-    from ._models_py3 import DataCollector
-    from ._models_py3 import DataContainer
-    from ._models_py3 import DataContainerProperties
-    from ._models_py3 import DataContainerResourceArmPaginatedResult
-    from ._models_py3 import DataDriftMetricThresholdBase
-    from ._models_py3 import DataDriftMonitoringSignal
-    from ._models_py3 import DataFactory
-    from ._models_py3 import DataImport
-    from ._models_py3 import DataImportSource
-    from ._models_py3 import DataLakeAnalytics
-    from ._models_py3 import DataLakeAnalyticsSchema
-    from ._models_py3 import DataLakeAnalyticsSchemaProperties
-    from ._models_py3 import DataPathAssetReference
-    from ._models_py3 import DataQualityMetricThresholdBase
-    from ._models_py3 import DataQualityMonitoringSignal
-    from ._models_py3 import DataVersionBase
-    from ._models_py3 import DataVersionBaseProperties
-    from ._models_py3 import DataVersionBaseResourceArmPaginatedResult
-    from ._models_py3 import DatabaseSource
-    from ._models_py3 import Databricks
-    from ._models_py3 import DatabricksComputeSecrets
-    from ._models_py3 import DatabricksComputeSecretsProperties
-    from ._models_py3 import DatabricksProperties
-    from ._models_py3 import DatabricksSchema
-    from ._models_py3 import DatasetExportSummary
-    from ._models_py3 import Datastore
-    from ._models_py3 import DatastoreCredentials
-    from ._models_py3 import DatastoreProperties
-    from ._models_py3 import DatastoreResourceArmPaginatedResult
-    from ._models_py3 import DatastoreSecrets
-    from ._models_py3 import DefaultScaleSettings
-    from ._models_py3 import DeploymentLogs
-    from ._models_py3 import DeploymentLogsRequest
-    from ._models_py3 import DeploymentResourceConfiguration
-    from ._models_py3 import DiagnoseRequestProperties
-    from ._models_py3 import DiagnoseResponseResult
-    from ._models_py3 import DiagnoseResponseResultValue
-    from ._models_py3 import DiagnoseResult
-    from ._models_py3 import DiagnoseWorkspaceParameters
-    from ._models_py3 import DistributionConfiguration
-    from ._models_py3 import Docker
-    from ._models_py3 import EarlyTerminationPolicy
-    from ._models_py3 import EmailMonitoringAlertNotificationSettings
-    from ._models_py3 import EncryptionKeyVaultUpdateProperties
-    from ._models_py3 import EncryptionProperty
-    from ._models_py3 import EncryptionUpdateProperties
-    from ._models_py3 import Endpoint
-    from ._models_py3 import EndpointAuthKeys
-    from ._models_py3 import EndpointAuthToken
-    from ._models_py3 import EndpointDeploymentPropertiesBase
-    from ._models_py3 import EndpointPropertiesBase
-    from ._models_py3 import EndpointScheduleAction
-    from ._models_py3 import EnvironmentContainer
-    from ._models_py3 import EnvironmentContainerProperties
-    from ._models_py3 import EnvironmentContainerResourceArmPaginatedResult
-    from ._models_py3 import EnvironmentVariable
-    from ._models_py3 import EnvironmentVersion
-    from ._models_py3 import EnvironmentVersionProperties
-    from ._models_py3 import EnvironmentVersionResourceArmPaginatedResult
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import EstimatedVMPrice
-    from ._models_py3 import EstimatedVMPrices
-    from ._models_py3 import ExportSummary
-    from ._models_py3 import ExternalFQDNResponse
-    from ._models_py3 import FQDNEndpoint
-    from ._models_py3 import FQDNEndpointDetail
-    from ._models_py3 import FQDNEndpoints
-    from ._models_py3 import FQDNEndpointsPropertyBag
-    from ._models_py3 import Feature
-    from ._models_py3 import FeatureAttributionDriftMonitoringSignal
-    from ._models_py3 import FeatureAttributionMetricThreshold
-    from ._models_py3 import FeatureProperties
-    from ._models_py3 import FeatureResourceArmPaginatedResult
-    from ._models_py3 import FeatureStoreSettings
-    from ._models_py3 import FeatureSubset
-    from ._models_py3 import FeatureWindow
-    from ._models_py3 import FeaturesetContainer
-    from ._models_py3 import FeaturesetContainerProperties
-    from ._models_py3 import FeaturesetContainerResourceArmPaginatedResult
-    from ._models_py3 import FeaturesetSpecification
-    from ._models_py3 import FeaturesetVersion
-    from ._models_py3 import FeaturesetVersionBackfillRequest
-    from ._models_py3 import FeaturesetVersionBackfillResponse
-    from ._models_py3 import FeaturesetVersionProperties
-    from ._models_py3 import FeaturesetVersionResourceArmPaginatedResult
-    from ._models_py3 import FeaturestoreEntityContainer
-    from ._models_py3 import FeaturestoreEntityContainerProperties
-    from ._models_py3 import FeaturestoreEntityContainerResourceArmPaginatedResult
-    from ._models_py3 import FeaturestoreEntityVersion
-    from ._models_py3 import FeaturestoreEntityVersionProperties
-    from ._models_py3 import FeaturestoreEntityVersionResourceArmPaginatedResult
-    from ._models_py3 import FeaturizationSettings
-    from ._models_py3 import FileSystemSource
-    from ._models_py3 import FixedInputData
-    from ._models_py3 import FlavorData
-    from ._models_py3 import ForecastHorizon
-    from ._models_py3 import Forecasting
-    from ._models_py3 import ForecastingSettings
-    from ._models_py3 import ForecastingTrainingSettings
-    from ._models_py3 import FqdnOutboundRule
-    from ._models_py3 import GenerationSafetyQualityMetricThreshold
-    from ._models_py3 import GenerationSafetyQualityMonitoringSignal
-    from ._models_py3 import GenerationTokenStatisticsMetricThreshold
-    from ._models_py3 import GenerationTokenStatisticsSignal
-    from ._models_py3 import GridSamplingAlgorithm
-    from ._models_py3 import HDInsight
-    from ._models_py3 import HDInsightProperties
-    from ._models_py3 import HDInsightSchema
-    from ._models_py3 import HdfsDatastore
-    from ._models_py3 import IdAssetReference
-    from ._models_py3 import IdentityConfiguration
-    from ._models_py3 import IdentityForCmk
-    from ._models_py3 import IdleShutdownSetting
-    from ._models_py3 import Image
-    from ._models_py3 import ImageClassification
-    from ._models_py3 import ImageClassificationBase
-    from ._models_py3 import ImageClassificationMultilabel
-    from ._models_py3 import ImageInstanceSegmentation
-    from ._models_py3 import ImageLimitSettings
-    from ._models_py3 import ImageMetadata
-    from ._models_py3 import ImageModelDistributionSettings
-    from ._models_py3 import ImageModelDistributionSettingsClassification
-    from ._models_py3 import ImageModelDistributionSettingsObjectDetection
-    from ._models_py3 import ImageModelSettings
-    from ._models_py3 import ImageModelSettingsClassification
-    from ._models_py3 import ImageModelSettingsObjectDetection
-    from ._models_py3 import ImageObjectDetection
-    from ._models_py3 import ImageObjectDetectionBase
-    from ._models_py3 import ImageSweepSettings
-    from ._models_py3 import ImageVertical
-    from ._models_py3 import ImportDataAction
-    from ._models_py3 import IndexColumn
-    from ._models_py3 import InferenceContainerProperties
-    from ._models_py3 import InferencingServer
-    from ._models_py3 import InstanceTypeSchema
-    from ._models_py3 import InstanceTypeSchemaResources
-    from ._models_py3 import IntellectualProperty
-    from ._models_py3 import JobBase
-    from ._models_py3 import JobBaseProperties
-    from ._models_py3 import JobBaseResourceArmPaginatedResult
-    from ._models_py3 import JobInput
-    from ._models_py3 import JobLimits
-    from ._models_py3 import JobOutput
-    from ._models_py3 import JobResourceConfiguration
-    from ._models_py3 import JobScheduleAction
-    from ._models_py3 import JobService
-    from ._models_py3 import KerberosCredentials
-    from ._models_py3 import KerberosKeytabCredentials
-    from ._models_py3 import KerberosKeytabSecrets
-    from ._models_py3 import KerberosPasswordCredentials
-    from ._models_py3 import KerberosPasswordSecrets
-    from ._models_py3 import KeyVaultProperties
-    from ._models_py3 import Kubernetes
-    from ._models_py3 import KubernetesOnlineDeployment
-    from ._models_py3 import KubernetesProperties
-    from ._models_py3 import KubernetesSchema
-    from ._models_py3 import LabelCategory
-    from ._models_py3 import LabelClass
-    from ._models_py3 import LabelingDataConfiguration
-    from ._models_py3 import LabelingJob
-    from ._models_py3 import LabelingJobImageProperties
-    from ._models_py3 import LabelingJobInstructions
-    from ._models_py3 import LabelingJobMediaProperties
-    from ._models_py3 import LabelingJobProperties
-    from ._models_py3 import LabelingJobResourceArmPaginatedResult
-    from ._models_py3 import LabelingJobTextProperties
-    from ._models_py3 import LakeHouseArtifact
-    from ._models_py3 import ListAmlUserFeatureResult
-    from ._models_py3 import ListNotebookKeysResult
-    from ._models_py3 import ListStorageAccountKeysResult
-    from ._models_py3 import ListUsagesResult
-    from ._models_py3 import ListWorkspaceKeysResult
-    from ._models_py3 import ListWorkspaceQuotas
-    from ._models_py3 import LiteralJobInput
-    from ._models_py3 import MLAssistConfiguration
-    from ._models_py3 import MLAssistConfigurationDisabled
-    from ._models_py3 import MLAssistConfigurationEnabled
-    from ._models_py3 import MLFlowModelJobInput
-    from ._models_py3 import MLFlowModelJobOutput
-    from ._models_py3 import MLTableData
-    from ._models_py3 import MLTableJobInput
-    from ._models_py3 import MLTableJobOutput
-    from ._models_py3 import ManagedComputeIdentity
-    from ._models_py3 import ManagedIdentity
-    from ._models_py3 import ManagedIdentityAuthTypeWorkspaceConnectionProperties
-    from ._models_py3 import ManagedNetworkProvisionOptions
-    from ._models_py3 import ManagedNetworkProvisionStatus
-    from ._models_py3 import ManagedNetworkSettings
-    from ._models_py3 import ManagedOnlineDeployment
-    from ._models_py3 import ManagedServiceIdentity
-    from ._models_py3 import MaterializationComputeResource
-    from ._models_py3 import MaterializationSettings
-    from ._models_py3 import MedianStoppingPolicy
-    from ._models_py3 import ModelConfiguration
-    from ._models_py3 import ModelContainer
-    from ._models_py3 import ModelContainerProperties
-    from ._models_py3 import ModelContainerResourceArmPaginatedResult
-    from ._models_py3 import ModelPackageInput
-    from ._models_py3 import ModelPerformanceMetricThresholdBase
-    from ._models_py3 import ModelPerformanceSignal
-    from ._models_py3 import ModelProfile
-    from ._models_py3 import ModelVersion
-    from ._models_py3 import ModelVersionProperties
-    from ._models_py3 import ModelVersionResourceArmPaginatedResult
-    from ._models_py3 import MonitorComputeConfigurationBase
-    from ._models_py3 import MonitorComputeIdentityBase
-    from ._models_py3 import MonitorDefinition
-    from ._models_py3 import MonitorServerlessSparkCompute
-    from ._models_py3 import MonitoringAlertNotificationSettingsBase
-    from ._models_py3 import MonitoringDataSegment
-    from ._models_py3 import MonitoringFeatureFilterBase
-    from ._models_py3 import MonitoringInputDataBase
-    from ._models_py3 import MonitoringSignalBase
-    from ._models_py3 import MonitoringTarget
-    from ._models_py3 import MonitoringThreshold
-    from ._models_py3 import MonitoringWorkspaceConnection
-    from ._models_py3 import Mpi
-    from ._models_py3 import NCrossValidations
-    from ._models_py3 import NlpFixedParameters
-    from ._models_py3 import NlpParameterSubspace
-    from ._models_py3 import NlpSweepSettings
-    from ._models_py3 import NlpVertical
-    from ._models_py3 import NlpVerticalFeaturizationSettings
-    from ._models_py3 import NlpVerticalLimitSettings
-    from ._models_py3 import NodeStateCounts
-    from ._models_py3 import Nodes
-    from ._models_py3 import NoneAuthTypeWorkspaceConnectionProperties
-    from ._models_py3 import NoneDatastoreCredentials
-    from ._models_py3 import NotebookAccessTokenResult
-    from ._models_py3 import NotebookPreparationError
-    from ._models_py3 import NotebookResourceInfo
-    from ._models_py3 import NotificationSetting
-    from ._models_py3 import NumericalDataDriftMetricThreshold
-    from ._models_py3 import NumericalDataQualityMetricThreshold
-    from ._models_py3 import NumericalPredictionDriftMetricThreshold
-    from ._models_py3 import Objective
-    from ._models_py3 import OneLakeArtifact
-    from ._models_py3 import OneLakeDatastore
-    from ._models_py3 import OnlineDeployment
-    from ._models_py3 import OnlineDeploymentProperties
-    from ._models_py3 import OnlineDeploymentTrackedResourceArmPaginatedResult
-    from ._models_py3 import OnlineEndpoint
-    from ._models_py3 import OnlineEndpointProperties
-    from ._models_py3 import OnlineEndpointTrackedResourceArmPaginatedResult
-    from ._models_py3 import OnlineInferenceConfiguration
-    from ._models_py3 import OnlineRequestSettings
-    from ._models_py3 import OnlineScaleSettings
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OsPatchingStatus
-    from ._models_py3 import OutboundRule
-    from ._models_py3 import OutboundRuleBasicResource
-    from ._models_py3 import OutboundRuleListResult
-    from ._models_py3 import OutputPathAssetReference
-    from ._models_py3 import PATAuthTypeWorkspaceConnectionProperties
-    from ._models_py3 import PackageInputPathBase
-    from ._models_py3 import PackageInputPathId
-    from ._models_py3 import PackageInputPathUrl
-    from ._models_py3 import PackageInputPathVersion
-    from ._models_py3 import PackageRequest
-    from ._models_py3 import PackageResponse
-    from ._models_py3 import PaginatedComputeResourcesList
-    from ._models_py3 import PartialBatchDeployment
-    from ._models_py3 import PartialBatchDeploymentPartialMinimalTrackedResourceWithProperties
-    from ._models_py3 import PartialJobBase
-    from ._models_py3 import PartialJobBasePartialResource
-    from ._models_py3 import PartialManagedServiceIdentity
-    from ._models_py3 import PartialMinimalTrackedResource
-    from ._models_py3 import PartialMinimalTrackedResourceWithIdentity
-    from ._models_py3 import PartialMinimalTrackedResourceWithSku
-    from ._models_py3 import PartialMinimalTrackedResourceWithSkuAndIdentity
-    from ._models_py3 import PartialNotificationSetting
-    from ._models_py3 import PartialRegistryPartialTrackedResource
-    from ._models_py3 import PartialSku
-    from ._models_py3 import Password
-    from ._models_py3 import PendingUploadCredentialDto
-    from ._models_py3 import PendingUploadRequestDto
-    from ._models_py3 import PendingUploadResponseDto
-    from ._models_py3 import PersonalComputeInstanceSettings
-    from ._models_py3 import PipelineJob
-    from ._models_py3 import PredictionDriftMetricThresholdBase
-    from ._models_py3 import PredictionDriftMonitoringSignal
-    from ._models_py3 import PrivateEndpoint
-    from ._models_py3 import PrivateEndpointConnection
-    from ._models_py3 import PrivateEndpointConnectionListResult
-    from ._models_py3 import PrivateEndpointDestination
-    from ._models_py3 import PrivateEndpointOutboundRule
-    from ._models_py3 import PrivateEndpointResource
-    from ._models_py3 import PrivateLinkResource
-    from ._models_py3 import PrivateLinkResourceListResult
-    from ._models_py3 import PrivateLinkServiceConnectionState
-    from ._models_py3 import ProbeSettings
-    from ._models_py3 import ProgressMetrics
-    from ._models_py3 import PyTorch
-    from ._models_py3 import QueueSettings
-    from ._models_py3 import QuotaBaseProperties
-    from ._models_py3 import QuotaUpdateParameters
-    from ._models_py3 import RandomSamplingAlgorithm
-    from ._models_py3 import Ray
-    from ._models_py3 import Recurrence
-    from ._models_py3 import RecurrenceSchedule
-    from ._models_py3 import RecurrenceTrigger
-    from ._models_py3 import RegenerateEndpointKeysRequest
-    from ._models_py3 import Registry
-    from ._models_py3 import RegistryListCredentialsResult
-    from ._models_py3 import RegistryPartialManagedServiceIdentity
-    from ._models_py3 import RegistryPrivateEndpointConnection
-    from ._models_py3 import RegistryPrivateLinkServiceConnectionState
-    from ._models_py3 import RegistryRegionArmDetails
-    from ._models_py3 import RegistryTrackedResourceArmPaginatedResult
-    from ._models_py3 import Regression
-    from ._models_py3 import RegressionModelPerformanceMetricThreshold
-    from ._models_py3 import RegressionTrainingSettings
-    from ._models_py3 import RequestLogging
-    from ._models_py3 import ResizeSchema
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceBase
-    from ._models_py3 import ResourceConfiguration
-    from ._models_py3 import ResourceId
-    from ._models_py3 import ResourceName
-    from ._models_py3 import ResourceQuota
-    from ._models_py3 import Route
-    from ._models_py3 import SASAuthTypeWorkspaceConnectionProperties
-    from ._models_py3 import SASCredentialDto
-    from ._models_py3 import SamplingAlgorithm
-    from ._models_py3 import SasDatastoreCredentials
-    from ._models_py3 import SasDatastoreSecrets
-    from ._models_py3 import ScaleSettings
-    from ._models_py3 import ScaleSettingsInformation
-    from ._models_py3 import Schedule
-    from ._models_py3 import ScheduleActionBase
-    from ._models_py3 import ScheduleBase
-    from ._models_py3 import ScheduleProperties
-    from ._models_py3 import ScheduleResourceArmPaginatedResult
-    from ._models_py3 import ScriptReference
-    from ._models_py3 import ScriptsToExecute
-    from ._models_py3 import Seasonality
-    from ._models_py3 import SecretConfiguration
-    from ._models_py3 import ServerlessEndpoint
-    from ._models_py3 import ServerlessEndpointProperties
-    from ._models_py3 import ServerlessEndpointTrackedResourceArmPaginatedResult
-    from ._models_py3 import ServiceManagedResourcesSettings
-    from ._models_py3 import ServicePrincipalAuthTypeWorkspaceConnectionProperties
-    from ._models_py3 import ServicePrincipalDatastoreCredentials
-    from ._models_py3 import ServicePrincipalDatastoreSecrets
-    from ._models_py3 import ServiceTagDestination
-    from ._models_py3 import ServiceTagOutboundRule
-    from ._models_py3 import SetupScripts
-    from ._models_py3 import SharedPrivateLinkResource
-    from ._models_py3 import Sku
-    from ._models_py3 import SkuCapacity
-    from ._models_py3 import SkuResource
-    from ._models_py3 import SkuResourceArmPaginatedResult
-    from ._models_py3 import SkuSetting
-    from ._models_py3 import SparkJob
-    from ._models_py3 import SparkJobEntry
-    from ._models_py3 import SparkJobPythonEntry
-    from ._models_py3 import SparkJobScalaEntry
-    from ._models_py3 import SparkResourceConfiguration
-    from ._models_py3 import SslConfiguration
-    from ._models_py3 import StackEnsembleSettings
-    from ._models_py3 import StaticInputData
-    from ._models_py3 import StatusMessage
-    from ._models_py3 import StorageAccountDetails
-    from ._models_py3 import SweepJob
-    from ._models_py3 import SweepJobLimits
-    from ._models_py3 import SynapseSpark
-    from ._models_py3 import SynapseSparkProperties
-    from ._models_py3 import SystemCreatedAcrAccount
-    from ._models_py3 import SystemCreatedStorageAccount
-    from ._models_py3 import SystemData
-    from ._models_py3 import SystemService
-    from ._models_py3 import TableFixedParameters
-    from ._models_py3 import TableParameterSubspace
-    from ._models_py3 import TableSweepSettings
-    from ._models_py3 import TableVertical
-    from ._models_py3 import TableVerticalFeaturizationSettings
-    from ._models_py3 import TableVerticalLimitSettings
-    from ._models_py3 import TargetLags
-    from ._models_py3 import TargetRollingWindowSize
-    from ._models_py3 import TargetUtilizationScaleSettings
-    from ._models_py3 import TensorFlow
-    from ._models_py3 import TextClassification
-    from ._models_py3 import TextClassificationMultilabel
-    from ._models_py3 import TextNer
-    from ._models_py3 import TmpfsOptions
-    from ._models_py3 import TopNFeaturesByAttribution
-    from ._models_py3 import TrackedResource
-    from ._models_py3 import TrailingInputData
-    from ._models_py3 import TrainingSettings
-    from ._models_py3 import TrialComponent
-    from ._models_py3 import TriggerBase
-    from ._models_py3 import TritonInferencingServer
-    from ._models_py3 import TritonModelJobInput
-    from ._models_py3 import TritonModelJobOutput
-    from ._models_py3 import TruncationSelectionPolicy
-    from ._models_py3 import UpdateWorkspaceQuotas
-    from ._models_py3 import UpdateWorkspaceQuotasResult
-    from ._models_py3 import UriFileDataVersion
-    from ._models_py3 import UriFileJobInput
-    from ._models_py3 import UriFileJobOutput
-    from ._models_py3 import UriFolderDataVersion
-    from ._models_py3 import UriFolderJobInput
-    from ._models_py3 import UriFolderJobOutput
-    from ._models_py3 import Usage
-    from ._models_py3 import UsageName
-    from ._models_py3 import UserAccountCredentials
-    from ._models_py3 import UserAssignedIdentity
-    from ._models_py3 import UserCreatedAcrAccount
-    from ._models_py3 import UserCreatedStorageAccount
-    from ._models_py3 import UserIdentity
-    from ._models_py3 import UsernamePasswordAuthTypeWorkspaceConnectionProperties
-    from ._models_py3 import VirtualMachine
-    from ._models_py3 import VirtualMachineImage
-    from ._models_py3 import VirtualMachineSchema
-    from ._models_py3 import VirtualMachineSchemaProperties
-    from ._models_py3 import VirtualMachineSecrets
-    from ._models_py3 import VirtualMachineSecretsSchema
-    from ._models_py3 import VirtualMachineSize
-    from ._models_py3 import VirtualMachineSizeListResult
-    from ._models_py3 import VirtualMachineSshCredentials
-    from ._models_py3 import VolumeDefinition
-    from ._models_py3 import VolumeOptions
-    from ._models_py3 import Webhook
-    from ._models_py3 import Workspace
-    from ._models_py3 import WorkspaceConnectionAccessKey
-    from ._models_py3 import WorkspaceConnectionApiKey
-    from ._models_py3 import WorkspaceConnectionManagedIdentity
-    from ._models_py3 import WorkspaceConnectionPersonalAccessToken
-    from ._models_py3 import WorkspaceConnectionPropertiesV2
-    from ._models_py3 import WorkspaceConnectionPropertiesV2BasicResource
-    from ._models_py3 import WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult
-    from ._models_py3 import WorkspaceConnectionServicePrincipal
-    from ._models_py3 import WorkspaceConnectionSharedAccessSignature
-    from ._models_py3 import WorkspaceConnectionUpdateParameter
-    from ._models_py3 import WorkspaceConnectionUsernamePassword
-    from ._models_py3 import WorkspaceHubConfig
-    from ._models_py3 import WorkspaceListResult
-    from ._models_py3 import WorkspacePrivateEndpointResource
-    from ._models_py3 import WorkspaceUpdateParameters
+    from ._models_py3 import (
+        AKS,
+        AccessKeyAuthTypeWorkspaceConnectionProperties,
+        AccountKeyDatastoreCredentials,
+        AccountKeyDatastoreSecrets,
+        AcrDetails,
+        AksComputeSecrets,
+        AksComputeSecretsProperties,
+        AksNetworkingConfiguration,
+        AKSSchema,
+        AKSSchemaProperties,
+        AllFeatures,
+        AllNodes,
+        AmlCompute,
+        AmlComputeNodeInformation,
+        AmlComputeNodesInformation,
+        AmlComputeProperties,
+        AmlComputeSchema,
+        AmlToken,
+        AmlTokenComputeIdentity,
+        AmlUserFeature,
+        ApiKeyAuthWorkspaceConnectionProperties,
+        ArmResourceId,
+        AssetBase,
+        AssetContainer,
+        AssetJobInput,
+        AssetJobOutput,
+        AssetReferenceBase,
+        AssignedUser,
+        AutoDeleteSetting,
+        AutoForecastHorizon,
+        AutologgerSettings,
+        AutoMLJob,
+        AutoMLVertical,
+        AutoNCrossValidations,
+        AutoPauseProperties,
+        AutoScaleProperties,
+        AutoSeasonality,
+        AutoTargetLags,
+        AutoTargetRollingWindowSize,
+        AzMonMonitoringAlertNotificationSettings,
+        AzureBlobDatastore,
+        AzureDataLakeGen1Datastore,
+        AzureDataLakeGen2Datastore,
+        AzureDatastore,
+        AzureDevOpsWebhook,
+        AzureFileDatastore,
+        AzureMLBatchInferencingServer,
+        AzureMLOnlineInferencingServer,
+        BanditPolicy,
+        BaseEnvironmentId,
+        BaseEnvironmentSource,
+        BatchDeployment,
+        BatchDeploymentConfiguration,
+        BatchDeploymentProperties,
+        BatchDeploymentTrackedResourceArmPaginatedResult,
+        BatchEndpoint,
+        BatchEndpointDefaults,
+        BatchEndpointProperties,
+        BatchEndpointTrackedResourceArmPaginatedResult,
+        BatchPipelineComponentDeploymentConfiguration,
+        BatchRetrySettings,
+        BayesianSamplingAlgorithm,
+        BindOptions,
+        BlobReferenceForConsumptionDto,
+        BuildContext,
+        CategoricalDataDriftMetricThreshold,
+        CategoricalDataQualityMetricThreshold,
+        CategoricalPredictionDriftMetricThreshold,
+        CertificateDatastoreCredentials,
+        CertificateDatastoreSecrets,
+        Classification,
+        ClassificationModelPerformanceMetricThreshold,
+        ClassificationTrainingSettings,
+        ClusterUpdateParameters,
+        CocoExportSummary,
+        CodeConfiguration,
+        CodeContainer,
+        CodeContainerProperties,
+        CodeContainerResourceArmPaginatedResult,
+        CodeVersion,
+        CodeVersionProperties,
+        CodeVersionResourceArmPaginatedResult,
+        Collection,
+        ColumnTransformer,
+        CommandJob,
+        CommandJobLimits,
+        ComponentConfiguration,
+        ComponentContainer,
+        ComponentContainerProperties,
+        ComponentContainerResourceArmPaginatedResult,
+        ComponentVersion,
+        ComponentVersionProperties,
+        ComponentVersionResourceArmPaginatedResult,
+        Compute,
+        ComputeInstance,
+        ComputeInstanceApplication,
+        ComputeInstanceAutologgerSettings,
+        ComputeInstanceConnectivityEndpoints,
+        ComputeInstanceContainer,
+        ComputeInstanceCreatedBy,
+        ComputeInstanceDataDisk,
+        ComputeInstanceDataMount,
+        ComputeInstanceEnvironmentInfo,
+        ComputeInstanceLastOperation,
+        ComputeInstanceProperties,
+        ComputeInstanceSchema,
+        ComputeInstanceSshSettings,
+        ComputeInstanceVersion,
+        ComputeResource,
+        ComputeResourceSchema,
+        ComputeRuntimeDto,
+        ComputeSchedules,
+        ComputeSecrets,
+        ComputeStartStopSchedule,
+        ContainerResourceRequirements,
+        ContainerResourceSettings,
+        CosmosDbSettings,
+        CreateMonitorAction,
+        Cron,
+        CronTrigger,
+        CsvExportSummary,
+        CustomForecastHorizon,
+        CustomInferencingServer,
+        CustomKeys,
+        CustomKeysWorkspaceConnectionProperties,
+        CustomMetricThreshold,
+        CustomModelJobInput,
+        CustomModelJobOutput,
+        CustomMonitoringSignal,
+        CustomNCrossValidations,
+        CustomSeasonality,
+        CustomService,
+        CustomTargetLags,
+        CustomTargetRollingWindowSize,
+        DatabaseSource,
+        Databricks,
+        DatabricksComputeSecrets,
+        DatabricksComputeSecretsProperties,
+        DatabricksProperties,
+        DatabricksSchema,
+        DataCollector,
+        DataContainer,
+        DataContainerProperties,
+        DataContainerResourceArmPaginatedResult,
+        DataDriftMetricThresholdBase,
+        DataDriftMonitoringSignal,
+        DataFactory,
+        DataImport,
+        DataImportSource,
+        DataLakeAnalytics,
+        DataLakeAnalyticsSchema,
+        DataLakeAnalyticsSchemaProperties,
+        DataPathAssetReference,
+        DataQualityMetricThresholdBase,
+        DataQualityMonitoringSignal,
+        DatasetExportSummary,
+        Datastore,
+        DatastoreCredentials,
+        DatastoreProperties,
+        DatastoreResourceArmPaginatedResult,
+        DatastoreSecrets,
+        DataVersionBase,
+        DataVersionBaseProperties,
+        DataVersionBaseResourceArmPaginatedResult,
+        DefaultScaleSettings,
+        DeploymentLogs,
+        DeploymentLogsRequest,
+        DeploymentResourceConfiguration,
+        DiagnoseRequestProperties,
+        DiagnoseResponseResult,
+        DiagnoseResponseResultValue,
+        DiagnoseResult,
+        DiagnoseWorkspaceParameters,
+        DistributionConfiguration,
+        Docker,
+        EarlyTerminationPolicy,
+        EmailMonitoringAlertNotificationSettings,
+        EncryptionKeyVaultUpdateProperties,
+        EncryptionProperty,
+        EncryptionUpdateProperties,
+        Endpoint,
+        EndpointAuthKeys,
+        EndpointAuthToken,
+        EndpointDeploymentPropertiesBase,
+        EndpointPropertiesBase,
+        EndpointScheduleAction,
+        EnvironmentContainer,
+        EnvironmentContainerProperties,
+        EnvironmentContainerResourceArmPaginatedResult,
+        EnvironmentVariable,
+        EnvironmentVersion,
+        EnvironmentVersionProperties,
+        EnvironmentVersionResourceArmPaginatedResult,
+        ErrorAdditionalInfo,
+        ErrorDetail,
+        ErrorResponse,
+        EstimatedVMPrice,
+        EstimatedVMPrices,
+        ExportSummary,
+        ExternalFQDNResponse,
+        Feature,
+        FeatureAttributionDriftMonitoringSignal,
+        FeatureAttributionMetricThreshold,
+        FeatureProperties,
+        FeatureResourceArmPaginatedResult,
+        FeaturesetContainer,
+        FeaturesetContainerProperties,
+        FeaturesetContainerResourceArmPaginatedResult,
+        FeaturesetSpecification,
+        FeaturesetVersion,
+        FeaturesetVersionBackfillRequest,
+        FeaturesetVersionBackfillResponse,
+        FeaturesetVersionProperties,
+        FeaturesetVersionResourceArmPaginatedResult,
+        FeaturestoreEntityContainer,
+        FeaturestoreEntityContainerProperties,
+        FeaturestoreEntityContainerResourceArmPaginatedResult,
+        FeaturestoreEntityVersion,
+        FeaturestoreEntityVersionProperties,
+        FeaturestoreEntityVersionResourceArmPaginatedResult,
+        FeatureStoreSettings,
+        FeatureSubset,
+        FeatureWindow,
+        FeaturizationSettings,
+        FileSystemSource,
+        FixedInputData,
+        FlavorData,
+        ForecastHorizon,
+        Forecasting,
+        ForecastingSettings,
+        ForecastingTrainingSettings,
+        FQDNEndpoint,
+        FQDNEndpointDetail,
+        FQDNEndpoints,
+        FQDNEndpointsPropertyBag,
+        FqdnOutboundRule,
+        GenerationSafetyQualityMetricThreshold,
+        GenerationSafetyQualityMonitoringSignal,
+        GenerationTokenStatisticsMetricThreshold,
+        GenerationTokenStatisticsSignal,
+        GridSamplingAlgorithm,
+        HdfsDatastore,
+        HDInsight,
+        HDInsightProperties,
+        HDInsightSchema,
+        IdAssetReference,
+        IdentityConfiguration,
+        IdentityForCmk,
+        IdleShutdownSetting,
+        Image,
+        ImageClassification,
+        ImageClassificationBase,
+        ImageClassificationMultilabel,
+        ImageInstanceSegmentation,
+        ImageLimitSettings,
+        ImageMetadata,
+        ImageModelDistributionSettings,
+        ImageModelDistributionSettingsClassification,
+        ImageModelDistributionSettingsObjectDetection,
+        ImageModelSettings,
+        ImageModelSettingsClassification,
+        ImageModelSettingsObjectDetection,
+        ImageObjectDetection,
+        ImageObjectDetectionBase,
+        ImageSweepSettings,
+        ImageVertical,
+        ImportDataAction,
+        IndexColumn,
+        InferenceContainerProperties,
+        InferencingServer,
+        InstanceTypeSchema,
+        InstanceTypeSchemaResources,
+        IntellectualProperty,
+        JobBase,
+        JobBaseProperties,
+        JobBaseResourceArmPaginatedResult,
+        JobInput,
+        JobLimits,
+        JobOutput,
+        JobResourceConfiguration,
+        JobScheduleAction,
+        JobService,
+        KerberosCredentials,
+        KerberosKeytabCredentials,
+        KerberosKeytabSecrets,
+        KerberosPasswordCredentials,
+        KerberosPasswordSecrets,
+        KeyVaultProperties,
+        Kubernetes,
+        KubernetesOnlineDeployment,
+        KubernetesProperties,
+        KubernetesSchema,
+        LabelCategory,
+        LabelClass,
+        LabelingDataConfiguration,
+        LabelingJob,
+        LabelingJobImageProperties,
+        LabelingJobInstructions,
+        LabelingJobMediaProperties,
+        LabelingJobProperties,
+        LabelingJobResourceArmPaginatedResult,
+        LabelingJobTextProperties,
+        LakeHouseArtifact,
+        ListAmlUserFeatureResult,
+        ListNotebookKeysResult,
+        ListStorageAccountKeysResult,
+        ListUsagesResult,
+        ListWorkspaceKeysResult,
+        ListWorkspaceQuotas,
+        LiteralJobInput,
+        ManagedComputeIdentity,
+        ManagedIdentity,
+        ManagedIdentityAuthTypeWorkspaceConnectionProperties,
+        ManagedNetworkProvisionOptions,
+        ManagedNetworkProvisionStatus,
+        ManagedNetworkSettings,
+        ManagedOnlineDeployment,
+        ManagedServiceIdentity,
+        MaterializationComputeResource,
+        MaterializationSettings,
+        MedianStoppingPolicy,
+        MLAssistConfiguration,
+        MLAssistConfigurationDisabled,
+        MLAssistConfigurationEnabled,
+        MLFlowModelJobInput,
+        MLFlowModelJobOutput,
+        MLTableData,
+        MLTableJobInput,
+        MLTableJobOutput,
+        ModelConfiguration,
+        ModelContainer,
+        ModelContainerProperties,
+        ModelContainerResourceArmPaginatedResult,
+        ModelPackageInput,
+        ModelPerformanceMetricThresholdBase,
+        ModelPerformanceSignal,
+        ModelProfile,
+        ModelVersion,
+        ModelVersionProperties,
+        ModelVersionResourceArmPaginatedResult,
+        MonitorComputeConfigurationBase,
+        MonitorComputeIdentityBase,
+        MonitorDefinition,
+        MonitoringAlertNotificationSettingsBase,
+        MonitoringDataSegment,
+        MonitoringFeatureFilterBase,
+        MonitoringInputDataBase,
+        MonitoringSignalBase,
+        MonitoringTarget,
+        MonitoringThreshold,
+        MonitoringWorkspaceConnection,
+        MonitorServerlessSparkCompute,
+        Mpi,
+        NCrossValidations,
+        NlpFixedParameters,
+        NlpParameterSubspace,
+        NlpSweepSettings,
+        NlpVertical,
+        NlpVerticalFeaturizationSettings,
+        NlpVerticalLimitSettings,
+        Nodes,
+        NodeStateCounts,
+        NoneAuthTypeWorkspaceConnectionProperties,
+        NoneDatastoreCredentials,
+        NotebookAccessTokenResult,
+        NotebookPreparationError,
+        NotebookResourceInfo,
+        NotificationSetting,
+        NumericalDataDriftMetricThreshold,
+        NumericalDataQualityMetricThreshold,
+        NumericalPredictionDriftMetricThreshold,
+        Objective,
+        OneLakeArtifact,
+        OneLakeDatastore,
+        OnlineDeployment,
+        OnlineDeploymentProperties,
+        OnlineDeploymentTrackedResourceArmPaginatedResult,
+        OnlineEndpoint,
+        OnlineEndpointProperties,
+        OnlineEndpointTrackedResourceArmPaginatedResult,
+        OnlineInferenceConfiguration,
+        OnlineRequestSettings,
+        OnlineScaleSettings,
+        Operation,
+        OperationDisplay,
+        OperationListResult,
+        OsPatchingStatus,
+        OutboundRule,
+        OutboundRuleBasicResource,
+        OutboundRuleListResult,
+        OutputPathAssetReference,
+        PackageInputPathBase,
+        PackageInputPathId,
+        PackageInputPathUrl,
+        PackageInputPathVersion,
+        PackageRequest,
+        PackageResponse,
+        PaginatedComputeResourcesList,
+        PartialBatchDeployment,
+        PartialBatchDeploymentPartialMinimalTrackedResourceWithProperties,
+        PartialJobBase,
+        PartialJobBasePartialResource,
+        PartialManagedServiceIdentity,
+        PartialMinimalTrackedResource,
+        PartialMinimalTrackedResourceWithIdentity,
+        PartialMinimalTrackedResourceWithSku,
+        PartialMinimalTrackedResourceWithSkuAndIdentity,
+        PartialNotificationSetting,
+        PartialRegistryPartialTrackedResource,
+        PartialSku,
+        Password,
+        PATAuthTypeWorkspaceConnectionProperties,
+        PendingUploadCredentialDto,
+        PendingUploadRequestDto,
+        PendingUploadResponseDto,
+        PersonalComputeInstanceSettings,
+        PipelineJob,
+        PredictionDriftMetricThresholdBase,
+        PredictionDriftMonitoringSignal,
+        PrivateEndpoint,
+        PrivateEndpointConnection,
+        PrivateEndpointConnectionListResult,
+        PrivateEndpointDestination,
+        PrivateEndpointOutboundRule,
+        PrivateEndpointResource,
+        PrivateLinkResource,
+        PrivateLinkResourceListResult,
+        PrivateLinkServiceConnectionState,
+        ProbeSettings,
+        ProgressMetrics,
+        PyTorch,
+        QueueSettings,
+        QuotaBaseProperties,
+        QuotaUpdateParameters,
+        RandomSamplingAlgorithm,
+        Ray,
+        Recurrence,
+        RecurrenceSchedule,
+        RecurrenceTrigger,
+        RegenerateEndpointKeysRequest,
+        Registry,
+        RegistryListCredentialsResult,
+        RegistryPartialManagedServiceIdentity,
+        RegistryPrivateEndpointConnection,
+        RegistryPrivateLinkServiceConnectionState,
+        RegistryRegionArmDetails,
+        RegistryTrackedResourceArmPaginatedResult,
+        Regression,
+        RegressionModelPerformanceMetricThreshold,
+        RegressionTrainingSettings,
+        RequestLogging,
+        ResizeSchema,
+        Resource,
+        ResourceBase,
+        ResourceConfiguration,
+        ResourceId,
+        ResourceName,
+        ResourceQuota,
+        Route,
+        SamplingAlgorithm,
+        SASAuthTypeWorkspaceConnectionProperties,
+        SASCredentialDto,
+        SasDatastoreCredentials,
+        SasDatastoreSecrets,
+        ScaleSettings,
+        ScaleSettingsInformation,
+        Schedule,
+        ScheduleActionBase,
+        ScheduleBase,
+        ScheduleProperties,
+        ScheduleResourceArmPaginatedResult,
+        ScriptReference,
+        ScriptsToExecute,
+        Seasonality,
+        SecretConfiguration,
+        ServerlessComputeSettings,
+        ServerlessEndpoint,
+        ServerlessEndpointProperties,
+        ServerlessEndpointTrackedResourceArmPaginatedResult,
+        ServiceManagedResourcesSettings,
+        ServicePrincipalAuthTypeWorkspaceConnectionProperties,
+        ServicePrincipalDatastoreCredentials,
+        ServicePrincipalDatastoreSecrets,
+        ServiceTagDestination,
+        ServiceTagOutboundRule,
+        SetupScripts,
+        SharedPrivateLinkResource,
+        Sku,
+        SkuCapacity,
+        SkuResource,
+        SkuResourceArmPaginatedResult,
+        SkuSetting,
+        SparkJob,
+        SparkJobEntry,
+        SparkJobPythonEntry,
+        SparkJobScalaEntry,
+        SparkResourceConfiguration,
+        SslConfiguration,
+        StackEnsembleSettings,
+        StaticInputData,
+        StatusMessage,
+        StorageAccountDetails,
+        SweepJob,
+        SweepJobLimits,
+        SynapseSpark,
+        SynapseSparkProperties,
+        SystemCreatedAcrAccount,
+        SystemCreatedStorageAccount,
+        SystemData,
+        SystemService,
+        TableFixedParameters,
+        TableParameterSubspace,
+        TableSweepSettings,
+        TableVertical,
+        TableVerticalFeaturizationSettings,
+        TableVerticalLimitSettings,
+        TargetLags,
+        TargetRollingWindowSize,
+        TargetUtilizationScaleSettings,
+        TensorFlow,
+        TextClassification,
+        TextClassificationMultilabel,
+        TextNer,
+        TmpfsOptions,
+        TopNFeaturesByAttribution,
+        TrackedResource,
+        TrailingInputData,
+        TrainingSettings,
+        TrialComponent,
+        TriggerBase,
+        TritonInferencingServer,
+        TritonModelJobInput,
+        TritonModelJobOutput,
+        TruncationSelectionPolicy,
+        UpdateWorkspaceQuotas,
+        UpdateWorkspaceQuotasResult,
+        UriFileDataVersion,
+        UriFileJobInput,
+        UriFileJobOutput,
+        UriFolderDataVersion,
+        UriFolderJobInput,
+        UriFolderJobOutput,
+        Usage,
+        UsageName,
+        UserAccountCredentials,
+        UserAssignedIdentity,
+        UserCreatedAcrAccount,
+        UserCreatedStorageAccount,
+        UserIdentity,
+        UsernamePasswordAuthTypeWorkspaceConnectionProperties,
+        VirtualMachine,
+        VirtualMachineImage,
+        VirtualMachineSchema,
+        VirtualMachineSchemaProperties,
+        VirtualMachineSecrets,
+        VirtualMachineSecretsSchema,
+        VirtualMachineSize,
+        VirtualMachineSizeListResult,
+        VirtualMachineSshCredentials,
+        VolumeDefinition,
+        VolumeOptions,
+        Webhook,
+        Workspace,
+        WorkspaceConnectionAccessKey,
+        WorkspaceConnectionApiKey,
+        WorkspaceConnectionManagedIdentity,
+        WorkspaceConnectionPersonalAccessToken,
+        WorkspaceConnectionPropertiesV2,
+        WorkspaceConnectionPropertiesV2BasicResource,
+        WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult,
+        WorkspaceConnectionServicePrincipal,
+        WorkspaceConnectionSharedAccessSignature,
+        WorkspaceConnectionUpdateParameter,
+        WorkspaceConnectionUsernamePassword,
+        WorkspaceHubConfig,
+        WorkspaceListResult,
+        WorkspacePrivateEndpointResource,
+        WorkspaceUpdateParameters,
+    )
 except (SyntaxError, ImportError):
     from ._models import AKS  # type: ignore
     from ._models import AKSSchema  # type: ignore
@@ -602,8 +605,6 @@ except (SyntaxError, ImportError):
     from ._models import AmlComputeNodesInformation  # type: ignore
     from ._models import AmlComputeProperties  # type: ignore
     from ._models import AmlComputeSchema  # type: ignore
-    from ._models import AmlOperation  # type: ignore
-    from ._models import AmlOperationListResult  # type: ignore
     from ._models import AmlToken  # type: ignore
     from ._models import AmlTokenComputeIdentity  # type: ignore
     from ._models import AmlUserFeature  # type: ignore
@@ -970,7 +971,9 @@ except (SyntaxError, ImportError):
     from ._models import OnlineInferenceConfiguration  # type: ignore
     from ._models import OnlineRequestSettings  # type: ignore
     from ._models import OnlineScaleSettings  # type: ignore
+    from ._models import Operation  # type: ignore
     from ._models import OperationDisplay  # type: ignore
+    from ._models import OperationListResult  # type: ignore
     from ._models import OsPatchingStatus  # type: ignore
     from ._models import OutboundRule  # type: ignore
     from ._models import OutboundRuleBasicResource  # type: ignore
@@ -1060,6 +1063,7 @@ except (SyntaxError, ImportError):
     from ._models import ScriptsToExecute  # type: ignore
     from ._models import Seasonality  # type: ignore
     from ._models import SecretConfiguration  # type: ignore
+    from ._models import ServerlessComputeSettings  # type: ignore
     from ._models import ServerlessEndpoint  # type: ignore
     from ._models import ServerlessEndpointProperties  # type: ignore
     from ._models import ServerlessEndpointTrackedResourceArmPaginatedResult  # type: ignore
@@ -1164,6 +1168,7 @@ except (SyntaxError, ImportError):
     from ._models import WorkspaceUpdateParameters  # type: ignore
 
 from ._azure_machine_learning_workspaces_enums import (
+    ActionType,
     AllocationState,
     ApplicationSharingPolicy,
     AssetProvisioningState,
@@ -1197,8 +1202,8 @@ from ._azure_machine_learning_workspaces_enums import (
     DataAvailabilityStatus,
     DataCollectionMode,
     DataImportSourceType,
-    DataType,
     DatastoreType,
+    DataType,
     DeploymentProvisioningState,
     DiagnoseResultLevel,
     DistributionType,
@@ -1246,13 +1251,13 @@ from ._azure_machine_learning_workspaces_enums import (
     LogTrainingMetrics,
     LogValidationLoss,
     LogVerbosity,
-    MLAssistConfigurationType,
-    MLFlowAutologgerState,
     ManagedNetworkStatus,
     ManagedServiceIdentityType,
     MaterializationStoreType,
     MediaType,
+    MLAssistConfigurationType,
     MlflowAutologger,
+    MLFlowAutologgerState,
     ModelSize,
     ModelTaskType,
     MonitorComputeIdentityType,
@@ -1282,6 +1287,7 @@ from ._azure_machine_learning_workspaces_enums import (
     OperationStatus,
     OperationTrigger,
     OrderString,
+    Origin,
     OsType,
     OutputDeliveryMode,
     PackageBuildState,
@@ -1342,10 +1348,10 @@ from ._azure_machine_learning_workspaces_enums import (
     UnitOfMeasure,
     UsageUnit,
     UseStl,
-    VMPriceOSType,
-    VMTier,
     ValidationMetricType,
+    VMPriceOSType,
     VmPriority,
+    VMTier,
     VolumeDefinitionType,
     WebhookType,
     WeekDay,
@@ -1369,8 +1375,6 @@ __all__ = [
     'AmlComputeNodesInformation',
     'AmlComputeProperties',
     'AmlComputeSchema',
-    'AmlOperation',
-    'AmlOperationListResult',
     'AmlToken',
     'AmlTokenComputeIdentity',
     'AmlUserFeature',
@@ -1737,7 +1741,9 @@ __all__ = [
     'OnlineInferenceConfiguration',
     'OnlineRequestSettings',
     'OnlineScaleSettings',
+    'Operation',
     'OperationDisplay',
+    'OperationListResult',
     'OsPatchingStatus',
     'OutboundRule',
     'OutboundRuleBasicResource',
@@ -1827,6 +1833,7 @@ __all__ = [
     'ScriptsToExecute',
     'Seasonality',
     'SecretConfiguration',
+    'ServerlessComputeSettings',
     'ServerlessEndpoint',
     'ServerlessEndpointProperties',
     'ServerlessEndpointTrackedResourceArmPaginatedResult',
@@ -1929,6 +1936,7 @@ __all__ = [
     'WorkspaceListResult',
     'WorkspacePrivateEndpointResource',
     'WorkspaceUpdateParameters',
+    'ActionType',
     'AllocationState',
     'ApplicationSharingPolicy',
     'AssetProvisioningState',
@@ -2047,6 +2055,7 @@ __all__ = [
     'OperationStatus',
     'OperationTrigger',
     'OrderString',
+    'Origin',
     'OsType',
     'OutputDeliveryMode',
     'PackageBuildState',
