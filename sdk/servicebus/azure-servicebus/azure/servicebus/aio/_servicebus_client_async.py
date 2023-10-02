@@ -526,8 +526,8 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          receiver will automatically stop receiving. The default value is None, meaning no timeout. If connection
          errors are occurring due to write timing out, the connection timeout value may need to be adjusted. See
          the `socket_timeout` optional parameter for more details. If there is session enabled queue or topic and 
-         NEXT_AVAILABLE_SESSION is specified, max_wait_time will wait for that time to receive a message from any
-         session before the operations times out.
+         NEXT_AVAILABLE_SESSION is specified, operation will time out after waiting `max_wait_time` seconds to
+         receive a message from any session.
         :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An
          ~azure.servicebus.aio.AutoLockRenewer can be provided such that messages are automatically registered on
          receipt. If the receiver is a session receiver, it will apply to the session instead.
