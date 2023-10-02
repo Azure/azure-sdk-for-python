@@ -70,7 +70,7 @@ class AsyncStorageAccountHostsMixin(object):
         self._credential_policy = None
         if hasattr(credential, "get_token"):
             if kwargs.get('audience'):
-                audience = kwargs.pop('audience') + DEFAULT_OAUTH_SCOPE
+                audience = str(kwargs.pop('audience')).rstrip('/') + DEFAULT_OAUTH_SCOPE
             else:
                 audience = STORAGE_OAUTH_SCOPE
             self._credential_policy = AsyncStorageBearerTokenCredentialPolicy(credential, audience)
