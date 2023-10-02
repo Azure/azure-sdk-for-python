@@ -4,6 +4,7 @@
 
 # pylint: disable=protected-access
 
+from abc import ABC
 import time
 from typing import Callable, Dict, Optional, Tuple
 
@@ -45,7 +46,7 @@ ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-class WorkspaceOperationsBase:
+class WorkspaceOperationsBase(ABC):
     """Base class for WorkspaceOperations, can't be instantiated directly."""
 
     def __init__(
@@ -67,6 +68,13 @@ class WorkspaceOperationsBase:
         self.containerRegistry = "none"
 
     def get(self, workspace_name: Optional[str] = None, **kwargs: Dict) -> Workspace:
+        """Get a Workspace by name.
+
+        :param workspace_name: Name of the workspace.
+        :type workspace_name: str
+        :return: The workspace with the provided name.
+        :rtype: ~azure.ai.ml.entities.Workspace
+        """
         workspace_name = self._check_workspace_name(workspace_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         obj = self._operation.get(resource_group, workspace_name)
@@ -79,6 +87,22 @@ class WorkspaceOperationsBase:
         get_callback: Optional[Callable[[], Workspace]] = None,
         **kwargs: Dict,
     ) -> LROPoller[Workspace]:
+        """Create a new Azure Machine Learning Workspace.
+
+        Returns the workspace if already exists.
+
+        :param workspace: Workspace definition.
+        :type workspace: ~azure.ai.ml.entities.Workspace
+        :param update_dependent_resources: Whether to update dependent resources, defaults to False.
+        :type update_dependent_resources: boolean
+        :param get_callback: A callable function to call at the end of operation.
+        :type get_callback: Optional[Callable[[], ~azure.ai.ml.entities.Workspace]]
+        :return: An instance of LROPoller that returns a Workspace.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
+        :raises ~azure.ai.ml.ValidationException: Raised if workspace is Project workspace and user
+        specifies any of the following in workspace object: storage_account, container_registry, key_vault,
+        public_network_access, managed_network, customer_managed_key.
+        """
         existing_workspace = None
         resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
         byo_open_ai_resource_id = kwargs.pop("byo_open_ai_resource_id", "")
@@ -119,7 +143,7 @@ class WorkspaceOperationsBase:
             template,
             param,
             resources_being_deployed,
-        ) = self._populate_arm_paramaters(workspace, byo_open_ai_resource_id=byo_open_ai_resource_id, **kwargs)
+        ) = self._populate_arm_parameters(workspace, byo_open_ai_resource_id=byo_open_ai_resource_id, **kwargs)
         # check if create with workspace hub request is valid
         if workspace._kind == PROJECT_WORKSPACE_KIND:
             if not all(
@@ -160,6 +184,11 @@ class WorkspaceOperationsBase:
         )
 
         def callback():
+            """Callback to be called after completion
+
+            :return: Result of calling appropriate callback.
+            :rtype: Any
+            """
             return get_callback() if get_callback else self.get(workspace.name, resource_group=resource_group)
 
         real_callback = callback
@@ -167,6 +196,11 @@ class WorkspaceOperationsBase:
         if injected_callback:
             # pylint: disable=function-redefined
             def real_callback():
+                """Callback to be called after completion
+
+                :return: Result of calling appropriate callback.
+                :rtype: Any
+                """
                 return injected_callback(callback())
 
         return LROPoller(
@@ -185,6 +219,21 @@ class WorkspaceOperationsBase:
         deserialize_callback: Optional[Callable[[], Workspace]] = None,
         **kwargs: Dict,
     ) -> LROPoller[Workspace]:
+        """Updates a Azure Machine Learning Workspace.
+
+        :param workspace: Workspace resource.
+        :type workspace: ~azure.ai.ml.entities.Workspace
+        :keyword update_dependent_resources: Whether to update dependent resources, defaults to False.
+        :paramtype update_dependent_resources: boolean
+        :keyword deserialize_callback: A callable function to call at the end of operation.
+        :paramtype deserialize_callback: Optional[Callable[[], ~azure.ai.ml.entities.Workspace]]
+        :return: An instance of LROPoller that returns a Workspace.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
+        :raises ~azure.ai.ml.ValidationException: Raised if updating container_registry for a workspace
+        and update_dependent_resources is not True.
+        :raises ~azure.ai.ml.ValidationException: Raised if updating application_insights for a workspace
+        and update_dependent_resources is not True.
+        """
         identity = kwargs.get("identity", workspace.identity)
         workspace_name = kwargs.get("workspace_name", workspace.name)
         resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
@@ -222,7 +271,8 @@ class WorkspaceOperationsBase:
                 "Updating the workspace-attached Azure Container Registry resource may break lineage of "
                 "previous jobs or your ability to rerun earlier jobs in this workspace. "
                 "Are you sure you want to perform this operation? "
-                "Include the --update_dependent_resources/-u parameter with this request to confirm."
+                "Include the update_dependent_resources argument in SDK or the "
+                "--update-dependent-resources/-u parameter in CLI with this request to confirm."
             )
             raise ValidationException(
                 message=msg,
@@ -240,7 +290,9 @@ class WorkspaceOperationsBase:
             msg = (
                 "Updating the workspace-attached Azure Application Insights resource may break lineage "
                 "of deployed inference endpoints this workspace. Are you sure you want to perform this "
-                "operation? Include the --update_dependent_resources/-u parameter with this request to confirm."
+                "operation? "
+                "Include the update_dependent_resources argument in SDK or the "
+                "--update-dependent-resources/-u parameter in CLI with this request to confirm."
             )
             raise ValidationException(
                 message=msg,
@@ -294,8 +346,13 @@ class WorkspaceOperationsBase:
         )
         grant_materialization_permissions = kwargs.get("grant_materialization_permissions", None)
 
-        # pylint: disable=unused-argument
+        # pylint: disable=unused-argument, docstring-missing-param
         def callback(_, deserialized, args):
+            """Callback to be called after completion
+
+            :return: Workspace deserialized.
+            :rtype: ~azure.ai.ml.entities.Workspace
+            """
             if (
                 workspace._kind
                 and workspace._kind.lower() == "featurestore"
@@ -332,8 +389,13 @@ class WorkspaceOperationsBase:
         real_callback = callback
         injected_callback = kwargs.get("cls", None)
         if injected_callback:
-            # pylint: disable=function-redefined
+            # pylint: disable=function-redefined, docstring-missing-param
             def real_callback(_, deserialized, args):
+                """Callback to be called after completion
+
+                :return: Result of calling appropriate callback.
+                :rtype: Any
+                """
                 return injected_callback(callback(_, deserialized, args))
 
         poller = self._operation.begin_update(
@@ -344,6 +406,20 @@ class WorkspaceOperationsBase:
     def begin_delete(
         self, name: str, *, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs: Dict
     ) -> LROPoller[None]:
+        """Delete a Workspace.
+
+        :param name: Name of the Workspace
+        :type name: str
+        :keyword delete_dependent_resources: Whether to delete resources associated with the Workspace,
+            i.e., container registry, storage account, key vault, application insights, log analytics.
+            The default is False. Set to True to delete these resources.
+        :paramtype delete_dependent_resources: bool
+        :keyword permanently_delete: Workspaces are soft-deleted by default to allow recovery of workspace data.
+            Set this flag to true to override the soft-delete behavior and permanently delete your workspace.
+        :paramtype permanently_delete: bool
+        :return: A poller to track the operation status.
+        :rtype: ~azure.core.polling.LROPoller[None]
+        """
         workspace = self.get(name, **kwargs)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
@@ -417,7 +493,14 @@ class WorkspaceOperationsBase:
         return poller
 
     # pylint: disable=too-many-statements,too-many-branches,too-many-locals
-    def _populate_arm_paramaters(self, workspace: Workspace, **kwargs: Dict) -> Tuple[dict, dict, dict]:
+    def _populate_arm_parameters(self, workspace: Workspace, **kwargs: Dict) -> Tuple[dict, dict, dict]:
+        """Populates ARM template parameters for use to deploy a workspace resource.
+
+        :param workspace: Workspace resource.
+        :type workspace: ~azure.ai.ml.entities.Workspace
+        :return: A tuple of three dicts: an ARM template, ARM template parameters, resources_being_deployed.
+        :rtype: Tuple[dict, dict, dict]
+        """
         resources_being_deployed = {}
         if not workspace.location:
             workspace.location = get_resource_group_location(
@@ -624,6 +707,13 @@ class WorkspaceOperationsBase:
     def _populate_feature_store_role_assignment_parameters(
         self, workspace: Workspace, **kwargs: Dict
     ) -> Tuple[dict, dict, dict]:
+        """Populates ARM template parameters for use to update feature store materialization identity role assignments.
+
+        :param workspace: Workspace resource.
+        :type workspace: ~azure.ai.ml.entities.Workspace
+        :return: A tuple of three dicts: an ARM template, ARM template parameters, resources_being_deployed.
+        :rtype: Tuple[dict, dict, dict]
+        """
         resources_being_deployed = {}
         template = get_template(resource_type=ArmConstants.FEATURE_STORE_ROLE_ASSIGNMENTS)
         param = get_template(resource_type=ArmConstants.FEATURE_STORE_ROLE_ASSIGNMENTS_PARAM)
@@ -666,6 +756,15 @@ class WorkspaceOperationsBase:
         return template, param, resources_being_deployed
 
     def _check_workspace_name(self, name) -> str:
+        """Validates that a workspace name exists.
+
+        :param name: Name for a workspace resource.
+        :type name: str
+        :return: No Return.
+        :rtype: None
+        :raises ~azure.ai.ml.ValidationException: Raised if updating nothing is specified for name and
+        MLClient does not have workspace name set.
+        """
         workspace_name = name or self._default_workspace_name
         if not workspace_name:
             msg = "Please provide a workspace name or use a MLClient with a workspace name set."
@@ -678,11 +777,30 @@ class WorkspaceOperationsBase:
         return workspace_name
 
 
-def _set_val(key: str, val: str) -> None:
-    key["value"] = val
+def _set_val(dict: dict, val: str) -> None:
+    """Sets the value of a reference in parameters dict to a certain value.
+
+    :param dict: Dict for a certain parameter.
+    :type dict: dict
+    :param val: The value to set for "value" in the passed in dict.
+    :type val: str
+    :return: No Return.
+    :rtype: None
+    """
+    dict["value"] = val
 
 
 def _generate_key_vault(name: str, resources_being_deployed: dict) -> str:
+    """Generates a name for a key vault resource to be created with workspace based on workspace name,
+    sets name and type in resources_being_deployed.
+
+    :param name: The name for the related workspace.
+    :type name: str
+    :param resources_being_deployed: Dict for resources being deployed.
+    :type resources_being_deployed: dict
+    :return: String for name of key vault.
+    :rtype: str
+    """
     # Vault name must only contain alphanumeric characters and dashes and cannot start with a number.
     # Vault name must be between 3-24 alphanumeric characters.
     # The name must begin with a letter, end with a letter or digit, and not contain consecutive hyphens.
@@ -692,12 +810,32 @@ def _generate_key_vault(name: str, resources_being_deployed: dict) -> str:
 
 
 def _generate_storage(name: str, resources_being_deployed: dict) -> str:
+    """Generates a name for a storage account resource to be created with workspace based on workspace name,
+    sets name and type in resources_being_deployed.
+
+    :param name: The name for the related workspace.
+    :type name: str
+    :param resources_being_deployed: Dict for resources being deployed.
+    :type resources_being_deployed: dict
+    :return: String for name of storage account.
+    :rtype: str
+    """
     storage = get_name_for_dependent_resource(name, "storage")
     resources_being_deployed[storage] = (ArmConstants.STORAGE, None)
     return storage
 
 
 def _generate_log_analytics(name: str, resources_being_deployed: dict) -> str:
+    """Generates a name for a log analytics resource to be created with workspace based on workspace name,
+    sets name and type in resources_being_deployed.
+
+    :param name: The name for the related workspace.
+    :type name: str
+    :param resources_being_deployed: Dict for resources being deployed.
+    :type resources_being_deployed: dict
+    :return: String for name of log analytics.
+    :rtype: str
+    """
     log_analytics = get_name_for_dependent_resource(name, "logalytics")  # cspell:disable-line
     resources_being_deployed[log_analytics] = (
         ArmConstants.LOG_ANALYTICS,
@@ -707,6 +845,16 @@ def _generate_log_analytics(name: str, resources_being_deployed: dict) -> str:
 
 
 def _generate_app_insights(name: str, resources_being_deployed: dict) -> str:
+    """Generates a name for an application insights resource to be created with workspace based on workspace name,
+    sets name and type in resources_being_deployed.
+
+    :param name: The name for the related workspace.
+    :type name: str
+    :param resources_being_deployed: Dict for resources being deployed.
+    :type resources_being_deployed: dict
+    :return: String for name of app insights.
+    :rtype: str
+    """
     # Application name only allows alphanumeric characters, periods, underscores,
     # hyphens and parenthesis and cannot end in a period
     app_insights = get_name_for_dependent_resource(name, "insights")
@@ -718,6 +866,8 @@ def _generate_app_insights(name: str, resources_being_deployed: dict) -> str:
 
 
 class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
+    """A custom polling method for ARM template deployment used internally for workspace creation."""
+
     def __init__(self, poller, arm_submit, func) -> None:
         self.poller = poller
         self.arm_submit = arm_submit
@@ -725,6 +875,13 @@ class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
         super().__init__()
 
     def resource(self):
+        """
+        Polls for the resource creation completing every so often with ability to cancel deployment and outputs
+        either error or executes function to "deserialize" result.
+
+        :return: The response from polling result and calling func from CustomArmTemplateDeploymentPollingMethod
+        :rtype: Any
+        """
         error = None
         try:
             while not self.poller.done():
@@ -753,14 +910,35 @@ class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
         module_logger.info("Total time : %s\n", from_iso_duration_format_min_sec(total_duration))
         return self.func()
 
+    # pylint: disable=docstring-missing-param
     def initialize(self, *args, **kwargs):
-        pass
+        """
+        unused stub overridden from ABC
+
+        :return: No return.
+        :rtype: ~azure.ai.ml.entities.OutboundRule
+        """
 
     def finished(self):
-        pass
+        """
+        unused stub overridden from ABC
+
+        :return: No return.
+        :rtype: ~azure.ai.ml.entities.OutboundRule
+        """
 
     def run(self):
-        pass
+        """
+        unused stub overridden from ABC
+
+        :return: No return.
+        :rtype: ~azure.ai.ml.entities.OutboundRule
+        """
 
     def status(self):
-        pass
+        """
+        unused stub overridden from ABC
+
+        :return: No return.
+        :rtype: ~azure.ai.ml.entities.OutboundRule
+        """

@@ -18,7 +18,8 @@ from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
 
 
 class OutboundRule(ABC):
-    """Base class for Outbound Rules, cannot be instantiated directly.
+    """Base class for Outbound Rules, cannot be instantiated directly. Please see FqdnDestination,
+    PrivateEndpointDestination, and ServiceTagDestination objects to create outbound rules.
 
     :param name: Name of the outbound rule.
     :type name: str
@@ -80,6 +81,13 @@ class FqdnDestination(OutboundRule):
     :type destination: str
     :ivar type: Type of the outbound rule. Set to "FQDN" for this class.
     :vartype type: str
+
+    .. literalinclude:: ../samples/ml_samples_workspace.py
+            :start-after: [START fqdn_outboundrule]
+            :end-before: [END fqdn_outboundrule]
+            :language: python
+            :dedent: 8
+            :caption: Creating a FqdnDestination outbound rule object.
     """
 
     def __init__(self, *, name: str, destination: str, **kwargs) -> None:
@@ -112,6 +120,13 @@ class PrivateEndpointDestination(OutboundRule):
     :type spark_enabled: bool
     :ivar type: Type of the outbound rule. Set to "PrivateEndpoint" for this class.
     :vartype type: str
+
+    .. literalinclude:: ../samples/ml_samples_workspace.py
+            :start-after: [START private_endpoint_outboundrule]
+            :end-before: [END private_endpoint_outboundrule]
+            :language: python
+            :dedent: 8
+            :caption: Creating a PrivateEndpointDestination outbound rule object.
     """
 
     def __init__(
@@ -167,6 +182,13 @@ class ServiceTagDestination(OutboundRule):
     :type port_ranges: str
     :ivar type: Type of the outbound rule. Set to "ServiceTag" for this class.
     :vartype type: str
+
+    .. literalinclude:: ../samples/ml_samples_workspace.py
+            :start-after: [START service_tag_outboundrule]
+            :end-before: [END service_tag_outboundrule]
+            :language: python
+            :dedent: 8
+            :caption: Creating a ServiceTagDestination outbound rule object.
     """
 
     def __init__(
@@ -207,6 +229,23 @@ class ServiceTagDestination(OutboundRule):
 
 
 class ManagedNetwork:
+    """Managed Network settings for a workspace.
+
+    :param isolation_mode: Isolation of the managed network, defaults to Disabled.
+    :type isolation_mode: str
+    :param outbound_rules: List of outbound rules for the managed network.
+    :type outbound_rules: List[~azure.ai.ml.entities.OutboundRule]
+    :param network_id: Network id for the managed network, not meant to be set by user.
+    :type network_id: str
+
+    .. literalinclude:: ../samples/ml_samples_workspace.py
+            :start-after: [START workspace_managed_network]
+            :end-before: [END workspace_managed_network]
+            :language: python
+            :dedent: 8
+            :caption: Creating a ManagedNetwork object with one of each rule type.
+    """
+
     def __init__(
         self,
         *,
