@@ -7,7 +7,7 @@
 from base64 import b64decode
 from hashlib import sha256
 import hmac
-from typing import Dict, List, Any
+from typing import Any, Dict, List, cast
 
 from azure.confidentialledger.receipt._claims_models import (
     ApplicationClaim,
@@ -58,7 +58,10 @@ def compute_claims_digest(application_claims: List[Dict[str, Any]]) -> str:
 
 
 def _validate_application_claims(application_claims: List[Dict[str, Any]]):
-    """Validate the application claims in a write transaction receipt."""
+    """Validate the application claims in a write transaction receipt.
+
+    :param list[dict[str, any]] application_claims: List of application claims to be verified against the receipt.
+    """
 
     assert isinstance(application_claims, list)
     assert len(application_claims) > 0, "Application claims list cannot be empty"
@@ -114,7 +117,12 @@ def _validate_application_claims(application_claims: List[Dict[str, Any]]):
 def _compute_ledger_entry_v1_claim_digest(
     ledger_entry_claim: LedgerEntryClaim,
 ) -> bytes:
-    """Compute the digest of a LedgerEntryV1 claim. It returns the digest in bytes."""
+    """Compute the digest of a LedgerEntryV1 claim. It returns the digest in bytes.
+
+    :param LedgerEntryClaim ledger_entry_claim: LedgerEntry claim to be digested.
+    :return: The digest of the LedgerEntry claim.
+    :rtype: bytes
+    """
 
     # Decode the secret key
     secret_key = b64decode(ledger_entry_claim.secretKey, validate=True)
@@ -138,7 +146,12 @@ def _compute_ledger_entry_v1_claim_digest(
 
 
 def _compute_ledger_entry_claim_digest(ledger_entry_claim: LedgerEntryClaim) -> bytes:
-    """Compute the digest of a LedgerEntry claim. It returns the digest in bytes."""
+    """Compute the digest of a LedgerEntry claim. It returns the digest in bytes.
+
+    :param LedgerEntryClaim ledger_entry_claim: LedgerEntry claim to be digested.
+    :return: The digest of the LedgerEntry claim.
+    :rtype: bytes
+    """
 
     claim_protocol = ledger_entry_claim.protocol
 
@@ -163,7 +176,12 @@ def _compute_claim_digest_from_object(claim_digest_object: ClaimDigest) -> bytes
 
 def _compute_claims_hexdigest(application_claims_list: List[ApplicationClaim]) -> str:
     """Compute the CCF claims digest from the provided list of application claims objects.
-    It returns the hexdigest of the claims digest."""
+    It returns the hexdigest of the claims digest.
+
+    :param list[ApplicationClaim] application_claims_list: List of application claims to be digested.
+    :return: The hexdigest of the claims digest.
+    :rtype: str
+    """
 
     # Initialize the claims digest
     claims_digests_concatenation = b""
@@ -178,13 +196,13 @@ def _compute_claims_hexdigest(application_claims_list: List[ApplicationClaim]) -
         if claim_kind == LEDGER_ENTRY_CLAIM_TYPE:
             # Compute the digest of the LedgerEntry claim
             claim_digest = _compute_ledger_entry_claim_digest(
-                application_claim_object.ledgerEntry
+                cast(LedgerEntryClaim, application_claim_object.ledgerEntry)
             )
 
         elif claim_kind == DIGEST_CLAIM_TYPE:
             # Compute the digest of the ClaimDigest claim
             claim_digest = _compute_claim_digest_from_object(
-                application_claim_object.digest
+                cast(ClaimDigest, application_claim_object.digest)
             )
 
         else:

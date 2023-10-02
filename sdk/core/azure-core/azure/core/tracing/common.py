@@ -38,7 +38,7 @@ __all__ = [
 ]
 
 
-def get_function_and_class_name(func: Callable, *args) -> str:
+def get_function_and_class_name(func: Callable, *args: object) -> str:
     """
     Given a function and its unamed arguments, returns class_name.function_name. It assumes the first argument
     is `self`. If there are no arguments then it only returns the function name.
@@ -46,6 +46,9 @@ def get_function_and_class_name(func: Callable, *args) -> str:
     :param func: the function passed in
     :type func: callable
     :param args: List of arguments passed into the function
+    :type args: list
+    :return: The function name with the class name
+    :rtype: str
     """
     try:
         return func.__qualname__
@@ -67,8 +70,9 @@ def change_context(span: Optional[AbstractSpan]) -> Generator:
     :param span: A span
     :type span: AbstractSpan
     :rtype: contextmanager
+    :return: A context manager that will run the given span in the new context
     """
-    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
+    span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
     if span_impl_type is None or span is None:
         yield
     else:
@@ -93,10 +97,11 @@ def with_current_context(func: Callable) -> Any:
     """Passes the current spans to the new context the function will be run in.
 
     :param func: The function that will be run in the new context
+    :type func: callable
     :return: The func wrapped with correct context
     :rtype: callable
     """
-    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
+    span_impl_type: Optional[Type[AbstractSpan]] = settings.tracing_implementation()
     if span_impl_type is None:
         return func
 

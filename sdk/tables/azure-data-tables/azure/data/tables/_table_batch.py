@@ -3,15 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import (
-    Union,
-    Any,
-    Dict,
-    Mapping,
-    Optional,
-    List,
-    Tuple
-)
+from typing import Union, Any, Dict, Mapping, Optional, List, Tuple
 
 from azure.core import MatchConditions
 from azure.core.pipeline.transport import HttpRequest
@@ -40,6 +32,9 @@ class TableBatchOperations(object):
     supported within a single transaction. The batch can include at most 100
     entities, and its total payload may be no more than 4 MB in size.
 
+    :ivar str table_name: The name of the table.
+    :ivar requests: A list of :class:`~azure.core.pipeline.transport.HttpRequest` in a batch.
+    :vartype requests: list[~azure.core.pipeline.transport.HttpRequest]
     """
 
     def __init__(
@@ -50,23 +45,22 @@ class TableBatchOperations(object):
         config: AzureTableConfiguration,
         table_name: str,
         is_cosmos_endpoint: bool = False,
-        **kwargs
-    ):
+        **kwargs,
+    ) -> None:
         """Create TableClient from a Credential.
 
-        :param client: an AzureTable object
-        :type client: AzureTable
-        :param serializer: serializer object for request serialization
+        :param client: An AzureTable object.
+        :type client: ~azure.data.tables._generated.AzureTable
+        :param serializer: A Serializer object for request serialization.
         :type serializer: ~azure.data.tables._generated._serialization.Serializer
-        :param deserializer: deserializer object for request serialization
+        :param deserializer: A Deserializer object for request deserialization.
         :type deserializer: ~azure.data.tables._generated._serialization.Deserializer
-        :param config: Azure Table Configuration object
-        :type config: AzureTableConfiguration
-        :param table_name: name of the Table to perform operations on
+        :param config: An AzureTableConfiguration object.
+        :type config: ~azure.data.tables._generated._configuration.AzureTableConfiguration
+        :param table_name: The name of the Table to perform operations on.
         :type table_name: str
-        :param table_client: TableClient object to perform operations on
-        :type table_client: TableClient
-
+        :param is_cosmos_endpoint: True if the client endpoint is for Tables Cosmos. False if not. Default is False.
+        :type is_cosmos_endpoint: bool
         :returns: None
         """
         self._client = client
@@ -89,23 +83,30 @@ class TableBatchOperations(object):
             raise ValueError("Partition Keys must all be the same")
 
     def add_operation(self, operation: TransactionOperationType) -> None:
-        """Add a single operation to a batch."""
+        """Add a single operation to a batch.
+
+        :param operation: An operation include operation type and entity, may with kwargs.
+        :type operation: A tuple of ~azure.data.tables.TransactionOperation or str, and
+            ~azure.data.tables.TableEntity or Mapping[str, Any]. Or a tuple of
+            ~azure.data.tables.TransactionOperation or str, and
+            ~azure.data.tables.TableEntity or Mapping[str, Any], and Mapping[str, Any]
+        :return: None
+        """
         try:
             operation_type, entity, kwargs = operation  # type: ignore
         except ValueError:
             operation_type, entity, kwargs = operation[0], operation[1], {}  # type: ignore
         try:
             getattr(self, operation_type.lower())(entity, **kwargs)
-        except AttributeError:
-            raise ValueError("Unrecognized operation: {}".format(operation))
+        except AttributeError as exc:
+            raise ValueError(f"Unrecognized operation: {operation}") from exc
 
     def create(self, entity: EntityType, **kwargs) -> None:
         """Adds an insert operation to the current batch.
 
         :param entity: The properties for the table entity.
-        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :return: None
-        :rtype: None
         :raises ValueError:
 
         .. admonition:: Example:
@@ -133,8 +134,8 @@ class TableBatchOperations(object):
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         response_preference: Optional[Union[str, models.ResponseFormat]] = "return-no-content",
-        format: Optional[Union[str, models.OdataMetadataFormat]] = None, # pylint: disable=redefined-builtin
-        **kwargs
+        format: Optional[Union[str, models.OdataMetadataFormat]] = None,  # pylint: disable=redefined-builtin
+        **kwargs,
     ) -> None:
         """
         Adds an insert operation to the batch. See
@@ -149,18 +150,19 @@ class TableBatchOperations(object):
         :param: entity:
             The entity to insert. Can be a dict or an entity object
             Must contain a PartitionKey and a RowKey.
-        :type: entity: Dict or :class:`~azure.data.tables.models.Entity`
+        :type: entity: dict[str, Any] or ~azure.data.tables.models.Entity
         :param timeout: The timeout parameter is expressed in seconds.
-        :type timeout: int
+        :type timeout: int or None
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when analytics logging is enabled.
-        :type request_id_parameter: str
+        :type request_id_parameter: str or None
         :param response_preference: Specifies the return format. Default is return without content.
         :type response_preference: str or ~azure.data.tables.models.ResponseFormat
         :param format: Specifies the media type for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata".
-        :type format: str or ~azure.data.tables.models.OdataMetadataFormat
+        :type format: str or ~azure.data.tables.models.OdataMetadataFormat or None
+        :return: None
         """
         data_service_version = "3.0"
         content_type = kwargs.pop("content_type", "application/json;odata=nometadata")
@@ -169,31 +171,21 @@ class TableBatchOperations(object):
         # Construct URL
         url = self._batch_create_entity.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "url": self._serialize.url(
-                "self._config.url", self._config.url, "str", skip_quote=True
-            ),
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
             "table": self._serialize.url("table", table, "str"),
         }
-        url = self._client._client.format_url(  # pylint: disable=protected-access
-            url, **path_format_arguments
-        )
+        url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         if timeout is not None:
-            query_parameters["timeout"] = self._serialize.query(
-                "timeout", timeout, "int", minimum=0
-            )
+            query_parameters["timeout"] = self._serialize.query("timeout", timeout, "int", minimum=0)
         if format is not None:
-            query_parameters["$format"] = self._serialize.query(
-                "format", format, "str"
-            )
+            query_parameters["$format"] = self._serialize.query("format", format, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["x-ms-version"] = self._serialize.header(
-            "self._config.version", self._config.version, "str"
-        )
+        header_parameters["x-ms-version"] = self._serialize.header("self._config.version", self._config.version, "str")
         if request_id_parameter is not None:
             header_parameters["x-ms-client-request-id"] = self._serialize.header(
                 "request_id_parameter", request_id_parameter, "str"
@@ -202,12 +194,8 @@ class TableBatchOperations(object):
             "data_service_version", data_service_version, "str"
         )
         if response_preference is not None:
-            header_parameters["Prefer"] = self._serialize.header(
-                "response_preference", response_preference, "str"
-            )
-        header_parameters["Content-Type"] = self._serialize.header(
-            "content_type", content_type, "str"
-        )
+            header_parameters["Prefer"] = self._serialize.header("response_preference", response_preference, "str")
+        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -227,14 +215,13 @@ class TableBatchOperations(object):
         """Adds an update operation to the current batch.
 
         :param entity: The properties for the table entity.
-        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :param mode: Merge or Replace entity
-        :type mode: :class:`~azure.data.tables.UpdateMode`
+        :type mode: ~azure.data.tables.UpdateMode
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
         :paramtype match_condition: ~azure.core.MatchCondition
         :return: None
-        :rtype: None
         :raises ValueError:
 
         .. admonition:: Example:
@@ -272,7 +259,7 @@ class TableBatchOperations(object):
                 row_key=row_key,
                 if_match=if_match,
                 table_entity_properties=temp,
-                **kwargs
+                **kwargs,
             )
         elif mode == UpdateMode.MERGE:
             self._batch_merge_entity(
@@ -281,10 +268,10 @@ class TableBatchOperations(object):
                 row_key=row_key,
                 if_match=if_match,
                 table_entity_properties=temp,
-                **kwargs
+                **kwargs,
             )
         else:
-            raise ValueError("Mode type '{}' is not supported.".format(mode))
+            raise ValueError(f"Mode type '{mode}' is not supported.")
 
     def _batch_update_entity(
         self,
@@ -295,8 +282,8 @@ class TableBatchOperations(object):
         request_id_parameter: Optional[str] = None,
         if_match: Optional[str] = None,
         table_entity_properties: Optional[EntityType] = None,
-        format: Optional[Union[str, models.OdataMetadataFormat]] = None, # pylint: disable=redefined-builtin
-        **kwargs
+        format: Optional[Union[str, models.OdataMetadataFormat]] = None,  # pylint: disable=redefined-builtin
+        **kwargs,
     ) -> None:
         """Update entity in a table.
 
@@ -307,23 +294,22 @@ class TableBatchOperations(object):
         :param row_key: The row key of the entity.
         :type row_key: str
         :param timeout: The timeout parameter is expressed in seconds.
-        :type timeout: int
+        :type timeout: int or None
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when analytics logging is enabled.
-        :type request_id_parameter: str
+        :type request_id_parameter: str or None
         :param if_match: Match condition for an entity to be updated. If specified and a matching
          entity is not found, an error will be raised. To force an unconditional update, set to the
          wildcard character (*). If not specified, an insert will be performed when no existing entity
          is found to update and a replace will be performed if an existing entity is found.
-        :type if_match: str
+        :type if_match: str or None
         :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: Dict[str, object]
+        :type table_entity_properties: dict[str, object] or None
         :param format: Specifies the media type for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata".
-        :type format: str or ~azure.data.tables.models.OdataMetadataFormat
+        :type format: str or ~azure.data.tables.models.OdataMetadataFormat or None
         :return: None
-        :rtype: None
         """
         data_service_version = "3.0"
         content_type = kwargs.pop("content_type", "application/json")
@@ -332,33 +318,23 @@ class TableBatchOperations(object):
         # Construct URL
         url = self._batch_update_entity.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "url": self._serialize.url(
-                "self._config.url", self._config.url, "str", skip_quote=True
-            ),
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
             "table": self._serialize.url("table", table, "str"),
             "partitionKey": self._serialize.url("partition_key", partition_key, "str"),
             "rowKey": self._serialize.url("row_key", row_key, "str"),
         }
-        url = self._client._client.format_url(  # pylint: disable=protected-access
-            url, **path_format_arguments
-        )
+        url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         if timeout is not None:
-            query_parameters["timeout"] = self._serialize.query(
-                "timeout", timeout, "int", minimum=0
-            )
+            query_parameters["timeout"] = self._serialize.query("timeout", timeout, "int", minimum=0)
         if format is not None:
-            query_parameters["$format"] = self._serialize.query(
-                "format", format, "str"
-            )
+            query_parameters["$format"] = self._serialize.query("format", format, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["x-ms-version"] = self._serialize.header(
-            "self._config.version", self._config.version, "str"
-        )
+        header_parameters["x-ms-version"] = self._serialize.header("self._config.version", self._config.version, "str")
         if request_id_parameter is not None:
             header_parameters["x-ms-client-request-id"] = self._serialize.header(
                 "request_id_parameter", request_id_parameter, "str"
@@ -367,12 +343,8 @@ class TableBatchOperations(object):
             "data_service_version", data_service_version, "str"
         )
         if if_match is not None:
-            header_parameters["If-Match"] = self._serialize.header(
-                "if_match", if_match, "str"
-            )
-        header_parameters["Content-Type"] = self._serialize.header(
-            "content_type", content_type, "str"
-        )
+            header_parameters["If-Match"] = self._serialize.header("if_match", if_match, "str")
+        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         body_content_kwargs = {}  # type: Dict[str, Any]
@@ -399,8 +371,8 @@ class TableBatchOperations(object):
         request_id_parameter: Optional[str] = None,
         if_match: Optional[str] = None,
         table_entity_properties: Optional[EntityType] = None,
-        format: Optional[Union[str, models.OdataMetadataFormat]] = None, # pylint: disable=redefined-builtin
-        **kwargs
+        format: Optional[Union[str, models.OdataMetadataFormat]] = None,  # pylint: disable=redefined-builtin
+        **kwargs,
     ) -> None:
         """Merge entity in a table.
 
@@ -411,23 +383,22 @@ class TableBatchOperations(object):
         :param row_key: The row key of the entity.
         :type row_key: str
         :param timeout: The timeout parameter is expressed in seconds.
-        :type timeout: int
+        :type timeout: int or None
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when analytics logging is enabled.
-        :type request_id_parameter: str
+        :type request_id_parameter: str or None
         :param if_match: Match condition for an entity to be updated. If specified and a matching
          entity is not found, an error will be raised. To force an unconditional update, set to the
          wildcard character (*). If not specified, an insert will be performed when no existing entity
          is found to update and a merge will be performed if an existing entity is found.
-        :type if_match: str
+        :type if_match: str or None
         :param table_entity_properties: The properties for the table entity.
-        :type table_entity_properties: Dict[str, object]
+        :type table_entity_properties: dict[str, object] or None
         :param format: Specifies the media type for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata".
-        :type format: str or ~azure.data.tables.models.OdataMetadataFormat
+        :type format: str or ~azure.data.tables.models.OdataMetadataFormat or None
         :return: None
-        :rtype: None
         """
         data_service_version = "3.0"
         content_type = kwargs.pop("content_type", "application/json")
@@ -436,33 +407,23 @@ class TableBatchOperations(object):
         # Construct URL
         url = self._batch_merge_entity.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "url": self._serialize.url(
-                "self._config.url", self._config.url, "str", skip_quote=True
-            ),
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
             "table": self._serialize.url("table", table, "str"),
             "partitionKey": self._serialize.url("partition_key", partition_key, "str"),
             "rowKey": self._serialize.url("row_key", row_key, "str"),
         }
-        url = self._client._client.format_url(  # pylint: disable=protected-access
-            url, **path_format_arguments
-        )
+        url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         if timeout is not None:
-            query_parameters["timeout"] = self._serialize.query(
-                "timeout", timeout, "int", minimum=0
-            )
+            query_parameters["timeout"] = self._serialize.query("timeout", timeout, "int", minimum=0)
         if format is not None:
-            query_parameters["$format"] = self._serialize.query(
-                "format", format, "str"
-            )
+            query_parameters["$format"] = self._serialize.query("format", format, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["x-ms-version"] = self._serialize.header(
-            "self._config.version", self._config.version, "str"
-        )
+        header_parameters["x-ms-version"] = self._serialize.header("self._config.version", self._config.version, "str")
         if request_id_parameter is not None:
             header_parameters["x-ms-client-request-id"] = self._serialize.header(
                 "request_id_parameter", request_id_parameter, "str"
@@ -471,12 +432,8 @@ class TableBatchOperations(object):
             "data_service_version", data_service_version, "str"
         )
         if if_match is not None:
-            header_parameters["If-Match"] = self._serialize.header(
-                "if_match", if_match, "str"
-            )
-        header_parameters["Content-Type"] = self._serialize.header(
-            "content_type", content_type, "str"
-        )
+            header_parameters["If-Match"] = self._serialize.header("if_match", if_match, "str")
+        header_parameters["Content-Type"] = self._serialize.header("content_type", content_type, "str")
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
         body_content_kwargs = {}  # type: Dict[str, Any]
         if table_entity_properties is not None:
@@ -491,21 +448,18 @@ class TableBatchOperations(object):
             _transform_patch_to_cosmos_post(request)
         self.requests.append(request)
 
-    _batch_merge_entity.metadata = {  # type: ignore
-        "url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
-    }
+    _batch_merge_entity.metadata = {"url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"}  # type: ignore
 
     def delete(self, entity: EntityType, **kwargs) -> None:
         """Adds a delete operation to the current branch.
 
-        :param partition_key: The partition key of the entity.
-        :type partition_key: str
-        :param row_key: The row key of the entity.
-        :type row_key: str
+        param entity: The properties for the table entity.
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :keyword str etag: Etag of the entity
         :keyword match_condition: MatchCondition
         :paramtype match_condition: ~azure.core.MatchCondition
-        :raises ValueError:
+        :return: None
+        :raises: ValueError
 
         .. admonition:: Example:
 
@@ -534,11 +488,7 @@ class TableBatchOperations(object):
         )
 
         self._batch_delete_entity(
-            table=self.table_name,
-            partition_key=partition_key,
-            row_key=row_key,
-            if_match=if_match,
-            **kwargs
+            table=self.table_name, partition_key=partition_key, row_key=row_key, if_match=if_match, **kwargs
         )
 
     def _batch_delete_entity(
@@ -549,7 +499,7 @@ class TableBatchOperations(object):
         if_match: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
-        format: Optional[Union[str, models.OdataMetadataFormat]] = None, # pylint: disable=redefined-builtin
+        format: Optional[Union[str, models.OdataMetadataFormat]] = None,  # pylint: disable=redefined-builtin
     ) -> None:
         """Deletes the specified entity in a table.
 
@@ -564,16 +514,15 @@ class TableBatchOperations(object):
          wildcard character (*).
         :type if_match: str
         :param timeout: The timeout parameter is expressed in seconds.
-        :type timeout: int
+        :type timeout: int or None
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
          limit that is recorded in the analytics logs when analytics logging is enabled.
-        :type request_id_parameter: str
+        :type request_id_parameter: str or None
         :param format: Specifies the media type for the response. Known values are:
          "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
          "application/json;odata=fullmetadata".
-        :type format: str or ~azure.data.tables.models.OdataMetadataFormat
+        :type format: str or ~azure.data.tables.models.OdataMetadataFormat or None
         :return: None
-        :rtype: None
         """
         data_service_version = "3.0"
         accept = "application/json;odata=minimalmetadata"
@@ -581,33 +530,23 @@ class TableBatchOperations(object):
         # Construct URL
         url = self._batch_delete_entity.metadata["url"]  # type: ignore
         path_format_arguments = {
-            "url": self._serialize.url(
-                "self._config.url", self._config.url, "str", skip_quote=True
-            ),
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
             "table": self._serialize.url("table", table, "str"),
             "partitionKey": self._serialize.url("partition_key", partition_key, "str"),
             "rowKey": self._serialize.url("row_key", row_key, "str"),
         }
-        url = self._client._client.format_url(  # pylint: disable=protected-access
-            url, **path_format_arguments
-        )
+        url = self._client._client.format_url(url, **path_format_arguments)  # pylint: disable=protected-access
 
         # Construct parameters
         query_parameters = {}  # type: Dict[str, Any]
         if timeout is not None:
-            query_parameters["timeout"] = self._serialize.query(
-                "timeout", timeout, "int", minimum=0
-            )
+            query_parameters["timeout"] = self._serialize.query("timeout", timeout, "int", minimum=0)
         if format is not None:
-            query_parameters["$format"] = self._serialize.query(
-                "format", format, "str"
-            )
+            query_parameters["$format"] = self._serialize.query("format", format, "str")
 
         # Construct headers
         header_parameters = {}  # type: Dict[str, Any]
-        header_parameters["x-ms-version"] = self._serialize.header(
-            "self._config.version", self._config.version, "str"
-        )
+        header_parameters["x-ms-version"] = self._serialize.header("self._config.version", self._config.version, "str")
         if request_id_parameter is not None:
             header_parameters["x-ms-client-request-id"] = self._serialize.header(
                 "request_id_parameter", request_id_parameter, "str"
@@ -615,9 +554,7 @@ class TableBatchOperations(object):
         header_parameters["DataServiceVersion"] = self._serialize.header(
             "data_service_version", data_service_version, "str"
         )
-        header_parameters["If-Match"] = self._serialize.header(
-            "if_match", if_match, "str"
-        )
+        header_parameters["If-Match"] = self._serialize.header("if_match", if_match, "str")
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client._client.delete(  # pylint: disable=protected-access
@@ -625,18 +562,17 @@ class TableBatchOperations(object):
         )
         self.requests.append(request)
 
-    _batch_delete_entity.metadata = {  # type: ignore
-        "url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"
-    }
+    _batch_delete_entity.metadata = {"url": "/{table}(PartitionKey='{partitionKey}',RowKey='{rowKey}')"}  # type: ignore
 
     def upsert(self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs) -> None:
         """Adds an upsert (update/merge) operation to the batch.
 
         :param entity: The properties for the table entity.
-        :type entity: :class:`~azure.data.tables.TableEntity` or Dict[str,str]
+        :type entity: ~azure.data.tables.TableEntity or dict[str, Any]
         :param mode: Merge or Replace entity
-        :type mode: :class:`~azure.data.tables.UpdateMode`
-        :raises ValueError:
+        :type mode: ~azure.data.tables.UpdateMode
+        :return: None
+        :raises: ValueError
 
         .. admonition:: Example:
 
@@ -660,7 +596,7 @@ class TableBatchOperations(object):
                 partition_key=partition_key,
                 row_key=row_key,
                 table_entity_properties=temp,
-                **kwargs
+                **kwargs,
             )
         elif mode == UpdateMode.REPLACE:
             self._batch_update_entity(
@@ -668,7 +604,7 @@ class TableBatchOperations(object):
                 partition_key=partition_key,
                 row_key=row_key,
                 table_entity_properties=temp,
-                **kwargs
+                **kwargs,
             )
         else:
-            raise ValueError("Mode type '{}' is not supported.".format(mode))
+            raise ValueError(f"Mode type '{mode}' is not supported.")

@@ -143,7 +143,7 @@ class SparkJobDefinitionOperations:
 
     get_spark_job_definitions_by_workspace.metadata = {"url": "/sparkJobDefinitions"}
 
-    async def _create_or_update_spark_job_definition_initial(  # pylint: disable=name-too-long
+    async def _create_or_update_spark_job_definition_initial(
         self,
         spark_job_definition_name: str,
         properties: _models.SparkJobDefinition,
@@ -207,7 +207,7 @@ class SparkJobDefinitionOperations:
     _create_or_update_spark_job_definition_initial.metadata = {"url": "/sparkJobDefinitions/{sparkJobDefinitionName}"}
 
     @distributed_trace_async
-    async def begin_create_or_update_spark_job_definition(  # pylint: disable=name-too-long
+    async def begin_create_or_update_spark_job_definition(
         self,
         spark_job_definition_name: str,
         properties: _models.SparkJobDefinition,

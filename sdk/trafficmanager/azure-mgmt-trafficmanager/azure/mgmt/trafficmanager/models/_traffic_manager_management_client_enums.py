@@ -37,6 +37,7 @@ class EndpointMonitorStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISABLED = "Disabled"
     INACTIVE = "Inactive"
     STOPPED = "Stopped"
+    UNMONITORED = "Unmonitored"
 
 
 class EndpointStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

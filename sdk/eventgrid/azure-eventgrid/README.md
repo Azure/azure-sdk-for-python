@@ -10,10 +10,6 @@ Azure Event Grid is a fully-managed intelligent event routing service that allow
 | [Samples][python-eg-samples]
 | [Changelog][python-eg-changelog]
 
-## _Disclaimer_
-
-_Azure SDK Python packages support for Python 2.7 has ended on 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
-
 ## Getting started
 
 ### Prerequisites
@@ -64,9 +60,9 @@ For example, you can use `DefaultAzureCredential` to construct a client which wi
 from azure.identity import DefaultAzureCredential
 from azure.eventgrid import EventGridPublisherClient, EventGridEvent
 
-credential = DefaultAzureCredential()
+default_az_credential = DefaultAzureCredential()
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
-client = EventGridPublisherClient(endpoint, credential)
+client = EventGridPublisherClient(endpoint, default_az_credential)
 ```
 
 <!-- END SNIPPET -->
@@ -92,8 +88,8 @@ from azure.core.credentials import AzureKeyCredential
 topic_key = os.environ["EVENTGRID_TOPIC_KEY"]
 endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 
-credential = AzureKeyCredential(topic_key)
-client = EventGridPublisherClient(endpoint, credential)
+credential_key = AzureKeyCredential(topic_key)
+client = EventGridPublisherClient(endpoint, credential_key)
 ```
 
 <!-- END SNIPPET -->

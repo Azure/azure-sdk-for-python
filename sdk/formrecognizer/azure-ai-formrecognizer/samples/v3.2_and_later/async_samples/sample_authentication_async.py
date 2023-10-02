@@ -81,7 +81,9 @@ async def authentication_with_api_key_credential_document_model_admin_client_asy
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
 
-    document_model_admin_client = DocumentModelAdministrationClient(endpoint, AzureKeyCredential(key))
+    document_model_admin_client = DocumentModelAdministrationClient(
+        endpoint, AzureKeyCredential(key)
+    )
     # [END create_dt_client_with_key_async]
     async with document_model_admin_client:
         info = await document_model_admin_client.get_resource_details()
@@ -98,7 +100,9 @@ async def authentication_with_azure_active_directory_document_model_admin_client
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     credential = DefaultAzureCredential()
 
-    document_model_admin_client = DocumentModelAdministrationClient(endpoint, credential)
+    document_model_admin_client = DocumentModelAdministrationClient(
+        endpoint, credential
+    )
     # [END create_dt_client_with_aad_async]
     async with document_model_admin_client:
         info = await document_model_admin_client.get_resource_details()
@@ -114,11 +118,14 @@ async def main():
 if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         asyncio.run(main())
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

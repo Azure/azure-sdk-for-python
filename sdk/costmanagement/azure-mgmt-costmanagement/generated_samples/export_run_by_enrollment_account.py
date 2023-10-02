@@ -28,11 +28,10 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.exports.execute(
+    client.exports.execute(
         scope="providers/Microsoft.Billing/billingAccounts/100/enrollmentAccounts/456",
         export_name="TestExport",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/cost-management/resource-manager/Microsoft.CostManagement/stable/2022-10-01/examples/ExportRunByEnrollmentAccount.json

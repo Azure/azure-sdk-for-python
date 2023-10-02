@@ -15,6 +15,5 @@ GeographyPoint = "Edm.GeographyPoint"
 ComplexType = "Edm.ComplexType"
 
 
-def Collection(typ):
-    # type (str) -> str
+def Collection(typ: str) -> str:
     return "Collection({})".format(typ)

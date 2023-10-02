@@ -7,7 +7,7 @@
 
 import datetime
 import functools
-from dateutil.tz import tzutc
+from datetime import timezone
 import pytest
 from devtools_testutils import recorded_by_proxy
 from azure.ai.metricsadvisor import MetricsAdvisorAdministrationClient
@@ -35,8 +35,8 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
         ingestions = client.list_data_feed_ingestion_status(
             data_feed_id=self.data_feed_id,
-            start_time=datetime.datetime(2021, 8, 9, tzinfo=tzutc()),
-            end_time=datetime.datetime(2021, 9, 16, tzinfo=tzutc()),
+            start_time=datetime.datetime(2021, 8, 9, tzinfo=timezone.utc),
+            end_time=datetime.datetime(2021, 9, 16, tzinfo=timezone.utc),
         )
         assert len(list(ingestions)) > 0
 
@@ -47,14 +47,14 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
 
         ingestions = client.list_data_feed_ingestion_status(
             data_feed_id=self.data_feed_id,
-            start_time=datetime.datetime(2021, 8, 9, tzinfo=tzutc()),
-            end_time=datetime.datetime(2021, 9, 16, tzinfo=tzutc()),
+            start_time=datetime.datetime(2021, 8, 9, tzinfo=timezone.utc),
+            end_time=datetime.datetime(2021, 9, 16, tzinfo=timezone.utc),
         )
 
         ingestions_with_skips = client.list_data_feed_ingestion_status(
             data_feed_id=self.data_feed_id,
-            start_time=datetime.datetime(2021, 8, 9, tzinfo=tzutc()),
-            end_time=datetime.datetime(2021, 9, 16, tzinfo=tzutc()),
+            start_time=datetime.datetime(2021, 8, 9, tzinfo=timezone.utc),
+            end_time=datetime.datetime(2021, 9, 16, tzinfo=timezone.utc),
             skip=5
         )
         ingestions_list = list(ingestions)
@@ -67,7 +67,7 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
     def test_refresh_data_feed_ingestion(self, client):
         client.refresh_data_feed_ingestion(
             self.data_feed_id,
-            start_time=datetime.datetime(2022, 2, 28, tzinfo=tzutc()),
-            end_time=datetime.datetime(2022, 3, 1, tzinfo=tzutc()),
+            start_time=datetime.datetime(2022, 2, 28, tzinfo=timezone.utc),
+            end_time=datetime.datetime(2022, 3, 1, tzinfo=timezone.utc),
         )
 

@@ -11,7 +11,8 @@ from azure.core.tracing.decorator import distributed_trace
 from ._generated._communication_network_traversal_client\
     import CommunicationNetworkTraversalClient\
         as CommunicationNetworkTraversalClientGen
-from ._shared.utils import parse_connection_str, get_authentication_policy
+from ._shared.auth_policy_utils import get_authentication_policy
+from ._shared.utils import parse_connection_str
 from ._version import SDK_MONIKER
 from ._generated.models import CommunicationRelayConfiguration
 from ._api_versions import DEFAULT_VERSION
@@ -100,10 +101,10 @@ class CommunicationRelayClient(object):
     ):
     # type: (...) -> CommunicationRelayConfiguration
         """get a Communication Relay configuration
-        :param user: Azure Communication User
-        :type user: ~azure.communication.identity.CommunicationUserIdentifier
-        :param route_type: Azure Communication Route Type
-        :type route_type: ~azure.communication.networktraversal.RouteType
+        :keyword user: Azure Communication User
+        :paramtype user: ~azure.communication.identity.CommunicationUserIdentifier
+        :keyword route_type: Azure Communication Route Type
+        :paramtype route_type: ~azure.communication.networktraversal.RouteType
         :return: CommunicationRelayConfiguration
         :rtype: ~azure.communication.networktraversal.models.CommunicationRelayConfiguration
         """

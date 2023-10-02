@@ -36,7 +36,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_get_spark_configurations_by_workspace_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_get_spark_configurations_by_workspace_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -55,7 +55,7 @@ def build_get_spark_configurations_by_workspace_request(**kwargs: Any) -> HttpRe
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_create_or_update_spark_configuration_request(  # pylint: disable=name-too-long
+def build_create_or_update_spark_configuration_request(
     spark_configuration_name: str, *, if_match: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -264,7 +264,7 @@ class SparkConfigurationOperations:
 
     get_spark_configurations_by_workspace.metadata = {"url": "/sparkconfigurations"}
 
-    def _create_or_update_spark_configuration_initial(  # pylint: disable=name-too-long
+    def _create_or_update_spark_configuration_initial(
         self,
         spark_configuration_name: str,
         properties: _models.SparkConfiguration,
@@ -328,7 +328,7 @@ class SparkConfigurationOperations:
     _create_or_update_spark_configuration_initial.metadata = {"url": "/sparkconfigurations/{sparkConfigurationName}"}
 
     @distributed_trace
-    def begin_create_or_update_spark_configuration(  # pylint: disable=name-too-long
+    def begin_create_or_update_spark_configuration(
         self,
         spark_configuration_name: str,
         properties: _models.SparkConfiguration,

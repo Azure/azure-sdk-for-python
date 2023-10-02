@@ -13,10 +13,6 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
 else:
@@ -25,7 +21,6 @@ else:
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class AccountSasParameters(_serialization.Model):
@@ -1043,7 +1038,7 @@ class LeaseContainerRequest(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar action: Specifies the lease action. Can be one of the available actions. Required. Known
-     values are: "Acquire", "Renew", "Change", "Release", and "Break".
+     values are: "Acquire", "Renew", "Change", "Release", "Break", and "Break".
     :vartype action: str or ~azure.mgmt.storage.v2018_07_01.models.LeaseContainerRequestAction
     :ivar lease_id: Identifies the lease. Can be specified in any valid GUID string format.
     :vartype lease_id: str
@@ -1082,7 +1077,7 @@ class LeaseContainerRequest(_serialization.Model):
     ) -> None:
         """
         :keyword action: Specifies the lease action. Can be one of the available actions. Required.
-         Known values are: "Acquire", "Renew", "Change", "Release", and "Break".
+         Known values are: "Acquire", "Renew", "Change", "Release", "Break", and "Break".
         :paramtype action: str or ~azure.mgmt.storage.v2018_07_01.models.LeaseContainerRequestAction
         :keyword lease_id: Identifies the lease. Can be specified in any valid GUID string format.
         :paramtype lease_id: str
@@ -1375,52 +1370,6 @@ class ListServiceSasResponse(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.service_sas_token = None
-
-
-class ManagementPoliciesRules(_serialization.Model):
-    """The Storage Account ManagementPolicies Rules, in JSON format. See more details in:
-    https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
-
-    :ivar policy: The Storage Account ManagementPolicies Rules, in JSON format. See more details
-     in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
-    :vartype policy: JSON
-    """
-
-    _attribute_map = {
-        "policy": {"key": "policy", "type": "object"},
-    }
-
-    def __init__(self, *, policy: Optional[JSON] = None, **kwargs: Any) -> None:
-        """
-        :keyword policy: The Storage Account ManagementPolicies Rules, in JSON format. See more details
-         in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
-        :paramtype policy: JSON
-        """
-        super().__init__(**kwargs)
-        self.policy = policy
-
-
-class ManagementPoliciesRulesSetParameter(_serialization.Model):
-    """The Storage Account ManagementPolicies Rules, in JSON format. See more details in:
-    https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
-
-    :ivar policy: The Storage Account ManagementPolicies Rules, in JSON format. See more details
-     in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
-    :vartype policy: JSON
-    """
-
-    _attribute_map = {
-        "policy": {"key": "properties.policy", "type": "object"},
-    }
-
-    def __init__(self, *, policy: Optional[JSON] = None, **kwargs: Any) -> None:
-        """
-        :keyword policy: The Storage Account ManagementPolicies Rules, in JSON format. See more details
-         in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
-        :paramtype policy: JSON
-        """
-        super().__init__(**kwargs)
-        self.policy = policy
 
 
 class MetricSpecification(_serialization.Model):
@@ -2498,83 +2447,6 @@ class StorageAccountListResult(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.value = None
-
-
-class StorageAccountManagementPolicies(Resource):
-    """The Get Storage Account ManagementPolicies operation response.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar policy: The Storage Account ManagementPolicies Rules, in JSON format. See more details
-     in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
-    :vartype policy: JSON
-    :ivar last_modified_time: Returns the date and time the ManagementPolicies was last modified.
-    :vartype last_modified_time: ~datetime.datetime
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "last_modified_time": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "policy": {"key": "properties.policy", "type": "object"},
-        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
-    }
-
-    def __init__(self, *, policy: Optional[JSON] = None, **kwargs: Any) -> None:
-        """
-        :keyword policy: The Storage Account ManagementPolicies Rules, in JSON format. See more details
-         in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
-        :paramtype policy: JSON
-        """
-        super().__init__(**kwargs)
-        self.policy = policy
-        self.last_modified_time = None
-
-
-class StorageAccountManagementPoliciesRulesProperty(ManagementPoliciesRules):
-    """The Storage Account Data Policies properties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar policy: The Storage Account ManagementPolicies Rules, in JSON format. See more details
-     in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
-    :vartype policy: JSON
-    :ivar last_modified_time: Returns the date and time the ManagementPolicies was last modified.
-    :vartype last_modified_time: ~datetime.datetime
-    """
-
-    _validation = {
-        "last_modified_time": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "policy": {"key": "policy", "type": "object"},
-        "last_modified_time": {"key": "lastModifiedTime", "type": "iso-8601"},
-    }
-
-    def __init__(self, *, policy: Optional[JSON] = None, **kwargs: Any) -> None:
-        """
-        :keyword policy: The Storage Account ManagementPolicies Rules, in JSON format. See more details
-         in: https://docs.microsoft.com/en-us/azure/storage/common/storage-lifecycle-managment-concepts.
-        :paramtype policy: JSON
-        """
-        super().__init__(policy=policy, **kwargs)
-        self.last_modified_time = None
 
 
 class StorageAccountRegenerateKeyParameters(_serialization.Model):

@@ -29,7 +29,7 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.sensitivity_labels.delete(
+    client.sensitivity_labels.delete(
         resource_group_name="myRG",
         server_name="myServer",
         database_name="myDatabase",
@@ -37,7 +37,6 @@ def main():
         table_name="myTable",
         column_name="myColumn",
     )
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/ColumnSensitivityLabelDelete.json

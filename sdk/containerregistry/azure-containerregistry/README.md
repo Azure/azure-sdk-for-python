@@ -104,13 +104,12 @@ Iterate through the collection of tags in the repository with anonymous access.
 <!-- SNIPPET:sample_list_tags.list_tags_anonymous -->
 
 ```python
-endpoint = os.environ.get("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT")
 with ContainerRegistryClient(endpoint) as anon_client:
     manifest = anon_client.get_manifest_properties("library/hello-world", "latest")
     print(f"Tags of {manifest.repository_name}: ")
     # Iterate through all the tags
     for tag in manifest.tags:
-        print(f"{tag}\n")
+        print(tag)
 ```
 
 <!-- END SNIPPET -->
@@ -124,12 +123,7 @@ Set properties of an artifact.
 ```python
 with ContainerRegistryClient(self.endpoint, self.credential) as client:
     # Set permissions on image "library/hello-world:v1"
-    client.update_manifest_properties(
-        "library/hello-world",
-        "v1",
-        can_write=False,
-        can_delete=False
-    )
+    client.update_manifest_properties("library/hello-world", "v1", can_write=False, can_delete=False)
 ```
 
 <!-- END SNIPPET -->
@@ -151,12 +145,7 @@ with ContainerRegistryClient(self.endpoint, self.credential) as client:
             manifest_count += 1
             if manifest_count > 3:
                 # Make sure will have the permission to delete the manifest later
-                client.update_manifest_properties(
-                    repository,
-                    manifest.digest,
-                    can_write=True,
-                    can_delete=True
-                )
+                client.update_manifest_properties(repository, manifest.digest, can_write=True, can_delete=True)
                 print(f"Deleting {repository}:{manifest.digest}")
                 client.delete_manifest(repository, manifest.digest)
 ```
@@ -172,10 +161,13 @@ To upload a full image, we need to upload individual layers and configuration. A
 ```python
 self.repository_name = "sample-oci-image"
 layer = BytesIO(b"Sample layer")
-config = BytesIO(json.dumps(
-    {
-        "sample config": "content",
-    }).encode())
+config = BytesIO(
+    json.dumps(
+        {
+            "sample config": "content",
+        }
+    ).encode()
+)
 with ContainerRegistryClient(self.endpoint, self.credential) as client:
     # Upload a layer
     layer_digest, layer_size = client.upload_blob(self.repository_name, layer)
@@ -221,7 +213,7 @@ with ContainerRegistryClient(self.endpoint, self.credential) as client:
     get_manifest_result = client.get_manifest(self.repository_name, "latest")
     received_manifest = get_manifest_result.manifest
     print(f"Got manifest:\n{received_manifest}")
-    
+
     # Download and write out the layers
     for layer in received_manifest["layers"]:
         # Remove the "sha256:" prefix from digest

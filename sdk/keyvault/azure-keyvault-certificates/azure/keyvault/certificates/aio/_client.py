@@ -123,7 +123,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
         create_certificate_polling = CreateCertificatePollerAsync(
             get_certificate_command=get_certificate_command, interval=polling_interval
         )
-        return await async_poller(command, create_certificate_operation, None, create_certificate_polling)
+        def no_op(*_, **__) -> Any:  # The deserialization callback is ignored based on polling implementation
+            pass
+        return await async_poller(command, create_certificate_operation, no_op, create_certificate_polling)
 
     @distributed_trace_async
     async def get_certificate(self, certificate_name: str, **kwargs) -> KeyVaultCertificate:
@@ -532,14 +534,17 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return KeyVaultCertificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
-    def list_deleted_certificates(self, **kwargs) -> AsyncItemPaged[DeletedCertificate]:
+    def list_deleted_certificates(
+        self, *, include_pending: Optional[bool] = None, **kwargs
+    ) -> AsyncItemPaged[DeletedCertificate]:
         """Lists the currently-recoverable deleted certificates. Possible only if vault is soft-delete enabled.
 
         Requires certificates/get/list permission. Retrieves the certificates in the current vault which are in a
         deleted state and ready for recovery or purging. This operation includes deletion-specific information.
 
         :keyword bool include_pending: Specifies whether to include certificates which are not completely deleted.
-            Only available for API versions v7.0 and up.
+            Only available for API versions v7.0 and up. If not provided, Key Vault treats this as False.
+        :paramtype include_pending: bool or None
 
         :return: An iterator-like instance of DeletedCertificate
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.DeletedCertificate]
@@ -556,11 +561,15 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """
         max_page_size = kwargs.pop("max_page_size", None)
 
-        if self.api_version == "2016-10-01" and kwargs.get("include_pending"):
-            raise NotImplementedError(
-                "The 'include_pending' parameter to `list_deleted_certificates` "
-                "is only available for API versions v7.0 and up"
-            )
+        if self.api_version == "2016-10-01":
+            if include_pending is not None:
+                raise NotImplementedError(
+                    "The 'include_pending' parameter to `list_deleted_certificates` "
+                    "is only available for API versions v7.0 and up"
+                )
+        else:
+            kwargs.update({"include_pending": include_pending})
+
         return self._client.get_deleted_certificates(
             vault_base_url=self._vault_url,
             maxresults=max_page_size,
@@ -569,13 +578,16 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_properties_of_certificates(self, **kwargs) -> AsyncItemPaged[CertificateProperties]:
+    def list_properties_of_certificates(
+        self, *, include_pending: Optional[bool] = None, **kwargs
+    ) -> AsyncItemPaged[CertificateProperties]:
         """List identifiers and properties of all certificates in the vault.
 
         Requires certificates/list permission.
 
         :keyword bool include_pending: Specifies whether to include certificates which are not completely provisioned.
-            Only available for API versions v7.0 and up.
+            Only available for API versions v7.0 and up. If not provided, Key Vault treats this as False.
+        :paramtype include_pending: bool or None
 
         :returns: An iterator-like instance of CertificateProperties
         :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.CertificateProperties]
@@ -592,11 +604,15 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """
         max_page_size = kwargs.pop("max_page_size", None)
 
-        if self.api_version == "2016-10-01" and kwargs.get("include_pending"):
-            raise NotImplementedError(
-                "The 'include_pending' parameter to `list_properties_of_certificates` "
-                "is only available for API versions v7.0 and up"
-            )
+        if self.api_version == "2016-10-01":
+            if include_pending is not None:
+                raise NotImplementedError(
+                    "The 'include_pending' parameter to `list_properties_of_certificates` "
+                    "is only available for API versions v7.0 and up"
+                )
+        else:
+            kwargs.update({"include_pending": include_pending})
+
         return self._client.get_certificates(
             vault_base_url=self._vault_url,
             maxresults=max_page_size,
@@ -877,7 +893,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         else:
             issuer_credentials = None
         if admin_contacts:
-            admin_details = [
+            admin_details: Optional[List[Any]] = [
                 self._models.AdministratorDetails(
                     first_name=contact.first_name,
                     last_name=contact.last_name,
@@ -885,7 +901,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                     phone=contact.phone,
                 )
                 for contact in admin_contacts
-            ]  # type: Optional[List[Any]]
+            ]
         else:
             admin_details = None
         if organization_id or admin_details:
@@ -941,7 +957,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         else:
             issuer_credentials = None
         if admin_contacts:
-            admin_details = list(
+            admin_details: Optional[List[Any]] = list(
                 self._models.AdministratorDetails(
                     first_name=contact.first_name,
                     last_name=contact.last_name,
@@ -949,7 +965,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                     phone=contact.phone,
                 )
                 for contact in admin_contacts
-            )  # type: Optional[List[Any]]
+            )
         else:
             admin_details = None
         if organization_id or admin_details:

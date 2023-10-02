@@ -1,6 +1,6 @@
 {
     "chosen_version": "2022-06-01",
-    "total_api_version_list": ["2020-09-01", "2021-06-01", "2022-06-01", "2022-07-01-preview", "2022-08-01-preview"],
+    "total_api_version_list": ["2022-06-01"],
     "client": {
         "name": "PolicyClient",
         "filename": "_policy_client",
@@ -105,12 +105,6 @@
         "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
-        "data_policy_manifests": "DataPolicyManifestsOperations",
-        "policy_definitions": "PolicyDefinitionsOperations",
-        "policy_set_definitions": "PolicySetDefinitionsOperations",
-        "policy_assignments": "PolicyAssignmentsOperations",
-        "policy_exemptions": "PolicyExemptionsOperations",
-        "variables": "VariablesOperations",
-        "variable_values": "VariableValuesOperations"
+        "policy_assignments": "PolicyAssignmentsOperations"
     }
 }

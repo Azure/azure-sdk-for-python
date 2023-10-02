@@ -43,6 +43,7 @@ class DataLakeFileQueryReader(object):  # pylint: disable=too-many-instance-attr
         If encoding has been configured - this will be used to decode individual
         records are they are received.
 
+        :returns: All query results.
         :rtype: Union[bytes, str]
         """
         return self._blob_query_reader.readall()
@@ -51,7 +52,7 @@ class DataLakeFileQueryReader(object):  # pylint: disable=too-many-instance-attr
         # type: (IO) -> None
         """Download the query result to a stream.
 
-        :param stream:
+        :param IO stream:
             The stream to download to. This can be an open file-handle,
             or any writable stream.
         :returns: None
@@ -66,6 +67,7 @@ class DataLakeFileQueryReader(object):  # pylint: disable=too-many-instance-attr
         If encoding has been configured - this will be used to decode individual
         records are they are received.
 
+        :returns: A record generator for the query result.
         :rtype: Iterable[Union[bytes, str]]
         """
         return self._blob_query_reader.records()

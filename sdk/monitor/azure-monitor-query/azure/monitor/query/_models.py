@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+# cspell:ignore milli
 import uuid
 from datetime import datetime, timedelta
 import sys
@@ -42,7 +42,11 @@ class LogsTableRow:
         self._row_dict = {_columns[i]: self._row[i] for i in range(len(self._row))}
 
     def __iter__(self) -> Iterator[Any]:
-        """This will iterate over the row directly."""
+        """This will iterate over the row directly.
+
+        :return: An iterator over the row.
+        :rtype: Iterator
+        """
         return iter(self._row)
 
     def __len__(self) -> int:
@@ -57,6 +61,8 @@ class LogsTableRow:
 
         :param column: The name of the column or the index of the element in a row.
         :type column: str or int
+        :return: The value of the column or the element in the row.
+        :rtype: Any
         """
         try:
             return self._row_dict[column]
@@ -247,6 +253,8 @@ class MetricsQueryResult:
         granularity = None
         if generated.get("interval"):
             granularity = Deserializer.deserialize_duration(generated.get("interval"))
+        if not generated.get("timespan"):
+            generated["timespan"] = f"{generated.get('starttime')}/{generated.get('endtime')}"
         return cls(
             cost=generated.get("cost"),
             timespan=generated.get("timespan"),
@@ -317,7 +325,7 @@ class LogsBatchQuery:
         query: str,
         *,
         timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:  # pylint: disable=super-init-not-called
         include_statistics = kwargs.pop("include_statistics", False)
         include_visualization = kwargs.pop("include_visualization", False)

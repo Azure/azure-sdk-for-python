@@ -39,6 +39,9 @@ from .._generated.models import (
     AnalyzeResult,
     AnalyzedTokenInfo,
     AsciiFoldingTokenFilter,
+    AzureOpenAIEmbeddingSkill,
+    AzureOpenAIParameters,
+    AzureOpenAIVectorizer,
     BM25Similarity,
     CharFilter,
     CjkBigramTokenFilter,
@@ -50,6 +53,8 @@ from .._generated.models import (
     ConditionalSkill,
     CorsOptions,
     CustomEntityLookupSkill,
+    CustomVectorizer,
+    CustomVectorizerParameters,
     DefaultCognitiveServicesAccount,
     CustomEntityLookupSkillLanguage,
     CustomNormalizer,
@@ -65,6 +70,8 @@ from .._generated.models import (
     EntityCategory,
     EntityLinkingSkill,
     EntityRecognitionSkillLanguage,
+    ExhaustiveKnnVectorSearchAlgorithmConfiguration,
+    ExhaustiveKnnParameters,
     FieldMapping,
     FieldMappingFunction,
     FreshnessScoringFunction,
@@ -169,9 +176,14 @@ from .._generated.models import (
     UaxUrlEmailTokenizer,
     UniqueTokenFilter,
     WebApiSkill,
-    VisualFeature,
     VectorSearch,
     VectorSearchAlgorithmConfiguration,
+    VectorSearchAlgorithmKind,
+    VectorSearchProfile,
+    VectorSearchVectorizer,
+    VectorSearchVectorizerKind,
+    VisualFeature,
+    HnswVectorSearchAlgorithmConfiguration,
     WordDelimiterTokenFilter,
 )
 from ._models import (
@@ -191,28 +203,33 @@ from ._models import (
 
 SearchFieldDataType = _edm
 
+
 class KeywordTokenizer(KeywordTokenizerV2):
     pass
+
 
 class PathHierarchyTokenizer(PathHierarchyTokenizerV2):
     pass
 
+
 class SimilarityAlgorithm(Similarity):
     pass
+
 
 class SearchSuggester(Suggester):
     pass
 
 
-
-
 __all__ = (
     "SearchAlias",
-    "AzureMachineLearningSkill",
     "AnalyzeTextOptions",
     "AnalyzeResult",
     "AnalyzedTokenInfo",
     "AsciiFoldingTokenFilter",
+    "AzureOpenAIEmbeddingSkill",
+    "AzureOpenAIParameters",
+    "AzureOpenAIVectorizer",
+    "AzureMachineLearningSkill",
     "BM25Similarity",
     "CharFilter",
     "CjkBigramTokenFilter",
@@ -226,6 +243,8 @@ __all__ = (
     "CorsOptions",
     "CustomAnalyzer",
     "CustomEntityLookupSkill",
+    "CustomVectorizer",
+    "CustomVectorizerParameters",
     "DefaultCognitiveServicesAccount",
     "CustomEntityLookupSkillLanguage",
     "CustomNormalizer",
@@ -243,6 +262,8 @@ __all__ = (
     "EntityRecognitionSkill",
     "EntityRecognitionSkillLanguage",
     "EntityRecognitionSkillVersion",
+    "ExhaustiveKnnVectorSearchAlgorithmConfiguration",
+    "ExhaustiveKnnParameters",
     "FieldMapping",
     "FieldMappingFunction",
     "FreshnessScoringFunction",
@@ -359,9 +380,15 @@ __all__ = (
     "TruncateTokenFilter",
     "UaxUrlEmailTokenizer",
     "UniqueTokenFilter",
-    "VisualFeature",
     "VectorSearch",
     "VectorSearchAlgorithmConfiguration",
+    "VectorSearchAlgorithmKind",
+    "VectorSearchProfile",
+    "VectorSearch",
+    "VectorSearchVectorizer",
+    "VectorSearchVectorizerKind",
+    "VisualFeature",
+    "HnswVectorSearchAlgorithmConfiguration",
     "WebApiSkill",
     "WordDelimiterTokenFilter",
     "SearchFieldDataType",

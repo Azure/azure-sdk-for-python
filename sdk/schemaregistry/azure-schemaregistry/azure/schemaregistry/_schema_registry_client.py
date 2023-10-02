@@ -24,27 +24,28 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import annotations
-from typing import Any, TYPE_CHECKING, Union, overload
+from typing import Any, TYPE_CHECKING, Union, overload, cast, IO, Dict
+from functools import partial
 
 from azure.core.tracing.decorator import distributed_trace
 
 from ._utils import (
-    build_get_schema_props_request,
-    build_get_schema_request,
-    build_register_schema_request,
-    get_case_insensitive_format
+    get_http_request_kwargs,
+    get_case_insensitive_format,
+    get_content_type,
 )
 from ._common._constants import SchemaFormat, DEFAULT_VERSION
 from ._common._schema import Schema, SchemaProperties
 from ._common._response_handlers import (
-    _parse_response_schema,
-    _parse_response_schema_properties,
+    prepare_schema_result,
+    prepare_schema_properties_result,
 )
 from ._generated._client import AzureSchemaRegistry
 
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+    from azure.core.rest import HttpResponse
 
 
 class SchemaRegistryClient(object):
@@ -113,6 +114,7 @@ class SchemaRegistryClient(object):
         :param format: Format for the schema being registered.
          For now Avro is the only supported schema format by the service.
         :type format: Union[str, SchemaFormat]
+        :return: The SchemaProperties associated with the registered schema.
         :rtype: ~azure.schemaregistry.SchemaProperties
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -127,12 +129,17 @@ class SchemaRegistryClient(object):
 
         """
         format = get_case_insensitive_format(format)
-        request = build_register_schema_request(
-            group_name, name, definition, format, kwargs
+        http_request_kwargs = get_http_request_kwargs(kwargs)
+        # ignoring return type because the generated client operations are not annotated w/ cls return type
+        schema_properties: Dict[str, Union[int, str]] = self._generated_client.schema.register(  # type: ignore
+            group_name=group_name,
+            schema_name=name,
+            schema_content=cast(IO[Any], definition),
+            content_type=kwargs.pop("content_type", get_content_type(format)),
+            cls=partial(prepare_schema_properties_result, format),
+            **http_request_kwargs,
         )
-        response = self._generated_client.send_request(request, **kwargs)
-        response.raise_for_status()
-        return _parse_response_schema_properties(response, format)
+        return SchemaProperties(**schema_properties)
 
     @overload
     def get_schema(self, schema_id: str, **kwargs: Any) -> Schema:
@@ -140,12 +147,14 @@ class SchemaRegistryClient(object):
 
     @overload
     def get_schema(
-        self, *, group_name: str, name: str, version: int, **kwargs
+        self, *, group_name: str, name: str, version: int, **kwargs: Any
     ) -> Schema:
         ...
 
     @distributed_trace
-    def get_schema(self, *args: str, **kwargs: Any) -> Schema:
+    def get_schema(  # pylint: disable=docstring-missing-param,docstring-should-be-keyword
+        self, *args: str, **kwargs: Any
+    ) -> Schema:
         """Gets a registered schema. There are two ways to call this method:
 
         1) To get a registered schema by its unique ID, pass the `schema_id` parameter and any optional
@@ -154,10 +163,12 @@ class SchemaRegistryClient(object):
         2) To get a specific version of a schema within the specified schema group, pass in the required
         keyword arguments `group_name`, `name`, and `version` and any optional keyword arguments.
 
-        :param str schema_id: References specific schema in registry namespace.
+        :param str schema_id: References specific schema in registry namespace. Required if `group_name`,
+         `name`, and `version` are not provided.
         :keyword str group_name: Name of schema group that contains the registered schema.
         :keyword str name: Name of schema which should be retrieved.
         :keyword int version: Version of schema which should be retrieved.
+        :return: The schema stored in the registry associated with the provided arguments.
         :rtype: ~azure.schemaregistry.Schema
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -177,10 +188,45 @@ class SchemaRegistryClient(object):
                 :dedent: 4
                 :caption: Get schema by version.
         """
-        request = build_get_schema_request(args, kwargs)
-        response = self._generated_client.send_request(request, **kwargs)
-        response.raise_for_status()
-        return _parse_response_schema(response)
+        http_request_kwargs = get_http_request_kwargs(kwargs)
+        http_response: "HttpResponse"
+        schema_properties: Dict[str, Union[int, str]]
+        try:
+            # Check positional args for schema_id.
+            # Else, check if schema_id was passed in with keyword.
+            try:
+                schema_id = args[0]
+            except IndexError:
+                schema_id = kwargs.pop("schema_id")
+            schema_id = cast(str, schema_id)
+            # ignoring return type because the generated client operations are not annotated w/ cls return type
+            http_response, schema_properties = self._generated_client.schema.get_by_id(  # type: ignore
+                id=schema_id, cls=prepare_schema_result, **http_request_kwargs
+            )
+        except KeyError:
+            # If group_name, name, and version aren't passed in as kwargs, raise error.
+            try:
+                group_name = kwargs.pop("group_name")
+                name = kwargs.pop("name")
+                version = kwargs.pop("version")
+            except KeyError:
+                raise TypeError(  # pylint:disable=raise-missing-from
+                    """Missing required argument(s). Specify either `schema_id` """
+                    """or `group_name`, `name`, `version."""
+                )
+            # ignoring return type because the generated client operations are not annotated w/ cls return type
+            http_response, schema_properties = self._generated_client.schema.get_schema_version(  # type: ignore
+                group_name=group_name,
+                schema_name=name,
+                schema_version=version,
+                cls=prepare_schema_result,
+                **http_request_kwargs,
+            )
+        http_response.read()
+        return Schema(
+            definition=http_response.text(),
+            properties=SchemaProperties(**schema_properties),
+        )
 
     @distributed_trace
     def get_schema_properties(
@@ -200,6 +246,7 @@ class SchemaRegistryClient(object):
         :param str definition: String representation of the schema for which properties should be retrieved.
         :param format: Format for the schema for which properties should be retrieved.
         :type format: Union[str, SchemaFormat]
+        :return: The SchemaProperties associated with the provided schema metadata.
         :rtype: ~azure.schemaregistry.SchemaProperties
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -214,9 +261,16 @@ class SchemaRegistryClient(object):
 
         """
         format = get_case_insensitive_format(format)
-        request = build_get_schema_props_request(
-            group_name, name, definition, format, kwargs
+        http_request_kwargs = get_http_request_kwargs(kwargs)
+        # ignoring return type because the generated client operations are not annotated w/ cls return type
+        schema_properties: Dict[str, Union[int, str]] = (
+            self._generated_client.schema.query_id_by_content(  # type: ignore
+                group_name=group_name,
+                schema_name=name,
+                schema_content=cast(IO[Any], definition),
+                content_type=kwargs.pop("content_type", get_content_type(format)),
+                cls=partial(prepare_schema_properties_result, format),
+                **http_request_kwargs,
+            )
         )
-        response = self._generated_client.send_request(request, **kwargs)
-        response.raise_for_status()
-        return _parse_response_schema_properties(response, format)
+        return SchemaProperties(**schema_properties)

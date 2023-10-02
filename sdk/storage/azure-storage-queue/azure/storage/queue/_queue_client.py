@@ -25,7 +25,7 @@ from ._shared.response_handlers import (
 from ._generated import AzureQueueStorage
 from ._generated.models import SignedIdentifier, QueueMessage as GenQueueMessage
 from ._deserialize import deserialize_queue_properties, deserialize_queue_creation
-from ._encryption import StorageEncryptionMixin
+from ._encryption import modify_user_agent_for_encryption, StorageEncryptionMixin
 from ._message_encoding import NoEncodePolicy, NoDecodePolicy
 from ._models import QueueMessage, AccessPolicy, MessagesPaged
 from ._serialize import get_api_version
@@ -86,8 +86,8 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
-        except AttributeError:
-            raise ValueError("Account URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Account URL must be a string.") from exc
         parsed_url = urlparse(account_url.rstrip('/'))
         if not queue_name:
             raise ValueError("Please specify a queue name.")
@@ -109,9 +109,6 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         self._configure_encryption(kwargs)
 
     def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-        """
         queue_name = self.queue_name
         if isinstance(queue_name, str):
             queue_name = queue_name.encode('UTF-8')
@@ -137,14 +134,15 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
         """
         try:
             if not queue_url.lower().startswith('http'):
                 queue_url = "https://" + queue_url
-        except AttributeError:
-            raise ValueError("Queue URL must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Queue URL must be a string.") from exc
         parsed_url = urlparse(queue_url.rstrip('/'))
 
         if not parsed_url.netloc:
@@ -184,6 +182,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             Credentials provided here will take precedence over those in the connection string.
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
+        :paramtype credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
 
@@ -316,25 +315,25 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         return response # type: ignore
 
     @distributed_trace
-    def set_queue_metadata(self,
-                           metadata=None,  # type: Optional[Dict[str, Any]]
-                           **kwargs  # type: Any
-                           ):
-        # type: (...) -> None
+    def set_queue_metadata(
+            self, metadata: Optional[Dict[str, Any]] = None,
+            **kwargs: Any
+        ) -> Dict[str, Any]:
         """Sets user-defined metadata on the specified queue.
 
         Metadata is associated with the queue as name-value pairs.
 
-        :param metadata:
+        :param Optional[Dict[str, Any]] metadata:
             A dict containing name-value pairs to associate with the
             queue as metadata.
-        :type metadata: dict(str, str)
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
             #other-client--per-operation-configuration>`_.
+        :return: A dictionary of response headers.
+        :rtype: Dict[str, Any]
 
         .. admonition:: Example:
 
@@ -502,6 +501,13 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         visibility_timeout = kwargs.pop('visibility_timeout', None)
         time_to_live = kwargs.pop('time_to_live', None)
         timeout = kwargs.pop('timeout', None)
+        if self.key_encryption_key:
+            modify_user_agent_for_encryption(
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs)
+
         try:
             self._config.message_encode_policy.configure(
                 require_encryption=self.require_encryption,
@@ -580,6 +586,13 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """
         visibility_timeout = kwargs.pop('visibility_timeout', None)
         timeout = kwargs.pop('timeout', None)
+        if self.key_encryption_key or self.key_resolver_function:
+            modify_user_agent_for_encryption(
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs)
+
         self._config.message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
@@ -662,6 +675,13 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         visibility_timeout = kwargs.pop('visibility_timeout', None)
         timeout = kwargs.pop('timeout', None)
         max_messages = kwargs.pop('max_messages', None)
+        if self.key_encryption_key or self.key_resolver_function:
+            modify_user_agent_for_encryption(
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs)
+
         self._config.message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
@@ -742,6 +762,13 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """
         visibility_timeout = kwargs.pop('visibility_timeout', None)
         timeout = kwargs.pop('timeout', None)
+        if self.key_encryption_key or self.key_resolver_function:
+            modify_user_agent_for_encryption(
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs)
+
         try:
             message_id = message.id
             message_text = content or message.content
@@ -846,9 +873,17 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 12
                 :caption: Peek messages.
         """
-        timeout = kwargs.pop('timeout', None)
         if max_messages and not 1 <= max_messages <= 32:
             raise ValueError("Number of messages to peek should be between 1 and 32")
+
+        timeout = kwargs.pop('timeout', None)
+        if self.key_encryption_key or self.key_resolver_function:
+            modify_user_agent_for_encryption(
+                self._config.user_agent_policy.user_agent,
+                self._sdk_moniker,
+                self.encryption_version,
+                kwargs)
+
         self._config.message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,

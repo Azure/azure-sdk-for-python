@@ -2774,7 +2774,8 @@ class CreateUpdateOptions(_serialization.Model):
 
     :ivar throughput: Request Units per second. For example, "throughput": 10000.
     :vartype throughput: int
-    :ivar autoscale_settings: Specifies the Autoscale settings.
+    :ivar autoscale_settings: Specifies the Autoscale settings. Note: Either throughput or
+     autoscaleSettings is required, but not both.
     :vartype autoscale_settings: ~azure.mgmt.cosmosdb.models.AutoscaleSettings
     """
 
@@ -2793,7 +2794,8 @@ class CreateUpdateOptions(_serialization.Model):
         """
         :keyword throughput: Request Units per second. For example, "throughput": 10000.
         :paramtype throughput: int
-        :keyword autoscale_settings: Specifies the Autoscale settings.
+        :keyword autoscale_settings: Specifies the Autoscale settings. Note: Either throughput or
+         autoscaleSettings is required, but not both.
         :paramtype autoscale_settings: ~azure.mgmt.cosmosdb.models.AutoscaleSettings
         """
         super().__init__(**kwargs)
@@ -2948,10 +2950,56 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
     :ivar enable_partition_merge: Flag to indicate enabling/disabling of Partition Merge feature on
      the account.
     :vartype enable_partition_merge: bool
-    :ivar minimal_tls_version: Indicates the minimum allowed Tls version. The default is Tls 1.0,
-     except for Cassandra and Mongo API's, which only work with Tls 1.2. Known values are: "Tls",
-     "Tls11", and "Tls12".
+    :ivar minimal_tls_version: Indicates the minimum allowed Tls version. The default value is Tls
+     1.2. Cassandra and Mongo APIs only work with Tls 1.2. Known values are: "Tls", "Tls11", and
+     "Tls12".
     :vartype minimal_tls_version: str or ~azure.mgmt.cosmosdb.models.MinimalTlsVersion
+    :ivar enable_burst_capacity: Flag to indicate enabling/disabling of Burst Capacity Preview
+     feature on the account.
+    :vartype enable_burst_capacity: bool
+    :ivar customer_managed_key_status: Indicates the status of the Customer Managed Key feature on
+     the account. In case there are errors, the property provides troubleshooting guidance. Known
+     values are: "Access to your account is currently revoked because the Azure Cosmos DB service is
+     unable to obtain the AAD authentication token for the account's default identity; for more
+     details about this error and how to restore access to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#azure-active-directory-token-acquisition-error
+     (4000).", "Access to your account is currently revoked because the Azure Cosmos DB account's
+     key vault key URI does not follow the expected format; for more details about this error and
+     how to restore access to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#improper-syntax-detected-on-the-key-vault-uri-property
+     (4006).", "Access to your account is currently revoked because the current default identity no
+     longer has permission to the associated Key Vault key; for more details about this error and
+     how to restore access to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#default-identity-is-unauthorized-to-access-the-azure-key-vault-key
+     (4002).", "Access to your account is currently revoked because the Azure Key Vault DNS name
+     specified by the account's keyvaultkeyuri property could not be resolved; for more details
+     about this error and how to restore access to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#unable-to-resolve-the-key-vaults-dns
+     (4009).", "Access to your account is currently revoked because the correspondent key is not
+     found on the specified Key Vault; for more details about this error and how to restore access
+     to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#azure-key-vault-resource-not-found
+     (4003).", "Access to your account is currently revoked because the Azure Cosmos DB service is
+     unable to wrap or unwrap the key; for more details about this error and how to restore access
+     to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#internal-unwrapping-procedure-error
+     (4005).", "Access to your account is currently revoked because the Azure Cosmos DB account has
+     an undefined default identity; for more details about this error and how to restore access to
+     your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#invalid-azure-cosmos-db-default-identity
+     (4015).", "Access to your account is currently revoked because the access rules are blocking
+     outbound requests to the Azure Key Vault service; for more details about this error and how to
+     restore access to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide (4016).", "Access
+     to your account is currently revoked because the correspondent Azure Key Vault was not found;
+     for more details about this error and how to restore access to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#azure-key-vault-resource-not-found
+     (4017).", "Access to your account is currently revoked; for more details about this error and
+     how to restore access to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide", and "Access to
+     the configured customer managed key confirmed.".
+    :vartype customer_managed_key_status: str or
+     ~azure.mgmt.cosmosdb.models.CustomerManagedKeyStatus
     """
 
     _validation = {
@@ -3007,6 +3055,8 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
         "keys_metadata": {"key": "properties.keysMetadata", "type": "DatabaseAccountKeysMetadata"},
         "enable_partition_merge": {"key": "properties.enablePartitionMerge", "type": "bool"},
         "minimal_tls_version": {"key": "properties.minimalTlsVersion", "type": "str"},
+        "enable_burst_capacity": {"key": "properties.enableBurstCapacity", "type": "bool"},
+        "customer_managed_key_status": {"key": "properties.customerManagedKeyStatus", "type": "str"},
     }
 
     database_account_offer_type = "Standard"
@@ -3046,6 +3096,8 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
         capacity: Optional["_models.Capacity"] = None,
         enable_partition_merge: Optional[bool] = None,
         minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersion"]] = None,
+        enable_burst_capacity: Optional[bool] = None,
+        customer_managed_key_status: Optional[Union[str, "_models.CustomerManagedKeyStatus"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3136,10 +3188,56 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
         :keyword enable_partition_merge: Flag to indicate enabling/disabling of Partition Merge feature
          on the account.
         :paramtype enable_partition_merge: bool
-        :keyword minimal_tls_version: Indicates the minimum allowed Tls version. The default is Tls
-         1.0, except for Cassandra and Mongo API's, which only work with Tls 1.2. Known values are:
-         "Tls", "Tls11", and "Tls12".
+        :keyword minimal_tls_version: Indicates the minimum allowed Tls version. The default value is
+         Tls 1.2. Cassandra and Mongo APIs only work with Tls 1.2. Known values are: "Tls", "Tls11", and
+         "Tls12".
         :paramtype minimal_tls_version: str or ~azure.mgmt.cosmosdb.models.MinimalTlsVersion
+        :keyword enable_burst_capacity: Flag to indicate enabling/disabling of Burst Capacity Preview
+         feature on the account.
+        :paramtype enable_burst_capacity: bool
+        :keyword customer_managed_key_status: Indicates the status of the Customer Managed Key feature
+         on the account. In case there are errors, the property provides troubleshooting guidance. Known
+         values are: "Access to your account is currently revoked because the Azure Cosmos DB service is
+         unable to obtain the AAD authentication token for the account's default identity; for more
+         details about this error and how to restore access to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#azure-active-directory-token-acquisition-error
+         (4000).", "Access to your account is currently revoked because the Azure Cosmos DB account's
+         key vault key URI does not follow the expected format; for more details about this error and
+         how to restore access to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#improper-syntax-detected-on-the-key-vault-uri-property
+         (4006).", "Access to your account is currently revoked because the current default identity no
+         longer has permission to the associated Key Vault key; for more details about this error and
+         how to restore access to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#default-identity-is-unauthorized-to-access-the-azure-key-vault-key
+         (4002).", "Access to your account is currently revoked because the Azure Key Vault DNS name
+         specified by the account's keyvaultkeyuri property could not be resolved; for more details
+         about this error and how to restore access to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#unable-to-resolve-the-key-vaults-dns
+         (4009).", "Access to your account is currently revoked because the correspondent key is not
+         found on the specified Key Vault; for more details about this error and how to restore access
+         to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#azure-key-vault-resource-not-found
+         (4003).", "Access to your account is currently revoked because the Azure Cosmos DB service is
+         unable to wrap or unwrap the key; for more details about this error and how to restore access
+         to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#internal-unwrapping-procedure-error
+         (4005).", "Access to your account is currently revoked because the Azure Cosmos DB account has
+         an undefined default identity; for more details about this error and how to restore access to
+         your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#invalid-azure-cosmos-db-default-identity
+         (4015).", "Access to your account is currently revoked because the access rules are blocking
+         outbound requests to the Azure Key Vault service; for more details about this error and how to
+         restore access to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide (4016).", "Access
+         to your account is currently revoked because the correspondent Azure Key Vault was not found;
+         for more details about this error and how to restore access to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#azure-key-vault-resource-not-found
+         (4017).", "Access to your account is currently revoked; for more details about this error and
+         how to restore access to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide", and "Access to
+         the configured customer managed key confirmed.".
+        :paramtype customer_managed_key_status: str or
+         ~azure.mgmt.cosmosdb.models.CustomerManagedKeyStatus
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
@@ -3173,6 +3271,8 @@ class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):  # pylint: d
         self.keys_metadata = None
         self.enable_partition_merge = enable_partition_merge
         self.minimal_tls_version = minimal_tls_version
+        self.enable_burst_capacity = enable_burst_capacity
+        self.customer_managed_key_status = customer_managed_key_status
 
 
 class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-many-instance-attributes
@@ -3303,10 +3403,56 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
     :ivar enable_partition_merge: Flag to indicate enabling/disabling of Partition Merge feature on
      the account.
     :vartype enable_partition_merge: bool
-    :ivar minimal_tls_version: Indicates the minimum allowed Tls version. The default is Tls 1.0,
-     except for Cassandra and Mongo API's, which only work with Tls 1.2. Known values are: "Tls",
-     "Tls11", and "Tls12".
+    :ivar minimal_tls_version: Indicates the minimum allowed Tls version. The default value is Tls
+     1.2. Cassandra and Mongo APIs only work with Tls 1.2. Known values are: "Tls", "Tls11", and
+     "Tls12".
     :vartype minimal_tls_version: str or ~azure.mgmt.cosmosdb.models.MinimalTlsVersion
+    :ivar enable_burst_capacity: Flag to indicate enabling/disabling of Burst Capacity Preview
+     feature on the account.
+    :vartype enable_burst_capacity: bool
+    :ivar customer_managed_key_status: Indicates the status of the Customer Managed Key feature on
+     the account. In case there are errors, the property provides troubleshooting guidance. Known
+     values are: "Access to your account is currently revoked because the Azure Cosmos DB service is
+     unable to obtain the AAD authentication token for the account's default identity; for more
+     details about this error and how to restore access to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#azure-active-directory-token-acquisition-error
+     (4000).", "Access to your account is currently revoked because the Azure Cosmos DB account's
+     key vault key URI does not follow the expected format; for more details about this error and
+     how to restore access to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#improper-syntax-detected-on-the-key-vault-uri-property
+     (4006).", "Access to your account is currently revoked because the current default identity no
+     longer has permission to the associated Key Vault key; for more details about this error and
+     how to restore access to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#default-identity-is-unauthorized-to-access-the-azure-key-vault-key
+     (4002).", "Access to your account is currently revoked because the Azure Key Vault DNS name
+     specified by the account's keyvaultkeyuri property could not be resolved; for more details
+     about this error and how to restore access to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#unable-to-resolve-the-key-vaults-dns
+     (4009).", "Access to your account is currently revoked because the correspondent key is not
+     found on the specified Key Vault; for more details about this error and how to restore access
+     to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#azure-key-vault-resource-not-found
+     (4003).", "Access to your account is currently revoked because the Azure Cosmos DB service is
+     unable to wrap or unwrap the key; for more details about this error and how to restore access
+     to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#internal-unwrapping-procedure-error
+     (4005).", "Access to your account is currently revoked because the Azure Cosmos DB account has
+     an undefined default identity; for more details about this error and how to restore access to
+     your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#invalid-azure-cosmos-db-default-identity
+     (4015).", "Access to your account is currently revoked because the access rules are blocking
+     outbound requests to the Azure Key Vault service; for more details about this error and how to
+     restore access to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide (4016).", "Access
+     to your account is currently revoked because the correspondent Azure Key Vault was not found;
+     for more details about this error and how to restore access to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#azure-key-vault-resource-not-found
+     (4017).", "Access to your account is currently revoked; for more details about this error and
+     how to restore access to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide", and "Access to
+     the configured customer managed key confirmed.".
+    :vartype customer_managed_key_status: str or
+     ~azure.mgmt.cosmosdb.models.CustomerManagedKeyStatus
     """
 
     _validation = {
@@ -3381,6 +3527,8 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
         "keys_metadata": {"key": "properties.keysMetadata", "type": "DatabaseAccountKeysMetadata"},
         "enable_partition_merge": {"key": "properties.enablePartitionMerge", "type": "bool"},
         "minimal_tls_version": {"key": "properties.minimalTlsVersion", "type": "str"},
+        "enable_burst_capacity": {"key": "properties.enableBurstCapacity", "type": "bool"},
+        "customer_managed_key_status": {"key": "properties.customerManagedKeyStatus", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -3417,6 +3565,8 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
         capacity: Optional["_models.Capacity"] = None,
         enable_partition_merge: Optional[bool] = None,
         minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersion"]] = None,
+        enable_burst_capacity: Optional[bool] = None,
+        customer_managed_key_status: Optional[Union[str, "_models.CustomerManagedKeyStatus"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3504,10 +3654,56 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
         :keyword enable_partition_merge: Flag to indicate enabling/disabling of Partition Merge feature
          on the account.
         :paramtype enable_partition_merge: bool
-        :keyword minimal_tls_version: Indicates the minimum allowed Tls version. The default is Tls
-         1.0, except for Cassandra and Mongo API's, which only work with Tls 1.2. Known values are:
-         "Tls", "Tls11", and "Tls12".
+        :keyword minimal_tls_version: Indicates the minimum allowed Tls version. The default value is
+         Tls 1.2. Cassandra and Mongo APIs only work with Tls 1.2. Known values are: "Tls", "Tls11", and
+         "Tls12".
         :paramtype minimal_tls_version: str or ~azure.mgmt.cosmosdb.models.MinimalTlsVersion
+        :keyword enable_burst_capacity: Flag to indicate enabling/disabling of Burst Capacity Preview
+         feature on the account.
+        :paramtype enable_burst_capacity: bool
+        :keyword customer_managed_key_status: Indicates the status of the Customer Managed Key feature
+         on the account. In case there are errors, the property provides troubleshooting guidance. Known
+         values are: "Access to your account is currently revoked because the Azure Cosmos DB service is
+         unable to obtain the AAD authentication token for the account's default identity; for more
+         details about this error and how to restore access to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#azure-active-directory-token-acquisition-error
+         (4000).", "Access to your account is currently revoked because the Azure Cosmos DB account's
+         key vault key URI does not follow the expected format; for more details about this error and
+         how to restore access to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#improper-syntax-detected-on-the-key-vault-uri-property
+         (4006).", "Access to your account is currently revoked because the current default identity no
+         longer has permission to the associated Key Vault key; for more details about this error and
+         how to restore access to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#default-identity-is-unauthorized-to-access-the-azure-key-vault-key
+         (4002).", "Access to your account is currently revoked because the Azure Key Vault DNS name
+         specified by the account's keyvaultkeyuri property could not be resolved; for more details
+         about this error and how to restore access to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#unable-to-resolve-the-key-vaults-dns
+         (4009).", "Access to your account is currently revoked because the correspondent key is not
+         found on the specified Key Vault; for more details about this error and how to restore access
+         to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#azure-key-vault-resource-not-found
+         (4003).", "Access to your account is currently revoked because the Azure Cosmos DB service is
+         unable to wrap or unwrap the key; for more details about this error and how to restore access
+         to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#internal-unwrapping-procedure-error
+         (4005).", "Access to your account is currently revoked because the Azure Cosmos DB account has
+         an undefined default identity; for more details about this error and how to restore access to
+         your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#invalid-azure-cosmos-db-default-identity
+         (4015).", "Access to your account is currently revoked because the access rules are blocking
+         outbound requests to the Azure Key Vault service; for more details about this error and how to
+         restore access to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide (4016).", "Access
+         to your account is currently revoked because the correspondent Azure Key Vault was not found;
+         for more details about this error and how to restore access to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#azure-key-vault-resource-not-found
+         (4017).", "Access to your account is currently revoked; for more details about this error and
+         how to restore access to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide", and "Access to
+         the configured customer managed key confirmed.".
+        :paramtype customer_managed_key_status: str or
+         ~azure.mgmt.cosmosdb.models.CustomerManagedKeyStatus
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
@@ -3550,6 +3746,8 @@ class DatabaseAccountGetResults(ARMResourceProperties):  # pylint: disable=too-m
         self.keys_metadata = None
         self.enable_partition_merge = enable_partition_merge
         self.minimal_tls_version = minimal_tls_version
+        self.enable_burst_capacity = enable_burst_capacity
+        self.customer_managed_key_status = customer_managed_key_status
 
 
 class DatabaseAccountKeysMetadata(_serialization.Model):
@@ -3820,10 +4018,56 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
     :ivar enable_partition_merge: Flag to indicate enabling/disabling of Partition Merge feature on
      the account.
     :vartype enable_partition_merge: bool
-    :ivar minimal_tls_version: Indicates the minimum allowed Tls version. The default is Tls 1.0,
-     except for Cassandra and Mongo API's, which only work with Tls 1.2. Known values are: "Tls",
-     "Tls11", and "Tls12".
+    :ivar minimal_tls_version: Indicates the minimum allowed Tls version. The default value is Tls
+     1.2. Cassandra and Mongo APIs only work with Tls 1.2. Known values are: "Tls", "Tls11", and
+     "Tls12".
     :vartype minimal_tls_version: str or ~azure.mgmt.cosmosdb.models.MinimalTlsVersion
+    :ivar enable_burst_capacity: Flag to indicate enabling/disabling of Burst Capacity Preview
+     feature on the account.
+    :vartype enable_burst_capacity: bool
+    :ivar customer_managed_key_status: Indicates the status of the Customer Managed Key feature on
+     the account. In case there are errors, the property provides troubleshooting guidance. Known
+     values are: "Access to your account is currently revoked because the Azure Cosmos DB service is
+     unable to obtain the AAD authentication token for the account's default identity; for more
+     details about this error and how to restore access to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#azure-active-directory-token-acquisition-error
+     (4000).", "Access to your account is currently revoked because the Azure Cosmos DB account's
+     key vault key URI does not follow the expected format; for more details about this error and
+     how to restore access to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#improper-syntax-detected-on-the-key-vault-uri-property
+     (4006).", "Access to your account is currently revoked because the current default identity no
+     longer has permission to the associated Key Vault key; for more details about this error and
+     how to restore access to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#default-identity-is-unauthorized-to-access-the-azure-key-vault-key
+     (4002).", "Access to your account is currently revoked because the Azure Key Vault DNS name
+     specified by the account's keyvaultkeyuri property could not be resolved; for more details
+     about this error and how to restore access to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#unable-to-resolve-the-key-vaults-dns
+     (4009).", "Access to your account is currently revoked because the correspondent key is not
+     found on the specified Key Vault; for more details about this error and how to restore access
+     to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#azure-key-vault-resource-not-found
+     (4003).", "Access to your account is currently revoked because the Azure Cosmos DB service is
+     unable to wrap or unwrap the key; for more details about this error and how to restore access
+     to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#internal-unwrapping-procedure-error
+     (4005).", "Access to your account is currently revoked because the Azure Cosmos DB account has
+     an undefined default identity; for more details about this error and how to restore access to
+     your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#invalid-azure-cosmos-db-default-identity
+     (4015).", "Access to your account is currently revoked because the access rules are blocking
+     outbound requests to the Azure Key Vault service; for more details about this error and how to
+     restore access to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide (4016).", "Access
+     to your account is currently revoked because the correspondent Azure Key Vault was not found;
+     for more details about this error and how to restore access to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#azure-key-vault-resource-not-found
+     (4017).", "Access to your account is currently revoked; for more details about this error and
+     how to restore access to your account please visit
+     https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide", and "Access to
+     the configured customer managed key confirmed.".
+    :vartype customer_managed_key_status: str or
+     ~azure.mgmt.cosmosdb.models.CustomerManagedKeyStatus
     """
 
     _validation = {
@@ -3867,6 +4111,8 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
         "keys_metadata": {"key": "properties.keysMetadata", "type": "DatabaseAccountKeysMetadata"},
         "enable_partition_merge": {"key": "properties.enablePartitionMerge", "type": "bool"},
         "minimal_tls_version": {"key": "properties.minimalTlsVersion", "type": "str"},
+        "enable_burst_capacity": {"key": "properties.enableBurstCapacity", "type": "bool"},
+        "customer_managed_key_status": {"key": "properties.customerManagedKeyStatus", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -3901,6 +4147,8 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
         capacity: Optional["_models.Capacity"] = None,
         enable_partition_merge: Optional[bool] = None,
         minimal_tls_version: Optional[Union[str, "_models.MinimalTlsVersion"]] = None,
+        enable_burst_capacity: Optional[bool] = None,
+        customer_managed_key_status: Optional[Union[str, "_models.CustomerManagedKeyStatus"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3983,10 +4231,56 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
         :keyword enable_partition_merge: Flag to indicate enabling/disabling of Partition Merge feature
          on the account.
         :paramtype enable_partition_merge: bool
-        :keyword minimal_tls_version: Indicates the minimum allowed Tls version. The default is Tls
-         1.0, except for Cassandra and Mongo API's, which only work with Tls 1.2. Known values are:
-         "Tls", "Tls11", and "Tls12".
+        :keyword minimal_tls_version: Indicates the minimum allowed Tls version. The default value is
+         Tls 1.2. Cassandra and Mongo APIs only work with Tls 1.2. Known values are: "Tls", "Tls11", and
+         "Tls12".
         :paramtype minimal_tls_version: str or ~azure.mgmt.cosmosdb.models.MinimalTlsVersion
+        :keyword enable_burst_capacity: Flag to indicate enabling/disabling of Burst Capacity Preview
+         feature on the account.
+        :paramtype enable_burst_capacity: bool
+        :keyword customer_managed_key_status: Indicates the status of the Customer Managed Key feature
+         on the account. In case there are errors, the property provides troubleshooting guidance. Known
+         values are: "Access to your account is currently revoked because the Azure Cosmos DB service is
+         unable to obtain the AAD authentication token for the account's default identity; for more
+         details about this error and how to restore access to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#azure-active-directory-token-acquisition-error
+         (4000).", "Access to your account is currently revoked because the Azure Cosmos DB account's
+         key vault key URI does not follow the expected format; for more details about this error and
+         how to restore access to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#improper-syntax-detected-on-the-key-vault-uri-property
+         (4006).", "Access to your account is currently revoked because the current default identity no
+         longer has permission to the associated Key Vault key; for more details about this error and
+         how to restore access to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#default-identity-is-unauthorized-to-access-the-azure-key-vault-key
+         (4002).", "Access to your account is currently revoked because the Azure Key Vault DNS name
+         specified by the account's keyvaultkeyuri property could not be resolved; for more details
+         about this error and how to restore access to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#unable-to-resolve-the-key-vaults-dns
+         (4009).", "Access to your account is currently revoked because the correspondent key is not
+         found on the specified Key Vault; for more details about this error and how to restore access
+         to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#azure-key-vault-resource-not-found
+         (4003).", "Access to your account is currently revoked because the Azure Cosmos DB service is
+         unable to wrap or unwrap the key; for more details about this error and how to restore access
+         to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#internal-unwrapping-procedure-error
+         (4005).", "Access to your account is currently revoked because the Azure Cosmos DB account has
+         an undefined default identity; for more details about this error and how to restore access to
+         your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#invalid-azure-cosmos-db-default-identity
+         (4015).", "Access to your account is currently revoked because the access rules are blocking
+         outbound requests to the Azure Key Vault service; for more details about this error and how to
+         restore access to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide (4016).", "Access
+         to your account is currently revoked because the correspondent Azure Key Vault was not found;
+         for more details about this error and how to restore access to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide#azure-key-vault-resource-not-found
+         (4017).", "Access to your account is currently revoked; for more details about this error and
+         how to restore access to your account please visit
+         https://learn.microsoft.com/en-us/azure/cosmos-db/cmk-troubleshooting-guide", and "Access to
+         the configured customer managed key confirmed.".
+        :paramtype customer_managed_key_status: str or
+         ~azure.mgmt.cosmosdb.models.CustomerManagedKeyStatus
         """
         super().__init__(**kwargs)
         self.tags = tags
@@ -4019,6 +4313,8 @@ class DatabaseAccountUpdateParameters(_serialization.Model):  # pylint: disable=
         self.keys_metadata = None
         self.enable_partition_merge = enable_partition_merge
         self.minimal_tls_version = minimal_tls_version
+        self.enable_burst_capacity = enable_burst_capacity
+        self.customer_managed_key_status = customer_managed_key_status
 
 
 class DatabaseRestoreResource(_serialization.Model):

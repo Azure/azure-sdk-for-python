@@ -8,7 +8,6 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import Any, List, IO, Optional
 from datetime import datetime, timedelta, tzinfo
-import six
 import jwt
 from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
@@ -75,7 +74,7 @@ def get_token_by_key(endpoint: str, hub: str, key: str, **kwargs: Any) -> str:
         payload["role"] = roles
     if groups:
         payload["webpubsub.group"] = groups
-    return six.ensure_str(jwt.encode(payload, key, algorithm="HS256", headers=kwargs.pop("jwt_headers", {})))
+    return jwt.encode(payload, key, algorithm="HS256", headers=kwargs.pop("jwt_headers", {})).decode("utf-8")
 
 
 class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixinGenerated):

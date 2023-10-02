@@ -23,18 +23,39 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable, TypeVar, Awaitable, Union, overload
+from typing_extensions import ParamSpec
 
 if TYPE_CHECKING:
     from ..rest import AsyncHttpResponse as RestAsyncHttpResponse
 
+P = ParamSpec("P")
+T = TypeVar("T")
 
-async def await_result(func, *args, **kwargs):
-    """If func returns an awaitable, await it."""
+
+@overload
+async def await_result(func: Callable[P, Awaitable[T]], *args: P.args, **kwargs: P.kwargs) -> T:
+    ...
+
+
+@overload
+async def await_result(func: Callable[P, T], *args: P.args, **kwargs: P.kwargs) -> T:
+    ...
+
+
+async def await_result(func: Callable[P, Union[T, Awaitable[T]]], *args: P.args, **kwargs: P.kwargs) -> T:
+    """If func returns an awaitable, await it.
+
+    :param func: The function to run.
+    :type func: callable
+    :param args: The positional arguments to pass to the function.
+    :type args: list
+    :rtype: any
+    :return: The result of the function
+    """
     result = func(*args, **kwargs)
-    if hasattr(result, "__await__"):
-        # type ignore on await: https://github.com/python/mypy/issues/7587
-        return await result  # type: ignore
+    if isinstance(result, Awaitable):
+        return await result
     return result
 
 
@@ -42,6 +63,9 @@ async def handle_no_stream_rest_response(response: "RestAsyncHttpResponse") -> N
     """Handle reading and closing of non stream rest responses.
     For our new rest responses, we have to call .read() and .close() for our non-stream
     responses. This way, we load in the body for users to access.
+
+    :param response: The response to read and close.
+    :type response: ~azure.core.rest.AsyncHttpResponse
     """
     try:
         await response.read()

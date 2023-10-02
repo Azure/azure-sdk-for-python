@@ -80,8 +80,10 @@ class ManagedIdentityCredential(AsyncContextManager):
                 from .cloud_shell import CloudShellCredential
 
                 self._credential = CloudShellCredential(**kwargs)
-        elif all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS) \
-                and not exclude_workload_identity:
+        elif (
+            all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS)
+            and not exclude_workload_identity
+        ):
             _LOGGER.info("%s will use workload identity", self.__class__.__name__)
             from .workload_identity import WorkloadIdentityCredential
 
@@ -112,7 +114,9 @@ class ManagedIdentityCredential(AsyncContextManager):
             await self._credential.close()
 
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    async def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         """Asynchronously request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
@@ -120,14 +124,18 @@ class ManagedIdentityCredential(AsyncContextManager):
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+        :keyword str claims: not used by this credential; any value provided will be ignored.
+        :keyword str tenant_id: not used by this credential; any value provided will be ignored.
+
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.identity.CredentialUnavailableError: managed identity isn't available in the hosting environment
         """
         if not self._credential:
             raise CredentialUnavailableError(
                 message="No managed identity endpoint found. \n"
-                        "The Target Azure platform could not be determined from environment variables. "
-                        "Visit https://aka.ms/azsdk/python/identity/managedidentitycredential/troubleshoot to "
-                        "troubleshoot this issue."
+                "The Target Azure platform could not be determined from environment variables. "
+                "Visit https://aka.ms/azsdk/python/identity/managedidentitycredential/troubleshoot to "
+                "troubleshoot this issue."
             )
-        return await self._credential.get_token(*scopes, **kwargs)
+        return await self._credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)

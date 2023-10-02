@@ -292,6 +292,7 @@ class LeaseContainerRequestAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CHANGE = "Change"
     RELEASE = "Release"
     BREAK = "Break"
+    BREAK_ENUM = "Break"
 
 
 class LeaseDuration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -311,6 +312,7 @@ class LeaseShareAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CHANGE = "Change"
     RELEASE = "Release"
     BREAK = "Break"
+    BREAK_ENUM = "Break"
 
 
 class LeaseState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

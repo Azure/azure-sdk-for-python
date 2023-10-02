@@ -3,20 +3,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from functools import partial
+from typing import TYPE_CHECKING
+
 from azure.core.tracing.decorator import distributed_trace
 
 from ._models import KeyVaultSecret, DeletedSecret, SecretProperties
 from ._shared import KeyVaultClientBase
 from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
 
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Optional
+    from typing import Optional
     from azure.core.paging import ItemPaged
     from azure.core.polling import LROPoller
 
@@ -54,6 +51,7 @@ class SecretClient(KeyVaultClientBase):
         :param str name: The name of the secret
         :param str version: (optional) Version of the secret to get. If unspecified, gets the latest version.
 
+        :returns: The fetched secret.
         :rtype: ~azure.keyvault.secrets.KeyVaultSecret
 
         :raises:
@@ -92,6 +90,7 @@ class SecretClient(KeyVaultClientBase):
         :keyword ~datetime.datetime not_before: Not before date of the secret in UTC
         :keyword ~datetime.datetime expires_on: Expiry date of the secret in UTC
 
+        :returns: The created or updated secret.
         :rtype: ~azure.keyvault.secrets.KeyVaultSecret
 
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -148,6 +147,7 @@ class SecretClient(KeyVaultClientBase):
         :keyword ~datetime.datetime not_before: Not before date of the secret in UTC
         :keyword ~datetime.datetime expires_on: Expiry date of the secret in UTC
 
+        :returns: The updated secret properties.
         :rtype: ~azure.keyvault.secrets.SecretProperties
 
         :raises:
@@ -248,6 +248,7 @@ class SecretClient(KeyVaultClientBase):
 
         :param str name: Name of the secret to back up
 
+        :returns: The backup result, in a protected bytes format that can only be used by Azure Key Vault.
         :rtype: bytes
 
         :raises:
@@ -296,7 +297,7 @@ class SecretClient(KeyVaultClientBase):
         return SecretProperties._from_secret_bundle(bundle)
 
     @distributed_trace
-    def begin_delete_secret(self, name: str, **kwargs) -> "LROPoller[DeletedSecret]":
+    def begin_delete_secret(self, name: str, **kwargs) -> "LROPoller[DeletedSecret]":  # pylint:disable=bad-option-value,delete-operation-wrong-return-type
         """Delete all versions of a secret. Requires secrets/delete permission.
 
         When this method returns Key Vault has begun deleting the secret. Deletion may take several seconds in a vault
@@ -347,6 +348,7 @@ class SecretClient(KeyVaultClientBase):
 
         :param str name: Name of the deleted secret
 
+        :returns: The deleted secret.
         :rtype: ~azure.keyvault.secrets.DeletedSecret
 
         :raises:

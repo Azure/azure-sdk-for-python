@@ -31,14 +31,15 @@ from azure.search.documents import SearchClient
 
 search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
+
 def upload_document():
     # [START upload_document]
     DOCUMENT = {
-        'Category': 'Hotel',
-        'HotelId': '1000',
-        'Rating': 4.0,
-        'Rooms': [],
-        'HotelName': 'Azure Inn',
+        "category": "Hotel",
+        "hotelId": "1000",
+        "rating": 4.0,
+        "rooms": [],
+        "hotelName": "Azure Inn",
     }
 
     result = search_client.upload_documents(documents=[DOCUMENT])
@@ -46,21 +47,24 @@ def upload_document():
     print("Upload of new document succeeded: {}".format(result[0].succeeded))
     # [END upload_document]
 
+
 def merge_document():
     # [START merge_document]
-    result = search_client.merge_documents(documents=[{"HotelId": "1000", "Rating": 4.5}])
+    result = search_client.merge_documents(documents=[{"hotelId": "1000", "rating": 4.5}])
 
     print("Merge into new document succeeded: {}".format(result[0].succeeded))
     # [END merge_document]
 
+
 def delete_document():
     # [START delete_document]
-    result = search_client.delete_documents(documents=[{"HotelId": "1000"}])
+    result = search_client.delete_documents(documents=[{"hotelId": "1000"}])
 
     print("Delete new document succeeded: {}".format(result[0].succeeded))
     # [END delete_document]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     upload_document()
     merge_document()
     delete_document()

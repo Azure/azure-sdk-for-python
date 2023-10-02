@@ -135,6 +135,12 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
 
     Use this client to configure and execute requests to the Azure Cosmos DB service.
 
+    Its recommended to maintain a single instance of CosmosClient per lifetime of the application which enables
+        efficient connection management and performance.
+
+    CosmosClient initialization is a heavy operation - don't use initialization CosmosClient instances as
+        credentials or network connectivity validations.
+
     :param str url: The URL of the Cosmos DB account.
     :param credential: Can be the account key, or a dictionary of resource tokens.
     :type credential: Union[str, Dict[str, str], ~azure.core.credentials.TokenCredential]
@@ -386,7 +392,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     def query_databases(
         self,
         query=None,  # type: Optional[str]
-        parameters=None,  # type: Optional[List[str]]
+        parameters=None,  # type: Optional[List[Dict[str, Any]]]
         enable_cross_partition_query=None,  # type: Optional[bool]
         max_item_count=None,  # type:  Optional[int]
         populate_query_metrics=None,  # type: Optional[bool]
@@ -396,7 +402,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         """Query the databases in a Cosmos DB SQL database account.
 
         :param str query: The Azure Cosmos DB SQL query to execute.
-        :param list[str] parameters: Optional array of parameters to the query. Ignored if no query is provided.
+        :param List[Dict[str, Any]] parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param bool enable_cross_partition_query: Allow scan on the queries which couldn't be
             served as indexing was opted out on the requested paths.
         :param int max_item_count: Max number of items to be returned in the enumeration operation.

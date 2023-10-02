@@ -47,6 +47,7 @@ async def test_error_reporting():
         assert transport.send.call_count == 1
         transport.send.reset_mock()
 
+
 @pytest.mark.skip(reason="Adding body to HttpResponseError str. Not an issue bc we don't automatically log errors")
 async def test_exceptions_do_not_expose_secrets():
     secret = "secret"
@@ -310,7 +311,7 @@ async def test_multitenant_cache():
     assert client_b.get_cached_access_token([scope]) is None
 
     # but C allows multitenant auth and should therefore return the token from tenant_a when appropriate
-    client_c = AadClient(tenant_id=tenant_c, additionally_allowed_tenants=['*'], **common_args)
+    client_c = AadClient(tenant_id=tenant_c, additionally_allowed_tenants=["*"], **common_args)
     assert client_c.get_cached_access_token([scope]) is None
     token = client_c.get_cached_access_token([scope], tenant_id=tenant_a)
     assert token.token == expected_token

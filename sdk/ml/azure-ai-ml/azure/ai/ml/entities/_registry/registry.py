@@ -90,8 +90,8 @@ class Registry(Resource):
     ) -> None:
         """Dump the registry spec into a file in yaml format.
 
-        :param path: Path to a local file as the target, new file will be created, raises exception if the file exists.
-        :type path: str
+        :param dest: Path to a local file as the target, new file will be created, raises exception if the file exists.
+        :type dest: str
         """
         yaml_serialized = self._to_dict()
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False)
@@ -198,6 +198,7 @@ class Registry(Resource):
         """Build current parameterized schedule instance to a registry object before submission.
 
         :return: Rest registry.
+        :rtype: RestRegistry
         """
         identity = RestManagedServiceIdentity(type=RestManagedServiceIdentityType.SYSTEM_ASSIGNED)
         replication_locations = []

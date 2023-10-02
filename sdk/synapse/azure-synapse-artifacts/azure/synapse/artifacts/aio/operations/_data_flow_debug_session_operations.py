@@ -261,7 +261,7 @@ class DataFlowDebugSessionOperations:
     begin_create_data_flow_debug_session.metadata = {"url": "/createDataFlowDebugSession"}
 
     @distributed_trace
-    def query_data_flow_debug_sessions_by_workspace(  # pylint: disable=name-too-long
+    def query_data_flow_debug_sessions_by_workspace(
         self, **kwargs: Any
     ) -> AsyncIterable["_models.DataFlowDebugSessionInfo"]:
         """Query all active data flow debug sessions.

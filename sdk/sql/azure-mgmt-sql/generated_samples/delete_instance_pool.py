@@ -29,11 +29,10 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.instance_pools.begin_delete(
+    client.instance_pools.begin_delete(
         resource_group_name="group1",
         instance_pool_name="testIP",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/DeleteInstancePool.json

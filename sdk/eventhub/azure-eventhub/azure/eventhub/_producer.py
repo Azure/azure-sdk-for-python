@@ -164,7 +164,7 @@ class EventHubProducer(
 
         :param outcome: The outcome of the message delivery - success or failure.
         :type outcome: ~uamqp.constants.MessageSendResult
-        :param condition: Detail information of the outcome.
+        :param Exception condition: Detail information of the outcome.
 
         """
         self._outcome = outcome
@@ -212,7 +212,7 @@ class EventHubProducer(
                 if not event_data:
                     return event_data
                 # If AmqpTransports are not the same, create batch with correct BatchMessage.
-                if self._amqp_transport.TIMEOUT_FACTOR != event_data._amqp_transport.TIMEOUT_FACTOR: # pylint: disable=protected-access
+                if self._amqp_transport.KIND != event_data._amqp_transport.KIND: # pylint: disable=protected-access
                     # pylint: disable=protected-access
                     event_data = EventDataBatch._from_batch(
                         event_data._internal_events,
@@ -255,10 +255,10 @@ class EventHubProducer(
         :param partition_key: With the given partition_key, event data will land to
          a particular partition of the Event Hub decided by the service. partition_key
          could be omitted if event_data is of type ~azure.eventhub.EventDataBatch.
-        :type partition_key: str
+        :type partition_key: str or None
         :param timeout: The maximum wait time to send the event data.
          If not specified, the default wait time specified when the producer was created will be used.
-        :type timeout: float
+        :type timeout: float or None
 
         :raises: ~azure.eventhub.exceptions.AuthenticationError,
                  ~azure.eventhub.exceptions.ConnectError,

@@ -52,14 +52,14 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
             await self._client.__aexit__()
 
     def __init__(
-            self,
-            tenant_id: str,
-            client_id: str,
-            authorization_code: str,
-            redirect_uri: str,
-            *,
-            client_secret: Optional[str] = None,
-            **kwargs
+        self,
+        tenant_id: str,
+        client_id: str,
+        authorization_code: str,
+        redirect_uri: str,
+        *,
+        client_secret: Optional[str] = None,
+        **kwargs
     ) -> None:
         self._authorization_code: Optional[str] = authorization_code
         self._client_id = client_id
@@ -68,7 +68,9 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
         self._redirect_uri = redirect_uri
         super().__init__()
 
-    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+    async def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs: Any
+    ) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
@@ -80,17 +82,19 @@ class AuthorizationCodeCredential(AsyncContextManager, GetTokenMixin):
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
             For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+            claims challenge following an authorization failure.
         :keyword str tenant_id: optional tenant to include in the token request.
-        :rtype: :class:`azure.core.credentials.AccessToken`
+
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
           attribute gives a reason. Any error response from Azure Active Directory is available as the error's
           ``response`` attribute.
         """
-        return await super().get_token(*scopes, **kwargs)
+        return await super().get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
 
-    async def _acquire_token_silently(
-        self, *scopes: str, **kwargs: Any
-    ) -> Optional[AccessToken]:
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:

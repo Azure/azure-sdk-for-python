@@ -6,6 +6,7 @@
 import logging
 from pathlib import Path
 import os
+from typing import Dict
 
 from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 
@@ -95,7 +96,8 @@ class AzureMlImageContext(object):
     def docker_azureml_app_path(self) -> str:
         """Returns the app path inside the local endpoint container.
 
-        :return: str
+        :return: The app path
+        :rtype: str
         """
         return self._docker_azureml_app_path
 
@@ -103,22 +105,26 @@ class AzureMlImageContext(object):
     def docker_conda_file_name(self) -> str:
         """Returns the name of the conda file to copy into docker image.
 
-        :return: str
+        :return: The conda file name
+        :rtype: str
         """
         return self._docker_conda_file_name  # pylint: disable=no-member
 
     @property
-    def volumes(self) -> dict:
+    def volumes(self) -> Dict[str, Dict[str, Dict[str, str]]]:
         """Returns the volumes to mount when running the Azure ML Image locally.
 
-        :return: dict
+        :return: The dict of volumes
+        :rtype: Dict[str, Dict[str, Dict[str, str]]]
         """
         return self._volumes
 
     @property
-    def environment(self) -> dict:
+    def environment(self) -> Dict[str, str]:
         """Returns the environment variables to set when running the Azure ML Image locally.
 
-        :return: dict
+
+        :return: A dict of environment variable names to values
+        :rtype: Dict[str, str]
         """
         return self._environment

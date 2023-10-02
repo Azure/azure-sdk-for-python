@@ -29,6 +29,7 @@ from azure.data.tables._models import UpdateMode
 from azure.core import MatchConditions
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError
 
+
 class ConditionalUpdateSamples(object):
     def __init__(self):
         load_dotenv(find_dotenv())
@@ -36,10 +37,8 @@ class ConditionalUpdateSamples(object):
         self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
         self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
-        self.connection_string = (
-            "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
-                self.account_name, self.access_key, self.endpoint_suffix
-            )
+        self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
+            self.account_name, self.access_key, self.endpoint_suffix
         )
         self.table_name_prefix = "SampleConditionalUpdate"
         self.entity1 = {
@@ -49,18 +48,20 @@ class ConditionalUpdateSamples(object):
             "color": "Purple",
             "price": 4.99,
             "last_updated": datetime.today(),
-            "product_id": uuid4()
+            "product_id": uuid4(),
         }
         self.entity2 = {
             "PartitionKey": "color",
             "RowKey": "brand",
             "color": "Red",
             "inventory_count": 42,
-            "barcode": b"135aefg8oj0ld58" # cspell:disable-line
+            "barcode": b"135aefg8oj0ld58",  # cspell:disable-line
         }
 
     def conditional_update_basic(self):
-        with TableClient.from_connection_string(self.connection_string, self.table_name_prefix + uuid4().hex) as table_client:
+        with TableClient.from_connection_string(
+            self.connection_string, self.table_name_prefix + uuid4().hex
+        ) as table_client:
             table_client.create_table()
             metadata1 = table_client.create_entity(entity=self.entity1)
             print("Entity:")
@@ -69,27 +70,43 @@ class ConditionalUpdateSamples(object):
             # Merge properties of an entity with one that already existed in a table.
             # This operation will only succeed if the entity has not been modified since we last retrieved the Etag.
             try:
-                metadata2 = table_client.update_entity(entity=self.entity2, mode=UpdateMode.MERGE, match_condition=MatchConditions.IfNotModified, etag=metadata1["etag"])
+                metadata2 = table_client.update_entity(
+                    entity=self.entity2,
+                    mode=UpdateMode.MERGE,
+                    match_condition=MatchConditions.IfNotModified,
+                    etag=metadata1["etag"],
+                )
             except ResourceModifiedError:
                 print("This entity has been altered and may no longer be in the expected state.")
-            entity2 = table_client.get_entity(partition_key=self.entity1["PartitionKey"], row_key=self.entity1["RowKey"])
+            entity2 = table_client.get_entity(
+                partition_key=self.entity1["PartitionKey"], row_key=self.entity1["RowKey"]
+            )
             print("Entity after merge:")
             print(entity2)
 
             # Update an existing entity by replacing all of its properties with those specified.
             # This operation will only succeed if the entity has not been modified since we last retrieved the Etag.
             try:
-                table_client.update_entity(entity=self.entity2, mode=UpdateMode.REPLACE, match_condition=MatchConditions.IfNotModified, etag=metadata2["etag"])
+                table_client.update_entity(
+                    entity=self.entity2,
+                    mode=UpdateMode.REPLACE,
+                    match_condition=MatchConditions.IfNotModified,
+                    etag=metadata2["etag"],
+                )
             except ResourceModifiedError:
                 print("This entity has been altered and may no longer be in the expected state.")
-            entity3 = table_client.get_entity(partition_key=self.entity1["PartitionKey"], row_key=self.entity1["RowKey"])
+            entity3 = table_client.get_entity(
+                partition_key=self.entity1["PartitionKey"], row_key=self.entity1["RowKey"]
+            )
             print("Entity after replace:")
             print(entity3)
 
             table_client.delete_table()
-    
+
     def conditional_update_with_a_target_field(self):
-        with TableClient.from_connection_string(self.connection_string, self.table_name_prefix + uuid4().hex) as table_client:
+        with TableClient.from_connection_string(
+            self.connection_string, self.table_name_prefix + uuid4().hex
+        ) as table_client:
             table_client.create_table()
             table_client.create_entity(entity=self.entity1)
             target_field = "barcode"
@@ -99,13 +116,19 @@ class ConditionalUpdateSamples(object):
             try:
                 table_client.create_entity(entity=self.entity2)
             except ResourceExistsError:
-                entity = table_client.get_entity(partition_key=self.entity2["PartitionKey"], row_key=self.entity2["RowKey"])
+                entity = table_client.get_entity(
+                    partition_key=self.entity2["PartitionKey"], row_key=self.entity2["RowKey"]
+                )
                 if target_field not in entity:
                     table_client.update_entity(
-                        entity={"PartitionKey": self.entity2["PartitionKey"], "RowKey": self.entity2["RowKey"], target_field: "foo"},
+                        entity={
+                            "PartitionKey": self.entity2["PartitionKey"],
+                            "RowKey": self.entity2["RowKey"],
+                            target_field: "foo",
+                        },
                         mode=UpdateMode.MERGE,
                         match_condition=MatchConditions.IfNotModified,
-                        etag=entity.metadata["etag"]
+                        etag=entity.metadata["etag"],
                     )
 
             table_client.delete_table()

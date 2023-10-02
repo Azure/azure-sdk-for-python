@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=no-self-use
 
 import logging
 from typing import Any
@@ -23,7 +22,7 @@ from azure.ai.ml.constants._job.job import JobType
 
 module_logger = logging.getLogger(__name__)
 
-
+# pylint: disable-next=name-too-long
 class BatchPipelineComponentDeploymentConfiguarationsSchema(metaclass=PatchedSchemaMeta):
     component_id = fields.Str()
     job = UnionField(

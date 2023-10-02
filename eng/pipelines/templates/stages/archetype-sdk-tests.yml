@@ -155,17 +155,21 @@ stages:
         timeoutInMinutes: 90
 
         variables:
-          PythonVersion: '3.9'
+          PythonVersion: '3.7'
 
         pool:
           name: azsdk-pool-mms-ubuntu-2004-general
           vmImage: MMSUbuntu20.04
 
         steps:
-          - pwsh: |
+          - task: UsePythonVersion@0
+            displayName: 'Use Python 3.7'
+            inputs:
+             versionSpec: '3.7'
+          - script: |
               python -m pip install setuptools==58.3.0
-              python -m pip install -r eng/ci_tools.txt 
-            displayName: 'Install Necessary Dependencies'
+              python -m pip install -r eng/ci_tools.txt
+            displayName: 'Prep Environment'
           - task: PythonScript@0
             displayName: 'Run Pylint Next'
             continueOnError: true
@@ -178,7 +182,8 @@ stages:
                 --toxenv="next-pylint"
                 --disablecov
                 --filter-type="Omit_management"
-            env: ${{ parameters.EnvVars }}
+            env:
+              GH_TOKEN: $(azuresdk-github-pat)
 
           - task: PythonScript@0
             displayName: 'Run MyPy Next'
@@ -191,7 +196,8 @@ stages:
                 --service="${{ parameters.ServiceDirectory }}" 
                 --toxenv="next-mypy"
                 --disablecov
-            env: ${{ parameters.EnvVars }}
+            env:
+              GH_TOKEN: $(azuresdk-github-pat)
 
           - task: PythonScript@0
             displayName: 'Run Pyright Next'
@@ -204,3 +210,18 @@ stages:
                 --service="${{ parameters.ServiceDirectory }}"
                 --toxenv="next-pyright"
                 --disablecov
+            env:
+              GH_TOKEN: $(azuresdk-github-pat)
+
+          - task: PythonScript@0
+            displayName: 'Run Ruff'
+            continueOnError: true
+            inputs:
+              scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+              arguments: >-
+                "azure*" 
+                --mark_arg="${{ parameters.TestMarkArgument }}" 
+                --service="${{ parameters.ServiceDirectory }}" 
+                --toxenv="ruff"
+                --disablecov
+            env: ${{ parameters.EnvVars }}

@@ -24,6 +24,7 @@ clear-output-folder: true
 batch:
   - tag: release_query
   - tag: release_metrics
+  - tag: release_metrics_batch
 ```
 
 ## Query
@@ -52,6 +53,18 @@ title: MonitorMetricsClient
 description: Azure Monitor Metrics Python Client
 ```
 
+### Metrics Batch
+
+These settings apply only when `--tag=release_metrics` is specified on the command line.
+
+```yaml $(tag) == 'release_metrics_batch'
+input-file:
+    - https://raw.githubusercontent.com/srnagar/azure-rest-api-specs/154cb5c6d5bdd2b183ea8d9d1b7e5bbd0caa625b/specification/monitor/data-plane/Microsoft.Insights/preview/2023-05-01-preview/metricBatch.json
+output-folder: ../azure/monitor/query/_generated/metrics/batch
+title: MonitorBatchMetricsClient
+description: Azure Monitor Batch Metrics Python Client
+```
+
 ### Remove metadata operations
 
 ``` yaml
@@ -71,3 +84,12 @@ directive:
   transform: >
     $.required = ["name", "type"]
 ```
+
+### Remove default value
+
+``` yaml
+directive:
+- from: swagger-document
+  where: $.parameters[IntervalParameter]
+  transform: >
+    delete $.default

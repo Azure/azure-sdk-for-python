@@ -4,7 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pytest
-import six
 from azure.containerregistry import (
     RepositoryProperties,
     ArtifactManifestProperties,
@@ -16,6 +15,7 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ClientAuthenticationError
 
 from asynctestcase import AsyncContainerRegistryTestClass
+from testcase import is_public_endpoint
 from constants import HELLO_WORLD
 from preparer import acr_preparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -25,7 +25,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_list_repository_names(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -38,7 +38,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             prev = None
             async for repo in repositories:
                 count += 1
-                assert isinstance(repo, six.string_types)
+                assert isinstance(repo, str)
                 assert prev != repo
                 prev = repo
 
@@ -47,7 +47,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_list_repository_names_by_page(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -62,7 +62,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             async for page in repository_pages.by_page():
                 page_count = 0
                 async for repo in page:
-                    assert isinstance(repo, six.string_types)
+                    assert isinstance(repo, str)
                     assert prev != repo
                     prev = repo
                     page_count += 1
@@ -74,7 +74,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_get_repository_properties(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -88,7 +88,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_list_manifest_properties(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -103,7 +103,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_get_manifest_properties(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -118,7 +118,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_list_tag_properties(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -133,7 +133,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_delete_repository(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -145,7 +145,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_delete_tag(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -157,7 +157,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_delete_manifest(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -169,7 +169,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_update_repository_properties(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -181,7 +181,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_update_tag_properties(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -193,7 +193,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_update_manifest_properties(self, containerregistry_anonregistry_endpoint):
-        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+        if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
         async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
@@ -205,18 +205,18 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
 
 @pytest.mark.asyncio
 async def test_set_api_version():
-    containerregistry_endpoint="https://fake_url.azurecr.io"
-    
+    containerregistry_endpoint = "https://fake_url.azurecr.io"
+
     async with ContainerRegistryClient(endpoint=containerregistry_endpoint, audience="https://microsoft.com") as client:
         assert client._client._config.api_version == "2021-07-01"
-    
+
     async with ContainerRegistryClient(
-        endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15-preview"
+        endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version="2019-08-15-preview"
     ) as client:
         assert client._client._config.api_version == "2019-08-15-preview"
-    
+
     with pytest.raises(ValueError):
         async with ContainerRegistryClient(
-            endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15"
+            endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version="2019-08-15"
         ) as client:
             pass

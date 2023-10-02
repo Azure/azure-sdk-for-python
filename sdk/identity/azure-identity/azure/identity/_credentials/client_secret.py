@@ -40,13 +40,7 @@ class ClientSecretCredential(ClientCredentialBase):
             :caption: Create a ClientSecretCredential.
     """
 
-    def __init__(
-            self,
-            tenant_id: str,
-            client_id: str,
-            client_secret: str,
-            **kwargs: Any
-    ) -> None:
+    def __init__(self, tenant_id: str, client_id: str, client_secret: str, **kwargs: Any) -> None:
         if not client_id:
             raise ValueError("client_id should be the id of an Azure Active Directory application")
         if not client_secret:
@@ -57,8 +51,5 @@ class ClientSecretCredential(ClientCredentialBase):
             )
 
         super(ClientSecretCredential, self).__init__(
-            client_id=client_id,
-            client_credential=client_secret,
-            tenant_id=tenant_id,
-            **kwargs
+            client_id=client_id, client_credential=client_secret, tenant_id=tenant_id, **kwargs
         )

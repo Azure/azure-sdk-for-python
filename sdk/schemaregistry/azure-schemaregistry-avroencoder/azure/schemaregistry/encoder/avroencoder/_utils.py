@@ -115,7 +115,7 @@ def validate_message(message: Union[MessageType, MessageContent]):
             )
         schema_id = content_type_parts[1]
     except AttributeError:
-        raise InvalidContentError(
+        raise InvalidContentError(  # pylint:disable=raise-missing-from
             f"Content type {content_type} was not in the expected format of Avro MIME type + schema ID."
         )
 
@@ -147,7 +147,7 @@ def decode_content(
         ) from exc
 
     try:
-        dict_value = avro_encoder.decode(content, reader)  # type: Dict[str, Any]
+        dict_value: Dict[str, Any]= avro_encoder.decode(content, reader)
     except SchemaResolutionException as exc:
         raise InvalidSchemaError(
             f"Incompatible schemas.\nWriter's Schema: {schema_definition}\nReader's Schema: {readers_schema}",

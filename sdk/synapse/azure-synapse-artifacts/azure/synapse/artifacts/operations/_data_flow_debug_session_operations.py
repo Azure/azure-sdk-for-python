@@ -37,7 +37,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_create_data_flow_debug_session_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_create_data_flow_debug_session_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -59,9 +59,7 @@ def build_create_data_flow_debug_session_request(**kwargs: Any) -> HttpRequest: 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_query_data_flow_debug_sessions_by_workspace_request(  # pylint: disable=name-too-long
-    **kwargs: Any,
-) -> HttpRequest:
+def build_query_data_flow_debug_sessions_by_workspace_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -102,7 +100,7 @@ def build_add_data_flow_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_data_flow_debug_session_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_delete_data_flow_debug_session_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -238,7 +236,7 @@ class DataFlowDebugSessionOperations:
         request: _models.CreateDataFlowDebugSessionRequest,
         *,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> LROPoller[_models.CreateDataFlowDebugSessionResponse]:
         """Creates a data flow debug session.
 
@@ -331,7 +329,7 @@ class DataFlowDebugSessionOperations:
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs,
+                **kwargs
             )
         kwargs.pop("error_map", None)
 
@@ -365,7 +363,7 @@ class DataFlowDebugSessionOperations:
     begin_create_data_flow_debug_session.metadata = {"url": "/createDataFlowDebugSession"}
 
     @distributed_trace
-    def query_data_flow_debug_sessions_by_workspace(  # pylint: disable=name-too-long
+    def query_data_flow_debug_sessions_by_workspace(
         self, **kwargs: Any
     ) -> Iterable["_models.DataFlowDebugSessionInfo"]:
         """Query all active data flow debug sessions.
@@ -560,7 +558,7 @@ class DataFlowDebugSessionOperations:
         request: _models.DeleteDataFlowDebugSessionRequest,
         *,
         content_type: str = "application/json",
-        **kwargs: Any,
+        **kwargs: Any
     ) -> None:
         """Deletes a data flow debug session.
 
@@ -825,7 +823,7 @@ class DataFlowDebugSessionOperations:
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
-                **kwargs,
+                **kwargs
             )
         kwargs.pop("error_map", None)
 

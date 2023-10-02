@@ -22,7 +22,9 @@ class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
         self._credential = credential
         if self._credential is None:
             # pylint: disable=line-too-long
-            self._exchange_client = AnonymousACRExchangeClient(endpoint) #  type: Union[AnonymousACRExchangeClient, ACRExchangeClient]
+            self._exchange_client = AnonymousACRExchangeClient(
+                endpoint
+            )  #  type: Union[AnonymousACRExchangeClient, ACRExchangeClient]
             # pylint: enable=line-too-long
         else:
             self._exchange_client = ACRExchangeClient(endpoint, self._credential, **kwargs)
@@ -31,7 +33,9 @@ class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
         """Called before the policy sends a request.
         The base implementation authorizes the request with a bearer token.
 
-        :param ~azure.core.pipeline.PipelineRequest request: the request
+        :param ~azure.core.pipeline.PipelineRequest request: The pipeline request object.
+        :return: None
+        :rtype: None
         """
         # Future caching implementation will be included here
         pass  # pylint: disable=unnecessary-pass
@@ -39,7 +43,9 @@ class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
     async def send(self, request: PipelineRequest) -> PipelineResponse:
         """Authorizes a request with a bearer token, possibly handling an authentication challenge
 
-        :param ~azure.core.pipeline.PipelineRequest request: the request
+        :param ~azure.core.pipeline.PipelineRequest request: The pipeline request object.
+        :return: The pipeline response object.
+        :rtype: ~azure.core.pipeline.PipelineResponse
         """
         _enforce_https(request)
 
@@ -50,7 +56,7 @@ class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
         if response.http_response.status_code == 401:
             challenge = response.http_response.headers.get("WWW-Authenticate")
             if challenge and await self.on_challenge(request, response, challenge):
-                if request.http_request.body and hasattr(request.http_request.body, 'read'):
+                if request.http_request.body and hasattr(request.http_request.body, "read"):
                     try:
                         # attempt to rewind the body to the initial position
                         request.http_request.body.seek(0, SEEK_SET)
@@ -70,8 +76,9 @@ class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
         :param ~azure.core.pipeline.PipelineResponse response: the resource provider's response
         :param str challenge: response's WWW-Authenticate header, unparsed. It may contain multiple challenges.
         :returns: a bool indicating whether the policy should send the request
+        :rtype: bool
         """
-        # pylint:disable=unused-argument,no-self-use
+        # pylint:disable=unused-argument
 
         access_token = await self._exchange_client.get_acr_access_token(challenge)
         if access_token is not None:

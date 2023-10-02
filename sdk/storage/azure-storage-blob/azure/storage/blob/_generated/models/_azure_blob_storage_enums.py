@@ -86,6 +86,7 @@ class ArchiveStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     REHYDRATE_PENDING_TO_HOT = "rehydrate-pending-to-hot"
     REHYDRATE_PENDING_TO_COOL = "rehydrate-pending-to-cool"
+    REHYDRATE_PENDING_TO_COLD = "rehydrate-pending-to-cold"
 
 
 class BlobCopySourceTags(str, Enum, metaclass=CaseInsensitiveEnumMeta):

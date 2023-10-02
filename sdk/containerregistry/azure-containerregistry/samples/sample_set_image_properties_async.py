@@ -26,8 +26,6 @@ USAGE:
     2) CONTAINERREGISTRY_TENANT_ID - The service principal's tenant ID
     3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
     4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
-    5) CONTAINERREGISTRY_RESOURCE_GROUP - The resource group name
-    6) CONTAINERREGISTRY_REGISTRY_NAME - The registry name
 """
 import asyncio
 import os
@@ -44,16 +42,11 @@ class SetImagePropertiesAsync(object):
         self.credential = get_credential(self.authority, is_async=True)
 
     async def set_image_properties(self):
-        load_registry()
+        load_registry(self.endpoint)
         # Instantiate an instance of ContainerRegistryClient
         async with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Set permissions on image "library/hello-world:v1"
-            await client.update_manifest_properties(
-                "library/hello-world",
-                "v1",
-                can_write=False,
-                can_delete=False
-            )        
+            await client.update_manifest_properties("library/hello-world", "v1", can_write=False, can_delete=False)
         # After this update, if someone were to push an update to `<registry endpoint>\library\hello-world:v1`,
         # it would fail. It's worth noting that if this image also had another tag, such as `latest`,
         # and that tag did not have permissions set to prevent reads or deletes, the image could still be

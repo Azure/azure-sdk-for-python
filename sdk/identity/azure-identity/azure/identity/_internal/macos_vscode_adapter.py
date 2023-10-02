@@ -14,7 +14,7 @@ _LOGGER = logging.getLogger(__name__)
 def get_user_settings():
     try:
         path = os.path.join(os.environ["HOME"], "Library", "Application Support", "Code", "User", "settings.json")
-        with open(path) as file:
+        with open(path, encoding="utf-8") as file:
             return json.load(file)
     except Exception as ex:  # pylint:disable=broad-except
         _LOGGER.debug('Exception reading VS Code user settings: "%s"', ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))

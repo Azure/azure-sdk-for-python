@@ -20,9 +20,13 @@ from azure.core.pipeline.policies import (
 from .user_agent import USER_AGENT
 
 
-def _get_config(**kwargs):
-    """Configuration common to a/sync pipelines"""
-    config = Configuration(**kwargs)
+def _get_config(**kwargs) -> Configuration:
+    """Configuration common to a/sync pipelines.
+
+    :return: A configuration object.
+    :rtype: ~azure.core.configuration.Configuration
+    """
+    config: Configuration = Configuration(**kwargs)
     config.custom_hook_policy = CustomHookPolicy(**kwargs)
     config.headers_policy = HeadersPolicy(**kwargs)
     config.http_logging_policy = HttpLoggingPolicy(**kwargs)
@@ -62,7 +66,10 @@ def build_pipeline(transport=None, policies=None, **kwargs):
         config.retry_policy = RetryPolicy(**kwargs)
         policies = _get_policies(config, **kwargs)
     if not transport:
-        from azure.core.pipeline.transport import RequestsTransport
+        from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import, no-name-in-module
+            RequestsTransport,
+        )
+
         transport = RequestsTransport(**kwargs)
 
     return Pipeline(transport, policies=policies)
@@ -78,7 +85,9 @@ def build_async_pipeline(transport=None, policies=None, **kwargs):
         config.retry_policy = AsyncRetryPolicy(**kwargs)
         policies = _get_policies(config, **kwargs)
     if not transport:
-        from azure.core.pipeline.transport import AioHttpTransport
+        from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import, no-name-in-module
+            AioHttpTransport,
+        )
 
         transport = AioHttpTransport(**kwargs)
 

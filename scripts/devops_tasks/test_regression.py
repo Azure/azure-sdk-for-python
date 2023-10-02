@@ -125,7 +125,7 @@ class RegressionTest:
 
             self.whl_path = os.path.join(
                 self.context.whl_directory,
-                find_whl(pkg_name, self.context.pkg_version, self.context.whl_directory),
+                find_whl(self.context.whl_directory, pkg_name, self.context.pkg_version),
             )
             if find_packages_missing_on_pypi(self.whl_path):
                 logging.error("Required packages are not available on PyPI. Skipping regression test")

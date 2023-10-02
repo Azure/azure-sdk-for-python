@@ -65,8 +65,8 @@ class DataTransferJob(Job, JobIOMixin):
     :type task: str
     :param data_copy_mode: data copy mode in copy task, possible value is "merge_with_overwrite", "fail_if_conflict".
     :type data_copy_mode: str
-    :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :keyword kwargs: A dictionary of additional configuration parameters.
+    :paramtype kwargs: dict
     """
 
     def __init__(
@@ -175,12 +175,14 @@ class DataTransferCopyJob(DataTransferJob):
         loaded_data = load_from_dict(DataTransferCopyJobSchema, data, context, additional_message, **kwargs)
         return DataTransferCopyJob(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "DataTransferCopyComponent":
         """Translate a data transfer copy job to component.
 
         :param context: Context of data transfer job YAML file.
-        :param kwargs: Extra arguments.
+        :type context: dict
+        :keyword kwargs: Extra arguments.
         :return: Translated data transfer copy component.
+        :rtype: DataTransferCopyComponent
         """
         from azure.ai.ml.entities._component.datatransfer_component import (
             DataTransferCopyComponent,
@@ -200,12 +202,14 @@ class DataTransferCopyJob(DataTransferJob):
             data_copy_mode=self.data_copy_mode,
         )
 
-    def _to_node(self, context: Optional[Dict] = None, **kwargs):
+    def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "DataTransferCopy":
         """Translate a data transfer copy job to a pipeline node.
 
         :param context: Context of data transfer job YAML file.
-        :param kwargs: Extra arguments.
+        :type context: dict
+        :keyword kwargs: Extra arguments.
         :return: Translated data transfer component.
+        :rtype: DataTransferCopy
         """
         from azure.ai.ml.entities._builders import DataTransferCopy
 
@@ -245,12 +249,14 @@ class DataTransferImportJob(DataTransferJob):
         loaded_data = load_from_dict(DataTransferImportJobSchema, data, context, additional_message, **kwargs)
         return DataTransferImportJob(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> str:
         """Translate a data transfer import job to component.
 
         :param context: Context of data transfer job YAML file.
-        :param kwargs: Extra arguments.
+        :type context: dict
+        :keyword kwargs: Extra arguments.
         :return: Translated data transfer import component.
+        :rtype: str
         """
 
         if self.source.type == ExternalDataType.DATABASE:
@@ -260,12 +266,14 @@ class DataTransferImportJob(DataTransferJob):
 
         return component
 
-    def _to_node(self, context: Optional[Dict] = None, **kwargs):
+    def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "DataTransferImport":
         """Translate a data transfer import job to a pipeline node.
 
         :param context: Context of data transfer job YAML file.
-        :param kwargs: Extra arguments.
+        :type context: dict
+        :keyword kwargs: Extra arguments.
         :return: Translated data transfer import node.
+        :rtype: DataTransferImport
         """
         from azure.ai.ml.entities._builders import DataTransferImport
 
@@ -305,12 +313,14 @@ class DataTransferExportJob(DataTransferJob):
         loaded_data = load_from_dict(DataTransferExportJobSchema, data, context, additional_message, **kwargs)
         return DataTransferExportJob(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> str:
         """Translate a data transfer export job to component.
 
         :param context: Context of data transfer job YAML file.
-        :param kwargs: Extra arguments.
+        :type context: dict
+        :keyword kwargs: Extra arguments.
         :return: Translated data transfer export component.
+        :rtype: str
         """
         if self.sink.type == ExternalDataType.DATABASE:
             component = DataTransferBuiltinComponentUri.EXPORT_DATABASE
@@ -324,12 +334,14 @@ class DataTransferExportJob(DataTransferJob):
             )
         return component
 
-    def _to_node(self, context: Optional[Dict] = None, **kwargs):
+    def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "DataTransferExport":
         """Translate a data transfer export job to a pipeline node.
 
         :param context: Context of data transfer job YAML file.
-        :param kwargs: Extra arguments.
+        :type context: dict
+        :keyword kwargs: Extra arguments.
         :return: Translated data transfer export node.
+        :rtype: DataTransferExport
         """
         from azure.ai.ml.entities._builders import DataTransferExport
 

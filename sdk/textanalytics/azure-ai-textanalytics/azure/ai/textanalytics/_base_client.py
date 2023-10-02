@@ -18,7 +18,7 @@ class TextAnalyticsApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cognitive Service for Language or Text Analytics API versions supported by this package"""
 
     #: This is the default version and corresponds to the Cognitive Service for Language API.
-    V2022_10_01_PREVIEW = "2022-10-01-preview"
+    V2023_04_01 = "2023-04-01"
     #: This version corresponds to the Cognitive Service for Language API.
     V2022_05_01 = "2022-05-01"
     #: This version corresponds to Text Analytics API.
@@ -81,8 +81,8 @@ class TextAnalyticsClientBase:
         )
         try:
             endpoint = endpoint.rstrip("/")
-        except AttributeError:
-            raise ValueError("Parameter 'endpoint' must be a string.")
+        except AttributeError as exc:
+            raise ValueError("Parameter 'endpoint' must be a string.") from exc
 
         self._api_version = api_version if api_version is not None else DEFAULT_API_VERSION
         if hasattr(self._api_version, "value"):

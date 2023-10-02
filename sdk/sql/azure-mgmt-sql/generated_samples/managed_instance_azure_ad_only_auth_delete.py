@@ -29,12 +29,11 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.managed_instance_azure_ad_only_authentications.begin_delete(
+    client.managed_instance_azure_ad_only_authentications.begin_delete(
         resource_group_name="Default-SQL-SouthEastAsia",
         managed_instance_name="managedInstance",
         authentication_name="Default",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/ManagedInstanceAzureADOnlyAuthDelete.json

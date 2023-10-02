@@ -34,15 +34,13 @@ def main():
         account_name="accountName",
         deployment_name="deploymentName",
         deployment={
-            "properties": {
-                "model": {"format": "OpenAI", "name": "ada", "version": "1"},
-                "scaleSettings": {"capacity": 1, "scaleType": "Manual"},
-            }
+            "properties": {"model": {"format": "OpenAI", "name": "ada", "version": "1"}},
+            "sku": {"capacity": 1, "name": "Standard"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2022-12-01/examples/PutDeployment.json
+# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2023-05-01/examples/PutDeployment.json
 if __name__ == "__main__":
     main()

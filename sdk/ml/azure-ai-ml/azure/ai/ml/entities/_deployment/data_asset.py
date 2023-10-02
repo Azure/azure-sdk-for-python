@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any, Dict, Optional
+from typing import Dict, Optional
 
 from azure.ai.ml._schema._deployment.online.data_asset_schema import DataAssetSchema
 from azure.ai.ml._utils._experimental import experimental

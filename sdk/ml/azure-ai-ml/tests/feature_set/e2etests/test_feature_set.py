@@ -2,23 +2,21 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from pathlib import Path
-from typing import Callable
 import datetime
 import time
+from pathlib import Path
+from typing import Callable
 
 import pytest
+from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient
-from azure.ai.ml.entities._load_functions import load_feature_set
-
-from azure.ai.ml.entities._assets._artifacts.feature_set import FeatureSet
-from azure.core.paging import ItemPaged
-from azure.core.polling import LROPoller
-
 from azure.ai.ml.entities import FeatureSet, MaterializationComputeResource, MaterializationSettings
+from azure.ai.ml.entities._assets._artifacts.feature_set import FeatureSet
+from azure.ai.ml.entities._load_functions import load_feature_set
 
 
 @pytest.mark.e2etest
@@ -28,7 +26,7 @@ class TestFeatureSet(AzureRecordedTestCase):
     def test_create_and_get(self, feature_store_client: MLClient, tmp_path: Path, randstr: Callable[[], str]) -> None:
         fset_name = f"e2etest_{randstr('fset_name')}"
         fset_description = "Feature set description"
-        fs_entity_name = "e2etest_fs_entity_name"
+        fs_entity_name = "e2etest_fs_entity"
         version = "1"
 
         params_override = [
@@ -68,7 +66,7 @@ class TestFeatureSet(AzureRecordedTestCase):
     ) -> None:
         fset_name = f"e2etest_fset_jobs"
         fset_description = "Feature set description"
-        fs_entity_name = "e2etest_fs_entity_name"
+        fs_entity_name = "e2etest_fs_entity"
         version = "1"
 
         params_override = [

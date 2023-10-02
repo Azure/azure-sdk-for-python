@@ -19,11 +19,12 @@ from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
 
-set_logger_provider(LoggerProvider())
+logger_provider = LoggerProvider()
+set_logger_provider(logger_provider)
 exporter = AzureMonitorLogExporter.from_connection_string(
     os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
-get_logger_provider().add_log_record_processor(BatchLogRecordProcessor(exporter))
+get_logger_provider().add_log_record_processor(BatchLogRecordProcessor(exporter, schedule_delay_millis=60000))
 
 # Attach LoggingHandler to namespaced logger
 handler = LoggingHandler()
@@ -33,4 +34,6 @@ logger.setLevel(logging.INFO)
 
 logger.info("Hello World!")
 
-input()
+# Telemetry records are flushed automatically upon application exit
+# If you would like to flush records manually yourself, you can call force_flush()
+logger_provider.force_flush()

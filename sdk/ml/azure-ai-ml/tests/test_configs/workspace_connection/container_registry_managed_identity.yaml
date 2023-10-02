@@ -1,7 +1,6 @@
 name: test_ws_conn_cr_managed
 type: container_registry
 target: https://test-feed.com
-expiryTime: 01/05/2025 00:00:00
 credentials:
   type: managed_identity
   client_id: client_id

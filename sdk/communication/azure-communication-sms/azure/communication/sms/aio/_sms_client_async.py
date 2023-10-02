@@ -16,7 +16,8 @@ from azure.communication.sms._models import SmsSendResult
 from azure.core.credentials import AzureKeyCredential
 
 from .._generated.aio._azure_communication_sms_service import AzureCommunicationSMSService
-from .._shared.utils import parse_connection_str, get_authentication_policy, get_current_utc_time
+from .._shared.auth_policy_utils import get_authentication_policy
+from .._shared.utils import parse_connection_str, get_current_utc_time
 from .._version import SDK_MONIKER
 
 class SmsClient(object): # pylint: disable=client-accepts-api-version-keyword
@@ -39,7 +40,7 @@ class SmsClient(object): # pylint: disable=client-accepts-api-version-keyword
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
         except AttributeError:
-            raise ValueError("Account URL must be a string.")
+            raise ValueError("Account URL must be a string.") # pylint: disable=raise-missing-from
 
         if not credential:
             raise ValueError(
@@ -78,7 +79,7 @@ class SmsClient(object): # pylint: disable=client-accepts-api-version-keyword
 
         return cls(endpoint, access_key, **kwargs)
 
-    @distributed_trace_async()
+    @distributed_trace_async
     async def send(self, from_, # type: str
              to, # type: Union[str, List[str]]
              message, # type: str

@@ -64,6 +64,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/trafficmanager/resource-manager/Microsoft.Network/preview/2022-04-01-preview/examples/Profile-PUT-WithAliasing.json
+# x-ms-original-file: specification/trafficmanager/resource-manager/Microsoft.Network/stable/2022-04-01/examples/Profile-PUT-WithAliasing.json
 if __name__ == "__main__":
     main()

@@ -21,17 +21,17 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models._azure_machine_learning_
     StochasticOptimizer,
 )
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_data_binding_expression, load_yaml
-from azure.ai.ml.constants._common import ARM_ID_PREFIX
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, AssetTypes, InputOutputModes
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.entities import CommandComponent, Component, Job, PipelineJob, SparkComponent
 from azure.ai.ml.entities._assets import Code
-from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._component.datatransfer_component import DataTransferComponent
+from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
     INPUT_MOUNT_MAPPING_FROM_REST,
-    validate_pipeline_input_key_contains_allowed_characters,
+    validate_pipeline_input_key_characters,
 )
 from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_dict_to_str_dict
 from azure.ai.ml.entities._job.job_service import (
@@ -55,10 +55,10 @@ class TestPipelineJobSchema:
     def test_validate_pipeline_job_keys(self):
         def validator(key, assert_valid=True):
             if assert_valid:
-                validate_pipeline_input_key_contains_allowed_characters(key)
+                validate_pipeline_input_key_characters(key)
                 return
             with pytest.raises(Exception):
-                validate_pipeline_input_key_contains_allowed_characters(key)
+                validate_pipeline_input_key_characters(key)
 
         validator("a.vsd2..", assert_valid=False)
         validator("a..b", assert_valid=False)
@@ -1848,3 +1848,7 @@ class TestPipelineJobSchema:
     ):
         pipeline: PipelineJob = load_job(source=pipeline_job_path)
         pipeline._to_rest_object()
+
+    def test_pipeline_job_with_spark_component(self):
+        yaml_path = r"./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_spark_component.yml"
+        load_job(yaml_path)

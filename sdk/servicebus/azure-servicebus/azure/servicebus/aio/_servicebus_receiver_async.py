@@ -14,7 +14,7 @@ import warnings
 from enum import Enum
 from typing import Any, List, Optional, AsyncIterator, Union, TYPE_CHECKING, cast
 
-from ..exceptions import ServiceBusError
+from ..exceptions import MessageLockLostError
 from ._servicebus_session_async import ServiceBusSession
 from ._base_handler_async import BaseHandler
 from .._common.message import ServiceBusReceivedMessage
@@ -132,6 +132,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     :keyword str client_identifier: A string-based identifier to uniquely identify the client instance.
      Service Bus will associate it with some error messages for easier correlation of errors. If not specified,
      a unique id will be generated.
+    :keyword float socket_timeout: The time in seconds that the underlying socket on the connection should
+     wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
+     and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
+     a larger than default value may need to be passed in.
     """
 
     def __init__(
@@ -230,7 +234,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     def __aiter__(self):
         return self._iter_contextual_wrapper()
 
-    async def _inner_anext(self, wait_time=None):
+    async def _inner_anext(self, wait_time=None) -> ServiceBusReceivedMessage:
         # We do this weird wrapping such that an imperitive next() call, and a generator-based iter both trace sanely.
         self._check_live()
         while True:
@@ -240,7 +244,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 self._message_iter = None
                 raise
 
-    async def __anext__(self):
+    async def __anext__(self) -> ServiceBusReceivedMessage:
         try:
             self._receive_context.set()
             message = await self._inner_anext()
@@ -442,13 +446,11 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
         # The following condition check is a hot fix for settling a message received for non-session queue after
         # lock expiration.
-        # uamqp doesn't have the ability to receive disposition result returned from the service after settlement,
-        # so there's no way we could tell whether a disposition succeeds or not and there's no error condition info.
-        # Throwing a general message error type here gives us the evolvability to have more fine-grained exception
-        # subclasses in the future after we add the missing feature support in uamqp.
-        # see issue: https://github.com/Azure/azure-uamqp-c/issues/274
+        # pyamqp doesn't currently (and uamqp doesn't have the ability to) wait to receive disposition result returned
+        # from the service after settlement, so there's no way we could tell whether a disposition succeeds or not and
+        # there's no error condition info. (for uamqp, see issue: https://github.com/Azure/azure-uamqp-c/issues/274)
         if not self._session and message._lock_expired:
-            raise ServiceBusError(
+            raise MessageLockLostError(
                 message="The lock on the message lock has expired.",
                 error=message.auto_renew_error,
             )
@@ -575,8 +577,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          If no messages arrive, and no timeout is specified, this call will not return
          until the connection is closed. If specified, and no messages arrive for the
          timeout period, the iterator will stop.
-
-         :rtype AsyncIterator[ServiceBusReceivedMessage]
+        :return: An async iterator of messages.
+        :rtype asynciterator[~azure.servicebus.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
 
@@ -616,6 +618,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          If no messages arrive, and no timeout is specified, this call will not return
          until the connection is closed. If specified, and no messages arrive within the
          timeout period, an empty list will be returned.
+        :return: A list of messages received. If no messages are available, this will be an empty list.
         :rtype: list[~azure.servicebus.aio.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
@@ -634,7 +637,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         if max_message_count is not None and max_message_count <= 0:
             raise ValueError("The max_message_count must be greater than 0")
         start_time = time.time_ns()
-        messages = await self._do_retryable_operation(
+        messages: List[ServiceBusReceivedMessage] = await self._do_retryable_operation(
             self._receive,
             max_message_count=max_message_count,
             timeout=max_wait_time,
@@ -663,6 +666,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
          deferred.
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.
+        :returns: A list of the received messages.
         :rtype: list[~azure.servicebus.aio.ServiceBusReceivedMessage]
 
         .. admonition:: Example:
@@ -739,6 +743,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         :keyword int sequence_number: A message sequence number from which to start browsing messages.
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.
+        :return: A list of ~azure.servicebus.ServiceBusReceivedMessage objects.
         :rtype: list[~azure.servicebus.ServiceBusReceivedMessage]
 
         .. admonition:: Example:

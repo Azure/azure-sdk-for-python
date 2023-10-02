@@ -29,13 +29,12 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.post_rules.refresh_counters(
+    client.post_rules.refresh_counters(
         global_rulestack_name="lrs1",
         priority="1",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/paloaltonetworks/resource-manager/PaloAltoNetworks.Cloudngfw/preview/2022-08-29-preview/examples/PostRules_refreshCounters_MinimumSet_Gen.json
+# x-ms-original-file: specification/paloaltonetworks/resource-manager/PaloAltoNetworks.Cloudngfw/stable/2022-08-29/examples/PostRules_refreshCounters_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

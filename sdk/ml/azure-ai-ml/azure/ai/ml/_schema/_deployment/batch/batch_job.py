@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use,protected-access
+# pylint: disable=unused-argument,protected-access
 
 from typing import Any
 
@@ -85,12 +85,12 @@ class BatchJobSchema(PathAwareSchema):
                         data[EndpointYamlFields.BATCH_JOB_INPUT_DATA][key] = CustomModelJobInput(
                             mode=input_data.mode, uri=input_data.path
                         )  # pylint: disable=line-too-long
-                    if (
-                        input_data.type == InputTypes.INTEGER
-                        or input_data.type == InputTypes.NUMBER
-                        or input_data.type == InputTypes.STRING
-                        or input_data.type == InputTypes.BOOLEAN
-                    ):
+                    if input_data.type in {
+                        InputTypes.INTEGER,
+                        InputTypes.NUMBER,
+                        InputTypes.STRING,
+                        InputTypes.BOOLEAN,
+                    }:
                         data[EndpointYamlFields.BATCH_JOB_INPUT_DATA][key] = LiteralJobInput(
                             value=input_data.default
                         )  # pylint: disable=line-too-long

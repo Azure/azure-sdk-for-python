@@ -286,6 +286,7 @@ from ._cosmos_db_management_client_enums import ConnectorOffer
 from ._cosmos_db_management_client_enums import ContinuousTier
 from ._cosmos_db_management_client_enums import CreateMode
 from ._cosmos_db_management_client_enums import CreatedByType
+from ._cosmos_db_management_client_enums import CustomerManagedKeyStatus
 from ._cosmos_db_management_client_enums import DataType
 from ._cosmos_db_management_client_enums import DatabaseAccountKind
 from ._cosmos_db_management_client_enums import DefaultConsistencyLevel
@@ -602,6 +603,7 @@ __all__ = [
     "ContinuousTier",
     "CreateMode",
     "CreatedByType",
+    "CustomerManagedKeyStatus",
     "DataType",
     "DatabaseAccountKind",
     "DefaultConsistencyLevel",

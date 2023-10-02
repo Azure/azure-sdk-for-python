@@ -12,11 +12,7 @@ from .._constants import EnvironmentVariables
 
 
 class TokenFileMixin:
-    def __init__(
-            self,
-            token_file_path: str,
-            **_: Any
-    ) -> None:
+    def __init__(self, token_file_path: str, **_: Any) -> None:
         super(TokenFileMixin, self).__init__()
         self._jwt = ""
         self._last_read_time = 0
@@ -25,7 +21,7 @@ class TokenFileMixin:
     def _get_service_account_token(self) -> str:
         now = int(time.time())
         if now - self._last_read_time > 600:
-            with open(self._token_file_path) as f:
+            with open(self._token_file_path, encoding="utf-8") as f:
                 self._jwt = f.read()
             self._last_read_time = now
         return self._jwt
@@ -64,12 +60,12 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
     """
 
     def __init__(
-            self,
-            *,
-            tenant_id: Optional[str] = None,
-            client_id: Optional[str] = None,
-            token_file_path: Optional[str] = None,
-            **kwargs: Any
+        self,
+        *,
+        tenant_id: Optional[str] = None,
+        client_id: Optional[str] = None,
+        token_file_path: Optional[str] = None,
+        **kwargs: Any,
     ) -> None:
         tenant_id = tenant_id or os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         client_id = client_id or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
@@ -94,5 +90,5 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
             client_id=client_id,
             func=self._get_service_account_token,
             token_file_path=token_file_path,
-            **kwargs
+            **kwargs,
         )

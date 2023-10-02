@@ -354,6 +354,9 @@ class ContainerProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword int continuation_token_limit: **provisional keyword** The size limit in kb of the
+        response continuation token in the query response. Valid values are positive integers.
+        A value of 0 is the same as not passing a value (default no limit).
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
@@ -396,6 +399,9 @@ class ContainerProxy(object):
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         correlated_activity_id = GenerateGuidId()
         feed_options["correlatedActivityId"] = correlated_activity_id
+        continuation_token_limit = kwargs.pop("continuation_token_limit", None)
+        if continuation_token_limit is not None:
+            feed_options["responseContinuationTokenLimitInKb"] = continuation_token_limit
         if hasattr(response_hook, "clear"):
             response_hook.clear()
 
@@ -593,7 +599,6 @@ class ContainerProxy(object):
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
@@ -870,11 +875,21 @@ class ContainerProxy(object):
         partition_key: Union[str, int, float, bool],
         **kwargs: Any
     ) -> None:
-        """Exposes an API to delete all items with a single partition key without the user having
-         to explicitly call delete on each record in the partition key.
+        """The delete by partition key feature is an asynchronous, background operation that allows you to delete all
+        documents with the same logical partition key value, using the Cosmos SDK. The delete by partition key
+        operation is constrained to consume at most 10% of the total
+        available RU/s on the container each second. This helps in limiting the resources used by
+        this background task.
 
         :param partition_key: Partition key for the items to be deleted.
         :type partition_key: Any
+        :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
+        :keyword str post_trigger_include: trigger id to be used as post operation trigger.
+        :keyword str session_token: Token for use with Session consistency.
+        :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
+            has changed, and act according to the condition specified by the `match_condition` parameter.
+        :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword Callable response_hook: A callable invoked with the response metadata.
         :rtype: None
         """
         request_options = build_options(kwargs)

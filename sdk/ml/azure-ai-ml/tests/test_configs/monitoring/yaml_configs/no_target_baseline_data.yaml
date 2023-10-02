@@ -27,37 +27,26 @@ create_monitor:
     runtime_version: "3.2"
   monitoring_target:
     endpoint_deployment_id: azureml:iris-endpoint:my-iris-deployment
+    ml_task: classification
   monitoring_signals:
     data-drift-signal:
       type: data_drift
       metric_thresholds:
-        - applicable_feature_type: numerical
-          metric_name: jensen_shannon_distance
-          threshold: 0.5
-        - applicable_feature_type: categorical
-          metric_name: pearsons_chi_squared_test
-          threshold: 0.2
-      data_segment:
-        feature_name: foo
-        feature_values:
-          - a
-          - b
-          - c
+        numerical:
+          jensen_shannon_distance: 0.5
+        categorical:
+          pearsons_chi_squared_test: 0.2
     data-quality-signal:
       type: data_quality
       metric_thresholds:
-        - applicable_feature_type: numerical
-          metric_name: null_value_rate
-          threshold: 0.5
-        - applicable_feature_type: categorical
-          metric_name: out_of_bounds_rate
-          threshold: 0.2
+        numerical:
+          null_value_rate: 0.5
+        categorical:
+          out_of_bounds_rate: 0.2
     prediction-drift-signal:
       type: prediction_drift
       metric_thresholds:
-        - applicable_feature_type: numerical
-          metric_name: jensen_shannon_distance
-          threshold: 0.5
-        - applicable_feature_type: categorical
-          metric_name: population_stability_index
-          threshold: 0.2
+        numerical:
+          jensen_shannon_distance: 0.5
+        categorical:
+          pearsons_chi_squared_test: 0.2

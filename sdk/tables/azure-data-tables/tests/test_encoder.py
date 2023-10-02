@@ -71,15 +71,21 @@ class EncoderVerificationTransport(RequestsTransport):
     def send(self, request, **kwargs):
         if "verify_payload" in kwargs:
             verification = kwargs["verify_payload"]
-            assert request.body == verification, f"Request body '{request.body}' does not match expected: '{verification}'."
+            assert (
+                request.body == verification
+            ), f"Request body '{request.body}' does not match expected: '{verification}'."
         if "verify_url" in kwargs:
             verification = kwargs["verify_url"]
-            assert request.url.endswith(kwargs["verify_url"]), f"Request URL '{request.url}' does not match expected: '{verification}'."
+            assert request.url.endswith(
+                kwargs["verify_url"]
+            ), f"Request URL '{request.url}' does not match expected: '{verification}'."
         if "verify_headers" in kwargs:
             verification = kwargs["verify_headers"]
             for key, value in verification.items():
                 try:
-                    assert request.headers[key] == value, f"Request header '{key}' with value '{request.headers[key]}' does not match expected: '{value}'."
+                    assert (
+                        request.headers[key] == value
+                    ), f"Request header '{key}' with value '{request.headers[key]}' does not match expected: '{value}'."
                 except KeyError:
                     raise AssertionError(f"Request missing expected header '{key}' from set: '{request.headers}'.")
         raise VerificationSuccessful()

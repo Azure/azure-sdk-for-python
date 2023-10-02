@@ -1,5 +1,78 @@
 # Release History
 
+## 26.0.0 (2023-08-18)
+
+### Features Added
+
+  - Model IstioServiceMesh has a new parameter certificate_authority
+  - Model IstioServiceMesh has a new parameter revisions
+  - Model ManagedCluster has a new parameter upgrade_settings
+  - Model UpgradeOverrideSettings has a new parameter force_upgrade
+
+### Breaking Changes
+
+  - Model UpgradeOverrideSettings no longer has parameter control_plane_overrides
+
+## 25.0.0 (2023-07-26)
+
+### Features Added
+
+  - Model AgentPoolUpgradeSettings has a new parameter drain_timeout_in_minutes
+  - Model ManagedClusterIdentity has a new parameter delegated_resources
+
+### Breaking Changes
+
+  - Model AgentPool no longer has parameter capacity_reservation_group_id
+  - Model AgentPool no longer has parameter enable_custom_ca_trust
+  - Model AgentPool no longer has parameter message_of_the_day
+  - Model AgentPool no longer has parameter network_profile
+  - Model AgentPool no longer has parameter windows_profile
+  - Model ContainerServiceNetworkProfile no longer has parameter kube_proxy_config
+  - Model ContainerServiceNetworkProfile no longer has parameter monitoring
+  - Model ManagedCluster no longer has parameter creation_data
+  - Model ManagedCluster no longer has parameter enable_namespace_resources
+  - Model ManagedCluster no longer has parameter guardrails_profile
+  - Model ManagedCluster no longer has parameter ingress_profile
+  - Model ManagedCluster no longer has parameter node_resource_group_profile
+  - Model ManagedCluster no longer has parameter service_mesh_profile
+  - Model ManagedCluster no longer has parameter upgrade_settings
+  - Model ManagedClusterAPIServerAccessProfile no longer has parameter enable_vnet_integration
+  - Model ManagedClusterAPIServerAccessProfile no longer has parameter subnet_id
+  - Model ManagedClusterAgentPoolProfile no longer has parameter capacity_reservation_group_id
+  - Model ManagedClusterAgentPoolProfile no longer has parameter enable_custom_ca_trust
+  - Model ManagedClusterAgentPoolProfile no longer has parameter message_of_the_day
+  - Model ManagedClusterAgentPoolProfile no longer has parameter network_profile
+  - Model ManagedClusterAgentPoolProfile no longer has parameter windows_profile
+  - Model ManagedClusterAgentPoolProfileProperties no longer has parameter capacity_reservation_group_id
+  - Model ManagedClusterAgentPoolProfileProperties no longer has parameter enable_custom_ca_trust
+  - Model ManagedClusterAgentPoolProfileProperties no longer has parameter message_of_the_day
+  - Model ManagedClusterAgentPoolProfileProperties no longer has parameter network_profile
+  - Model ManagedClusterAgentPoolProfileProperties no longer has parameter windows_profile
+  - Model ManagedClusterHTTPProxyConfig no longer has parameter effective_no_proxy
+  - Model ManagedClusterLoadBalancerProfile no longer has parameter backend_pool_type
+  - Model ManagedClusterSecurityProfile no longer has parameter custom_ca_trust_certificates
+  - Model ManagedClusterSecurityProfile no longer has parameter node_restriction
+  - Model ManagedClusterStorageProfileDiskCSIDriver no longer has parameter version
+  - Model ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler no longer has parameter controlled_values
+  - Model ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler no longer has parameter update_mode
+  - Operation AgentPoolsOperations.begin_delete no longer has parameter ignore_pod_disruption_budget
+  - Operation ManagedClustersOperations.begin_delete no longer has parameter ignore_pod_disruption_budget
+
+## 24.0.0 (2023-06-21)
+
+### Features Added
+
+  - Model ContainerServiceNetworkProfile has a new parameter monitoring
+  - Model OrchestratorProfile has a new parameter is_preview
+
+### Breaking Changes
+
+  - Removed operation ContainerServicesOperations.begin_create_or_update
+  - Removed operation ContainerServicesOperations.begin_delete
+  - Removed operation ContainerServicesOperations.get
+  - Removed operation ContainerServicesOperations.list
+  - Removed operation ContainerServicesOperations.list_by_resource_group
+
 ## 23.0.0 (2023-05-16)
 
 ### Breaking Changes

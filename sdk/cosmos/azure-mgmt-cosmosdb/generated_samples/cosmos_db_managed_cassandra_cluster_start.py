@@ -29,13 +29,12 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.cassandra_clusters.begin_start(
+    client.cassandra_clusters.begin_start(
         resource_group_name="cassandra-prod-rg",
         cluster_name="cassandra-prod",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-04-15/examples/CosmosDBManagedCassandraClusterStart.json
+# x-ms-original-file: specification/cosmos-db/resource-manager/Microsoft.DocumentDB/stable/2023-09-15/examples/CosmosDBManagedCassandraClusterStart.json
 if __name__ == "__main__":
     main()

@@ -21,14 +21,15 @@ from .._connection import get_local_timeout, _CLOSING_STATES
 from ..constants import (
     PORT,
     SECURE_PORT,
+    SOCKET_TIMEOUT,
     WEBSOCKET_PORT,
     MAX_CHANNELS,
     MAX_FRAME_SIZE_BYTES,
     HEADER_FRAME,
+    WS_TIMEOUT_INTERVAL,
     ConnectionState,
     EMPTY_FRAME,
     TransportType,
-    READ_TIMEOUT_INTERVAL
 )
 
 from ..error import ErrorCondition, AMQPConnectionError, AMQPError
@@ -64,6 +65,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value). When using these settings,
      the transport_type would be AmqpOverWebSocket.
      Additionally the following keys may also be present: `'username', 'password'`.
+    :keyword float socket_timeout: The maximum time in seconds that the underlying socket in the transport should
+     wait when reading or writing data before timing out. The default value is 0.2 (for transport type Amqp),
+     and 1 for transport type AmqpOverWebsocket.
     """
 
     def __init__(self, endpoint, **kwargs):  # pylint:disable=too-many-statements
@@ -94,6 +98,15 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
 
         transport = kwargs.get("transport")
         self._transport_type = kwargs.pop("transport_type", TransportType.Amqp)
+        # socket_timeout that will be used by `asyncio.wait_for()` in send/receive ops
+        self._socket_timeout = kwargs.pop("socket_timeout", None)
+
+        if self._transport_type.value == TransportType.Amqp.value and self._socket_timeout is None:
+            self._socket_timeout = SOCKET_TIMEOUT
+        elif (self._transport_type.value == TransportType.AmqpOverWebsocket.value and
+              self._socket_timeout is None):
+            self._socket_timeout = WS_TIMEOUT_INTERVAL
+
         if transport:
             self._transport = transport
         elif "sasl_credential" in kwargs:
@@ -119,6 +132,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         self._max_frame_size = kwargs.pop(
             "max_frame_size", MAX_FRAME_SIZE_BYTES
         )  # type: int
+
         self._remote_max_frame_size = None  # type: Optional[int]
         self._channel_max = kwargs.pop("channel_max", MAX_CHANNELS)  # type: int
         self._idle_timeout = kwargs.pop("idle_timeout", None)  # type: Optional[int]
@@ -162,7 +176,11 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
 
     async def _set_state(self, new_state):
         # type: (ConnectionState) -> None
-        """Update the connection state."""
+        """Update the connection state.
+        :param ~pyamqp.constants.ConnectionState new_state: The new state to transition to.
+        :return: None
+        :rtype: None
+        """
         if new_state is None:
             return
         previous_state = self.state
@@ -212,7 +230,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 description="Failed to initiate the connection due to exception: "
                 + str(exc),
                 error=exc,
-            )
+            ) from exc
 
     async def _disconnect(self) -> None:
         """Disconnect the transport and set state to END."""
@@ -223,7 +241,10 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
 
     def _can_read(self):
         # type: () -> bool
-        """Whether the connection is in a state where it is legal to read for incoming frames."""
+        """Whether the connection is in a state where it is legal to read for incoming frames.
+        :return: True if the connection is in a state where it is legal to read for incoming frames.
+        :rtype: bool
+        """
         return self.state not in (ConnectionState.CLOSE_RCVD, ConnectionState.END)
 
     async def _read_frame(self, wait: Union[bool, int, float] = True, **kwargs) -> bool:
@@ -239,7 +260,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """
         timeout: Optional[Union[int, float]] = None
         if wait is False:
-            timeout = READ_TIMEOUT_INTERVAL
+            timeout = self._socket_timeout
         elif wait is True:
             timeout = None
         else:
@@ -249,7 +270,10 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
 
     def _can_write(self):
         # type: () -> bool
-        """Whether the connection is in a state where it is legal to write outgoing frames."""
+        """Whether the connection is in a state where it is legal to write outgoing frames.
+        :return: Whether the connection is in a state where it is legal to write outgoing frames.
+        :rtype: bool
+        """
         return self.state not in _CLOSING_STATES
 
     async def _send_frame(self, channel, frame, timeout=None, **kwargs):
@@ -257,7 +281,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """Send a frame over the connection.
 
         :param int channel: The outgoing channel number.
-        :param NamedTuple: The outgoing frame.
+        :param NamedTuple frame: The outgoing frame.
         :param int timeout: An optional timeout value to wait until the socket is ready to send the frame.
         :rtype: None
         """
@@ -339,7 +363,10 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
 
     async def _incoming_header(self, _, frame):
         # type: (int, bytes) -> None
-        """Process an incoming AMQP protocol header and update the connection state."""
+        """Process an incoming AMQP protocol header and update the connection state.
+        :param int _: Ignored.
+        :param bytes frame: The incoming frame.
+        """
         if self._network_trace:
             _LOGGER.debug("<- Header(%r)", frame, extra=self._network_trace_params)
         if self.state == ConnectionState.START:
@@ -451,7 +478,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
 
     async def _outgoing_close(self, error=None):
         # type: (Optional[AMQPError]) -> None
-        """Send a Close frame to shutdown connection with optional error information."""
+        """Send a Close frame to shutdown connection with optional error information.
+        :param Exception or None error: The error to send with the Close frame.
+        """
         close_frame = CloseFrame(error=error)
         if self._network_trace:
             _LOGGER.debug("-> %r", close_frame, extra=self._network_trace_params)
@@ -465,6 +494,8 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
 
             - frame[0]: error (Optional[AMQPError])
 
+        :param int channel: The incoming channel number.
+        :param tuple frame: The incoming Close frame.
         """
         if self._network_trace:
             _LOGGER.debug("<- %r", CloseFrame(*frame), extra=self._network_trace_params)
@@ -550,8 +581,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """
         try:
             await self._incoming_endpoints[channel]._incoming_end(frame)  # pylint:disable=protected-access
+            outgoing_channel = self._incoming_endpoints[channel].channel
             self._incoming_endpoints.pop(channel)
-            self._outgoing_endpoints.pop(channel)
+            self._outgoing_endpoints.pop(outgoing_channel)
         except KeyError:
             #close the connection
             await self.close(
@@ -637,6 +669,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
     async def _process_outgoing_frame(self, channel, frame):
         # type: (int, NamedTuple) -> None
         """Send an outgoing frame if the connection is in a legal state.
+
+        :param int channel: The channel to send the frame on.
+        :param NamedTuple frame: The frame to send.
 
         :raises ValueError: If the connection is not open or not in a valid state.
         """
@@ -796,6 +831,8 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
          Default value is that configured for the connection.
         :keyword bool network_trace: Whether to log the network traffic of this session. If enabled, frames
          will be logged at the logging.INFO level. Default value is that configured for the connection.
+        :return: The created session.
+        :rtype: ~pyamqp._session.Session
         """
         assigned_channel = self._get_next_outgoing_channel()
         kwargs["allow_pipelined_open"] = self._allow_pipelined_open

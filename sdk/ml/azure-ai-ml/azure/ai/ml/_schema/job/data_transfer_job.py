@@ -36,7 +36,7 @@ class DataTransferImportJobSchema(BaseJobSchema):
     source = UnionField([NestedField(DatabaseSchema), NestedField(FileSystemSchema)], required=True, allow_none=False)
 
     @validates("outputs")
-    def outputs_key(self, value):  # pylint: disable=no-self-use
+    def outputs_key(self, value):
         if len(value) != 1 or list(value.keys())[0] != "sink":
             raise ValidationError(
                 f"outputs field only support one output called sink in task type "
@@ -52,7 +52,7 @@ class DataTransferExportJobSchema(BaseJobSchema):
     sink = UnionField([NestedField(DatabaseSchema), NestedField(FileSystemSchema)], required=True, allow_none=False)
 
     @validates("inputs")
-    def inputs_key(self, value):  # pylint: disable=no-self-use
+    def inputs_key(self, value):
         if len(value) != 1 or list(value.keys())[0] != "source":
             raise ValidationError(
                 f"inputs field only support one input called source in task type "

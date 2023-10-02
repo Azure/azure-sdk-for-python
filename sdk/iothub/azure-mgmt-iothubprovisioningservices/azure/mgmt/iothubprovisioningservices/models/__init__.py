@@ -21,6 +21,7 @@ from ._models_py3 import IotDpsSkuDefinitionListResult
 from ._models_py3 import IotDpsSkuInfo
 from ._models_py3 import IotHubDefinitionDescription
 from ._models_py3 import IpFilterRule
+from ._models_py3 import ManagedServiceIdentity
 from ._models_py3 import NameAvailabilityInfo
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
@@ -38,6 +39,7 @@ from ._models_py3 import SharedAccessSignatureAuthorizationRuleAccessRightsDescr
 from ._models_py3 import SharedAccessSignatureAuthorizationRuleListResult
 from ._models_py3 import SystemData
 from ._models_py3 import TagsResource
+from ._models_py3 import UserAssignedIdentity
 from ._models_py3 import VerificationCodeRequest
 from ._models_py3 import VerificationCodeResponse
 from ._models_py3 import VerificationCodeResponseProperties
@@ -49,12 +51,13 @@ from ._iot_dps_client_enums import CreatedByType
 from ._iot_dps_client_enums import IotDpsSku
 from ._iot_dps_client_enums import IpFilterActionType
 from ._iot_dps_client_enums import IpFilterTargetType
+from ._iot_dps_client_enums import ManagedServiceIdentityType
 from ._iot_dps_client_enums import NameUnavailabilityReason
 from ._iot_dps_client_enums import PrivateLinkServiceConnectionStatus
 from ._iot_dps_client_enums import PublicNetworkAccess
 from ._iot_dps_client_enums import State
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -73,6 +76,7 @@ __all__ = [
     "IotDpsSkuInfo",
     "IotHubDefinitionDescription",
     "IpFilterRule",
+    "ManagedServiceIdentity",
     "NameAvailabilityInfo",
     "Operation",
     "OperationDisplay",
@@ -90,6 +94,7 @@ __all__ = [
     "SharedAccessSignatureAuthorizationRuleListResult",
     "SystemData",
     "TagsResource",
+    "UserAssignedIdentity",
     "VerificationCodeRequest",
     "VerificationCodeResponse",
     "VerificationCodeResponseProperties",
@@ -100,6 +105,7 @@ __all__ = [
     "IotDpsSku",
     "IpFilterActionType",
     "IpFilterTargetType",
+    "ManagedServiceIdentityType",
     "NameUnavailabilityReason",
     "PrivateLinkServiceConnectionStatus",
     "PublicNetworkAccess",

@@ -24,15 +24,20 @@ USAGE:
 
 import os
 
+
 def format_bounding_region(bounding_regions):
     if not bounding_regions:
         return "N/A"
-    return ", ".join("Page #{}: {}".format(region.page_number, format_polygon(region.polygon)) for region in bounding_regions)
+    return ", ".join(
+        f"Page #{region.page_number}: {format_polygon(region.polygon)}"
+        for region in bounding_regions
+    )
+
 
 def format_polygon(polygon):
     if not polygon:
         return "N/A"
-    return ", ".join(["[{}, {}]".format(p.x, p.y) for p in polygon])
+    return ", ".join([f"[{p.x}, {p.y}]" for p in polygon])
 
 
 def get_words_on_document_line():
@@ -60,31 +65,23 @@ def get_words_on_document_line():
         )
     result = poller.result()
 
-    for idx, page in enumerate(result.pages):
-        print("----Analyzing lines and words from page #{}----".format(idx + 1))
+    for page in result.pages:
+        print(f"----Analyzing lines and words from page #{page.page_number}----")
         print(
-            "Page has width: {} and height: {}, measured with unit: {}".format(
-                page.width, page.height, page.unit
-            )
+            f"Page has width: {page.width} and height: {page.height}, measured with unit: {page.unit}"
         )
 
         if page.lines is not None:
             for line_idx, line in enumerate(page.lines):
                 words = line.get_words()
                 print(
-                    "...Line # {} has word count {} and text '{}' within bounding polygon '{}'".format(
-                        line_idx,
-                        len(words),
-                        line.content,
-                        format_polygon(line.polygon),
-                    )
+                    f"...Line # {line_idx} has word count {len(words)} and text '{line.content}' "
+                    f"within bounding polygon '{format_polygon(line.polygon)}'"
                 )
 
                 for word in words:
                     print(
-                        "......Word '{}' has a confidence of {}".format(
-                            word.content, word.confidence
-                        )
+                        f"......Word '{word.content}' has a confidence of {word.confidence}"
                     )
 
     print("----------------------------------------")
@@ -93,11 +90,14 @@ def get_words_on_document_line():
 if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         get_words_on_document_line()
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

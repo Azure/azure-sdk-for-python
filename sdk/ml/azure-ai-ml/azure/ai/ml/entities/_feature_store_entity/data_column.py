@@ -4,12 +4,12 @@
 
 # pylint: disable=redefined-builtin,disable=unused-argument
 
-from typing import Dict
+from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import IndexColumn, FeatureDataType
-
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml._restclient.v2023_02_01_preview.models import FeatureDataType, IndexColumn
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .data_column_type import DataColumnType
 
@@ -39,13 +39,38 @@ FeatureDataTypeMap: Dict[str, DataColumnType] = {
 @experimental
 class DataColumn(RestTranslatableMixin):
     """A dataframe column
-    :param name: The column name
-    :type name: str, required
-    :param type: Column data type
-    :type type: str, one of [string, integer, long, float, double, binary, datetime, boolean] or
-    ~azure.ai.ml.entities.DataColumnType, optional"""
 
-    def __init__(self, *, name: str, type: DataColumnType = None, **kwargs):
+    :param name: The column name
+    :type name: str
+    :param type: The column data type. Defaults to None.
+    :type type: Optional[union[str, ~azure.ai.ml.entities.DataColumnType]]
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
+    :raises ValidationException: Raised if type is specified and is not a valid DataColumnType or str.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_featurestore.py
+            :start-after: [START configure_feature_store_entity]
+            :end-before: [END configure_feature_store_entity]
+            :language: Python
+            :dedent: 8
+            :caption: Using DataColumn when creating an index column for a feature store entity
+    """
+
+    def __init__(self, *, name: str, type: Optional[Union[str, DataColumnType]] = None, **kwargs) -> None:
+        if isinstance(type, str):
+            type = DataColumnType[type]
+        elif not isinstance(type, DataColumnType):
+            msg = f"Type should be DataColumnType enum string or enum type, found {type}"
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                error_type=ValidationErrorType.INVALID_VALUE,
+                target=ErrorTarget.DATA,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+
         self.name = name
         self.type = type
 

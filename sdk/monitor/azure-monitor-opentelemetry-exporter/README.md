@@ -188,6 +188,10 @@ logging.getLogger().setLevel(logging.NOTSET)
 logger = logging.getLogger(__name__)
 
 logger.warning("Hello World!")
+
+# Telemetry records are flushed automatically upon application exit
+# If you would like to flush records manually yourself, you can call force_flush()
+logger_provider.force_flush()
 ```
 
 #### Export Correlated Log
@@ -397,6 +401,10 @@ histogram.record(99.9)
 # Async Gauge
 gauge = meter.create_observable_gauge("gauge", [observable_gauge_func])
 
+# Upon application exit, one last collection is made and telemetry records are
+# flushed automatically. # If you would like to flush records manually yourself,
+# you can call force_flush()
+meter_provider.force_flush()
 ```
 
 #### Metric custom views
@@ -521,7 +529,8 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 
-trace.set_tracer_provider(TracerProvider())
+tracer_provider = TracerProvider()
+trace.set_tracer_provider(tracer_provider)
 tracer = trace.get_tracer(__name__)
 # This is the exporter that sends data to Application Insights
 exporter = AzureMonitorTraceExporter(
@@ -532,6 +541,10 @@ trace.get_tracer_provider().add_span_processor(span_processor)
 
 with tracer.start_as_current_span("hello"):
     print("Hello, World!")
+
+# Telemetry records are flushed automatically upon application exit
+# If you would like to flush records manually yourself, you can call force_flush()
+tracer_provider.force_flush()
 ```
 
 #### Instrumentation with requests library
@@ -610,6 +623,10 @@ for i in range(100):
     with tracer.start_as_current_span("hello"):
         print("Hello, World!")
 ```
+
+## Flush/shutdown behavior
+
+For all applications set up with OpenTelemetry SDK and Azure Monitor exporters, telemetry is flushed automatically upon application exit. Note that this does not include when application ends abruptly or crashes due to uncaught exception.
 
 ## Troubleshooting
 

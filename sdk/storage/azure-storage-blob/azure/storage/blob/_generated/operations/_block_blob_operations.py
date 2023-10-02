@@ -7,6 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+import sys
 from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
@@ -14,6 +15,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -24,8 +26,12 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -50,9 +56,9 @@ def build_upload_request(
     blob_content_disposition: Optional[str] = None,
     encryption_key: Optional[str] = None,
     encryption_key_sha256: Optional[str] = None,
-    encryption_algorithm: Optional[Union[str, "_models.EncryptionAlgorithmType"]] = None,
+    encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
     encryption_scope: Optional[str] = None,
-    tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
+    tier: Optional[Union[str, _models.AccessTierOptional]] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     if_match: Optional[str] = None,
@@ -61,7 +67,7 @@ def build_upload_request(
     request_id_parameter: Optional[str] = None,
     blob_tags_string: Optional[str] = None,
     immutability_policy_expiry: Optional[datetime.datetime] = None,
-    immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
+    immutability_policy_mode: Optional[Union[str, _models.BlobImmutabilityPolicyMode]] = None,
     legal_hold: Optional[bool] = None,
     transactional_content_crc64: Optional[bytes] = None,
     **kwargs: Any
@@ -69,18 +75,18 @@ def build_upload_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    blob_type = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -180,9 +186,9 @@ def build_put_blob_from_url_request(
     blob_content_disposition: Optional[str] = None,
     encryption_key: Optional[str] = None,
     encryption_key_sha256: Optional[str] = None,
-    encryption_algorithm: Optional[Union[str, "_models.EncryptionAlgorithmType"]] = None,
+    encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
     encryption_scope: Optional[str] = None,
-    tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
+    tier: Optional[Union[str, _models.AccessTierOptional]] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     if_match: Optional[str] = None,
@@ -198,23 +204,23 @@ def build_put_blob_from_url_request(
     blob_tags_string: Optional[str] = None,
     copy_source_blob_properties: Optional[bool] = None,
     copy_source_authorization: Optional[str] = None,
-    copy_source_tags: Optional[Union[str, "_models.BlobCopySourceTags"]] = None,
+    copy_source_tags: Optional[Union[str, _models.BlobCopySourceTags]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    blob_type = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -320,7 +326,7 @@ def build_stage_block_request(
     lease_id: Optional[str] = None,
     encryption_key: Optional[str] = None,
     encryption_key_sha256: Optional[str] = None,
-    encryption_algorithm: Optional[Union[str, "_models.EncryptionAlgorithmType"]] = None,
+    encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
     encryption_scope: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
     **kwargs: Any
@@ -328,18 +334,18 @@ def build_stage_block_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp = kwargs.pop("comp", _params.pop("comp", "block"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    comp: Literal["block"] = kwargs.pop("comp", _params.pop("comp", "block"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -391,7 +397,7 @@ def build_stage_block_from_url_request(
     timeout: Optional[int] = None,
     encryption_key: Optional[str] = None,
     encryption_key_sha256: Optional[str] = None,
-    encryption_algorithm: Optional[Union[str, "_models.EncryptionAlgorithmType"]] = None,
+    encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
     encryption_scope: Optional[str] = None,
     lease_id: Optional[str] = None,
     source_if_modified_since: Optional[datetime.datetime] = None,
@@ -405,17 +411,17 @@ def build_stage_block_from_url_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp = kwargs.pop("comp", _params.pop("comp", "block"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    comp: Literal["block"] = kwargs.pop("comp", _params.pop("comp", "block"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -487,9 +493,9 @@ def build_commit_block_list_request(
     blob_content_disposition: Optional[str] = None,
     encryption_key: Optional[str] = None,
     encryption_key_sha256: Optional[str] = None,
-    encryption_algorithm: Optional[Union[str, "_models.EncryptionAlgorithmType"]] = None,
+    encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
     encryption_scope: Optional[str] = None,
-    tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
+    tier: Optional[Union[str, _models.AccessTierOptional]] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     if_match: Optional[str] = None,
@@ -498,25 +504,25 @@ def build_commit_block_list_request(
     request_id_parameter: Optional[str] = None,
     blob_tags_string: Optional[str] = None,
     immutability_policy_expiry: Optional[datetime.datetime] = None,
-    immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
+    immutability_policy_mode: Optional[Union[str, _models.BlobImmutabilityPolicyMode]] = None,
     legal_hold: Optional[bool] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp = kwargs.pop("comp", _params.pop("comp", "blocklist"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    comp: Literal["blocklist"] = kwargs.pop("comp", _params.pop("comp", "blocklist"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -602,7 +608,7 @@ def build_get_block_list_request(
     url: str,
     *,
     snapshot: Optional[str] = None,
-    list_type: Union[str, "_models.BlockListType"] = "committed",
+    list_type: Union[str, _models.BlockListType] = "committed",
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     if_tags: Optional[str] = None,
@@ -612,17 +618,17 @@ def build_get_block_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp = kwargs.pop("comp", _params.pop("comp", "blocklist"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    comp: Literal["blocklist"] = kwargs.pop("comp", _params.pop("comp", "blocklist"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "{url}/{containerName}/{blob}")
+    _url = kwargs.pop("template_url", "{url}")
     path_format_arguments = {
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -672,11 +678,11 @@ class BlockBlobOperations:
         timeout: Optional[int] = None,
         transactional_content_md5: Optional[bytes] = None,
         metadata: Optional[Dict[str, str]] = None,
-        tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
+        tier: Optional[Union[str, _models.AccessTierOptional]] = None,
         request_id_parameter: Optional[str] = None,
         blob_tags_string: Optional[str] = None,
         immutability_policy_expiry: Optional[datetime.datetime] = None,
-        immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
+        immutability_policy_mode: Optional[Union[str, _models.BlobImmutabilityPolicyMode]] = None,
         legal_hold: Optional[bool] = None,
         transactional_content_crc64: Optional[bytes] = None,
         blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
@@ -753,15 +759,20 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        blob_type = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _blob_content_type = None
         _blob_content_encoding = None
@@ -840,10 +851,11 @@ class BlockBlobOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -877,7 +889,7 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+    upload.metadata = {"url": "{url}"}
 
     @distributed_trace
     def put_blob_from_url(  # pylint: disable=inconsistent-return-statements
@@ -887,13 +899,13 @@ class BlockBlobOperations:
         timeout: Optional[int] = None,
         transactional_content_md5: Optional[bytes] = None,
         metadata: Optional[Dict[str, str]] = None,
-        tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
+        tier: Optional[Union[str, _models.AccessTierOptional]] = None,
         request_id_parameter: Optional[str] = None,
         source_content_md5: Optional[bytes] = None,
         blob_tags_string: Optional[str] = None,
         copy_source_blob_properties: Optional[bool] = None,
         copy_source_authorization: Optional[str] = None,
-        copy_source_tags: Optional[Union[str, "_models.BlobCopySourceTags"]] = None,
+        copy_source_tags: Optional[Union[str, _models.BlobCopySourceTags]] = None,
         blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
@@ -977,14 +989,19 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        blob_type = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _blob_content_type = None
         _blob_content_encoding = None
@@ -1077,10 +1094,11 @@ class BlockBlobOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1114,7 +1132,7 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    put_blob_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+    put_blob_from_url.metadata = {"url": "{url}"}
 
     @distributed_trace
     def stage_block(  # pylint: disable=inconsistent-return-statements
@@ -1170,15 +1188,20 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "block"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp: Literal["block"] = kwargs.pop("comp", _params.pop("comp", "block"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
         _encryption_key = None
@@ -1217,10 +1240,11 @@ class BlockBlobOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1254,7 +1278,7 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    stage_block.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+    stage_block.metadata = {"url": "{url}"}
 
     @distributed_trace
     def stage_block_from_url(  # pylint: disable=inconsistent-return-statements
@@ -1322,14 +1346,19 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "block"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp: Literal["block"] = kwargs.pop("comp", _params.pop("comp", "block"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _encryption_key = None
         _encryption_key_sha256 = None
@@ -1381,10 +1410,11 @@ class BlockBlobOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1418,7 +1448,7 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    stage_block_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+    stage_block_from_url.metadata = {"url": "{url}"}
 
     @distributed_trace
     def commit_block_list(  # pylint: disable=inconsistent-return-statements
@@ -1428,11 +1458,11 @@ class BlockBlobOperations:
         transactional_content_md5: Optional[bytes] = None,
         transactional_content_crc64: Optional[bytes] = None,
         metadata: Optional[Dict[str, str]] = None,
-        tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
+        tier: Optional[Union[str, _models.AccessTierOptional]] = None,
         request_id_parameter: Optional[str] = None,
         blob_tags_string: Optional[str] = None,
         immutability_policy_expiry: Optional[datetime.datetime] = None,
-        immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
+        immutability_policy_mode: Optional[Union[str, _models.BlobImmutabilityPolicyMode]] = None,
         legal_hold: Optional[bool] = None,
         blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -1507,15 +1537,20 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "blocklist"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp: Literal["blocklist"] = kwargs.pop("comp", _params.pop("comp", "blocklist"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _blob_cache_control = None
         _blob_content_type = None
@@ -1593,10 +1628,11 @@ class BlockBlobOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1633,13 +1669,13 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    commit_block_list.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+    commit_block_list.metadata = {"url": "{url}"}
 
     @distributed_trace
     def get_block_list(
         self,
         snapshot: Optional[str] = None,
-        list_type: Union[str, "_models.BlockListType"] = "committed",
+        list_type: Union[str, _models.BlockListType] = "committed",
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -1680,14 +1716,19 @@ class BlockBlobOperations:
         :rtype: ~azure.storage.blob.models.BlockList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "blocklist"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BlockList]
+        comp: Literal["blocklist"] = kwargs.pop("comp", _params.pop("comp", "blocklist"))
+        cls: ClsType[_models.BlockList] = kwargs.pop("cls", None)
 
         _lease_id = None
         _if_tags = None
@@ -1711,10 +1752,11 @@ class BlockBlobOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1745,4 +1787,4 @@ class BlockBlobOperations:
 
         return deserialized
 
-    get_block_list.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+    get_block_list.metadata = {"url": "{url}"}

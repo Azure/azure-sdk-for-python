@@ -1,6 +1,6 @@
 {
     "chosen_version": "2017-07-01",
-    "total_api_version_list": ["2017-07-01", "2019-04-01"],
+    "total_api_version_list": ["2017-07-01"],
     "client": {
         "name": "ContainerServiceClient",
         "filename": "_container_service_client",

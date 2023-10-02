@@ -25,7 +25,17 @@ from azure.ai.ml.entities._util import load_from_dict
 
 
 class ForecastingJob(AutoMLTabular):
-    """Configuration for AutoML Forecasting Task."""
+    """
+    Configuration for AutoML Forecasting Task.
+
+    :param primary_metric: The primary metric to use for model selection.
+    :type primary_metric: Optional[str]
+    :param forecasting_settings: The settings for the forecasting task.
+    :type forecasting_settings:
+        Optional[~azure.ai.ml.automl.ForecastingSettings]
+    :param kwargs: Job-specific arguments
+    :type kwargs: Dict[str, Any]
+    """
 
     _DEFAULT_PRIMARY_METRIC = ForecastingPrimaryMetrics.NORMALIZED_ROOT_MEAN_SQUARED_ERROR
 
@@ -36,15 +46,7 @@ class ForecastingJob(AutoMLTabular):
         forecasting_settings: Optional[ForecastingSettings] = None,
         **kwargs,
     ) -> None:
-        """Initialize a new AutoML Forecasting task.
-
-        :param primary_metric: The primary metric to use for optimization
-        :type primary_metric: str, optional
-        :param forecasting_settings: The settings for the forecasting task
-        :type forecasting_settings: ForecastingSettings, optional
-        :param kwargs: Job-specific arguments
-        :type kwargs: dict
-        """
+        """Initialize a new AutoML Forecasting task."""
         # Extract any task specific settings
         featurization = kwargs.pop("featurization", None)
         limits = kwargs.pop("limits", None)
@@ -62,11 +64,23 @@ class ForecastingJob(AutoMLTabular):
         self._forecasting_settings = forecasting_settings
 
     @property
-    def primary_metric(self):
+    def primary_metric(self) -> Optional[str]:
+        """
+        Return the primary metric to use for model selection.
+
+        :return: The primary metric for model selection.
+        :rtype: Optional[str]
+        """
         return self._primary_metric
 
     @primary_metric.setter
-    def primary_metric(self, value: Union[str, ForecastingPrimaryMetrics]):
+    def primary_metric(self, value: Union[str, ForecastingPrimaryMetrics]) -> None:
+        """
+        Set the primary metric to use for model selection.
+
+        :param value: The primary metric for model selection.
+        :type: Union[str, ~azure.ai.ml.automl.ForecastingPrimaryMetrics]
+        """
         if is_data_binding_expression(str(value), ["parent"]):
             self._primary_metric = value
             return
@@ -78,10 +92,22 @@ class ForecastingJob(AutoMLTabular):
 
     @property
     def training(self) -> ForecastingTrainingSettings:
+        """
+        Return the forecast training settings.
+
+        :return: training settings.
+        :rtype: ~azure.ai.ml.automl.ForecastingTrainingSettings
+        """
         return self._training or ForecastingTrainingSettings()
 
     @property
     def forecasting_settings(self) -> ForecastingSettings:
+        """
+        Return the forecast settings.
+
+        :return: forecast settings.
+        :rtype: ~azure.ai.ml.automl.ForecastingSettings
+        """
         return self._forecasting_settings
 
     def set_forecast_settings(
@@ -100,28 +126,29 @@ class ForecastingJob(AutoMLTabular):
         frequency: Optional[str] = None,
         target_aggregate_function: Optional[str] = None,
         cv_step_size: Optional[int] = None,
+        features_unknown_at_forecast_time: Optional[Union[str, List[str]]] = None,
     ) -> None:
         """Manage parameters used by forecasting tasks.
 
-        :param time_column_name:
+        :keyword time_column_name:
             The name of the time column. This parameter is required when forecasting to specify the datetime
             column in the input data used for building the time series and inferring its frequency.
-        :type time_column_name: str
-        :param forecast_horizon:
+        :paramtype time_column_name: Optional[str]
+        :keyword forecast_horizon:
             The desired maximum forecast horizon in units of time-series frequency. The default value is 1.
 
             Units are based on the time interval of your training data, e.g., monthly, weekly that the forecaster
             should predict out. When task type is forecasting, this parameter is required. For more information on
             setting forecasting parameters, see `Auto-train a time-series forecast model <https://docs.microsoft.com/
             azure/machine-learning/how-to-auto-train-forecast>`_.
-        :type forecast_horizon: int or str
-        :param time_series_id_column_names:
-            The names of columns used to group a timeseries.
+        :type forecast_horizon: Optional[Union[int, str]]
+        :keyword time_series_id_column_names:
+            The names of columns used to group a time series.
             It can be used to create multiple series. If time series id column names is not defined or
             the identifier columns specified do not identify all the series in the dataset, the time series identifiers
-            will be automatically created for your dataset.
-        :type time_series_id_column_names: str or list(str)
-        :param target_lags:
+            will be automatically created for your data set.
+        :paramtype time_series_id_column_names: Optional[Union[str, List[str]]]
+        :keyword target_lags:
             The number of past periods to lag from the target column. By default the lags are turned off.
 
             When forecasting, this parameter represents the number of rows to lag the target values based
@@ -152,10 +179,11 @@ class ForecastingJob(AutoMLTabular):
             #. We scan the PACF values from the beginning and the value before the first insignificant
                auto correlation will designate the lag. If first significant element (value correlate with
                itself) is followed by insignificant, the lag will be 0 and we will not use look back features.
-        :type target_lags: int, str, or list(int)
-        :param feature_lags: Flag for generating lags for the numeric features with 'auto' or None.
-        :type feature_lags: str or None
-        :param target_rolling_window_size:
+
+        :type target_lags: Optional[Union[str, int, List[int]]]
+        :keyword feature_lags: Flag for generating lags for the numeric features with 'auto' or None.
+        :paramtype feature_lags: Optional[str]
+        :keyword target_rolling_window_size:
             The number of past periods used to create a rolling window average of the target column.
 
             When forecasting, this parameter represents `n` historical periods to use to generate forecasted values,
@@ -163,27 +191,29 @@ class ForecastingJob(AutoMLTabular):
             when you only want to consider a certain amount of history when training the model.
             If set to 'auto', rolling window will be estimated as the last
             value where the PACF is more then the significance threshold. Please see target_lags section for details.
-        :type target_rolling_window_size: int, str or None
-        :param country_or_region_for_holidays: The country/region used to generate holiday features.
+        :paramtype target_rolling_window_size: Optional[Union[str, int]]
+        :keyword country_or_region_for_holidays: The country/region used to generate holiday features.
             These should be ISO 3166 two-letter country/region codes, for example 'US' or 'GB'.
-        :type country_or_region_for_holidays: str or None
-        :param use_stl: Configure STL Decomposition of the time-series target column.
+        :paramtype country_or_region_for_holidays: Optional[str]
+        :keyword use_stl: Configure STL Decomposition of the time-series target column.
                     use_stl can take three values: None (default) - no stl decomposition, 'season' - only generate
                     season component and season_trend - generate both season and trend components.
-        :type use_stl: str or None
-        :param seasonality: Set time series seasonality as an integer multiple of the series frequency.
+        :type use_stl: Optional[str]
+        :keyword seasonality: Set time series seasonality as an integer multiple of the series frequency.
                     If seasonality is set to 'auto', it will be inferred.
                     If set to None, the time series is assumed non-seasonal which is equivalent to seasonality=1.
-        :type seasonality: int, str or None
-        :param short_series_handling_config:
+        :paramtype seasonality: Optional[Union[int, str]
+        :keyword short_series_handling_config:
             The parameter defining how if AutoML should handle short time series.
 
             Possible values: 'auto' (default), 'pad', 'drop' and None.
+
             * **auto** short series will be padded if there are no long series,
             otherwise short series will be dropped.
             * **pad** all the short series will be padded.
             * **drop**  all the short series will be dropped".
             * **None** the short series will not be modified.
+
             If set to 'pad', the table will be padded with the zeroes and
             empty values for the regressors and random values for target with the mean
             equal to target value median for given time series id. If median is more or equal
@@ -216,28 +246,30 @@ class ForecastingJob(AutoMLTabular):
             short_series_handling for brevity are marked as handling_configuration and handling
             respectively).
 
-            +-----------+------------------------+--------------------+----------------------------------+
-            |  handling | handling_configuration | resulting handling | resulting handling_configuration |
-            +===========+========================+====================+==================================+
-            | True      | auto                   | True               | auto                             |
-            +-----------+------------------------+--------------------+----------------------------------+
-            | True      | pad                    | True               | auto                             |
-            +-----------+------------------------+--------------------+----------------------------------+
-            | True      | drop                   | True               | auto                             |
-            +-----------+------------------------+--------------------+----------------------------------+
-            | True      | None                   | False              | None                             |
-            +-----------+------------------------+--------------------+----------------------------------+
-            | False     | auto                   | False              | None                             |
-            +-----------+------------------------+--------------------+----------------------------------+
-            | False     | pad                    | False              | None                             |
-            +-----------+------------------------+--------------------+----------------------------------+
-            | False     | drop                   | False              | None                             |
-            +-----------+------------------------+--------------------+----------------------------------+
-            | False     | None                   | False              | None                             |
-            +-----------+------------------------+--------------------+----------------------------------+
+            +------------+--------------------------+----------------------+-----------------------------+
+            | | handling | | handling               | | resulting          | | resulting                 |
+            |            | | configuration          | | handling           | | handling                  |
+            |            |                          |                      | | configuration             |
+            +============+==========================+======================+=============================+
+            | True       | auto                     | True                 | auto                        |
+            +------------+--------------------------+----------------------+-----------------------------+
+            | True       | pad                      | True                 | auto                        |
+            +------------+--------------------------+----------------------+-----------------------------+
+            | True       | drop                     | True                 | auto                        |
+            +------------+--------------------------+----------------------+-----------------------------+
+            | True       | None                     | False                | None                        |
+            +------------+--------------------------+----------------------+-----------------------------+
+            | False      | auto                     | False                | None                        |
+            +------------+--------------------------+----------------------+-----------------------------+
+            | False      | pad                      | False                | None                        |
+            +------------+--------------------------+----------------------+-----------------------------+
+            | False      | drop                     | False                | None                        |
+            +------------+--------------------------+----------------------+-----------------------------+
+            | False      | None                     | False                | None                        |
+            +------------+--------------------------+----------------------+-----------------------------+
 
-        :type short_series_handling_config: str or None
-        :param frequency: Forecast frequency.
+        :type short_series_handling_config: Optional[str]
+        :keyword frequency: Forecast frequency.
 
             When forecasting, this parameter represents the period with which the forecast is desired,
             for example daily, weekly, yearly, etc. The forecast frequency is dataset frequency by default.
@@ -247,8 +279,8 @@ class ForecastingJob(AutoMLTabular):
             The frequency needs to be a pandas offset alias.
             Please refer to pandas documentation for more information:
             https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#dateoffset-objects
-        :type frequency: str or None
-        :param target_aggregate_function: The function to be used to aggregate the time series target
+        :type frequency: Optional[str]
+        :keyword target_aggregate_function: The function to be used to aggregate the time series target
                                             column to conform to a user specified frequency. If the
                                             target_aggregation_function is set, but the freq parameter
                                             is not set, the error is raised. The possible target
@@ -262,32 +294,59 @@ class ForecastingJob(AutoMLTabular):
                   the most prominent category in the window.
                 * Date predictor columns are aggregated by minimum value, maximum value and mode.
 
-                +----------------+-----------------------------+---------------------------------------------+
-                |      freq      | target_aggregation_function |      Data regularity fixing mechanism       |
-                +================+=============================+=============================================+
-                | None (Default) | None (Default)              | The aggregation is not applied.             |
-                |                |                             | If the valid frequency can not be           |
-                |                |                             | determined the error will be raised.        |
-                +----------------+-----------------------------+---------------------------------------------+
-                | Some Value     | None (Default)              | The aggregation is not applied.             |
-                |                |                             | If the number of data points compliant      |
-                |                |                             | to given frequency grid is less then 90%    |
-                |                |                             | these points will be removed, otherwise     |
-                |                |                             | the error will be raised.                   |
-                +----------------+-----------------------------+---------------------------------------------+
-                | None (Default) | Aggregation function        | The error about missing frequency parameter |
-                |                |                             | is raised.                                  |
-                +----------------+-----------------------------+---------------------------------------------+
-                | Some Value     | Aggregation function        | Aggregate to frequency using provided       |
-                |                |                             | aggregation function.                       |
-                +----------------+-----------------------------+---------------------------------------------+
+                +----------------+-------------------------------+--------------------------------------+
+                |     | freq     | | target_aggregation_function | | Data regularity                    |
+                |                |                               | | fixing mechanism                   |
+                +================+===============================+======================================+
+                | None (Default) | None (Default)                | | The aggregation                    |
+                |                |                               | | is not applied.                    |
+                |                |                               | | If the valid                       |
+                |                |                               | | frequency can                      |
+                |                |                               | | not be                             |
+                |                |                               | | determined                         |
+                |                |                               | | the error                          |
+                |                |                               | | will be raised.                    |
+                +----------------+-------------------------------+--------------------------------------+
+                | Some Value     | None (Default)                | | The aggregation                    |
+                |                |                               | | is not applied.                    |
+                |                |                               | | If the number                      |
+                |                |                               | | of data points                     |
+                |                |                               | | compliant to                       |
+                |                |                               | | given frequency                    |
+                |                |                               | | grid is                            |
+                |                |                               | | less then 90%                      |
+                |                |                               | | these points                       |
+                |                |                               | | will be                            |
+                |                |                               | | removed,                           |
+                |                |                               | | otherwise                          |
+                |                |                               | | the error will                     |
+                |                |                               | | be raised.                         |
+                +----------------+-------------------------------+--------------------------------------+
+                | None (Default) | Aggregation function          | | The error about                    |
+                |                |                               | | missing                            |
+                |                |                               | | frequency                          |
+                |                |                               | | parameter is                       |
+                |                |                               | | raised.                            |
+                +----------------+-------------------------------+--------------------------------------+
+                | Some Value     | Aggregation function          | | Aggregate to                       |
+                |                |                               | | frequency using                    |
+                |                |                               | | provided                           |
+                |                |                               | | aggregation                        |
+                |                |                               | | function.                          |
+                +----------------+-------------------------------+--------------------------------------+
 
-        :type target_aggregate_function: str or None
-        :param cv_step_size:
+        :type target_aggregate_function: Optional[str]
+        :keyword cv_step_size:
             Number of periods between the origin_time of one CV fold and the next fold. For
             example, if `n_step` = 3 for daily data, the origin time for each fold will be
             three days apart.
-        :type cv_step_size: int or None
+        :paramtype cv_step_size: Optional[int]
+        :keyword features_unknown_at_forecast_time:
+            The feature columns that are available for training but unknown at the time of forecast/inference.
+            If features_unknown_at_forecast_time is set to an empty list, it is assumed that
+            all the feature columns in the dataset are known at inference time. If this parameter is not set
+            the support for future features is not enabled.
+        :paramtype features_unknown_at_forecast_time: Optional[Union[str, List[str]]]
         """
         self._forecasting_settings = self._forecasting_settings or ForecastingSettings()
 
@@ -338,6 +397,11 @@ class ForecastingJob(AutoMLTabular):
             if time_series_id_column_names is not None
             else self._forecasting_settings.time_series_id_column_names
         )
+        self._forecasting_settings.features_unknown_at_forecast_time = (
+            features_unknown_at_forecast_time
+            if features_unknown_at_forecast_time is not None
+            else self._forecasting_settings.features_unknown_at_forecast_time
+        )
 
     # override
     def set_training(
@@ -357,22 +421,22 @@ class ForecastingJob(AutoMLTabular):
         """
         The method to configure forecast training related settings.
 
-        :param enable_onnx_compatible_models:
+        :keyword enable_onnx_compatible_models:
             Whether to enable or disable enforcing the ONNX-compatible models.
             The default is False. For more information about Open Neural Network Exchange (ONNX) and Azure Machine
             Learning, see this `article <https://docs.microsoft.com/azure/machine-learning/concept-onnx>`__.
-        :type: bool or None
-        :param enable_dnn_training:
+        :type enable_onnx_compatible: Optional[bool]
+        :keyword enable_dnn_training:
             Whether to include DNN based models during model selection.
             However, the default is True for DNN NLP tasks, and it's False for all other AutoML tasks.
-        :type: bool or None
-        :param enable_model_explainability:
+        :paramtype enable_dnn_training: Optional[bool]
+        :keyword enable_model_explainability:
             Whether to enable explaining the best AutoML model at the end of all AutoML training iterations.
             For more information, see `Interpretability: model explanations in automated machine learning
             <https://docs.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
             , defaults to None
-        :type: bool or None
-        :param enable_stack_ensemble:
+        :type enable_model_explainability: Optional[bool]
+        :keyword enable_stack_ensemble:
             Whether to enable/disable StackEnsemble iteration.
             If `enable_onnx_compatible_models` flag is being set, then StackEnsemble iteration will be disabled.
             Similarly, for Timeseries tasks, StackEnsemble iteration will be disabled by default, to avoid risks of
@@ -380,30 +444,30 @@ class ForecastingJob(AutoMLTabular):
             For more information about ensembles, see `Ensemble configuration
             <https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__
             , defaults to None
-        :type: bool or None
-        :param enable_vote_ensemble:
+        :type enable_stack_ensemble: Optional[bool]
+        :keyword enable_vote_ensemble:
             Whether to enable/disable VotingEnsemble iteration.
             For more information about ensembles, see `Ensemble configuration
             <https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__
             , defaults to None
-        :type: bool or None
-        :param stack_ensemble_settings:
+        :type enable_vote_ensemble: Optional[bool]
+        :keyword stack_ensemble_settings:
             Settings for StackEnsemble iteration, defaults to None
-        :type: StackEnsembleSettings or None
-        :param ensemble_model_download_timeout:
+        :paramtype stack_ensemble_settings: Optional[StackEnsembleSettings]
+        :keyword ensemble_model_download_timeout:
             During VotingEnsemble and StackEnsemble model generation,
             multiple fitted models from the previous child runs are downloaded. Configure this parameter with a
             higher value than 300 secs, if more time is needed, defaults to None
-        :type: int or None
-        :param allowed_training_algorithms:
+        :paramtype ensemble_model_download_timeout: Optional[int]
+        :keyword allowed_training_algorithms:
             A list of model names to search for an experiment. If not specified,
             then all models supported for the task are used minus any specified in ``blocked_training_algorithms``
             or deprecated TensorFlow models, defaults to None
-        :type: list(str) or None
-        :param blocked_training_algorithms:
+        :paramtype allowed_training_algorithms: Optional[List[str]]
+        :keyword blocked_training_algorithms:
             A list of algorithms to ignore for an experiment, defaults to None
-        :type: list(str) or None
-        :param training_mode:
+        :paramtype blocked_training_algorithms: Optional[List[str]]
+        :keyword training_mode:
             [Experimental] The training mode to use.
             The possible values are-
 
@@ -414,7 +478,7 @@ class ForecastingJob(AutoMLTabular):
             * auto- Currently, it is same as non_distributed. In future, this might change.
 
             Note: This parameter is in public preview and may change in future.
-        :type: azure.ai.ml.constants.TabularTrainingMode, str or None
+        :type training_mode: Optional[Union[~azure.ai.ml.constants.TabularTrainingMode, str]]
         """
         super().set_training(
             enable_onnx_compatible_models=enable_onnx_compatible_models,

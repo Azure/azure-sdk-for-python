@@ -11,67 +11,66 @@ FILE: utilities.py
 
 DESCRIPTION:
     This file include some utility functions for samples to use:
-    - load_registry(): to create some repositories and import images with different tags in each repository.
+    - load_registry(): to create repository "library/hello-world" and import images with different tags.
     - get_authority(): get authority of the ContainerRegistryClient
     - get_audience(): get audience of the ContainerRegistryClient
     - get_credential(): get credential of the ContainerRegistryClient
     It is not a file expected to run independently.
 """
+import json
 import os
-from azure.mgmt.containerregistry import ContainerRegistryManagementClient
-from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
+from io import BytesIO
+from azure.containerregistry import ContainerRegistryClient
 from azure.identity import AzureAuthorityHosts, ClientSecretCredential
 from azure.identity.aio import ClientSecretCredential as AsyncClientSecretCredential
 
-def load_registry():
-    authority = get_authority(os.environ.get("CONTAINERREGISTRY_ENDPOINT"))
-    repo = "library/hello-world"
-    tags = [
-        [
-            "library/hello-world:latest",
-            "library/hello-world:v1",
-            "library/hello-world:v2",
-            "library/hello-world:v3"
-        ]
-    ]
-    for tag in tags:
-        try:
-            _import_image(authority, repo, tag)
-        except Exception as e:
-            print(e)
 
-def _import_image(authority, repository, tags):
+def load_registry(endpoint):
+    print("loading registry...")
+    repo = "library/hello-world"
+    tags = ["latest", "v1", "v2", "v3"]
+    try:
+        _import_images(endpoint, repo, tags)
+    except Exception as e:
+        raise
+
+
+def _import_images(endpoint, repository, tags):
+    authority = get_authority(endpoint)
     credential = ClientSecretCredential(
         tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
         client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
         client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
-        authority=authority
+        authority=authority,
     )
-    sub_id = os.environ.get("CONTAINERREGISTRY_SUBSCRIPTION_ID")
-    audience = get_audience(authority)
-    scope = [audience + "/.default"]
-    mgmt_client = ContainerRegistryManagementClient(
-        credential,
-        sub_id,
-        api_version="2019-05-01",
-        base_url=audience,
-        credential_scopes=scope
-    )
-    registry_uri = "registry.hub.docker.com"
-    rg_name = os.environ.get("CONTAINERREGISTRY_RESOURCE_GROUP")
-    registry_name = os.environ.get("CONTAINERREGISTRY_REGISTRY_NAME")
+    with ContainerRegistryClient(endpoint, credential) as client:
+        # Upload a layer
+        layer = BytesIO(b"Sample layer")
+        layer_digest, layer_size = client.upload_blob(repository, layer)
+        # Upload a config
+        config = BytesIO(json.dumps({"sample config": "content"}).encode())
+        config_digest, config_size = client.upload_blob(repository, config)
+        docker_manifest = {
+            "config": {
+                "digest": config_digest,
+                "mediaType": "application/vnd.docker.container.image.v1+json",
+                "size": config_size,
+            },
+            "layers": [
+                {
+                    "digest": layer_digest,
+                    "mediaType": "application/vnd.docker.image.rootfs.diff.tar.gzip",
+                    "size": layer_size,
+                }
+            ],
+            "mediaType": "application/vnd.docker.distribution.manifest.v2+json",
+            "schemaVersion": 2,
+        }
+        for tag in tags:
+            client.set_manifest(
+                repository, docker_manifest, tag=tag, media_type="application/vnd.docker.distribution.manifest.v2+json"
+            )
 
-    import_source = ImportSource(source_image=repository, registry_uri=registry_uri)
-
-    import_params = ImportImageParameters(mode=ImportMode.Force, source=import_source, target_tags=tags)
-
-    result = mgmt_client.registries.begin_import_image(
-        rg_name,
-        registry_name,
-        parameters=import_params,
-    )
-    
-    result.wait()
 
 def get_authority(endpoint):
     if ".azurecr.io" in endpoint:
@@ -82,6 +81,7 @@ def get_authority(endpoint):
         return AzureAuthorityHosts.AZURE_GOVERNMENT
     raise ValueError(f"Endpoint ({endpoint}) could not be understood")
 
+
 def get_audience(authority):
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
         return "https://management.azure.com"
@@ -90,6 +90,7 @@ def get_audience(authority):
     if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
         return "https://management.usgovcloudapi.net"
 
+
 def get_credential(authority, **kwargs):
     is_async = kwargs.pop("is_async", False)
     if is_async:
@@ -97,14 +98,11 @@ def get_credential(authority, **kwargs):
             tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
             client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
             client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
-            authority=authority
+            authority=authority,
         )
     return ClientSecretCredential(
         tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
         client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
         client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
-        authority=authority
+        authority=authority,
     )
-
-def get_data_path():
-    return os.path.join(os.getcwd(), "samples", "data", "docker_artifact")

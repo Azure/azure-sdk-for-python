@@ -3,12 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from ._router_client_async import RouterClient
-from ._router_administration_client_async import RouterAdministrationClient
-from .._shared.user_credential_async import CommunicationTokenCredential
+from ._router_client_async import JobRouterClient
+from ._router_administration_client_async import JobRouterAdministrationClient
 
 __all__ =[
-    'RouterClient',
-    'RouterAdministrationClient',
-    'CommunicationTokenCredential'
+    'JobRouterClient',
+    'JobRouterAdministrationClient'
 ]

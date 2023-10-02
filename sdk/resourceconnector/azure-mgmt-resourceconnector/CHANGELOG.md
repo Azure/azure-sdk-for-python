@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0 (2023-08-18)
+
+### Features Added
+
+  - Operation AppliancesOperations.list_keys has a new optional parameter artifact_type
+
 ## 1.0.0b4 (2023-04-24)
 
 ### Breaking Changes

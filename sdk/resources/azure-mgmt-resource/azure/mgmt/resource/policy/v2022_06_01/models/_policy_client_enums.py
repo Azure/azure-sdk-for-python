@@ -10,66 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AliasPathAttributes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The attributes of the token that the alias path is referring to."""
-
-    NONE = "None"
-    """The token that the alias path is referring to has no attributes."""
-    MODIFIABLE = "Modifiable"
-    """The token that the alias path is referring to is modifiable by policies with 'modify' effect."""
-
-
-class AliasPathTokenType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the token that the alias path is referring to."""
-
-    NOT_SPECIFIED = "NotSpecified"
-    """The token type is not specified."""
-    ANY = "Any"
-    """The token type can be anything."""
-    STRING = "String"
-    """The token type is string."""
-    OBJECT = "Object"
-    """The token type is object."""
-    ARRAY = "Array"
-    """The token type is array."""
-    INTEGER = "Integer"
-    """The token type is integer."""
-    NUMBER = "Number"
-    """The token type is number."""
-    BOOLEAN = "Boolean"
-    """The token type is boolean."""
-
-
-class AliasPatternType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of alias pattern."""
-
-    NOT_SPECIFIED = "NotSpecified"
-    """NotSpecified is not allowed."""
-    EXTRACT = "Extract"
-    """Extract is the only allowed value."""
-
-
-class AliasType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the alias."""
-
-    NOT_SPECIFIED = "NotSpecified"
-    """Alias type is unknown (same as not providing alias type)."""
-    PLAIN_TEXT = "PlainText"
-    """Alias value is not secret."""
-    MASK = "Mask"
-    """Alias value is secret."""
-
-
-class AssignmentScopeValidation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The option whether validate the exemption is at or under the assignment scope."""
-
-    DEFAULT = "Default"
-    """This option will validate the exemption is at or under the assignment scope."""
-    DO_NOT_VALIDATE = "DoNotValidate"
-    """This option will bypass the validation the exemption scope is at or under the policy assignment
-    #: scope."""
-
-
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -88,42 +28,11 @@ class EnforcementMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The policy effect is not enforced during resource creation or update."""
 
 
-class ExemptionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The policy exemption category. Possible values are Waiver and Mitigated."""
-
-    WAIVER = "Waiver"
-    """This category of exemptions usually means the scope is not applicable for the policy."""
-    MITIGATED = "Mitigated"
-    """This category of exemptions usually means the mitigation actions have been applied to the
-    #: scope."""
-
-
 class OverrideKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The override kind."""
 
     POLICY_EFFECT = "policyEffect"
     """It will override the policy effect type."""
-
-
-class ParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The data type of the parameter."""
-
-    STRING = "String"
-    ARRAY = "Array"
-    OBJECT = "Object"
-    BOOLEAN = "Boolean"
-    INTEGER = "Integer"
-    FLOAT = "Float"
-    DATE_TIME = "DateTime"
-
-
-class PolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of policy definition. Possible values are NotSpecified, BuiltIn, Custom, and Static."""
-
-    NOT_SPECIFIED = "NotSpecified"
-    BUILT_IN = "BuiltIn"
-    CUSTOM = "Custom"
-    STATIC = "Static"
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

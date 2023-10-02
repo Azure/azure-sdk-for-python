@@ -23,6 +23,7 @@ from ._export_jobs_operations import ExportJobsOperations
 from ._export_jobs_operation_result_operations import ExportJobsOperationResultOperations
 from ._deleted_backup_instances_operations import DeletedBackupInstancesOperations
 from ._resource_guards_operations import ResourceGuardsOperations
+from ._dpp_resource_guard_proxy_operations import DppResourceGuardProxyOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -46,6 +47,7 @@ __all__ = [
     "ExportJobsOperationResultOperations",
     "DeletedBackupInstancesOperations",
     "ResourceGuardsOperations",
+    "DppResourceGuardProxyOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

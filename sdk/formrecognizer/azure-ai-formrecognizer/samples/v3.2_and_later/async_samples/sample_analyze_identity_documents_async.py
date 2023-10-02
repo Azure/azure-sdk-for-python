@@ -55,62 +55,42 @@ async def analyze_identity_documents_async():
         id_documents = await poller.result()
 
     for idx, id_document in enumerate(id_documents.documents):
-        print("--------Analyzing ID document #{}--------".format(idx + 1))
+        print(f"--------Analyzing ID document #{idx + 1}--------")
         first_name = id_document.fields.get("FirstName")
         if first_name:
             print(
-                "First Name: {} has confidence: {}".format(
-                    first_name.value, first_name.confidence
-                )
+                f"First Name: {first_name.value} has confidence: {first_name.confidence}"
             )
         last_name = id_document.fields.get("LastName")
         if last_name:
             print(
-                "Last Name: {} has confidence: {}".format(
-                    last_name.value, last_name.confidence
-                )
+                f"Last Name: {last_name.value} has confidence: {last_name.confidence}"
             )
         document_number = id_document.fields.get("DocumentNumber")
         if document_number:
             print(
-                "Document Number: {} has confidence: {}".format(
-                    document_number.value, document_number.confidence
-                )
+                f"Document Number: {document_number.value} has confidence: {document_number.confidence}"
             )
         dob = id_document.fields.get("DateOfBirth")
         if dob:
-            print(
-                "Date of Birth: {} has confidence: {}".format(dob.value, dob.confidence)
-            )
+            print(f"Date of Birth: {dob.value} has confidence: {dob.confidence}")
         doe = id_document.fields.get("DateOfExpiration")
         if doe:
-            print(
-                "Date of Expiration: {} has confidence: {}".format(
-                    doe.value, doe.confidence
-                )
-            )
+            print(f"Date of Expiration: {doe.value} has confidence: {doe.confidence}")
         sex = id_document.fields.get("Sex")
         if sex:
-            print("Sex: {} has confidence: {}".format(sex.value, sex.confidence))
+            print(f"Sex: {sex.value} has confidence: {sex.confidence}")
         address = id_document.fields.get("Address")
         if address:
-            print(
-                "Address: {} has confidence: {}".format(
-                    address.value, address.confidence
-                )
-            )
+            print(f"Address: {address.value} has confidence: {address.confidence}")
         country_region = id_document.fields.get("CountryRegion")
         if country_region:
             print(
-                "Country/Region: {} has confidence: {}".format(
-                    country_region.value, country_region.confidence
-                )
+                f"Country/Region: {country_region.value} has confidence: {country_region.confidence}"
             )
         region = id_document.fields.get("Region")
         if region:
-            print(
-                "Region: {} has confidence: {}".format(region.value, region.confidence)
-            )
+            print(f"Region: {region.value} has confidence: {region.confidence}")
 
 
 async def main():
@@ -120,11 +100,14 @@ async def main():
 if __name__ == "__main__":
     import sys
     from azure.core.exceptions import HttpResponseError
+
     try:
         asyncio.run(main())
     except HttpResponseError as error:
-        print("For more information about troubleshooting errors, see the following guide: "
-              "https://aka.ms/azsdk/python/formrecognizer/troubleshooting")
+        print(
+            "For more information about troubleshooting errors, see the following guide: "
+            "https://aka.ms/azsdk/python/formrecognizer/troubleshooting"
+        )
         # Examples of how to check an HttpResponseError
         # Check by error code:
         if error.error is not None:

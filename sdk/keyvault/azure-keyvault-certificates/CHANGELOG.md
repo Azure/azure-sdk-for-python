@@ -1,6 +1,6 @@
 # Release History
 
-## 4.8.0b2 (Unreleased)
+## 4.8.0b3 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.8.0b2 (2023-07-11)
+
+### Features Added
+- Added `CertificateProperties.x509_thumbprint_string` to return the hexadecimal string representation of the SHA-1 hash
+  of the certificate ([#30166](https://github.com/Azure/azure-sdk-for-python/issues/30166))
 
 ## 4.8.0b1 (2023-05-16)
 

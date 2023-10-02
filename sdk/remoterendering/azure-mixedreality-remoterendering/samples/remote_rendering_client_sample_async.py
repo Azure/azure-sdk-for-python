@@ -26,14 +26,17 @@ import asyncio
 import logging
 import os
 import sys
-import time
+from typing import Optional, cast
 import uuid
+from datetime import datetime
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import AzureKeyCredential
+from azure.core.pipeline import policies
 from azure.mixedreality.remoterendering import (AssetConversionInputSettings,
                                                 AssetConversionOutputSettings,
                                                 AssetConversionStatus,
+                                                AssetConversionOutput,
                                                 RenderingSession,
                                                 RenderingSessionSize,
                                                 RenderingSessionStatus)
@@ -53,7 +56,7 @@ logging_policy_enabled = os.environ.get("ARR_LOGGING_ENABLED", None)
 
 logging_policy = None
 if logging_policy_enabled:
-    logging_policy = NetworkTraceLoggingPolicy()
+    logging_policy = policies.NetworkTraceLoggingPolicy()
     logging_policy.enable_http_logger = True
 
 arr_endpoint = os.environ.get("ARR_SERVICE_ENDPOINT", None)
@@ -72,17 +75,19 @@ account_key = os.environ.get("ARR_ACCOUNT_KEY", None)
 if not account_key:
     raise ValueError("Set ARR_ACCOUNT_KEY env before run this sample.")
 
-storage_container_uri = os.environ.get("ARR_STORAGE_CONTAINER_URI", None)
-if not storage_container_uri:
+storage_container_uri_optional: Optional[str] = os.environ.get("ARR_STORAGE_CONTAINER_URI", None)
+if not storage_container_uri_optional:
     raise ValueError("Set ARR_STORAGE_CONTAINER_URI env before run this sample.")
+storage_container_uri: str = storage_container_uri_optional
 
 input_blob_prefix = os.environ.get("ARR_STORAGE_INPUT_BLOB_PREFIX", None)
 # if no input_blob_prefix is specified the whole content of the storage container will be retrieved for conversions
 # this is not recommended since copying lots of unneeded files will slow down conversions
 
-relative_input_asset_path = os.environ.get("ARR_STORAGE_INPUT_ASSET_PATH", None)
-if not relative_input_asset_path:
+relative_input_asset_path_optional: Optional[str] = os.environ.get("ARR_STORAGE_INPUT_ASSET_PATH", None)
+if not relative_input_asset_path_optional:
     raise ValueError("Set ARR_STORAGE_INPUT_ASSET_PATH env before run this sample.")
+relative_input_asset_path: str = relative_input_asset_path_optional
 
 # use AzureKeyCredentials to authenticate to the service - other auth options include AAD and getting
 # STS token using the mixed reality STS client
@@ -128,7 +133,10 @@ async def perform_asset_conversion():
         print("conversion with id:", conversion_id, "created. Waiting for completion.")
         conversion = await conversion_poller.result()
         print("conversion with id:", conversion_id, "finished with result:", conversion.status)
-        print(conversion.output.asset_uri)
+        if conversion.output is not None:
+            print(conversion.output.asset_uri)
+        else:
+            print("conversion had no output asset_uri")
 
         # a poller can also be acquired by id
         # id_poller = await client.get_asset_conversion_poller(conversion_id=conversion_id)
@@ -151,7 +159,10 @@ async def list_all_asset_conversions():
         created_on = c.created_on.strftime("%m/%d/%Y, %H:%M:%S")
         print("\t conversion:  id:", c.id, "status:", c.status, "created on:", created_on)
         if c.status == AssetConversionStatus.SUCCEEDED:
-            print("\t\tconversion result URI:", c.output.asset_uri)
+            if c.output is not None:
+                print("\t\tconversion result URI:", c.output.asset_uri)
+            else:
+                print("conversion result returned with empty URI")
 
 
 async def demonstrate_rendering_session_lifecycle():
@@ -178,10 +189,10 @@ async def demonstrate_rendering_session_lifecycle():
         print(session)
 
         # if the session should run longer than initially requested we can extend the lifetime of the session
-        session = client.get_rendering_session(session_id)
-        if session.lease_time_minutes - session.elapsed_time_minutes < 2:
+        session = await client.get_rendering_session(session_id)
+        if cast(int, session.lease_time_minutes) - cast(int, session.elapsed_time_minutes) < 2:
             session = await client.update_rendering_session(
-                session_id=session_id, lease_time_minutes=session.lease_time_minutes + 10)
+                session_id=session_id, lease_time_minutes=cast(int, session.lease_time_minutes) + 10)
             print("session with id:", session.id, "updated. New lease time:", session.lease_time_minutes, "minutes")
 
         # once we do not need the session anymore we can stop the session
@@ -197,7 +208,7 @@ async def list_all_rendering_sessions():
     rendering_sessions = await client.list_rendering_sessions()
     async for session in rendering_sessions:
         print("\t session:  id:", session.id, "status:", session.status,
-              "created on:", session.created_on.strftime("%m/%d/%Y, %H:%M:%S"))
+              "created on:", cast(datetime, session.created_on).strftime("%m/%d/%Y, %H:%M:%S"))
 
 
 async def main():

@@ -31,7 +31,7 @@ class ExceptionPolicySamples(object):
         policy_id = self._ep_policy_id
         # [START create_exception_policy]
         from azure.communication.jobrouter import (
-            RouterAdministrationClient,
+            JobRouterAdministrationClient,
             WaitTimeExceptionTrigger,
             QueueLengthExceptionTrigger,
             ReclassifyExceptionAction,
@@ -40,8 +40,8 @@ class ExceptionPolicySamples(object):
         )
 
         # set `connection_string` to an existing ACS endpoint
-        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
-        print("RouterAdministrationClient created successfully!")
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        print("JobRouterAdministrationClient created successfully!")
 
         # we are going to create 2 rules:
         # 1. EscalateJobOnQueueOverFlowTrigger: triggers when queue has more than 10 jobs already en-queued,
@@ -108,7 +108,7 @@ class ExceptionPolicySamples(object):
         policy_id = self._ep_policy_id
         # [START update_exception_policy]
         from azure.communication.jobrouter import (
-            RouterAdministrationClient,
+            JobRouterAdministrationClient,
             WaitTimeExceptionTrigger,
             ReclassifyExceptionAction,
             ExceptionPolicy,
@@ -117,8 +117,8 @@ class ExceptionPolicySamples(object):
         )
 
         # set `connection_string` to an existing ACS endpoint
-        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
-        print("RouterAdministrationClient created successfully!")
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        print("JobRouterAdministrationClient created successfully!")
 
         # we are going to
         # 1. Add an exception rule: EscalateJobOnWaitTimeExceededTrigger2Min: triggers when job has waited in the
@@ -179,9 +179,9 @@ class ExceptionPolicySamples(object):
         connection_string = self.endpoint
         policy_id = self._ep_policy_id
         # [START get_exception_policy]
-        from azure.communication.jobrouter import RouterAdministrationClient
+        from azure.communication.jobrouter import JobRouterAdministrationClient
 
-        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
 
         exception_policy = router_admin_client.get_exception_policy(exception_policy_id = policy_id)
 
@@ -191,9 +191,9 @@ class ExceptionPolicySamples(object):
     def list_exception_policies(self):
         connection_string = self.endpoint
         # [START list_exception_policies]
-        from azure.communication.jobrouter import RouterAdministrationClient
+        from azure.communication.jobrouter import JobRouterAdministrationClient
 
-        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
 
         exception_policy_iterator = router_admin_client.list_exception_policies()
 
@@ -206,9 +206,9 @@ class ExceptionPolicySamples(object):
     def list_exception_policies_batched(self):
         connection_string = self.endpoint
         # [START list_exception_policies_batched]
-        from azure.communication.jobrouter import RouterAdministrationClient
+        from azure.communication.jobrouter import JobRouterAdministrationClient
 
-        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
 
         exception_policy_iterator = router_admin_client.list_exception_policies(results_per_page = 10)
 
@@ -227,9 +227,9 @@ class ExceptionPolicySamples(object):
         policy_id = self._ep_policy_id
 
         # [START delete_exception_policy]
-        from azure.communication.jobrouter import RouterAdministrationClient
+        from azure.communication.jobrouter import JobRouterAdministrationClient
 
-        router_admin_client = RouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
 
         router_admin_client.delete_exception_policy(exception_policy_id = policy_id)
 

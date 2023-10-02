@@ -20,14 +20,14 @@ def mock_credential() -> Mock:
 def mock_workspace_connection_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2023_04_01_preview: Mock,
+    mock_aml_services_2022_01_01_preview: Mock,
     mock_machinelearning_client: Mock,
     mock_credential: Mock,
 ) -> WorkspaceConnectionsOperations:
     yield WorkspaceConnectionsOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client=mock_aml_services_2023_04_01_preview,
+        service_client=mock_aml_services_2022_01_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
         credentials=mock_credential,
     )
@@ -52,7 +52,6 @@ class TestWorkspaceConnectionsOperation:
         mock_from_rest.return_value = WorkspaceConnection(
             target="dummy_target",
             type=ConnectionCategory.PYTHON_FEED,
-            expiryTime="01/05/2025 00:00:00",
             credentials=PatTokenConfiguration(pat="dummy_pat"),
             name="dummy_connection",
         )
@@ -68,7 +67,6 @@ class TestWorkspaceConnectionsOperation:
         mock_from_rest.return_value = WorkspaceConnection(
             target="dummy_target",
             type=camel_to_snake(ConnectionCategory.PYTHON_FEED),
-            expiryTime="01/05/2025 00:00:00",
             credentials=PatTokenConfiguration(pat="dummy_pat"),
             name="dummy_connection",
             metadata=None,
