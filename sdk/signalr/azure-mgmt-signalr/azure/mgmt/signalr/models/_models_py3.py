@@ -18,28 +18,35 @@ if TYPE_CHECKING:
 
 
 class Resource(_serialization.Model):
-    """The core properties of ARM resources.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.signalr.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -48,32 +55,40 @@ class Resource(_serialization.Model):
         self.id = None
         self.name = None
         self.type = None
+        self.system_data = None
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have everything other than
-    required location and tags.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.signalr.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -88,13 +103,16 @@ class CustomCertificate(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.signalr.models.SystemData
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
      "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
@@ -145,7 +163,6 @@ class CustomCertificate(ProxyResource):
         :paramtype key_vault_secret_version: str
         """
         super().__init__(**kwargs)
-        self.system_data = None
         self.provisioning_state = None
         self.key_vault_base_uri = key_vault_base_uri
         self.key_vault_secret_name = key_vault_secret_name
@@ -194,13 +211,16 @@ class CustomDomain(ProxyResource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource Id for the resource.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.signalr.models.SystemData
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
      "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
@@ -239,7 +259,6 @@ class CustomDomain(ProxyResource):
         :paramtype custom_certificate: ~azure.mgmt.signalr.models.ResourceReference
         """
         super().__init__(**kwargs)
-        self.system_data = None
         self.provisioning_state = None
         self.domain_name = domain_name
         self.custom_certificate = custom_certificate
@@ -722,8 +741,9 @@ class NameAvailabilityParameters(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: The resource type. Can be "Microsoft.SignalRService/SignalR" or
-     "Microsoft.SignalRService/webPubSub". Required.
+    :ivar type: The resource type. Can be "Microsoft.SignalRService/SignalR",
+     "Microsoft.SignalRService/WebPubSub", "Microsoft.SignalRService/SignalR/replicas" or
+     "Microsoft.SignalRService/WebPubSub/replicas". Required.
     :vartype type: str
     :ivar name: The resource name to validate. e.g."my-resource-name". Required.
     :vartype name: str
@@ -741,8 +761,9 @@ class NameAvailabilityParameters(_serialization.Model):
 
     def __init__(self, *, type: str, name: str, **kwargs: Any) -> None:
         """
-        :keyword type: The resource type. Can be "Microsoft.SignalRService/SignalR" or
-         "Microsoft.SignalRService/webPubSub". Required.
+        :keyword type: The resource type. Can be "Microsoft.SignalRService/SignalR",
+         "Microsoft.SignalRService/WebPubSub", "Microsoft.SignalRService/SignalR/replicas" or
+         "Microsoft.SignalRService/WebPubSub/replicas". Required.
         :paramtype type: str
         :keyword name: The resource name to validate. e.g."my-resource-name". Required.
         :paramtype name: str
@@ -1014,13 +1035,16 @@ class PrivateEndpointConnection(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.signalr.models.SystemData
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
      "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
@@ -1074,7 +1098,6 @@ class PrivateEndpointConnection(ProxyResource):
          ~azure.mgmt.signalr.models.PrivateLinkServiceConnectionState
         """
         super().__init__(**kwargs)
-        self.system_data = None
         self.provisioning_state = None
         self.private_endpoint = private_endpoint
         self.group_ids = None
@@ -1122,12 +1145,17 @@ class PrivateLinkResource(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.signalr.models.SystemData
     :ivar group_id: Group Id of the private link resource.
     :vartype group_id: str
     :ivar required_members: Required members of the private link resource.
@@ -1144,12 +1172,14 @@ class PrivateLinkResource(ProxyResource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "group_id": {"key": "properties.groupId", "type": "str"},
         "required_members": {"key": "properties.requiredMembers", "type": "[str]"},
         "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
@@ -1284,6 +1314,161 @@ class RegenerateKeyParameters(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.key_type = key_type
+
+
+class TrackedResource(Resource):
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.signalr.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+    }
+
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.location = location
+
+
+class Replica(TrackedResource):
+    """A class represent a replica resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.signalr.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar sku: The billing information of the resource.
+    :vartype sku: ~azure.mgmt.signalr.models.ResourceSku
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
+     "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.signalr.models.ProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "sku": {"key": "sku", "type": "ResourceSku"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[Dict[str, str]] = None,
+        sku: Optional["_models.ResourceSku"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword sku: The billing information of the resource.
+        :paramtype sku: ~azure.mgmt.signalr.models.ResourceSku
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.sku = sku
+        self.provisioning_state = None
+
+
+class ReplicaList(_serialization.Model):
+    """ReplicaList.
+
+    :ivar value: List of the replica.
+    :vartype value: list[~azure.mgmt.signalr.models.Replica]
+    :ivar next_link: The URL the client should use to fetch the next page (per server side paging).
+     It's null for now, added for future use.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Replica]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.Replica"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of the replica.
+        :paramtype value: list[~azure.mgmt.signalr.models.Replica]
+        :keyword next_link: The URL the client should use to fetch the next page (per server side
+         paging).
+         It's null for now, added for future use.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class ResourceLogCategory(_serialization.Model):
@@ -1621,13 +1806,16 @@ class SharedPrivateLinkResource(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource.
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.signalr.models.SystemData
     :ivar group_id: The group id from the provider of resource the shared private link resource is
      for.
@@ -1687,7 +1875,6 @@ class SharedPrivateLinkResource(ProxyResource):
         :paramtype request_message: str
         """
         super().__init__(**kwargs)
-        self.system_data = None
         self.group_id = group_id
         self.private_link_resource_id = private_link_resource_id
         self.provisioning_state = None
@@ -1920,77 +2107,34 @@ class SignalRNetworkACLs(_serialization.Model):
         self.private_endpoints = private_endpoints
 
 
-class TrackedResource(Resource):
-    """The resource model definition for a ARM tracked top level resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
-    :vartype type: str
-    :ivar location: The GEO location of the resource. e.g. West US | East US | North Central US |
-     South Central US.
-    :vartype location: str
-    :ivar tags: Tags of the service which is a list of key value pairs that describe the resource.
-    :vartype tags: dict[str, str]
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword location: The GEO location of the resource. e.g. West US | East US | North Central US
-         | South Central US.
-        :paramtype location: str
-        :keyword tags: Tags of the service which is a list of key value pairs that describe the
-         resource.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.location = location
-        self.tags = tags
-
-
 class SignalRResource(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """A class represent a resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource Id for the resource.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: The GEO location of the resource. e.g. West US | East US | North Central US |
-     South Central US.
-    :vartype location: str
-    :ivar tags: Tags of the service which is a list of key value pairs that describe the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.signalr.models.SystemData
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar sku: The billing information of the resource.
     :vartype sku: ~azure.mgmt.signalr.models.ResourceSku
-    :ivar kind: The kind of the service, it can be SignalR or RawWebSockets. Known values are:
-     "SignalR" and "RawWebSockets".
+    :ivar kind: The kind of the service. Known values are: "SignalR" and "RawWebSockets".
     :vartype kind: str or ~azure.mgmt.signalr.models.ServiceKind
     :ivar identity: A class represent managed identities used for request and response.
     :vartype identity: ~azure.mgmt.signalr.models.ManagedIdentity
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.signalr.models.SystemData
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
      "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
     :vartype provisioning_state: str or ~azure.mgmt.signalr.models.ProvisioningState
@@ -2060,6 +2204,7 @@ class SignalRResource(TrackedResource):  # pylint: disable=too-many-instance-att
         "name": {"readonly": True},
         "type": {"readonly": True},
         "system_data": {"readonly": True},
+        "location": {"required": True},
         "provisioning_state": {"readonly": True},
         "external_ip": {"readonly": True},
         "host_name": {"readonly": True},
@@ -2075,12 +2220,12 @@ class SignalRResource(TrackedResource):  # pylint: disable=too-many-instance-att
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "sku": {"key": "sku", "type": "ResourceSku"},
         "kind": {"key": "kind", "type": "str"},
         "identity": {"key": "identity", "type": "ManagedIdentity"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "external_ip": {"key": "properties.externalIP", "type": "str"},
         "host_name": {"key": "properties.hostName", "type": "str"},
@@ -2115,7 +2260,7 @@ class SignalRResource(TrackedResource):  # pylint: disable=too-many-instance-att
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        location: Optional[str] = None,
+        location: str,
         tags: Optional[Dict[str, str]] = None,
         sku: Optional["_models.ResourceSku"] = None,
         kind: Optional[Union[str, "_models.ServiceKind"]] = None,
@@ -2134,16 +2279,13 @@ class SignalRResource(TrackedResource):  # pylint: disable=too-many-instance-att
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: The GEO location of the resource. e.g. West US | East US | North Central US
-         | South Central US.
-        :paramtype location: str
-        :keyword tags: Tags of the service which is a list of key value pairs that describe the
-         resource.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword sku: The billing information of the resource.
         :paramtype sku: ~azure.mgmt.signalr.models.ResourceSku
-        :keyword kind: The kind of the service, it can be SignalR or RawWebSockets. Known values are:
-         "SignalR" and "RawWebSockets".
+        :keyword kind: The kind of the service. Known values are: "SignalR" and "RawWebSockets".
         :paramtype kind: str or ~azure.mgmt.signalr.models.ServiceKind
         :keyword identity: A class represent managed identities used for request and response.
         :paramtype identity: ~azure.mgmt.signalr.models.ManagedIdentity
@@ -2186,11 +2328,10 @@ class SignalRResource(TrackedResource):  # pylint: disable=too-many-instance-att
          When set as true, connection with AuthType=aad won't work.
         :paramtype disable_aad_auth: bool
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
         self.kind = kind
         self.identity = identity
-        self.system_data = None
         self.provisioning_state = None
         self.external_ip = None
         self.host_name = None
@@ -2247,7 +2388,8 @@ class SignalRResourceList(_serialization.Model):
 class SignalRTlsSettings(_serialization.Model):
     """TLS settings for the resource.
 
-    :ivar client_cert_enabled: Request client certificate during TLS handshake if enabled.
+    :ivar client_cert_enabled: Request client certificate during TLS handshake if enabled. Not
+     supported for free tier. Any input will be ignored for free tier.
     :vartype client_cert_enabled: bool
     """
 
@@ -2255,9 +2397,10 @@ class SignalRTlsSettings(_serialization.Model):
         "client_cert_enabled": {"key": "clientCertEnabled", "type": "bool"},
     }
 
-    def __init__(self, *, client_cert_enabled: bool = True, **kwargs: Any) -> None:
+    def __init__(self, *, client_cert_enabled: bool = False, **kwargs: Any) -> None:
         """
-        :keyword client_cert_enabled: Request client certificate during TLS handshake if enabled.
+        :keyword client_cert_enabled: Request client certificate during TLS handshake if enabled. Not
+         supported for free tier. Any input will be ignored for free tier.
         :paramtype client_cert_enabled: bool
         """
         super().__init__(**kwargs)

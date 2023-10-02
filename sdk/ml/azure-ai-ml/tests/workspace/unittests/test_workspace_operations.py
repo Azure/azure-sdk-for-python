@@ -64,7 +64,7 @@ class TestWorkspaceOperation:
         mocker: MockFixture,
     ):
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations.get", return_value=None)
-        mocker.patch("azure.ai.ml.operations.WorkspaceOperations._populate_arm_paramaters", return_value=({}, {}, {}))
+        mocker.patch("azure.ai.ml.operations.WorkspaceOperations._populate_arm_parameters", return_value=({}, {}, {}))
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
         mock_workspace_operation.begin_create(workspace=Workspace(name="name"))
 
@@ -118,11 +118,17 @@ class TestWorkspaceOperation:
 
     def test_delete(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
         mocker.patch("azure.ai.ml.operations._workspace_operations_base.delete_resource_by_arm_id", return_value=None)
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.get_generic_arm_resource_by_arm_id", return_value=None
+        )
         mock_workspace_operation.begin_delete("randstr", delete_dependent_resources=True)
         mock_workspace_operation._operation.begin_delete.assert_called_once()
 
     def test_purge(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture) -> None:
         mocker.patch("azure.ai.ml.operations._workspace_operations_base.delete_resource_by_arm_id", return_value=None)
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.get_generic_arm_resource_by_arm_id", return_value=None
+        )
         mock_workspace_operation.begin_delete("randstr", delete_dependent_resources=True, permanently_delete=True)
         mock_workspace_operation._operation.begin_delete.assert_called_once()
 

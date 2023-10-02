@@ -8,7 +8,7 @@ import functools
 from collections import OrderedDict
 from copy import deepcopy
 from datetime import datetime, timedelta
-from typing import Type, Dict, Any, Union, Optional, List
+from typing import Type, Dict, Any, Union, Optional, List, Tuple
 from ._generated._serialization import Model
 
 from ._generated.models import (
@@ -56,11 +56,11 @@ def validate_extraction_missing_args(extraction_missing_args):
 
 class DictMixin(object):
     def __setitem__(self, key, item):
-        # type: (Any, Any) -> None
+        # type: (str, Any) -> None
         self.__dict__[key] = item
 
     def __getitem__(self, key):
-        # type: (Any) -> Any
+        # type: (str) -> Any
         return self.__dict__[key]
 
     def __repr__(self):
@@ -72,7 +72,7 @@ class DictMixin(object):
         return len(self.keys())
 
     def __delitem__(self, key):
-        # type: (Any) -> None
+        # type: (str) -> None
         self.__dict__[key] = None
 
     def __eq__(self, other):
@@ -99,11 +99,11 @@ class DictMixin(object):
         # type: () -> str
         return str({k: v for k, v in self.__dict__.items() if not k.startswith("_")})
 
-    def __contains__(self, key):
+    def __contains__(self, key: str) -> bool:
         return key in self.__dict__
 
     def has_key(self, k):
-        # type: (Any) -> bool
+        # type: (str) -> bool
         return k in self.__dict__
 
     def update(self, *args, **kwargs):
@@ -111,19 +111,19 @@ class DictMixin(object):
         return self.__dict__.update(*args, **kwargs)
 
     def keys(self):
-        # type: () -> list
+        # type: () -> List[str]
         return [k for k in self.__dict__ if not k.startswith("_")]
 
     def values(self):
-        # type: () -> list
+        # type: () -> List
         return [v for k, v in self.__dict__.items() if not k.startswith("_")]
 
     def items(self):
-        # type: () -> list
+        # type: () -> List[Tuple[str, Any]]
         return [(k, v) for k, v in self.__dict__.items() if not k.startswith("_")]
 
     def get(self, key, default=None):
-        # type: (Any, Optional[Any]) -> Any
+        # type: (str, Optional[Any]) -> Any
         if key in self.__dict__:
             return self.__dict__[key]
         return default

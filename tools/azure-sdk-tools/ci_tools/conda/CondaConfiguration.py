@@ -47,13 +47,17 @@ http = urllib3.PoolManager()
 #       checkout_path: sdk/storage
 #       version: 12.7.0
 
+
 def get_pypi_page(package: str, version: str) -> bs4.BeautifulSoup:
     url = f"https://pypi.org/project/{package}/{version}/"
 
     try:
         r = http.request("GET", url)
     except Exception as e:
-        raise RuntimeError(f"We must get this the data {url} to continue proper assembly.")
+        raise RuntimeError(
+            f'This package "{package}" has been configured to retrieve package source distribution from PyPI at URL "{url}".'
+            + "Unable to retrieve these bits from PyPI. Check conda package configuration in conda-sdk-client.yml and retry."
+        )
 
     return bs4.BeautifulSoup(r.data.decode("utf-8"), "html.parser")
 
@@ -65,7 +69,7 @@ def get_package_sdist_url(package: str, version: str) -> str:
     try:
         target_zip = soup.select("div.file__card a")[0]["href"]
     except Exception as e:
-        print(f"Cant get data from {package} and {version}")
+        print(f"Can't get data from {package} and {version}")
         raise e
     filename = os.path.basename(target_zip)
 
@@ -84,22 +88,11 @@ class CheckoutConfiguration:
         else:
             raise ValueError("A checkout configuration MUST have a package name defined in key 'package'.")
 
-        if "checkout_path" in raw_json:
-            self.checkout_path = raw_json["checkout_path"]
-        else:
-            self.checkout_path = None
+        self.checkout_path = raw_json.get("checkout_path", None)
+        self.version = raw_json.get("version", None)
+        self.download_uri = raw_json.get("download_uri", None)
 
-        if "version" in raw_json:
-            self.version = raw_json["version"]
-        else:
-            self.version = None
-
-        if "download_uri" in raw_json:
-            self.download_uri = raw_json["download_uri"]
-        else:
-            self.download_uri = None
-
-        if "version" in raw_json and self.checkout_path is None:
+        if self.version and self.checkout_path is None:
             self.download_uri = get_package_sdist_url(self.package, self.version)
 
         if not self.checkout_path and not self.download_uri:
@@ -134,7 +127,7 @@ class CondaConfiguration:
         created_sdist_path: str = None,
         service: str = "",
         conda_py_versions: List[str] = [],
-        channels: List[str] = []
+        channels: List[str] = [],
     ):
         self.name: str = name
         self.common_root: str = common_root
@@ -147,28 +140,13 @@ class CondaConfiguration:
 
     @classmethod
     def from_json(cls, raw_json_blob: dict):
-        name = raw_json_blob["name"]
-        common_root = None
-        service = None
-
-        if "common_root" in raw_json_blob:
-            common_root = raw_json_blob["common_root"]
-
+        name = raw_json_blob.get("name")
+        common_root = raw_json_blob.get("common_root", None)
         in_batch = str_to_bool(raw_json_blob["in_batch"])
-        checkout_config = parse_checkout_config(raw_json_blob["checkout"])
-
-        if "conda_py_versions" in raw_json_blob:
-            conda_py_versions = raw_json_blob["conda_py_versions"]
-        else:
-            conda_py_versions = []
-
-        if "service" in raw_json_blob:
-            service = raw_json_blob["service"]
-
-        if "channels" in raw_json_blob:
-            channels = raw_json_blob["channels"]
-        else:
-            channels = []
+        checkout_config = parse_checkout_config(raw_json_blob.get("checkout"))
+        conda_py_versions = raw_json_blob.get("conda_py_versions", [])
+        service = raw_json_blob.get("service", None)
+        channels = raw_json_blob.get("channels", [])
 
         # default the service
         if any([a.checkout_path for a in checkout_config]) and not service:

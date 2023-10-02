@@ -1,5 +1,17 @@
 # Release History
 
+## 3.0.0 (2023-09-19)
+
+### Features Added
+
+  - Model RoutingEndpoints has a new parameter cosmos_db_sql_containers
+
+### Breaking Changes
+
+  - Model RoutingCosmosDBSqlApiProperties has a new required parameter container_name
+  - Model RoutingCosmosDBSqlApiProperties no longer has parameter collection_name
+  - Model RoutingEndpoints no longer has parameter cosmos_db_sql_collections
+
 ## 2.4.0 (2023-04-20)
 
 ### Features Added

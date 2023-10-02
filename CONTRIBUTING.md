@@ -83,11 +83,11 @@ If at any time you want to blow away the tox created virtual environments and st
 
 #### Example `azure-core` mypy
 
-1. Run `tox run -e mypy -c ../../../eng/tox/tox.ini --root sdk/core/azure-core`
+1. Run `tox run -e mypy -c ./eng/tox/tox.ini --root sdk/core/azure-core`
 
 #### Example `azure-storage-blob` tests
 
-2. Execute `tox run -c ../../../eng/tox/tox.ini --root sdk/storage/azure-storage-blob`
+2. Execute `tox run -c ./eng/tox/tox.ini --root sdk/storage/azure-storage-blob`
 
 Note that we didn't provide an `environment` argument for this example. Reason here is that the _default_ environment selected by our common `tox.ini` file is one that runs `pytest`.
 

@@ -107,7 +107,7 @@ def test_response_headers(old_response, new_response):
     assert (
         set(old_response.headers.keys())
         == set(new_response.headers.keys())
-        == set(["Content-Type", "Connection", "Server", "Date"])
+        == set(["Content-Type", "Connection", "Server", "Date", "Transfer-Encoding"])
     )
     old_response.headers = {"Hello": "world!"}
     new_response.headers = {"Hello": "world!"}

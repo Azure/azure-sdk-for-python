@@ -30,7 +30,7 @@ from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -43,7 +43,7 @@ def build_list_request(resource_group_name: str, account_name: str, subscription
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -61,7 +61,7 @@ def build_list_request(resource_group_name: str, account_name: str, subscription
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -78,7 +78,7 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -98,7 +98,7 @@ def build_create_request(
         "serviceName": _SERIALIZER.url("service_name", service_name, "str", max_length=50, min_length=3),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -117,7 +117,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -136,7 +136,7 @@ def build_get_request(
         "serviceName": _SERIALIZER.url("service_name", service_name, "str", max_length=50, min_length=3),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -153,7 +153,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -172,7 +172,7 @@ def build_delete_request(
         "serviceName": _SERIALIZER.url("service_name", service_name, "str", max_length=50, min_length=3),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -350,11 +350,18 @@ class ServiceOperations:
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
+        response_headers = {}
         if response.status_code == 200:
             deserialized = self._deserialize("ServiceResource", pipeline_response)
 
+        if response.status_code == 202:
+            response_headers["azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("azure-AsyncOperation")
+            )
+            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
