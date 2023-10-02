@@ -45,7 +45,7 @@ from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
 from azure.ai.ml.entities._policies.policy import Policy
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 module_logger = logging.getLogger(__name__)
 
@@ -950,8 +950,8 @@ def load_policies(source: Union[str, PathLike, IO[AnyStr]]) -> [Policy]:
     policies = []
 
     for item in yaml_list:
-        scope = item['scope']
-        rules = item['policies']
+        scope = item["scope"]
+        rules = item["policies"]
         for rule in rules:
             rule["definition"] = Policy.Definition.get(rule["definition"])
             rule["effect"] = Policy.Effect[rule["effect"].title()]

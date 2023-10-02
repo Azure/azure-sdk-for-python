@@ -58,14 +58,12 @@ class ComputePolicyOperations(_ScopeDependentOperations):
             subscription_id = self._operation_scope.subscription_id
             resource_group_name = self._operation_scope.resource_group_name
             workspace_name = workspace_name or self._workspace_name
-        
+
         if subscription_id is None or resource_group_name is None or workspace_name is None:
             raise ValueError("Please provide a valid scope or workspace_name or use a MLClient with a workspace set")
 
-        policies : ListComputePoliciesResponse = self._operation.list(
-            subscription_id=subscription_id,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name
+        policies: ListComputePoliciesResponse = self._operation.list(
+            subscription_id=subscription_id, resource_group_name=resource_group_name, workspace_name=workspace_name
         )
 
         return (Policy._from_rest_object(policy) for policy in policies.policies)
@@ -79,7 +77,7 @@ class ComputePolicyOperations(_ScopeDependentOperations):
             subscription_id = self._operation_scope.subscription_id
             resource_group_name = self._operation_scope.resource_group_name
             workspace_name = workspace_name or self._workspace_name
-        
+
         if subscription_id is None or resource_group_name is None or workspace_name is None:
             raise ValueError("Please provide a valid scope or workspace_name or use a MLClient with a workspace set")
 
@@ -87,7 +85,7 @@ class ComputePolicyOperations(_ScopeDependentOperations):
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
-            policy_name=name
+            policy_name=name,
         )
 
         return Policy._from_rest_object(rest_obj)
@@ -101,19 +99,19 @@ class ComputePolicyOperations(_ScopeDependentOperations):
             subscription_id = self._operation_scope.subscription_id
             resource_group_name = self._operation_scope.resource_group_name
             workspace_name = workspace_name or self._workspace_name
-        
+
         if subscription_id is None or resource_group_name is None or workspace_name is None:
             raise ValueError("Please provide a valid scope or workspace_name or use a MLClient with a workspace set")
-    
+
         return self._operation.delete(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
-            policy_name=name
+            policy_name=name,
         )
-    
+
     def __get_scope_values(self, scope: str):
-        scope = scope.split('/')
+        scope = scope.split("/")
         subscription_id = scope[2] if len(scope) > 2 else None
         resource_group_name = scope[4] if len(scope) > 4 else None
         workspace_name = scope[8] if len(scope) > 8 else None

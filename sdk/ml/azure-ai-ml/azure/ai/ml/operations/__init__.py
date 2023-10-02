@@ -53,5 +53,5 @@ __all__ = [
     "FeatureSetOperations",
     "FeatureStoreEntityOperations",
     "FeatureStoreOperations",
-    "ComputePolicyOperations"
+    "ComputePolicyOperations",
 ]
