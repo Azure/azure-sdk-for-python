@@ -37,6 +37,7 @@ PACKAGES_EXCLUDED_FROM_CLEANUP: List[str] = [
     "pip",
     "pluggy",
     "typing-extensions",
+    "execnet",
     "tomli",
     "tomli-w",
     "wheel",
@@ -457,17 +458,17 @@ def prepare_and_test(mapped_args: argparse.Namespace) -> int:
         pytest_args.extend(config.get("additional_pytest_args", []))
 
         logging.info(f"Invoking tests for package {parsed_package.name} and optional environment {env_name}")
-        breakpoint()
+
         config_results.append(pytest(pytest_args))
 
     if all(config_results):
-        logging.info("All optional environment(s) for {parsed_package.name} completed successfully.")
+        logging.info(f"All optional environment(s) for {parsed_package.name} completed successfully.")
         sys.exit(0)
     else:
         for i, config in enumerate(optional_configs):
             if not config_results[i]:
                 config_name = config.get("name")
                 logging.error(
-                    "Optional environment {config_name} for {parsed_package.name} completed with non-zero exit-code. Check test results above."
+                    f"Optional environment {config_name} for {parsed_package.name} completed with non-zero exit-code. Check test results above."
                 )
         sys.exit(1)
