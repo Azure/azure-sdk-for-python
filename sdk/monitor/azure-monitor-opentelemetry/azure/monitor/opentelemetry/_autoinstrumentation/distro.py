@@ -14,6 +14,9 @@ from opentelemetry.environment_variables import (
 from opentelemetry.instrumentation.distro import (
     BaseDistro,
 )
+from opentelemetry.instrumentation.environment_variables import (
+    OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,
+)
 from opentelemetry.sdk.environment_variables import (
     _OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED,
 )
@@ -22,6 +25,7 @@ from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from azure.monitor.opentelemetry._constants import (
     _is_attach_enabled,
+    _AZURE_SDK_INSTRUMENTATION_NAME,
     _PREVIEW_ENTRY_POINT_WARNING,
 )
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
@@ -31,6 +35,9 @@ from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
 )
 from azure.monitor.opentelemetry._diagnostics.status_logger import (
     AzureStatusLogger,
+)
+from azure.monitor.opentelemetry._util.configurations import (
+    _get_otel_disabled_instrumentations,
 )
 
 
@@ -67,4 +74,6 @@ def _configure_auto_instrumentation() -> None:
     environ.setdefault(
         _OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED, "true"
     )
-    settings.tracing_implementation = OpenTelemetrySpan
+    otel_disabled_instrumentations = _get_otel_disabled_instrumentations()
+    if _AZURE_SDK_INSTRUMENTATION_NAME not in otel_disabled_instrumentations:
+        settings.tracing_implementation = OpenTelemetrySpan
