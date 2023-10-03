@@ -40,7 +40,7 @@ from azure.core.pipeline.policies import (
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
 
 from .authentication import StorageHttpChallenge
-from .constants import DEFAULT_OAUTH_SCOPE, STORAGE_OAUTH_SCOPE
+from .constants import DEFAULT_OAUTH_SCOPE
 from .models import LocationMode
 
 try:

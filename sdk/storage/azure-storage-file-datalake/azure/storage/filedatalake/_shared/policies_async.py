@@ -14,7 +14,7 @@ from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, Async
 from azure.core.exceptions import AzureError
 
 from .authentication import StorageHttpChallenge
-from .constants import DEFAULT_OAUTH_SCOPE, STORAGE_OAUTH_SCOPE
+from .constants import DEFAULT_OAUTH_SCOPE
 from .policies import is_retry, StorageRetryPolicy
 
 if TYPE_CHECKING:
