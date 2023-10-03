@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime
-import json
 from typing import List, Optional, Union, Any
 import uuid
 from azure.core.credentials import AzureKeyCredential, TokenCredential
