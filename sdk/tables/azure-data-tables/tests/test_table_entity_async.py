@@ -908,7 +908,7 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 etag="W/\"datetime'2012-06-15T22%3A51%3A44.9662825Z'\"",
                 match_condition=MatchConditions.IfNotModified,
             )
-            
+
             entity, _ = await self._insert_random_entity()
             with pytest.raises(ResourceModifiedError) as ex:
                 await self.table.delete_entity(

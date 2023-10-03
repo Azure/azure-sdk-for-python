@@ -730,7 +730,7 @@ class TestTableEntityCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         try:
             entity = self._create_random_base_entity_dict()
             sent_entity = self._create_updated_entity_dict(entity["PartitionKey"], entity["RowKey"])
-            
+
             with pytest.raises(ResourceNotFoundError) as ex:
                 await self.table.update_entity(mode=UpdateMode.MERGE, entity=sent_entity)
             assert ex.value.response.status_code == 404
@@ -852,7 +852,7 @@ class TestTableEntityCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 etag="W/\"datetime'2012-06-15T22%3A51%3A44.9662825Z'\"",
                 match_condition=MatchConditions.IfNotModified,
             )
-            
+
             entity, _ = await self._insert_random_entity()
             with pytest.raises(ResourceModifiedError) as ex:
                 await self.table.delete_entity(
