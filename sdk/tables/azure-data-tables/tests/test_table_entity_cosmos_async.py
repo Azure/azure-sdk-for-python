@@ -681,6 +681,7 @@ class TestTableEntityCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             resp = await self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
+            self._assert_valid_metadata(resp)
             received_entity = await self.table.get_entity(entity["PartitionKey"], entity["RowKey"])
             self._assert_updated_entity(received_entity)
         finally:

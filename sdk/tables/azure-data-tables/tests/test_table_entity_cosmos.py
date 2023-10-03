@@ -887,7 +887,7 @@ class TestTableEntityCosmos(AzureRecordedTestCase, TableTestCase):
             resp = self.table.upsert_entity(mode=UpdateMode.REPLACE, entity=sent_entity)
 
             # Assert
-            # assert resp is not None
+            self._assert_valid_metadata(resp)
             received_entity = self.table.get_entity(entity["PartitionKey"], entity["RowKey"])
             self._assert_updated_entity(received_entity)
         finally:
