@@ -49,12 +49,6 @@ class DeviceCodeCredential(InteractiveCredential):
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
-    :keyword bool allow_broker: An authentication broker is an application that runs on a user's machine that manages
-        the authentication handshakes and token maintenance for connected accounts. The Windows operating system uses
-        the Web Account Manager (WAM) as its authentication broker. If this parameter is set to True, the broker will
-        be used when possible. Defaults to False.
-        Check https://learn.microsoft.com/azure/active-directory/develop/scenario-desktop-acquire-token-wam for more
-        information about WAM.
     :keyword bool disable_instance_discovery: Determines whether or not instance discovery is performed when attempting
         to authenticate. Setting this to true will completely disable both instance discovery and authority validation.
         This functionality is intended for use in scenarios where the metadata endpoint cannot be reached, such as in
