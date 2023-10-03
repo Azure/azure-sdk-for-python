@@ -90,8 +90,8 @@ class CommunicationRoom:
     :ivar valid_until: The timestamp from when the room can no longer be joined. The timestamp is
      in RFC3339 format: ``yyyy-MM-ddTHH:mm:ssZ``.
     :vartype valid_until: ~datetime.datetime
-    :ivar pstnDialOutEnabled: Set this flag to true if, at the time of the call, dial out to a PSTN number is enabled in a particular room. By default, this flag is set to false.
-    :vartype pstnDialOutEnabled: bool
+    :ivar pstn_dial_out_enabled: Set this flag to true if, at the time of the call, dial out to a PSTN number is enabled in a particular room. By default, this flag is set to false.
+    :vartype pstn_dial_out_enabled: bool
     """
 
     @overload
@@ -100,7 +100,7 @@ class CommunicationRoom:
         *,
         valid_from: Optional[datetime] = None,
         valid_until: Optional[datetime] = None,
-        pstnDialOutEnabled: Optional[bool] = None
+        pstn_dial_out_enabled: Optional[bool] = None
     ):
         ...
     @overload
@@ -116,7 +116,7 @@ class CommunicationRoom:
             self.created_at = args[0]['createdAt']
             self.valid_from = args[0]['validFrom']
             self.valid_until = args[0]['validUntil']
-            self.pstnDialOutEnabled = args[0]['pstnDialOutEnabled']
+            self.pstn_dial_out_enabled = args[0]['pstnDialOutEnabled']
         elif args:
             raise TypeError(
                 f"CommunicationRoom.__init__() takes 2 positional arguments but {len(args) + 1} were given."
@@ -126,7 +126,7 @@ class CommunicationRoom:
             self.created_at = None
             self.valid_from = kwargs.get('valid_from')
             self.valid_until = kwargs.get('valid_until')
-            self.pstnDialOutEnabled = kwargs.get('pstnDialOutEnabled')
+            self.pstn_dial_out_enabled = kwargs.get('pstn_dial_out_enabled')
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):

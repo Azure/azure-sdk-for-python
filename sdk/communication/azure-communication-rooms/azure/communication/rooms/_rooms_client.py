@@ -99,7 +99,7 @@ class RoomsClient(object):
         *,
         valid_from: Optional[datetime] = None,
         valid_until: Optional[datetime] = None,
-        pstnDialOutEnabled: Optional[bool] = False,
+        pstn_dial_out_enabled: bool = False,
         participants: Optional[List[RoomParticipant]]=None,
         **kwargs
     ) -> CommunicationRoom:
@@ -107,7 +107,7 @@ class RoomsClient(object):
 
         :keyword datetime valid_from: The timestamp from when the room is open for joining. Optional.
         :keyword datetime valid_until: The timestamp from when the room can no longer be joined. Optional.
-        :keyword bool pstnDialOutEnabled: Set this flag to true if, at the time of the call, dial out to a PSTN number is enabled in a particular room. Optional.
+        :keyword bool pstn_dial_out_enabled: Set this flag to true if, at the time of the call, dial out to a PSTN number is enabled in a particular room. Optional.
         :keyword List[RoomParticipant] participants: Collection of identities invited to the room. Optional.
         :type participants: List[~azure.communication.rooms.RoomParticipant]
         :returns: Created room.
@@ -117,7 +117,7 @@ class RoomsClient(object):
         create_room_request = {
             "validFrom": valid_from,
             "validUntil": valid_until,
-            "pstnDialOutEnabled": pstnDialOutEnabled,
+            "pstnDialOutEnabled": pstn_dial_out_enabled,
         }
         if participants:
             create_room_request["participants"] ={
@@ -163,8 +163,8 @@ class RoomsClient(object):
         *,
         room_id: str,
         valid_from: Optional[datetime] = None,
-        valid_until: Optional[datetime]= None,
-        pstnDialOutEnabled: Optional[bool] = None,
+        valid_until: Optional[datetime] = None,
+        pstn_dial_out_enabled: Optional[bool] = None,
         **kwargs: Any
     ) -> CommunicationRoom:
         """Update a valid room's attributes. For any argument that is passed
@@ -173,7 +173,7 @@ class RoomsClient(object):
         :keyword str room_id: Required. Id of room to be updated
         :keyword datetime valid_from: The timestamp from when the room is open for joining. Optional.
         :keyword datetime valid_until: The timestamp from when the room can no longer be joined. Optional.
-        :keyword bool pstnDialOutEnabled: Set this flag to true if, at the time of the call, dial out to a PSTN number is enabled in a particular room. Optional.
+        :keyword bool pstn_dial_out_enabled: Set this flag to true if, at the time of the call, dial out to a PSTN number is enabled in a particular room. Optional.
         :returns: Updated room.
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -181,7 +181,7 @@ class RoomsClient(object):
         update_room_request = {
             "validFrom": valid_from,
             "validUntil": valid_until,
-            "pstnDialOutEnabled": pstnDialOutEnabled,
+            "pstnDialOutEnabled": pstn_dial_out_enabled,
         }
         update_room_response = self._rooms_service_client.rooms.update(
             room_id=room_id, update_room_request=update_room_request, **kwargs)
