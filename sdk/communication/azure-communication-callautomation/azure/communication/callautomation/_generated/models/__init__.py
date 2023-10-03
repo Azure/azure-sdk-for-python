@@ -18,6 +18,10 @@ from ._models import CallLocator
 from ._models import CallParticipant
 from ._models import CallTransferAccepted
 from ._models import CallTransferFailed
+from ._models import CancelAddParticipantFailed
+from ._models import CancelAddParticipantRequest
+from ._models import CancelAddParticipantResponse
+from ._models import CancelAddParticipantSucceeded
 from ._models import ChannelAffinity
 from ._models import Choice
 from ._models import ChoiceResult
@@ -102,6 +106,10 @@ __all__ = [
     "CallParticipant",
     "CallTransferAccepted",
     "CallTransferFailed",
+    "CancelAddParticipantFailed",
+    "CancelAddParticipantRequest",
+    "CancelAddParticipantResponse",
+    "CancelAddParticipantSucceeded",
     "ChannelAffinity",
     "Choice",
     "ChoiceResult",
