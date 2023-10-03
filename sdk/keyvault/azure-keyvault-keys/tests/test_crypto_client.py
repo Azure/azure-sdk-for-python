@@ -12,7 +12,7 @@ from unittest import mock
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 
 from cryptography.hazmat.primitives.hashes import SHA1, SHA256
-from cryptography.hazmat.primitives.asymmetric.padding import MGF1, OAEP, PSS
+from cryptography.hazmat.primitives.asymmetric.padding import MGF1, OAEP, PKCS1v15
 from cryptography.hazmat.primitives.asymmetric.rsa import rsa_crt_dmp1, rsa_crt_dmq1, rsa_crt_iqmp
 import pytest
 from azure.core.exceptions import AzureError, HttpResponseError
@@ -50,7 +50,7 @@ def _to_bytes(hex):
     return codecs.decode(hex, "hex_codec")
 
 
-# RSA key with private components so that the JWK could theoretically be used for private operations
+# RSA key with private components so that the JWK can be used for private operations
 TEST_JWK = {
     "kty":"RSA",
     "key_ops":["decrypt", "verify", "unwrapKey"],
@@ -236,6 +236,15 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         plaintext = private_key.decrypt(ciphertext=ciphertext, padding=padding)
         assert self.plaintext == plaintext
 
+        # Use cryptography library's own implementation to validate ours (as well as our public/private numbers)
+        crypto_public_key = public_key.public_numbers().public_key()
+        crypto_ciphertext = crypto_public_key.encrypt(self.plaintext, padding)
+        # Create a crypto client from private JWK since we can't get the private components from an imported key
+        crypto_client = CryptographyClient.from_jwk(jwk=TEST_JWK)
+        crypto_private_key = crypto_client.create_rsa_private_key().private_numbers().private_key()
+        crypto_plaintext = crypto_private_key.decrypt(ciphertext=crypto_ciphertext, padding=padding)
+        assert crypto_plaintext == plaintext
+
     @pytest.mark.parametrize("api_version,is_hsm", no_get)
     @KeysClientPreparer(permissions=NO_GET)
     @recorded_by_proxy
@@ -269,13 +278,26 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         # Create a KeyVaultRSAPrivateKey that can perform signing with `cryptography`'s interface
         private_key = crypto_client.create_rsa_private_key()
         algorithm = SHA256()
-        mgf = MGF1(algorithm)
-        padding = PSS(mgf, PSS.MAX_LENGTH)
+        padding = PKCS1v15()
         signature = private_key.sign(self.plaintext, padding, algorithm)
 
         # Create a KeyVaultRSAPublicKey that can perform verifying with `cryptography`'s interface
         public_key = crypto_client.create_rsa_public_key()
         public_key.verify(signature, self.plaintext, padding, algorithm)
+
+        # Use cryptography library's own implementation to validate ours (as well as our public/private numbers)
+        # Create a crypto client from private JWK since we can't get the private components from an imported key
+        crypto_client = CryptographyClient.from_jwk(jwk=TEST_JWK)
+        crypto_private_key = crypto_client.create_rsa_private_key().private_numbers().private_key()
+        crypto_signature = crypto_private_key.sign(self.plaintext, padding, algorithm)
+
+        # PKCS#1 signing produces deterministic signatures, so we can compare the two signatures we generated
+        # PSS padding is nondeterministic, by comparison
+        assert signature == crypto_signature
+
+        crypto_public_key = public_key.public_numbers().public_key()
+        crypto_public_key.verify(crypto_signature, self.plaintext, padding, algorithm)
+        crypto_public_key.verify(signature, self.plaintext, padding, algorithm)
 
     @pytest.mark.parametrize("api_version,is_hsm", no_get)
     @KeysClientPreparer(permissions=NO_GET)
