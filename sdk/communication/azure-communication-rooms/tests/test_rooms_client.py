@@ -205,7 +205,7 @@ class TestRoomsClient(ACSRoomsTestCase):
 
     @pytest.mark.live_test_only
     @recorded_by_proxy
-    def test_update_room_PsntDialOutEnabled(self):
+    def test_update_room_PstnDialOutEnabled(self):
         # room with no attributes
         create_response = self.rooms_client.create_room()
 
@@ -224,7 +224,7 @@ class TestRoomsClient(ACSRoomsTestCase):
 
     @pytest.mark.live_test_only
     @recorded_by_proxy
-    def test_update_room_PsntDialOutRemainsUnchanged(self):
+    def test_update_room_PstnDialOutRemainsUnchanged(self):
         # room with no attributes
         create_response = self.rooms_client.create_room(pstn_dial_out_enabled=True)
 
