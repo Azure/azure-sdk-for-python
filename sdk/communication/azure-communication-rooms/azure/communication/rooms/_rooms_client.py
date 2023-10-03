@@ -107,7 +107,8 @@ class RoomsClient(object):
 
         :keyword datetime valid_from: The timestamp from when the room is open for joining. Optional.
         :keyword datetime valid_until: The timestamp from when the room can no longer be joined. Optional.
-        :keyword bool pstn_dial_out_enabled: Set this flag to true if, at the time of the call, dial out to a PSTN number is enabled in a particular room. Optional.
+        :keyword bool pstn_dial_out_enabled: Set this flag to true if, at the time of the call,
+        dial out to a PSTN number is enabled in a particular room. Optional.
         :keyword List[RoomParticipant] participants: Collection of identities invited to the room. Optional.
         :type participants: List[~azure.communication.rooms.RoomParticipant]
         :returns: Created room.
@@ -173,7 +174,8 @@ class RoomsClient(object):
         :keyword str room_id: Required. Id of room to be updated
         :keyword datetime valid_from: The timestamp from when the room is open for joining. Optional.
         :keyword datetime valid_until: The timestamp from when the room can no longer be joined. Optional.
-        :keyword bool pstn_dial_out_enabled: Set this flag to true if, at the time of the call, dial out to a PSTN number is enabled in a particular room. Optional.
+        :keyword bool pstn_dial_out_enabled: Set this flag to true if, at the time of the call,
+        dial out to a PSTN number is enabled in a particular room. Optional.
         :returns: Updated room.
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
