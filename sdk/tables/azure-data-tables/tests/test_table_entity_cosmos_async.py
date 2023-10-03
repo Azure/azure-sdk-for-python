@@ -601,19 +601,29 @@ class TestTableEntityCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
-            entity, _ = await self._insert_random_entity()
-
-            # Act
+            # Test when the entity not exists
+            entity = self._create_random_base_entity_dict()
             sent_entity = self._create_updated_entity_dict(entity["PartitionKey"], entity["RowKey"])
-            with pytest.raises(ResourceModifiedError):
+            with pytest.raises(ResourceNotFoundError) as ex:
+                await self.table.update_entity(
+                    mode=UpdateMode.REPLACE,
+                    entity=sent_entity,
+                    etag="W/\"datetime'2022-05-06T00%3A34%3A21.0093307Z'\"",
+                    match_condition=MatchConditions.IfNotModified,
+                )
+            assert ex.value.response.status_code == 404
+
+            # Test when the entity exists
+            entity, _ = await self._insert_random_entity()
+            sent_entity = self._create_updated_entity_dict(entity["PartitionKey"], entity["RowKey"])
+            with pytest.raises(ResourceModifiedError) as ex:
                 await self.table.update_entity(
                     mode=UpdateMode.REPLACE,
                     entity=sent_entity,
                     etag="W/\"datetime'2012-06-15T22%3A51%3A44.9662825Z'\"",
                     match_condition=MatchConditions.IfNotModified,
                 )
-
-            # Assert
+            assert ex.value.response.status_code == 412
         finally:
             await self._tear_down()
 
@@ -766,19 +776,31 @@ class TestTableEntityCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         # Arrange
         await self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
         try:
-            entity, _ = await self._insert_random_entity()
-
-            # Act
+            # Test when the entity not exists
+            entity = self._create_random_base_entity_dict()
             sent_entity = self._create_updated_entity_dict(entity["PartitionKey"], entity["RowKey"])
-            with pytest.raises(ResourceModifiedError):
+
+            with pytest.raises(ResourceNotFoundError) as ex:
+                await self.table.update_entity(
+                    mode=UpdateMode.MERGE,
+                    entity=sent_entity,
+                    etag="W/\"datetime'2022-05-06T00%3A34%3A21.0093307Z'\"",
+                    match_condition=MatchConditions.IfNotModified,
+                )
+            assert ex.value.response.status_code == 404
+
+            # Test when the entity exists
+            entity, _ = await self._insert_random_entity()
+            sent_entity = self._create_updated_entity_dict(entity["PartitionKey"], entity["RowKey"])
+
+            with pytest.raises(ResourceModifiedError) as ex:
                 await self.table.update_entity(
                     mode=UpdateMode.MERGE,
                     entity=sent_entity,
                     etag="W/\"datetime'2012-06-15T22%3A51%3A44.9662825Z'\"",
                     match_condition=MatchConditions.IfNotModified,
                 )
-
-            # Assert
+            assert ex.value.response.status_code == 412
         finally:
             await self._tear_down()
 
