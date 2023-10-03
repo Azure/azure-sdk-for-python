@@ -10,7 +10,7 @@ from collections import OrderedDict
 from enum import Enum as PyEnum
 from enum import EnumMeta
 from inspect import Parameter, getmro, signature
-from typing import Any, Callable, Dict, List, Optional, Tuple, Type, TypeVar, Union, cast
+from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union, cast
 
 from typing_extensions import Annotated, Literal, TypeAlias
 
@@ -454,10 +454,7 @@ def _update_io_from_mldesigner(annotations: Dict[str, Annotation]) -> Dict[str, 
     return result
 
 
-T = TypeVar("T")
-
-
-def _remove_empty_values(data: T) -> T:
+def _remove_empty_values(data: Any) -> Any:
     """Recursively removes None values from a dict
 
     :param data: The value to remove None from

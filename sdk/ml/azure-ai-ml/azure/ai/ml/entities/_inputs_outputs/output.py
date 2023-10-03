@@ -141,7 +141,8 @@ class Output(_InputOutputBase):
         """
         keys = self._IO_KEYS
         result = {key: getattr(self, key) for key in keys}
-        return _remove_empty_values(result)
+        res: dict = _remove_empty_values(result)
+        return res
 
     def _to_rest_object(self) -> Dict:
         # this is for component rest object when using Output as component outputs, as for job output usage,
