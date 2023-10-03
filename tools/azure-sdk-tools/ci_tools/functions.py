@@ -414,6 +414,7 @@ def pip_install(requirements: List[str], include_dependencies: bool = True) -> b
 
     try:
         result = subprocess.check_call(command)
+        return True
     except subprocess.CalledProcessError as f:
         return False
 
@@ -431,6 +432,7 @@ def pip_uninstall(requirements: List[str]) -> bool:
 
     try:
         result = subprocess.check_call(command)
+        return True
     except subprocess.CalledProcessError as f:
         return False
 
@@ -472,9 +474,10 @@ def pytest(args: [], cwd: str = None) -> bool:
         sys.executable,
         "-m",
         "pytest",
-    ].extend(args)
+    ]
 
-    breakpoint()
+    commands.extend(args)
+
     if cwd:
         result = subprocess.run(commands, cwd=cwd)
     else:

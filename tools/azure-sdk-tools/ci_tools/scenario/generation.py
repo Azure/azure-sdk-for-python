@@ -418,17 +418,26 @@ def prepare_and_test(mapped_args: argparse.Namespace) -> int:
         )
 
         # install the dev requirements
-        pip_install_requirements_file(os.path.join(mapped_args.target, "dev_requirements.txt"))
+        install_result = pip_install_requirements_file(os.path.join(mapped_args.target, "dev_requirements.txt"))
 
-        # todo: handle failed install
+        if not install_result:
+            logging.error(f"Unable to complete installation of dev_requirements.txt for {parsed_package.name}, check command output above.")
+            config_results.append(False)
+            break
 
-        # install any additional requirements
-        pip_install(config.get("install", []))
-        # todo: handle failed install
+        additional_installs = config.get("install", [])
+        install_result = pip_install(additional_installs)
+        if not install_result:
+            logging.error(f"Unable to complete installation of additional packages {additional_installs} for {parsed_package.name}, check command output above.")
+            config_results.append(False)
+            break
 
         # uninstall anything additional
-        pip_uninstall(config.get("uninstall", []))
-        # todo: handle failed uninstall
+        uninstall_result = pip_uninstall(config.get("uninstall", []))
+        if not uninstall_result:
+            logging.error(f"Unable to complete installation of additional packages {additional_installs} for {parsed_package.name}, check command output above.")
+            config_results.append(False)
+            break
 
         packages = freeze_environment(mapped_args.target, env_name)
 
@@ -448,13 +457,17 @@ def prepare_and_test(mapped_args: argparse.Namespace) -> int:
         pytest_args.extend(config.get("additional_pytest_args", []))
 
         logging.info(f"Invoking tests for package {parsed_package.name} and optional environment {env_name}")
+        breakpoint()
         config_results.append(pytest(pytest_args))
 
-    if all(config_results, lambda x: x):
+    if all(config_results):
         logging.info("All optional environment(s) for {parsed_package.name} completed successfully.")
         sys.exit(0)
     else:
-        logging.error(
-            "An optional environment for {parsed_package.name} completed with non-zero exit-code. Check test results above."
-        )
+        for i, config in enumerate(optional_configs):
+            if not config_results[i]:
+                config_name = config.get("name")
+                logging.error(
+                    "Optional environment {config_name} for {parsed_package.name} completed with non-zero exit-code. Check test results above."
+                )
         sys.exit(1)
