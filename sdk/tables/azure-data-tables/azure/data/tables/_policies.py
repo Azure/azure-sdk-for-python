@@ -97,22 +97,22 @@ class TablesRetryPolicy(RetryPolicy):
 
     The retry policy in the pipeline can be configured directly, or tweaked on a per-call basis.
 
-    :ivar int total_retries: Total number of retries to allow. Takes precedence over other counts.
+    :ivar int retry_total: Total number of retries to allow. Takes precedence over other counts.
         Default value is 10.
-    :ivar int connect_retries: How many connection-related errors to retry on.
+    :ivar int retry_connect: How many connection-related errors to retry on.
         These are errors raised before the request is sent to the remote server,
         which we assume has not triggered the server to process the request. Default value is 3.
-    :ivar int read_retries: How many times to retry on read errors.
+    :ivar int retry_read: How many times to retry on read errors.
         These errors are raised after the request was sent to the server, so the
         request may have side-effects. Default value is 3.
-    :ivar int status_retries: How many times to retry on bad status codes. Default value is 3.
-    :ivar float backoff_factor: A backoff factor to apply between attempts after the second try
+    :ivar int retry_status: How many times to retry on bad status codes. Default value is 3.
+    :ivar float retry_backoff_factor: A backoff factor to apply between attempts after the second try
         (most errors are resolved immediately by a second try without a delay).
         In fixed mode, retry policy will always sleep for {backoff factor}. In 'exponential' mode,
         retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))` seconds.
         If the backoff_factor is 0.1, then the retry will sleep for [0.0s, 0.2s, 0.4s, ...] between retries.
         The default value is 0.8.
-    :ivar int backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
+    :ivar int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
     """
 
     def __init__(self, **kwargs):

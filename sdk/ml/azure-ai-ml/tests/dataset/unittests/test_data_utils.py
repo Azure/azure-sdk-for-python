@@ -4,6 +4,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
+from azure.core.exceptions import ServiceRequestError
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml._utils._data_utils import read_local_mltable_metadata_contents, read_remote_mltable_metadata_contents
 from azure.ai.ml._utils._http_utils import HttpPipeline
@@ -68,13 +69,12 @@ class TestDataUtils:
             assert contents["paths"] == [OrderedDict([("file", "./tmp_file.csv")])]
 
         # remote https inaccessible
-        with pytest.raises(Exception) as ex:
+        with pytest.raises(ServiceRequestError) as ex:
             contents = read_remote_mltable_metadata_contents(
                 datastore_operations=mock_datastore_operations,
                 base_uri="https://fake.localhost/file.yaml",
                 requests_pipeline=mock_requests_pipeline,
             )
-        assert "Failed to establish a new connection" in str(ex)
 
         # remote azureml accessible
         with patch("azure.ai.ml._utils._data_utils.TemporaryDirectory", return_value=mltable_folder):

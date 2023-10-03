@@ -20,6 +20,30 @@ FeaturestoreJobTypeMap: Dict[str, MaterializationType] = {
 
 @experimental
 class FeatureSetMaterializationMetadata(RestTranslatableMixin):
+    """Feature Set Materialization Metadata
+
+    :param type: The type of the materialization job.
+    :type type: MaterializationType
+    :param feature_window_start_time: The feature window start time for the feature set materialization job.
+    :type feature_window_start_time: Optional[datetime]
+    :param feature_window_end_time: The feature window end time for the feature set materialization job.
+    :type feature_window_end_time: Optional[datetime]
+    :param name: The name of the feature set materialization job.
+    :type name: Optional[str]
+    :param display_name: The display name for the feature set materialization job.
+    :type display_name: Optional[str]
+    :param creation_context: The creation context of the feature set materialization job.
+    :type creation_context: Optional[~azure.ai.ml.entities.SystemData]
+    :param duration: current time elapsed for feature set materialization job.
+    :type duration: Optional[~datetime.timedelta]
+    :param status: The status of the feature set materialization job.
+    :type status: Optional[str]
+    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :type tags: Optional[dict[str, str]]
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
+    """
+
     def __init__(
         self,
         *,
@@ -33,7 +57,7 @@ class FeatureSetMaterializationMetadata(RestTranslatableMixin):
         status: Optional[str],
         tags: Optional[Dict[str, str]],
         **kwargs  # pylint: disable=unused-argument
-    ):
+    ) -> None:
         self.type = type
         self.feature_window_start_time = feature_window_start_time
         self.feature_window_end_time = feature_window_end_time

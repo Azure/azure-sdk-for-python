@@ -3521,9 +3521,9 @@ class Storage(_serialization.Model):
     :ivar auto_grow: Flag to enable / disable Storage Auto grow for flexible server. Known values
      are: "Enabled" and "Disabled".
     :vartype auto_grow: str or ~azure.mgmt.rdbms.postgresql_flexibleservers.models.StorageAutoGrow
-    :ivar iops_tier: Name of storage tier for IOPS. Known values are: "P1", "P2", "P3", "P4", "P6",
+    :ivar tier: Name of storage tier for IOPS. Known values are: "P1", "P2", "P3", "P4", "P6",
      "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", and "P80".
-    :vartype iops_tier: str or
+    :vartype tier: str or
      ~azure.mgmt.rdbms.postgresql_flexibleservers.models.AzureManagedDiskPerformanceTiers
     :ivar iops: Storage tier IOPS quantity.
     :vartype iops: int
@@ -3536,7 +3536,7 @@ class Storage(_serialization.Model):
     _attribute_map = {
         "storage_size_gb": {"key": "storageSizeGB", "type": "int"},
         "auto_grow": {"key": "autoGrow", "type": "str"},
-        "iops_tier": {"key": "iopsTier", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
         "iops": {"key": "iops", "type": "int"},
     }
 
@@ -3545,7 +3545,7 @@ class Storage(_serialization.Model):
         *,
         storage_size_gb: Optional[int] = None,
         auto_grow: Optional[Union[str, "_models.StorageAutoGrow"]] = None,
-        iops_tier: Optional[Union[str, "_models.AzureManagedDiskPerformanceTiers"]] = None,
+        tier: Optional[Union[str, "_models.AzureManagedDiskPerformanceTiers"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3555,15 +3555,15 @@ class Storage(_serialization.Model):
          values are: "Enabled" and "Disabled".
         :paramtype auto_grow: str or
          ~azure.mgmt.rdbms.postgresql_flexibleservers.models.StorageAutoGrow
-        :keyword iops_tier: Name of storage tier for IOPS. Known values are: "P1", "P2", "P3", "P4",
-         "P6", "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", and "P80".
-        :paramtype iops_tier: str or
+        :keyword tier: Name of storage tier for IOPS. Known values are: "P1", "P2", "P3", "P4", "P6",
+         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", and "P80".
+        :paramtype tier: str or
          ~azure.mgmt.rdbms.postgresql_flexibleservers.models.AzureManagedDiskPerformanceTiers
         """
         super().__init__(**kwargs)
         self.storage_size_gb = storage_size_gb
         self.auto_grow = auto_grow
-        self.iops_tier = iops_tier
+        self.tier = tier
         self.iops = None
 
 
