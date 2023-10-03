@@ -2548,7 +2548,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             pk_properties = partition_key_definition
             partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
             partition_key_value = pk_properties["partition_key"]
-            feedrangeEPK = partition_key_definition.get_epk_range_for_prefix_partition_key(partition_key_value)  # cspell:disable-line # pylint: disable=line-too-long
+            feedrangeEPK = partition_key_definition._get_epk_range_for_prefix_partition_key(partition_key_value)  # cspell:disable-line # pylint: disable=line-too-long
             over_lapping_ranges = self._routing_map_provider.get_overlapping_ranges(id_, [feedrangeEPK])
             if over_lapping_ranges:
                 single_range = routing_range.Range.PartitionKeyRangeToRange(over_lapping_ranges[0])

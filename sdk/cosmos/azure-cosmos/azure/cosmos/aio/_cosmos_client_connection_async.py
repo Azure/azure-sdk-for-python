@@ -2371,7 +2371,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if isPrefixPartitionQuery:
             # here get the overlap, then do one of two scenarios
             req_headers.pop(http_constants.HttpHeaders.PartitionKey, None)
-            feedrangeEPK = partition_key_definition.get_epk_range_for_prefix_partition_key(partition_key)  # cspell:disable-line # pylint: disable=line-too-long
+            feedrangeEPK = partition_key_definition._get_epk_range_for_prefix_partition_key(partition_key)  # cspell:disable-line # pylint: disable=line-too-long
             over_lapping_ranges = await self._routing_map_provider.get_overlapping_ranges(id_, [feedrangeEPK])
 
             if over_lapping_ranges:

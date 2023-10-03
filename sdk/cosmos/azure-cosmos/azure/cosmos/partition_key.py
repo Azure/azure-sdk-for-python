@@ -153,7 +153,7 @@ class PartitionKey(dict):
     def version(self, value):
         self["version"] = value
 
-    def get_epk_range_for_prefix_partition_key(self, pk_value: list) -> Range:
+    def _get_epk_range_for_prefix_partition_key(self, pk_value: list) -> Range:
         if self.kind != "MultiHash":
             raise ValueError("Unsupported partition definition kind for partial key operations")
 
