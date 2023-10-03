@@ -128,9 +128,10 @@ def _is_readonly(p):
 class AzureJSONEncoder(JSONEncoder):
     """A JSON encoder that's capable of serializing datetime objects and bytes."""
 
-    def __init__(self, *args, exclude_readonly: bool = False, **kwargs):
+    def __init__(self, *args, exclude_readonly: bool = False, format: typing.Optional[str] = None, **kwargs):
         super().__init__(*args, **kwargs)
         self.exclude_readonly = exclude_readonly
+        self.format = format
 
     def default(self, o):  # pylint: disable=too-many-return-statements
         if _is_model(o):
@@ -138,18 +139,16 @@ class AzureJSONEncoder(JSONEncoder):
                 readonly_props = [p._rest_name for p in o._attr_to_rest_field.values() if _is_readonly(p)]
                 return {k: v for k, v in o.items() if k not in readonly_props}
             return dict(o.items())
-        if isinstance(o, (bytes, bytearray)):
-            return base64.b64encode(o).decode()
-        if isinstance(o, _Null):
-            return None
         try:
             return super(AzureJSONEncoder, self).default(o)
         except TypeError:
+            if isinstance(o, _Null):
+                return None
             if isinstance(o, (bytes, bytearray)):
-                return _serialize_bytes(o)
+                return _serialize_bytes(o, self.format)
             try:
                 # First try datetime.datetime
-                return _serialize_datetime(o)
+                return _serialize_datetime(o, self.format)
             except AttributeError:
                 pass
             # Last, try datetime.timedelta
