@@ -8,7 +8,6 @@ from azure.ai.translation.text.models import InputTextItem
 from preparer import TextTranslationPreparer
 from test_helper import TestHelper
 from testcase import TextTranslationTest
-import asyncio
 
 class TestTransliterationAsync(TextTranslationTest, TestHelper):
 

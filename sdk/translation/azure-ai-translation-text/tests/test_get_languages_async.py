@@ -6,7 +6,6 @@
 from devtools_testutils.aio import recorded_by_proxy_async
 from preparer import TextTranslationPreparer
 from testcase import TextTranslationTest
-import asyncio
 
 class TestGetLanguagesAsync(TextTranslationTest):
 

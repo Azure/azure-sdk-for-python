@@ -7,7 +7,6 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.translation.text.models import DictionaryExampleTextItem
 from preparer import TextTranslationPreparer
 from testcase import TextTranslationTest
-import asyncio
 
 class TestDictionaryExamplesAsync(TextTranslationTest):
 
