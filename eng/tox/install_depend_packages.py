@@ -39,7 +39,7 @@ MINIMUM_VERSION_GENERIC_OVERRIDES = {
     "opentelemetry-sdk": "1.3.0",
     "azure-core": "1.11.0",
     "requests": "2.19.0",
-    "six": "1.12.0",
+    "six": "1.16.0",
     "cryptography": "3.3.2",
     "msal": "1.23.0",
 }
