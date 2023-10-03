@@ -84,9 +84,6 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
-    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
-        authentication. Only has an effect when credential is of type TokenCredential. The value could be
-        https://storage.azure.com/ (default) or https://<account>.file.core.windows.net.
 
     .. admonition:: Example:
 
