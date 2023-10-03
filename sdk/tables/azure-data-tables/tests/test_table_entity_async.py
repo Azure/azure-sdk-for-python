@@ -853,12 +853,12 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
             entity, _ = await self._insert_random_entity()
 
             # Act
-            resp = await self.table.delete_entity(partition_key=entity["PartitionKey"], row_key=entity["RowKey"])
+            await self.table.delete_entity(partition_key=entity["PartitionKey"], row_key=entity["RowKey"])
 
             # Assert
-            assert resp is None
-            with pytest.raises(ResourceNotFoundError):
+            with pytest.raises(ResourceNotFoundError) as ex:
                 await self.table.get_entity(entity["PartitionKey"], entity["RowKey"])
+            assert ex.value.response.status_code == 404
         finally:
             await self._tear_down()
 
@@ -882,14 +882,14 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
             entity, etag = await self._insert_random_entity()
 
             # Act
-            resp = await self.table.delete_entity(
+            await self.table.delete_entity(
                 entity["PartitionKey"], entity["RowKey"], etag=etag, match_condition=MatchConditions.IfNotModified
             )
 
             # Assert
-            assert resp is None
-            with pytest.raises(ResourceNotFoundError):
+            with pytest.raises(ResourceNotFoundError) as ex:
                 await self.table.get_entity(entity["PartitionKey"], entity["RowKey"])
+            assert ex.value.response.status_code == 404
         finally:
             await self._tear_down()
 
@@ -901,18 +901,23 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
         try:
+            entity = self._create_random_base_entity_dict()
+            await self.table.delete_entity(
+                entity["PartitionKey"],
+                entity["RowKey"],
+                etag="W/\"datetime'2012-06-15T22%3A51%3A44.9662825Z'\"",
+                match_condition=MatchConditions.IfNotModified,
+            )
+            
             entity, _ = await self._insert_random_entity()
-
-            # Act
-            with pytest.raises(ResourceModifiedError):
+            with pytest.raises(ResourceModifiedError) as ex:
                 await self.table.delete_entity(
                     entity["PartitionKey"],
                     entity["RowKey"],
                     etag="W/\"datetime'2012-06-15T22%3A51%3A44.9662825Z'\"",
                     match_condition=MatchConditions.IfNotModified,
                 )
-
-            # Assert
+            ex.value.response.status_code == 412
         finally:
             await self._tear_down()
 
