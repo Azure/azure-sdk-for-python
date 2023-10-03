@@ -22,7 +22,7 @@ pyyaml==6.0.1
 urllib3==1.26.16
 PyGithub==1.59.1
 ConfigArgParse==1.2.3
-six==1.14.0
+six==1.16.0
 
 # 312 compatibility
 https://docsupport.blob.core.windows.net/repackaged/cffi-1.15.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl; python_version >= '3.12'
