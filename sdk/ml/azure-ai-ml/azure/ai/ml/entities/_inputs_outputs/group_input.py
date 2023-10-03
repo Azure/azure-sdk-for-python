@@ -6,7 +6,6 @@ from enum import Enum as PyEnum
 from typing import Any, Dict, List, Optional, Union
 
 from azure.ai.ml.constants._component import IOConstants
-from azure.ai.ml.entities._job.pipeline._io.attr_dict import _GroupAttrDict
 from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationException
 
 from .input import Input
@@ -34,12 +33,14 @@ class GroupInput(Input):
         self._group_class = _group_class
 
     @classmethod
-    def _create_group_attr_dict(cls, dct: dict) -> _GroupAttrDict:
+    def _create_group_attr_dict(cls, dct: dict) -> "_GroupAttrDict":
+        from .._job.pipeline._io import _GroupAttrDict
 
         return _GroupAttrDict(dct)
 
     @classmethod
     def _is_group_attr_dict(cls, obj: object) -> bool:
+        from .._job.pipeline._io import _GroupAttrDict
 
         return isinstance(obj, _GroupAttrDict)
 
@@ -52,7 +53,7 @@ class GroupInput(Input):
                 return self.values[item]
             raise
 
-    def _create_default(self) -> _GroupAttrDict:
+    def _create_default(self) -> "_GroupAttrDict":
         from .._job.pipeline._io import PipelineInput
 
         default_dict = {}
@@ -208,7 +209,7 @@ class GroupInput(Input):
                 target_dict = target_dict[group_name]
             target_dict[param_name] = data
 
-        def restore_from_dict_recursively(_data: dict) -> Union[GroupInput, _GroupAttrDict]:
+        def restore_from_dict_recursively(_data: dict) -> Union[GroupInput, "_GroupAttrDict"]:
             for key, val in _data.items():
                 if type(val) == dict:  # pylint: disable=unidiomatic-typecheck
                     _data[key] = restore_from_dict_recursively(val)
