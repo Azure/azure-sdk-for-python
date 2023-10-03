@@ -147,18 +147,21 @@ class TestSubpartitionCRUD:
                                                  created_container.read)
 
         container_proxy = await created_db.create_container_if_not_exists(id=created_collection.id,
-                                                                          partition_key=PartitionKey(path=['/id',
+                                                                          partition_key=PartitionKey(path=['/id1',
                                                                                                            '/id2',
                                                                                                            '/id3'],
                                                                                                      kind='MultiHash'))
         assert created_collection.id == container_proxy.id
-        assert PartitionKey(path=["/id1", "/id2", "/id3"], kind='MultiHash') == container_proxy._properties['partitionKey']
+        container_proxy_properties = await container_proxy._get_properties()
+        assert PartitionKey(path=["/id1", "/id2", "/id3"], kind='MultiHash') == container_proxy_properties['partitionKey']
 
         container_proxy = await created_db.create_container_if_not_exists(id=created_collection.id,
                                                                           partition_key=created_properties[
                                                                               'partitionKey'])
         assert created_container.id == container_proxy.id
-        assert PartitionKey(path=["/id1", "/id2", "/id3"], kind='MultiHash') == container_proxy._properties['partitionKey']
+
+        container_proxy_properties = await container_proxy._get_properties()
+        assert PartitionKey(path=["/id1", "/id2", "/id3"], kind='MultiHash') == container_proxy_properties['partitionKey']
 
         await created_db.delete_container(created_collection.id)
 
@@ -219,7 +222,7 @@ class TestSubpartitionCRUD:
         # create document without partition key being specified
         created_document = await created_collection.create_item(body=document_definition)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-        assert self.last_headers[1] == '["WA", "Redmond"]'
+        assert self.last_headers[1] == '["WA","Redmond"]'
         del self.last_headers[:]
 
         assert created_document.get('id') == document_definition.get('id')
@@ -269,7 +272,7 @@ class TestSubpartitionCRUD:
         _retry_utility_async.ExecuteFunctionAsync = self._MockExecuteFunction
         created_document = await created_collection1.create_item(body=document_definition)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-        assert self.last_headers[1] == '["val1", "val2"]'
+        assert self.last_headers[-1] == '["val1","val2"]'
         del self.last_headers[:]
 
         collection_definition2 = {
@@ -300,7 +303,7 @@ class TestSubpartitionCRUD:
         # create document without partition key being specified
         created_document = await created_collection2.create_item(body=document_definition)
         _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
-        assert self.last_headers[1] == '["val3", "val4"]'
+        assert self.last_headers[-1] == '["val3","val4"]'
         del self.last_headers[:]
 
         await created_db.delete_container(created_collection1.id)
@@ -310,9 +313,11 @@ class TestSubpartitionCRUD:
     async def test_partitioned_collection_document_crud_and_query_async(self):
         await self._set_up()
         created_db = self.database_for_test
+        collection_id = 'test_partitioned_collection_partition_document_crud_and_query_MH ' + str(uuid.uuid4())
         created_collection = await created_db.create_container(
-            test_config._test_config.TEST_COLLECTION_MULTI_HASH_MULTI_PARTITION,
-            PartitionKey(path=["/city", "/zipcode"], kind="MultiHash"))
+            id=collection_id,
+            partition_key=PartitionKey(path=['/city', '/zipcode'], kind=documents.PartitionKind.MultiHash)
+        )
 
         document_definition = {'id': 'document',
                                'key': 'value',
@@ -503,8 +508,7 @@ class TestSubpartitionCRUD:
         assert len(created_documents) == len(document_definitions)
 
         # Query all documents should return all items
-        document_list = [document async for document in created_collection.query_items(query='Select * from c'
-                                                                                       , enable_cross_partition_query=True)]  # pylint: disable=line-too-long
+        document_list = [document async for document in created_collection.query_items(query='Select * from c')]
         assert len(document_list) == len(document_definitions)
 
         # Query all items with only CA for 1st level. Should return only 8 items instead of 10
@@ -594,6 +598,9 @@ class TestSubpartitionCRUD:
     #     await created_db.delete_container(created_collection)
 
     async def _MockExecuteFunction(self, function, *args, **kwargs):
-        self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey]
-                                 if HttpHeaders.PartitionKey in args[4].headers else '')
+        try:
+            self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey]
+                                     if HttpHeaders.PartitionKey in args[4].headers else '')
+        except IndexError:
+            self.last_headers.append('')
         return await self.OriginalExecuteFunction(function, *args, **kwargs)
