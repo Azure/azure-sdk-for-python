@@ -102,7 +102,7 @@ class EventGridEvent(object):
         )[:1024]
 
     @classmethod
-    def _from_dict(cls, event: Dict[str, Any]) -> "EventGridEvent":
+    def from_dict(cls, event: Dict[str, Any]) -> "EventGridEvent":
         """Returns the deserialized EventGridEvent object when a dict is provided.
 
         :param event: The dict representation of the event which needs to be deserialized.
