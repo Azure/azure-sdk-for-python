@@ -6,6 +6,8 @@
 # that are used within node constructors. Keep imports and
 # general complexity in this file to a minimum.
 
+from typing import Any
+
 from mldesigner import Output, command_component
 
 from azure.ai.ml.constants._common import DefaultOpenEncoding
@@ -41,7 +43,7 @@ def save_mltable_yaml(path, mltable_paths):
 
 # TODO 2293610: add support for more types of outputs besides uri_folder and mltable
 @command_component()
-def create_scatter_output_table(aggregated_output: Output(type="mltable"), **kwargs):
+def create_scatter_output_table(aggregated_output: Output, **kwargs: Any) -> None:
     """Create scatter output table.
 
     This function is used by the FL scatter gather node to reduce a dynamic number of silo outputs
@@ -52,6 +54,4 @@ def create_scatter_output_table(aggregated_output: Output(type="mltable"), **kwa
 
     Keyword arguments represent input names and URI folder paths.
     """
-    # kwargs keys are inputs names (ex: silo_output_silo_1)
-    # values are uri_folder paths
     save_mltable_yaml(aggregated_output, kwargs.values())
