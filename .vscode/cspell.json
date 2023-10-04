@@ -120,6 +120,10 @@
     "conda/conda-releaselogs/azure-mgmt.md"
   ],
   "words": [
+    "certifi",
+    "cffi",
+    "tomlw",
+    "xdist",
     "pyprojecttoml",
     "tomli",
     "sdkrel",
