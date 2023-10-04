@@ -14,9 +14,6 @@ from opentelemetry.environment_variables import (
 from opentelemetry.instrumentation.distro import (
     BaseDistro,
 )
-from opentelemetry.instrumentation.environment_variables import (
-    OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,
-)
 from opentelemetry.sdk.environment_variables import (
     _OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED,
 )
