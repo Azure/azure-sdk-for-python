@@ -6,14 +6,14 @@
 # that are used within node constructors. Keep imports and
 # general complexity in this file to a minimum.
 
-from typing import Any
+from typing import Any, List
 
 from mldesigner import Output, command_component
 
 from azure.ai.ml.constants._common import DefaultOpenEncoding
 
 
-def save_mltable_yaml(path, mltable_paths):
+def save_mltable_yaml(path: str, mltable_paths: List[str]) -> None:
     """Save MLTable YAML.
 
     :param path: The path to save the MLTable YAML file.
@@ -54,4 +54,4 @@ def create_scatter_output_table(aggregated_output: Output, **kwargs: Any) -> Non
 
     Keyword arguments represent input names and URI folder paths.
     """
-    save_mltable_yaml(aggregated_output, kwargs.values())
+    save_mltable_yaml(aggregated_output, list(kwargs.values()))
