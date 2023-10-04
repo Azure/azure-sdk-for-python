@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- `V2023_07_01` has been added to `ApiVersion` and set as the default api version.
+  - `Protobuf` has been added to supported formats in `SchemaFormat`.
+
 ### Breaking Changes
 
 ### Bugs Fixed
