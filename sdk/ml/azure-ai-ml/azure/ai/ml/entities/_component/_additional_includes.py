@@ -11,7 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from multiprocessing import cpu_count
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Tuple, Union
+from typing import Dict, Iterator, List, Optional, Tuple, Union
 
 from azure.ai.ml.constants._common import AzureDevopsArtifactsType
 from azure.ai.ml.entities._validation import MutableValidationResult, ValidationResultBuilder
@@ -394,7 +394,7 @@ class AdditionalIncludes:
         return root_ignore_file
 
     @contextmanager
-    def merge_local_code_and_additional_includes(self) -> Path:
+    def merge_local_code_and_additional_includes(self) -> Iterator:
         """Merge code and potential additional includes into a temporary folder and return the absolute path of it.
 
         If no additional includes are specified, just return the absolute path of the original code path.
@@ -507,7 +507,7 @@ class AdditionalIncludesMixin(ComponentCodeMixin):
         )
 
     @contextmanager
-    def _try_build_local_code(self) -> Iterable[Optional[Code]]:
+    def _try_build_local_code(self) -> Iterator:
         """Build final code when origin code is a local code.
 
         Will merge code path with additional includes into a temp folder if additional includes is specified.
