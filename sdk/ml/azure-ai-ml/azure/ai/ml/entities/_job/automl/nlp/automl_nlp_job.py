@@ -270,15 +270,15 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
     ) -> None:
         """Define limit configuration for AutoML NLP job
 
-        :param max_trials: Maximum number of sweep trials, defaults to 1
+        :param max_trials: Maximum number of AutoML iterations, defaults to 1
         :type max_trials: int, optional
-        :param max_concurrent_trials: Maxiumum number of concurrent sweep trials, defaults to 1
+        :param max_concurrent_trials: Maximum number of concurrent AutoML iterations, defaults to 1
         :type max_concurrent_trials: int, optional
         :param max_nodes: Maximum number of nodes used for sweep, defaults to 1
         :type max_nodes: int, optional
-        :param timeout_minutes: Timeout for the sweep job, defaults to None
+        :param timeout_minutes: Timeout for the AutoML job, defaults to None
         :type timeout_minutes: Optional[int], optional
-        :param trial_timeout_minutes: Timeout for each sweep trial, defaults to None
+        :param trial_timeout_minutes: Timeout for each AutoML trial, defaults to None
         :type trial_timeout_minutes: Optional[int], optional
         """
         self._limits = NlpLimitSettings(
