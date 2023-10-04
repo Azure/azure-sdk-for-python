@@ -130,8 +130,11 @@ def _get_param_with_standard_annotation(
                 origin_annotation = annotation
                 annotation: Input = _get_annotation_cls_by_type(annotation, raise_error=False)
                 if not annotation:
-                    msg = f"Unsupported annotation type {origin_annotation!r} for parameter {name!r}."
-                    raise UserErrorException(msg)
+                    if str(origin_annotation) == "typing.Any" and str(name) == "'kwargs'":
+                        pass
+                    else:
+                        msg = f"Unsupported annotation type {origin_annotation!r} for parameter {name!r}."
+                        raise UserErrorException(msg)
             annotation_fields[name] = annotation
         return annotation_fields
 
