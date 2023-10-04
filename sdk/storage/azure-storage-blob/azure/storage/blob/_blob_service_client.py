@@ -33,7 +33,7 @@ from ._blob_client import BlobClient
 from ._deserialize import service_stats_deserialize, service_properties_deserialize
 from ._encryption import StorageEncryptionMixin
 from ._list_blobs_helper import FilteredBlobPaged
-from ._models import ContainerPropertiesPaged
+from ._models import BlobProperties, ContainerPropertiesPaged
 from ._serialize import get_api_version
 
 if TYPE_CHECKING:
@@ -565,9 +565,9 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def delete_container(
-            self, container: Union["ContainerProperties", str],
-            lease: Optional[Union["BlobLeaseClient", str]] = None,
-            **kwargs: Any
+        self, container: Union["ContainerProperties", str],
+        lease: Optional[Union["BlobLeaseClient", str]] = None,
+        **kwargs: Any
     ) -> None:
         """Marks the specified container for deletion.
 
@@ -768,6 +768,11 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 12
                 :caption: Getting the blob client to interact with a specific blob.
         """
+        if isinstance(blob, BlobProperties):
+            warnings.warn(
+                "The use of a 'BlobProperties' instance is deprecated. Please use str instead.",
+                DeprecationWarning
+            )
         try:
             container_name = container.name
         except AttributeError:

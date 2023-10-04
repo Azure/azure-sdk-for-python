@@ -33,7 +33,7 @@ from .._generated.models import StorageServiceProperties, KeyInfo
 from .._blob_service_client import BlobServiceClient as BlobServiceClientBase
 from .._deserialize import service_stats_deserialize, service_properties_deserialize
 from .._encryption import StorageEncryptionMixin
-from .._models import ContainerProperties
+from .._models import BlobProperties, ContainerProperties
 from .._serialize import get_api_version
 from ._blob_client_async import BlobClient
 from ._container_client_async import ContainerClient
@@ -507,9 +507,9 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
 
     @distributed_trace_async
     async def delete_container(
-            self, container: Union[ContainerProperties, str],
-            lease: Optional[Union["BlobLeaseClient", str]] = None,
-            **kwargs: Any
+        self, container: Union[ContainerProperties, str],
+        lease: Optional[Union["BlobLeaseClient", str]] = None,
+        **kwargs: Any
     ) -> None:
         """Marks the specified container for deletion.
 
@@ -711,6 +711,11 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
                 :dedent: 16
                 :caption: Getting the blob client to interact with a specific blob.
         """
+        if isinstance(blob, BlobProperties):
+            warnings.warn(
+                "The use of a 'BlobProperties' instance is deprecated. Please use str instead.",
+                DeprecationWarning
+            )
         try:
             container_name = container.name
         except AttributeError:

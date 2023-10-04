@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 
 import functools
+import warnings
 from typing import (
     Any, AnyStr, Dict, List, IO, Iterable, Iterator, Optional, overload, Union,
     TYPE_CHECKING
@@ -1077,6 +1078,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 :dedent: 8
                 :caption: Upload blob to the container.
         """
+        if isinstance(name, BlobProperties):
+            warnings.warn(
+                "The use of a 'BlobProperties' instance is deprecated. Please use str instead.",
+                DeprecationWarning
+            )
         blob = self.get_blob_client(name)
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
@@ -1159,6 +1165,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             #other-client--per-operation-configuration>`_.
         :rtype: None
         """
+        if isinstance(blob, BlobProperties):
+            warnings.warn(
+                "The use of a 'BlobProperties' instance is deprecated. Please use str instead.",
+                DeprecationWarning
+            )
         blob_client = self.get_blob_client(blob) # type: ignore
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
@@ -1279,6 +1290,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :returns: A streaming object (StorageStreamDownloader)
         :rtype: ~azure.storage.blob.StorageStreamDownloader
         """
+        if isinstance(blob, BlobProperties):
+            warnings.warn(
+                "The use of a 'BlobProperties' instance is deprecated. Please use str instead.",
+                DeprecationWarning
+            )
         blob_client = self.get_blob_client(blob) # type: ignore
         kwargs.setdefault('merge_span', True)
         return blob_client.download_blob(
@@ -1748,6 +1764,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 :dedent: 8
                 :caption: Get the blob client.
         """
+        if isinstance(blob, BlobProperties):
+            warnings.warn(
+                "The use of a 'BlobProperties' instance is deprecated. Please use str instead.",
+                DeprecationWarning
+            )
         blob_name = _get_blob_name(blob)
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
