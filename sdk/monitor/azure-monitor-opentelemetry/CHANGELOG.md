@@ -10,7 +10,7 @@
 - Add ability to specify which logger to export telemetry for via `logger_name` configuration
     ([#32192](https://github.com/Azure/azure-sdk-for-python/pull/32192))
 - Allow OTEL_PYTHON_DISABLED_INSTRUMENTATIONS functionality for Azure Core Tracing in Auto-instrumentation
-    ([#XXXXX](https://github.com/Azure/azure-sdk-for-python/pull/XXXXX))
+    ([#32331](https://github.com/Azure/azure-sdk-for-python/pull/32331))
 
 ### Breaking Changes
 
