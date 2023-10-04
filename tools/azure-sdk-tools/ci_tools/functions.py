@@ -235,7 +235,7 @@ def get_config_setting(package_path: str, setting: str, default: Any = True) -> 
 def is_package_active(package_path: str):
     disabled = INACTIVE_CLASSIFIER in ParsedSetup.from_path(package_path).classifiers
 
-    override_value = os.getenv(f"ENABLE_{os.path.basename(package_path).upper()}", None)
+    override_value = os.getenv(f"ENABLE_{os.path.basename(package_path).upper().replace('-', '_')}", None)
 
     if override_value:
         return str_to_bool(override_value)
