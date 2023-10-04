@@ -26,7 +26,7 @@ import pytest
 import test_config
 
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
-from azure.cosmos.cosmos_client import CosmosClient
+from azure.cosmos import CosmosClient, exceptions
 from azure.cosmos.partition_key import PartitionKey
 
 pytestmark = pytest.mark.cosmosEmulator
@@ -181,3 +181,25 @@ class BulkTests(unittest.TestCase):
         assert bulk_result[0][1].get("statusCode") == StatusCodes.CREATED
         assert bulk_result[1][1].get("statusCode") == StatusCodes.CONFLICT
         assert bulk_result[2][1].get("statusCode") == StatusCodes.CREATED
+
+    def test_bulk_large_entity(self):
+        container_id = "entity_too_large_container" + str(uuid.uuid4())
+        container = self.test_database.create_container_if_not_exists(id=container_id,
+                                                                      partition_key=PartitionKey(path="/id"))
+        item_id = str(uuid.uuid4())
+        massive_item = {'id': item_id}
+        while len(str(massive_item)) < 2500000:
+            for i in range(100):
+                massive_item.update({str(uuid.uuid4()): str(uuid.uuid4())})
+        operations = [{"operationType": "Create",
+                       "resourceBody": massive_item,
+                       "partitionKey": item_id}]
+        try:
+            container.bulk(operations=operations)
+            pytest.fail("test should have failed")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.message.startswith("(RequestEntityTooLarge)")
+        # check no items were created in the container
+        item_list = list(container.query_items("select * from x", enable_cross_partition_query=True))
+        assert len(item_list) == 0
+        self.test_database.delete_container(container_id)

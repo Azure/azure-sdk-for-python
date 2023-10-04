@@ -592,13 +592,18 @@ executing the operations individually, the provisioned throughput (RU/s) consume
 it based on the volume of operations you want to push.
 
 Another caveat is the size of the documents. The batches that the SDK creates to optimize throughput have a current maximum
-of 220kb or 100 operations per batch, the smaller the documents, the greater the optimization that can be achieved
+of 220kb or 100 operations per batch, so the smaller the documents, the greater the optimization that can be achieved
 (the bigger the documents, the more batches need to be used).
 
 If your operations get throttled during a Bulk request, it means that now the bottleneck of your application is on the 
 provisioned throughput of your container.
 
 The SDK only retries bulk on throttling errors - any other errors will show up as part of your bulk responses.
+
+**Important**: Using request timeouts as described in our [timeouts document][timeouts_document] with bulk requests works
+differently due to the fact these requests are sent in internal batches to the service. In this case, the timeout is applied
+on a per-batch case, and running into a timeout does not mean that all operations were timed out - if one operation times
+out while retrying due to throttling, all previous operations will have run regardless.
 
 Available Bulk operation types are:
 - Create
@@ -765,6 +770,7 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
 [telemetry_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/tracing_open_telemetry.py
+[timeouts_document]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/docs/TimeoutAndRetriesConfig.md
 
 ## Contributing
 

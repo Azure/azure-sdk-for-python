@@ -1832,7 +1832,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         response = []
         for batch in micro_batches:
             if len(batch.get("operations")) > 0:
-                print(batch.get("range_id"))
                 result = self._Bulk(
                     batch.get("operations"),
                     batch.get("range_id"),
@@ -1864,7 +1863,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         initial_headers = self.default_headers.copy()
         base._populate_bulk_headers(initial_headers, pk_range_id)
         headers = base.GetHeaders(self, initial_headers, "post", path, collection_id, "docs", options)
-
         request_params = _request_object.RequestObject("docs", documents._OperationType.Batch)
         return self.__Post(path, request_params, operations, headers, **kwargs)
 
