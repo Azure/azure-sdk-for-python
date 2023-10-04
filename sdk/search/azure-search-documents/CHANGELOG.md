@@ -11,6 +11,7 @@
 - Renamed `vector_search_configuration` to `vector_search_profile` in `SearchField`.
 - Renamed `vectors` to `vector_queries` in `Search` method.
 - Renamed `azure.search.documents.models.Vector` to `azure.search.documents.models.VectorQuery`.
+- Stopped supporting api version `V2023_07_01_PREVIEW` anymore.
 
 ### Bugs Fixed
 
