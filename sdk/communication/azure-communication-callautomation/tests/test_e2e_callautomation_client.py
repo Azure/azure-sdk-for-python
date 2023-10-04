@@ -33,7 +33,7 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
         return
 
     @recorded_by_proxy
-    def test_create_VOIP_call_and_add_participant_then_cancel_request(self):
+    def test_add_participant_then_cancel_request(self):
         # try to establish the call
         caller = self.identity_client.create_user()
         target = self.identity_client.create_user()
