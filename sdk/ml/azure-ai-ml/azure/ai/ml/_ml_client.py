@@ -369,6 +369,15 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_08_2023_preview = ServiceClient082023Preview(
+            credential=self._credential,
+            subscription_id=self._ws_operation_scope._subscription_id
+            if registry_reference
+            else self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._workspaces = WorkspaceOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._service_client_06_2023_preview,

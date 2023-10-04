@@ -349,7 +349,7 @@ class CallConnectionClient:
             source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
             source_display_name=source_display_name,
             custom_context=user_custom_context,
-            invitation_timeout=invitation_timeout,
+            invitation_timeout_in_seconds=invitation_timeout,
             operation_context=operation_context,
             callback_uri=callback_url
         )
