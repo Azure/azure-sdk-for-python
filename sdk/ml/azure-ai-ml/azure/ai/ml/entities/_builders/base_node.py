@@ -400,9 +400,8 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatable
         _type = obj[CommonYamlFields.TYPE]
         if _type == NodeType.DATA_TRANSFER:
             _type = "_".join([NodeType.DATA_TRANSFER, obj.get("task", "")])
-        instance: BaseNode = pipeline_node_factory.get_create_instance_func(_type)()
-        init_kwargs = instance._from_rest_object_to_init_params(obj)
-        instance.__init__(**init_kwargs)
+        init_kwargs = cls._from_rest_object_to_init_params(obj)
+        instance: BaseNode = pipeline_node_factory.get_create_instance_func(_type)(**init_kwargs)
         return instance
 
     @classmethod
