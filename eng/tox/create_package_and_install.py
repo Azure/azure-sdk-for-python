@@ -82,7 +82,16 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    create_package_and_install(args.distribution_directory, args.target_setup, args.skip_install, args.cache_dir, args.work_dir, args.force_create, args.package_type, args.pre_download_disabled)
+    create_package_and_install(
+        distribution_directory=args.distribution_directory,
+        target_setup=args.target_setup,
+        skip_install=args.skip_install,
+        cache_dir=args.cache_dir,
+        work_dir=args.work_dir,
+        force_create=args.force_create,
+        package_type=args.package_type,
+        pre_download_disabled=args.pre_download_disabled,
+    )
 
 
     
