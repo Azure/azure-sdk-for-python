@@ -1,6 +1,6 @@
 # Release History
 
-## 1.11.0 (unreleased)
+## 1.11.0 (2023-10-04)
 
 ### Features Added
 - Now, when you specify `delete_dependent_resources` as True when deleting a workspace, the log analytics resource
