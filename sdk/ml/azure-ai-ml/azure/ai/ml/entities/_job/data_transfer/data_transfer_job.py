@@ -6,7 +6,7 @@
 
 import logging
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._schema.job.data_transfer_job import (
@@ -16,20 +16,10 @@ from azure.ai.ml._schema.job.data_transfer_job import (
 )
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
-from azure.ai.ml.constants._component import (
-    DataTransferBuiltinComponentUri,
-    DataTransferTaskType,
-    ExternalDataType,
-)
-from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.constants._component import DataTransferBuiltinComponentUri, DataTransferTaskType, ExternalDataType
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-)
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from ..job import Job
 from ..job_io_mixin import JobIOMixin
@@ -72,15 +62,15 @@ class DataTransferJob(Job, JobIOMixin):
     def __init__(
         self,
         task: str,
-        **kwargs,
+        **kwargs: Any,
     ):
         kwargs[TYPE] = JobType.DATA_TRANSFER
-        self._parameters = kwargs.pop("parameters", {})
+        self._parameters: Dict = kwargs.pop("parameters", {})
         super().__init__(**kwargs)
         self.task = task
 
     @property
-    def parameters(self) -> Dict[str, str]:
+    def parameters(self) -> Dict:
         """MLFlow parameters.
 
         :return: MLFlow parameters logged in job.
@@ -109,7 +99,7 @@ class DataTransferJob(Job, JobIOMixin):
         raise NotImplementedError("Not support submit standalone job for now")
 
     @classmethod
-    def _build_source_sink(cls, io_dict: Union[Dict, Database, FileSystem]):
+    def _build_source_sink(cls, io_dict: Union[Dict, Database, FileSystem]) -> Union[(Database, FileSystem)]:
         if io_dict is None:
             return io_dict
         if isinstance(io_dict, (Database, FileSystem)):
@@ -155,10 +145,10 @@ class DataTransferCopyJob(DataTransferJob):
     def __init__(
         self,
         *,
-        inputs: Optional[Dict[str, Union[Input, str]]] = None,
-        outputs: Optional[Dict[str, Union[Output]]] = None,
-        data_copy_mode: str = None,
-        **kwargs,
+        inputs: Optional[Dict] = None,
+        outputs: Optional[Dict] = None,
+        data_copy_mode: Optional[str] = None,
+        **kwargs: Any,
     ):
         kwargs["task"] = DataTransferTaskType.COPY_DATA
         super().__init__(**kwargs)
@@ -168,14 +158,17 @@ class DataTransferCopyJob(DataTransferJob):
         self.data_copy_mode = data_copy_mode
 
     def _to_dict(self) -> Dict:
-        return DataTransferCopyJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = DataTransferCopyJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "DataTransferCopyJob":
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any
+    ) -> "DataTransferCopyJob":
         loaded_data = load_from_dict(DataTransferCopyJobSchema, data, context, additional_message, **kwargs)
         return DataTransferCopyJob(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "DataTransferCopyComponent":
+    def _to_component(self, context: Optional[Dict] = None, **kwargs: Any) -> "DataTransferCopyComponent":
         """Translate a data transfer copy job to component.
 
         :param context: Context of data transfer job YAML file.
@@ -184,9 +177,7 @@ class DataTransferCopyJob(DataTransferJob):
         :return: Translated data transfer copy component.
         :rtype: DataTransferCopyComponent
         """
-        from azure.ai.ml.entities._component.datatransfer_component import (
-            DataTransferCopyComponent,
-        )
+        from azure.ai.ml.entities._component.datatransfer_component import DataTransferCopyComponent
 
         pipeline_job_dict = kwargs.get("pipeline_job_dict", {})
         context = context or {BASE_PATH_CONTEXT_KEY: Path("./")}
@@ -202,7 +193,7 @@ class DataTransferCopyJob(DataTransferJob):
             data_copy_mode=self.data_copy_mode,
         )
 
-    def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "DataTransferCopy":
+    def _to_node(self, context: Optional[Dict] = None, **kwargs: Any) -> "DataTransferCopy":
         """Translate a data transfer copy job to a pipeline node.
 
         :param context: Context of data transfer job YAML file.
@@ -231,9 +222,9 @@ class DataTransferImportJob(DataTransferJob):
     def __init__(
         self,
         *,
-        outputs: Optional[Dict[str, Union[Output]]] = None,
+        outputs: Optional[Dict] = None,
         source: Optional[Union[Dict, Database, FileSystem]] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         kwargs["task"] = DataTransferTaskType.IMPORT_DATA
         super().__init__(**kwargs)
@@ -242,14 +233,17 @@ class DataTransferImportJob(DataTransferJob):
         self.source = self._build_source_sink(source)
 
     def _to_dict(self) -> Dict:
-        return DataTransferImportJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = DataTransferImportJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "DataTransferImportJob":
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any
+    ) -> "DataTransferImportJob":
         loaded_data = load_from_dict(DataTransferImportJobSchema, data, context, additional_message, **kwargs)
         return DataTransferImportJob(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> str:
+    def _to_component(self, context: Optional[Dict] = None, **kwargs: Any) -> str:
         """Translate a data transfer import job to component.
 
         :param context: Context of data transfer job YAML file.
@@ -259,6 +253,7 @@ class DataTransferImportJob(DataTransferJob):
         :rtype: str
         """
 
+        component: str = ""
         if self.source.type == ExternalDataType.DATABASE:
             component = DataTransferBuiltinComponentUri.IMPORT_DATABASE
         else:
@@ -266,7 +261,7 @@ class DataTransferImportJob(DataTransferJob):
 
         return component
 
-    def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "DataTransferImport":
+    def _to_node(self, context: Optional[Dict] = None, **kwargs: Any) -> "DataTransferImport":
         """Translate a data transfer import job to a pipeline node.
 
         :param context: Context of data transfer job YAML file.
@@ -295,9 +290,9 @@ class DataTransferExportJob(DataTransferJob):
     def __init__(
         self,
         *,
-        inputs: Optional[Dict[str, Union[Input]]] = None,
+        inputs: Optional[Dict] = None,
         sink: Optional[Union[Dict, Database, FileSystem]] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         kwargs["task"] = DataTransferTaskType.EXPORT_DATA
         super().__init__(**kwargs)
@@ -306,14 +301,17 @@ class DataTransferExportJob(DataTransferJob):
         self.sink = self._build_source_sink(sink)
 
     def _to_dict(self) -> Dict:
-        return DataTransferExportJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = DataTransferExportJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "DataTransferExportJob":
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any
+    ) -> "DataTransferExportJob":
         loaded_data = load_from_dict(DataTransferExportJobSchema, data, context, additional_message, **kwargs)
         return DataTransferExportJob(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> str:
+    def _to_component(self, context: Optional[Dict] = None, **kwargs: Any) -> str:
         """Translate a data transfer export job to component.
 
         :param context: Context of data transfer job YAML file.
@@ -322,6 +320,7 @@ class DataTransferExportJob(DataTransferJob):
         :return: Translated data transfer export component.
         :rtype: str
         """
+        component: str = ""
         if self.sink.type == ExternalDataType.DATABASE:
             component = DataTransferBuiltinComponentUri.EXPORT_DATABASE
         else:
@@ -334,7 +333,7 @@ class DataTransferExportJob(DataTransferJob):
             )
         return component
 
-    def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "DataTransferExport":
+    def _to_node(self, context: Optional[Dict] = None, **kwargs: Any) -> "DataTransferExport":
         """Translate a data transfer export job to a pipeline node.
 
         :param context: Context of data transfer job YAML file.

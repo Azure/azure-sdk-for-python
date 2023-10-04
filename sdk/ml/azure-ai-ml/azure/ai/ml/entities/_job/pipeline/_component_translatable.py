@@ -4,7 +4,7 @@
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use input as argument name
 import re
-from typing import Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 from pydash import get
 
@@ -348,7 +348,7 @@ class ComponentTranslatableMixin:
             )
         return Output(**output_variable)
 
-    def _to_inputs(self, inputs: Dict[str, Union[Input, str, bool, int, float]], **kwargs) -> Dict[str, Input]:
+    def _to_inputs(self, inputs: Optional[Dict], **kwargs) -> Dict:
         """Translate inputs to Inputs.
 
         :param inputs: mapping from input name to input object.
@@ -362,7 +362,7 @@ class ComponentTranslatableMixin:
             translated_component_inputs[io_name] = self._to_input(io_value, pipeline_job_dict)
         return translated_component_inputs
 
-    def _to_outputs(self, outputs: Dict[str, Output], **kwargs) -> Dict[str, Output]:
+    def _to_outputs(self, outputs: Optional[Dict], **kwargs: Any) -> Dict:
         """Translate outputs to Outputs.
 
         :param outputs: mapping from output name to output object.
