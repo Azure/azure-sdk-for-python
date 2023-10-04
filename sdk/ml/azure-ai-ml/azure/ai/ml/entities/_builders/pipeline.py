@@ -140,7 +140,8 @@ class Pipeline(BaseNode):
             "component": (str, PipelineComponent),
         }
 
-    def _to_job(self):
+    def _to_job(self) -> "PipelineJob":  # type: ignore[name-defined]
+        # mypy type error ignored due to circular import risk
         from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
 
         return PipelineJob(
