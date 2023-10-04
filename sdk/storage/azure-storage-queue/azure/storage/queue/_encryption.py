@@ -505,8 +505,8 @@ def _generate_encryption_data_dict(
         encryption_agent['EncryptionAlgorithm'] = _EncryptionAlgorithm.AES_GCM_256
 
         encrypted_region_info = OrderedDict()
-        encrypted_region_info['DataLength'] = str(_GCM_REGION_DATA_LENGTH)
-        encrypted_region_info['NonceLength'] = str(_GCM_NONCE_LENGTH)
+        encrypted_region_info['DataLength'] = _GCM_REGION_DATA_LENGTH
+        encrypted_region_info['NonceLength'] = _GCM_NONCE_LENGTH
 
     encryption_data_dict = OrderedDict()
     encryption_data_dict['WrappedContentKey'] = wrapped_content_key
@@ -514,7 +514,7 @@ def _generate_encryption_data_dict(
     if version == _ENCRYPTION_PROTOCOL_V1:
         encryption_data_dict['ContentEncryptionIV'] = encode_base64(iv)
     elif version == _ENCRYPTION_PROTOCOL_V2:
-        encryption_data_dict['EncryptedRegionInfo'] = encrypted_region_info
+        encryption_data_dict['EncryptedRegionInfo'] = encrypted_region_info  # type: ignore[assignment]
     encryption_data_dict['KeyWrappingMetadata'] = OrderedDict({'EncryptionLibrary': 'Python ' + VERSION})
 
     return encryption_data_dict
@@ -711,7 +711,7 @@ def _decrypt_message(
         if encryption_data.encrypted_region_info is None:
             raise ValueError("Missing required metadata for Encryption V2")
 
-        nonce_length = encryption_data.encrypted_region_info.nonce_length
+        nonce_length = int(encryption_data.encrypted_region_info.nonce_length)
 
         # First bytes are the nonce
         nonce = message[:nonce_length]

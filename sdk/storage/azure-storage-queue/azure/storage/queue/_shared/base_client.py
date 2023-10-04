@@ -479,6 +479,6 @@ def is_credential_sastoken(credential: Any) -> bool:
 
     sas_values = QueryStringConstants.to_list()
     parsed_query = parse_qs(credential.lstrip("?"))
-    if parsed_query and all(k in sas_values for k in parsed_query.keys()):
+    if parsed_query and all(k in sas_values for k in parsed_query):
         return True
     return False

@@ -312,12 +312,12 @@ class AccessPolicy(GenAccessPolicy):
         be UTC.
     """
 
-    permission: Optional[QueueSasPermissions]
+    permission: Optional[QueueSasPermissions] #type: ignore [assignment]
     """The permissions associated with the shared access signature. The user is restricted to
         operations allowed by the permissions."""
-    expiry: Optional[Union["datetime", str]]
+    expiry: Optional[Union["datetime", str]] #type: ignore [assignment]
     """The time at which the shared access signature becomes invalid."""
-    start: Optional[Union["datetime", str]]
+    start: Optional[Union["datetime", str]] #type: ignore [assignment]
     """The time at which the shared access signature becomes valid."""
 
     def __init__(
@@ -357,40 +357,14 @@ class QueueMessage(DictMixin):
     """A UTC date value representing the time the message will next be visible.
         Only returned by receive messages operations. Set to None for peek messages."""
 
-    @overload
-    def __init__(self, *, id: str, content: Any = None) -> None:
-        ...
-
-    @overload
-    def __init__(
-        self, *,
-        id: Optional[str] = None,
-        inserted_on: Optional["datetime"] = None,
-        expires_on: Optional["datetime"] = None,
-        dequeue_count: Optional[int] = None,
-        content: Optional[Any] = None,
-        pop_receipt: Optional[str] = None,
-        next_visible_on: Optional["datetime"] = None
-    ) -> None:
-        ...
-
-    def __init__(
-        self, *,
-        id: Optional[str] = None,
-        inserted_on: Optional["datetime"] = None,
-        expires_on: Optional["datetime"] = None,
-        dequeue_count: Optional[int] = None,
-        content: Optional[Any] = None,
-        pop_receipt: Optional[str] = None,
-        next_visible_on: Optional["datetime"] = None
-    ) -> None:
-        self.id = id  # type: ignore [assignment]
-        self.inserted_on = inserted_on
-        self.expires_on = expires_on
-        self.dequeue_count = dequeue_count
+    def __init__(self, content=None):
+        self.id = None
+        self.inserted_on = None
+        self.expires_on = None
+        self.dequeue_count = None
         self.content = content
-        self.pop_receipt = pop_receipt
-        self.next_visible_on = next_visible_on
+        self.pop_receipt = None
+        self.next_visible_on = None
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
@@ -480,7 +454,7 @@ class QueueProperties(DictMixin):
 
     def __init__(self, **kwargs: Any) -> None:
         self.metadata = kwargs.get('metadata')
-        self.approximate_message_count = kwargs.get('x-ms-approximate-messages-count')
+        self.approximate_message_count = kwargs.get('x-ms-approximate-messages-count') #type: ignore [assignment]
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:

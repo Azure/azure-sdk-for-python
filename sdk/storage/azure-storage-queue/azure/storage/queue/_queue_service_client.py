@@ -414,7 +414,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :caption: Get the queue client.
         """
         if isinstance(queue, QueueProperties):
-                queue_name = queue.name
+            queue_name = queue.name
         else:
             queue_name = queue
 
