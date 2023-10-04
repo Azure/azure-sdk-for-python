@@ -645,7 +645,7 @@ class CallConnectionClient:
         """Send Dtmf tones to this call.
 
         :param tones: List of tones to be sent to target participant.
-        :type tones:list[str or ~azure.communication.callautomation.DtmfTone]
+        :type tones: list[str or ~azure.communication.callautomation.DtmfTone]
         :param target_participant: Target participant.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword operation_context: The value to identify context of the operation.
