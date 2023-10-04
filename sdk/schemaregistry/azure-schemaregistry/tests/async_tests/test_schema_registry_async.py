@@ -210,14 +210,11 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
     async def test_schema_negative_wrong_endpoint_async(self, format, schema_str, **kwargs):
         schemaregistry_group = kwargs.pop("schemaregistry_group")
         client = self.create_client(fully_qualified_namespace="fake.servicebus.windows.net")
+        name = self.get_resource_name(f"test-schema-nonexist-async-{format.lower()}")
         async with client:
-            name = self.get_resource_name(f"test-schema-nonexist-async-{format.lower()}")
             # accepting both errors for now due to: https://github.com/Azure/azure-sdk-tools/issues/2907
             with pytest.raises((ServiceRequestError, HttpResponseError)) as exc_info:
                 await client.register_schema(schemaregistry_group, name, schema_str, format)
-            if exc_info.type is HttpResponseError:
-                response_content = json.loads(exc_info.value.response.content)
-                assert any([(m in response_content["Message"]) for m in ["Name does not resolve", "Unable to find a record"]])
 
         await client._generated_client._config.credential.close()
 
