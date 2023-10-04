@@ -50,7 +50,7 @@ class FeatureSetBackfillRequest(RestTranslatableMixin):
         data_status: Optional[List[str]] = None,
         job_id: Optional[str] = None,
         **kwargs: Any,
-    ) -> None:
+    ):
         self.name = name
         self.version = version
         self.feature_window = feature_window

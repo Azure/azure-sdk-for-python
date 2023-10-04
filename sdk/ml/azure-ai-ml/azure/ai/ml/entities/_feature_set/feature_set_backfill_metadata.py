@@ -31,7 +31,7 @@ class FeatureSetBackfillMetadata(RestTranslatableMixin):
         type: Optional[str] = None,
         # pylint: disable=unused-argument
         **kwargs: Any
-    ) -> None:
+    ):
         self.type = type if type else "BackfillMaterialization"
         self.job_ids = job_ids
 
