@@ -140,7 +140,7 @@ class Pipeline(BaseNode):
             "component": (str, PipelineComponent),
         }
 
-    def _to_job(self) -> "PipelineJob":
+    def _to_job(self):
         from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
 
         return PipelineJob(
