@@ -113,7 +113,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
 
         super().__init__(**kwargs)
         self.conf = self.conf or {}
-        self.properties: dict = {}
+        self.properties = self.properties or {}
         self.driver_cores = driver_cores
         self.driver_memory = driver_memory
         self.executor_cores = executor_cores
