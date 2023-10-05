@@ -30,12 +30,16 @@ from azure.ai.ml.entities._util import load_from_dict
 class TextClassificationJob(AutoMLNLPJob):
     """Configuration for AutoML Text Classification Job.
 
-    :param target_column_name: The name of the target column
-    :param training_data: Training data to be used for training
-    :param validation_data: Validation data to be used for evaluating the trained model
-    :param primary_metric: The primary metric to be displayed
-    :param log_verbosity: Log verbosity level
-    :param kwargs: Job-specific arguments
+    :param target_column_name: The name of the target column, defaults to None
+    :type target_column_name: Optional[str], optional
+    :param training_data: Training data to be used for training, defaults to None
+    :type training_data: Optional[Input], optional
+    :param validation_data: Validation data to be used for evaluating the trained model, defaults to None
+    :type validation_data: Optional[Input], optional
+    :param primary_metric: The primary metric to be displayed, defaults to None
+    :type primary_metric: Optional[ClassificationPrimaryMetrics], optional
+    :param log_verbosity: Log verbosity level, defaults to None
+    :type log_verbosity: Optional[str], optional
     """
 
     _DEFAULT_PRIMARY_METRIC = ClassificationPrimaryMetrics.ACCURACY
