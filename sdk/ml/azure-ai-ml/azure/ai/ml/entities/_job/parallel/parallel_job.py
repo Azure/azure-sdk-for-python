@@ -4,7 +4,7 @@
 
 import logging
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
 from azure.ai.ml._schema.job.parallel_job import ParallelJobSchema
@@ -69,7 +69,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
         *,
         inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
         outputs: Optional[Dict[str, Output]] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         kwargs[TYPE] = JobType.PARALLEL
 
@@ -78,22 +78,23 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
         self.inputs = inputs
         self.outputs = outputs
 
-    def _to_dict(self):
-        return ParallelJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+    def _to_dict(self) -> Dict:
+        res: dict = ParallelJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        return res
 
-    def _to_rest_object(self):
+    def _to_rest_object(self) -> None:
         pass
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "ParallelJob":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "ParallelJob":
         loaded_data = load_from_dict(ParallelJobSchema, data, context, additional_message, **kwargs)
         return ParallelJob(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
     @classmethod
-    def _load_from_rest(cls, obj: JobBaseData):
+    def _load_from_rest(cls, obj: JobBaseData) -> None:
         pass
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "ParallelComponent":
+    def _to_component(self, context: Optional[Dict] = None, **kwargs: Any) -> "ParallelComponent":
         """Translate a parallel job to component job.
 
         :param context: Context of parallel job YAML file.
@@ -124,7 +125,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
             resources=self.resources if self.resources else None,
         )
 
-    def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "Parallel":
+    def _to_node(self, context: Optional[Dict] = None, **kwargs: Any) -> "Parallel":
         """Translate a parallel job to a pipeline node.
 
         :param context: Context of parallel job YAML file.
