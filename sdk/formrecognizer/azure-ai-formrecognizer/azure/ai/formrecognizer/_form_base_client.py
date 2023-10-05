@@ -12,6 +12,7 @@ from azure.core.pipeline.policies import HttpLoggingPolicy
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from ._generated._form_recognizer_client import FormRecognizerClient as FormRecognizer
+from ._api_versions import validate_api_version
 from ._helpers import (
     _get_deserialize,
     get_authentication_policy,
