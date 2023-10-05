@@ -56,6 +56,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
     :param search_space: Search space(s) to sweep over for NLP sweep jobs, defaults to None
     :type search_space: Optional[List[NlpSearchSpace]], optional
     """
+
     def __init__(
         self,
         *,
@@ -176,7 +177,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
     def limits(self) -> NlpLimitSettings:
         """Limit settings for NLP jobs
 
-        :return: 
+        :return:
         :rtype: NlpLimitSettings
         """
         return self._limits
@@ -247,11 +248,11 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
     def set_data(self, *, training_data: Input, target_column_name: str, validation_data: Input) -> None:
         """Define data configuration for NLP job
 
-        :param training_data: Training data
+        :keyword training_data: Training data
         :type training_data: Input
-        :param target_column_name: Column name of the target column.
+        :keyword target_column_name: Column name of the target column.
         :type target_column_name: str
-        :param validation_data: Validation data
+        :keyword validation_data: Validation data
         :type validation_data: Input
         """
         # Properties for NlpVerticalDataSettings
@@ -270,15 +271,15 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
     ) -> None:
         """Define limit configuration for AutoML NLP job
 
-        :param max_trials: Maximum number of AutoML iterations, defaults to 1
+        :keyword max_trials: Maximum number of AutoML iterations, defaults to 1
         :type max_trials: int, optional
-        :param max_concurrent_trials: Maximum number of concurrent AutoML iterations, defaults to 1
+        :keyword max_concurrent_trials: Maximum number of concurrent AutoML iterations, defaults to 1
         :type max_concurrent_trials: int, optional
-        :param max_nodes: Maximum number of nodes used for sweep, defaults to 1
+        :keyword max_nodes: Maximum number of nodes used for sweep, defaults to 1
         :type max_nodes: int, optional
-        :param timeout_minutes: Timeout for the AutoML job, defaults to None
+        :keyword timeout_minutes: Timeout for the AutoML job, defaults to None
         :type timeout_minutes: Optional[int], optional
-        :param trial_timeout_minutes: Timeout for each AutoML trial, defaults to None
+        :keyword trial_timeout_minutes: Timeout for each AutoML trial, defaults to None
         :type trial_timeout_minutes: Optional[int], optional
         """
         self._limits = NlpLimitSettings(
@@ -297,10 +298,11 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
     ):
         """Define sweep configuration for AutoML NLP job
 
-        :param sampling_algorithm: Required. Specifies type of hyperparameter sampling algorithm.
+        :keyword sampling_algorithm: Required. Specifies type of hyperparameter sampling algorithm.
             Possible values include: "Grid", "Random", and "Bayesian".
         :type sampling_algorithm: Union[str, SamplingAlgorithmType]
-        :param early_termination: Optional. early termination policy to end poorly performing training candidates, defaults to None.
+        :keyword early_termination: Optional. early termination policy to end poorly performing training candidates,
+            defaults to None.
         :type early_termination: Optional[EarlyTerminationPolicy], optional
         """
         if self._sweep:
@@ -325,29 +327,30 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
     ) -> None:
         """Fix certain training parameters throughout the training procedure for all candidates.
 
-        :param gradient_accumulation_steps: number of steps over which to accumulate gradients before a backward
+        :keyword gradient_accumulation_steps: number of steps over which to accumulate gradients before a backward
             pass. This must be a positive integer., defaults to None
         :type gradient_accumulation_steps: Optional[int], optional
-        :param learning_rate: initial learning rate. Must be a float in (0, 1)., defaults to None
+        :keyword learning_rate: initial learning rate. Must be a float in (0, 1)., defaults to None
         :type learning_rate: Optional[float], optional
-        :param learning_rate_scheduler: the type of learning rate scheduler. Must choose from 'linear', 'cosine',
+        :keyword learning_rate_scheduler: the type of learning rate scheduler. Must choose from 'linear', 'cosine',
             'cosine_with_restarts', 'polynomial', 'constant', and 'constant_with_warmup'., defaults to None
         :type learning_rate_scheduler: Optional[Union[str, NlpLearningRateScheduler]], optional
-        :param model_name: the model name to use during training. Must choose from 'bert-base-cased',
+        :keyword model_name: the model name to use during training. Must choose from 'bert-base-cased',
             'bert-base-uncased', 'bert-base-multilingual-cased', 'bert-base-german-cased', 'bert-large-cased',
             'bert-large-uncased', 'distilbert-base-cased', 'distilbert-base-uncased', 'roberta-base', 'roberta-large',
-            'distilroberta-base', 'xlm-roberta-base', 'xlm-roberta-large', xlnet-base-cased', and 'xlnet-large-cased'., defaults to None
+            'distilroberta-base', 'xlm-roberta-base', 'xlm-roberta-large', xlnet-base-cased', and 'xlnet-large-cased'.,
+            defaults to None
         :type model_name: Optional[str], optional
-        :param number_of_epochs: the number of epochs to train with. Must be a positive integer., defaults to None
+        :keyword number_of_epochs: the number of epochs to train with. Must be a positive integer., defaults to None
         :type number_of_epochs: Optional[int], optional
-        :param training_batch_size: the batch size during training. Must be a positive integer., defaults to None
+        :keyword training_batch_size: the batch size during training. Must be a positive integer., defaults to None
         :type training_batch_size: Optional[int], optional
-        :param validation_batch_size: the batch size during validation. Must be a positive integer., defaults to None
+        :keyword validation_batch_size: the batch size during validation. Must be a positive integer., defaults to None
         :type validation_batch_size: Optional[int], optional
-        :param warmup_ratio: ratio of total training steps used for a linear warmup from 0 to learning_rate.
+        :keyword warmup_ratio: ratio of total training steps used for a linear warmup from 0 to learning_rate.
             Must be a float in [0, 1]., defaults to None
         :type warmup_ratio: Optional[float], optional
-        :param weight_decay: value of weight decay when optimizer is sgd, adam, or adamw. This must be a float in
+        :keyword weight_decay: value of weight decay when optimizer is sgd, adam, or adamw. This must be a float in
             the range [0, 1]., defaults to None
         :type weight_decay: Optional[float], optional
         """
@@ -398,7 +401,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
     def set_featurization(self, *, dataset_language: Optional[str] = None) -> None:
         """Define featurization configuration for AutoML NLP job.
 
-        :param dataset_language: Language of the dataset, defaults to None
+        :keyword dataset_language: Language of the dataset, defaults to None
         :type dataset_language: Optional[str], optional
         """
         self._featurization = NlpFeaturizationSettings(

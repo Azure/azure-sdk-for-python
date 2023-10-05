@@ -29,10 +29,11 @@ from azure.ai.ml.entities._util import load_from_dict
 
 class TextNerJob(AutoMLNLPJob):
     """Configuration for AutoML Text NER Job.
-    
+
     :param training_data: Training data to be used for training, defaults to None
     :type training_data: Optional[Input], optional
-    :param validation_data: Validation data to be used for evaluating the trained model, defaults to None
+    :param validation_data: Validation data to be used for evaluating the trained model,
+        defaults to None
     :type validation_data: Optional[Input], optional
     :param primary_metric: The primary metric to be displayed, defaults to None
     :type primary_metric: Optional[str], optional

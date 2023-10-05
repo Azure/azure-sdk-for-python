@@ -27,7 +27,8 @@ class NlpSearchSpace(RestTranslatableMixin):
     :param model_name: the model name to use during training. Must choose from 'bert-base-cased',
         'bert-base-uncased', 'bert-base-multilingual-cased', 'bert-base-german-cased', 'bert-large-cased',
         'bert-large-uncased', 'distilbert-base-cased', 'distilbert-base-uncased', 'roberta-base', 'roberta-large',
-        'distilroberta-base', 'xlm-roberta-base', 'xlm-roberta-large', xlnet-base-cased', and 'xlnet-large-cased'., defaults to None
+        'distilroberta-base', 'xlm-roberta-base', 'xlm-roberta-large', xlnet-base-cased', and 'xlnet-large-cased'.,
+        defaults to None
     :type model_name: Optional[Union[str, SweepDistribution]], optional
     :param number_of_epochs: the number of epochs to train with. Must be a positive integer., defaults to None
     :type number_of_epochs: Optional[Union[int, SweepDistribution]], optional

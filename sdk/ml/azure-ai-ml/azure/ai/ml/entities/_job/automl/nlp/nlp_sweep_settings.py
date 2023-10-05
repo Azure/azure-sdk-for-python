@@ -17,7 +17,8 @@ class NlpSweepSettings(RestTranslatableMixin):
     :param sampling_algorithm: Required. Specifies type of hyperparameter sampling algorithm.
         Possible values include: "Grid", "Random", and "Bayesian".
     :type sampling_algorithm: Union[str, SamplingAlgorithmType]
-    :param early_termination: Optional. early termination policy to end poorly performing training candidates, defaults to None.
+    :param early_termination: Optional. early termination policy to end poorly performing training candidates,
+        defaults to None.
     :type early_termination: Optional[EarlyTerminationPolicy], optional
     """
 
