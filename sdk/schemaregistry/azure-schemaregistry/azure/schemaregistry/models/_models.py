@@ -40,3 +40,4 @@ class Version(_model_base.Model):
 
     schema_version: int = rest_field(name="schemaVersion", visibility=["read"])
     """Version number of specific schema. Required."""
+
