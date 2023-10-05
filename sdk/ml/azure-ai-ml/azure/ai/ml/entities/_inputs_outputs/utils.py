@@ -130,6 +130,8 @@ def _get_param_with_standard_annotation(
                 origin_annotation = annotation
                 annotation: Input = _get_annotation_cls_by_type(annotation, raise_error=False)
                 if not annotation:
+                    print(origin_annotation)
+                    print(name)
                     if str(origin_annotation) == "typing.Any" and str(name) == "'kwargs'":
                         pass
                     else:
