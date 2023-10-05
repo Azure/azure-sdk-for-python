@@ -662,6 +662,8 @@ class ServiceBusReceiver(
 
         """
         self._check_live()
+        if max_wait_time:
+            warnings.warn("max_wait_time is deprecated. Please set it in client constructor.")
         if max_wait_time is not None and max_wait_time <= 0:
             raise ValueError("The max_wait_time must be greater than 0.")
         if max_message_count is not None and max_message_count <= 0:
