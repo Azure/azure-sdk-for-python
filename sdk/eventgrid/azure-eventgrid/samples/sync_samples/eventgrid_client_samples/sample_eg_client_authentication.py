@@ -19,8 +19,8 @@ import os
 from azure.eventgrid import EventGridClient
 from azure.core.credentials import AzureKeyCredential
 
-key = os.environ["EVENTGRID_KEY"]
-endpoint = os.environ["EVENTGRID_ENDPOINT"]
+key: str = os.environ["EVENTGRID_KEY"]
+endpoint: str = os.environ["EVENTGRID_ENDPOINT"]
 
 credential = AzureKeyCredential(key)
 client = EventGridClient(endpoint, credential)
