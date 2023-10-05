@@ -134,7 +134,7 @@ def _get_param_with_standard_annotation(
                     print(name)
                     print(repr(annotation))
                     print(repr(name))
-                    if repr(origin_annotation) == "typing.Any":
+                    if repr(origin_annotation) == "typing.Any" or repr(name) == "'kwargs'":
                         pass
                     else:
                         msg = f"Unsupported annotation type {origin_annotation!r} for parameter {name!r}."
