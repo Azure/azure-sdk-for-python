@@ -118,7 +118,10 @@ def get_signature_algorithm(padding: AsymmetricPadding, algorithm: HashAlgorithm
 
 
 class KeyVaultRSAPublicKey(RSAPublicKey):
-    """An `RSAPublicKey` implementation based on a key managed by Key Vault."""
+    """An `RSAPublicKey` implementation based on a key managed by Key Vault.
+
+    Only synchronous clients and operations are supported at this time.
+    """
 
     def __init__(self, client: "CryptographyClient", key_material: JsonWebKey) -> None:
         """Creates a `KeyVaultRSAPublicKey` from a `CryptographyClient` and key.
@@ -284,7 +287,10 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
 
 
 class KeyVaultRSAPrivateKey(RSAPrivateKey):
-    """An `RSAPrivateKey` implementation based on a key managed by Key Vault."""
+    """An `RSAPrivateKey` implementation based on a key managed by Key Vault.
+
+    Only synchronous clients and operations are supported at this time.
+    """
 
     def __init__(self, client: "CryptographyClient", key_material: JsonWebKey) -> None:
         """Creates a `KeyVaultRSAPrivateKey` from a `CryptographyClient` and key.
