@@ -7,6 +7,7 @@ from os.path import isdir
 import platform
 import threading
 import time
+import warnings
 
 from opentelemetry.semconv.resource import ResourceAttributes
 from opentelemetry.sdk.util import ns_to_iso_str
@@ -52,9 +53,23 @@ def _get_sdk_version_prefix():
     return sdk_version_prefix
 
 
+def _getlocale():
+    try:
+        with warnings.catch_warnings():
+            # temporary work-around for https://github.com/python/cpython/issues/82986
+            # by continuing to use getdefaultlocale() even though it has been deprecated.
+            # we ignore the deprecation warnings to reduce noise
+            warnings.simplefilter('ignore', category=DeprecationWarning)
+            return locale.getdefaultlocale()[0]
+    except AttributeError:
+        # locale.getlocal() has issues on Windows: https://github.com/python/cpython/issues/82986
+        # Use this as a fallback if locale.getdefaultlocale() doesn't exist (>Py3.13)
+        return locale.getlocale()[0]
+
+
 azure_monitor_context = {
     "ai.device.id": platform.node(),
-    "ai.device.locale": locale.getdefaultlocale()[0],
+    "ai.device.locale": _getlocale(),
     "ai.device.osVersion": platform.version(),
     "ai.device.type": "Other",
     "ai.internal.sdkVersion": "{}py{}:otel{}:ext{}".format(
