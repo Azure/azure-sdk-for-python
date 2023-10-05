@@ -259,10 +259,10 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         public_key = self.public_numbers().public_key()
         try:
             return public_key.recover_data_from_signature(signature=signature, padding=padding, algorithm=algorithm)
-        except AttributeError:
+        except AttributeError as exc:
             raise NotImplementedError(
                 "This method is only available on `cryptography`>=3.3. Update your package version to use this method."
-            )
+            ) from exc
 
     def __eq__(self, other: object) -> bool:
         """Checks equality.
