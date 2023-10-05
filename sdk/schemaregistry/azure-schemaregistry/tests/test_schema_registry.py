@@ -21,7 +21,7 @@ import functools
 import pytest
 import json
 
-from azure.schemaregistry import SchemaRegistryClient
+from azure.schemaregistry import SchemaRegistryClient, ApiVersion
 from azure.identity import ClientSecretCredential
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError, HttpResponseError
 
@@ -33,6 +33,7 @@ SchemaRegistryEnvironmentVariableLoader = functools.partial(
     schemaregistry_avro_fully_qualified_namespace="fake_resource_avro.servicebus.windows.net",
     schemaregistry_json_fully_qualified_namespace="fake_resource_json.servicebus.windows.net",
     schemaregistry_custom_fully_qualified_namespace="fake_resource_custom.servicebus.windows.net",
+    #schemaregistry_protobuf_fully_qualified_namespace="fake_resource_protobuf.servicebus.windows.net",
     schemaregistry_group="fakegroup"
 )
 AVRO_SCHEMA_STR = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
@@ -59,14 +60,18 @@ JSON_SCHEMA = {
 }
 JSON_SCHEMA_STR = json.dumps(JSON_SCHEMA, separators=(",", ":"))
 CUSTOM_SCHEMA_STR = "My favorite color is yellow."
+with open("person.proto", "r") as f:
+    PROTOBUF_SCHEMA_STR = f.read()
 
 AVRO_FORMAT = "Avro"
 JSON_FORMAT = "Json"
 CUSTOM_FORMAT = "Custom"
+PROTOBUF_FORMAT = "Protobuf"
 
 avro_args = (AVRO_FORMAT, AVRO_SCHEMA_STR)
 json_args = (JSON_FORMAT, JSON_SCHEMA_STR)
 custom_args = (CUSTOM_FORMAT, CUSTOM_SCHEMA_STR)
+protobuf_args = (PROTOBUF_FORMAT, PROTOBUF_SCHEMA_STR)
 
 format_params = [avro_args, json_args, custom_args]
 format_ids = [AVRO_FORMAT, JSON_FORMAT, CUSTOM_FORMAT]
@@ -318,3 +323,27 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         assert e.value.error.code == 'InvalidRequest'
         assert e.value.status_code == 400
         assert e.value.reason == 'Bad Request'
+
+    @SchemaRegistryEnvironmentVariableLoader()
+    @pytest.mark.parametrize("format, schema_str", format_params, ids=format_ids)
+    @ArgPasser()
+    @recorded_by_proxy
+    def test_schema_apiversion(self, format, schema_str, **kwargs):
+        schemaregistry_fully_qualified_namespace = kwargs.pop(f"schemaregistry_{format.lower()}_fully_qualified_namespace")
+        schemaregistry_group = kwargs.pop("schemaregistry_group")
+
+        apiversion_2021_10 = ApiVersion.V2021_10
+        client_2021_10 = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace, api_version=apiversion_2021_10)
+        name = self.get_resource_name(f"test-schema-apiversion-{format.lower()}")
+
+        schema_properties = client_2021_10.register_schema(schemaregistry_group, name, schema_str, format, logging_enable=True)
+
+        assert schema_properties.id is not None
+        assert schema_properties.format == format
+
+        apiversion_2022_10 = ApiVersion.V2022_10
+        client_2022_10 = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace, api_version=apiversion_2022_10)
+        schema_properties = client_2022_10.register_schema(schemaregistry_group, name, schema_str, format, logging_enable=True)
+
+        assert schema_properties.id is not None
+        assert schema_properties.format == format
