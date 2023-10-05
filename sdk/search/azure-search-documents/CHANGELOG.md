@@ -1,8 +1,6 @@
 # Release History
 
-## 11.4.0b10 (Unreleased)
-
-### Features Added
+## 11.4.0b10 (2023-10-10)
 
 ### Breaking Changes
 
@@ -13,9 +11,9 @@
 - Renamed `azure.search.documents.models.Vector` to `azure.search.documents.models.VectorQuery`.
 - Stopped supporting api version `V2023_07_01_PREVIEW` anymore.
 
-### Bugs Fixed
-
 ### Other Changes
+
+- Default to use API version `V2023_10_01_PREVIEW`
 
 ## 11.4.0b9 (2023-09-12)
 
