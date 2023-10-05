@@ -423,9 +423,9 @@ class TableClient(AsyncTablesBaseClient):
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
-        entity = _add_entity_properties(entity)
         partition_key = entity["PartitionKey"]
         row_key = entity["RowKey"]
+        entity = _add_entity_properties(entity)
 
         try:
             metadata = None
