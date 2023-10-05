@@ -4,7 +4,7 @@
 
 import collections.abc
 import re
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CustomModelJobInput as RestCustomModelJobInput
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CustomModelJobOutput as RestCustomModelJobOutput
@@ -151,7 +151,7 @@ def validate_inputs_for_command(command: str, inputs: Dict[str, Any]) -> None:
     _validate_inputs_for("command", command, inputs)
 
 
-def validate_inputs_for_args(args: str, inputs: Dict[str, Any]) -> None:
+def validate_inputs_for_args(args: str, inputs: Optional[Dict[str, Any]]) -> None:
     _validate_inputs_for("args", args, inputs)
 
 
@@ -184,7 +184,7 @@ def validate_pipeline_input_key_characters(key: str) -> None:
 
 
 def to_rest_dataset_literal_inputs(
-    inputs: Dict[str, Union[int, str, float, bool, Input]],
+    inputs: Optional[Dict],
     *,
     job_type,
 ) -> Dict[str, RestJobInput]:
@@ -300,7 +300,7 @@ def from_rest_inputs_to_dataset_literal(
     return from_rest_inputs
 
 
-def to_rest_data_outputs(outputs: Dict[str, Output]) -> Dict[str, RestJobOutput]:
+def to_rest_data_outputs(outputs: Optional[Dict[str, Output]]) -> Dict[str, RestJobOutput]:
     """Turns job outputs into REST format.
 
     :param outputs: Dictionary of dataset outputs from job
