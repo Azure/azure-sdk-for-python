@@ -24,11 +24,13 @@ from unittest.mock import Mock
 class TestCallConnectionClient(unittest.TestCase):
     call_connection_id = "10000000-0000-0000-0000-000000000000"
     communication_user_id = "8:acs:123"
+    transferee_user_id = "8:acs:456"
     operation_context = "operationContext"
     call_participant = {
         "identifier": {"rawId": communication_user_id, "communicationUser": {"id": communication_user_id}},
         "isMuted": False
     }
+    invitation_id = "invitationId"
 
     def test_hangup(self):
         def mock_send(_, **kwargs):
@@ -75,6 +77,29 @@ class TestCallConnectionClient(unittest.TestCase):
 
         response = call_connection.transfer_call_to_participant(user)
         assert isinstance(response, TransferCallResult)
+        self.assertEqual(self.operation_context, response.operation_context)
+
+    def test_transfer_call_to_participant_with_transferee(self):
+        raised = False
+
+        def mock_send(*_, **__):
+            return mock_response(status_code=202, json_payload={
+                "operationContext": self.operation_context})
+
+        call_connection = CallConnectionClient(
+            endpoint="https://endpoint",
+            credential=AzureKeyCredential("fakeCredential=="),
+            call_connection_id=self.call_connection_id,
+            transport=Mock(send=mock_send))
+        user = CommunicationUserIdentifier(self.communication_user_id)
+        transferee = CommunicationUserIdentifier(self.transferee_user_id)
+        try:
+            response = call_connection.transfer_call_to_participant(user, transferee=transferee)
+        except:
+            raised = True
+            raise
+
+        self.assertFalse(raised, 'Expected is no exception raised')
         self.assertEqual(self.operation_context, response.operation_context)
 
     def test_list_participants(self):
@@ -185,4 +210,22 @@ class TestCallConnectionClient(unittest.TestCase):
             transport=Mock(send=mock_send))
         user = CommunicationUserIdentifier(self.communication_user_id)
         response = call_connection.mute_participant(user)
+        self.assertEqual(self.operation_context, response.operation_context)
+
+    def test_cancel_add_participant(self):
+        def mock_send(_, **kwargs):
+            kwargs.pop("stream", None)
+            if kwargs:
+                raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
+            return mock_response(status_code=202, json_payload={
+                "invitationId": self.invitation_id,
+                "operationContext": self.operation_context})
+
+        call_connection = CallConnectionClient(
+            endpoint="https://endpoint",
+            credential=AzureKeyCredential("fakeCredential=="),
+            call_connection_id=self.call_connection_id,
+            transport=Mock(send=mock_send))
+        response = call_connection.cancel_add_participant(self.invitation_id)
+        self.assertEqual(self.invitation_id, response.invitation_id)
         self.assertEqual(self.operation_context, response.operation_context)

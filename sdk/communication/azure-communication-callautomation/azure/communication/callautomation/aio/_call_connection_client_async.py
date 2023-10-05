@@ -28,7 +28,8 @@ from .._models import (
     TransferCallResult,
     MuteParticipantResult,
     SendDtmfTonesResult,
-    CallInvite
+    CallInvite,
+    CancelAddParticipantResult
 )
 from .._generated.aio import AzureCommunicationCallAutomationService
 from .._generated.models import (
@@ -43,7 +44,8 @@ from .._generated.models import (
     SpeechOptions,
     PlayOptions,
     RecognizeOptions,
-    MuteParticipantsRequest
+    MuteParticipantsRequest,
+    CancelAddParticipantRequest
 )
 from .._generated.models._enums import RecognizeInputType
 from .._shared.utils import (
@@ -235,6 +237,8 @@ class CallConnectionClient:
         target_participant: 'CommunicationIdentifier',
         *,
         operation_context: Optional[str] = None,
+        override_callback_url: Optional[str] = None,
+        transferee: Optional['CommunicationIdentifier'] = None,
         **kwargs
     ) -> TransferCallResult:
         """Transfer the call to a participant.
@@ -243,16 +247,23 @@ class CallConnectionClient:
         :type target_participant: CommunicationIdentifier
         :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
+        :keyword override_callback_url: Url that overrides original callback URI for this request.
+        :paramtype override_callback_url: str
+        :keyword transferee: Transferee is the participant who is transferring the call.
+        :paramtype transferee: ~azure.communication.callautomation.CommunicationIdentifier or None
         :return: TransferCallResult
         :rtype: ~azure.communication.callautomation.TransferCallResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         request = TransferToParticipantRequest(
             target_participant=serialize_identifier(target_participant),
-            operation_context=operation_context
+            operation_context=operation_context,
+            override_callback_uri=override_callback_url
         )
 
         process_repeatability_first_sent(kwargs)
+        if transferee:
+            request.transferee = serialize_identifier(transferee)
         result = await self._call_connection_client.transfer_to_participant(
             self._call_connection_id,
             request,
@@ -269,6 +280,7 @@ class CallConnectionClient:
         operation_context: Optional[str] = None,
         source_caller_id_number: Optional['PhoneNumberIdentifier'] = None,
         source_display_name: Optional[str] = None,
+        override_callback_url: Optional[str] = None,
         **kwargs
     ) -> AddParticipantResult:
         """Add a participant to the call.
@@ -286,6 +298,8 @@ class CallConnectionClient:
         :paramtype source_caller_id_number: ~azure.communication.callautomation.PhoneNumberIdentifier or None
         :keyword source_display_name: Display name of the caller.
         :paramtype source_display_name: str or None
+        :keyword override_callback_url: Url that overrides original callback URI for this request.
+        :paramtype override_callback_url: str or None
         :return: AddParticipantResult
         :rtype: ~azure.communication.callautomation.AddParticipantResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -301,7 +315,8 @@ class CallConnectionClient:
             source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
             source_display_name=source_display_name,
             invitation_timeout=invitation_timeout,
-            operation_context=operation_context
+            operation_context=operation_context,
+            override_callback_uri=override_callback_url
         )
 
         process_repeatability_first_sent(kwargs)
@@ -318,6 +333,7 @@ class CallConnectionClient:
         target_participant: 'CommunicationIdentifier',
         *,
         operation_context: Optional[str] = None,
+        override_callback_url: Optional[str] = None,
         **kwargs
     ) -> RemoveParticipantResult:
         """Remove a participant from the call.
@@ -326,13 +342,16 @@ class CallConnectionClient:
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
+        :keyword override_callback_url: Url that overrides original callback URI for this request.
+        :paramtype override_callback_url: str
         :return: RemoveParticipantResult
         :rtype: ~azure.communication.callautomation.RemoveParticipantResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         remove_participant_request = RemoveParticipantRequest(
             participant_to_remove=serialize_identifier(target_participant),
-            operation_context=operation_context
+            operation_context=operation_context,
+            override_callback_uri   =override_callback_url
         )
 
         process_repeatability_first_sent(kwargs)
@@ -351,6 +370,7 @@ class CallConnectionClient:
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
+        override_callback_url: Optional[str] = None,
         **kwargs
     ) -> None:
         """Play media to specific participant(s) in the call.
@@ -369,6 +389,8 @@ class CallConnectionClient:
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str or None
+        :keyword override_callback_url: Url that overrides original callback URI for this request.
+        :paramtype override_callback_url: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -386,6 +408,7 @@ class CallConnectionClient:
             play_to=audience,
             play_options=PlayOptions(loop=loop),
             operation_context=operation_context,
+            override_callback_uri=override_callback_url,
             **kwargs
         )
         await self._call_media_client.play(self._call_connection_id, play_request)
@@ -397,6 +420,7 @@ class CallConnectionClient:
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
+        override_callback_url: Optional[str] = None,
         **kwargs
     ) -> None:
         """Play media to all participants in the call.
@@ -408,6 +432,8 @@ class CallConnectionClient:
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
         :paramtype operation_context: str or None
+        :keyword override_callback_url: Url that overrides original callback URI for this request.
+        :paramtype override_callback_url: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -420,6 +446,7 @@ class CallConnectionClient:
             play_source=play_source,
             loop=loop,
             operation_context=operation_context,
+            override_callback_url=override_callback_url,
             **kwargs
         )
 
@@ -441,6 +468,7 @@ class CallConnectionClient:
         choices: Optional[List['RecognitionChoice']] = None,
         end_silence_timeout: Optional[int] = None,
         speech_recognition_model_endpoint_id: Optional[str] = None,
+        override_callback_url: Optional[str] = None,
         **kwargs
     ) -> None:
         """Recognize tones from specific participant in the call.
@@ -480,6 +508,8 @@ class CallConnectionClient:
         :paramtype end_silence_timeout: int
         :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
         :paramtype speech_recognition_model_endpoint_id: str
+        :keyword override_callback_url: Url that overrides original callback URI for this request.
+        :paramtype override_callback_url: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -530,6 +560,7 @@ class CallConnectionClient:
             interrupt_call_media_operation=interrupt_call_media_operation,
             operation_context=operation_context,
             recognize_options=options,
+            override_callback_uri=override_callback_url,
             **kwargs
         )
         await self._call_media_client.recognize(
@@ -581,6 +612,7 @@ class CallConnectionClient:
         target_participant: 'CommunicationIdentifier',
         *,
         operation_context: Optional[str] = None,
+        override_callback_url: Optional[str] = None,
         **kwargs
     ) -> None:
         """Stop continuous Dtmf recognition by unsubscribing to tones.
@@ -589,13 +621,16 @@ class CallConnectionClient:
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
+        :keyword override_callback_url: Url that overrides original callback URI for this request.
+        :paramtype override_callback_url: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         continuous_dtmf_recognition_request = ContinuousDtmfRecognitionRequest(
             target_participant=serialize_identifier(target_participant),
-            operation_context=operation_context
+            operation_context=operation_context,
+            override_callback_uri=override_callback_url
         )
         await self._call_media_client.stop_continuous_dtmf_recognition(
             self._call_connection_id,
@@ -610,16 +645,19 @@ class CallConnectionClient:
         target_participant: 'CommunicationIdentifier',
         *,
         operation_context: Optional[str] = None,
+        override_callback_url: Optional[str] = None,
         **kwargs
     ) -> SendDtmfTonesResult:
         """Send Dtmf tones to the call.
 
         :param tones: List of tones to be sent to target participant.
-        :type tones:list[str or ~azure.communication.callautomation.DtmfTone]
+        :type tones: list[str or ~azure.communication.callautomation.DtmfTone]
         :param target_participant: Target participant.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
         :keyword operation_context: Value that can be used to track the call and its associated events.
         :paramtype operation_context: str
+        :keyword override_callback_url: Url that overrides original callback URI for this request.
+        :paramtype override_callback_url: str
         :return: SendDtmfTonesResult
         :rtype: ~azure.communication.callautomation.SendDtmfTonesResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -627,7 +665,8 @@ class CallConnectionClient:
         send_dtmf_tones_request = SendDtmfTonesRequest(
             tones=tones,
             target_participant=serialize_identifier(target_participant),
-            operation_context=operation_context
+            operation_context=operation_context,
+            override_callback_uri=override_callback_url
         )
         process_repeatability_first_sent(kwargs)
         response = await self._call_media_client.send_dtmf_tones(
@@ -668,6 +707,39 @@ class CallConnectionClient:
             **kwargs
         )
         return MuteParticipantResult._from_generated(response) # pylint:disable=protected-access
+
+    @distributed_trace_async
+    async def cancel_add_participant(
+        self,
+        invitation_id: str,
+        *,
+        operation_context: Optional[str] = None,
+        override_callback_url: Optional[str] = None,
+        **kwargs
+    ) -> CancelAddParticipantResult:
+        """Cancel add participant request.
+        :param  invitation_id: The invitation ID used to add participant.
+        :type invitation_id: str
+        :keyword operation_context: Value that can be used to track the call and its associated events.
+        :paramtype operation_context: str
+        :keyword override_callback_url: Url that overrides original callback URI for this request.
+        :paramtype override_callback_url: str
+        :return: CancelAddParticipantResult
+        :rtype: ~azure.communication.callautomation.CancelAddParticipantResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        cancel_add_participant_request = CancelAddParticipantRequest(
+            invitation_id=invitation_id,
+            operation_context=operation_context,
+            override_callback_uri=override_callback_url
+        )
+        process_repeatability_first_sent(kwargs)
+        response = await self._call_connection_client.cancel_add_participant(
+            self._call_connection_id,
+            cancel_add_participant_request,
+            **kwargs
+        )
+        return CancelAddParticipantResult._from_generated(response)  # pylint:disable=protected-access
 
     async def __aenter__(self) -> "CallConnectionClient":
         await self._client.__aenter__()
