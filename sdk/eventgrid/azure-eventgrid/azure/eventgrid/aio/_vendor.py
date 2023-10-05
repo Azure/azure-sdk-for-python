@@ -16,10 +16,12 @@ if TYPE_CHECKING:
 
     from .._serialization import Deserializer, Serializer
 
-
-class EventGridClientMixinABC(ABC):
+class EventGridClientMixinABC(  
+    ABC
+):
     """DO NOT use this class. It is for internal typing use only."""
     _client: "AsyncPipelineClient"
     _config: EventGridClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"
+
