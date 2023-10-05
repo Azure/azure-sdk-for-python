@@ -31,6 +31,7 @@ from azure.ai.ml.entities._deployment.online_deployment import OnlineDeployment
 from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from azure.ai.ml.entities._endpoint.batch_endpoint import BatchEndpoint
 from azure.ai.ml.entities._endpoint.online_endpoint import OnlineEndpoint
+from azure.ai.ml.entities._feature_set.feature_set_backfill_request import FeatureSetBackfillRequest
 from azure.ai.ml.entities._feature_store.feature_store import FeatureStore
 from azure.ai.ml.entities._feature_store_entity.feature_store_entity import FeatureStoreEntity
 from azure.ai.ml.entities._job.job import Job
@@ -184,7 +185,7 @@ def load_job(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START load_job]
             :end-before: [END load_job]
             :language: python
@@ -220,6 +221,15 @@ def load_workspace(
 
     :return: Loaded workspace object.
     :rtype: Workspace
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_workspace.py
+            :start-after: [START load_workspace]
+            :end-before: [END load_workspace]
+            :language: python
+            :dedent: 8
+            :caption: Loading a Workspace from a YAML config file.
     """
     return load_common(Workspace, source, relative_origin, **kwargs)
 
@@ -345,7 +355,7 @@ def load_compute(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../samples/ml_samples_compute.py
+        .. literalinclude:: ../samples/ml_samples_compute.py
             :start-after: [START load_compute]
             :end-before: [END load_compute]
             :language: python
@@ -383,13 +393,13 @@ def load_component(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../samples/ml_samples_component_configurations.py
+        .. literalinclude:: ../samples/ml_samples_component_configurations.py
             :start-after: [START configure_load_component]
             :end-before: [END configure_load_component]
             :language: python
             :dedent: 8
             :caption: Loading a Component object from a YAML file, overriding its version to "1.0.2", and
-            registering it remotely.
+                registering it remotely.
     """
 
     client = kwargs.pop("client", None)
@@ -437,7 +447,7 @@ def load_model(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START load_model]
             :end-before: [END load_model]
             :language: python
@@ -716,6 +726,15 @@ def load_workspace_connection(
 
     :return: Constructed workspace connection object.
     :rtype: WorkspaceConnection
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_workspace.py
+            :start-after: [START load_workspace_connection]
+            :end-before: [END load_workspace_connection]
+            :language: python
+            :dedent: 8
+            :caption: Loading a Workspace Connection from a YAML config file.
     """
     return load_common(WorkspaceConnection, source, relative_origin, **kwargs)
 
@@ -847,6 +866,7 @@ def load_workspace_hub(
     **kwargs,
 ) -> WorkspaceHub:
     """Load a WorkspaceHub object from a yaml file.
+
     :param source: The local yaml source of a WorkspaceHub. Must be either a
         path to a local file, or an already-open file.
         If the source is a path, it will be open and read.
@@ -864,6 +884,15 @@ def load_workspace_hub(
     :paramtype params_override: List[Dict]
     :return: Loaded WorkspaceHub object.
     :rtype: WorkspaceHub
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_workspace.py
+            :start-after: [START load_workspace_hub]
+            :end-before: [END load_workspace_hub]
+            :language: python
+            :dedent: 8
+            :caption: Loading a Workspace Hub from a YAML config file.
     """
     return load_common(WorkspaceHub, source, relative_origin, **kwargs)
 
@@ -894,7 +923,7 @@ def load_model_package(
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START load_model_package]
             :end-before: [END load_model_package]
             :language: python
@@ -902,3 +931,34 @@ def load_model_package(
             :caption: Loading a ModelPackage from a YAML config file.
     """
     return load_common(ModelPackage, source, relative_origin, **kwargs)
+
+
+def load_feature_set_backfill_request(
+    source: Union[str, PathLike, IO[AnyStr]],
+    *,
+    relative_origin: Optional[str] = None,
+    **kwargs,
+) -> FeatureSetBackfillRequest:
+    """Construct a FeatureSetBackfillRequest object from yaml file.
+
+    :param source: The local yaml source of a FeatureSetBackfillRequest object. Must be either a
+        path to a local file, or an already-open file.
+        If the source is a path, it will be open and read.
+        An exception is raised if the file does not exist.
+        If the source is an open file, the file will be read directly,
+        and an exception is raised if the file is not readable.
+    :type source: Union[PathLike, str, io.TextIOWrapper]
+    :keyword relative_origin: The origin to be used when deducing
+        the relative locations of files referenced in the parsed yaml.
+        Defaults to the inputted source's directory if it is a file or file path input.
+        Defaults to "./" if the source is a stream input with no name value.
+    :type relative_origin: str
+    :keyword params_override: Fields to overwrite on top of the yaml file.
+        Format is [{"field1": "value1"}, {"field2": "value2"}]
+    :type params_override: List[Dict]
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeatureSetBackfillRequest
+        cannot be successfully validated. Details will be provided in the error message.
+    :return: Constructed FeatureSetBackfillRequest object.
+    :rtype: FeatureSetBackfillRequest
+    """
+    return load_common(FeatureSetBackfillRequest, source, relative_origin, **kwargs)

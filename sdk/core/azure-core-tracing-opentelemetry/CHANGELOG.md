@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b11 (Unreleased)
+## 1.0.0b12 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0b11 (2023-09-07)
+
+### Bugs Fixed
+
+- Fixed `OpenTelemetrySpan` typing to correctly implement the `AbstractSpan` protocol. ([#31943](https://github.com/Azure/azure-sdk-for-python/pull/31943))
 
 ## 1.0.0b10 (2023-07-11)
 

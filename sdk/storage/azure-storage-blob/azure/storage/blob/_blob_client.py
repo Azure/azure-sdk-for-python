@@ -1005,7 +1005,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         This operations returns a BlobQueryReader, users need to use readall() or readinto() to get query data.
 
         :param str query_expression:
-            Required. a query statement.
+            Required. a query statement. For more details see
+            https://learn.microsoft.com/azure/storage/blobs/query-acceleration-sql-reference.
         :keyword Callable[~azure.storage.blob.BlobQueryError] on_error:
             A function to be called on any processing errors returned by the service.
         :keyword blob_format:

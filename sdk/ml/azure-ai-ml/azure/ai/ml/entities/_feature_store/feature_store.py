@@ -20,17 +20,82 @@ from azure.ai.ml.entities._workspace.compute_runtime import ComputeRuntime
 from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
 
-from ._constants import (
-    DEFAULT_SPARK_RUNTIME_VERSION,
-    FEATURE_STORE_KIND,
-    OFFLINE_STORE_CONNECTION_NAME,
-    ONLINE_STORE_CONNECTION_NAME,
-)
+from ._constants import DEFAULT_SPARK_RUNTIME_VERSION, FEATURE_STORE_KIND
 from .materialization_store import MaterializationStore
 
 
 @experimental
 class FeatureStore(Workspace):
+    """Feature Store
+
+    :param name: The name of the feature store.
+    :type name: str
+    :param compute_runtime: The compute runtime of the feature store. Defaults to None.
+    :type compute_runtime: Optional[~azure.ai.ml.entities.ComputeRuntime]
+    :param offline_store: The offline store for feature store.
+        materialization_identity is required when offline_store is passed. Defaults to None.
+    :type offline_store: Optional[~azure.ai.ml.entities.MaterializationStore]
+    :param online_store: The online store for feature store.
+        materialization_identity is required when online_store is passed.  Defaults to None.
+    :type online_store: Optional[~azure.ai.ml.entities.MaterializationStore]
+    :param materialization_identity: The identity used for materialization. Defaults to None.
+    :type materialization_identity: Optional[~azure.ai.ml.entities.ManagedIdentityConfiguration]
+    :param description: The description of the feature store. Defaults to None.
+    :type description: Optional[str]
+    :param tags: Tags of the feature store.
+    :type tags: dict
+    :param display_name: The display name for the feature store. This is non-unique within the resource group.
+        Defaults to None.
+    :type display_name: Optional[str]
+    :param location: The location to create the feature store in.
+        If not specified, the same location as the resource group will be used. Defaults to None.
+    :type location: Optional[str]
+    :param resource_group: The name of the resource group to create the feature store in. Defaults to None.
+    :type resource_group: Optional[str]
+    :param hbi_workspace: Boolean for whether the customer data is of high business impact (HBI),
+        containing sensitive business information. Defaults to False.
+        For more information, see
+        https://docs.microsoft.com/azure/machine-learning/concept-data-encryption#encryption-at-rest.
+    :type hbi_workspace: Optional[bool]
+    :param storage_account: The resource ID of an existing storage account to use instead of creating a new one.
+        Defaults to None.
+    :type storage_account: Optional[str]
+    :param container_registry: The resource ID of an existing container registry
+        to use instead of creating a new one. Defaults to None.
+    :type container_registry: Optional[str]
+    :param key_vault: The resource ID of an existing key vault to use instead of creating a new one. Defaults to None.
+    :type key_vault: Optional[str]
+    :param application_insights: The resource ID of an existing application insights
+        to use instead of creating a new one. Defaults to None.
+    :type application_insights: Optional[str]
+    :param customer_managed_key: The key vault details for encrypting data with customer-managed keys.
+        If not specified, Microsoft-managed keys will be used by default. Defaults to None.
+    :type customer_managed_key: Optional[CustomerManagedKey]
+    :param image_build_compute: The name of the compute target to use for building environment
+        Docker images with the container registry is behind a VNet. Defaults to None.
+    :type image_build_compute: Optional[str]
+    :param public_network_access: Whether to allow public endpoint connectivity
+        when a workspace is private link enabled. Defaults to None.
+    :type public_network_access: Optional[str]
+    :param identity: The workspace's Managed Identity (user assigned, or system assigned). Defaults to None.
+    :type identity: Optional[IdentityConfiguration]
+    :param primary_user_assigned_identity: The workspace's primary user assigned identity. Defaults to None.
+    :type primary_user_assigned_identity: Optional[str]
+    :param managed_network: The workspace's Managed Network configuration. Defaults to None.
+    :type managed_network: Optional[ManagedNetwork]
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_featurestore.py
+            :start-after: [START create_feature_store]
+            :end-before: [END create_feature_store]
+            :language: Python
+            :dedent: 8
+            :caption: Instantiating a Feature Store object
+    """
+
     def __init__(
         self,
         *,
@@ -56,75 +121,13 @@ class FeatureStore(Workspace):
         primary_user_assigned_identity: Optional[str] = None,
         managed_network: Optional[ManagedNetwork] = None,
         **kwargs,
-    ):
-        """FeatureStore.
-
-        :param name: Name of the feature store.
-        :type name: str
-        :param compute_runtime: Compute runtime of the feature store.
-        :type compute_runtime: ~azure.ai.ml.entities.ComputeRuntime
-        :param offline_store: Offline store for feature store.
-        materialization_identity is required when offline_store is passed.
-        :type offline_store: ~azure.ai.ml.entities.MaterializationStore
-        :param online_store: Online store for feature store.
-        materialization_identity is required when online_store is passed.
-        :type online_store: ~azure.ai.ml.entities.MaterializationStore
-        :param materialization_identity: Identity used for materialization.
-        :type materialization_identity: ~azure.ai.ml.entities.ManagedIdentityConfiguration
-        :param description: Description of the feature store.
-        :type description: str
-        :param tags: Tags of the feature store.
-        :type tags: dict
-        :param display_name: Display name for the feature store. This is non-unique within the resource group.
-        :type display_name: str
-        :param location: The location to create the feature store in.
-            If not specified, the same location as the resource group will be used.
-        :type location: str
-        :param resource_group: Name of resource group to create the feature store in.
-        :type resource_group: str
-        :param hbi_workspace: Whether the customer data is of high business impact (HBI),
-            containing sensitive business information.
-            For more information, see
-            https://docs.microsoft.com/azure/machine-learning/concept-data-encryption#encryption-at-rest.
-        :type hbi_workspace: bool
-        :param storage_account: The resource ID of an existing storage account to use instead of creating a new one.
-        :type storage_account: str
-        :param container_registry: The resource ID of an existing container registry
-            to use instead of creating a new one.
-        :type container_registry: str
-        :param key_vault: The resource ID of an existing key vault to use instead of creating a new one.
-        :type key_vault: str
-        :param application_insights: The resource ID of an existing application insights
-            to use instead of creating a new one.
-        :type application_insights: str
-        :param customer_managed_key: Key vault details for encrypting data with customer-managed keys.
-            If not specified, Microsoft-managed keys will be used by default.
-        :type customer_managed_key: CustomerManagedKey
-        :param image_build_compute: The name of the compute target to use for building environment
-            Docker images with the container registry is behind a VNet.
-        :type image_build_compute: str
-        :param public_network_access: Whether to allow public endpoint connectivity
-            when a workspace is private link enabled.
-        :type public_network_access: str
-        :param identity: workspace's Managed Identity (user assigned, or system assigned)
-        :type identity: IdentityConfiguration
-        :param primary_user_assigned_identity: The workspace's primary user assigned identity
-        :type primary_user_assigned_identity: str
-        :param managed_network: workspace's Managed Network configuration
-        :type managed_network: ManagedNetwork
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
-        """
-
-        feature_store_settings = FeatureStoreSettings(
-            compute_runtime=compute_runtime
-            if compute_runtime
-            else ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION),
-            offline_store_connection_name=(
-                OFFLINE_STORE_CONNECTION_NAME if materialization_identity and offline_store else None
-            ),
-            online_store_connection_name=(
-                ONLINE_STORE_CONNECTION_NAME if materialization_identity and online_store else None
+    ) -> None:
+        feature_store_settings = kwargs.pop(
+            "feature_store_settings",
+            FeatureStoreSettings(
+                compute_runtime=compute_runtime
+                if compute_runtime
+                else ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION),
             ),
         )
         self._workspace_id = kwargs.pop("workspace_id", "")
@@ -188,6 +191,7 @@ class FeatureStore(Workspace):
             primary_user_assigned_identity=workspace_object.primary_user_assigned_identity,
             managed_network=workspace_object.managed_network,
             workspace_id=rest_obj.workspace_id,
+            feature_store_settings=workspace_object._feature_store_settings,
         )
 
     @classmethod

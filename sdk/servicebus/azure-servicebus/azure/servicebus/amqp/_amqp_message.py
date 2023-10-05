@@ -87,32 +87,32 @@ class AmqpAnnotatedMessage(object):
     for more information on the message format.
 
     :keyword data_body: The body consists of one or more data sections and each section contains opaque binary data.
-    :paramtype data_body: Union[str, bytes, List[Union[str, bytes]]]
+    :paramtype data_body: str or bytes or list[str or bytes]
     :keyword sequence_body: The body consists of one or more sequence sections and
      each section contains an arbitrary number of structured data elements.
-    :paramtype sequence_body: List[Any]
+    :paramtype sequence_body: list[any]
     :keyword value_body: The body consists of one amqp-value section and the section contains a single AMQP value.
-    :paramtype value_body: Any
+    :paramtype value_body: any
     :keyword header: The amqp message header.
-    :paramtype header: Optional[~azure.servicebus.amqp.AmqpMessageHeader]
+    :paramtype header: ~azure.servicebus.amqp.AmqpMessageHeader or mapping[str, any] or None
     :keyword footer: The amqp message footer.
-    :paramtype footer: Optional[Dict]
+    :paramtype footer: dict or None
     :keyword properties: Properties to add to the amqp message.
-    :paramtype properties: Optional[~azure.servicebus.amqp.AmqpMessageProperties]
+    :paramtype properties: ~azure.servicebus.amqp.AmqpMessageProperties or mapping[str, any] or None
     :keyword application_properties: Service specific application properties.
-    :paramtype application_properties: Optional[Dict]
+    :paramtype application_properties: dict or None
     :keyword annotations: Service specific message annotations.
-    :paramtype annotations: Optional[Dict]
+    :paramtype annotations: dict or None
     :keyword delivery_annotations: Service specific delivery annotations.
-    :paramtype delivery_annotations: Optional[Dict]
+    :paramtype delivery_annotations: dict or None
     """
 
     def __init__(
         self,
         *,
-        header: Optional["AmqpMessageHeader"] = None,
+        header: Optional[Union["AmqpMessageHeader", Mapping[str, Any]]] = None,
         footer: Optional[Dict[str, Any]] = None,
-        properties: Optional["AmqpMessageProperties"] = None,
+        properties: Optional[Union["AmqpMessageProperties", Mapping[str, Any]]] = None,
         application_properties: Optional[Dict[str, Any]] = None,
         annotations: Optional[Dict[str, Any]] = None,
         delivery_annotations: Optional[Dict[str, Any]] = None,

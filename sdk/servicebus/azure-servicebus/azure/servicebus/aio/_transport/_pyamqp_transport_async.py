@@ -15,6 +15,7 @@ from ..._pyamqp.aio import SendClientAsync, ReceiveClientAsync
 from ..._pyamqp.aio._authentication_async import JWTTokenAuthAsync
 from ..._pyamqp.aio._connection_async import Connection as ConnectionAsync
 from ..._pyamqp.error import (
+    AMQPConnectionError,
     AMQPError,
     MessageException,
 )
@@ -277,35 +278,42 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         dead_letter_error_description: Optional[str] = None,
     ) -> None:
         # pylint: disable=protected-access
-        if settle_operation == MESSAGE_COMPLETE:
-            return await handler.settle_messages_async(message._delivery_id, 'accepted')
-        if settle_operation == MESSAGE_ABANDON:
-            return await handler.settle_messages_async(
-                message._delivery_id,
-                'modified',
-                delivery_failed=True,
-                undeliverable_here=False
-            )
-        if settle_operation == MESSAGE_DEAD_LETTER:
-            return await handler.settle_messages_async(
-                message._delivery_id,
-                'rejected',
-                error=AMQPError(
-                    condition=DEADLETTERNAME,
-                    description=dead_letter_error_description,
-                    info={
-                        RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
-                        RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
-                    }
+        try:
+            if settle_operation == MESSAGE_COMPLETE:
+                return await handler.settle_messages_async(message._delivery_id, 'accepted')
+            if settle_operation == MESSAGE_ABANDON:
+                return await handler.settle_messages_async(
+                    message._delivery_id,
+                    'modified',
+                    delivery_failed=True,
+                    undeliverable_here=False
                 )
-            )
-        if settle_operation == MESSAGE_DEFER:
-            return await handler.settle_messages_async(
-                message._delivery_id,
-                'modified',
-                delivery_failed=True,
-                undeliverable_here=True
-            )
+            if settle_operation == MESSAGE_DEAD_LETTER:
+                return await handler.settle_messages_async(
+                    message._delivery_id,
+                    'rejected',
+                    error=AMQPError(
+                        condition=DEADLETTERNAME,
+                        description=dead_letter_error_description,
+                        info={
+                            RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
+                            RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
+                        }
+                    )
+                )
+            if settle_operation == MESSAGE_DEFER:
+                return await handler.settle_messages_async(
+                    message._delivery_id,
+                    'modified',
+                    delivery_failed=True,
+                    undeliverable_here=True
+                )
+        except AttributeError as ae:
+            raise RuntimeError("handler is not initialized and cannot complete the message") from ae
+
+        except AMQPConnectionError as e:
+            raise RuntimeError("Connection lost during settle operation.") from e
+
         raise ValueError(
             f"Unsupported settle operation type: {settle_operation}"
         )

@@ -79,11 +79,7 @@ setup(
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
@@ -615,19 +611,21 @@ def build_conda_packages(
             invoke_conda_build(conda_output_dir, conda_env_dir, conda_build_folder, None, conda_build.channels)
 
 
-
-def invoke_conda_build(conda_output_dir: str, conda_env_dir: str, conda_build_folder: str, optional_py_version: str = None, channels: List[str] = []) -> None:
+def invoke_conda_build(
+    conda_output_dir: str,
+    conda_env_dir: str,
+    conda_build_folder: str,
+    optional_py_version: str = None,
+    channels: List[str] = [],
+) -> None:
     channel_suffix = " ".join([f'-c "{channel}"' for channel in channels])
     command = f'conda run --prefix "{conda_env_dir}" conda-build . --output-folder "{conda_output_dir}" -c "{conda_output_dir}" {channel_suffix}'
 
     if optional_py_version:
         command += f" --py {optional_py_version}"
 
-    print(f"Calling \'{command}\' in folder {conda_build_folder}.")
-    get_output(
-        command,
-        conda_build_folder
-    )
+    print(f"Calling '{command}' in folder {conda_build_folder}.")
+    get_output(command, conda_build_folder)
 
 
 def check_conda_config():

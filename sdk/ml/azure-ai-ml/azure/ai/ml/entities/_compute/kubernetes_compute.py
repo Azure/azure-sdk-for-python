@@ -27,7 +27,7 @@ class KubernetesCompute(Compute):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_compute.py
+        .. literalinclude:: ../samples/ml_samples_compute.py
             :start-after: [START kubernetes_compute]
             :end-before: [END kubernetes_compute]
             :language: python

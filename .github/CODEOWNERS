@@ -58,12 +58,6 @@
 # PRLabel: %App Configuration Provider
 /sdk/appconfiguration/azure-appconfiguration-provider/               @mametcal @albertofori @avanigupta @mrm9084
 
-# PRLabel: %Monitor - ApplicationInsights
-/sdk/applicationinsights/azure-applicationinsights/                  @azmonapplicationinsights @pvaneck
-
-# PRLabel: %Monitor - LogAnalytics
-/sdk/loganalytics/azure-loganalytics/                                @azmonapplicationinsights @pvaneck
-
 # PRLabel: %Attestation
 /sdk/attestation/azure-security-attestation/                         @anilba06 @Azure/azure-sdk-write-attestation @gkostal
 
@@ -112,20 +106,20 @@
 # PRLabel: %Load Testing
 /sdk/loadtestservice/azure-developer-loadtesting/                    @msyyc @iscai-msft
 
-# PRLabel: %Monitor - LogAnalytics
+# PRLabel: %Monitor
+/sdk/loganalytics/azure-loganalytics/                                @azmonapplicationinsights @pvaneck
 /sdk/loganalytics/                                                   @pvaneck
+/sdk/monitor/azure-monitor-ingestion/                                @pvaneck @Azure/azure-sdk-write-monitor-data-plane
+/sdk/monitor/azure-monitor-query/                                    @pvaneck @Azure/azure-sdk-write-monitor-data-plane
+
+# PRLabel: %Monitor - ApplicationInsights
+/sdk/applicationinsights/azure-applicationinsights/                  @azmonapplicationinsights @pvaneck
 
 # PRLabel: %Monitor - Distro
 /sdk/monitor/azure-monitor-opentelemetry/                            @lzchen @jeremydvoss
 
 # PRLabel: %Monitor - Exporter
 /sdk/monitor/azure-monitor-opentelemetry-exporter/                   @lmazuel @lzchen @hectorhdzg @jeremydvoss
-
-# PRLabel: %Monitor - Query
-/sdk/monitor/azure-monitor-query/                                    @pvaneck @Azure/azure-sdk-write-monitor-data-plane
-
-# PRLabel: %Monitor - Ingestion
-/sdk/monitor/azure-monitor-ingestion/                                @pvaneck @Azure/azure-sdk-write-monitor-data-plane
 
 # PRLabel: %Consumption
 /sdk/consumption/                                                    @sandeepnl
@@ -169,7 +163,7 @@
 /sdk/machinelearningcompute/                                         @shutchings
 
 # PRLabel: %Machine Learning
-/sdk/ml/                                                             @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nemanjarajic @nthandeMS
+/sdk/ml/                                                             @paulshealy1 @singankit @diondrapeck @luigiw @kdestin @MilesHolland @needuv @ninghu @YusakuNo1
 
 # PRLabel: %ML-Data
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_data/                                          @sogansky @MayankKumar91 @code-vicar @pritamDas9191
@@ -251,8 +245,8 @@
 /sdk/ml/azure-ai-ml/azure/ai/ml/operations/_workspace_operations.py           @mingweihe @seanyao1
 
 # PRLabel: %ML-WorkspaceConnections
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/connections/                @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nemanjarajic @nthandeMS
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace/connections/              @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nemanjarajic @nthandeMS
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/connections/                @paulshealy1 @singankit @diondrapeck @luigiw @kdestin @MilesHolland @needuv @ninghu @YusakuNo1
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace/connections/              @paulshealy1 @singankit @diondrapeck @luigiw @kdestin @MilesHolland @needuv @ninghu @YusakuNo1
 
 # PRLabel: %ML-ImportJob
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job/import_job.py                     @xiongrenyi
@@ -660,31 +654,16 @@
 #/<NotInRepo>/          @kpiteira
 
 # ServiceLabel: %Monitor %Service Attention
-#/<NotInRepo>/          @SameergMS @dadunl
-
-# ServiceLabel: %Monitor - Autoscale %Service Attention
-#/<NotInRepo>/          @AzMonEssential
-
-# ServiceLabel: %Monitor - ActivityLogs %Service Attention
-#/<NotInRepo>/          @AzMonEssential
-
-# ServiceLabel: %Monitor - Metrics %Service Attention
-#/<NotInRepo>/          @AzMonEssential
-
-# ServiceLabel: %Monitor - Diagnostic Settings %Service Attention
-#/<NotInRepo>/          @AzMonEssential
-
-# ServiceLabel: %Monitor - Alerts %Service Attention
-#/<NotInRepo>/          @AzmonAlerts
-
-# ServiceLabel: %Monitor - ActionGroups %Service Attention
-#/<NotInRepo>/          @AzmonActionG
-
-# ServiceLabel: %Monitor - LogAnalytics %Service Attention
-#/<NotInRepo>/          @AzmonLogA
+#/<NotInRepo>/          @SameergMS @dadunl @AzMonEssential @AzmonAlerts @AzmonActionG @AzmonLogA
 
 # ServiceLabel: %Monitor - ApplicationInsights %Service Attention
 #/<NotInRepo>/          @azmonapplicationinsights
+
+# ServiceLabel: %Monitor - Distro %Service Attention
+#/<NotInRepo>/          @lzchen @jeremydvoss
+
+# ServiceLabel: %Monitor - Exporter %Service Attention
+#/<NotInRepo>/          @lzchen @jeremydvoss
 
 # ServiceLabel: %MySQL %Service Attention
 #/<NotInRepo>/          @ambhatna @savjani
@@ -946,12 +925,6 @@
 
 # ServiceLabel: %Consumption - RIandShowBack %Service Attention
 #/<NotInRepo>/          @ccmshowbackdevs
-
-# ServiceLabel: %Monitor - Exporter %Service Attention
-#/<NotInRepo>/          @lzchen @jeremydvoss
-
-# ServiceLabel: %Monitor - Distro %Service Attention
-#/<NotInRepo>/          @lzchen @jeremydvoss
 
 # Management Plane
 /**/*mgmt*/                                                          @ChenxiJiang333 @msyyc

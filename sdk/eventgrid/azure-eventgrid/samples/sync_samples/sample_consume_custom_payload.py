@@ -6,12 +6,12 @@
 """
 FILE: sample_consume_custom_payload.py
 DESCRIPTION:
-    These samples demonstrate consuming a raw json with a list of jsons and
+    These samples demonstrate consuming a raw json with a list of json and
     deserializing them into typed objects of CloudEvents.
 USAGE:
     python sample_consume_custom_payload.py
 """
-
+from typing import List
 from azure.core.messaging import CloudEvent
 import json
 
@@ -27,7 +27,7 @@ cloud_custom_dict = """[{
     "specversion":"1.0"
 }]"""
 
-deserialized_dict_events = [CloudEvent(**msg) for msg in json.loads(cloud_custom_dict)]
+deserialized_dict_events: List[CloudEvent] = [CloudEvent(**msg) for msg in json.loads(cloud_custom_dict)]
 
 for event in deserialized_dict_events:
     print(event.data)
