@@ -135,6 +135,7 @@ class ServiceBusReceiver(
      **WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
      the in-memory prefetch buffer until they're received into the application. If the application ends before
      the messages are received into the application, those messages will be lost and unable to be recovered.
+     Therefore, it's recommended that PEEK_LOCK mode be used with prefetch.
     :keyword str client_identifier: A string-based identifier to uniquely identify the client instance.
      Service Bus will associate it with some error messages for easier correlation of errors.
      If not specified, a unique id will be generated.
@@ -305,6 +306,7 @@ class ServiceBusReceiver(
          **WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
          the in-memory prefetch buffer until they're received into the application. If the application ends before
          the messages are received into the application, those messages will be lost and unable to be recovered.
+         Therefore, it's recommended that PEEK_LOCK mode be used with prefetch.
         :rtype: ~azure.servicebus.ServiceBusReceiver
 
         :raises ~azure.servicebus.ServiceBusAuthenticationError: Indicates an issue in token/identity validity.
