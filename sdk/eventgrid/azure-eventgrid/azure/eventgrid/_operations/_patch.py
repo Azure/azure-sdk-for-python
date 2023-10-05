@@ -148,10 +148,10 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         if isinstance(body, CloudEvent):
             kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
-            internal_body = _cloud_event_to_generated(body)
             if self._binary_mode:
-                self._publish_binary_mode(topic_name, internal_body, **kwargs)
+                self._publish_binary_mode(topic_name, body, **kwargs)
             else:
+                internal_body = _cloud_event_to_generated(body)
                 self._publish_cloud_event(topic_name, internal_body, **kwargs)
         else:
             kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
