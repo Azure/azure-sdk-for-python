@@ -420,7 +420,11 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         :returns: The serialized key.
         :rtype: bytes
         """
-        private_key = self.private_numbers().private_key()
+        try:
+            private_numbers = self.private_numbers()
+        except ValueError as exc:
+            raise ValueError("Insufficient key material to serialize the private key.") from exc
+        private_key = private_numbers.private_key()
         return private_key.private_bytes(encoding=encoding, format=format, encryption_algorithm=encryption_algorithm)
 
     def signer(  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
