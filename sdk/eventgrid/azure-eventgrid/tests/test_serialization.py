@@ -9,7 +9,7 @@ import pytest
 import base64
 
 from azure.core.messaging import CloudEvent
-from azure.eventgrid._helpers import _cloud_event_to_generated
+from azure.eventgrid._legacy._helpers import _cloud_event_to_generated
 from azure.eventgrid import SystemEventNames, EventGridEvent
 from _mocks import (
     cloud_storage_dict,

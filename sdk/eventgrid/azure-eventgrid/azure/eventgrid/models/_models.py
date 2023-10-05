@@ -146,11 +146,11 @@ class CloudEvent(_model_base.Model):
      unique for each distinct event. Required."""
     data: Optional[Any] = rest_field()
     """Event data specific to the event type."""
-    data_base64: Optional[bytes] = rest_field()
+    data_base64: Optional[bytes] = rest_field(format="base64")
     """Event data specific to the event type, encoded as a base64 string."""
     type: str = rest_field()
     """Type of event related to the originating occurrence. Required."""
-    time: Optional[datetime.datetime] = rest_field()
+    time: Optional[datetime.datetime] = rest_field(format="rfc3339")
     """The time (in UTC) the event was generated, in RFC3339 format."""
     specversion: str = rest_field()
     """The version of the CloudEvents specification which the event uses. Required."""
@@ -207,6 +207,14 @@ class FailedLockToken(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:# pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
+
+
+class PublishResult(_model_base.Model):
+    """The result of the Publish operation.
+
+    """
+
+
 
 
 class ReceiveDetails(_model_base.Model):
