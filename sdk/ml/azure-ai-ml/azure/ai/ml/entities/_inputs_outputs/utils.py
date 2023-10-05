@@ -134,9 +134,10 @@ def _get_param_with_standard_annotation(
                     print(name)
                     print(repr(annotation))
                     print(repr(name))
-                    if repr(origin_annotation) == "typing.Any" or repr(name) == "'kwargs'":
-                        pass
+                    if repr(origin_annotation) == "typing.Any" and repr(name) == "'kwargs'":
+                        print(f"This is a {origin_annotation} typing for repr{name}")
                     else:
+                        print(f"This is not a {origin_annotation} typing for repr{name}")
                         msg = f"Unsupported annotation type {origin_annotation!r} for parameter {name!r}."
                         raise UserErrorException(msg)
             annotation_fields[name] = annotation
