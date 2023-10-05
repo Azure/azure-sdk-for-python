@@ -27,7 +27,6 @@ class TestSendRequest(FormRecognizerTest):
             headers={"Accept": "application/json"},
         )
         result = client.send_request(request)
-        breakpoint()
         received_info1 = result.json()
         assert received_info1
         assert received_info1["customDocumentModels"]
@@ -40,7 +39,6 @@ class TestSendRequest(FormRecognizerTest):
             headers={"Accept": "application/json"},
         )
         result = client.send_request(request)
-        breakpoint()
         received_info2 = result.json()
         assert received_info2["customDocumentModels"]["count"] == received_info1["customDocumentModels"]["count"]
         assert received_info2["customDocumentModels"]["limit"] == received_info1["customDocumentModels"]["limit"]
