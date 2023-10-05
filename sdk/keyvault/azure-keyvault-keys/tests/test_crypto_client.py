@@ -13,7 +13,14 @@ from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 
 from cryptography.hazmat.primitives.hashes import SHA1, SHA256
 from cryptography.hazmat.primitives.asymmetric.padding import MGF1, OAEP, PKCS1v15
-from cryptography.hazmat.primitives.asymmetric.rsa import rsa_crt_dmp1, rsa_crt_dmq1, rsa_crt_iqmp
+from cryptography.hazmat.primitives.asymmetric.rsa import (
+    rsa_crt_dmp1,
+    rsa_crt_dmq1,
+    rsa_crt_iqmp,
+    RSAPrivateNumbers,
+    RSAPublicNumbers
+)
+from cryptography.hazmat.primitives.serialization import Encoding, NoEncryption, PrivateFormat, PublicFormat
 import pytest
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -288,14 +295,15 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
         # Use cryptography library's own implementation to validate ours (as well as our public/private numbers)
         # Create a crypto client from private JWK since we can't get the private components from an imported key
         crypto_client = CryptographyClient.from_jwk(jwk=TEST_JWK)
-        crypto_private_key = crypto_client.create_rsa_private_key().private_numbers().private_key()
+        private_numbers = crypto_client.create_rsa_private_key().private_numbers()
+        crypto_private_key = private_numbers.private_key()
         crypto_signature = crypto_private_key.sign(self.plaintext, padding, algorithm)
 
         # PKCS#1 signing produces deterministic signatures, so we can compare the two signatures we generated
         # PSS padding is nondeterministic, by comparison
         assert signature == crypto_signature
 
-        crypto_public_key = public_key.public_numbers().public_key()
+        crypto_public_key = private_numbers.public_numbers.public_key()
         crypto_public_key.verify(crypto_signature, self.plaintext, padding, algorithm)
         crypto_public_key.verify(signature, self.plaintext, padding, algorithm)
 
@@ -1019,6 +1027,19 @@ def test_rsa_public_key_equals():
     assert public_key == key_dupe
 
 
+def test_rsa_public_key_public_bytes():
+    """Verify behavior of KeyVaultRSAPublicKey.public_bytes"""
+
+    client = CryptographyClient.from_jwk(jwk=TEST_JWK)
+    public_key = client.create_rsa_public_key()
+    public_bytes = public_key.public_bytes(Encoding.PEM, PublicFormat.PKCS1)
+
+    public_numbers = public_key.public_numbers()
+    crypto_public_numbers = RSAPublicNumbers(e=public_numbers.e, n=public_numbers.n)
+    crypto_public_bytes = crypto_public_numbers.public_key().public_bytes(Encoding.PEM, PublicFormat.PKCS1)
+    assert public_bytes ==  crypto_public_bytes
+
+
 def test_rsa_private_key_public_key():
     """Verify behavior of KeyVaultRSAPrivateKey.public_key against a JWK and KeyVaultRSAPublicKey instance"""
 
@@ -1040,6 +1061,29 @@ def test_rsa_private_key_private_numbers():
     assert private_numbers.dmp1 == rsa_crt_dmp1(private_numbers.d, private_numbers.p)
     assert private_numbers.dmq1 == rsa_crt_dmq1(private_numbers.d, private_numbers.q)
     assert private_numbers.iqmp == rsa_crt_iqmp(private_numbers.p, private_numbers.q)
+
+
+def test_rsa_private_key_private_bytes():
+    """Verify behavior of KeyVaultRSAPrivateKey.private_bytes"""
+
+    client = CryptographyClient.from_jwk(jwk=TEST_JWK)
+    private_key = client.create_rsa_private_key()
+    private_bytes = private_key.private_bytes(Encoding.PEM, PrivateFormat.TraditionalOpenSSL, NoEncryption())
+
+    private_numbers = private_key.private_numbers()
+    crypto_private_numbers = RSAPrivateNumbers(
+        p=private_numbers.p,
+        q=private_numbers.q,
+        d=private_numbers.d,
+        dmp1=private_numbers.dmp1,
+        dmq1=private_numbers.dmq1,
+        iqmp=private_numbers.iqmp,
+        public_numbers=private_numbers.public_numbers,
+    )
+    crypto_private_bytes = crypto_private_numbers.private_key().private_bytes(
+        Encoding.PEM, PrivateFormat.TraditionalOpenSSL, NoEncryption()
+    )
+    assert private_bytes == crypto_private_bytes
 
 
 def test_retain_url_port():

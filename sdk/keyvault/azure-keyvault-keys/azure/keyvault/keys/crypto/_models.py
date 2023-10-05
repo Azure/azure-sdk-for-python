@@ -50,7 +50,7 @@ def get_encryption_algorithm(padding: AsymmetricPadding) -> EncryptionAlgorithm:
     """Maps an `AsymmetricPadding` to an encryption algorithm.
 
     :param padding: The padding to use.
-    :type padding: AsymmetricPadding
+    :type padding: :class:`~cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding`
 
     :returns: The corresponding Key Vault encryption algorithm.
     :rtype: EncryptionAlgorithm
@@ -86,9 +86,9 @@ def get_signature_algorithm(padding: AsymmetricPadding, algorithm: HashAlgorithm
     """Maps an `AsymmetricPadding` and `HashAlgorithm` to a signature algorithm.
 
     :param padding: The padding to use.
-    :type padding: AsymmetricPadding
+    :type padding: :class:`~cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding`
     :param algorithm: The algorithm to use.
-    :type algorithm: HashAlgorithm
+    :type algorithm: :class:`~cryptography.hazmat.primitives.hashes.HashAlgorithm`
 
     :returns: The corresponding Key Vault signature algorithm.
     :rtype: SignatureAlgorithm
@@ -138,7 +138,7 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         :param padding: The padding to use. Supported paddings are `OAEP` and `PKCS1v15`. For `OAEP` padding, supported
             hash algorithms are `SHA1` and `SHA256`. The only supported mask generation function is `MGF1`. See
             https://learn.microsoft.com/azure/key-vault/keys/about-keys-details for details.
-        :type padding: AsymmetricPadding
+        :type padding: :class:`~cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding`
 
         :returns: The encrypted ciphertext, as bytes.
         :rtype: bytes
@@ -154,7 +154,8 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         :returns: The key's size.
         :rtype: int
         """
-        return len(self._key.n) * 8  # type: ignore[attr-defined]
+        public_key = self.public_numbers().public_key()
+        return public_key.key_size
 
     def public_numbers(self) -> RSAPublicNumbers:
         """Returns an `RSAPublicNumbers` representing the key's public numbers.
@@ -166,13 +167,23 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         n = int.from_bytes(self._key.n, "big")  # type: ignore[attr-defined]
         return RSAPublicNumbers(e, n)
 
-    def public_bytes(  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
-        self,
-        encoding: Encoding,
-        format: PublicFormat,
-    ) -> NoReturn:
-        """Not implemented."""
-        raise NotImplementedError()
+    def public_bytes(self, encoding: Encoding, format: PublicFormat) -> bytes:
+        """Allows serialization of the key to bytes.
+
+        This function uses the `cryptography` library's implementation.
+        Encoding (`PEM` or `DER`) and format (`SubjectPublicKeyInfo` or `PKCS1`) are chosen to define the exact
+        serialization.
+
+        :param encoding: A value from the `Encoding` enum.
+        :type encoding: :class:`~cryptography.hazmat.primitives.serialization.Encoding`
+        :param format: A value from the `PublicFormat` enum.
+        :type format: :class:`~cryptography.hazmat.primitives.serialization.PublicFormat`
+
+        :returns: The serialized key.
+        :rtype: bytes
+        """
+        public_key = self.public_numbers().public_key()
+        return public_key.public_bytes(encoding=encoding, format=format)
 
     def verify(
         self,
@@ -188,10 +199,11 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         :param padding: The padding to use. Supported paddings are `PKCS1v15` and `PSS`. For `PSS`, the only supported
             mask generation function is `MGF1`. See https://learn.microsoft.com/azure/key-vault/keys/about-keys-details
             for details.
-        :type padding: AsymmetricPadding
+        :type padding: :class:`~cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding`
         :param algorithm: The algorithm to sign with. Only `HashAlgorithm`s are supported -- specifically, `SHA256`,
             `SHA384`, and `SHA512`.
-        :type algorithm: Prehashed or HashAlgorithm
+        :type algorithm: :class:`~cryptography.hazmat.primitives.asymmetric.utils.Prehashed` or
+            :class:`~cryptography.hazmat.primitives.hashes.HashAlgorithm`
 
         :raises InvalidSignature: If the signature does not validate.
         """
@@ -204,14 +216,50 @@ class KeyVaultRSAPublicKey(RSAPublicKey):
         if not result.is_valid:
             raise InvalidSignature(f"The provided signature '{signature!r}' is invalid.")
 
-    def recover_data_from_signature(  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
-        self,
-        signature: bytes,
-        padding: AsymmetricPadding,
-        algorithm: Optional[HashAlgorithm],
-    ) -> NoReturn:
-        """Not implemented."""
-        raise NotImplementedError()
+    def recover_data_from_signature(
+        self, signature: bytes, padding: AsymmetricPadding, algorithm: Optional[HashAlgorithm]
+    ) -> bytes:
+        """Recovers the signed data from the signature. Only supported with `cryptography` version 3.3 and above.
+
+        This function uses the `cryptography` library's implementation.
+        The data typically contains the digest of the original message string. The `padding` and `algorithm` parameters
+        must match the ones used when the signature was created for the recovery to succeed.
+        The `algorithm` parameter can also be set to None to recover all the data present in the signature, without
+        regard to its format or the hash algorithm used for its creation.
+
+        For `PKCS1v15` padding, this method returns the data after removing the padding layer. For standard signatures
+        the data contains the full `DigestInfo` structure. For non-standard signatures, any data can be returned,
+        including zero-length data.
+
+        Normally you should use the `verify()` function to validate the signature. But for some non-standard signature
+        formats you may need to explicitly recover and validate the signed data. The following are some examples:
+            * Some old Thawte and Verisign timestamp certificates without `DigestInfo`.
+            * Signed MD5/SHA1 hashes in TLS 1.1 or earlier
+              (`RFC 4346 <https://datatracker.ietf.org/doc/html/rfc4346.html>`_, section 4.7).
+            * IKE version 1 signatures without `DigestInfo`
+              (`RFC 2409 <https://datatracker.ietf.org/doc/html/rfc2409.html>`_, section 5.1).
+
+        :param bytes signature: The signature.
+        :param padding: An instance of `AsymmetricPadding`. Recovery is only supported with some of the padding types.
+        :type padding: :class:`~cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding`
+        :param algorithm: An instance of `HashAlgorithm`. Can be None to return all the data present in the signature.
+        :type algorithm: :class:`~cryptography.hazmat.primitives.hashes.HashAlgorithm`
+
+        :returns: The signed data.
+        :rtype: bytes
+        :raises:
+            NotImplementedError if the local version of `cryptography` doesn't support this method.
+            :class:`~cryptography.exceptions.InvalidSignature` if the signature is invalid.
+            :class:`~cryptography.exceptions.UnsupportedAlgorithm` if the signature data recovery is not supported with
+                the provided `padding` type.
+        """
+        public_key = self.public_numbers().public_key()
+        try:
+            return public_key.recover_data_from_signature(signature=signature, padding=padding, algorithm=algorithm)
+        except AttributeError:
+            raise NotImplementedError(
+                "This method is only available on `cryptography`>=3.3. Update your package version to use this method."
+            )
 
     def __eq__(self, other: object) -> bool:
         """Checks equality.
@@ -256,7 +304,7 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         :param padding: The padding to use. Supported paddings are `OAEP` and `PKCS1v15`. For `OAEP` padding, supported
             hash algorithms are `SHA1` and `SHA256`. The only supported mask generation function is `MGF1`. See
             https://learn.microsoft.com/azure/key-vault/keys/about-keys-details for details.
-        :type padding: AsymmetricPadding
+        :type padding: :class:`~cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding`
 
         :returns: The decrypted plaintext, as bytes.
         :rtype: bytes
@@ -272,7 +320,8 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         :returns: The key's size.
         :rtype: int
         """
-        return len(self._key.n) * 8  # type: ignore[attr-defined]
+        private_key = self.private_numbers().private_key()
+        return private_key.key_size
 
     def public_key(self) -> KeyVaultRSAPublicKey:
         """The `RSAPublicKey` associated with this private key, as a `KeyVaultRSAPublicKey`.
@@ -296,10 +345,11 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         :param padding: The padding to use. Supported paddings are `PKCS1v15` and `PSS`. For `PSS`, the only supported
             mask generation function is `MGF1`. See https://learn.microsoft.com/azure/key-vault/keys/about-keys-details
             for details.
-        :type padding: AsymmetricPadding
+        :type padding: :class:`~cryptography.hazmat.primitives.asymmetric.padding.AsymmetricPadding`
         :param algorithm: The algorithm to sign with. Only `HashAlgorithm`s are supported -- specifically, `SHA256`,
             `SHA384`, and `SHA512`.
-        :type algorithm: Prehashed or HashAlgorithm
+        :type algorithm: :class:`~cryptography.hazmat.primitives.asymmetric.utils.Prehashed` or
+            :class:`~cryptography.hazmat.primitives.hashes.HashAlgorithm`
 
         :returns: The signature, as bytes.
         :rtype: bytes
@@ -316,7 +366,7 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         """Returns an `RSAPrivateNumbers` representing the key's private numbers.
 
         :returns: The private numbers of the key.
-        :rtype: RSAPrivateNumbers
+        :rtype: :class:`~cryptography.hazmat.primitives.asymmetric.rsa.RSAPrivateNumbers`
         """
         # Fetch public numbers from JWK
         e = int.from_bytes(self._key.e, "big")  # type: ignore[attr-defined]
@@ -345,14 +395,27 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
 
         return RSAPrivateNumbers(p, q, d, dmp1, dmq1, iqmp, public_numbers)
 
-    def private_bytes(  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
-        self,
-        encoding: Encoding,
-        format: PrivateFormat,
-        encryption_algorithm: KeySerializationEncryption,
-    ) -> NoReturn:
-        """Not implemented."""
-        raise NotImplementedError()
+    def private_bytes(
+        self, encoding: Encoding, format: PrivateFormat, encryption_algorithm: KeySerializationEncryption
+    ) -> bytes:
+        """Allows serialization of the key to bytes.
+
+        This function uses the `cryptography` library's implementation.
+        Encoding (`PEM` or `DER`) and format (`TraditionalOpenSSL`, `OpenSSH`, or `PKCS8`) and encryption algorithm
+        (such as `BestAvailableEncryption` or `NoEncryption`) are chosen to define the exact serialization.
+
+        :param encoding: A value from the `Encoding` enum.
+        :type encoding: :class:`~cryptography.hazmat.primitives.serialization.Encoding`
+        :param format: A value from the `PrivateFormat` enum.
+        :type format: :class:`~cryptography.hazmat.primitives.serialization.PrivateFormat`
+        :param encryption_algorithm: An instance of an object conforming to the `KeySerializationEncryption` interface.
+        :type encryption_algorithm: :class:`~cryptography.hazmat.primitives.serialization.KeySerializationEncryption`
+
+        :returns: The serialized key.
+        :rtype: bytes
+        """
+        private_key = self.private_numbers().private_key()
+        return private_key.private_bytes(encoding=encoding, format=format, encryption_algorithm=encryption_algorithm)
 
     def signer(  # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         self, padding: AsymmetricPadding, algorithm: HashAlgorithm
