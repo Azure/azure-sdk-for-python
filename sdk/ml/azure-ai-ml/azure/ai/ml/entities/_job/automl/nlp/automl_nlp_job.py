@@ -147,7 +147,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         self._search_space = [cast_to_specific_search_space(item, NlpSearchSpace, self.task_type) for item in value]
 
     @property
-    def primary_metric(self) -> :
+    def primary_metric(self) -> str:
         """Primary metric to display from NLP job
 
         :return: primary metric to display

@@ -50,7 +50,6 @@ class TextClassificationJob(AutoMLNLPJob):
         log_verbosity: Optional[str] = None,
         **kwargs
     ):
-
         super().__init__(
             task_type=TaskType.TEXT_CLASSIFICATION,
             primary_metric=primary_metric or TextClassificationJob._DEFAULT_PRIMARY_METRIC,
