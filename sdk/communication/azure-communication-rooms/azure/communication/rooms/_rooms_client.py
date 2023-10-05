@@ -128,13 +128,15 @@ class RoomsClient(object):
         repeatability_request_id =  str(uuid.uuid1())
         repeatability_first_sent = _SERIALIZER.serialize_data(datetime.utcnow(), "rfc-1123")
 
-        create_room_response = self._rooms_service_client.rooms.create(
+        request_headers = kwargs.pop("headers", {})
+        request_headers.update({
+            "Repeatability-Request-Id": repeatability_request_id,
+            "Repeatability-First-Sent": repeatability_first_sent
+        })
 
+        create_room_response = self._rooms_service_client.rooms.create(
             create_room_request=create_room_request,
-            headers = {
-                       "Repeatability-Request-Id" : repeatability_request_id,
-                       "Repeatability-First-Sent" : repeatability_first_sent
-                       },
+            headers = request_headers,
            **kwargs )
 
         return CommunicationRoom(create_room_response)
