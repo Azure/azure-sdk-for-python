@@ -57,8 +57,8 @@ MAXIMUM_VERSION_GENERIC_OVERRIDES = {
 # will be overridden to 1.25.0.
 MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
     "azure-eventhub": {"azure-core": "1.25.0"},
-    "azure-eventhub-checkpointstoreblob-aio": {"azure-core": "1.25.0"},
-    "azure-eventhub-checkpointstoreblob": {"azure-core": "1.25.0"},
+    "azure-eventhub-checkpointstoreblob-aio": {"azure-core": "1.25.0", "azure-eventhub": "5.11.0"},
+    "azure-eventhub-checkpointstoreblob": {"azure-core": "1.25.0", "azure-eventhub": "5.11.0"},
     "azure-identity": {"msal": "1.23.0"},
 }
 
