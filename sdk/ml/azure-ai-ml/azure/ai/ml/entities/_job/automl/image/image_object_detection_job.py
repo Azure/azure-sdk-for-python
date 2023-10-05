@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access,no-member
 
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ImageObjectDetection as RestImageObjectDetection
@@ -30,7 +30,7 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
         self,
         *,
         primary_metric: Optional[Union[str, ObjectDetectionPrimaryMetrics]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """Initialize a new AutoML Image Object Detection job.
 
@@ -55,11 +55,11 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
         self.primary_metric = primary_metric or ImageObjectDetectionJob._DEFAULT_PRIMARY_METRIC
 
     @property
-    def primary_metric(self):
+    def primary_metric(self) -> Union[str, ObjectDetectionPrimaryMetrics]:
         return self._primary_metric
 
     @primary_metric.setter
-    def primary_metric(self, value: Union[str, ObjectDetectionPrimaryMetrics]):
+    def primary_metric(self, value: Union[str, ObjectDetectionPrimaryMetrics]) -> None:
         if is_data_binding_expression(str(value), ["parent"]):
             self._primary_metric = value
             return
@@ -171,7 +171,7 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
         data: Dict,
         context: Dict,
         additional_message: str,
-        **kwargs,
+        **kwargs: Any,
     ) -> "ImageObjectDetectionJob":
         from azure.ai.ml._schema.automl.image_vertical.image_object_detection import ImageObjectDetectionSchema
         from azure.ai.ml._schema.pipeline.automl_node import ImageObjectDetectionNodeSchema
@@ -204,10 +204,11 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
         job.set_data(**data_settings)
         return job
 
-    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
+    def _to_dict(self, inside_pipeline: bool = False) -> Dict:  # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.image_vertical.image_object_detection import ImageObjectDetectionSchema
         from azure.ai.ml._schema.pipeline.automl_node import ImageObjectDetectionNodeSchema
 
+        schema_dict: dict = {}
         if inside_pipeline:
             schema_dict = ImageObjectDetectionNodeSchema(
                 context={BASE_PATH_CONTEXT_KEY: "./", "inside_pipeline": True}
@@ -217,7 +218,7 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
 
         return schema_dict
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, ImageObjectDetectionJob):
             return NotImplemented
 
@@ -226,5 +227,5 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
 
         return self.primary_metric == other.primary_metric
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
