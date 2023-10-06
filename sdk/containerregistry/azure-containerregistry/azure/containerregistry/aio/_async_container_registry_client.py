@@ -459,7 +459,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         tag_properties = await self._client.container_registry.get_tag_properties(repository, tag, **kwargs)
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
             tag_properties.tag,  # type: ignore
-            repository=repository,
+            repository_name=repository,
         )
 
     @distributed_trace
@@ -494,7 +494,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         cls = kwargs.pop(
             "cls",
             lambda objs: [
-                ArtifactTagProperties._from_generated(o, repository=repository)  # pylint: disable=protected-access
+                ArtifactTagProperties._from_generated(o, repository_name=repository)  # pylint: disable=protected-access
                 for o in objs
             ],
         )
@@ -859,7 +859,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
         )
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-            tag_attributes.tag, repository=repository  # type: ignore
+            tag_attributes.tag, repository_name=repository  # type: ignore
         )
 
     @distributed_trace_async
