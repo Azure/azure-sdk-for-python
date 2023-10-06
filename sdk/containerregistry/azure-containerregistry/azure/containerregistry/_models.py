@@ -55,7 +55,7 @@ class ArtifactOperatingSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attributes
     """Represents properties of a registry artifact.
-    
+
     :ivar Optional[bool] can_delete: Delete Permissions for an artifact.
     :ivar Optional[bool] can_write: Write Permissions for an artifact.
     :ivar Optional[bool] can_read: Read Permissions for an artifact.
@@ -210,7 +210,7 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
 
 class RepositoryProperties:
     """Represents properties of a single repository.
-    
+
     :ivar Optional[bool] can_delete: Delete Permissions for a repository.
     :ivar Optional[bool] can_write: Write Permissions for a repository.
     :ivar Optional[bool] can_read: Read Permissions for a repository.
@@ -278,7 +278,7 @@ class RepositoryProperties:
     @property
     def created_on(self) -> datetime:
         """Time and date the repository was created.
-        
+
         :rtype: ~datetime.datetime
         """
         return self._created_on
@@ -286,7 +286,7 @@ class RepositoryProperties:
     @property
     def last_updated_on(self) -> datetime:
         """Time and date the repository was last updated.
-        
+
         :rtype: ~datetime.datetime
         """
         return self._last_updated_on
@@ -294,7 +294,7 @@ class RepositoryProperties:
     @property
     def manifest_count(self) -> int:
         """Number of manifest in the repository.
-        
+
         :rtype: int
         """
         return self._manifest_count
@@ -302,7 +302,7 @@ class RepositoryProperties:
     @property
     def name(self) -> str:
         """Name of the repository.
-        
+
         :rtype: str
         """
         return self._name
@@ -310,7 +310,7 @@ class RepositoryProperties:
     @property
     def tag_count(self) -> int:
         """Number of tags associated with the repository.
-        
+
         :rtype: int
         """
         return self._tag_count
@@ -318,7 +318,7 @@ class RepositoryProperties:
 
 class ArtifactTagProperties:
     """Represents properties of a single tag.
-    
+
     :ivar Optional[bool] can_delete: Delete Permissions for a tag.
     :ivar Optional[bool] can_write: Write Permissions for a tag.
     :ivar Optional[bool] can_read: Read Permissions for a tag.
@@ -377,7 +377,7 @@ class ArtifactTagProperties:
     @property
     def created_on(self) -> datetime:
         """Time and date the tag was created.
-        
+
         :rtype: ~datetime.datetime
         """
         return self._created_on
@@ -385,7 +385,7 @@ class ArtifactTagProperties:
     @property
     def digest(self) -> str:
         """Digest for the tag.
-        
+
         :rtype: str
         """
         return self._digest
@@ -393,7 +393,7 @@ class ArtifactTagProperties:
     @property
     def last_updated_on(self) -> datetime:
         """Time and date the tag was last updated.
-        
+
         :rtype: ~datetime.datetime
         """
         return self._last_updated_on
@@ -401,7 +401,7 @@ class ArtifactTagProperties:
     @property
     def name(self) -> str:
         """Name of the tag.
-        
+
         :rtype: str
         """
         return self._name
@@ -409,7 +409,7 @@ class ArtifactTagProperties:
     @property
     def repository_name(self) -> str:
         """Repository name the tag belongs to.
-        
+
         :rtype: str
         """
         return self._repository_name
