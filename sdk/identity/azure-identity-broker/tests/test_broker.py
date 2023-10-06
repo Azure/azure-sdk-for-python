@@ -19,7 +19,7 @@ def test_interactive_browser_cred_without_broker():
 
 
 def test_username_password_cred_with_broker():
-    cred = UsernamePasswordCredential(allow_broker=True)
+    cred = UsernamePasswordCredential("client-id", "username", "password", allow_broker=True)
     assert cred._allow_broker
 
 
