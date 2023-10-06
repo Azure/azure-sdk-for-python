@@ -54,7 +54,28 @@ class ArtifactOperatingSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attributes
-    """Represents properties of a registry artifact."""
+    """Represents properties of a registry artifact.
+    
+    :ivar Optional[bool] can_delete: Delete Permissions for an artifact.
+    :ivar Optional[bool] can_write: Write Permissions for an artifact.
+    :ivar Optional[bool] can_read: Read Permissions for an artifact.
+    :ivar Optional[bool] can_list: List Permissions for an artifact.
+    :ivar architecture: CPU Architecture of an artifact.
+        Note: any value not listed in enum ArtifactArchitecture will be string type.
+    :vartype architecture: Optional[Union[str, ~azure.containerregistry.ArtifactArchitecture]]
+    :ivar created_on: Time and date an artifact was created.
+    :vartype created_on: ~datetime.datetime
+    :ivar str digest: Digest for the artifact.
+    :ivar last_updated_on: Time and date an artifact was last updated.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar operating_system: Operating system for the artifact.
+        Note: any value not listed in enum ArtifactOperatingSystem will be string type.
+    :vartype operating_system: Optional[Union[str, ~azure.containerregistry.ArtifactOperatingSystem]]
+    :ivar Optional[str] repository_name: Repository name the artifact belongs to.
+    :ivar Optional[int] size_in_bytes: Size of the artifact.
+    :ivar Optional[List[str]] tags: Tags associated with a registry artifact.
+    :ivar str fully_qualified_reference: The fully qualified name of this artifact.
+    """
 
     can_delete: Optional[bool]
     """Delete Permissions for an artifact."""
@@ -66,36 +87,6 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
     """Write Permissions for an artifact."""
 
     def __init__(self, **kwargs: Any) -> None:
-        """
-        :keyword cpu_architecture: CPU Architecture of an artifact.
-            Note: any value not listed in enum ArtifactArchitecture will be string type.
-        :paramtype cpu_architecture: str or ~azure.containerregistry.ArtifactArchitecture or None
-        :keyword created_on: Time and date the artifact was created.
-        :paramtype created_on: ~datetime.datetime or None
-        :keyword digest: Digest for the artifact.
-        :paramtype digest: str or None
-        :keyword last_updated_on: Time and date the artifact was last updated.
-        :paramtype last_updated_on: ~datetime.datetime or None
-        :keyword operating_system: Operating system for the artifact.
-            Note: any value not listed in enum ArtifactOperatingSystem will be string type.
-        :paramtype operating_system: str or ~azure.containerregistry.ArtifactOperatingSystem or None
-        :keyword repository_name: Repository name the artifact belongs to.
-        :paramtype repository_name: str or None
-        :keyword registry: Registry name the artifact belongs to.
-        :paramtype registry: str or None
-        :keyword size_in_bytes: Size of the artifact.
-        :paramtype size_in_bytes: int or None
-        :keyword tags: Tags associated with the registry artifact.
-        :paramtype tags: list[str] or None
-        :keyword can_delete: Delete Permissions for an artifact.
-        :paramtype can_delete: bool or None
-        :keyword bool can_write: Write Permissions for an artifact.
-        :paramtype can_write: bool or None
-        :keyword bool can_read: Read Permissions for an artifact.
-        :paramtype can_read: bool or None
-        :keyword bool can_list: List Permissions for an artifact.
-        :paramtype can_list: bool or None
-        """
         self._architecture = kwargs.get("cpu_architecture", None)
         try:
             self._architecture = ArtifactArchitecture(self._architecture)
@@ -147,6 +138,7 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
     @property
     def architecture(self) -> Optional[Union[ArtifactArchitecture, str]]:
         """CPU Architecture of an artifact.
+
         :rtype: ~azure.containerregistry.ArtifactArchitecture or str or None
         """
         return self._architecture
@@ -154,6 +146,7 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
     @property
     def created_on(self) -> datetime:
         """Time and date an artifact was created.
+
         :rtype: ~datetime.datetime
         """
         return self._created_on
@@ -161,6 +154,7 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
     @property
     def digest(self) -> str:
         """Digest for the artifact.
+
         :rtype: str
         """
         return self._digest
@@ -168,6 +162,7 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
     @property
     def last_updated_on(self) -> datetime:
         """Time and date an artifact was last updated.
+
         :rtype: ~datetime.datetime
         """
         return self._last_updated_on
@@ -175,6 +170,7 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
     @property
     def operating_system(self) -> Optional[Union[ArtifactOperatingSystem, str]]:
         """Operating system for the artifact.
+
         :rtype: ~azure.containerregistry.ArtifactOperatingSystem or str or None
         """
         return self._operating_system
@@ -182,6 +178,7 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
     @property
     def repository_name(self) -> Optional[str]:
         """Repository name the artifact belongs to.
+
         :rtype: str or None
         """
         return self._repository_name
@@ -189,6 +186,7 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
     @property
     def size_in_bytes(self) -> Optional[int]:
         """Size of the artifact.
+
         :rtype: int or None
         """
         return self._size_in_bytes
@@ -196,6 +194,7 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
     @property
     def tags(self) -> Optional[List[str]]:
         """Tags associated with a registry artifact.
+
         :rtype: list[str] or None
         """
         return self._tags
@@ -203,13 +202,27 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
     @property
     def fully_qualified_reference(self) -> str:
         """The fully qualified name of this artifact.
+
         :rtype: str
         """
         return f"{_host_only(self._registry)}/{self._repository_name}{':' if _is_tag(self._digest) else '@'}{_strip_alg(self._digest)}"  # pylint: disable=line-too-long
 
 
 class RepositoryProperties:
-    """Represents properties of a single repository."""
+    """Represents properties of a single repository.
+    
+    :ivar Optional[bool] can_delete: Delete Permissions for a repository.
+    :ivar Optional[bool] can_write: Write Permissions for a repository.
+    :ivar Optional[bool] can_read: Read Permissions for a repository.
+    :ivar Optional[bool] can_list: List Permissions for a repository.
+    :ivar created_on: Time the repository was created
+    :vartype created_on: ~datetime.datetime
+    :ivar last_updated_on: Time the repository was last updated.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar int manifest_count: Number of manifest in the repository.
+    :ivar str name: Name of the repository.
+    :ivar int tag_count: Number of tags associated with the repository.
+    """
 
     can_delete: Optional[bool]
     """Delete Permissions for a repository."""
@@ -221,26 +234,6 @@ class RepositoryProperties:
     """Write Permissions for a repository."""
 
     def __init__(self, **kwargs: Any) -> None:
-        """
-        :keyword created_on: Time and date the repository was created.
-        :paramtype created_on: ~datetime.datetime or None
-        :keyword last_updated_on: Time and date the repository was last updated.
-        :paramtype last_updated_on: ~datetime.datetime or None
-        :keyword manifest_count: Number of manifest in the repository.
-        :paramtype manifest_count: int or None
-        :keyword name: Name of the repository.
-        :paramtype name: str or None
-        :keyword tag_count: Number of tags associated with the repository.
-        :paramtype tag_count: int or None
-        :keyword can_delete: Delete Permissions for a repository.
-        :paramtype can_delete: bool or None
-        :keyword bool can_write: Write Permissions for a repository.
-        :paramtype can_write: bool or None
-        :keyword bool can_read: Read Permissions for a repository.
-        :paramtype can_read: bool or None
-        :keyword bool can_list: List Permissions for a repository.
-        :paramtype can_list: bool or None
-        """
         self._created_on = kwargs.get("created_on", None)
         self._last_updated_on = kwargs.get("last_updated_on", None)
         self._manifest_count = kwargs.get("manifest_count", None)
@@ -285,6 +278,7 @@ class RepositoryProperties:
     @property
     def created_on(self) -> datetime:
         """Time and date the repository was created.
+        
         :rtype: ~datetime.datetime
         """
         return self._created_on
@@ -292,6 +286,7 @@ class RepositoryProperties:
     @property
     def last_updated_on(self) -> datetime:
         """Time and date the repository was last updated.
+        
         :rtype: ~datetime.datetime
         """
         return self._last_updated_on
@@ -299,6 +294,7 @@ class RepositoryProperties:
     @property
     def manifest_count(self) -> int:
         """Number of manifest in the repository.
+        
         :rtype: int
         """
         return self._manifest_count
@@ -306,6 +302,7 @@ class RepositoryProperties:
     @property
     def name(self) -> str:
         """Name of the repository.
+        
         :rtype: str
         """
         return self._name
@@ -313,13 +310,27 @@ class RepositoryProperties:
     @property
     def tag_count(self) -> int:
         """Number of tags associated with the repository.
+        
         :rtype: int
         """
         return self._tag_count
 
 
 class ArtifactTagProperties:
-    """Represents properties of a single tag."""
+    """Represents properties of a single tag.
+    
+    :ivar Optional[bool] can_delete: Delete Permissions for a tag.
+    :ivar Optional[bool] can_write: Write Permissions for a tag.
+    :ivar Optional[bool] can_read: Read Permissions for a tag.
+    :ivar Optional[bool] can_list: List Permissions for a tag.
+    :ivar created_on: Time the tag was created.
+    :vartype created_on: ~datetime.datetime
+    :ivar str digest: Digest for the tag.
+    :ivar last_updated_on: Time the tag was last updated.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar str name: Name of the image the tag corresponds to.
+    :ivar str repository_name: Repository name the tag belongs to.
+    """
 
     can_delete: Optional[bool]
     """Delete Permissions for a tag."""
@@ -331,26 +342,6 @@ class ArtifactTagProperties:
     """Write Permissions for a tag."""
 
     def __init__(self, **kwargs: Any) -> None:
-        """
-        :keyword created_on: Time and date the tag was created.
-        :paramtype created_on: ~datetime.datetime or None
-        :keyword digest: Digest for the tag.
-        :paramtype digest: str or None
-        :keyword last_updated_on: Time and date the tag was last updated.
-        :paramtype last_updated_on: ~datetime.datetime or None
-        :keyword name: Name of the tag.
-        :paramtype name: str or None
-        :keyword repository_name: Repository name the tag belongs to.
-        :paramtype repository_name: str or None
-        :keyword can_delete: Delete Permissions for a tag.
-        :paramtype can_delete: bool or None
-        :keyword bool can_write: Write Permissions for a tag.
-        :paramtype can_write: bool or None
-        :keyword bool can_read: Read Permissions for a tag.
-        :paramtype can_read: bool or None
-        :keyword bool can_list: List Permissions for a tag.
-        :paramtype can_list: bool or None
-        """
         self._created_on = kwargs.get("created_on", None)
         self._digest = kwargs.get("digest", None)
         self._last_updated_on = kwargs.get("last_updated_on", None)
@@ -372,7 +363,7 @@ class ArtifactTagProperties:
             can_read=generated.changeable_attributes.can_read,
             can_write=generated.changeable_attributes.can_write,
             can_list=generated.changeable_attributes.can_list,
-            repository_name=kwargs.get("repository_name", None),
+            repository_name=kwargs.get("repository_name"),
         )
 
     def _to_generated(self) -> TagWriteableProperties:
@@ -386,6 +377,7 @@ class ArtifactTagProperties:
     @property
     def created_on(self) -> datetime:
         """Time and date the tag was created.
+        
         :rtype: ~datetime.datetime
         """
         return self._created_on
@@ -393,6 +385,7 @@ class ArtifactTagProperties:
     @property
     def digest(self) -> str:
         """Digest for the tag.
+        
         :rtype: str
         """
         return self._digest
@@ -400,6 +393,7 @@ class ArtifactTagProperties:
     @property
     def last_updated_on(self) -> datetime:
         """Time and date the tag was last updated.
+        
         :rtype: ~datetime.datetime
         """
         return self._last_updated_on
@@ -407,14 +401,16 @@ class ArtifactTagProperties:
     @property
     def name(self) -> str:
         """Name of the tag.
+        
         :rtype: str
         """
         return self._name
 
     @property
-    def repository_name(self) -> Optional[str]:
+    def repository_name(self) -> str:
         """Repository name the tag belongs to.
-        :rtype: str or None
+        
+        :rtype: str
         """
         return self._repository_name
 
