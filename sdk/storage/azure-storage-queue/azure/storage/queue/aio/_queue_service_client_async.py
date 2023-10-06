@@ -32,12 +32,12 @@ from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import process_storage_error
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
     from .._models import CorsRule, Metrics, QueueAnalyticsLogging
 
 
-class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin): # pylint: disable=line-too-long
+class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # type: ignore [misc]  # pylint: disable=line-too-long
     """A client to interact with the Queue Service at the account level.
 
     This client provides operations to retrieve and configure the account properties
@@ -139,7 +139,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
                 :dedent: 8
                 :caption: Creating the QueueServiceClient with a connection string.
         """
-        account_url, secondary, credential = parse_connection_str(
+        account_url, secondary, credential = parse_connection_str(  #type: ignore
             conn_str, credential, 'queue')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary

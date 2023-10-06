@@ -183,7 +183,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
                 :dedent: 8
                 :caption: Create the queue client from connection string.
         """
-        account_url, secondary, credential = parse_connection_str(
+        account_url, secondary, credential = parse_connection_str(  #type: ignore
             conn_str, credential, 'queue')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary

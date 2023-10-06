@@ -140,7 +140,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 8
                 :caption: Creating the QueueServiceClient with a connection string.
         """
-        account_url, secondary, credential = parse_connection_str(
+        account_url, secondary, credential = parse_connection_str(  #type: ignore
             conn_str, credential, 'queue')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary

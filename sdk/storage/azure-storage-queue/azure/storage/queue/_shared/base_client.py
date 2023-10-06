@@ -220,7 +220,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         return query_str.rstrip("?&"), credential
 
     def _create_pipeline(
-        self, credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] = None, # pylint: disable=line-too-long
+        self, credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential", "TokenCredential"]] = None, # pylint: disable=line-too-long
         **kwargs: Any
     ) -> Tuple[StorageConfiguration, Pipeline]:
         self._credential_policy: Any = None
