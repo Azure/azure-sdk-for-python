@@ -2,30 +2,30 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.identity.broker import InteractiveBrowserCredential, UsernamePasswordCredential
+from azure.identity.broker import InteractiveBrowserBrokerCredential, UsernamePasswordBrokerCredential
 
 
 def test_interactive_browser_cred_with_broker():
-    cred = InteractiveBrowserCredential(allow_broker=True)
+    cred = InteractiveBrowserBrokerCredential(allow_broker=True)
     assert cred._allow_broker
 
 
 def test_interactive_browser_cred_without_broker():
-    cred = InteractiveBrowserCredential()
+    cred = InteractiveBrowserBrokerCredential()
     assert not cred._allow_broker
 
-    cred = InteractiveBrowserCredential(allow_broker=False)
+    cred = InteractiveBrowserBrokerCredential(allow_broker=False)
     assert not cred._allow_broker
 
 
 def test_username_password_cred_with_broker():
-    cred = UsernamePasswordCredential("client-id", "username", "password", allow_broker=True)
+    cred = UsernamePasswordBrokerCredential("client-id", "username", "password", allow_broker=True)
     assert cred._allow_broker
 
 
 def test_username_password_cred_without_broker():
-    cred = UsernamePasswordCredential("client-id", "username", "password")
+    cred = UsernamePasswordBrokerCredential("client-id", "username", "password")
     assert not cred._allow_broker
 
-    cred = UsernamePasswordCredential("client-id", "username", "password", allow_broker=False)
+    cred = UsernamePasswordBrokerCredential("client-id", "username", "password", allow_broker=False)
     assert not cred._allow_broker

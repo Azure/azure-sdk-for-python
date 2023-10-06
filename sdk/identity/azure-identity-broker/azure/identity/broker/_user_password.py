@@ -7,7 +7,7 @@ from azure.identity._credentials import UsernamePasswordCredential as _UsernameP
 from ._utils import wrap_exceptions
 
 
-class UsernamePasswordCredential(_UsernamePasswordCredential):
+class UsernamePasswordBrokerCredential(_UsernamePasswordCredential):
     """Authenticates a user with a username and password.
 
     In general, Microsoft doesn't recommend this kind of authentication, because it's less secure than other

@@ -15,7 +15,7 @@ from ._utils import wrap_exceptions, resolve_tenant, within_dac
 DEVELOPER_SIGN_ON_CLIENT_ID = "04b07795-8ddb-461a-bbee-02f9e1bf7b46"
 
 
-class InteractiveBrowserCredential(_InteractiveBrowserCredential):
+class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
     """Opens a browser to interactively authenticate a user.
 
     :func:`~get_token` opens a browser to a login URL provided by Azure Active Directory and authenticates a user
