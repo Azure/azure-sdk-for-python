@@ -601,7 +601,7 @@ class MLClient:
         self._featurestoreentities = FeatureStoreEntityOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2023,
+            self._service_client_04_2023_preview,
             **ops_kwargs,
         )
 
