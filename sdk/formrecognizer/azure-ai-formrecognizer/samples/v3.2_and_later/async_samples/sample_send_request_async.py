@@ -42,6 +42,7 @@ async def sample_send_request():
     request = HttpRequest(method="GET", url="info")
     async with client:
         response = await client.send_request(request)
+    response.raise_for_status()
     
     response_body = response.json()
     print(

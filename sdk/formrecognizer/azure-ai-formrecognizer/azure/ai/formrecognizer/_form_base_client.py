@@ -121,23 +121,25 @@ class FormRecognizerClientBase:
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs) -> HttpResponse:
         """Runs a network request using the client's existing pipeline.
 
-        The request URL can be relative to the vault URL. The service API version used for the request is the same as
-        the client's unless otherwise specified. This method does not raise if the response is an error; to raise an
-        exception, call `raise_for_status()` on the returned response object. For more information about how to send
-        custom requests with this method, see https://aka.ms/azsdk/dpcodegen/python/send_request.
+        The request URL can be relative to the base URL. The service API version used for the request is the same as
+        the client's unless otherwise specified. We only support service API version 2022-08-31 and later in request.
+        This method does not raise if the response is an error; to raise an exception, call `raise_for_status()` on
+        the returned response object. For more information about how to send custom requests with this method,
+        see https://aka.ms/azsdk/dpcodegen/python/send_request.
 
         :param request: The network request you want to make.
         :type request: ~azure.core.rest.HttpRequest
-
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
-
         :return: The response of your network call. Does not do error handling on your response.
         :rtype: ~azure.core.rest.HttpResponse
         """
         api_version = self._api_version
         if hasattr(api_version, "value"):
             api_version = api_version.value
-        request_copy = _format_api_version(request, api_version)
+        if self._api_version.startswith("v"):
+            request_copy = deepcopy(request)
+        else:
+            request_copy = _format_api_version(request, api_version)
         path_format_arguments = {
             "endpoint": _SERIALIZER.url("endpoint", self._endpoint, "str", skip_quote=True),
         }

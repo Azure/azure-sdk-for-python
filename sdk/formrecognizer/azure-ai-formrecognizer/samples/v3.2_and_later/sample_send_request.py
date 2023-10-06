@@ -41,6 +41,7 @@ def sample_send_request():
     # and the API version of your client will automatically be used for the request.
     request = HttpRequest(method="GET", url="info")
     response = client.send_request(request)
+    response.raise_for_status()
     
     response_body = response.json()
     print(
