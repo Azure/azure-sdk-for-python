@@ -71,8 +71,6 @@ class UsernamePasswordBrokerCredential(_UsernamePasswordCredential):
         super(UsernamePasswordBrokerCredential, self).__init__(
             client_id=client_id, username=username, password=password, **kwargs
         )
-        self._username = username
-        self._password = password
 
     @wrap_exceptions
     def _request_token(self, *scopes: str, **kwargs: Any) -> Dict:
