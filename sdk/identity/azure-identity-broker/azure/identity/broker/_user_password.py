@@ -3,11 +3,11 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import Any, Dict
+from azure.identity import UsernamePasswordCredential as _UsernamePasswordCredential
+from ._utils import wrap_exceptions
 
-from ._interactive import InteractiveCredential, wrap_exceptions
 
-
-class UsernamePasswordCredential(InteractiveCredential):
+class UsernamePasswordCredential(_UsernamePasswordCredential):
     """Authenticates a user with a username and password.
 
     In general, Microsoft doesn't recommend this kind of authentication, because it's less secure than other
@@ -61,11 +61,14 @@ class UsernamePasswordCredential(InteractiveCredential):
             :caption: Create a UsernamePasswordCredential.
     """
 
-    def __init__(self, client_id: str, username: str, password: str, **kwargs: Any) -> None:
+    def __init__(
+        self, client_id: str, username: str, password: str, **kwargs: Any
+    ) -> None:
         # The base class will accept an AuthenticationRecord, allowing this credential to authenticate silently the
         # first time it's asked for a token. However, we want to ensure this first authentication is not silent, to
         # validate the given password. This class therefore doesn't document the authentication_record argument, and we
         # discard it here.
+        self._allow_broker = kwargs.pop("allow_broker", None)
         kwargs.pop("authentication_record", None)
         super(UsernamePasswordCredential, self).__init__(client_id=client_id, **kwargs)
         self._username = username

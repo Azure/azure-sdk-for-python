@@ -5,17 +5,16 @@
 import socket
 from typing import Dict, Any
 from urllib.parse import urlparse
+import msal
 
 from azure.core.exceptions import ClientAuthenticationError
+from azure.identity import InteractiveBrowserCredential as _InteractiveBrowserCredential, CredentialUnavailableError
+from ._utils import wrap_exceptions
 
-from ._interactive import InteractiveCredential
-from ._exceptions import CredentialUnavailableError
-from ._constants import DEVELOPER_SIGN_ON_CLIENT_ID
-from ._decorators import wrap_exceptions
-from ._utils import within_dac
+DEVELOPER_SIGN_ON_CLIENT_ID = "04b07795-8ddb-461a-bbee-02f9e1bf7b46"
 
 
-class InteractiveBrowserCredential(InteractiveCredential):
+class InteractiveBrowserCredential(_InteractiveBrowserCredential):
     """Opens a browser to interactively authenticate a user.
 
     :func:`~get_token` opens a browser to a login URL provided by Azure Active Directory and authenticates a user
@@ -72,18 +71,25 @@ class InteractiveBrowserCredential(InteractiveCredential):
     """
 
     def __init__(self, **kwargs: Any) -> None:
+        self._allow_broker = kwargs.pop("allow_broker", None)
+        self._parent_window_handle = kwargs.pop("parent_window_handle", None)
+        self._enable_msa_passthrough = kwargs.pop("enable_msa_passthrough", False)
         redirect_uri = kwargs.pop("redirect_uri", None)
         if redirect_uri:
             self._parsed_url = urlparse(redirect_uri)
             if not (self._parsed_url.hostname and self._parsed_url.port):
-                raise ValueError('"redirect_uri" must be a URL with port number, for example "http://localhost:8400"')
+                raise ValueError(
+                    '"redirect_uri" must be a URL with port number, for example "http://localhost:8400"'
+                )
         else:
             self._parsed_url = None
 
         self._login_hint = kwargs.pop("login_hint", None)
         self._timeout = kwargs.pop("timeout", 300)
         client_id = kwargs.pop("client_id", DEVELOPER_SIGN_ON_CLIENT_ID)
-        super(InteractiveBrowserCredential, self).__init__(client_id=client_id, **kwargs)
+        super(InteractiveBrowserCredential, self).__init__(
+            client_id=client_id, **kwargs
+        )
 
     @wrap_exceptions
     def _request_token(self, *scopes: str, **kwargs: Any) -> Dict:
@@ -104,7 +110,9 @@ class InteractiveBrowserCredential(InteractiveCredential):
                 enable_msa_passthrough=self._enable_msa_passthrough,
             )
         except socket.error as ex:
-            raise CredentialUnavailableError(message="Couldn't start an HTTP server.") from ex
+            raise CredentialUnavailableError(
+                message="Couldn't start an HTTP server."
+            ) from ex
         if "access_token" not in result and "error_description" in result:
             if within_dac.get():
                 raise CredentialUnavailableError(message=result["error_description"])
@@ -116,3 +124,38 @@ class InteractiveBrowserCredential(InteractiveCredential):
 
         # base class will raise for other errors
         return result
+
+
+    def _get_app(self, **kwargs: Any) -> msal.ClientApplication:
+        tenant_id = resolve_tenant(
+            self._tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
+        )
+
+        client_applications_map = self._client_applications
+        capabilities = None
+        token_cache = self._cache
+
+        app_class = msal.ConfidentialClientApplication if self._client_credential else msal.PublicClientApplication
+
+        if kwargs.get("enable_cae"):
+            client_applications_map = self._cae_client_applications
+            capabilities = ["CP1"]
+            token_cache = self._cae_cache
+
+        if not token_cache:
+            token_cache = self._initialize_cache(is_cae=bool(kwargs.get("enable_cae")))
+
+        if tenant_id not in client_applications_map:
+            client_applications_map[tenant_id] = app_class(
+                client_id=self._client_id,
+                client_credential=self._client_credential,
+                client_capabilities=capabilities,
+                authority="{}/{}".format(self._authority, tenant_id),
+                azure_region=self._regional_authority,
+                token_cache=token_cache,
+                http_client=self._client,
+                instance_discovery=self._instance_discovery,
+                allow_broker=self._allow_broker,
+            )
+
+        return client_applications_map[tenant_id]
