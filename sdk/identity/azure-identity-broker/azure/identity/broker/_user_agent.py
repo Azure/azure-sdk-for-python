@@ -6,4 +6,6 @@ import platform
 
 from .._version import VERSION
 
-USER_AGENT = "azsdk-python-identity-broker/{} Python/{} ({})".format(VERSION, platform.python_version(), platform.platform())
+USER_AGENT = "azsdk-python-identity-broker/{} Python/{} ({})".format(
+    VERSION, platform.python_version(), platform.platform()
+)

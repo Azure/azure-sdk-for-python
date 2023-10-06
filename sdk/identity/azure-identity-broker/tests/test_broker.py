@@ -17,6 +17,7 @@ def test_interactive_browser_cred_without_broker():
     cred = InteractiveBrowserCredential(allow_broker=False)
     assert not cred._allow_broker
 
+
 def test_username_password_cred_with_broker():
     cred = UsernamePasswordCredential(allow_broker=True)
     assert cred._allow_broker
