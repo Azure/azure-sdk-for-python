@@ -713,7 +713,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase, St
         """
         if isinstance(blob, BlobProperties):
             warnings.warn(
-                "The use of a 'BlobProperties' instance is deprecated. Please use str instead.",
+                "The use of a 'BlobProperties' instance for param blob is deprecated. Please use str instead.",
                 DeprecationWarning
             )
         try:
