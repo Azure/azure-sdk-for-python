@@ -75,18 +75,7 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
         self._allow_broker = kwargs.pop("allow_broker", None)
         self._parent_window_handle = kwargs.pop("parent_window_handle", None)
         self._enable_msa_passthrough = kwargs.pop("enable_msa_passthrough", False)
-        redirect_uri = kwargs.pop("redirect_uri", None)
-        if redirect_uri:
-            self._parsed_url = urlparse(redirect_uri)
-            if not (self._parsed_url.hostname and self._parsed_url.port):
-                raise ValueError('"redirect_uri" must be a URL with port number, for example "http://localhost:8400"')
-        else:
-            self._parsed_url = None
-
-        self._login_hint = kwargs.pop("login_hint", None)
-        self._timeout = kwargs.pop("timeout", 300)
-        client_id = kwargs.pop("client_id", DEVELOPER_SIGN_ON_CLIENT_ID)
-        super(InteractiveBrowserBrokerCredential, self).__init__(client_id=client_id, **kwargs)
+        super().__init__(**kwargs)
 
     @wrap_exceptions
     def _request_token(self, *scopes: str, **kwargs: Any) -> Dict:
