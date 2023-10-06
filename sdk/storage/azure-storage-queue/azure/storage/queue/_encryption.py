@@ -15,7 +15,7 @@ from json import (
     dumps,
     loads,
 )
-from typing import Any, BinaryIO, Callable, Dict, Optional, Tuple, TYPE_CHECKING
+from typing import Any, BinaryIO, Callable, Dict, Optional, Tuple, TYPE_CHECKING, Union
 from typing_extensions import Protocol
 
 from cryptography.hazmat.backends import default_backend
@@ -508,13 +508,13 @@ def _generate_encryption_data_dict(
         encrypted_region_info['DataLength'] = _GCM_REGION_DATA_LENGTH
         encrypted_region_info['NonceLength'] = _GCM_NONCE_LENGTH
 
-    encryption_data_dict = OrderedDict()
+    encryption_data_dict: OrderedDict[str, Any] = OrderedDict()
     encryption_data_dict['WrappedContentKey'] = wrapped_content_key
     encryption_data_dict['EncryptionAgent'] = encryption_agent
     if version == _ENCRYPTION_PROTOCOL_V1:
         encryption_data_dict['ContentEncryptionIV'] = encode_base64(iv)
     elif version == _ENCRYPTION_PROTOCOL_V2:
-        encryption_data_dict['EncryptedRegionInfo'] = encrypted_region_info  # type: ignore[assignment]
+        encryption_data_dict['EncryptedRegionInfo'] = encrypted_region_info
     encryption_data_dict['KeyWrappingMetadata'] = OrderedDict({'EncryptionLibrary': 'Python ' + VERSION})
 
     return encryption_data_dict
