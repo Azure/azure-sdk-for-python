@@ -86,7 +86,7 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
         self._login_hint = kwargs.pop("login_hint", None)
         self._timeout = kwargs.pop("timeout", 300)
         client_id = kwargs.pop("client_id", DEVELOPER_SIGN_ON_CLIENT_ID)
-        super(InteractiveBrowserCredential, self).__init__(client_id=client_id, **kwargs)
+        super(InteractiveBrowserBrokerCredential, self).__init__(client_id=client_id, **kwargs)
 
     @wrap_exceptions
     def _request_token(self, *scopes: str, **kwargs: Any) -> Dict:
