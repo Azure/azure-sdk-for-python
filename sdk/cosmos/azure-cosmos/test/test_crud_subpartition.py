@@ -201,6 +201,22 @@ class CRUDTests(unittest.TestCase):
             self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
             self.assertTrue("Too many partition key paths" in error.message)
 
+        # Negative Test: Check if user tries to create multihash container while defining single hash
+        collection_definition3 = {'id': 'test_partitioned_collection2_MH ' + str(uuid.uuid4()),
+                                  'partitionKey':
+                                      {
+                                          'paths': ['/id', '/pk', '/id2', "/pk2"],
+                                          'kind': documents.PartitionKind.Hash,
+                                          'version': 2
+                                      }
+                                  }
+        try:
+            created_collection = created_db.create_container(id=collection_definition['id'],
+                                                             partition_key=collection_definition3['partitionKey'],
+                                                             offer_throughput=offer_throughput)
+        except exceptions.CosmosHttpResponseError as error:
+            self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
+            self.assertTrue("Too many partition key paths" in error.message)
         created_db.delete_container(created_collection.id)
 
     def test_partitioned_collection_partition_key_extraction(self):

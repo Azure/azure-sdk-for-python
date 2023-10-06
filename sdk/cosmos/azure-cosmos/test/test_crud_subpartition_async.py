@@ -196,6 +196,40 @@ class TestSubpartitionCRUD:
 
         assert expected_offer.offer_throughput == offer_throughput
 
+        # Negative test, check that user can't make a subpartition higher than 3 levels
+        collection_definition2 = {'id': 'test_partitioned_collection2_MH ' + str(uuid.uuid4()),
+                                  'partitionKey':
+                                      {
+                                          'paths': ['/id', '/pk', '/id2', "/pk2"],
+                                          'kind': documents.PartitionKind.MultiHash,
+                                          'version': 2
+                                      }
+                                  }
+        try:
+            created_collection = await created_db.create_container(id=collection_definition['id'],
+                                                             partition_key=collection_definition2['partitionKey'],
+                                                             offer_throughput=offer_throughput)
+        except exceptions.CosmosHttpResponseError as error:
+            assert error.status_code == StatusCodes.BAD_REQUEST
+            assert "Too many partition key paths" in error.message
+
+        # Negative Test: Check if user tries to create multihash container while defining single hash
+        collection_definition3 = {'id': 'test_partitioned_collection2_MH ' + str(uuid.uuid4()),
+                                  'partitionKey':
+                                      {
+                                          'paths': ['/id', '/pk', '/id2', "/pk2"],
+                                          'kind': documents.PartitionKind.Hash,
+                                          'version': 2
+                                      }
+                                  }
+        try:
+            created_collection = await created_db.create_container(id=collection_definition['id'],
+                                                             partition_key=collection_definition3['partitionKey'],
+                                                             offer_throughput=offer_throughput)
+        except exceptions.CosmosHttpResponseError as error:
+            assert error.status_code == StatusCodes.BAD_REQUEST
+            assert "Too many partition key paths" in error.message
+
         await created_db.delete_container(created_collection.id)
 
     @pytest.mark.asyncio

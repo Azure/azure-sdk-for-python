@@ -155,10 +155,10 @@ class PartitionKey(dict):
 
     def _get_epk_range_for_prefix_partition_key(self, pk_value: list) -> Range:
         if self.kind != "MultiHash":
-            raise ValueError("Unsupported partition definition kind for partial key operations")
+            raise ValueError("Effective Partition Key Range for Prefix Partition Keys is only supported for Hierarchical Partition Keys.")  # pylint: disable=line-too-long
 
         if len(pk_value) >= len(self["paths"]):
-            raise ValueError("Too many partition key components")
+            raise ValueError("{} partition key components provided. Expected less than {} components (number of container partition key definition components).".format(len(pk_value), len(self["paths"])))  # pylint: disable=line-too-long
         # Prefix Partitions always have exclusive max
         min_epk = self._get_effective_partition_key_string(pk_value)
         if min_epk == _MinimumInclusiveEffectivePartitionKey:

@@ -2361,35 +2361,44 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             cont_prop = await cont_prop()
             pk_properties = cont_prop["partitionKey"]
             partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
-            if partition_key_definition.kind != "MultiHash":
-                isPrefixPartitionQuery = False
-            elif type(partition_key) == list and len(partition_key_definition['paths']) == len(partition_key):
-                isPrefixPartitionQuery = False
-            else:
+            if partition_key_definition.kind == "MultiHash" and\
+                    (type(partition_key) == list and len(partition_key_definition['paths']) != len(partition_key)):
                 isPrefixPartitionQuery = True
 
         if isPrefixPartitionQuery:
-            # here get the overlap, then do one of two scenarios
+            # here get the overlapping ranges
             req_headers.pop(http_constants.HttpHeaders.PartitionKey, None)
             feedrangeEPK = partition_key_definition._get_epk_range_for_prefix_partition_key(partition_key)  # cspell:disable-line # pylint: disable=line-too-long
             over_lapping_ranges = await self._routing_map_provider.get_overlapping_ranges(id_, [feedrangeEPK])
-
-            if over_lapping_ranges:
-                # For epk range filtering we can end up in one of 2 cases:
-                # overlappingRanges.Count == 1
-                single_range = routing_range.Range.PartitionKeyRangeToRange(over_lapping_ranges[0])
+            results = None
+            for over_lapping_range in over_lapping_ranges:
+                # It is possible for the over lapping range to include multiple physical partitions
+                # we should return query results for all the partitions that are overlapped.
+                single_range = routing_range.Range.PartitionKeyRangeToRange(over_lapping_range)
                 if single_range.min == feedrangeEPK.min and single_range.max == feedrangeEPK.max:
-                    # 1 The EpkRange spans exactly one physical partition
+                    # The EpkRange spans exactly one physical partition
                     # In this case we can route to the physical pk range id
-                    req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_ranges[0]["id"]
+                    req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_range["id"]
                 else:
-                    # 2) The EpkRange spans less than single physical partition
+                    # The EpkRange spans less than single physical partition
                     # In this case we route to the physical partition and
                     # pass the epk range headers to filter within partition
-                    req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_ranges[0]["id"]
+                    req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_range["id"]
                     req_headers[http_constants.HttpHeaders.StartEpkString] = feedrangeEPK.min
                     req_headers[http_constants.HttpHeaders.EndEpkString] = feedrangeEPK.max
-            req_headers[http_constants.HttpHeaders.ReadFeedKeyType] = "EffectivePartitionKeyRange"
+                req_headers[http_constants.HttpHeaders.ReadFeedKeyType] = "EffectivePartitionKeyRange"
+                r, self.last_response_headers = await self.__Post(path, request_params, query, req_headers, **kwargs)
+                if results:
+                    # add up all the query results from all over lapping ranges
+                    results["Documents"].extend(r["Documents"])
+                    results["_count"] += r["_count"]
+                else:
+                    results = r
+                if response_hook:
+                    response_hook(self.last_response_headers, results)
+            # if the prefix partition query has results lets return it
+            if results:
+                return __GetBodiesFromQueryResult(results)
 
         result, self.last_response_headers = await self.__Post(path, request_params, query, req_headers, **kwargs)
 

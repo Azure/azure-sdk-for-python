@@ -2543,27 +2543,41 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         #check if query has prefix partition key
         isPrefixPartitionQuery = kwargs.pop("isPrefixPartitionQuery", None)
         if isPrefixPartitionQuery:
-            #here get the overlap, then do one of two scenarios
+            # here get the over lapping ranges
             partition_key_definition = kwargs.pop("partitionKeyDefinition", None)
             pk_properties = partition_key_definition
             partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
             partition_key_value = pk_properties["partition_key"]
             feedrangeEPK = partition_key_definition._get_epk_range_for_prefix_partition_key(partition_key_value)  # cspell:disable-line # pylint: disable=line-too-long
             over_lapping_ranges = self._routing_map_provider.get_overlapping_ranges(id_, [feedrangeEPK])
-            if over_lapping_ranges:
-                single_range = routing_range.Range.PartitionKeyRangeToRange(over_lapping_ranges[0])
+            # It is possible to get more than one over lapping range. We need to get the query results for each one
+            results = None
+            for over_lapping_range in over_lapping_ranges:
+                single_range = routing_range.Range.PartitionKeyRangeToRange(over_lapping_range)
                 if single_range.min == feedrangeEPK.min and single_range.max == feedrangeEPK.max:
-                    # 1 The EpkRange spans exactly one physical partition
+                    # The EpkRange spans exactly one physical partition
                     # In this case we can route to the physical pk range id
-                    req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_ranges[0]["id"]
+                    req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_range["id"]
                 else:
-                    # 2) The EpkRange spans less than single physical partition
+                    # The EpkRange spans less than single physical partition
                     # In this case we route to the physical partition and
                     # pass the epk range headers to filter within partition
-                    req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_ranges[0]["id"]
+                    req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_range["id"]
                     req_headers[http_constants.HttpHeaders.StartEpkString] = feedrangeEPK.min
                     req_headers[http_constants.HttpHeaders.EndEpkString] = feedrangeEPK.max
-            req_headers[http_constants.HttpHeaders.ReadFeedKeyType] = "EffectivePartitionKeyRange"
+                req_headers[http_constants.HttpHeaders.ReadFeedKeyType] = "EffectivePartitionKeyRange"
+                r, self.last_response_headers = self.__Post(path, request_params, query, req_headers, **kwargs)
+                if results:
+                    # add up all the query results from all over lapping ranges
+                    results["Documents"].extend(r["Documents"])
+                    results["_count"] += r["_count"]
+                else:
+                    results = r
+                if response_hook:
+                    response_hook(self.last_response_headers, results)
+            # if the prefix partition query has results lets return it
+            if results:
+                return __GetBodiesFromQueryResult(results)
 
         result, self.last_response_headers = self.__Post(path, request_params, query, req_headers, **kwargs)
 
