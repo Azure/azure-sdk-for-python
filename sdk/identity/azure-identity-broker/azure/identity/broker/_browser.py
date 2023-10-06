@@ -9,7 +9,7 @@ import msal
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import InteractiveBrowserCredential as _InteractiveBrowserCredential, CredentialUnavailableError
-from ._utils import wrap_exceptions
+from ._utils import wrap_exceptions, resolve_tenant, within_dac
 
 DEVELOPER_SIGN_ON_CLIENT_ID = "04b07795-8ddb-461a-bbee-02f9e1bf7b46"
 
@@ -78,18 +78,14 @@ class InteractiveBrowserCredential(_InteractiveBrowserCredential):
         if redirect_uri:
             self._parsed_url = urlparse(redirect_uri)
             if not (self._parsed_url.hostname and self._parsed_url.port):
-                raise ValueError(
-                    '"redirect_uri" must be a URL with port number, for example "http://localhost:8400"'
-                )
+                raise ValueError('"redirect_uri" must be a URL with port number, for example "http://localhost:8400"')
         else:
             self._parsed_url = None
 
         self._login_hint = kwargs.pop("login_hint", None)
         self._timeout = kwargs.pop("timeout", 300)
         client_id = kwargs.pop("client_id", DEVELOPER_SIGN_ON_CLIENT_ID)
-        super(InteractiveBrowserCredential, self).__init__(
-            client_id=client_id, **kwargs
-        )
+        super(InteractiveBrowserCredential, self).__init__(client_id=client_id, **kwargs)
 
     @wrap_exceptions
     def _request_token(self, *scopes: str, **kwargs: Any) -> Dict:
@@ -110,9 +106,7 @@ class InteractiveBrowserCredential(_InteractiveBrowserCredential):
                 enable_msa_passthrough=self._enable_msa_passthrough,
             )
         except socket.error as ex:
-            raise CredentialUnavailableError(
-                message="Couldn't start an HTTP server."
-            ) from ex
+            raise CredentialUnavailableError(message="Couldn't start an HTTP server.") from ex
         if "access_token" not in result and "error_description" in result:
             if within_dac.get():
                 raise CredentialUnavailableError(message=result["error_description"])
@@ -124,7 +118,6 @@ class InteractiveBrowserCredential(_InteractiveBrowserCredential):
 
         # base class will raise for other errors
         return result
-
 
     def _get_app(self, **kwargs: Any) -> msal.ClientApplication:
         tenant_id = resolve_tenant(
