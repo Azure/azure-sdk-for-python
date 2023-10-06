@@ -8,7 +8,8 @@ from urllib.parse import urlparse
 import msal
 
 from azure.core.exceptions import ClientAuthenticationError
-from azure.identity import InteractiveBrowserCredential as _InteractiveBrowserCredential, CredentialUnavailableError
+from azure.identity._credentials import InteractiveBrowserCredential as _InteractiveBrowserCredential
+from azure.identity._exceptions import CredentialUnavailableError
 from ._utils import wrap_exceptions, resolve_tenant, within_dac
 
 DEVELOPER_SIGN_ON_CLIENT_ID = "04b07795-8ddb-461a-bbee-02f9e1bf7b46"

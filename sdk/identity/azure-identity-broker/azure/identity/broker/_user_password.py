@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import Any, Dict
-from azure.identity import UsernamePasswordCredential as _UsernamePasswordCredential
+from azure.identity._credentials import UsernamePasswordCredential as _UsernamePasswordCredential
 from ._utils import wrap_exceptions
 
 
