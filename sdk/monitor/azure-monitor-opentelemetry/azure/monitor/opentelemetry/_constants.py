@@ -21,8 +21,8 @@ DISABLE_AZURE_CORE_TRACING_ARG = "disable_azure_core_tracing"
 DISABLE_LOGGING_ARG = "disable_logging"
 DISABLE_METRICS_ARG = "disable_metrics"
 DISABLE_TRACING_ARG = "disable_tracing"
-DISABLED_INSTRUMENTATIONS_ARG = "disabled_instrumentations"
 LOGGER_NAME_ARG = "logger_name"
+INSTRUMENTATION_OPTIONS_ARG = "instrumentation_options"
 SAMPLING_RATIO_ARG = "sampling_ratio"
 
 
@@ -75,6 +75,25 @@ _EXTENSION_VERSION = _env_var_or_default(
     "ApplicationInsightsAgent_EXTENSION_VERSION", "disabled"
 )
 
+# Instrumentations
+
+# Opt-out
+_AZURE_SDK_INSTRUMENTATION_NAME = "azure_sdk"
+_FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES = (
+    _AZURE_SDK_INSTRUMENTATION_NAME,
+    "django",
+    "fastapi",
+    "flask",
+    "psycopg2",
+    "requests",
+    "urllib",
+    "urllib3",
+)
+# Opt-in
+_PREVIEW_INSTRUMENTED_LIBRARIES = ()
+_ALL_SUPPORTED_INSTRUMENTED_LIBRARIES = _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES + _PREVIEW_INSTRUMENTED_LIBRARIES
+
+# Autoinstrumentation
 
 def _is_attach_enabled():
     return isdir("/agents/python/")

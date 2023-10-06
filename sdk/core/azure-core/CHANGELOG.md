@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Added check that enter aiohttp session only when it is not None.
+
 ### Other Changes
 
 ## 1.29.4 (2023-09-07)
