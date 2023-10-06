@@ -4,7 +4,7 @@
 # ------------------------------------
 from typing import Any, Dict
 
-from .._internal import InteractiveCredential, wrap_exceptions
+from ._interactive import InteractiveCredential, wrap_exceptions
 
 
 class UsernamePasswordCredential(InteractiveCredential):
@@ -41,6 +41,12 @@ class UsernamePasswordCredential(InteractiveCredential):
         https://login.microsoft.com/ to validate the authority. By setting this to **True**, the validation of the
         authority is disabled. As a result, it is crucial to ensure that the configured authority host is valid and
         trustworthy.
+    :keyword bool allow_broker: An authentication broker is an application that runs on a user's machine that manages
+        the authentication handshakes and token maintenance for connected accounts. The Windows operating system uses
+        the Web Account Manager (WAM) as its authentication broker. If this parameter is set to True, the broker will
+        be used when possible. Defaults to False.
+        Check https://learn.microsoft.com/azure/active-directory/develop/scenario-desktop-acquire-token-wam for more
+        information about WAM.
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
