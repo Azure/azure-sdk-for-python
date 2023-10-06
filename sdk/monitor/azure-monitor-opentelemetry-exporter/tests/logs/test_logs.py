@@ -140,6 +140,27 @@ class TestAzureLogExporter(unittest.TestCase):
             ),
             InstrumentationScope("test_name"),
         )
+        cls._exc_data_blank = _logs.LogData(
+            _logs.LogRecord(
+                timestamp = 1646865018558419456,
+                trace_id = 125960616039069540489478540494783893221,
+                span_id = 2909973987304607650,
+                severity_text = "EXCEPTION",
+                trace_flags = None,
+                severity_number = SeverityNumber.FATAL,
+                body = "Test message",
+                resource = Resource.create(
+                    attributes={"asd":"test_resource"}
+                ),
+                attributes={
+                    "test": "attribute",
+                    SpanAttributes.EXCEPTION_TYPE: "",
+                    SpanAttributes.EXCEPTION_MESSAGE: "",
+                    SpanAttributes.EXCEPTION_STACKTRACE: ""
+                },
+            ),
+            InstrumentationScope("test_name"),
+        )
 
     @classmethod
     def tearDownClass(cls):
@@ -294,6 +315,21 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.exceptions[0].message, "division by zero")
         self.assertTrue(envelope.data.base_data.exceptions[0].has_full_stack)
         self.assertEqual(envelope.data.base_data.exceptions[0].stack, 'Traceback (most recent call last):\n  File "test.py", line 38, in <module>\n    raise ZeroDivisionError()\nZeroDivisionError\n')
+
+    def test_log_to_envelope_exception_blank(self):
+        exporter = self._exporter
+        envelope = exporter._log_to_envelope(self._exc_data_blank)
+        record = self._log_data.log_record
+        self.assertEqual(envelope.name, 'Microsoft.ApplicationInsights.Exception')
+        self.assertEqual(envelope.time, ns_to_iso_str(record.timestamp))
+        self.assertEqual(envelope.data.base_type, 'ExceptionData')
+        self.assertEqual(envelope.data.base_data.severity_level, 4)
+        self.assertEqual(envelope.data.base_data.properties["test"], "attribute")
+        self.assertEqual(len(envelope.data.base_data.exceptions), 1)
+        self.assertEqual(envelope.data.base_data.exceptions[0].type_name, "Exception")
+        self.assertEqual(envelope.data.base_data.exceptions[0].message, "Exception")
+        self.assertTrue(envelope.data.base_data.exceptions[0].has_full_stack)
+        self.assertEqual(envelope.data.base_data.exceptions[0].stack, "")
 
     def test_log_to_envelope_event(self):
         exporter = self._exporter

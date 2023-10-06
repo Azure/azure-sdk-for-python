@@ -22,7 +22,7 @@ from ._generated.models import (
     QueryType,
     SearchMode,
     ScoringStatistics,
-    Vector,
+    VectorQuery,
     SemanticErrorHandling,
     QueryDebugMode,
     SuggestRequest,
@@ -165,7 +165,7 @@ class SearchClient(HeadersMixin):
         top: Optional[int] = None,
         scoring_statistics: Optional[Union[str, ScoringStatistics]] = None,
         session_id: Optional[str] = None,
-        vectors: Optional[List[Vector]] = None,
+        vector_queries: Optional[List[VectorQuery]] = None,
         semantic_error_handling: Optional[Union[str, SemanticErrorHandling]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
         debug: Optional[Union[str, QueryDebugMode]] = None,
@@ -276,8 +276,8 @@ class SearchClient(HeadersMixin):
         :keyword debug: Enables a debugging tool that can be used to further explore your Semantic search
          results. Known values are: "disabled", "speller", "semantic", and "all".
         :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
-        :keyword vectors: The query parameters for multi-vector search queries.
-        :paramtype vectors: list[Vector]
+        :keyword vector_queries: The query parameters for vector and hybrid search queries.
+        :paramtype vector_queries: list[VectorQuery]
         :rtype:  SearchItemPaged[Dict]
 
         .. admonition:: Example:
@@ -348,7 +348,7 @@ class SearchClient(HeadersMixin):
             top=top,
             session_id=session_id,
             scoring_statistics=scoring_statistics,
-            vectors=vectors,
+            vector_queries=vector_queries,
             semantic_error_handling=semantic_error_handling,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
             debug=debug,
