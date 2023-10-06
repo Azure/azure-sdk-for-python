@@ -67,7 +67,6 @@ class UsernamePasswordBrokerCredential(_UsernamePasswordCredential):
         # validate the given password. This class therefore doesn't document the authentication_record argument, and we
         # discard it here.
         self._allow_broker = kwargs.pop("allow_broker", None)
-        kwargs.pop("authentication_record", None)
         super(UsernamePasswordBrokerCredential, self).__init__(
             client_id=client_id, username=username, password=password, **kwargs
         )
