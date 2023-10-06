@@ -23,8 +23,8 @@ def test_username_password_cred_with_broker():
 
 
 def test_username_password_cred_without_broker():
-    cred = UsernamePasswordCredential()
+    cred = UsernamePasswordCredential("client-id", "username", "password")
     assert not cred._allow_broker
 
-    cred = UsernamePasswordCredential(allow_broker=False)
+    cred = UsernamePasswordCredential("client-id", "username", "password", allow_broker=False)
     assert not cred._allow_broker
