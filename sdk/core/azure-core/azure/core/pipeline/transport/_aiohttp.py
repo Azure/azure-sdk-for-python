@@ -122,9 +122,10 @@ class AioHttpTransport(AsyncHttpTransport):
             if self._loop is not None:
                 clientsession_kwargs["loop"] = self._loop
             self.session = aiohttp.ClientSession(**clientsession_kwargs)
-        # pyright has trouble to understand that self.session is not None, since we raised at worst in the init
-        self.session = cast(aiohttp.ClientSession, self.session)
-        await self.session.__aenter__()
+        if self.session is not None:
+            # pyright has trouble to understand that self.session is not None, since we raised at worst in the init
+            self.session = cast(aiohttp.ClientSession, self.session)
+            await self.session.__aenter__()
 
     async def close(self):
         """Closes the connection."""
