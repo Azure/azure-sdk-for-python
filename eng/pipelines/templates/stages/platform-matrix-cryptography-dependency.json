@@ -16,7 +16,18 @@
         "Ubuntu2004_312": {
           "OSVmImage": "MMSUbuntu20.04",
           "Pool": "azsdk-pool-mms-ubuntu-2004-general",
-          "PythonVersion": ["3.11", "3.12.0"],
+          "PythonVersion": "3.12.0",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false"
+        }
+      }
+    },
+    {
+      "Config": {
+        "Ubuntu2004_311": {
+          "OSVmImage": "MMSUbuntu20.04",
+          "Pool": "azsdk-pool-mms-ubuntu-2004-general",
+          "PythonVersion": "3.11",
           "CoverageArg": "--disablecov",
           "TestSamples": "false"
         }
