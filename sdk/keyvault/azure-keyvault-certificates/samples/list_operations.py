@@ -3,7 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-from azure.keyvault.certificates import CertificateClient, CertificatePolicy
+
+from azure.keyvault.certificates import CertificateClient, CertificatePolicy, KeyVaultCertificate
 from azure.identity import DefaultAzureCredential
 
 # ----------------------------------------------------------------------------------------------------------
@@ -70,6 +71,7 @@ bank_certificate_poller = client.begin_create_certificate(
     certificate_name=bank_cert_name, policy=CertificatePolicy.get_default(), tags=tags
 )
 bank_certificate = bank_certificate_poller.result()
+assert isinstance(bank_certificate, KeyVaultCertificate) and bank_certificate.properties
 print(
     f"Certificate with name '{bank_certificate.name}' was created again with tags '{bank_certificate.properties.tags}'"
 )

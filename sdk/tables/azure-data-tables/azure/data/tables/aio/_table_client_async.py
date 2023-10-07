@@ -25,7 +25,7 @@ from .._serialize import (
     _parameter_filter_substitution,
     _prepare_key,
     _add_entity_properties,
-    _get_match_headers,
+    _get_match_condition,
 )
 from .._deserialize import deserialize_iso, _return_headers_and_deserialized, _convert_to_entity, _trim_service_metadata
 from .._error import (
@@ -321,9 +321,8 @@ class TableClient(AsyncTablesBaseClient):
                 etag = entity.metadata.get("etag", None)
             except (AttributeError, TypeError):
                 pass
-        if_match = _get_match_headers(
-            etag=etag,
-            match_condition=match_condition or MatchConditions.Unconditionally,
+        match_condition = _get_match_condition(
+            etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
 
         try:
@@ -331,7 +330,8 @@ class TableClient(AsyncTablesBaseClient):
                 table=self.table_name,
                 partition_key=_prepare_key(partition_key),
                 row_key=_prepare_key(row_key),
-                if_match=if_match,
+                etag=etag,
+                match_condition=match_condition,
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -413,40 +413,35 @@ class TableClient(AsyncTablesBaseClient):
                 etag = entity.metadata.get("etag", None)  # type: ignore[union-attr]
             except (AttributeError, TypeError):
                 pass
-        if_match = _get_match_headers(
-            etag=etag,
-            match_condition=match_condition or MatchConditions.Unconditionally,
+        match_condition = _get_match_condition(
+            etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
-
         partition_key = entity["PartitionKey"]
         row_key = entity["RowKey"]
-        entity_json = _add_entity_properties(entity)
+        entity_copy = _add_entity_properties(entity)
+
         try:
             if mode == UpdateMode.REPLACE:
-                metadata, content = cast(
-                    Tuple[Dict[str, str], Optional[Dict[str, Any]]],
-                    await self._client.table.update_entity(
-                        table=self.table_name,
-                        partition_key=_prepare_key(partition_key),
-                        row_key=_prepare_key(row_key),
-                        table_entity_properties=entity_json,
-                        if_match=if_match,
-                        cls=kwargs.pop("cls", _return_headers_and_deserialized),
-                        **kwargs,
-                    ),
+                metadata, content = await self._client.table.update_entity(  # type: ignore
+                    table=self.table_name,
+                    partition_key=_prepare_key(partition_key),
+                    row_key=_prepare_key(row_key),
+                    table_entity_properties=entity_copy,  # type: ignore
+                    etag=etag,
+                    match_condition=match_condition,
+                    cls=kwargs.pop("cls", _return_headers_and_deserialized),
+                    **kwargs,
                 )
             elif mode == UpdateMode.MERGE:
-                metadata, content = cast(
-                    Tuple[Dict[str, str], Optional[Dict[str, Any]]],
-                    await self._client.table.merge_entity(
-                        table=self.table_name,
-                        partition_key=_prepare_key(partition_key),
-                        row_key=_prepare_key(row_key),
-                        if_match=if_match,
-                        cls=kwargs.pop("cls", _return_headers_and_deserialized),
-                        table_entity_properties=entity_json,
-                        **kwargs,
-                    ),
+                metadata, content = await self._client.table.merge_entity(  # type: ignore
+                    table=self.table_name,
+                    partition_key=_prepare_key(partition_key),
+                    row_key=_prepare_key(row_key),
+                    etag=etag,
+                    match_condition=match_condition,
+                    cls=kwargs.pop("cls", _return_headers_and_deserialized),
+                    table_entity_properties=entity_copy,  # type: ignore
+                    **kwargs,
                 )
             else:
                 raise ValueError(f"Mode type '{mode}' is not supported.")

@@ -9,7 +9,8 @@ from marshmallow import ValidationError
 from pytest_mock import MockFixture
 from test_utilities.utils import omit_with_wildcard, verify_entity_load_and_dump
 
-from azure.ai.ml import MLClient, dsl, load_component, load_job
+from azure.ai.ml import Input, MLClient, dsl, load_component, load_job
+from azure.ai.ml.dsl import pipeline
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase as RestJob
 from azure.ai.ml._schema.automl import AutoMLRegressionSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
@@ -2101,6 +2102,25 @@ class TestPipelineJobEntity:
         # similar to sweep job, automl job job_tier value is also lowercase.
         rest_obj = pipeline_job._to_rest_object()
         assert rest_obj.properties.jobs["text_ner_node"]["queue_settings"] == {"job_tier": "spot"}
+
+    def test_pipeline_with_duplicate_output(self) -> None:
+        component_path = "./tests/test_configs/components/helloworld_component.yml"
+        comp_func = load_component(source=component_path)
+
+        @pipeline(default_compute="cpu-cluster")
+        def pipeline_with_duplicate_output(dataset: Input, str_param: str):
+            component = comp_func(
+                component_in_number=str_param,
+                component_in_path=dataset,
+            )
+            return {
+                "output1": component.outputs.component_out_path,
+                "output2": component.outputs.component_out_path,
+            }
+
+        pipeline_job = pipeline_with_duplicate_output(str_param=1, dataset=Input(path=component_path))
+        assert "output1" in pipeline_job.outputs
+        assert "output2" in pipeline_job.outputs
 
     def test_get_predecessors_for_pipeline_job(self) -> None:
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_component_output.yml"

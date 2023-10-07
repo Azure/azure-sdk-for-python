@@ -27,7 +27,8 @@ from .._models import (
     RemoveParticipantResult,
     TransferCallResult,
     MuteParticipantsResult,
-    CallInvite
+    CallInvite,
+    CancelAddParticipantResult
 )
 from .._generated.aio import AzureCommunicationCallAutomationService
 from .._generated.models import (
@@ -44,8 +45,9 @@ from .._generated.models import (
     PlayOptions,
     RecognizeOptions,
     MuteParticipantsRequest,
+    CancelAddParticipantRequest,
+    StopHoldMusicRequest,
     StartHoldMusicRequest,
-    StopHoldMusicRequest
 )
 from .._generated.models._enums import RecognizeInputType
 from .._shared.auth_policy_utils import get_authentication_policy
@@ -337,7 +339,7 @@ class CallConnectionClient:
             source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
             source_display_name=source_display_name,
             custom_context=user_custom_context,
-            invitation_timeout=invitation_timeout,
+            invitation_timeout_in_seconds=invitation_timeout,
             operation_context=operation_context,
             callback_uri=callback_url
         )
@@ -715,6 +717,40 @@ class CallConnectionClient:
             **kwargs
         )
         return MuteParticipantsResult._from_generated(response)  # pylint:disable=protected-access
+
+    @distributed_trace_async
+    async def cancel_add_participant(
+        self,
+        invitation_id: str,
+        *,
+        operation_context: Optional[str] = None,
+        callback_url: Optional[str] = None,
+        **kwargs
+    ) -> CancelAddParticipantResult:
+        """Cancel add participant request.
+
+        :param  invitation_id: The invitation ID used to add participant.
+        :type invitation_id: str
+        :keyword operation_context: Value that can be used to track the call and its associated events.
+        :paramtype operation_context: str
+        :keyword callback_url: Url that overrides original callback URI for this request.
+        :paramtype callback_url: str
+        :return: CancelAddParticipantResult
+        :rtype: ~azure.communication.callautomation.CancelAddParticipantResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        cancel_add_participant_request = CancelAddParticipantRequest(
+            invitation_id=invitation_id,
+            operation_context=operation_context,
+            callback_uri=callback_url
+        )
+        process_repeatability_first_sent(kwargs)
+        response = await self._call_connection_client.cancel_add_participant(
+            self._call_connection_id,
+            cancel_add_participant_request,
+            **kwargs
+        )
+        return CancelAddParticipantResult._from_generated(response)  # pylint:disable=protected-access
 
     @distributed_trace_async
     async def start_hold_music(

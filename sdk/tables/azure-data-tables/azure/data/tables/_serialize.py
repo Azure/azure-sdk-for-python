@@ -17,15 +17,15 @@ from ._common_conversion import _encode_base64, _to_utc_datetime
 from ._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED
 
 
-def _get_match_headers(etag, match_condition):
+def _get_match_condition(etag, match_condition):
     if match_condition == MatchConditions.IfNotModified:
         if not etag:
             raise ValueError("IfNotModified must be specified with etag.")
-        return etag
+        return match_condition
     if match_condition == MatchConditions.Unconditionally:
         if etag:
             raise ValueError("Etag is not supported for an Unconditional operation.")
-        return "*"
+        return MatchConditions.IfPresent
     raise ValueError(f"Unsupported match condition: {match_condition}")
 
 
