@@ -71,7 +71,7 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
     :ivar operating_system: Operating system for the artifact.
         Note: any value not listed in enum ArtifactOperatingSystem will be string type.
     :vartype operating_system: Optional[Union[str, ~azure.containerregistry.ArtifactOperatingSystem]]
-    :ivar Optional[str] repository_name: Repository name the artifact belongs to.
+    :ivar str repository_name: Repository name the artifact belongs to.
     :ivar Optional[int] size_in_bytes: Size of the artifact.
     :ivar Optional[List[str]] tags: Tags associated with a registry artifact.
     :ivar str fully_qualified_reference: The fully qualified name of this artifact.
@@ -123,8 +123,8 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
             can_read=None if generated.changeable_attributes is None else generated.changeable_attributes.can_read,
             can_write=None if generated.changeable_attributes is None else generated.changeable_attributes.can_write,
             can_list=None if generated.changeable_attributes is None else generated.changeable_attributes.can_list,
-            repository_name=kwargs.get("repository_name", None),
-            registry=kwargs.get("registry", None),
+            repository_name=kwargs.get("repository_name"),
+            registry=kwargs.get("registry"),
         )
 
     def _to_generated(self) -> ManifestWriteableProperties:
@@ -176,10 +176,10 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
         return self._operating_system
 
     @property
-    def repository_name(self) -> Optional[str]:
+    def repository_name(self) -> str:
         """Repository name the artifact belongs to.
 
-        :rtype: str or None
+        :rtype: str
         """
         return self._repository_name
 
