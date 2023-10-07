@@ -4,7 +4,6 @@
 # ------------------------------------
 import socket
 from typing import Dict, Any
-from urllib.parse import urlparse
 import msal
 
 from azure.core.exceptions import ClientAuthenticationError
