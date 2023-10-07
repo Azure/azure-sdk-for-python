@@ -9,7 +9,7 @@ import msal
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import InteractiveBrowserCredential as _InteractiveBrowserCredential, CredentialUnavailableError
-from azure.identity._internal.utils import within_dac
+from azure.identity._internal.utils import within_dac  # pylint:disable=protected-access
 from ._utils import wrap_exceptions, resolve_tenant
 
 DEVELOPER_SIGN_ON_CLIENT_ID = "04b07795-8ddb-461a-bbee-02f9e1bf7b46"
