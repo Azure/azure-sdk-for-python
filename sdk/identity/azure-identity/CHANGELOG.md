@@ -8,6 +8,10 @@
 
 ### Breaking Changes
 
+> These changes do not impact the API of stable versions such as 1.14.0.
+> Only code written against a beta version such as 1.15.0b1 may be affected.
+- Windows Web Account Manager (WAM) Brokered Authentication is moved into another package.
+
 ### Bugs Fixed
 
 - `ManagedIdentityCredential` will now correctly retry when the instance metadata endpoint returns a 410 response.  ([#32200](https://github.com/Azure/azure-sdk-for-python/pull/32200))
