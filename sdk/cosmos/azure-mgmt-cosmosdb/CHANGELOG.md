@@ -38,7 +38,7 @@
   - Model BackupResource no longer has parameter properties
   - Model BackupResource no longer has parameter type
 
-## 9.3.0 (2023-10-23)
+## 9.3.0 (2023-09-28)
 
 ### Features Added
 
