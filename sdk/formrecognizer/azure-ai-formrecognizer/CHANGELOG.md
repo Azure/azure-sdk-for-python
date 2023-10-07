@@ -3,6 +3,7 @@
 ## 3.3.1 (Unreleased)
 
 ### Features Added
+- Exposed `send_request()` method in each client to send custom requests using the client's existing pipeline. ([#32151](https://github.com/Azure/azure-sdk-for-python/issues/32151))
 
 ### Breaking Changes
 
