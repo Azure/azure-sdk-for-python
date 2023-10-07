@@ -2,9 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Dict
-from azure.identity._credentials import UsernamePasswordCredential as _UsernamePasswordCredential
-from ._utils import wrap_exceptions
+from typing import Any
+import msal
+from azure.identity import UsernamePasswordCredential as _UsernamePasswordCredential
+from ._utils import resolve_tenant
 
 
 class UsernamePasswordBrokerCredential(_UsernamePasswordCredential):
@@ -50,15 +51,6 @@ class UsernamePasswordBrokerCredential(_UsernamePasswordCredential):
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/credential_creation_code_snippets.py
-            :start-after: [START create_username_password_credential]
-            :end-before: [END create_username_password_credential]
-            :language: python
-            :dedent: 4
-            :caption: Create a UsernamePasswordCredential.
     """
 
     def __init__(self, client_id: str, username: str, password: str, **kwargs: Any) -> None:
@@ -71,12 +63,42 @@ class UsernamePasswordBrokerCredential(_UsernamePasswordCredential):
             client_id=client_id, username=username, password=password, **kwargs
         )
 
-    @wrap_exceptions
-    def _request_token(self, *scopes: str, **kwargs: Any) -> Dict:
-        app = self._get_app(**kwargs)
-        return app.acquire_token_by_username_password(
-            username=self._username,
-            password=self._password,
-            scopes=list(scopes),
-            claims_challenge=kwargs.get("claims"),
+    def _get_app(self, **kwargs: Any) -> msal.ClientApplication:
+        tenant_id = resolve_tenant(
+            self._tenant_id,
+            additionally_allowed_tenants=self._additionally_allowed_tenants,
+            **kwargs
         )
+
+        client_applications_map = self._client_applications
+        capabilities = None
+        token_cache = self._cache
+
+        app_class = (
+            msal.ConfidentialClientApplication
+            if self._client_credential
+            else msal.PublicClientApplication
+        )
+
+        if kwargs.get("enable_cae"):
+            client_applications_map = self._cae_client_applications
+            capabilities = ["CP1"]
+            token_cache = self._cae_cache
+
+        if not token_cache:
+            token_cache = self._initialize_cache(is_cae=bool(kwargs.get("enable_cae")))
+
+        if tenant_id not in client_applications_map:
+            client_applications_map[tenant_id] = app_class(
+                client_id=self._client_id,
+                client_credential=self._client_credential,
+                client_capabilities=capabilities,
+                authority="{}/{}".format(self._authority, tenant_id),
+                azure_region=self._regional_authority,
+                token_cache=token_cache,
+                http_client=self._client,
+                instance_discovery=self._instance_discovery,
+                allow_broker=self._allow_broker,
+            )
+
+        return client_applications_map[tenant_id]

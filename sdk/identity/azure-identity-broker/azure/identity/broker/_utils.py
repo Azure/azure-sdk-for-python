@@ -10,38 +10,6 @@ from contextvars import ContextVar
 from azure.core.exceptions import ClientAuthenticationError
 
 
-class EnvironmentVariables:
-    AZURE_CLIENT_ID = "AZURE_CLIENT_ID"
-    AZURE_CLIENT_SECRET = "AZURE_CLIENT_SECRET"
-    AZURE_TENANT_ID = "AZURE_TENANT_ID"
-    CLIENT_SECRET_VARS = (AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_TENANT_ID)
-
-    AZURE_CLIENT_CERTIFICATE_PATH = "AZURE_CLIENT_CERTIFICATE_PATH"
-    AZURE_CLIENT_CERTIFICATE_PASSWORD = "AZURE_CLIENT_CERTIFICATE_PASSWORD"
-    CERT_VARS = (AZURE_CLIENT_ID, AZURE_CLIENT_CERTIFICATE_PATH, AZURE_TENANT_ID)
-
-    AZURE_USERNAME = "AZURE_USERNAME"
-    AZURE_PASSWORD = "AZURE_PASSWORD"
-    USERNAME_PASSWORD_VARS = (AZURE_CLIENT_ID, AZURE_USERNAME, AZURE_PASSWORD)
-
-    AZURE_POD_IDENTITY_AUTHORITY_HOST = "AZURE_POD_IDENTITY_AUTHORITY_HOST"
-    IDENTITY_ENDPOINT = "IDENTITY_ENDPOINT"
-    IDENTITY_HEADER = "IDENTITY_HEADER"
-    IDENTITY_SERVER_THUMBPRINT = "IDENTITY_SERVER_THUMBPRINT"
-    IMDS_ENDPOINT = "IMDS_ENDPOINT"
-    MSI_ENDPOINT = "MSI_ENDPOINT"
-    MSI_SECRET = "MSI_SECRET"
-
-    AZURE_AUTHORITY_HOST = "AZURE_AUTHORITY_HOST"
-    AZURE_IDENTITY_DISABLE_MULTITENANTAUTH = "AZURE_IDENTITY_DISABLE_MULTITENANTAUTH"
-    AZURE_REGIONAL_AUTHORITY_NAME = "AZURE_REGIONAL_AUTHORITY_NAME"
-
-    AZURE_FEDERATED_TOKEN_FILE = "AZURE_FEDERATED_TOKEN_FILE"
-    WORKLOAD_IDENTITY_VARS = (AZURE_AUTHORITY_HOST, AZURE_TENANT_ID, AZURE_FEDERATED_TOKEN_FILE)
-
-
-within_dac = ContextVar("within_dac", default=False)
-
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -81,7 +49,7 @@ def resolve_tenant(
     """
     if tenant_id is None or tenant_id == default_tenant:
         return default_tenant
-    if default_tenant == "adfs" or os.environ.get(EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH):
+    if default_tenant == "adfs" or os.environ.get("AZURE_IDENTITY_DISABLE_MULTITENANTAUTH"):
         _LOGGER.info(
             "A token was request for a different tenant than was configured on the credential, "
             "but the configured value was used since multi tenant authentication has been disabled. "

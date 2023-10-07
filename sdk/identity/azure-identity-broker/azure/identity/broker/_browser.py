@@ -8,9 +8,9 @@ from urllib.parse import urlparse
 import msal
 
 from azure.core.exceptions import ClientAuthenticationError
-from azure.identity._credentials import InteractiveBrowserCredential as _InteractiveBrowserCredential
-from azure.identity._exceptions import CredentialUnavailableError
-from ._utils import wrap_exceptions, resolve_tenant, within_dac
+from azure.identity import InteractiveBrowserCredential as _InteractiveBrowserCredential, CredentialUnavailableError
+from azure.identity._internal.utils import within_dac
+from ._utils import wrap_exceptions, resolve_tenant
 
 DEVELOPER_SIGN_ON_CLIENT_ID = "04b07795-8ddb-461a-bbee-02f9e1bf7b46"
 
@@ -60,15 +60,6 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
         authority is disabled. As a result, it is crucial to ensure that the configured authority host is valid and
         trustworthy.
     :raises ValueError: invalid **redirect_uri**
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/credential_creation_code_snippets.py
-            :start-after: [START create_interactive_browser_credential]
-            :end-before: [END create_interactive_browser_credential]
-            :language: python
-            :dedent: 4
-            :caption: Create an InteractiveBrowserCredential.
     """
 
     def __init__(self, **kwargs: Any) -> None:
