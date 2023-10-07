@@ -47,9 +47,7 @@ MINIMUM_VERSION_GENERIC_OVERRIDES = {
     "msal": "1.23.0",
 }
 
-MAXIMUM_VERSION_GENERIC_OVERRIDES = {
-    "typing-extensions": "4.6.3",
-}
+MAXIMUM_VERSION_GENERIC_OVERRIDES = {}
 
 # SPECIFIC OVERRIDES provide additional filtering of upper and lower bound by 
 # binding an override to the specific package being processed. As an example, when
@@ -59,6 +57,7 @@ MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
     "azure-eventhub": {"azure-core": "1.25.0"},
     "azure-eventhub-checkpointstoreblob-aio": {"azure-core": "1.25.0", "azure-eventhub": "5.11.0"},
     "azure-eventhub-checkpointstoreblob": {"azure-core": "1.25.0", "azure-eventhub": "5.11.0"},
+    "azure-eventhub-checkpointstoretable": {"azure-core": "1.25.0", "azure-eventhub": "5.11.0"},
     "azure-identity": {"msal": "1.23.0"},
 }
 
