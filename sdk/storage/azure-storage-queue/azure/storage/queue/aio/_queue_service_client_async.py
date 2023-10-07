@@ -25,8 +25,8 @@ from .._generated.models import StorageServiceProperties
 from .._models import QueueProperties, service_properties_deserialize, service_stats_deserialize
 from .._queue_service_client_helpers import _parse_url
 from .._serialize import get_api_version
-from .._shared.base_client import parse_connection_str, StorageAccountHostsMixin
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
+from .._shared.base_client import StorageAccountHostsMixin
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.models import LocationMode
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import process_storage_error
@@ -139,7 +139,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
                 :dedent: 8
                 :caption: Creating the QueueServiceClient with a connection string.
         """
-        account_url, secondary, credential = parse_connection_str(  #type: ignore
+        account_url, secondary, credential = parse_connection_str(
             conn_str, credential, 'queue')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary

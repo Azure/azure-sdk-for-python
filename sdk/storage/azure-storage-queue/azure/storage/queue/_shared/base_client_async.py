@@ -25,7 +25,7 @@ from azure.core.pipeline.transport import AsyncHttpTransport
 
 from .authentication import SharedKeyCredentialPolicy
 from .base_client import create_configuration
-from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, STORAGE_OAUTH_SCOPE
+from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, SERVICE_HOST_BASE, STORAGE_OAUTH_SCOPE
 from .models import StorageConfiguration
 from .policies import (
     QueueMessagePolicy,
@@ -43,6 +43,13 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 _LOGGER = logging.getLogger(__name__)
+
+_SERVICE_PARAMS = {
+    "blob": {"primary": "BLOBENDPOINT", "secondary": "BLOBSECONDARYENDPOINT"},
+    "queue": {"primary": "QUEUEENDPOINT", "secondary": "QUEUESECONDARYENDPOINT"},
+    "file": {"primary": "FILEENDPOINT", "secondary": "FILESECONDARYENDPOINT"},
+    "dfs": {"primary": "BLOBENDPOINT", "secondary": "BLOBENDPOINT"},
+}
 
 
 class AsyncStorageAccountHostsMixin(object):
@@ -199,6 +206,57 @@ class AsyncStorageAccountHostsMixin(object):
             return parts
         except HttpResponseError as error:
             process_storage_error(error)
+
+def parse_connection_str(
+    conn_str: str,
+    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential"]], # pylint: disable=line-too-long
+    service: str
+) -> Tuple[Optional[str], Optional[str], Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential"]]]: # pylint: disable=line-too-long
+    conn_str = conn_str.rstrip(";")
+    conn_settings_list = [s.split("=", 1) for s in conn_str.split(";")]
+    if any(len(tup) != 2 for tup in conn_settings_list):
+        raise ValueError("Connection string is either blank or malformed.")
+    conn_settings = dict((key.upper(), val) for key, val in conn_settings_list)
+    endpoints = _SERVICE_PARAMS[service]
+    primary = None
+    secondary = None
+    if not credential:
+        try:
+            credential = {"account_name": conn_settings["ACCOUNTNAME"], "account_key": conn_settings["ACCOUNTKEY"]}
+        except KeyError:
+            credential = conn_settings.get("SHAREDACCESSSIGNATURE")
+    if endpoints["primary"] in conn_settings:
+        primary = conn_settings[endpoints["primary"]]
+        if endpoints["secondary"] in conn_settings:
+            secondary = conn_settings[endpoints["secondary"]]
+    else:
+        if endpoints["secondary"] in conn_settings:
+            raise ValueError("Connection string specifies only secondary endpoint.")
+        try:
+            primary =(
+                f"{conn_settings['DEFAULTENDPOINTSPROTOCOL']}://"
+                f"{conn_settings['ACCOUNTNAME']}.{service}.{conn_settings['ENDPOINTSUFFIX']}"
+            )
+            secondary = (
+                f"{conn_settings['ACCOUNTNAME']}-secondary."
+                f"{service}.{conn_settings['ENDPOINTSUFFIX']}"
+            )
+        except KeyError:
+            pass
+
+    if not primary:
+        try:
+            primary = (
+                f"https://{conn_settings['ACCOUNTNAME']}."
+                f"{service}.{conn_settings.get('ENDPOINTSUFFIX', SERVICE_HOST_BASE)}"
+            )
+        except KeyError as exc:
+            raise ValueError("Connection string missing required connection details.") from exc
+    if service == "dfs":
+        primary = primary.replace(".blob.", ".dfs.")
+        if secondary:
+            secondary = secondary.replace(".blob.", ".dfs.")
+    return primary, secondary, credential
 
 def is_credential_sastoken(credential: Any) -> bool:
     if not credential or not isinstance(credential, str):

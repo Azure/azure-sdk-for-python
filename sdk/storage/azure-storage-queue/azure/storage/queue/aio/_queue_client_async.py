@@ -26,8 +26,8 @@ from .._message_encoding import NoDecodePolicy, NoEncodePolicy
 from .._models import AccessPolicy, QueueMessage
 from .._queue_client_helpers import _format_url_helper, _from_queue_url_helper, _parse_url
 from .._serialize import get_api_version
-from .._shared.base_client import parse_connection_str, StorageAccountHostsMixin
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from .._shared.base_client import StorageAccountHostsMixin
+from .._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers, serialize_iso
 from .._shared.response_handlers import (
@@ -183,7 +183,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
                 :dedent: 8
                 :caption: Create the queue client from connection string.
         """
-        account_url, secondary, credential = parse_connection_str(  #type: ignore
+        account_url, secondary, credential = parse_connection_str(
             conn_str, credential, 'queue')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
