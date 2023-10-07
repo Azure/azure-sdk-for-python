@@ -1,5 +1,43 @@
 # Release History
 
+## 10.0.0b2 (2023-10-07)
+
+### Features Added
+
+  - Model BackupResource has a new parameter backup_expiry_timestamp
+  - Model BackupResource has a new parameter backup_id
+  - Model BackupResource has a new parameter backup_start_timestamp
+  - Model BackupResource has a new parameter backup_state
+  - Model BackupResource has a new parameter backup_stop_timestamp
+  - Model CassandraClusterDataCenterNodeItem has a new parameter is_latest_model
+  - Model ClusterResourceProperties has a new parameter backup_schedules
+  - Model ClusterResourceProperties has a new parameter cluster_type
+  - Model ClusterResourceProperties has a new parameter extensions
+  - Model CosmosCassandraDataTransferDataSourceSink has a new parameter remote_account_name
+  - Model CosmosMongoDataTransferDataSourceSink has a new parameter remote_account_name
+  - Model CosmosSqlDataTransferDataSourceSink has a new parameter remote_account_name
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter customer_managed_key_status
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter default_priority_level
+  - Model DatabaseAccountCreateUpdateParameters has a new parameter enable_priority_based_execution
+  - Model DatabaseAccountGetResults has a new parameter customer_managed_key_status
+  - Model DatabaseAccountGetResults has a new parameter default_priority_level
+  - Model DatabaseAccountGetResults has a new parameter enable_priority_based_execution
+  - Model DatabaseAccountUpdateParameters has a new parameter customer_managed_key_status
+  - Model DatabaseAccountUpdateParameters has a new parameter default_priority_level
+  - Model DatabaseAccountUpdateParameters has a new parameter enable_priority_based_execution
+  - Model ThroughputSettingsGetPropertiesResource has a new parameter instant_maximum_throughput
+  - Model ThroughputSettingsGetPropertiesResource has a new parameter soft_allowed_maximum_throughput
+  - Model ThroughputSettingsResource has a new parameter instant_maximum_throughput
+  - Model ThroughputSettingsResource has a new parameter soft_allowed_maximum_throughput
+  - Operation CassandraClustersOperations.begin_deallocate has a new optional parameter x_ms_force_deallocate
+
+### Breaking Changes
+
+  - Model BackupResource no longer has parameter id
+  - Model BackupResource no longer has parameter name
+  - Model BackupResource no longer has parameter properties
+  - Model BackupResource no longer has parameter type
+
 ## 9.3.0 (2023-10-23)
 
 ### Features Added
