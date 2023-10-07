@@ -4,7 +4,9 @@
 # ------------------------------------
 from typing import Any
 import msal
-from azure.identity import UsernamePasswordCredential as _UsernamePasswordCredential
+from azure.identity._credentials import (
+    UsernamePasswordCredential as _UsernamePasswordCredential,
+)  # pylint:disable=protected-access
 from ._utils import resolve_tenant
 
 
@@ -65,20 +67,14 @@ class UsernamePasswordBrokerCredential(_UsernamePasswordCredential):
 
     def _get_app(self, **kwargs: Any) -> msal.ClientApplication:
         tenant_id = resolve_tenant(
-            self._tenant_id,
-            additionally_allowed_tenants=self._additionally_allowed_tenants,
-            **kwargs
+            self._tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
         )
 
         client_applications_map = self._client_applications
         capabilities = None
         token_cache = self._cache
 
-        app_class = (
-            msal.ConfidentialClientApplication
-            if self._client_credential
-            else msal.PublicClientApplication
-        )
+        app_class = msal.ConfidentialClientApplication if self._client_credential else msal.PublicClientApplication
 
         if kwargs.get("enable_cae"):
             client_applications_map = self._cae_client_applications
