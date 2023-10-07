@@ -6,7 +6,6 @@ from typing import List, Optional
 import os
 import functools
 import logging
-from contextvars import ContextVar
 from azure.core.exceptions import ClientAuthenticationError
 
 
