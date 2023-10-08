@@ -1,5 +1,34 @@
 # Release History
 
+## 13.0.0 (2023-10-23)
+
+### Features Added
+
+  - Added operation AFDProfilesOperations.begin_upgrade
+  - Added operation AFDProfilesOperations.check_endpoint_name_availability
+  - Added operation AFDProfilesOperations.validate_secret
+  - Added operation ProfilesOperations.begin_can_migrate
+  - Added operation ProfilesOperations.begin_migrate
+  - Added operation ProfilesOperations.begin_migration_commit
+  - Model AFDDomain has a new parameter extended_properties
+  - Model AFDDomainProperties has a new parameter extended_properties
+  - Model AzureFirstPartyManagedCertificateParameters has a new parameter certificate_authority
+  - Model AzureFirstPartyManagedCertificateParameters has a new parameter expiration_date
+  - Model AzureFirstPartyManagedCertificateParameters has a new parameter secret_source
+  - Model AzureFirstPartyManagedCertificateParameters has a new parameter subject
+  - Model AzureFirstPartyManagedCertificateParameters has a new parameter subject_alternative_names
+  - Model AzureFirstPartyManagedCertificateParameters has a new parameter thumbprint
+  - Model CdnWebApplicationFirewallPolicy has a new parameter extended_properties
+  - Model Profile has a new parameter extended_properties
+  - Model Profile has a new parameter identity
+  - Model ProfileUpdateParameters has a new parameter identity
+
+### Breaking Changes
+
+  - Removed operation group ValidateOperations
+  - Renamed operation CustomDomainsOperations.disable_custom_https to CustomDomainsOperations.begin_disable_custom_https
+  - Renamed operation CustomDomainsOperations.enable_custom_https to CustomDomainsOperations.begin_enable_custom_https
+
 ## 12.1.0b1 (2022-10-21)
 
 ### Breaking Changes

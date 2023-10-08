@@ -14,9 +14,9 @@ from azure.mgmt.cdn import CdnManagementClient
     pip install azure-identity
     pip install azure-mgmt-cdn
 # USAGE
-    python get_policy.py
+    python waf_list_policies.py
 
-    Before run the sample, please set the values of the client ID, tenant ID and client secret 
+    Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
     AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
     https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
@@ -29,13 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.policies.get(
+    response = client.policies.list(
         resource_group_name="rg1",
-        policy_name="MicrosoftCdnWafPolicy",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/cdn/resource-manager/Microsoft.Cdn/stable/2021-06-01/examples/WafPolicyGet.json
+# x-ms-original-file: specification/cdn/resource-manager/Microsoft.Cdn/stable/2023-05-01/examples/WafListPolicies.json
 if __name__ == "__main__":
     main()

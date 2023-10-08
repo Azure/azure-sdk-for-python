@@ -14,9 +14,9 @@ from azure.mgmt.cdn import CdnManagementClient
     pip install azure-identity
     pip install azure-mgmt-cdn
 # USAGE
-    python validate_secret.py
+    python origin_groups_list_by_endpoint.py
 
-    Before run the sample, please set the values of the client ID, tenant ID and client secret 
+    Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
     AZURE_CLIENT_SECRET. For more info about how to get the value, please see:
     https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
@@ -29,17 +29,15 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.validate.secret(
-        validate_secret_input={
-            "secretSource": {
-                "id": "/subscriptions/subid/resourcegroups/RG/providers/Microsoft.KeyVault/vault/kvName/certificate/certName"
-            },
-            "secretType": "CustomerCertificate",
-        },
+    response = client.origin_groups.list_by_endpoint(
+        resource_group_name="RG",
+        profile_name="profile1",
+        endpoint_name="endpoint1",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/cdn/resource-manager/Microsoft.Cdn/stable/2021-06-01/examples/Validate_Secret.json
+# x-ms-original-file: specification/cdn/resource-manager/Microsoft.Cdn/stable/2023-05-01/examples/OriginGroups_ListByEndpoint.json
 if __name__ == "__main__":
     main()
