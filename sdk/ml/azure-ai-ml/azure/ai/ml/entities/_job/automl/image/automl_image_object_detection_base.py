@@ -8,11 +8,11 @@ from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     LearningRateScheduler,
+    LogTrainingMetrics,
+    LogValidationLoss,
     ModelSize,
     StochasticOptimizer,
     ValidationMetricType,
-    LogTrainingMetrics,
-    LogValidationLoss,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._job.automl import SearchSpace
@@ -39,6 +39,7 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         super().__init__(task_type=task_type, limits=limits, sweep=sweep, **kwargs)
 
         self.training_parameters = training_parameters  # Assigning training_parameters through setter method.
+        self._training_parameters: Optional[ImageModelSettingsObjectDetection] = None
         self._search_space = search_space
 
     @property

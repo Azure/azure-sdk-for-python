@@ -31,6 +31,7 @@ class AutoMLImageClassificationBase(AutoMLImage):
     ) -> None:
         super().__init__(task_type=task_type, limits=limits, sweep=sweep, **kwargs)
         self.training_parameters = training_parameters  # Assigning training_parameters through setter method.
+        self._training_parameters: Optional[ImageModelSettingsClassification] = None
         self._search_space = search_space
 
     @property
