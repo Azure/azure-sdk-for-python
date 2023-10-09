@@ -12,7 +12,8 @@ import shutil
 import logging
 import threading
 import six
-import vcr
+# We don't vcrpy anymore, if this code is loaded, fail
+# import vcr
 
 from .config import TestConfig
 from .const import ENV_TEST_DIAGNOSE
@@ -78,7 +79,7 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
         "x-ms-ratelimit-remaining-subscription-reads",
         "x-ms-request-id",
         "x-ms-routing-request-id",
-        "x-ms-gateway-service-instanceid",
+        "x-ms-gateway-service-instanceid",  # cspell:disable-line
         "x-ms-ratelimit-remaining-tenant-reads",
         "x-ms-served-by",
         "x-ms-authorization-auxiliary",

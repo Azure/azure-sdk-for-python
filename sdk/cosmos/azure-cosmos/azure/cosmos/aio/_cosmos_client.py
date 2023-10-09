@@ -292,6 +292,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :returns: A DatabaseProxy instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
         """
+        offer_throughput = kwargs.pop("offerThroughput", None)
         try:
             database_proxy = self.get_database_client(id)
             await database_proxy.read(**kwargs)
@@ -299,6 +300,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         except CosmosResourceNotFoundError:
             return await self.create_database(
                 id,
+                offer_throughput=offer_throughput,
                 **kwargs
             )
 

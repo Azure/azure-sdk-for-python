@@ -1,6 +1,6 @@
 # Release History
 
-## 1.3.0b2 (Unreleased)
+## 1.3.0b3 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,16 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.3.0b2 (2023-08-09)
+
+### Features Added
+
+The following features are experimental and may be removed:
+
+- Sync and async `JsonSchemaEncoder` have been added under `azure.schemaregistry.encoder.jsonencoder`.
+- `InvalidContentError` and `JsonSchemaDraftIdentifier` have been added under `azure.schemaregistry.encoder.jsonencoder` for use with the `JsonSchemaEncoder`.
+- `MessageType`, `MessageContent`, `SchemaContentValidate`, `SchemaEncoder` have been added under `azure.schemaregistry` as protocols to define/for use with the `JsonSchemaEncoder` and future encoder implementations.
 
 ## 1.3.0b1 (2023-01-12)
 

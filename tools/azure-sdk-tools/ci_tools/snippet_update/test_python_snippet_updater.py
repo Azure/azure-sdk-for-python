@@ -1,6 +1,6 @@
 import os
 import tempfile
-from python_snippet_updater import get_snippet, update_snippet, check_snippets, check_not_up_to_date
+from .python_snippet_updater import get_snippet, update_snippet, check_snippets, check_not_up_to_date
 
 def test_update_snippet():
     temp_sample = tempfile.NamedTemporaryFile(delete=False)

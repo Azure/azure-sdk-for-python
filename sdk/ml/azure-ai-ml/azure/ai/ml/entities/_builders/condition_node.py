@@ -52,7 +52,13 @@ class ConditionNode(ControlFlowNode):
 
     @classmethod
     def _create_instance_from_schema_dict(cls, loaded_data: Dict) -> "ConditionNode":
-        """Create a condition node instance from schema parsed dict."""
+        """Create a condition node instance from schema parsed dict.
+
+        :param loaded_data: The loaded data
+        :type loaded_data: Dict
+        :return: The ConditionNode node
+        :rtype: ConditionNode
+        """
         return cls(**loaded_data)
 
     @property
@@ -73,13 +79,10 @@ class ConditionNode(ControlFlowNode):
         """
         return self._false_block
 
-    def _to_dict(self) -> Dict:
-        return self._dump_for_validation()
-
     def _customized_validate(self) -> MutableValidationResult:
-        return self._validate_params(raise_error=False)
+        return self._validate_params()
 
-    def _validate_params(self, raise_error=True) -> MutableValidationResult:
+    def _validate_params(self) -> MutableValidationResult:
         # pylint disable=protected-access
         validation_result = self._create_empty_validation_result()
         if not isinstance(self.condition, (str, bool, InputOutputBase)):
@@ -94,11 +97,11 @@ class ConditionNode(ControlFlowNode):
         if isinstance(self.condition, InputOutputBase) and self.condition._meta is not None:
             # pylint: disable=protected-access
             output_definition = self.condition._meta
-            if output_definition is not None and not output_definition._is_control_or_primitive_type:
+            if output_definition is not None and not output_definition._is_primitive_type:
                 validation_result.append_error(
                     yaml_path="condition",
-                    message=f"'condition' of dsl.condition node must have 'is_control' field or is primitive type "
-                    f"with value 'True', got {output_definition._is_control_or_primitive_type}",
+                    message=f"'condition' of dsl.condition node must be primitive type "
+                    f"with value 'True', got {output_definition._is_primitive_type}",
                 )
 
         # check if condition is valid binding
@@ -140,4 +143,4 @@ class ConditionNode(ControlFlowNode):
                         message=f"'{name}' of dsl.condition has invalid binding expression: {block}, {error_tail}",
                     )
 
-        return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
+        return validation_result

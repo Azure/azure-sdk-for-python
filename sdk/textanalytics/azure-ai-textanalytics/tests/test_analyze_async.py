@@ -950,6 +950,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             assert isinstance(action_result[9], ExtractKeyPhrasesResult)
             assert action_result[9].id == doc_id
 
+    @pytest.mark.skip("https://msazure.visualstudio.com/Cognitive%20Services/_workitems/edit/24886131")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -1181,6 +1182,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         assert document_results[1][1].is_error
         assert document_results[1][2].is_error
 
+    @pytest.mark.skip("https://msazure.visualstudio.com/Cognitive%20Services/_workitems/edit/24886131")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async

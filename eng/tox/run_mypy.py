@@ -17,6 +17,8 @@ from ci_tools.environment_exclusions import (
     is_check_enabled, is_typing_ignored
 )
 from ci_tools.variables import in_ci
+from gh_tools.vnext_issue_creator import create_vnext_issue
+
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -74,21 +76,30 @@ if __name__ == "__main__":
             f"Package {package_name} opts-out of mypy check on samples."
         )
     else:
-        sample_code = [
-            *commands,
-            "--check-untyped-defs",
-            "--follow-imports=silent",
-            os.path.join(args.target_package, "samples")
-        ]
-        try:
+        # check if samples dir exists, if not, skip sample code check
+        if not os.path.exists(os.path.join(args.target_package, "samples")):
             logging.info(
-                f"Running mypy commands on sample code: {sample_code}"
+                f"Package {package_name} does not have a samples directory."
             )
-            check_call(sample_code)
-        except CalledProcessError as sample_err:
-            sample_code_error = sample_err
+        else:
+            sample_code = [
+                *commands,
+                "--check-untyped-defs",
+                "--follow-imports=silent",
+                os.path.join(args.target_package, "samples")
+            ]
+            try:
+                logging.info(
+                    f"Running mypy commands on sample code: {sample_code}"
+                )
+                check_call(sample_code)
+            except CalledProcessError as sample_err:
+                sample_code_error = sample_err
 
-    print("See https://aka.ms/python/typing-guide for information.\n\n")
+    if args.next and in_ci() and is_check_enabled(args.target_package, "mypy") and not is_typing_ignored(package_name):
+        if src_code_error or sample_code_error:
+            create_vnext_issue(package_name, "mypy")
+
     if src_code_error and sample_code_error:
         raise Exception(
             [

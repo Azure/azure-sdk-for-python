@@ -29,13 +29,12 @@ def main():
         subscription_id="{subscription-id}",
     )
 
-    response = client.storage_accounts.delete(
+    client.storage_accounts.delete(
         resource_group_name="res4228",
         account_name="sto2434",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2022-09-01/examples/StorageAccountDelete.json
+# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2023-01-01/examples/StorageAccountDelete.json
 if __name__ == "__main__":
     main()

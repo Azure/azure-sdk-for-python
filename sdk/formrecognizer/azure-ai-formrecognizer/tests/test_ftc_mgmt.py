@@ -34,6 +34,7 @@ class TestManagement(FormRecognizerTest):
         assert properties.custom_model_limit
         assert properties.custom_model_count
 
+    @pytest.mark.skip("Issue: https://github.com/Azure/azure-sdk-for-python/issues/31739")
     @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
@@ -72,6 +73,7 @@ class TestManagement(FormRecognizerTest):
         with pytest.raises(ResourceNotFoundError):
             client.get_custom_model(labeled_model_from_train.model_id)
 
+    @pytest.mark.skip("Issue: https://github.com/Azure/azure-sdk-for-python/issues/31739")
     @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})

@@ -1,0 +1,1908 @@
+============================= test session starts =============================
+platform win32 -- Python 3.8.10, pytest-7.4.0, pluggy-1.2.0
+rootdir: C:\Users\hoppe\work\sandbox\azure-sdk-for-python
+configfile: setup.cfg
+plugins: asyncio-0.21.1, cov-4.1.0
+asyncio: mode=strict
+collected 1 item
+
+tests\test_batch.py::TestBatch::test_batch_tasks 
+------------------------------- live log setup --------------------------------
+DEBUG    urllib3.connectionpool:connectionpool.py:1003 Starting new HTTPS connection (1): localhost:5001
+DEBUG    urllib3.util.retry:retry.py:594 Incremented Retry for (url='/Info/Available'): Retry(total=2, connect=None, read=None, redirect=None, status=None)
+WARNING  urllib3.connectionpool:connectionpool.py:812 Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x0000018B0586E130>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /Info/Available
+DEBUG    urllib3.connectionpool:connectionpool.py:1003 Starting new HTTPS connection (2): localhost:5001
+DEBUG    urllib3.util.retry:retry.py:594 Incremented Retry for (url='/Info/Available'): Retry(total=1, connect=None, read=None, redirect=None, status=None)
+WARNING  urllib3.connectionpool:connectionpool.py:812 Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x0000018B0585BF10>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /Info/Available
+DEBUG    urllib3.connectionpool:connectionpool.py:1003 Starting new HTTPS connection (3): localhost:5001
+DEBUG    urllib3.util.retry:retry.py:594 Incremented Retry for (url='/Info/Available'): Retry(total=0, connect=None, read=None, redirect=None, status=None)
+WARNING  urllib3.connectionpool:connectionpool.py:812 Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x0000018B0585BA00>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /Info/Available
+DEBUG    urllib3.connectionpool:connectionpool.py:1003 Starting new HTTPS connection (4): localhost:5001
+DEBUG    root:proxy_startup.py:144 HTTPSConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /Info/Available (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x0000018B0585BAC0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+INFO     root:proxy_startup.py:284 C:\Users\hoppe\work\sandbox\azure-sdk-for-python is calculated repo root
+INFO     root:proxy_startup.py:300 Downloading and starting standalone proxy executable...
+DEBUG    urllib3.connectionpool:connectionpool.py:1003 Starting new HTTPS connection (1): localhost:5001
+DEBUG    urllib3.connectionpool:connectionpool.py:456 https://localhost:5001 "GET /Info/Available HTTP/1.1" 200 40693
+DEBUG    urllib3.connectionpool:connectionpool.py:1003 Starting new HTTPS connection (1): localhost:5001
+DEBUG    urllib3.connectionpool:connectionpool.py:456 https://localhost:5001 "POST /Admin/AddSanitizer HTTP/1.1" 200 0
+DEBUG    urllib3.connectionpool:connectionpool.py:1003 Starting new HTTPS connection (1): localhost:5001
+DEBUG    urllib3.connectionpool:connectionpool.py:456 https://localhost:5001 "POST /Admin/SetMatcher HTTP/1.1" 200 0
+DEBUG    urllib3.connectionpool:connectionpool.py:1003 Starting new HTTPS connection (1): localhost:5001
+DEBUG    urllib3.connectionpool:connectionpool.py:456 https://localhost:5001 "POST /Admin/SetMatcher HTTP/1.1" 200 0
+-------------------------------- live log call --------------------------------
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:92 Entering preparer wrapper for ResourceGroupPreparer and test <test_batch.TestBatch object at 0x0000018B0587B2B0>
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:108 Child cache status for ResourceGroupPreparer: False
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:118 Aggregate cache key: ('ResourceGroupPreparer', 'resource_group', '')
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:55 Creating resource 71d31cdf for ResourceGroupPreparer
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:61 Successfully created resource 71d31cdf
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:92 Entering preparer wrapper for AccountPreparer and test <test_batch.TestBatch object at 0x0000018B0587B2B0>
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:108 Child cache status for AccountPreparer: False
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:118 Aggregate cache key: (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', ''))
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:55 Creating resource batch71d31cdf for AccountPreparer
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:61 Successfully created resource batch71d31cdf
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:92 Entering preparer wrapper for JobPreparer and test <test_batch.TestBatch object at 0x0000018B0587B2B0>
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:108 Child cache status for JobPreparer: False
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:118 Aggregate cache key: (('JobPreparer',), (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')))
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:55 Creating resource batch71d31cdf for JobPreparer
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:61 Successfully created resource batch71d31cdf
+DEBUG    asyncio:selector_events.py:59 Using selector: SelectSelector
+DEBUG    urllib3.connectionpool:connectionpool.py:1003 Starting new HTTPS connection (1): localhost:5001
+DEBUG    urllib3.connectionpool:connectionpool.py:456 https://localhost:5001 "POST /playback/start HTTP/1.1" 200 None
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '286'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 201
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900BE6B96D'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Location': 'REDACTED'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '7e39b4cc-a4a7-456c-bf9e-063ec98886bb'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task1_71d31cdf?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900BE6B96D'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '0989ba66-7855-4cbe-bd64-d65c99594cc1'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '541'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 201
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900C190CA2'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Location': 'REDACTED'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'c9701f3b-434f-4bab-ae1e-46ac70549c6e'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task2_71d31cdf?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900C190CA2'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'a5dad7bc-73ca-4516-bca5-068cf818ab2c'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '152'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 201
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900C467F6F'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Location': 'REDACTED'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '6e3bc4cf-64db-4d04-9e05-28e69e06e691'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task3_71d31cdf?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900C467F6F'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'd1a5c9c9-bf95-4be4-8278-f6cd2f3d61f5'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '128'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 201
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900C6FBBEB'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Location': 'REDACTED'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '7ad0731c-cb7f-4573-b74c-9f6f87d151d8'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task4_71d31cdf?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900C6FBBEB'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'cd271fc6-024a-43b6-96b1-e593dbd9b21f'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '202'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 201
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900C97DAA2'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Location': 'REDACTED'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '1e92902b-9435-4673-9ab3-5a13243e62de'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task5_71d31cdf?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900C97DAA2'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '45317dc5-bb1a-4850-94a4-77bb8db4423d'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '119'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 201
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900CBE67F5'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Location': 'REDACTED'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '827b0718-e852-4a23-ad42-365947e293bc'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task6_71d31cdf?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900CBE67F5'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '84563bc8-6df7-47ff-9229-0056597b7370'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '245'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '3af53490-c41e-4881-ad73-20203803ced5'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '39495762-f3e0-4a10-ba7a-b18397a5d880'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/taskcounts?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:04 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '9cf6afef-3c53-4b85-8d97-be5dbbb7c4ac'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task6_71d31cdf/terminate?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 204
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 09 Oct 2023 06:22:04 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900E7A9D48'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:04 GMT'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'af15f84e-402b-4fb2-a030-659feba76ebf'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task6_71d31cdf?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:04 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900E7A9D48'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:04 GMT'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'a6a7a639-2e37-43a7-ad6a-bf22a64fd162'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task6_71d31cdf/reactivate?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 204
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 09 Oct 2023 06:22:04 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900EA7E357'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:04 GMT'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '8fcd87d0-248c-42c8-94fe-b2ad74e41618'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task6_71d31cdf?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:04 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900EA7E357'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:04 GMT'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'ac117d11-4ff8-41f2-8ff5-02d851525ded'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task6_71d31cdf?api-version=REDACTED'
+Request method: 'PUT'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '41'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 09 Oct 2023 06:22:04 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900ED10EDD'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:05 GMT'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '6bcb8245-1b85-4c37-b86b-5e477c4c7556'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task6_71d31cdf/subtasksinfo?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:04 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'bc1381f3-519e-4552-984f-70a8b19b912d'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task6_71d31cdf?api-version=REDACTED'
+Request method: 'DELETE'
+Request headers:
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 09 Oct 2023 06:22:05 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'b34b5cfc-75cd-406d-ac47-8c0b85434e09'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '1177854'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 413
+Response headers:
+    'Content-Length': '413'
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:05 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'a0908731-3f02-46dc-9237-71f2f5b4452d'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+ERROR    azure.batch.aio._operations._patch:_patch.py:493 Failed to add task with ID mytask due to the body exceeding the maximum request size
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '1177854'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 413
+Response headers:
+    'Content-Length': '413'
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:07 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '5f859740-8aae-4ae7-b0bc-783620cec041'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+ERROR    azure.batch.aio._operations._patch:_patch.py:493 Failed to add task with ID mytask due to the body exceeding the maximum request size
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '1144611'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '1144611'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '1144611'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 413
+Response headers:
+    'Content-Length': '413'
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:11 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '82923529-e87d-4f4d-bdc6-3a46aa10e158'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.batch.aio._operations._patch:_patch.py:504 Amount of tasks per request reduced from 100 to 50 due to the request body being too large
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572311'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 413
+Response headers:
+    'Content-Length': '413'
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:10 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'ddef217e-25a3-4f77-b262-a0364e0c6c5c'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572311'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 413
+Response headers:
+    'Content-Length': '413'
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:10 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '1a8d1c46-67b6-4d17-baec-74c5cc627018'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572311'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:17 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '0861e092-3776-43dd-b02d-6832dc22a290'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572311'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:14 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'b7d23dff-e360-46c3-b642-03d68fbad0e6'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572311'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:12 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'aed9ecb6-1fb9-4ad8-b35e-3af1d2bce40f'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572311'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:12 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'e59790a0-db95-4709-b0cc-7e8d9f741bdd'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572311'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:13 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '0fd74279-491b-448c-b9ed-2d23394701dd'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572311'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:13 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '70e0bde7-df23-4b80-a0f6-f7f3b26e4b95'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572311'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:16 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '65b987e7-97d2-4c68-a7cf-a6bf5d6167bf'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572294'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:16 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'b1af4780-1f78-42e5-b162-d1364df8247f'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572261'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:15 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'ce705784-f408-4ebd-90c4-7979e0185871'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572268'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:18 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'c51ac334-ad78-40f7-9c7a-713ae6bbe941'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572311'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 404
+Response headers:
+    'Content-Type': 'application/json;'
+    'Date': 'Mon, 09 Oct 2023 06:40:36 GMT'
+    'Server': 'Kestrel'
+    'Transfer-Encoding': 'chunked'
+    'x-request-mismatch': 'REDACTED'
+    'x-request-mismatch-error': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:19 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '495a29b0-bfab-4c0b-aeec-e975cafa0748'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 404
+Response headers:
+    'Content-Type': 'application/json;'
+    'Date': 'Mon, 09 Oct 2023 06:40:36 GMT'
+    'Server': 'Kestrel'
+    'Transfer-Encoding': 'chunked'
+    'x-request-mismatch': 'REDACTED'
+    'x-request-mismatch-error': 'REDACTED'
+DEBUG    urllib3.connectionpool:connectionpool.py:1003 Starting new HTTPS connection (1): localhost:5001
+DEBUG    urllib3.connectionpool:connectionpool.py:456 https://localhost:5001 "POST /playback/stop HTTP/1.1" 200 0
+FAILED                                                                   [100%]
+------------------------------ live log teardown ------------------------------
+INFO     root:proxy_startup.py:334 Stopping the test proxy tool...
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:227 Perform all delayed resource removal.
+
+
+================================== FAILURES ===================================
+_________________________ TestBatch.test_batch_tasks __________________________
+
+self = <test_batch.TestBatch object at 0x0000018B0587B2B0>
+kwargs = {'__aggregate_cache_key': (('JobPreparer',), (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', ''))),... id='batch71d31cdf'), 'credential': <azure.core.credentials.AzureNamedKeyCredential object at 0x0000018B0587BBE0>, ...}
+client = <azure.batch.aio._patch.BatchClient object at 0x0000018B0587B190>
+
+    async def wrapper(self, **kwargs):
+        client = create_sharedkey_client(**kwargs)
+        try:
+            await test_func(self, client, **kwargs)
+        except Exception as err:
+>           raise err
+
+tests\decorators.py:161: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\decorators.py:159: in wrapper
+    await test_func(self, client, **kwargs)
+tests\decorators.py:103: in record_wrap
+    test_variables = await test_func(
+tests\test_batch.py:1317: in test_batch_tasks
+    result = await async_wrapper(
+tests\async_wrapper.py:14: in async_wrapper
+    waited = await obj
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <azure.batch.aio._patch.BatchClient object at 0x0000018B0587B190>
+job_id = 'batch71d31cdf'
+collection = [{'id': 'mytask0', 'commandLine': 'sleep 1', 'resourceFiles': [{'httpUrl': 'https://mystorageaccount.blob.core.windows...'httpUrl': 'https://mystorageaccount.blob.core.windows.net/files/resourceFile99', 'filePath': 'resourceFile99'}]}, ...]
+concurrencies = 3, time_out = None, ocp_date = None
+kwargs = {'ocp_date': None, 'time_out': None}
+results_queue = deque([{'status': 'Success', 'taskId': 'mytask33', 'eTag': '0x8DBC8901779A745', 'lastModified': '2023-10-09T06:22:19.7...22:19.7591634Z', 'location': 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/mytask38'}, ...])
+task_workflow_manager = <azure.batch.aio._operations._patch._TaskWorkflowManager object at 0x0000018B087EF490>
+coroutines = [<coroutine object _TaskWorkflowManager.task_collection_handler at 0x0000018B05874BC0>, <coroutine object _TaskWorkflo..._handler at 0x0000018B05874F40>, <coroutine object _TaskWorkflowManager.task_collection_handler at 0x0000018B05874140>]
+i = 2
+
+    async def create_task_collection(
+        self,
+        job_id: str,
+        collection: _models.BatchTaskCollection or List[_models.BatchTaskCreateOptions],
+        concurrencies: Optional[int] = 0,
+        *,
+        time_out: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> _models.TaskAddCollectionResult:
+        """Adds a collection of Tasks to the specified Job.
+    
+        Note that each Task must have a unique ID. The Batch service may not return the
+        results for each Task in the same order the Tasks were submitted in this
+        request. If the server times out or the connection is closed during the
+        request, the request may have been partially or fully processed, or not at all.
+        In such cases, the user should re-issue the request. Note that it is up to the
+        user to correctly handle failures when re-issuing a request. For example, you
+        should use the same Task IDs during a retry so that if the prior operation
+        succeeded, the retry will not create extra Tasks unexpectedly. If the response
+        contains any Tasks which failed to add, a client can retry the request. In a
+        retry, it is most efficient to resubmit only Tasks that failed to add, and to
+        omit Tasks that were successfully added on the first attempt. The maximum
+        lifetime of a Task from addition to completion is 180 days. If a Task has not
+        completed within 180 days of being added it will be terminated by the Batch
+        service and left in whatever state it was in at that time.
+    
+        :param job_id: The ID of the Job to which the Task collection is to be added. Required.
+        :type job_id: str
+        :param collection: The Tasks to be added. Required.
+        :type collection: ~azure.batch.models.BatchTaskCollection
+        :param concurrency: number of coroutines to use in parallel when adding tasks. If specified
+        and greater than 0, will start additional coroutines to submit requests and wait for them to finish.
+        Otherwise will submit create_task_collection requests sequentially on main thread
+        :type concurrency: int
+        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
+         applications can be returned. Default value is None.
+        :paramtype time_out: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocp_date: ~datetime.datetime
+        :keyword content_type: Type of content. Default value is "application/json;
+         odata=minimalmetadata".
+        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: TaskAddCollectionResult. The TaskAddCollectionResult is compatible with MutableMapping
+        :rtype: ~azure.batch.models.TaskAddCollectionResult
+        :raises ~azure.batch.custom.CreateTasksErrorException
+        """
+    
+        kwargs.update({"time_out": time_out, "ocp_date": ocp_date})
+    
+        results_queue = (
+            collections.deque()
+        )
+        task_workflow_manager = _TaskWorkflowManager(
+            super().create_task_collection,
+            job_id=job_id,
+            collection=collection,
+            **kwargs
+        )
+    
+        if concurrencies:
+            if concurrencies < 0:
+                raise ValueError("Concurrencies must be positive or 0")
+    
+            coroutines = []
+            for i in range(concurrencies):
+                coroutines.append(
+                    task_workflow_manager.task_collection_handler(results_queue)
+                )
+            await asyncio.gather(*coroutines)
+        else:
+            await task_workflow_manager.task_collection_handler(results_queue)
+    
+        # Only define error if all coroutines have finished and there were failures
+        if task_workflow_manager.failure_tasks or task_workflow_manager.errors:
+>           raise _models.CreateTasksErrorException(
+                task_workflow_manager.tasks_to_add,
+                task_workflow_manager.failure_tasks,
+                task_workflow_manager.errors,
+            )
+E           azure.batch.models._patch.CreateTasksErrorException: Multiple errors occurred when submitting add_collection requests. Check the `errors` property for the inner exceptions.
+
+azure\batch\aio\_operations\_patch.py:113: CreateTasksErrorException
+----------------------------- Captured log setup ------------------------------
+DEBUG    urllib3.connectionpool:connectionpool.py:1003 Starting new HTTPS connection (1): localhost:5001
+DEBUG    urllib3.util.retry:retry.py:594 Incremented Retry for (url='/Info/Available'): Retry(total=2, connect=None, read=None, redirect=None, status=None)
+WARNING  urllib3.connectionpool:connectionpool.py:812 Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x0000018B0586E130>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /Info/Available
+DEBUG    urllib3.connectionpool:connectionpool.py:1003 Starting new HTTPS connection (2): localhost:5001
+DEBUG    urllib3.util.retry:retry.py:594 Incremented Retry for (url='/Info/Available'): Retry(total=1, connect=None, read=None, redirect=None, status=None)
+WARNING  urllib3.connectionpool:connectionpool.py:812 Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x0000018B0585BF10>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /Info/Available
+DEBUG    urllib3.connectionpool:connectionpool.py:1003 Starting new HTTPS connection (3): localhost:5001
+DEBUG    urllib3.util.retry:retry.py:594 Incremented Retry for (url='/Info/Available'): Retry(total=0, connect=None, read=None, redirect=None, status=None)
+WARNING  urllib3.connectionpool:connectionpool.py:812 Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x0000018B0585BA00>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')': /Info/Available
+DEBUG    urllib3.connectionpool:connectionpool.py:1003 Starting new HTTPS connection (4): localhost:5001
+DEBUG    root:proxy_startup.py:144 HTTPSConnectionPool(host='localhost', port=5001): Max retries exceeded with url: /Info/Available (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x0000018B0585BAC0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+INFO     root:proxy_startup.py:284 C:\Users\hoppe\work\sandbox\azure-sdk-for-python is calculated repo root
+INFO     root:proxy_startup.py:300 Downloading and starting standalone proxy executable...
+DEBUG    urllib3.connectionpool:connectionpool.py:1003 Starting new HTTPS connection (1): localhost:5001
+DEBUG    urllib3.connectionpool:connectionpool.py:456 https://localhost:5001 "GET /Info/Available HTTP/1.1" 200 40693
+DEBUG    urllib3.connectionpool:connectionpool.py:1003 Starting new HTTPS connection (1): localhost:5001
+DEBUG    urllib3.connectionpool:connectionpool.py:456 https://localhost:5001 "POST /Admin/AddSanitizer HTTP/1.1" 200 0
+DEBUG    urllib3.connectionpool:connectionpool.py:1003 Starting new HTTPS connection (1): localhost:5001
+DEBUG    urllib3.connectionpool:connectionpool.py:456 https://localhost:5001 "POST /Admin/SetMatcher HTTP/1.1" 200 0
+DEBUG    urllib3.connectionpool:connectionpool.py:1003 Starting new HTTPS connection (1): localhost:5001
+DEBUG    urllib3.connectionpool:connectionpool.py:456 https://localhost:5001 "POST /Admin/SetMatcher HTTP/1.1" 200 0
+------------------------------ Captured log call ------------------------------
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:92 Entering preparer wrapper for ResourceGroupPreparer and test <test_batch.TestBatch object at 0x0000018B0587B2B0>
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:108 Child cache status for ResourceGroupPreparer: False
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:118 Aggregate cache key: ('ResourceGroupPreparer', 'resource_group', '')
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:55 Creating resource 71d31cdf for ResourceGroupPreparer
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:61 Successfully created resource 71d31cdf
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:92 Entering preparer wrapper for AccountPreparer and test <test_batch.TestBatch object at 0x0000018B0587B2B0>
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:108 Child cache status for AccountPreparer: False
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:118 Aggregate cache key: (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', ''))
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:55 Creating resource batch71d31cdf for AccountPreparer
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:61 Successfully created resource batch71d31cdf
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:92 Entering preparer wrapper for JobPreparer and test <test_batch.TestBatch object at 0x0000018B0587B2B0>
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:108 Child cache status for JobPreparer: False
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:118 Aggregate cache key: (('JobPreparer',), (('AccountPreparer',), ('ResourceGroupPreparer', 'resource_group', '')))
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:55 Creating resource batch71d31cdf for JobPreparer
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:61 Successfully created resource batch71d31cdf
+DEBUG    asyncio:selector_events.py:59 Using selector: SelectSelector
+DEBUG    urllib3.connectionpool:connectionpool.py:1003 Starting new HTTPS connection (1): localhost:5001
+DEBUG    urllib3.connectionpool:connectionpool.py:456 https://localhost:5001 "POST /playback/start HTTP/1.1" 200 None
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '286'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 201
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900BE6B96D'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Location': 'REDACTED'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '7e39b4cc-a4a7-456c-bf9e-063ec98886bb'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task1_71d31cdf?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900BE6B96D'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '0989ba66-7855-4cbe-bd64-d65c99594cc1'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '541'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 201
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900C190CA2'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Location': 'REDACTED'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'c9701f3b-434f-4bab-ae1e-46ac70549c6e'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task2_71d31cdf?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900C190CA2'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'a5dad7bc-73ca-4516-bca5-068cf818ab2c'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '152'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 201
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900C467F6F'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Location': 'REDACTED'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '6e3bc4cf-64db-4d04-9e05-28e69e06e691'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task3_71d31cdf?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900C467F6F'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'd1a5c9c9-bf95-4be4-8278-f6cd2f3d61f5'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '128'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 201
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 09 Oct 2023 06:22:00 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900C6FBBEB'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Location': 'REDACTED'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '7ad0731c-cb7f-4573-b74c-9f6f87d151d8'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task4_71d31cdf?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900C6FBBEB'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'cd271fc6-024a-43b6-96b1-e593dbd9b21f'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '202'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 201
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900C97DAA2'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Location': 'REDACTED'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '1e92902b-9435-4673-9ab3-5a13243e62de'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task5_71d31cdf?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900C97DAA2'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '45317dc5-bb1a-4850-94a4-77bb8db4423d'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '119'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 201
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900CBE67F5'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Location': 'REDACTED'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '827b0718-e852-4a23-ad42-365947e293bc'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task6_71d31cdf?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900CBE67F5'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '84563bc8-6df7-47ff-9229-0056597b7370'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '245'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '3af53490-c41e-4881-ad73-20203803ced5'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:01 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '39495762-f3e0-4a10-ba7a-b18397a5d880'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/taskcounts?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:04 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '9cf6afef-3c53-4b85-8d97-be5dbbb7c4ac'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task6_71d31cdf/terminate?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 204
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 09 Oct 2023 06:22:04 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900E7A9D48'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:04 GMT'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'af15f84e-402b-4fb2-a030-659feba76ebf'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task6_71d31cdf?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:04 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900E7A9D48'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:04 GMT'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'a6a7a639-2e37-43a7-ad6a-bf22a64fd162'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task6_71d31cdf/reactivate?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 204
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 09 Oct 2023 06:22:04 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900EA7E357'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:04 GMT'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '8fcd87d0-248c-42c8-94fe-b2ad74e41618'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task6_71d31cdf?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:04 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900EA7E357'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:04 GMT'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'ac117d11-4ff8-41f2-8ff5-02d851525ded'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task6_71d31cdf?api-version=REDACTED'
+Request method: 'PUT'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '41'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 09 Oct 2023 06:22:04 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Etag': '0x8DBC8900ED10EDD'
+    'Last-Modified': 'Mon, 09 Oct 2023 06:22:05 GMT'
+    'DataServiceId': 'REDACTED'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '6bcb8245-1b85-4c37-b86b-5e477c4c7556'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task6_71d31cdf/subtasksinfo?api-version=REDACTED'
+Request method: 'GET'
+Request headers:
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:04 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'bc1381f3-519e-4552-984f-70a8b19b912d'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:514 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/tasks/batch_task6_71d31cdf?api-version=REDACTED'
+Request method: 'DELETE'
+Request headers:
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+No body was attached to the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Length': '0'
+    'Date': 'Mon, 09 Oct 2023 06:22:05 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'b34b5cfc-75cd-406d-ac47-8c0b85434e09'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '1177854'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 413
+Response headers:
+    'Content-Length': '413'
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:05 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'a0908731-3f02-46dc-9237-71f2f5b4452d'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+ERROR    azure.batch.aio._operations._patch:_patch.py:493 Failed to add task with ID mytask due to the body exceeding the maximum request size
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '1177854'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 413
+Response headers:
+    'Content-Length': '413'
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:07 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '5f859740-8aae-4ae7-b0bc-783620cec041'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+ERROR    azure.batch.aio._operations._patch:_patch.py:493 Failed to add task with ID mytask due to the body exceeding the maximum request size
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '1144611'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '1144611'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '1144611'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 413
+Response headers:
+    'Content-Length': '413'
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:11 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '82923529-e87d-4f4d-bdc6-3a46aa10e158'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.batch.aio._operations._patch:_patch.py:504 Amount of tasks per request reduced from 100 to 50 due to the request body being too large
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572311'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 413
+Response headers:
+    'Content-Length': '413'
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:10 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'ddef217e-25a3-4f77-b262-a0364e0c6c5c'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572311'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 413
+Response headers:
+    'Content-Length': '413'
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:10 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '1a8d1c46-67b6-4d17-baec-74c5cc627018'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572311'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:17 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '0861e092-3776-43dd-b02d-6832dc22a290'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572311'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:14 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'b7d23dff-e360-46c3-b642-03d68fbad0e6'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572311'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:12 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'aed9ecb6-1fb9-4ad8-b35e-3af1d2bce40f'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572311'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:12 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'e59790a0-db95-4709-b0cc-7e8d9f741bdd'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572311'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:13 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '0fd74279-491b-448c-b9ed-2d23394701dd'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572311'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:13 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '70e0bde7-df23-4b80-a0f6-f7f3b26e4b95'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572311'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:16 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '65b987e7-97d2-4c68-a7cf-a6bf5d6167bf'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572294'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:16 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'b1af4780-1f78-42e5-b162-d1364df8247f'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572261'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:15 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'ce705784-f408-4ebd-90c4-7979e0185871'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572268'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:18 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': 'c51ac334-ad78-40f7-9c7a-713ae6bbe941'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:511 Request URL: 'https://batch71d31cdf.eastasia.batch.azure.com/jobs/batch71d31cdf/addtaskcollection?api-version=REDACTED'
+Request method: 'POST'
+Request headers:
+    'content-type': 'application/json; odata=minimalmetadata'
+    'Content-Length': '572311'
+    'Accept': 'application/json'
+    'client-request-id': 'REDACTED'
+    'User-Agent': 'azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)'
+    'ocp-date': 'REDACTED'
+    'Authorization': 'REDACTED'
+A body is sent with the request
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 404
+Response headers:
+    'Content-Type': 'application/json;'
+    'Date': 'Mon, 09 Oct 2023 06:40:36 GMT'
+    'Server': 'Kestrel'
+    'Transfer-Encoding': 'chunked'
+    'x-request-mismatch': 'REDACTED'
+    'x-request-mismatch-error': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 200
+Response headers:
+    'Content-Type': 'application/json; odata=minimalmetadata'
+    'Date': 'Mon, 09 Oct 2023 06:22:19 GMT'
+    'Server': 'Microsoft-HTTPAPI/2.0'
+    'Transfer-Encoding': 'chunked'
+    'DataServiceVersion': 'REDACTED'
+    'Request-Id': '495a29b0-bfab-4c0b-aeec-e975cafa0748'
+    'Strict-Transport-Security': 'REDACTED'
+    'X-Content-Type-Options': 'REDACTED'
+INFO     azure.core.pipeline.policies.http_logging_policy:_universal.py:550 Response status: 404
+Response headers:
+    'Content-Type': 'application/json;'
+    'Date': 'Mon, 09 Oct 2023 06:40:36 GMT'
+    'Server': 'Kestrel'
+    'Transfer-Encoding': 'chunked'
+    'x-request-mismatch': 'REDACTED'
+    'x-request-mismatch-error': 'REDACTED'
+DEBUG    urllib3.connectionpool:connectionpool.py:1003 Starting new HTTPS connection (1): localhost:5001
+DEBUG    urllib3.connectionpool:connectionpool.py:456 https://localhost:5001 "POST /playback/stop HTTP/1.1" 200 0
+---------------------------- Captured log teardown ----------------------------
+INFO     root:proxy_startup.py:334 Stopping the test proxy tool...
+DEBUG    azure_devtools.scenario_tests.preparers:preparers.py:227 Perform all delayed resource removal.
+=========================== short test summary info ===========================
+FAILED tests\test_batch.py::TestBatch::test_batch_tasks - azure.batch.models....
+============================= 1 failed in 23.93s ==============================

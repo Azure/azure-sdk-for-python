@@ -222,8 +222,6 @@ class SchemaRegistryClient(object):
                 cls=prepare_schema_result,
                 **http_request_kwargs,
             )
-        print(http_response)
-        print(type(http_response))
         http_response.read()
         return Schema(
             definition=http_response.text(),

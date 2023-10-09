@@ -11,7 +11,7 @@ class PayloadResponse:
     """Response deployment entity
 
     :param enabled: Is response logging enabled.
-    :type enabled: str, optional
+    :type enabled: str
 
     """
 

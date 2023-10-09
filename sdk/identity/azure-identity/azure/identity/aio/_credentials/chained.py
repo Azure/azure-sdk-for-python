@@ -78,6 +78,7 @@ class ChainedTokenCredential(AsyncContextManager):
                 token = await credential.get_token(*scopes, claims=claims, tenant_id=tenant_id, **kwargs)
                 _LOGGER.info("%s acquired a token from %s", self.__class__.__name__, credential.__class__.__name__)
                 self._successful_credential = credential
+                within_credential_chain.set(False)
                 return token
             except CredentialUnavailableError as ex:
                 # credential didn't attempt authentication because it lacks required data or state -> continue

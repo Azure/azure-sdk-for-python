@@ -3,13 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Any
-from azure.core.pipeline.policies import BearerTokenCredentialPolicy, AsyncBearerTokenCredentialPolicy
+from typing import Any, Optional
+from azure.core.pipeline.policies import (
+    BearerTokenCredentialPolicy,
+    AsyncBearerTokenCredentialPolicy,
+)
 
 DEFAULT_AUDIENCE = "https://search.azure.com"
 
 
-def is_retryable_status_code(status_code: int) -> bool:
+def is_retryable_status_code(status_code: Optional[int]) -> bool:
+    if not status_code:
+        return False
     return status_code in [422, 409, 503]
 
 

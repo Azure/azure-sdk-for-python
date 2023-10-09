@@ -6,6 +6,9 @@ import functools
 import inspect
 import logging
 import sys
+from typing import Callable, Type, TypeVar, Union
+
+from typing_extensions import ParamSpec
 
 from azure.ai.ml.constants._common import (
     DOCSTRING_DEFAULT_INDENTATION,
@@ -18,9 +21,19 @@ from azure.ai.ml.constants._common import (
 _warning_cache = set()
 module_logger = logging.getLogger(__name__)
 
+TExperimental = TypeVar("TExperimental", bound=Union[Type, Callable])
+P = ParamSpec("P")
+T = TypeVar("T")
 
-def experimental(wrapped):
-    """Add experimental tag to a class or a method."""
+
+def experimental(wrapped: TExperimental) -> TExperimental:
+    """Add experimental tag to a class or a method.
+
+    :param wrapped: Either a Class or Function to mark as experimental
+    :type wrapped: TExperimental
+    :return: The wrapped class or method
+    :rtype: TExperimental
+    """
     if inspect.isclass(wrapped):
         return _add_class_docstring(wrapped)
     if inspect.isfunction(wrapped):
@@ -28,11 +41,23 @@ def experimental(wrapped):
     return wrapped
 
 
-def _add_class_docstring(cls):
-    """Add experimental tag to the class doc string."""
+def _add_class_docstring(cls: Type[T]) -> Type[T]:
+    """Add experimental tag to the class doc string.
 
-    def _add_class_warning(func=None):
-        """Add warning message for class init."""
+    :return: The updated class
+    :rtype: Type[T]
+    """
+
+    P2 = ParamSpec("P2")
+
+    def _add_class_warning(func: Callable[P2, None]) -> Callable[P2, None]:
+        """Add warning message for class __init__.
+
+        :param func: The original __init__ function
+        :type func: Callable[P2, None]
+        :return: Updated __init__
+        :rtype: Callable[P2, None]
+        """
 
         @functools.wraps(func)
         def wrapped(*args, **kwargs):
@@ -52,8 +77,14 @@ def _add_class_docstring(cls):
     return cls
 
 
-def _add_method_docstring(func=None):
-    """Add experimental tag to the method doc string."""
+def _add_method_docstring(func: Callable[P, T] = None) -> Callable[P, T]:
+    """Add experimental tag to the method doc string.
+
+    :param func: The function to update
+    :type func: Callable[P, T]
+    :return: A wrapped method marked as experimental
+    :rtype: Callable[P,T]
+    """
     doc_string = DOCSTRING_TEMPLATE.format(EXPERIMENTAL_METHOD_MESSAGE, EXPERIMENTAL_LINK_MESSAGE)
     if func.__doc__:
         func.__doc__ = _add_note_to_docstring(func.__doc__, doc_string)
@@ -62,7 +93,7 @@ def _add_method_docstring(func=None):
         func.__doc__ = doc_string + ">"
 
     @functools.wraps(func)
-    def wrapped(*args, **kwargs):
+    def wrapped(*args: P.args, **kwargs: P.kwargs) -> T:
         message = "Method {0}: {1} {2}".format(func.__name__, EXPERIMENTAL_METHOD_MESSAGE, EXPERIMENTAL_LINK_MESSAGE)
         if not _should_skip_warning() and not _is_warning_cached(message):
             module_logger.warning(message)
@@ -71,15 +102,29 @@ def _add_method_docstring(func=None):
     return wrapped
 
 
-def _add_note_to_docstring(doc_string, note):
-    """Adds experimental note to docstring at the top and correctly indents original docstring."""
+def _add_note_to_docstring(doc_string: str, note: str) -> str:
+    """Adds experimental note to docstring at the top and correctly indents original docstring.
+
+    :param doc_string: The docstring
+    :type doc_string: str
+    :param note: The note to add to the docstring
+    :type note: str
+    :return: Updated docstring
+    :rtype: str
+    """
     indent = _get_indentation_size(doc_string)
     doc_string = doc_string.rjust(len(doc_string) + indent)
     return note + doc_string
 
 
-def _get_indentation_size(doc_string):
-    """Finds the minimum indentation of all non-blank lines after the first line."""
+def _get_indentation_size(doc_string: str) -> int:
+    """Finds the minimum indentation of all non-blank lines after the first line.
+
+    :param doc_string: The docstring
+    :type doc_string: str
+    :return: Minimum number of indentation of the docstring
+    :rtype: int
+    """
     lines = doc_string.expandtabs().splitlines()
     indent = sys.maxsize
     for line in lines[1:]:

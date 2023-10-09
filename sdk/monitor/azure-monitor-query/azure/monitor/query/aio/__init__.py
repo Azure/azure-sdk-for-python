@@ -6,5 +6,6 @@
 
 from ._logs_query_client_async import LogsQueryClient
 from ._metrics_query_client_async import MetricsQueryClient
+from ._metrics_batch_query_client_async import MetricsBatchQueryClient
 
-__all__ = ["LogsQueryClient", "MetricsQueryClient"]
+__all__ = ["LogsQueryClient", "MetricsQueryClient", "MetricsBatchQueryClient"]

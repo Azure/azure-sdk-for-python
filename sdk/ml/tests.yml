@@ -8,7 +8,8 @@ parameters:
       Public:
         SubscriptionConfiguration: $(python-ml-subscription-scope-configuration)
         Location: eastus2euap
-
+        MatrixReplace:
+          - TestSamples=.*/true
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:

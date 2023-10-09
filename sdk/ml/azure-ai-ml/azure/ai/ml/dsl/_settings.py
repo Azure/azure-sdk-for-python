@@ -115,10 +115,10 @@ def set_pipeline_settings(
 
     :keyword on_init: On_init job node or name. On init job will be executed before all other jobs, \
                 it should not have data connections to regular nodes.
-    :type on_init: Union[BaseNode, str]
+    :paramtype on_init: Union[BaseNode, str]
     :keyword on_finalize: On_finalize job node or name. On finalize job will be executed after pipeline run \
                 finishes (completed/failed/canceled), it should not have data connections to regular nodes.
-    :type on_finalize: Union[BaseNode, str]
+    :paramtype on_finalize: Union[BaseNode, str]
     :return:
     """
     dsl_settings = _dsl_settings_stack.top()
