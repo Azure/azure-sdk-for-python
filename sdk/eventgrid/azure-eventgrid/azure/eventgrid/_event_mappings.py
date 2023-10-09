@@ -374,9 +374,9 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ResourceDeleteSuccessName = 'Microsoft.Resources.ResourceDeleteSuccess'
 
-    ResourceNotificationsHealthResourcesAnnotatedEventName = 'Microsoft.ResourceNotifications.HealthResources'
+    ResourceNotificationsHealthResourcesAnnotatedEventName = 'Microsoft.ResourceNotifications.HealthResources.ResourceAnnotated'
 
-    ResourceNotificationsHealthResourcesAvailabilityStatusChangedEventName = 'Microsoft.ResourceNotifications.HealthResources'
+    ResourceNotificationsHealthResourcesAvailabilityStatusChangedEventName = 'Microsoft.ResourceNotifications.HealthResources.AvailabilityStatusChanged'
 
     ResourceWriteCancelName = 'Microsoft.Resources.ResourceWriteCancel'
 
