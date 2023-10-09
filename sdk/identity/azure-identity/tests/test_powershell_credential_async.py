@@ -97,7 +97,7 @@ async def test_get_token_tenant_id(stderr):
 
     mock_exec = get_mock_exec(stdout=stdout, stderr=stderr)
     with patch(CREATE_SUBPROCESS_EXEC, mock_exec):
-        token = await AzurePowerShellCredential().get_token(scope, tenant_id="tenant_id")
+        token = await AzurePowerShellCredential().get_token(scope, tenant_id="tenant-id")
 
     assert token.token == expected_access_token
     assert token.expires_on == expected_expires_on
@@ -313,5 +313,5 @@ async def test_multitenant_authentication_not_allowed():
         assert token.token == expected_token
 
         with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
-            token = await credential.get_token("scope", tenant_id="some tenant")
+            token = await credential.get_token("scope", tenant_id="some-tenant")
             assert token.token == expected_token

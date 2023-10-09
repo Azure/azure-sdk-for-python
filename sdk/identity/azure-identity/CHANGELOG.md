@@ -1,5 +1,11 @@
 # Release History
 
+## 1.14.1 (2023-10-09)
+
+### Bugs Fixed
+
+- Bug fixes for developer credentials
+
 ## 1.14.0 (2023-08-08)
 
 ### Features Added

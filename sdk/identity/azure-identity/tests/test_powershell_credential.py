@@ -110,7 +110,7 @@ def test_get_token_tenant_id(stderr):
 
     Popen = get_mock_Popen(stdout=stdout, stderr=stderr)
     with patch(POPEN, Popen):
-        token = AzurePowerShellCredential().get_token(scope, tenant_id="tenant_id")
+        token = AzurePowerShellCredential().get_token(scope, tenant_id="tenant-id")
 
     assert token.token == expected_access_token
     assert token.expires_on == expected_expires_on
@@ -315,5 +315,5 @@ def test_multitenant_authentication_not_allowed():
         assert token.token == expected_token
 
         with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
-            token = credential.get_token("scope", tenant_id="some tenant")
+            token = credential.get_token("scope", tenant_id="some-tenant")
             assert token.token == expected_token
