@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 from abc import ABC
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
 from azure.ai.ml.constants._common import TYPE
 from azure.ai.ml.constants._job.sweep import SearchSpace
@@ -40,9 +40,10 @@ class SweepDistribution(ABC, RestTranslatableMixin):
             SearchSpace.QLOGUNIFORM: QLogUniform,
         }
 
-        ss_class = mapping.get(obj[0], None)
+        ss_class: Any = mapping.get(obj[0], None)
         if ss_class:
-            return ss_class._from_rest_object(obj)
+            res: SweepDistribution = ss_class._from_rest_object(obj)
+            return res
 
         msg = f"Unknown search space type: {obj[0]}"
         raise JobException(
@@ -55,7 +56,8 @@ class SweepDistribution(ABC, RestTranslatableMixin):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, SweepDistribution):
             return NotImplemented
-        return self._to_rest_object() == other._to_rest_object()
+        res: bool = self._to_rest_object() == other._to_rest_object()
+        return res
 
 
 class Choice(SweepDistribution):
@@ -74,24 +76,25 @@ class Choice(SweepDistribution):
             :caption: Using Choice distribution to set values for a hyperparameter sweep
     """
 
-    def __init__(self, values: Optional[List[Union[float, str, dict]]] = None, **kwargs) -> None:
+    def __init__(self, values: Optional[List] = None, **kwargs: Any) -> None:
         kwargs.setdefault(TYPE, SearchSpace.CHOICE)
         super().__init__(**kwargs)
         self.values = values
 
     def _to_rest_object(self) -> List:
-        items = []
-        for value in self.values:
-            if isinstance(value, dict):
-                rest_dict = {}
-                for k, v in value.items():
-                    if isinstance(v, SweepDistribution):
-                        rest_dict[k] = v._to_rest_object()
-                    else:
-                        rest_dict[k] = v
-                items.append(rest_dict)
-            else:
-                items.append(value)
+        items: List = []
+        if self.values is not None:
+            for value in self.values:
+                if isinstance(value, dict):
+                    rest_dict = {}
+                    for k, v in value.items():
+                        if isinstance(v, SweepDistribution):
+                            rest_dict[k] = v._to_rest_object()
+                        else:
+                            rest_dict[k] = v
+                    items.append(rest_dict)
+                else:
+                    items.append(value)
         return [self.type, [items]]
 
     @classmethod
@@ -134,7 +137,7 @@ class Normal(SweepDistribution):
             :caption: Configuring Normal distributions for a hyperparameter sweep on a Command job.
     """
 
-    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs) -> None:
+    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs: Any) -> None:
         kwargs.setdefault(TYPE, SearchSpace.NORMAL)
         super().__init__(**kwargs)
         self.mu = mu
@@ -166,7 +169,7 @@ class LogNormal(Normal):
             :caption: Configuring LogNormal distributions for a hyperparameter sweep on a Command job.
     """
 
-    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs) -> None:
+    def __init__(self, mu: Optional[float] = None, sigma: Optional[float] = None, **kwargs: Any) -> None:
         kwargs.setdefault(TYPE, SearchSpace.LOGNORMAL)
         super().__init__(mu=mu, sigma=sigma, **kwargs)
 
@@ -192,7 +195,7 @@ class QNormal(Normal):
     """
 
     def __init__(
-        self, mu: Optional[float] = None, sigma: Optional[float] = None, q: Optional[int] = None, **kwargs
+        self, mu: Optional[float] = None, sigma: Optional[float] = None, q: Optional[int] = None, **kwargs: Any
     ) -> None:
         kwargs.setdefault(TYPE, SearchSpace.QNORMAL)
         super().__init__(mu=mu, sigma=sigma, **kwargs)
