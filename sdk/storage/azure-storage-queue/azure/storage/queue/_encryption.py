@@ -468,7 +468,7 @@ def _generate_encryption_data_dict(
         cek: bytes,
         iv: Optional[bytes],
         version: str
-    ) -> Dict[str, Any]:
+    ) -> "OrderedDict[str, Any]":
     """
     Generates and returns the encryption metadata as a dict.
 
@@ -477,7 +477,7 @@ def _generate_encryption_data_dict(
     :param Optional[bytes] iv: The initialization vector. Only required for AES-CBC.
     :param str version: The client encryption version used.
     :return: A dict containing all the encryption metadata.
-    :rtype: dict
+    :rtype: OrderedDict[str, Any]
     """
     # Encrypt the cek.
     if version == _ENCRYPTION_PROTOCOL_V1:
