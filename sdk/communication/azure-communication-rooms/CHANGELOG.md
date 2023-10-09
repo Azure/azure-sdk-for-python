@@ -2,7 +2,9 @@
 
 ## 1.1.0b1 (2023-10-31)
 
-- Added the ability to enable PSTN.
+### Features Added
+
+- Added support for PSTN dial-out capability
 
 ## 1.0.0 (2023-06-12)
 
