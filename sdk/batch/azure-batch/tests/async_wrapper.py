@@ -1,8 +1,7 @@
-from collections.abc import AsyncIterable, Iterable
-import asyncio
+from collections.abc import AsyncIterable
 import inspect
-from azure.batch import models
 
+# wrapper to handle async and sync objects
 async def async_wrapper(obj):
     
     if (isinstance(obj, AsyncIterable)):

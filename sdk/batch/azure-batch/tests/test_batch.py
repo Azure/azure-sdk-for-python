@@ -1321,3 +1321,107 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert len(result.value) == 733
         assert result.value[0].status == models.TaskAddStatus.success
         assert all(t.status == models.TaskAddStatus.success for t in result.value)
+
+    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
+    @client_setup(BatchClient)
+    @recorded_by_proxy_async
+    async def test_batch_jobs(self, client: BatchClient, **kwargs):
+        # Test Create Job
+        auto_pool = models.AutoPoolSpecification(
+            pool_lifetime_option=models.PoolLifetimeOption.job,
+            pool=models.PoolSpecification(
+                vm_size=DEFAULT_VM_SIZE,
+                cloud_service_configuration=models.CloudServiceConfiguration(
+                    os_family="5"
+                ),
+            ),
+        )
+        job_prep = models.JobPreparationTask(command_line='cmd /c "echo hello world"')
+        job_release = models.JobReleaseTask(command_line='cmd /c "echo goodbye world"')
+        job_param = models.BatchJobCreateOptions(
+            id=self.get_resource_name("batch_job1_"),
+            pool_info=models.PoolInformation(auto_pool_specification=auto_pool),
+            job_preparation_task=job_prep,
+            job_release_task=job_release,
+        )
+
+        now = datetime.datetime.now()
+        # stamp = mktime(now.timetuple())
+        # currenttime =  format_date_time(stamp) #--> Wed, 22 Oct 2008 10:52:40 GMT
+
+        response = await async_wrapper(client.create_job(body=job_param, ocp_date=now))
+
+        # response = client.create_job(body=job_param,ocp_date="Wed, 3 May 2023 21:49:13 GMT")
+        # response = client.create_job(body=job_param,ocp_date=datetime.datetime.utcnow())
+        assert response is None
+
+        # Test Update Job
+        constraints = models.JobConstraints(max_task_retry_count=3)
+        options = models.BatchJob(
+            priority=500,
+            constraints=constraints,
+            pool_info=models.PoolInformation(auto_pool_specification=auto_pool),
+        )
+        response = await async_wrapper(client.replace_job(job_param.id, options))
+        assert response is None
+
+        # Test Patch Job
+        options = models.BatchJobUpdateOptions(priority=900)
+        response = await async_wrapper(client.update_job(job_param.id, options))
+        assert response is None
+
+        job = await async_wrapper(client.get_job(job_param.id))
+        assert isinstance(job, models.BatchJob)
+        assert job.id == job_param.id
+        assert job.constraints.max_task_retry_count == 3
+        assert job.priority == 900
+
+        # Test Create Job with Auto Complete
+        job_auto_param = models.BatchJobCreateOptions(
+            id=self.get_resource_name("batch_job2_"),
+            on_all_tasks_complete=models.OnAllTasksComplete.TERMINATE_JOB,
+            on_task_failure=models.OnTaskFailure.PERFORM_EXIT_OPTIONS_JOB_ACTION,
+            pool_info=models.PoolInformation(auto_pool_specification=auto_pool),
+        )
+        response = await async_wrapper(client.create_job(job_auto_param))
+        assert response is None
+        job = await async_wrapper(client.get_job(job_auto_param.id))
+        assert isinstance(job, models.BatchJob)
+        assert job.on_all_tasks_complete == models.OnAllTasksComplete.TERMINATE_JOB
+        assert (
+            job.on_task_failure == models.OnTaskFailure.PERFORM_EXIT_OPTIONS_JOB_ACTION
+        )
+
+        # Test List Jobs
+        jobs = await async_wrapper(client.list_jobs())
+        assert isinstance(jobs, Iterable)
+        assert len(list(jobs)) == 2
+
+        # Test Disable Job
+        response = await async_wrapper(
+            client.disable_job(
+                job_id=job_param.id,
+                body=models.BatchJobDisableOptions(disable_tasks="requeue"),
+            )
+        )
+        assert response is None
+
+        # Test Enable Job
+        response = await async_wrapper(client.enable_job(job_param.id))
+        assert response is None
+
+        # Prep and release task status
+        task_status = await async_wrapper(
+            client.list_job_preparation_and_release_task_status(job_param.id)
+        )
+        assert isinstance(task_status, Iterable)
+        assert list(task_status) == []
+
+        # Test Terminate Job
+        response = await async_wrapper(client.terminate_job(job_param.id))
+        assert response is None
+
+        # Test Delete Job
+        response = await async_wrapper(client.delete_job(job_auto_param.id))
+        assert response is None

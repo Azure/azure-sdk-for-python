@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import datetime
-from typing import Any, Callable, Dict, Iterable, List, Optional, TypeVar
+from typing import Any, List, Optional
 from .. import models as _models
 from ._operations import (
     BatchClientOperationsMixin as BatchClientOperationsMixinGenerated,

@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import asyncio
 from typing import List
 import datetime
-from typing import Any, Callable, Dict, Iterable, List, Optional, TypeVar
+from typing import Any, List, Optional
 from ._operations import (
     BatchClientOperationsMixin as BatchClientOperationsMixinGenerated,
 )
@@ -87,7 +87,7 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         results_queue = (
             collections.deque()
-        )  # deque operations(append/pop) are thread-safe
+        )
         task_workflow_manager = _TaskWorkflowManager(
             super().create_task_collection,
             job_id=job_id,
@@ -105,11 +105,10 @@ class BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                     task_workflow_manager.task_collection_handler(results_queue)
                 )
             await asyncio.gather(*coroutines)
-        # single-threaded behavior
         else:
             await task_workflow_manager.task_collection_handler(results_queue)
 
-        # Only define error if all threads have finished and there were failures
+        # Only define error if all coroutines have finished and there were failures
         if task_workflow_manager.failure_tasks or task_workflow_manager.errors:
             raise _models.CreateTasksErrorException(
                 task_workflow_manager.tasks_to_add,
@@ -432,7 +431,6 @@ class _TaskWorkflowManager(object):
         collection: _models.BatchTaskCollection or List[_models.BatchTaskCreateOptions],
         **kwargs
     ):
-        # Append operations thread safe - Only read once all threads have completed
         # List of tasks which failed to add due to a returned client error
         self.failure_tasks = collections.deque()
         # List of unknown exceptions which occurred during requests.
@@ -502,8 +500,6 @@ class _TaskWorkflowManager(object):
                     # we should decrease the initial task collection size to avoid repeating the error
                     # Midpoint is lower bounded by 1 due to above base case
                     midpoint = int(len(chunk_tasks_to_add) / 2)
-                    # Restrict one thread at a time to do this compare and set,
-                    # therefore forcing max_tasks_per_request to be strictly decreasing
                     if midpoint < self._max_tasks_per_request:
                         _LOGGER.info(
                             "Amount of tasks per request reduced from %s to %s due to the"
@@ -516,7 +512,7 @@ class _TaskWorkflowManager(object):
                     # Not the most efficient solution for all cases, but the goal of this is to handle this
                     # exception and have it work in all cases where tasks are well behaved
                     # Behavior retries as a smaller chunk and
-                    # appends extra tasks to queue to be picked up by another thread .
+                    # appends extra tasks to queue to be picked up by another coroutines .
                     self.tasks_to_add.extendleft(chunk_tasks_to_add[midpoint:])
                     await self._bulk_add_tasks(
                         results_queue, chunk_tasks_to_add[:midpoint]
