@@ -7,7 +7,7 @@
 # pylint: disable=super-init-not-called
 
 import sys
-from typing import Any, Callable, Dict, List, Optional, overload, Tuple, TYPE_CHECKING, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING, Union
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 from ._shared.response_handlers import process_storage_error, return_context_and_deserialized
