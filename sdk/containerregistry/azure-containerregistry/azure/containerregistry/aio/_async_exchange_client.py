@@ -4,13 +4,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 from .._generated.aio import ContainerRegistry
+from .._generated.aio.operations._patch import AuthenticationOperations
 from .._generated.models import PostContentSchemaGrantType
 from .._helpers import _parse_challenge, _parse_exp_time
 from .._user_agent import USER_AGENT
@@ -75,8 +76,9 @@ class ACRExchangeClient(object):
     async def exchange_aad_token_for_refresh_token(  # pylint:disable=client-method-missing-tracing-decorator-async
         self, service: str, **kwargs
     ) -> str:
+        auth_operation = cast(AuthenticationOperations, self._client.authentication)
         token = await self._credential.get_token(*self.credential_scopes)
-        refresh_token = await self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(  # type: ignore[attr-defined] # pylint: disable=line-too-long
+        refresh_token = await auth_operation.exchange_aad_access_token_for_acr_refresh_token(
             grant_type=PostContentSchemaGrantType.ACCESS_TOKEN, service=service, access_token=token.token, **kwargs
         )
         return refresh_token.refresh_token if refresh_token.refresh_token is not None else ""
@@ -84,7 +86,8 @@ class ACRExchangeClient(object):
     async def exchange_refresh_token_for_access_token(  # pylint:disable=client-method-missing-tracing-decorator-async
         self, refresh_token: str, service: str, scope: str, **kwargs
     ) -> Optional[str]:
-        access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(  # type: ignore[attr-defined] # pylint: disable=line-too-long
+        auth_operation = cast(AuthenticationOperations, self._client.authentication)
+        access_token = await auth_operation.exchange_acr_refresh_token_for_acr_access_token(
             service, scope, refresh_token, **kwargs
         )
         return access_token.access_token
