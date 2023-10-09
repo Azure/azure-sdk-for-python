@@ -36,10 +36,12 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         search_space: Optional[List[ImageObjectDetectionSearchSpace]] = None,
         **kwargs,
     ) -> None:
+        self._training_parameters: Optional[ImageModelSettingsObjectDetection] = None
+
         super().__init__(task_type=task_type, limits=limits, sweep=sweep, **kwargs)
 
         self.training_parameters = training_parameters  # Assigning training_parameters through setter method.
-        self._training_parameters: Optional[ImageModelSettingsObjectDetection] = None
+
         self._search_space = search_space
 
     @property
