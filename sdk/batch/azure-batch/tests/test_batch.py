@@ -1056,3 +1056,268 @@ class TestBatch(AzureMgmtRecordedTestCase):
             client.delete_task_file(batch_job.id, task_id, only_files[0].name)
         )
         assert response is None
+
+    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
+    @JobPreparer(on_task_failure=models.OnTaskFailure.perform_exit_options_job_action)
+    @client_setup(BatchClient)
+    @recorded_by_proxy_async
+    async def test_batch_tasks(self, client: BatchClient, **kwargs):
+        batch_job = kwargs.pop("batch_job")
+        # Test Create Task with Auto Complete
+        exit_conditions = models.ExitConditions(
+            exit_codes=[
+                models.ExitCodeMapping(
+                    code=1,
+                    exit_options=models.ExitOptions(
+                        job_action=models.JobAction.terminate
+                    ),
+                )
+            ],
+            exit_code_ranges=[
+                models.ExitCodeRangeMapping(
+                    start=2,
+                    end=4,
+                    exit_options=models.ExitOptions(
+                        job_action=models.JobAction.disable
+                    ),
+                )
+            ],
+            default=models.ExitOptions(job_action=models.JobAction.none),
+        )
+        task_param = models.BatchTaskCreateOptions(
+            id=self.get_resource_name("batch_task1_"),
+            command_line='cmd /c "echo hello world"',
+            exit_conditions=exit_conditions,
+        )
+        try:
+            await async_wrapper(client.create_task(batch_job.id, task_param))
+        except azure.core.exceptions.HttpResponseError as e:
+            message = "{}: ".format(e.error.code, e.error.message)
+            for v in e.model.values:
+                message += "\n{}: {}".format(v.key, v.value)
+            raise Exception(message)
+        task = await async_wrapper(client.get_task(batch_job.id, task_param.id))
+        assert isinstance(task, models.BatchTask)
+        assert task.exit_conditions.default.job_action == models.JobAction.none
+        assert task.exit_conditions.exit_codes[0].code == 1
+        assert (
+            task.exit_conditions.exit_codes[0].exit_options.job_action
+            == models.JobAction.terminate
+        )
+
+        # Test Create Task with Output Files
+        container_url = "https://test.blob.core.windows.net:443/test-container"
+        outputs = [
+            models.OutputFile(
+                file_pattern="../stdout.txt",
+                destination=models.OutputFileDestination(
+                    container=models.OutputFileBlobContainerDestination(
+                        container_url=container_url, path="taskLogs/output.txt"
+                    )
+                ),
+                upload_options=models.OutputFileUploadOptions(
+                    upload_condition=models.OutputFileUploadCondition.task_completion
+                ),
+            ),
+            models.OutputFile(
+                file_pattern="../stderr.txt",
+                destination=models.OutputFileDestination(
+                    container=models.OutputFileBlobContainerDestination(
+                        container_url=container_url, path="taskLogs/error.txt"
+                    )
+                ),
+                upload_options=models.OutputFileUploadOptions(
+                    upload_condition=models.OutputFileUploadCondition.task_failure
+                ),
+            ),
+        ]
+        task_param = models.BatchTaskCreateOptions(
+            id=self.get_resource_name("batch_task2_"),
+            command_line='cmd /c "echo hello world"',
+            output_files=outputs,
+        )
+        await async_wrapper(client.create_task(batch_job.id, task_param))
+        task = await async_wrapper(client.get_task(batch_job.id, task_param.id))
+        assert isinstance(task, models.BatchTask)
+        assert len(task.output_files) == 2
+
+        # Test Create Task with Auto User
+        auto_user = models.AutoUserSpecification(
+            scope=models.AutoUserScope.task, elevation_level=models.ElevationLevel.admin
+        )
+        task_param = models.BatchTaskCreateOptions(
+            id=self.get_resource_name("batch_task3_"),
+            command_line='cmd /c "echo hello world"',
+            user_identity=models.UserIdentity(auto_user=auto_user),
+        )
+        await async_wrapper(client.create_task(batch_job.id, task_param))
+        task = await async_wrapper(client.get_task(batch_job.id, task_param.id))
+        assert isinstance(task, models.BatchTask)
+        assert task.user_identity.auto_user.scope == models.AutoUserScope.task
+        assert (
+            task.user_identity.auto_user.elevation_level == models.ElevationLevel.admin
+        )
+
+        # Test Create Task with Token Settings
+        task_param = models.BatchTaskCreateOptions(
+            id=self.get_resource_name("batch_task4_"),
+            command_line='cmd /c "echo hello world"',
+            authentication_token_settings=models.AuthenticationTokenSettings(
+                access=[models.AccessScope.job]
+            ),
+        )
+        await async_wrapper(client.create_task(batch_job.id, task_param))
+        task = await async_wrapper(client.get_task(batch_job.id, task_param.id))
+        assert isinstance(task, models.BatchTask)
+        assert task.authentication_token_settings.access[0] == models.AccessScope.job
+
+        # Test Create Task with Container Settings
+        task_param = models.BatchTaskCreateOptions(
+            id=self.get_resource_name("batch_task5_"),
+            command_line='cmd /c "echo hello world"',
+            container_settings=models.TaskContainerSettings(
+                image_name="windows_container:latest",
+                registry=models.ContainerRegistry(
+                    username="username", password="password"
+                ),
+            ),
+        )
+        await async_wrapper(client.create_task(batch_job.id, task_param))
+        task = await async_wrapper(client.get_task(batch_job.id, task_param.id))
+        assert isinstance(task, models.BatchTask)
+        assert task.container_settings.image_name == "windows_container:latest"
+        assert task.container_settings.registry.username == "username"
+
+        # Test Create Task with Run-As-User
+        task_param = models.BatchTaskCreateOptions(
+            id=self.get_resource_name("batch_task6_"),
+            command_line='cmd /c "echo hello world"',
+            user_identity=models.UserIdentity(username="task-user"),
+        )
+        await async_wrapper(client.create_task(batch_job.id, task_param))
+        task = await async_wrapper(client.get_task(batch_job.id, task_param.id))
+        assert isinstance(task, models.BatchTask)
+        assert task.user_identity.username == "task-user"
+
+        # Test Add Task Collection
+        tasks = []
+        for i in range(7, 10):
+            tasks.append(
+                models.BatchTaskCreateOptions(
+                    id=self.get_resource_name("batch_task{}_".format(i)),
+                    command_line='cmd /c "echo hello world"',
+                )
+            )
+        result = await async_wrapper(
+            client.create_task_collection(batch_job.id, collection=tasks)
+        )
+        assert isinstance(result, models.TaskAddCollectionResult)
+        assert len(result.value) == 3
+        assert result.value[0].status == models.TaskAddStatus.success
+
+        # Test List Tasks
+        tasks = list(await async_wrapper(client.list_tasks(batch_job.id)))
+        assert len(tasks) == 9
+
+        # Test Count Tasks
+        task_results = await async_wrapper(client.get_job_task_counts(batch_job.id))
+        assert isinstance(task_results, models.TaskCountsResult)
+        assert task_results.task_counts.completed == 0
+        assert task_results.task_counts.succeeded == 0
+
+        # Test Terminate Task
+        response = await async_wrapper(
+            client.terminate_task(batch_job.id, task_param.id)
+        )
+        assert response is None
+        task = await async_wrapper(client.get_task(batch_job.id, task_param.id))
+        assert task.state == models.TaskState.completed
+
+        # Test Reactivate Task
+        response = await async_wrapper(
+            client.reactivate_task(batch_job.id, task_param.id)
+        )
+        assert response is None
+        task = await async_wrapper(client.get_task(batch_job.id, task_param.id))
+        assert task.state == models.TaskState.active
+
+        # Test Update Task
+        response = await async_wrapper(
+            client.replace_task(
+                job_id=batch_job.id,
+                task_id=task_param.id,
+                body=models.BatchTask(
+                    constraints=models.TaskConstraints(max_task_retry_count=1)
+                ),
+            )
+        )
+        assert response is None
+
+        # Test Get Subtasks
+        # TODO: Test with actual subtasks
+        subtasks = await async_wrapper(
+            client.list_sub_tasks(batch_job.id, task_param.id)
+        )
+        assert isinstance(subtasks, models.BatchTaskListSubtasksResult)
+        assert subtasks.value == []
+
+        # Test Delete Task
+        response = await async_wrapper(client.delete_task(batch_job.id, task_param.id))
+        assert response is None
+
+        # Test Bulk Add Task Failure
+        task_id = "mytask"
+        tasks_to_add = []
+        resource_files = []
+        for i in range(10000):
+            resource_file = models.ResourceFile(
+                http_url="https://mystorageaccount.blob.core.windows.net/files/resourceFile{}".format(
+                    str(i)
+                ),
+                file_path="resourceFile{}".format(str(i)),
+            )
+            resource_files.append(resource_file)
+        task = models.BatchTaskCreateOptions(
+            id=task_id, command_line="sleep 1", resource_files=resource_files
+        )
+        tasks_to_add.append(task)
+        await self.assertCreateTasksError(
+            "RequestBodyTooLarge",
+            client.create_task_collection,
+            batch_job.id,
+            tasks_to_add,
+        )
+        await self.assertCreateTasksError(
+            "RequestBodyTooLarge",
+            client.create_task_collection,
+            batch_job.id,
+            tasks_to_add,
+            concurrencies=3,
+        )
+
+        # Test Bulk Add Task Success
+        task_id = "mytask"
+        tasks_to_add = []
+        resource_files = []
+        for i in range(100):
+            resource_file = models.ResourceFile(
+                http_url="https://mystorageaccount.blob.core.windows.net/files/resourceFile"
+                + str(i),
+                file_path="resourceFile" + str(i),
+            )
+            resource_files.append(resource_file)
+        for i in range(733):
+            task = models.BatchTaskCreateOptions(
+                id=task_id + str(i),
+                command_line="sleep 1",
+                resource_files=resource_files,
+            )
+            tasks_to_add.append(task)
+        result = await async_wrapper(
+            client.create_task_collection(batch_job.id, tasks_to_add)
+        )
+        assert isinstance(result, models.TaskAddCollectionResult)
+        assert len(result.value) == 733
+        assert result.value[0].status == models.TaskAddStatus.success
+        assert all(t.status == models.TaskAddStatus.success for t in result.value)

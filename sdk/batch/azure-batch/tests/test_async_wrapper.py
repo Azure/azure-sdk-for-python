@@ -52,5 +52,4 @@ class TestAyncWrapper:
     async def test_isSync(self):
         def func():
             return 1
-        result = await async_wrapper(func())
-        assert 1 == await async_wrapper(1)
+        assert await async_wrapper(func()) == 1
