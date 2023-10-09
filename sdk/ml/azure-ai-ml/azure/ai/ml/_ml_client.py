@@ -35,6 +35,7 @@ from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWork
 
 # Same object, but was renamed starting in v2023_08_01_preview
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningServices as ServiceClient082023Preview
+from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningWorkspaces as ServiceClient102023
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
 from azure.ai.ml._user_agent import USER_AGENT
@@ -326,6 +327,13 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_10_2023 = ServiceClient102023(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
         # A general purpose, user-configurable pipeline for making
         # http requests
         self._requests_pipeline = HttpPipeline(**kwargs)
@@ -372,6 +380,15 @@ class MLClient:
         )
 
         self._service_client_08_2023_preview = ServiceClient082023Preview(
+            credential=self._credential,
+            subscription_id=self._ws_operation_scope._subscription_id
+            if registry_reference
+            else self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
+        self._service_client_10_2023 = ServiceClient102023(
             credential=self._credential,
             subscription_id=self._ws_operation_scope._subscription_id
             if registry_reference
@@ -577,6 +594,7 @@ class MLClient:
         self._featuresets = FeatureSetOperations(
             self._operation_scope,
             self._operation_config,
+            self._service_client_10_2023,
             self._service_client_08_2023_preview,
             self._datastores,
             **ops_kwargs,
@@ -585,7 +603,7 @@ class MLClient:
         self._featurestoreentities = FeatureStoreEntityOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_04_2023_preview,
+            self._service_client_10_2023,
             **ops_kwargs,
         )
 

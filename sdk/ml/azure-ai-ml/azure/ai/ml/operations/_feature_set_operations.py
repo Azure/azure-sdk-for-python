@@ -15,7 +15,8 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningServices as ServiceClient082023Preview
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningWorkspaces as ServiceClient102023
+from azure.ai.ml._restclient.v2023_10_01.models import (
     FeaturesetVersion,
     FeaturesetVersionBackfillRequest,
     FeatureWindow,
@@ -59,7 +60,8 @@ class FeatureSetOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: ServiceClient082023Preview,
+        service_client: ServiceClient102023,
+        service_client_for_jobs: ServiceClient082023Preview,
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
@@ -67,7 +69,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         ops_logger.update_info(kwargs)
         self._operation = service_client.featureset_versions
         self._container_operation = service_client.featureset_containers
-        self._jobs_operation = service_client.jobs
+        self._jobs_operation = service_client_for_jobs.jobs
         self._feature_operation = service_client.features
         self._service_client = service_client
         self._datastore_operation = datastore_operations
