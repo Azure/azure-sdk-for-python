@@ -1,16 +1,10 @@
 # Release History
 
-## 1.29.5 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.29.5 (2023-10-10)
 
 ### Bugs Fixed
 
 - Added check that enter aiohttp session only when it is not None.
-
-### Other Changes
 
 ## 1.29.4 (2023-09-07)
 
