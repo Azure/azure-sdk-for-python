@@ -237,7 +237,7 @@ class TableBatchOperations(object):
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
             try:
-                etag = entity.metadata.get("etag", None)
+                etag = entity.metadata.get("etag", None)  # type: ignore[union-attr] # It doesn't have attribute "metadata" when entity in type Mapping[str, Any]
             except (AttributeError, TypeError):
                 pass
         match_condition = _get_match_condition(
@@ -465,7 +465,7 @@ class TableBatchOperations(object):
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
             try:
-                etag = entity.metadata.get("etag", None)
+                etag = entity.metadata.get("etag", None)  # type: ignore[union-attr] # It doesn't have attribute "metadata" when entity in type Mapping[str, Any]
             except (AttributeError, TypeError):
                 pass
         match_condition = _get_match_condition(
@@ -485,7 +485,7 @@ class TableBatchOperations(object):
         table: str,
         partition_key: str,
         row_key: str,
-        if_match: str,
+        if_match: Optional[str],
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         format: Optional[Union[str, models.OdataMetadataFormat]] = None,  # pylint: disable=redefined-builtin
@@ -501,7 +501,7 @@ class TableBatchOperations(object):
         :param if_match: Match condition for an entity to be deleted. If specified and a matching
          entity is not found, an error will be raised. To force an unconditional delete, set to the
          wildcard character (*).
-        :type if_match: str
+        :type if_match: str or None
         :param timeout: The timeout parameter is expressed in seconds.
         :type timeout: int or None
         :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
@@ -543,7 +543,8 @@ class TableBatchOperations(object):
         header_parameters["DataServiceVersion"] = self._serialize.header(
             "data_service_version", data_service_version, "str"
         )
-        header_parameters["If-Match"] = self._serialize.header("if_match", if_match, "str")
+        if if_match is not None:
+            header_parameters["If-Match"] = self._serialize.header("if_match", if_match, "str")
         header_parameters["Accept"] = self._serialize.header("accept", accept, "str")
 
         request = self._client._client.delete(  # pylint: disable=protected-access

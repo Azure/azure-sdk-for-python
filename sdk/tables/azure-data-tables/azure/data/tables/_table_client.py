@@ -413,26 +413,32 @@ class TableClient(TablesBaseClient):
 
         try:
             if mode == UpdateMode.REPLACE:
-                metadata, content = self._client.table.update_entity(
-                    table=self.table_name,
-                    partition_key=_prepare_key(partition_key),
-                    row_key=_prepare_key(row_key),
-                    table_entity_properties=entity_copy,
-                    etag=etag,
-                    match_condition=match_condition,
-                    cls=kwargs.pop("cls", _return_headers_and_deserialized),
-                    **kwargs,
+                metadata, content = cast(
+                    Tuple[Dict[str, str], Optional[Dict[str, Any]]],
+                    self._client.table.update_entity(
+                        table=self.table_name,
+                        partition_key=_prepare_key(partition_key),
+                        row_key=_prepare_key(row_key),
+                        table_entity_properties=entity_copy,
+                        etag=etag,
+                        match_condition=match_condition,
+                        cls=kwargs.pop("cls", _return_headers_and_deserialized),
+                        **kwargs,
+                    ),
                 )
             elif mode == UpdateMode.MERGE:
-                metadata, content = self._client.table.merge_entity(
-                    table=self.table_name,
-                    partition_key=_prepare_key(partition_key),
-                    row_key=_prepare_key(row_key),
-                    etag=etag,
-                    match_condition=match_condition,
-                    table_entity_properties=entity_copy,
-                    cls=kwargs.pop("cls", _return_headers_and_deserialized),
-                    **kwargs,
+                metadata, content = cast(
+                    Tuple[Dict[str, str], Optional[Dict[str, Any]]],
+                    self._client.table.merge_entity(
+                        table=self.table_name,
+                        partition_key=_prepare_key(partition_key),
+                        row_key=_prepare_key(row_key),
+                        etag=etag,
+                        match_condition=match_condition,
+                        table_entity_properties=entity_copy,
+                        cls=kwargs.pop("cls", _return_headers_and_deserialized),
+                        **kwargs,
+                    ),
                 )
             else:
                 raise ValueError(f"Mode type '{mode}' is not supported.")
