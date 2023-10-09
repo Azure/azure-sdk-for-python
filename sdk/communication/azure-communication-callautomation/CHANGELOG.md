@@ -1,5 +1,9 @@
 # Release History
 
+## 1.1.0b2 (Unreleased)
+### Features Added
+- `PauseOnStart` call recording option to call automation
+
 ## 1.1.0b1 (Unreleased)
 ### Features Added
 - Play and recognize supports TTS and SSML source prompts.
