@@ -6,13 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models import AddParticipantCancelled
 from ._models import AddParticipantFailed
 from ._models import AddParticipantRequest
 from ._models import AddParticipantResponse
 from ._models import AddParticipantSucceeded
 from ._models import AnswerCallRequest
-from ._models import BlobStorage
 from ._models import CallConnected
 from ._models import CallConnectionProperties
 from ._models import CallDisconnected
@@ -23,10 +21,10 @@ from ._models import CallTransferFailed
 from ._models import CancelAddParticipantFailed
 from ._models import CancelAddParticipantRequest
 from ._models import CancelAddParticipantResponse
+from ._models import CancelAddParticipantSucceeded
 from ._models import ChannelAffinity
 from ._models import Choice
 from ._models import ChoiceResult
-from ._models import CollectTonesResult
 from ._models import CommunicationError
 from ._models import CommunicationErrorResponse
 from ._models import CommunicationIdentifierModel
@@ -36,25 +34,12 @@ from ._models import ContinuousDtmfRecognitionStopped
 from ._models import ContinuousDtmfRecognitionToneFailed
 from ._models import ContinuousDtmfRecognitionToneReceived
 from ._models import CreateCallRequest
-from ._models import CustomContext
-from ._models import DialogCompleted
-from ._models import DialogConsent
-from ._models import DialogFailed
-from ._models import DialogHangup
-from ._models import DialogLanguageChange
-from ._models import DialogOptions
-from ._models import DialogSensitivityUpdate
-from ._models import DialogStarted
-from ._models import DialogStateResponse
-from ._models import DialogTransfer
 from ._models import DtmfOptions
 from ._models import DtmfResult
-from ._models import ExternalStorage
 from ._models import FileSource
-from ._models import MediaStreamingConfiguration
 from ._models import MicrosoftTeamsUserIdentifierModel
 from ._models import MuteParticipantsRequest
-from ._models import MuteParticipantsResponse
+from ._models import MuteParticipantsResult
 from ._models import ParticipantsUpdated
 from ._models import PhoneNumberIdentifierModel
 from ._models import PlayCanceled
@@ -77,44 +62,25 @@ from ._models import RemoveParticipantRequest
 from ._models import RemoveParticipantResponse
 from ._models import RemoveParticipantSucceeded
 from ._models import ResultInformation
-from ._models import SendDtmfCompleted
-from ._models import SendDtmfFailed
-from ._models import SendDtmfRequest
+from ._models import SendDtmfTonesCompleted
+from ._models import SendDtmfTonesFailed
+from ._models import SendDtmfTonesRequest
+from ._models import SendDtmfTonesResult
 from ._models import SpeechOptions
 from ._models import SpeechResult
 from ._models import SsmlSource
 from ._models import StartCallRecordingRequest
-from ._models import StartDialogRequest
-from ._models import StartHoldMusicRequest
-from ._models import StartTranscriptionRequest
-from ._models import StopHoldMusicRequest
-from ._models import StopTranscriptionRequest
 from ._models import TextSource
 from ._models import ToneInfo
-from ._models import TranscriptionConfiguration
-from ._models import TranscriptionFailed
-from ._models import TranscriptionResumed
-from ._models import TranscriptionStarted
-from ._models import TranscriptionStopped
-from ._models import TranscriptionUpdate
 from ._models import TransferCallResponse
 from ._models import TransferToParticipantRequest
-from ._models import UnmuteParticipantsRequest
-from ._models import UnmuteParticipantsResponse
-from ._models import UpdateTranscriptionDataRequest
-from ._models import UserConsent
 
 from ._enums import CallConnectionState
 from ._enums import CallLocatorKind
 from ._enums import CallRejectReason
 from ._enums import CommunicationCloudEnvironmentModel
 from ._enums import CommunicationIdentifierModelKind
-from ._enums import DialogInputType
 from ._enums import DtmfTone
-from ._enums import Gender
-from ._enums import MediaStreamingAudioChannelType
-from ._enums import MediaStreamingContentType
-from ._enums import MediaStreamingTransportType
 from ._enums import PlaySourceType
 from ._enums import RecognitionType
 from ._enums import RecognizeInputType
@@ -122,23 +88,17 @@ from ._enums import RecordingChannel
 from ._enums import RecordingContent
 from ._enums import RecordingFormat
 from ._enums import RecordingState
-from ._enums import RecordingStorage
-from ._enums import RecordingType
-from ._enums import TranscriptionStatus
-from ._enums import TranscriptionStatusDetails
-from ._enums import TranscriptionTransportType
+from ._enums import VoiceKind
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AddParticipantCancelled",
     "AddParticipantFailed",
     "AddParticipantRequest",
     "AddParticipantResponse",
     "AddParticipantSucceeded",
     "AnswerCallRequest",
-    "BlobStorage",
     "CallConnected",
     "CallConnectionProperties",
     "CallDisconnected",
@@ -149,10 +109,10 @@ __all__ = [
     "CancelAddParticipantFailed",
     "CancelAddParticipantRequest",
     "CancelAddParticipantResponse",
+    "CancelAddParticipantSucceeded",
     "ChannelAffinity",
     "Choice",
     "ChoiceResult",
-    "CollectTonesResult",
     "CommunicationError",
     "CommunicationErrorResponse",
     "CommunicationIdentifierModel",
@@ -162,25 +122,12 @@ __all__ = [
     "ContinuousDtmfRecognitionToneFailed",
     "ContinuousDtmfRecognitionToneReceived",
     "CreateCallRequest",
-    "CustomContext",
-    "DialogCompleted",
-    "DialogConsent",
-    "DialogFailed",
-    "DialogHangup",
-    "DialogLanguageChange",
-    "DialogOptions",
-    "DialogSensitivityUpdate",
-    "DialogStarted",
-    "DialogStateResponse",
-    "DialogTransfer",
     "DtmfOptions",
     "DtmfResult",
-    "ExternalStorage",
     "FileSource",
-    "MediaStreamingConfiguration",
     "MicrosoftTeamsUserIdentifierModel",
     "MuteParticipantsRequest",
-    "MuteParticipantsResponse",
+    "MuteParticipantsResult",
     "ParticipantsUpdated",
     "PhoneNumberIdentifierModel",
     "PlayCanceled",
@@ -203,43 +150,24 @@ __all__ = [
     "RemoveParticipantResponse",
     "RemoveParticipantSucceeded",
     "ResultInformation",
-    "SendDtmfCompleted",
-    "SendDtmfFailed",
-    "SendDtmfRequest",
+    "SendDtmfTonesCompleted",
+    "SendDtmfTonesFailed",
+    "SendDtmfTonesRequest",
+    "SendDtmfTonesResult",
     "SpeechOptions",
     "SpeechResult",
     "SsmlSource",
     "StartCallRecordingRequest",
-    "StartDialogRequest",
-    "StartHoldMusicRequest",
-    "StartTranscriptionRequest",
-    "StopHoldMusicRequest",
-    "StopTranscriptionRequest",
     "TextSource",
     "ToneInfo",
-    "TranscriptionConfiguration",
-    "TranscriptionFailed",
-    "TranscriptionResumed",
-    "TranscriptionStarted",
-    "TranscriptionStopped",
-    "TranscriptionUpdate",
     "TransferCallResponse",
     "TransferToParticipantRequest",
-    "UnmuteParticipantsRequest",
-    "UnmuteParticipantsResponse",
-    "UpdateTranscriptionDataRequest",
-    "UserConsent",
     "CallConnectionState",
     "CallLocatorKind",
     "CallRejectReason",
     "CommunicationCloudEnvironmentModel",
     "CommunicationIdentifierModelKind",
-    "DialogInputType",
     "DtmfTone",
-    "Gender",
-    "MediaStreamingAudioChannelType",
-    "MediaStreamingContentType",
-    "MediaStreamingTransportType",
     "PlaySourceType",
     "RecognitionType",
     "RecognizeInputType",
@@ -247,11 +175,7 @@ __all__ = [
     "RecordingContent",
     "RecordingFormat",
     "RecordingState",
-    "RecordingStorage",
-    "RecordingType",
-    "TranscriptionStatus",
-    "TranscriptionStatusDetails",
-    "TranscriptionTransportType",
+    "VoiceKind",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
