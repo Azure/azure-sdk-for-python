@@ -19,16 +19,17 @@ from azure.ai.ml.constants._monitoring import (
 )
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._monitoring.alert_notification import AlertNotification
+from azure.ai.ml.entities._monitoring.compute import ServerlessSparkCompute
 from azure.ai.ml.entities._monitoring.signals import (
     CustomMonitoringSignal,
     DataDriftSignal,
     DataQualitySignal,
     FeatureAttributionDriftSignal,
+    GenerationSafetyQualitySignal,
     MonitoringSignal,
     PredictionDriftSignal,
 )
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
-from azure.ai.ml.entities._monitoring.compute import ServerlessSparkCompute
 
 
 @experimental
@@ -45,14 +46,14 @@ class MonitorDefinition(RestTranslatableMixin):
     :paramtype monitoring_signals: Optional[Dict[str, Union[~azure.ai.ml.entities.DataDriftSignal
         , ~azure.ai.ml.entities.DataQualitySignal, ~azure.ai.ml.entities.PredictionDriftSignal
         , ~azure.ai.ml.entities.FeatureAttributionDriftSignal
-        , ~azure.ai.ml.entities.CustomMonitoringSignal]]]
+        , ~azure.ai.ml.entities.CustomMonitoringSignal
+        , ~azure.ai.ml.entities.GenerationSafetyQualitySignal]]]
     :keyword alert_notification: The alert configuration for the monitor.
     :paramtype alert_notification: Optional[Union[Literal['azmonitoring'], ~azure.ai.ml.entities.AlertNotification]]
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
+        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_monitor_definition]
             :end-before: [END spark_monitor_definition]
             :language: python
@@ -73,6 +74,7 @@ class MonitorDefinition(RestTranslatableMixin):
                 PredictionDriftSignal,
                 FeatureAttributionDriftSignal,
                 CustomMonitoringSignal,
+                GenerationSafetyQualitySignal,
             ],
         ] = None,
         alert_notification: Optional[Union[Literal[AZMONITORING], AlertNotification]] = None,

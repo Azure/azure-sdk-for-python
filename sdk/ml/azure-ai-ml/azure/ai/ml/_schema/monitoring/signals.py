@@ -24,6 +24,7 @@ from azure.ai.ml._schema.monitoring.thresholds import (
     FeatureAttributionDriftMetricThresholdSchema,
     ModelPerformanceMetricThresholdSchema,
     CustomMonitoringMetricThresholdSchema,
+    GenerationSafetyQualityMetricThresholdSchema,
 )
 
 
@@ -257,9 +258,11 @@ class CustomMonitoringSignalSchema(metaclass=PatchedSchemaMeta):
     workspace_connection = NestedField(WorkspaceConnectionSchema)
     component_id = ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT)
     metric_thresholds = fields.List(NestedField(CustomMonitoringMetricThresholdSchema))
-    input_datasets = fields.Dict(keys=fields.Str(), values=NestedField(ProductionDataSchema))
+    input_data = fields.Dict(keys=fields.Str(), values=NestedField(ReferenceDataSchema))
     alert_enabled = fields.Bool()
-    input_literals = fields.Dict(keys=fields.Str, values=NestedField(DataInputSchema))
+    inputs = fields.Dict(
+        keys=fields.Str, values=UnionField(union_fields=[NestedField(DataInputSchema), NestedField(MLTableInputSchema)])
+    )
 
     @pre_dump
     def predump(self, data, **kwargs):
@@ -275,3 +278,40 @@ class CustomMonitoringSignalSchema(metaclass=PatchedSchemaMeta):
 
         data.pop("type", None)
         return CustomMonitoringSignal(**data)
+
+
+class LlmDataSchema(metaclass=PatchedSchemaMeta):
+    input_data = UnionField(union_fields=[NestedField(DataInputSchema), NestedField(MLTableInputSchema)])
+    data_column_names = fields.Dict()
+    data_window_size = fields.Str()
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._monitoring.signals import LlmData
+
+        return LlmData(**data)
+
+
+class GenerationSafetyQualitySchema(metaclass=PatchedSchemaMeta):
+    type = StringTransformedEnum(allowed_values=MonitorSignalType.GENERATION_SAFETY_QUALITY, required=True)
+    production_data = fields.List(NestedField(LlmDataSchema))
+    workspace_connection_id = fields.Str()
+    metric_thresholds = NestedField(GenerationSafetyQualityMetricThresholdSchema)
+    alert_enabled = fields.Bool()
+    properties = fields.Dict()
+    sampling_rate = fields.Int()
+
+    @pre_dump
+    def predump(self, data, **kwargs):
+        from azure.ai.ml.entities._monitoring.signals import GenerationSafetyQualitySignal
+
+        if not isinstance(data, GenerationSafetyQualitySignal):
+            raise ValidationError("Cannot dump non-GenerationSafetyQuality object into GenerationSafetyQuality")
+        return data
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._monitoring.signals import GenerationSafetyQualitySignal
+
+        data.pop("type", None)
+        return GenerationSafetyQualitySignal(**data)

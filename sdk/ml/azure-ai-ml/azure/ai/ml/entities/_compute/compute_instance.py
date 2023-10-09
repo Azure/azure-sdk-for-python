@@ -46,7 +46,7 @@ class ComputeInstanceSshSettings:
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_compute.py
+        .. literalinclude:: ../samples/ml_samples_compute.py
             :start-after: [START compute_instance_ssh_settings]
             :end-before: [END compute_instance_ssh_settings]
             :language: python
@@ -93,7 +93,7 @@ class AssignedUserConfiguration(DictMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_compute.py
+        .. literalinclude:: ../samples/ml_samples_compute.py
             :start-after: [START assigned_user_configuration]
             :end-before: [END assigned_user_configuration]
             :language: python
@@ -132,11 +132,13 @@ class ComputeInstance(Compute):
     :param ssh_settings: SSH settings for the compute instance.
     :type ssh_settings: Optional[~azure.ai.ml.entities.ComputeInstanceSshSettings]
     :param ssh_public_access_enabled: State of the public SSH port. Defaults to None. Possible values are:
+
         * False - Indicates that the public ssh port is closed on all nodes of the cluster.
         * True - Indicates that the public ssh port is open on all nodes of the cluster.
         * None -Indicates that the public ssh port is closed on all nodes of the cluster if VNet is defined,
             else is open all public nodes. It can be default only during cluster creation time, after
             creation it will be either True or False.
+
     :type ssh_public_access_enabled: Optional[bool]
     :param schedules: Compute instance schedules. Defaults to None.
     :type schedules: Optional[~azure.ai.ml.entities.ComputeSchedules]
@@ -151,18 +153,17 @@ class ComputeInstance(Compute):
     :type idle_time_before_shutdown_minutes: Optional[int]
     :param enable_node_public_ip: Enable or disable node public IP address provisioning. Defaults to True.
         Possible values are:
-        * True - Indicates that the compute nodes will have public IPs provisioned.
-        * False - Indicates that the compute nodes will have a private endpoint and no public IPs.
+            * True - Indicates that the compute nodes will have public IPs provisioned.
+            * False - Indicates that the compute nodes will have a private endpoint and no public IPs.
     :type enable_node_public_ip: Optional[bool]
     :param setup_scripts: Details of customized scripts to execute for setting up the cluster.
     :type setup_scripts: Optional[~azure.ai.ml.entities.SetupScripts]
-    :param custom_applications: List of custom applications and their endpoints
-        for the compute instance.
+    :param custom_applications: List of custom applications and their endpoints for the compute instance.
     :type custom_applications: Optional[List[~azure.ai.ml.entities.CustomApplications]]
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_compute.py
+        .. literalinclude:: ../samples/ml_samples_compute.py
             :start-after: [START compute_instance]
             :end-before: [END compute_instance]
             :language: python

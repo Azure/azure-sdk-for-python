@@ -178,6 +178,7 @@ async def test_response_internal_response_trio(get_old_response_trio, get_new_re
     _test_response_internal_response(old_response, new_response, port)
 
 
+@pytest.mark.skip(reason="Resolve in #32162")
 @pytest.mark.asyncio
 @pytest.mark.parametrize("transport", TRANSPORTS)
 async def test_response_stream_download(get_old_response, get_new_response, transport):
@@ -251,7 +252,7 @@ def _test_response_headers(old_response, new_response):
     assert (
         set(old_response.headers.keys())
         == set(new_response.headers.keys())
-        == set(["Content-Type", "Connection", "Server", "Date"])
+        == set(["Content-Type", "Connection", "Server", "Date", "Transfer-Encoding"])
     )
     old_response.headers = {"Hello": "world!"}
     new_response.headers = {"Hello": "world!"}

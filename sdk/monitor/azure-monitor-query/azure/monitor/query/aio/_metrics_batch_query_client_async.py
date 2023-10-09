@@ -4,8 +4,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from datetime import timedelta, datetime
 from json import loads
-from typing import Any, List, MutableMapping, Sequence
+from typing import Any, List, MutableMapping, Sequence, Optional, Union, Tuple
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -48,7 +49,18 @@ class MetricsBatchQueryClient:  # pylint: disable=client-accepts-api-version-key
 
     @distributed_trace_async
     async def query_batch(
-        self, resource_uris: Sequence[str], metric_namespace: str, metric_names: Sequence[str], **kwargs: Any
+        self,
+        resource_uris: Sequence[str],
+        metric_namespace: str,
+        metric_names: Sequence[str],
+        *,
+        timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]] = None,
+        granularity: Optional[timedelta] = None,
+        aggregations: Optional[Sequence[str]] = None,
+        max_results: Optional[int] = None,
+        order_by: Optional[str] = None,
+        filter: Optional[str] = None,
+        **kwargs: Any
     ) -> List[MetricsQueryResult]:
         """Lists the metric values for multiple resources.
 
@@ -102,23 +114,26 @@ class MetricsBatchQueryClient:  # pylint: disable=client-accepts-api-version-key
         if not resource_uris:
             raise ValueError("resource_uris must be provided and must not be empty.")
 
-        aggregations = kwargs.pop("aggregations", None)
-        if aggregations:
-            kwargs.setdefault("aggregation", ",".join(aggregations))
-
         # Metric names with commas need to be encoded.
         metric_names = [x.replace(",", "%2") for x in metric_names]
-        kwargs.setdefault("top", kwargs.pop("max_results", None))
-        kwargs.setdefault("interval", kwargs.pop("granularity", None))
-        kwargs.setdefault("orderby", kwargs.pop("order_by", None))
 
-        start_time, end_time = get_timespan_iso8601_endpoints(kwargs.pop("timespan", None))
-        kwargs.setdefault("starttime", start_time)
-        kwargs.setdefault("endtime", end_time)
+        start_time, end_time = get_timespan_iso8601_endpoints(timespan)
         resource_id_json: JSON = {"resourceids": list(resource_uris)}
         subscription_id = get_subscription_id_from_resource(resource_uris[0])
+
         generated = await self._batch_metrics_op.batch(
-            subscription_id, resource_id_json, metricnamespace=metric_namespace, metricnames=metric_names, **kwargs
+            subscription_id,
+            resource_id_json,
+            metricnamespace=metric_namespace,
+            metricnames=metric_names,
+            starttime=start_time,
+            endtime=end_time,
+            interval=granularity,
+            aggregation=",".join(aggregations) if aggregations else None,
+            top=max_results,
+            orderby=order_by,
+            filter=filter,
+            **kwargs
         )
 
         # In rare cases, the generated value is a JSON string instead of a dict. This potentially stems from a bug in

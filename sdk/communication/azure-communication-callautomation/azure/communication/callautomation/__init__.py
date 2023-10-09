@@ -20,7 +20,8 @@ from ._models import (
     TransferCallResult,
     MediaStreamingConfiguration,
     ChannelAffinity,
-    MuteParticipantsResult
+    MuteParticipantsResult,
+    CancelAddParticipantResult,
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -67,6 +68,7 @@ __all__ = [
     "RemoveParticipantResult",
     "TransferCallResult",
     "MuteParticipantsResult",
+    "CancelAddParticipantResult",
 
     # common ACS communication identifier
     "CommunicationIdentifier",

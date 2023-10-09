@@ -252,47 +252,9 @@ skipped, so the `TestProxy` parameter doesn't need to be set in `tests.yml`.
 
 ### Fetch environment variables
 
-Fetching environment variables, passing them directly to tests, and sanitizing their real values can be done all at once
-by using the `devtools_testutils` [EnvironmentVariableLoader][env_var_loader] (formerly known, and sometimes referred
-to, as the PowerShellPreparer).
-
-This loader is meant to be paired with the PowerShell test resource management commands that are documented in
-[/eng/common/TestResources][test_resources]. It's recommended that all test suites use these scripts for live test
-resource management.
-
-The EnvironmentVariableLoader accepts a positional `directory` argument and arbitrary keyword-only arguments:
-- `directory` is the name of your package's service as it appears in the Python repository; i.e. `service` in `azure-sdk-for-python/sdk/service/azure-service-package`.
-  - For example, for `azure-keyvault-keys`, the value of `directory` is `keyvault`.
-- For each environment variable you want to provide to tests, pass in a keyword argument with the pattern `environment_variable_name="sanitized-value"`.
-  - For example, to fetch the value of `STORAGE_ENDPOINT` and sanitize this value in recordings as `fake-endpoint`, provide `storage_endpoint="fake-endpoint"` to the EnvironmentVariableLoader constructor.
-
-Decorated test methods will have the values of environment variables passed to them as keyword arguments, and these
-values will automatically have sanitizers registered with the test proxy. More specifically, the true values of
-requested variables will be provided to tests in live mode, and the sanitized values of these variables will be provided
-in playback mode.
-
-The most common way to use the EnvironmentVariableLoader is to declare a callable specifying arguments by using
-`functools.partial` and then decorate test methods with that callable. For example:
-
-```python
-import functools
-from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
-
-ServicePreparer = functools.partial(
-    EnvironmentVariableLoader,
-    "service",
-    service_endpoint="fake-endpoint",
-    service_account_name="fake-account-name",
-)
-
-class TestExample(AzureRecordedTestCase):
-
-    @ServicePreparer()
-    @recorded_by_proxy
-    def test_example_with_preparer(self, **kwargs):
-        service_endpoint = kwargs.pop("service_endpoint")
-        ...
-```
+Refer to the [documentation in `devtools_testutils`][env_var_docs] and use the
+[`devtools_testutils.EnvironmentVariableLoader`][env_var_loader] to fetch environment variables and provide them to
+tests.
 
 ### Record test variables
 
@@ -459,6 +421,7 @@ client to the test.
 
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 
+[env_var_docs]: https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-sdk-tools/devtools_testutils#use-the-environmentvariableloader
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
 
 [mgmt_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_recorded_testcase.py

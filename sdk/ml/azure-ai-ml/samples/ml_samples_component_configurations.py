@@ -40,7 +40,8 @@ class ComponentConfigurationOptions(object):
         from azure.ai.ml import load_component
 
         component = load_component(
-            source="../tests/test_configs/components/helloworld_component.yml", params_override=[{"version": "1.0.2"}]
+            source="./sdk/ml/azure-ai-ml/tests/test_configs/components/helloworld_component.yml",
+            params_override=[{"version": "1.0.2"}],
         )
         registered_component = ml_client.components.create_or_update(component)
         # [END configure_load_component]

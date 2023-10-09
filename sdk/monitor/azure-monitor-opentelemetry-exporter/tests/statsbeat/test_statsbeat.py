@@ -153,6 +153,13 @@ class TestStatsbeat(unittest.TestCase):
 
 
     @mock.patch('azure.monitor.opentelemetry.exporter.statsbeat._statsbeat._StatsbeatMetrics')
+    @mock.patch.dict(
+        "os.environ",
+        {
+            "APPLICATION_INSIGHTS_STATS_SHORT_EXPORT_INTERVAL": "",
+            "APPLICATION_INSIGHTS_STATS_LONG_EXPORT_INTERVAL": "",
+        },
+    )
     def test_collect_statsbeat_metrics_aad(
         self,
         mock_statsbeat_metrics,
@@ -177,6 +184,13 @@ class TestStatsbeat(unittest.TestCase):
 
 
     @mock.patch('azure.monitor.opentelemetry.exporter.statsbeat._statsbeat._StatsbeatMetrics')
+    @mock.patch.dict(
+        "os.environ",
+        {
+            "APPLICATION_INSIGHTS_STATS_SHORT_EXPORT_INTERVAL": "",
+            "APPLICATION_INSIGHTS_STATS_LONG_EXPORT_INTERVAL": "",
+        },
+    )
     def test_collect_statsbeat_metrics_no_aad(
         self,
         mock_statsbeat_metrics,

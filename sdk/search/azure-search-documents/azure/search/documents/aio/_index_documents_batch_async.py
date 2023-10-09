@@ -3,16 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Union, Dict, Tuple
+from typing import List, Union, Dict, Tuple, Any, cast
 import asyncio
 
 from .._generated.models import IndexAction
 
 
-def _flatten_args(args: Union[List[Dict], List[List[Dict]]]) -> List[Dict]:
-    if len(args) == 1 and isinstance(args[0], (List, Tuple)):
-        return args[0]
-    return args
+def _flatten_args(args: Tuple[Union[List[Dict[Any, Any]], List[List[Dict[Any, Any]]]], ...]) -> List[Dict]:
+    if len(args) == 1 and isinstance(args[0], (list, tuple)):
+        return cast(List[Dict], args[0])
+    return cast(List[Dict], args)
 
 
 class IndexDocumentsBatch:
