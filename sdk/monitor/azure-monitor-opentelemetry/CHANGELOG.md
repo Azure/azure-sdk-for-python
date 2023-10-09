@@ -22,6 +22,8 @@
 
 - Add Azure resource detectors
     ([#32087](https://github.com/Azure/azure-sdk-for-python/pull/32087))
+- Add instrumentation_options
+    ([#31793](https://github.com/Azure/azure-sdk-for-python/pull/31793))
 
 ### Other Changes
 

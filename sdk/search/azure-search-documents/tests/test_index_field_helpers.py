@@ -3,7 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.search.documents.indexes.models import ComplexField, SearchableField, SimpleField, SearchFieldDataType
+from azure.search.documents.indexes.models import (
+    ComplexField,
+    SearchableField,
+    SimpleField,
+    SearchFieldDataType,
+)
 
 
 def test_edm_contents():
