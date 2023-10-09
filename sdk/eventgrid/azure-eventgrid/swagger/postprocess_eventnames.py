@@ -14,8 +14,7 @@ def extract(definitions):
         if event.endswith('Data') and event not in EXCEPTIONS:
             key, txt = "Name".join(event.rsplit('Data', 1)), definitions[event]['description']
             try:
-                val = re.findall("Microsoft.[a-zA-Z]+.[a-zA-Z]+.[a-zA-Z]+", txt)
-
+                val = re.findall("Microsoft.[a-zA-Z]+.[a-zA-Z]+.[a-zA-Z]^\s*", txt)
                 tups.append((key, val[0]))
             except:
                 try:

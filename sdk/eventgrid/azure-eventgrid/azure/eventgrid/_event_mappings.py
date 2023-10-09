@@ -240,10 +240,6 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     EventHubCaptureFileCreatedEventName = 'Microsoft.EventHub.CaptureFileCreated'
 
-    HealthResourcesAvailabilityStatusChangedEventName = 'Microsoft.ResourceNotifications.HealthResources.AvailabilityStatusChanged'
-
-    HealthResourcesResourceAnnotatedEventName = 'Microsoft.ResourceNotifications.HealthResources.ResourceAnnotated'
-
     HealthcareDicomImageCreatedEventName = 'Microsoft.HealthcareApis.DicomImageCreated'
 
     HealthcareDicomImageDeletedEventName = 'Microsoft.HealthcareApis.DicomImageDeleted'
@@ -295,8 +291,6 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MachineLearningServicesRunCompletedEventName = 'Microsoft.MachineLearningServices.RunCompleted'
 
     MachineLearningServicesRunStatusChangedEventName = 'Microsoft.MachineLearningServices.RunStatusChanged'
-
-    MaintenanceResourcesScheduledEventEmittedEventName = 'Microsoft.ResourceNotifications.MaintenanceResources.ScheduledEventEmitted'
 
     MapsGeofenceEnteredEventName = 'Microsoft.Maps.GeofenceEntered'
 
@@ -380,9 +374,9 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ResourceDeleteSuccessName = 'Microsoft.Resources.ResourceDeleteSuccess'
 
-    ResourceManagementCreatedOrUpdatedEventName = 'Microsoft.ResourceNotifications.Resources.CreatedOrUpdated'
+    ResourceNotificationsHealthResourcesAnnotatedEventName = 'Microsoft.ResourceNotifications.HealthResources'
 
-    ResourceManagementDeletedEventName = 'Microsoft.ResourceNotifications.Resources.Deleted'
+    ResourceNotificationsHealthResourcesAvailabilityStatusChangedEventName = 'Microsoft.ResourceNotifications.HealthResources'
 
     ResourceWriteCancelName = 'Microsoft.Resources.ResourceWriteCancel'
 
