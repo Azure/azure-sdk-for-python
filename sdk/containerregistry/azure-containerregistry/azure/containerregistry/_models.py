@@ -77,15 +77,6 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
     :ivar str fully_qualified_reference: The fully qualified name of this artifact.
     """
 
-    can_delete: Optional[bool]
-    """Delete Permissions for an artifact."""
-    can_read: Optional[bool]
-    """Read Permissions for an artifact."""
-    can_list: Optional[bool]
-    """List Permissions for an artifact."""
-    can_write: Optional[bool]
-    """Write Permissions for an artifact."""
-
     def __init__(self, **kwargs: Any) -> None:
         self._architecture = kwargs.get("cpu_architecture", None)
         try:
@@ -104,10 +95,10 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
         self._registry = kwargs.get("registry", None)
         self._size_in_bytes = kwargs.get("size_in_bytes", None)
         self._tags = kwargs.get("tags", None)
-        self.can_delete = kwargs.get("can_delete")
-        self.can_read = kwargs.get("can_read")
-        self.can_list = kwargs.get("can_list")
-        self.can_write = kwargs.get("can_write")
+        self.can_delete: Optional[bool] = kwargs.get("can_delete")
+        self.can_read: Optional[bool] = kwargs.get("can_read")
+        self.can_list: Optional[bool] = kwargs.get("can_list")
+        self.can_write: Optional[bool] = kwargs.get("can_write")
 
     @classmethod
     def _from_generated(cls, generated: ManifestAttributesBase, **kwargs) -> "ArtifactManifestProperties":
@@ -224,25 +215,16 @@ class RepositoryProperties:
     :ivar int tag_count: Number of tags associated with the repository.
     """
 
-    can_delete: Optional[bool]
-    """Delete Permissions for a repository."""
-    can_read: Optional[bool]
-    """Read Permissions for a repository."""
-    can_list: Optional[bool]
-    """List Permissions for a repository."""
-    can_write: Optional[bool]
-    """Write Permissions for a repository."""
-
     def __init__(self, **kwargs: Any) -> None:
         self._created_on = kwargs.get("created_on", None)
         self._last_updated_on = kwargs.get("last_updated_on", None)
         self._manifest_count = kwargs.get("manifest_count", None)
         self._name = kwargs.get("name", None)
         self._tag_count = kwargs.get("tag_count", None)
-        self.can_delete = kwargs.get("can_delete")
-        self.can_read = kwargs.get("can_read")
-        self.can_list = kwargs.get("can_list")
-        self.can_write = kwargs.get("can_write")
+        self.can_delete: Optional[bool] = kwargs.get("can_delete")
+        self.can_read: Optional[bool] = kwargs.get("can_read")
+        self.can_list: Optional[bool] = kwargs.get("can_list")
+        self.can_write: Optional[bool] = kwargs.get("can_write")
 
     @classmethod
     def _from_generated(cls, generated: GeneratedRepositoryProperties) -> "RepositoryProperties":
@@ -266,14 +248,15 @@ class RepositoryProperties:
             can_list=self.can_list,
         )
 
-    def __getattr__(self, name: str) -> datetime:
+    def __getattr__(self, name: str) -> Any:
         if name == "last_udpated_on":
             warnings.warn(
                 "The property name with a typo called 'last_udpated_on' has been deprecated and will be retired \
                 in future versions",
                 DeprecationWarning,
             )
-        return self.last_updated_on
+            return self.last_updated_on
+        raise AttributeError(f"'RepositoryProperties' object has no attribute '{name}'")
 
     @property
     def created_on(self) -> datetime:
@@ -293,7 +276,7 @@ class RepositoryProperties:
 
     @property
     def manifest_count(self) -> int:
-        """Number of manifest in the repository.
+        """Number of manifests in the repository.
 
         :rtype: int
         """
@@ -332,25 +315,16 @@ class ArtifactTagProperties:
     :ivar str repository_name: Repository name the tag belongs to.
     """
 
-    can_delete: Optional[bool]
-    """Delete Permissions for a tag."""
-    can_read: Optional[bool]
-    """Read Permissions for a tag."""
-    can_list: Optional[bool]
-    """List Permissions for a tag."""
-    can_write: Optional[bool]
-    """Write Permissions for a tag."""
-
     def __init__(self, **kwargs: Any) -> None:
         self._created_on = kwargs.get("created_on", None)
         self._digest = kwargs.get("digest", None)
         self._last_updated_on = kwargs.get("last_updated_on", None)
         self._name = kwargs.get("name", None)
         self._repository_name = kwargs.get("repository_name", None)
-        self.can_delete = kwargs.get("can_delete")
-        self.can_read = kwargs.get("can_read")
-        self.can_list = kwargs.get("can_list")
-        self.can_write = kwargs.get("can_write")
+        self.can_delete: Optional[bool] = kwargs.get("can_delete")
+        self.can_read: Optional[bool] = kwargs.get("can_read")
+        self.can_list: Optional[bool] = kwargs.get("can_list")
+        self.can_write: Optional[bool] = kwargs.get("can_write")
 
     @classmethod
     def _from_generated(cls, generated: TagAttributesBase, **kwargs) -> "ArtifactTagProperties":
@@ -425,7 +399,7 @@ class GetManifestResult:
     digest: str
     """The manifest's digest, calculated by the registry."""
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.manifest = cast(Mapping[str, Any], kwargs.get("manifest"))
         self.media_type = str(kwargs.get("media_type"))
         self.digest = str(kwargs.get("digest"))
