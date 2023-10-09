@@ -2371,31 +2371,41 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             feedrangeEPK = partition_key_definition._get_epk_range_for_prefix_partition_key(partition_key)  # cspell:disable-line # pylint: disable=line-too-long
             over_lapping_ranges = await self._routing_map_provider.get_overlapping_ranges(id_, [feedrangeEPK])
             results = None
+            # For each over lapping range we will take a sub range of the feed range EPK that overlaps with the over
+            # lapping physical partition. The EPK sub range will be one of three:
+            # 1) Will have a range min equal to the feed range EPK min, and a range max equal to the over lapping
+            # partition
+            # 2) Will have a range min equal to the over lapping partition range min, and a range max equal to the
+            # feed range EPK range max.
+            # 3) will match exactly with the current over lapping physical partition, so we just return the over lapping
+            # physical partition's partition key id.
             for over_lapping_range in over_lapping_ranges:
-                # It is possible for the over lapping range to include multiple physical partitions
-                # we should return query results for all the partitions that are overlapped.
                 single_range = routing_range.Range.PartitionKeyRangeToRange(over_lapping_range)
-                if single_range.min == feedrangeEPK.min and single_range.max == feedrangeEPK.max:
-                    # The EpkRange spans exactly one physical partition
+                # Since the range min and max are all Upper Cased string Hex Values,
+                # we can compare the values lexicographically
+                EPK_sub_range = routing_range.Range(range_min=max(single_range.min, feedrangeEPK.min),
+                                                    range_max=min(single_range.max, feedrangeEPK.max),
+                                                    isMinInclusive=True, isMaxInclusive=False)
+                if single_range.min == EPK_sub_range.min and EPK_sub_range.max == single_range.max:
+                    # The Epk Sub Range spans exactly one physical partition
                     # In this case we can route to the physical pk range id
                     req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_range["id"]
                 else:
-                    # The EpkRange spans less than single physical partition
+                    # The Epk Sub Range spans less than a single physical partition
                     # In this case we route to the physical partition and
-                    # pass the epk range headers to filter within partition
+                    # pass the epk sub range to the headers to filter within partition
                     req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_range["id"]
-                    req_headers[http_constants.HttpHeaders.StartEpkString] = feedrangeEPK.min
-                    req_headers[http_constants.HttpHeaders.EndEpkString] = feedrangeEPK.max
+                    req_headers[http_constants.HttpHeaders.StartEpkString] = EPK_sub_range.min
+                    req_headers[http_constants.HttpHeaders.EndEpkString] = EPK_sub_range.max
                 req_headers[http_constants.HttpHeaders.ReadFeedKeyType] = "EffectivePartitionKeyRange"
                 r, self.last_response_headers = await self.__Post(path, request_params, query, req_headers, **kwargs)
                 if results:
                     # add up all the query results from all over lapping ranges
                     results["Documents"].extend(r["Documents"])
-                    results["_count"] += r["_count"]
                 else:
                     results = r
                 if response_hook:
-                    response_hook(self.last_response_headers, results)
+                    response_hook(self.last_response_headers, r)
             # if the prefix partition query has results lets return it
             if results:
                 return __GetBodiesFromQueryResult(results)

@@ -30,6 +30,8 @@ import pytest
 from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
 import azure.cosmos.documents as documents
 import azure.cosmos.exceptions as exceptions
+from azure.cosmos._routing import routing_range
+from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 import test_config
 import azure.cosmos.cosmos_client as cosmos_client
@@ -579,6 +581,103 @@ class CRUDTests(unittest.TestCase):
             self.assertEqual(error.status_code, StatusCodes.BAD_REQUEST)
             self.assertTrue("Cross partition query is required but disabled"
                             in error.message)
+
+    def test_partition_key_range_overlap(self):
+        Id = 'id'
+        MinInclusive = 'minInclusive'
+        MaxExclusive = 'maxExclusive'
+        partitionKeyRanges = \
+            [
+                ({Id: "2",
+                  MinInclusive: "0000000050",
+                  MaxExclusive: "0000000070"},
+                 2),
+                ({Id: "0",
+                  MinInclusive: "",
+                  MaxExclusive: "0000000030"},
+                 0),
+                ({Id: "1",
+                  MinInclusive: "0000000030",
+                  MaxExclusive: "0000000050"},
+                 1),
+                ({Id: "3",
+                  MinInclusive: "0000000070",
+                  MaxExclusive: "FF"},
+                 3)
+            ]
+
+        crm = CollectionRoutingMap.CompleteRoutingMap(partitionKeyRanges, "")
+
+        # Case 1: EPK range matches a single entire physical partition
+        EPK_range_1 = routing_range.Range(range_min="0000000030", range_max="0000000050",
+                                                    isMinInclusive=True, isMaxInclusive=False)
+        over_lapping_ranges_1 = crm.get_overlapping_ranges([EPK_range_1])
+        # Should only have 1 over lapping range
+        self.assertEqual(len(over_lapping_ranges_1), 1)
+        # EPK range 1 should be overlapping physical partition 1
+        self.assertEqual(over_lapping_ranges_1[0][Id], "1")
+        # Partition 1 and EPK range 1 should have same range min and range max
+        over_lapping_range_1 = routing_range.Range.PartitionKeyRangeToRange(over_lapping_ranges_1[0])
+        self.assertEqual(over_lapping_range_1.min, EPK_range_1.min)
+        self.assertEqual(over_lapping_range_1.max, EPK_range_1.max)
+
+        # Case 2: EPK range is a sub range of a single physical partition
+
+        EPK_range_2 = routing_range.Range(range_min="0000000035", range_max="0000000045",
+                                          isMinInclusive=True, isMaxInclusive=False)
+        over_lapping_ranges_2 = crm.get_overlapping_ranges([EPK_range_2])
+        # Should only have 1 over lapping range
+        self.assertEqual(len(over_lapping_ranges_2), 1)
+        # EPK range 2 should be overlapping physical partition 1
+        self.assertEqual(over_lapping_ranges_2[0][Id], "1")
+        # EPK range 2 min should be higher than over lapping partition and the max should be lower
+        over_lapping_range_2 = routing_range.Range.PartitionKeyRangeToRange(over_lapping_ranges_2[0])
+        self.assertLess(over_lapping_range_2.min, EPK_range_2.min)
+        self.assertLess(EPK_range_2.max, over_lapping_range_2.max)
+
+        # Case 3: EPK range partially spans 2 physical partitions
+
+        EPK_range_3 = routing_range.Range(range_min="0000000035", range_max="0000000055",
+                                          isMinInclusive=True, isMaxInclusive=False)
+        over_lapping_ranges_3 = crm.get_overlapping_ranges([EPK_range_3])
+        # Should overlap exactly two partition ranges
+        self.assertEqual(len(over_lapping_ranges_3), 2)
+        # EPK range 3 should be over lapping partition 1 and partition 2
+        self.assertEqual(over_lapping_ranges_3[0][Id], "1")
+        self.assertEqual(over_lapping_ranges_3[1][Id], "2")
+        # EPK Range 3 range min should be higher than partition 1's min, but lower than partition 2's, vice versa with max
+        over_lapping_range_3A = routing_range.Range.PartitionKeyRangeToRange(over_lapping_ranges_3[0])
+        over_lapping_range_3B = routing_range.Range.PartitionKeyRangeToRange(over_lapping_ranges_3[1])
+        self.assertLess(over_lapping_range_3A.min, EPK_range_3.min)
+        self.assertLess(EPK_range_3.min, over_lapping_range_3B.min)
+        self.assertGreater(EPK_range_3.max, over_lapping_range_3A.max)
+        self.assertGreater(over_lapping_range_3B.max, EPK_range_3.max)
+
+        # Case 4: EPK range spans multiple physical partitions, including entire physical partitions
+
+        EPK_range_4 = routing_range.Range(range_min="0000000020", range_max="0000000060",
+                                          isMinInclusive=True, isMaxInclusive=False)
+        over_lapping_ranges_4 = crm.get_overlapping_ranges([EPK_range_4])
+        # should overlap 3 partitions
+        self.assertEqual(len(over_lapping_ranges_4), 3)
+        # EPK range 4 should be over lapping partitions 0, 1, and 2
+        self.assertEqual(over_lapping_ranges_4[0][Id], "0")
+        self.assertEqual(over_lapping_ranges_4[1][Id], "1")
+        self.assertEqual(over_lapping_ranges_4[2][Id], "2")
+
+        # individual ranges for each partition
+        olr_4_a = routing_range.Range.PartitionKeyRangeToRange(over_lapping_ranges_4[0])
+        olr_4_b = routing_range.Range.PartitionKeyRangeToRange(over_lapping_ranges_4[1])
+        olr_4_c = routing_range.Range.PartitionKeyRangeToRange(over_lapping_ranges_4[2])
+        # both EPK range 4 min and max should be greater than partitions 0 min and max
+        self.assertGreater(EPK_range_4.min, olr_4_a.min)
+        self.assertGreater(EPK_range_4.max, olr_4_a.max)
+        # EPK range 4 should contain partition 1's range entirely
+        self.assertTrue(EPK_range_4.contains(olr_4_b.min))
+        self.assertTrue(EPK_range_4.contains(olr_4_b.max))
+        # Both EPK range 4 min and max should be less than partition 2's min and max
+        self.assertLess(EPK_range_4.min, olr_4_c.min)
+        self.assertLess(EPK_range_4.max, olr_4_c.max)
 
     # Commenting out delete items by pk until test pipelines support it
     # def test_delete_all_items_by_partition_key(self):
