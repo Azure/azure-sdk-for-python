@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access,no-member
 
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, TaskType
@@ -40,7 +40,7 @@ class TextClassificationJob(AutoMLNLPJob):
         validation_data: Optional[Input] = None,
         primary_metric: Optional[ClassificationPrimaryMetrics] = None,
         log_verbosity: Optional[str] = None,
-        **kwargs
+        **kwargs: Any
     ):
         """Initializes a new AutoML Text Classification task.
 
@@ -61,8 +61,12 @@ class TextClassificationJob(AutoMLNLPJob):
             **kwargs,
         )
 
-    @AutoMLNLPJob.primary_metric.setter
-    def primary_metric(self, value: Union[str, ClassificationPrimaryMetrics]):
+    @property
+    def primary_metric(self) -> Union[str, ClassificationPrimaryMetrics]:
+        return self._primary_metric
+
+    @primary_metric.setter
+    def primary_metric(self, value: Union[str, ClassificationPrimaryMetrics]) -> None:
         if is_data_binding_expression(str(value), ["parent"]):
             self._primary_metric = value
             return
@@ -170,11 +174,13 @@ class TextClassificationJob(AutoMLNLPJob):
 
         return text_classification_job
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "Component":
+    def _to_component(self, context: Optional[Dict] = None, **kwargs: Any) -> "Component":
         raise NotImplementedError()
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "TextClassificationJob":
+    def _load_from_dict(
+        cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any
+    ) -> "TextClassificationJob":
         from azure.ai.ml._schema.automl.nlp_vertical.text_classification import TextClassificationSchema
 
         if kwargs.pop("inside_pipeline", False):
@@ -197,16 +203,18 @@ class TextClassificationJob(AutoMLNLPJob):
         loaded_data.pop(AutoMLConstants.TASK_TYPE_YAML, None)
         return TextClassificationJob(**loaded_data)
 
-    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
+    def _to_dict(self, inside_pipeline: bool = False) -> Dict:  # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.nlp_vertical.text_classification import TextClassificationSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLTextClassificationNode
 
         if inside_pipeline:
-            return AutoMLTextClassificationNode(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            res_autoML: dict = AutoMLTextClassificationNode(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+            return res_autoML
 
-        return TextClassificationSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = TextClassificationSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, TextClassificationJob):
             return NotImplemented
 
@@ -215,5 +223,5 @@ class TextClassificationJob(AutoMLNLPJob):
 
         return self.primary_metric == other.primary_metric
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
