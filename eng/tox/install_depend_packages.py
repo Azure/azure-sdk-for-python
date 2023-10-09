@@ -41,8 +41,8 @@ MINIMUM_VERSION_GENERIC_OVERRIDES = {
     "opentelemetry-api": "1.3.0",
     "opentelemetry-sdk": "1.3.0",
     "azure-core": "1.11.0",
-    "requests": "2.30.0",
-    "six": "1.16.0",
+    "requests": "2.19.0",
+    "six": "1.12.0",
     "cryptography": "3.3.2",
     "msal": "1.23.0",
 }
@@ -71,7 +71,10 @@ MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {
 # filtering on a _per platform_ basis. Primarily used to limit certain packages due to platform compatbility
 PLATFORM_SPECIFIC_MINIMUM_OVERRIDES = {
     ">=3.12.0": {
-        "azure-core": "1.23.1"
+        "azure-core": "1.23.1",
+        "aiohttp": "3.8.6",
+        "six": "1.16.0",
+        "requests": "2.30.0"
     }
 }
 
