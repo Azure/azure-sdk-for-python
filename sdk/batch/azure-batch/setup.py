@@ -31,7 +31,6 @@ with open('README.md', encoding='utf-8') as f:
     readme = f.read()
 with open('CHANGELOG.md', encoding='utf-8') as f:
     changelog = f.read()
-    
 setup(
     name=PACKAGE_NAME,
     version=version,
@@ -42,6 +41,7 @@ setup(
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
+    keywords="azure, azure sdk",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         'Programming Language :: Python',
