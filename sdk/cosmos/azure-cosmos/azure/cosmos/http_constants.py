@@ -401,7 +401,7 @@ class StatusCodes(object):
         412: "PRECONDITION_FAILED - Operation cannot be performed because one of the specified precondition is not met",
         413: "REQUEST_ENTITY_TOO_LARGE - Document size exceeds limit.",
         429: "TOO_MANY_REQUESTS",
-        449: "RETRY_WITH - Transient error on write operation, safe to retry the operation."
+        449: "RETRY_WITH - Conflicting request to resource has been attempted. Retry to avoid conflicts."
     }
 
 
