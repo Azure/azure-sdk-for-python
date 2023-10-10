@@ -89,6 +89,7 @@ class ParameterizedSparkSchema(PathAwareSchema):
         no_duplicates("archives", value)
 
     @pre_load
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def map_conf_field_names(self, data, **kwargs):
         """Map the field names in the conf dictionary.
         This function must be called after YamlFileSchema.load_from_file.

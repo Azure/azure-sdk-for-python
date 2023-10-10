@@ -9,6 +9,7 @@ from unittest.mock import Mock
 from requests import Response
 
 from azure.core.credentials import AccessToken
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
@@ -429,3 +430,13 @@ async def test_bearer_policy_redirect_customize_sensitive_headers():
     pipeline = AsyncPipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy, header_clean_up_policy])
 
     await pipeline.run(HttpRequest("GET", "https://localhost"))
+
+
+@pytest.mark.asyncio
+async def test_async_token_credential_inheritance():
+    class TestTokenCredential(AsyncTokenCredential):
+        async def get_token(self, *scopes, **kwargs):
+            return "TOKEN"
+
+    cred = TestTokenCredential()
+    await cred.get_token("scope")

@@ -4,8 +4,9 @@
 
 # pylint: disable=protected-access
 
+import os
 from pathlib import Path
-from typing import Iterable, Tuple
+from typing import Dict, Optional, Tuple, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import download_artifact_from_storage_url
 from azure.ai.ml._utils._arm_id_utils import parse_name_version, parse_name_label
@@ -22,16 +23,27 @@ def get_environment_artifacts(
     deployment: OnlineDeployment,
     environment_operations: EnvironmentOperations,
     download_path: str,
-) -> Iterable[str]:
+) -> Union[
+    Tuple[str, Optional[Path], str, None, None, Optional[Dict]], Tuple[None, None, None, Path, str, Optional[Dict]]
+]:
     """Validates and returns artifacts from environment specification.
 
     :param endpoint_name: name of endpoint which this deployment is linked to
     :type endpoint_name: str
     :param deployment: deployment to validate
-    :type deployment: OnlineDeployment entity
+    :type deployment: OnlineDeployment
+    :param environment_operations: The environment operations
+    :type environment_operations: EnvironmentOperations
+    :param download_path: The path to download to
+    :type download_path: str
     :return: (base_image, conda_file_path, conda_file_contents, build_directory,
-        dockerfile_contents, inference_config) - Either base_image or build_directory should be None.
-    :type return: Iterable[str]
+        dockerfile_contents, inference_config)
+
+        Either base_image or build_directory should be None.
+    :rtype: Union[
+            Tuple[str, Optional[Path], str, None, None, Optional[Dict]],
+            Tuple[None, None, None, Path, str, Optional[Dict]]
+        ]
     :raises: azure.ai.ml._local_endpoints.errors.RequiredLocalArtifactsNotFoundError
     :raises: azure.ai.ml._local_endpoints.errors.CloudArtifactsNotSupportedError
     """
@@ -77,11 +89,25 @@ def _get_cloud_environment_artifacts(
     environment_operations: EnvironmentOperations,
     environment_asset: Environment,
     download_path: str,
-) -> Tuple[str, str, str, str]:
-    """
+) -> Union[
+    Tuple[str, Optional[Path], str, None, None, Optional[Dict]], Tuple[None, None, None, Path, str, Optional[Dict]]
+]:
+    """Retrieves the cloud environment's artifacts
+
+    :param environment_operations: The environment operations
+    :type environment_operations: EnvironmentOperations
+    :param environment_asset: The cloud environment
+    :type environment_asset: Environment
+    :param download_path: The path to download to
+    :type download_path: str
     :return: (base_image, conda_file_path, conda_file_contents, build_directory,
-        dockerfile_contents) - Either base_image or build_directory should be None.
-    :type return: Iterable[str]
+        dockerfile_contents, inference_config)
+
+        Either base_image or build_directory should be None.
+    :rtype: Union[
+            Tuple[str, Optional[Path], str, None, None, Optional[Dict]],
+            Tuple[None, None, None, Path, str, Optional[Dict]]
+        ]
     """
     if environment_asset.build and environment_asset.build.path and is_url(environment_asset.build.path):
         environment_build_directory = download_artifact_from_storage_url(
@@ -111,11 +137,25 @@ def _get_cloud_environment_artifacts(
     )
 
 
-def _get_local_environment_artifacts(base_path: str, environment: Environment):
-    """
+def _get_local_environment_artifacts(
+    base_path: Union[str, os.PathLike], environment: Environment
+) -> Union[
+    Tuple[str, Optional[Path], str, None, None, Optional[Dict]], Tuple[None, None, None, Path, str, Optional[Dict]]
+]:
+    """Retrieves the local environment's artifacts
+
+    :param base_path: The base path
+    :type base_path: Union[str, os.PathLike]
+    :param environment: The local environment
+    :type environment: Environment
     :return: (base_image, conda_file_path, conda_file_contents, build_directory,
-        dockerfile_contents, inference_config) - Either base_image or build_directory should be None.
-    :type return: Iterable[str]
+        dockerfile_contents, inference_config)
+
+        Either base_image or build_directory should be None.
+    :rtype: Union[
+            Tuple[str, Optional[Path], str, None, None, Optional[Dict]],
+            Tuple[None, None, None, Path, str, Optional[Dict]]
+        ]
     """
     if environment.image:
         conda_file_contents = dump_yaml(environment.conda_file)

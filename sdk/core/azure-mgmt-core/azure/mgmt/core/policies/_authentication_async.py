@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TypeVar, Awaitable, Optional
+from typing import cast, Awaitable, Optional, List, Union, Any
 import inspect
 
 from azure.core.pipeline.policies import (
@@ -31,12 +31,20 @@ from azure.core.pipeline.policies import (
     AsyncHTTPPolicy,
 )
 from azure.core.pipeline import PipelineRequest, PipelineResponse
+from azure.core.pipeline.transport import (
+    HttpRequest as LegacyHttpRequest,
+    AsyncHttpResponse as LegacyAsyncHttpResponse,
+)
+from azure.core.rest import HttpRequest, AsyncHttpResponse
+from azure.core.credentials import AccessToken
+from azure.core.credentials_async import AsyncTokenCredential
+
 
 from ._authentication import _parse_claims_challenge, _AuxiliaryAuthenticationPolicyBase
 
 
-HTTPRequestType = TypeVar("HTTPRequestType")
-AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
+HTTPRequestType = Union[LegacyHttpRequest, HttpRequest]
+AsyncHTTPResponseType = Union[LegacyAsyncHttpResponse, AsyncHttpResponse]
 
 
 async def await_result(func, *args, **kwargs):
@@ -76,8 +84,8 @@ class AsyncARMChallengeAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
         :returns: a bool indicating whether the policy should send the request
         :rtype: bool
         """
-
-        challenge = response.http_response.headers.get("WWW-Authenticate")
+        # Casting, as the code seems to be certain that on_challenge this header will be present
+        challenge: str = cast(str, response.http_response.headers.get("WWW-Authenticate"))
         claims = _parse_claims_challenge(challenge)
         if claims:
             await self.authorize_request(request, *self._scopes, claims=claims)
@@ -87,10 +95,10 @@ class AsyncARMChallengeAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
 
 
 class AsyncAuxiliaryAuthenticationPolicy(
-    _AuxiliaryAuthenticationPolicyBase,
+    _AuxiliaryAuthenticationPolicyBase[AsyncTokenCredential],
     AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType],
 ):
-    async def _get_auxiliary_tokens(self, *scopes, **kwargs):
+    async def _get_auxiliary_tokens(self, *scopes: str, **kwargs: Any) -> Optional[List[AccessToken]]:
         if self._auxiliary_credentials:
             return [await cred.get_token(*scopes, **kwargs) for cred in self._auxiliary_credentials]
         return None

@@ -149,10 +149,12 @@ class Appliance(TrackedResource):  # pylint: disable=too-many-instance-attribute
     :vartype public_key: str
     :ivar status: Appliance’s health and state of connection to on-prem. Known values are:
      "WaitingForHeartbeat", "Validating", "Connecting", "Connected", "Running",
-     "PreparingForUpgrade", "UpgradePrerequisitesCompleted", "PreUpgrade", "UpgradingKVAIO",
-     "WaitingForKVAIO", "ImagePending", "ImageProvisioning", "ImageProvisioned", "ImageDownloading",
-     "ImageDownloaded", "ImageDeprovisioning", "ImageUnknown", "UpdatingCloudOperator",
-     "WaitingForCloudOperator", "UpdatingCAPI", "UpdatingCluster", "PostUpgrade", "UpgradeComplete",
+     "PreparingForUpgrade", "ETCDSnapshotFailed", "UpgradePrerequisitesCompleted",
+     "ValidatingSFSConnectivity", "ValidatingImageDownload", "ValidatingImageUpload",
+     "ValidatingETCDHealth", "PreUpgrade", "UpgradingKVAIO", "WaitingForKVAIO", "ImagePending",
+     "ImageProvisioning", "ImageProvisioned", "ImageDownloading", "ImageDownloaded",
+     "ImageDeprovisioning", "ImageUnknown", "UpdatingCloudOperator", "WaitingForCloudOperator",
+     "UpdatingCAPI", "UpdatingCluster", "PostUpgrade", "UpgradeComplete",
      "UpgradeClusterExtensionFailedToDelete", "UpgradeFailed", "Offline", and "None".
     :vartype status: str or ~azure.mgmt.resourceconnector.models.Status
     :ivar version: Version of the Appliance.
@@ -462,7 +464,7 @@ class AppliancePropertiesInfrastructureConfig(_serialization.Model):
     """Contains infrastructure information about the Appliance.
 
     :ivar provider: Information about the connected appliance. Known values are: "VMWare", "HCI",
-     "SCVMM", "KubeVirt", and "OpenStack".
+     and "SCVMM".
     :vartype provider: str or ~azure.mgmt.resourceconnector.models.Provider
     """
 
@@ -473,7 +475,7 @@ class AppliancePropertiesInfrastructureConfig(_serialization.Model):
     def __init__(self, *, provider: Optional[Union[str, "_models.Provider"]] = None, **kwargs: Any) -> None:
         """
         :keyword provider: Information about the connected appliance. Known values are: "VMWare",
-         "HCI", "SCVMM", "KubeVirt", and "OpenStack".
+         "HCI", and "SCVMM".
         :paramtype provider: str or ~azure.mgmt.resourceconnector.models.Provider
         """
         super().__init__(**kwargs)

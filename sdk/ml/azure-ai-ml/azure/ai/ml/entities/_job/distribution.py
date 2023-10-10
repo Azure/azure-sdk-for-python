@@ -39,7 +39,9 @@ class DistributionConfiguration(RestTranslatableMixin):
     def _from_rest_object(
         cls, obj: Optional[Union[RestDistributionConfiguration, Dict]]
     ) -> "DistributionConfiguration":
-        """This function works for distribution property of a Job object and of a Component object()
+        """Constructs a DistributionConfiguration object from a REST object
+
+        This function works for distribution property of a Job object and of a Component object()
 
         Distribution of Job when returned by MFE, is a RestDistributionConfiguration
 
@@ -48,6 +50,12 @@ class DistributionConfiguration(RestTranslatableMixin):
 
         So in the job distribution case, we need to call as_dict() first and get type from "distribution_type" property.
         In the componenet case, we need to extract type from key "type"
+
+
+        :param obj: The object to translate
+        :type obj: Optional[Union[RestDistributionConfiguration, Dict]]
+        :return: The distribution configuration
+        :rtype: DistributionConfiguration
         """
         if obj is None:
             return None
@@ -70,12 +78,13 @@ class MpiDistribution(DistributionConfiguration):
     """MPI distribution configuration.
 
     :keyword process_count_per_instance: The number of processes per node.
-    :type process_count_per_instance: Optional[int]
+    :paramtype process_count_per_instance: Optional[int]
+    :ivar type: Specifies the type of distribution. Set automatically to "mpi" for this class.
+    :vartype type: str
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START mpi_distribution_configuration]
             :end-before: [END mpi_distribution_configuration]
             :language: python
@@ -96,12 +105,13 @@ class PyTorchDistribution(DistributionConfiguration):
     """PyTorch distribution configuration.
 
     :keyword process_count_per_instance: The number of processes per node.
-    :type process_count_per_instance: Optional[int]
+    :paramtype process_count_per_instance: Optional[int]
+    :ivar type: Specifies the type of distribution. Set automatically to "pytorch" for this class.
+    :vartype type: str
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START pytorch_distribution_configuration]
             :end-before: [END pytorch_distribution_configuration]
             :language: python
@@ -121,15 +131,21 @@ class PyTorchDistribution(DistributionConfiguration):
 class TensorFlowDistribution(DistributionConfiguration):
     """TensorFlow distribution configuration.
 
+    :vartype distribution_type: str or ~azure.mgmt.machinelearningservices.models.DistributionType
     :keyword parameter_server_count: The number of parameter server tasks. Defaults to 0.
-    :type parameter_server_count: Optional[int]
+    :paramtype parameter_server_count: Optional[int]
     :keyword worker_count: The number of workers. Defaults to the instance count.
-    :type worker_count: Optional[int]
+    :paramtype worker_count: Optional[int]
+    :ivar parameter_server_count: Number of parameter server tasks.
+    :vartype parameter_server_count: int
+    :ivar worker_count: Number of workers. If not specified, will default to the instance count.
+    :vartype worker_count: int
+    :ivar type: Specifies the type of distribution. Set automatically to "tensorflow" for this class.
+    :vartype type: str
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START tensorflow_distribution_configuration]
             :end-before: [END tensorflow_distribution_configuration]
             :language: python

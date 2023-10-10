@@ -20,13 +20,11 @@ from azure.core.exceptions import (
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .._serialization import Serializer
-from .._vendor import _format_url_section
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -55,7 +53,7 @@ def build_metric_definitions_list_request(
         "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -94,7 +92,7 @@ def build_metrics_list_request(
         "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timespan is not None:
@@ -138,7 +136,7 @@ def build_metric_namespaces_list_request(
         "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -280,6 +278,8 @@ class MetricDefinitionsOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 
@@ -485,6 +485,8 @@ class MetricsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -593,6 +595,8 @@ class MetricNamespacesOperations:
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
+                if _stream:
+                    response.read()  # Load the body in memory and close the socket
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 raise HttpResponseError(response=response)
 

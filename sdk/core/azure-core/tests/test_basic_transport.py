@@ -53,14 +53,9 @@ class RestMockResponse(RestHttpResponseImpl):
         )
         # the impl takes in a lot more kwargs. It's not public and is a
         # helper implementation shared across our azure core transport responses
-        self._body = body
-
-    def body(self):
-        return self._body
-
-    @property
-    def content(self):
-        return self._body
+        self._content = body
+        self._is_closed = True
+        self._is_stream_consumed = True
 
 
 MOCK_RESPONSES = [PipelineTransportMockResponse, RestMockResponse]
@@ -692,6 +687,41 @@ def test_multipart_receive(http_request, mock_response):
     assert res1.headers["x-ms-fun"] == "true"
 
 
+@pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))
+def test_multipart_receive_with_empty_requests(http_request, mock_response):
+
+    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed()
+
+    body_as_bytes = (
+        b"--batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f\r\n"
+        b"Content-Type: application/http\r\n"
+        b"Content-Transfer-Encoding: binary\r\n"
+        b"\r\n"
+        b"HTTP/1.1 400 Bad Request\r\n"
+        b"DataServiceVersion: 1.0;\r\n"
+        b"Content-Type: application/xml;charset=utf-8\r\n"
+        b"\r\n"
+        b'<?xml version="1.0" encoding="utf-8"?><error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><code>InvalidInput</code><message xml:lang="en-US">An error occurred while processing this request.\nRequestId:1a930d9b-8002-0020-575c-d1b166000000\nTime:2023-08-17T22:44:06.8465534Z</message></error>\r\n'
+        b"--batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f--\r\n"
+    )
+
+    response = mock_response(
+        request,
+        body_as_bytes,
+        "multipart/mixed; boundary=batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f",
+    )
+
+    response = response.parts()
+    assert len(response) == 1
+    res0 = response[0]
+    assert res0.status_code == 400
+    assert res0.reason == "Bad Request"
+    assert res0.headers["DataServiceVersion"] == "1.0;"
+    assert res0.request.method == "POST"
+    assert res0.request.url == "http://account.blob.core.windows.net/?comp=batch"
+
+
 @pytest.mark.parametrize("mock_response", MOCK_RESPONSES)
 def test_raise_for_status_bad_response(mock_response):
     response = mock_response(request=None, body=None, content_type=None)
@@ -758,6 +788,101 @@ def test_multipart_receive_with_one_changeset(http_request, mock_response):
 
     res0 = parts[0]
     assert res0.status_code == 202
+
+
+@pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))
+def test_multipart_receive_with_empty_changeset(http_request, mock_response):
+
+    changeset = http_request(None, None)
+    changeset.set_multipart_mixed()
+    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(changeset)
+
+    body_as_bytes = (
+        b"--batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f\r\n"
+        b"Content-Type: multipart/mixed; boundary=changesetresponse_390b0b55-6892-4fce-8427-001ca15662f5\r\n"
+        b"\r\n"
+        b"--changesetresponse_390b0b55-6892-4fce-8427-001ca15662f5\r\n"
+        b"Content-Type: application/http\r\n"
+        b"Content-Transfer-Encoding: binary\r\n"
+        b"\r\n"
+        b"HTTP/1.1 400 Bad Request\r\n"
+        b"DataServiceVersion: 1.0;\r\n"
+        b"Content-Type: application/xml;charset=utf-8\r\n"
+        b"\r\n"
+        b'<?xml version="1.0" encoding="utf-8"?><error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><code>InvalidInput</code><message xml:lang="en-US">An error occurred while processing this request.\nRequestId:1a930d9b-8002-0020-575c-d1b166000000\nTime:2023-08-17T22:44:06.8465534Z</message></error>\r\n'
+        b"--changesetresponse_390b0b55-6892-4fce-8427-001ca15662f5--\r\n"
+        b"--batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f--\r\n"
+    )
+
+    response = mock_response(
+        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f"
+    )
+    parts = []
+    for part in response.parts():
+        parts.append(part)
+    assert len(parts) == 1
+    res0 = parts[0]
+    assert res0.status_code == 400
+    assert res0.reason == "Bad Request"
+    assert "DataServiceVersion" in res0.headers
+    assert res0.request.method == "POST"
+    assert res0.request.url == "http://account.blob.core.windows.net/?comp=batch"
+
+    # Test against other HTTP verbs to see if http.client.HttpResponse has any concerns.
+    changeset = http_request("PATCH", "https://foo.com")
+    changeset.set_multipart_mixed()
+    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(changeset)
+    response = mock_response(
+        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f"
+    )
+    parts = []
+    for part in response.parts():
+        parts.append(part)
+    assert len(parts) == 1
+    res0 = parts[0]
+    assert res0.status_code == 400
+    assert res0.reason == "Bad Request"
+    assert "DataServiceVersion" in res0.headers
+    assert res0.request.method == "POST"
+    assert res0.request.url == "http://account.blob.core.windows.net/?comp=batch"
+
+    changeset = http_request("DELETE", None)
+    changeset.set_multipart_mixed()
+    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(changeset)
+    response = mock_response(
+        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f"
+    )
+    parts = []
+    for part in response.parts():
+        parts.append(part)
+    assert len(parts) == 1
+    res0 = parts[0]
+    assert res0.status_code == 400
+    assert res0.reason == "Bad Request"
+    assert "DataServiceVersion" in res0.headers
+    assert res0.request.method == "POST"
+    assert res0.request.url == "http://account.blob.core.windows.net/?comp=batch"
+
+    changeset = http_request("HEAD", None)
+    changeset.set_multipart_mixed()
+    request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(changeset)
+    response = mock_response(
+        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f"
+    )
+    parts = []
+    for part in response.parts():
+        parts.append(part)
+    assert len(parts) == 1
+    res0 = parts[0]
+    assert res0.status_code == 400
+    assert res0.reason == "Bad Request"
+    assert "DataServiceVersion" in res0.headers
+    assert res0.request.method == "POST"
+    assert res0.request.url == "http://account.blob.core.windows.net/?comp=batch"
 
 
 @pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))

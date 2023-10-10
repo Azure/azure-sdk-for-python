@@ -137,9 +137,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.target == "dummy"
         assert ws_connection.metadata is None
 
-        ws_connection = load_workspace_connection(
-            source="./tests/test_configs/workspace_connection/open_ai.yaml"
-        )
+        ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/open_ai.yaml")
 
         assert ws_connection.type == camel_to_snake(ConnectionCategory.AZURE_OPEN_AI)
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
@@ -151,9 +149,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.metadata["ApiType"] == "dummy"
         assert ws_connection.metadata["ApiVersion"] == "dummy"
 
-        ws_connection = load_workspace_connection(
-            source="./tests/test_configs/workspace_connection/cog_search.yaml"
-        )
+        ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/cog_search.yaml")
 
         assert ws_connection.type == camel_to_snake(ConnectionCategory.COGNITIVE_SEARCH)
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
@@ -164,9 +160,7 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.metadata is not None
         assert ws_connection.metadata["ApiVersion"] == "dummy"
 
-        ws_connection = load_workspace_connection(
-            source="./tests/test_configs/workspace_connection/cog_service.yaml"
-        )
+        ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/cog_service.yaml")
 
         assert ws_connection.type == camel_to_snake(ConnectionCategory.COGNITIVE_SERVICE)
         assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
@@ -177,4 +171,3 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.metadata is not None
         assert ws_connection.metadata["ApiVersion"] == "dummy"
         assert ws_connection.metadata["Kind"] == "dummy"
-

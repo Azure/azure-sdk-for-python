@@ -45,6 +45,7 @@ class ParsedSetup:
         package_data: Dict[str, Any],
         include_package_data: bool,
         classifiers: List[str],
+        keywords: List[str]
     ):
         self.name: str = name
         self.version: str = version
@@ -56,6 +57,7 @@ class ParsedSetup:
         self.package_data: Dict[str, Any] = package_data
         self.include_package_data: bool = include_package_data
         self.classifiers: List[str] = classifiers
+        self.keywords: List[str] = keywords
 
         self.folder = os.path.dirname(self.setup_filename)
 
@@ -72,6 +74,7 @@ class ParsedSetup:
             package_data,
             include_package_data,
             classifiers,
+            keywords
         ) = parse_setup(parse_directory_or_file)
 
         return cls(
@@ -85,6 +88,7 @@ class ParsedSetup:
             package_data,
             include_package_data,
             classifiers,
+            keywords
         )
 
     def get_build_config(self) -> Dict[str, Any]:
@@ -130,7 +134,8 @@ def parse_setup(setup_filename: str) -> Tuple[str, str, str, List[str], bool, st
         <namespace>,
         <package_data dict>,
         <include_package_data bool>,
-        <classifiers>
+        <classifiers>,
+        <keywords>
     )
     """
     if not setup_filename.endswith("setup.py"):
@@ -203,6 +208,10 @@ def parse_setup(setup_filename: str) -> Tuple[str, str, str, List[str], bool, st
     if "classifiers" in kwargs:
         classifiers = kwargs["classifiers"]
 
+    keywords = []
+    if "keywords" in kwargs:
+        keywords = kwargs["keywords"]
+
     is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x)[0] in NEW_REQ_PACKAGES), requires))
 
     return (
@@ -215,7 +224,8 @@ def parse_setup(setup_filename: str) -> Tuple[str, str, str, List[str], bool, st
         name_space,
         package_data,
         include_package_data,
-        classifiers
+        classifiers,
+        keywords
     )
 
 

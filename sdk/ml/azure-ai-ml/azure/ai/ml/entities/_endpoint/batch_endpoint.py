@@ -30,19 +30,19 @@ class BatchEndpoint(Endpoint):
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
     :param auth_mode: Possible values include: "AMLToken", "Key", "AADToken", defaults to None
-    :type auth_mode: str, optional
+    :type auth_mode: str
     :param description: Description of the inference endpoint, defaults to None
-    :type description: str, optional
+    :type description: str
     :param location: defaults to None
-    :type location: str, optional
+    :type location: str
     :param defaults:  Traffic rules on how the traffic will be routed across deployments, defaults to {}
-    :type defaults: Dict[str, str], optional
+    :type defaults: Dict[str, str]
     :param default_deployment_name:  Equivalent to defaults.default_deployment, will be ignored if defaults is present.
-    :type default_deployment_name: str, optional
+    :type default_deployment_name: str
     :param scoring_uri: URI to use to perform a prediction, readonly.
-    :type scoring_uri: str, optional
+    :type scoring_uri: str
     :param openapi_uri: URI to check the open API definition of the endpoint.
-    :type openapi_uri: str, optional
+    :type openapi_uri: str
     """
 
     def __init__(

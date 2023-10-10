@@ -10,6 +10,7 @@
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
+# pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
 def _scopes_to_resource(*scopes):
     """Convert an AADv2 scope to an AADv1 resource."""
 

@@ -4,6 +4,7 @@
 # pylint: disable=protected-access
 
 import logging
+import os
 import uuid
 from abc import abstractmethod
 from enum import Enum
@@ -26,16 +27,18 @@ from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpr
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, resolve_pipeline_parameters
-from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
-from azure.ai.ml.exceptions import ErrorTarget
+from azure.ai.ml.entities._validation import MutableValidationResult, PathAwareSchemaValidatableMixin
+from azure.ai.ml.exceptions import ErrorTarget, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
 
-def parse_inputs_outputs(data):
+def parse_inputs_outputs(data: dict) -> dict:
     """Parse inputs and outputs from data. If data is a list, parse each item in the list.
 
-    :return: parsed data
+    :param data: A dict that may contain "inputs" or "outputs" keys
+    :type data: dict
+    :return: Dict with parsed "inputs" and "outputs" keys
     :rtype: Dict
     """
 
@@ -73,7 +76,7 @@ def pipeline_node_decorator(func):
 
 
 # pylint: disable=too-many-instance-attributes
-class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, NodeWithGroupInputMixin):
+class BaseNode(Job, YamlTranslatableMixin, _AttrDict, PathAwareSchemaValidatableMixin, NodeWithGroupInputMixin):
     """Base class for node in pipeline, used for component version consumption. Can't be instantiated directly.
 
     You should not instantiate this class directly. Instead, you should
@@ -268,24 +271,34 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         # TODO: replace this hack
         return self._init
 
-    def _set_base_path(self, base_path):
+    def _set_base_path(self, base_path: Union[str, os.PathLike]):
         """Set the base path for the node.
 
         Will be used for schema validation. If not set, will use Path.cwd() as the base path
         (default logic defined in SchemaValidatableMixin._base_path_for_validation).
+
+        :param base_path: The new base path
+        :type base_path: Union[str, os.PathLike]
         """
         self._base_path = base_path
 
-    def _set_referenced_control_flow_node_instance_id(self, instance_id):
+    def _set_referenced_control_flow_node_instance_id(self, instance_id: str) -> None:
         """Set the referenced control flow node instance id.
 
         If this node is referenced to a control flow node, the instance_id will not be modified.
+
+        :param instance_id: The new instance id
+        :type instance_id: str
         """
         if not self._referenced_control_flow_node_instance_id:
             self._referenced_control_flow_node_instance_id = instance_id
 
     def _get_component_id(self) -> Union[str, Component]:
-        """Return component id if possible."""
+        """Return component id if possible.
+
+        :return: The component id
+        :rtype: Union[str, Component]
+        """
         if isinstance(self._component, Component) and self._component.id:
             # If component is remote, return it's asset id
             return self._component.id
@@ -302,17 +315,17 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         return self._component.name
 
     def _to_dict(self) -> Dict:
-        return self._dump_for_validation()
+        return convert_ordered_dict_to_dict(self._dump_for_validation())
 
     @classmethod
-    def _get_validation_error_target(cls) -> ErrorTarget:
-        """Return the error target of this resource.
+    def _create_validation_error(cls, message: str, no_personal_data_message: str):
+        return ValidationException(
+            message=message,
+            no_personal_data_message=no_personal_data_message,
+            target=ErrorTarget.PIPELINE,
+        )
 
-        Should be overridden by subclass. Value should be in ErrorTarget enum.
-        """
-        return ErrorTarget.PIPELINE
-
-    def _validate_inputs(self, raise_error=True):
+    def _validate_inputs(self):
         validation_result = self._create_empty_validation_result()
         if self._validate_required_input_not_provided:
             # validate required inputs not provided
@@ -337,14 +350,17 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
                     message=f"Input of command {self.name} is a SweepDistribution, "
                     f"please use command.sweep to transform the command into a sweep node.",
                 )
-        return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
+        return validation_result
 
     def _customized_validate(self) -> MutableValidationResult:
         """Validate the resource with customized logic.
 
         Override this method to add customized validation logic.
+
+        :return: The validation result
+        :rtype: MutableValidationResult
         """
-        validate_result = self._validate_inputs(raise_error=False)
+        validate_result = self._validate_inputs()
         return validate_result
 
     @classmethod
@@ -391,10 +407,15 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
 
     @classmethod
     def _from_rest_object_to_init_params(cls, obj: dict) -> Dict:
-        """Transfer the rest object to a dict containing items to init the node.
+        """Convert the rest object to a dict containing items to init the node.
 
         Will be used in _from_rest_object. Please override this method instead of _from_rest_object to make the logic
         reusable.
+
+        :param obj: The REST object
+        :type obj: dict
+        :return: The init params
+        :rtype: Dict
         """
         inputs = obj.get("inputs", {})
         outputs = obj.get("outputs", {})
@@ -420,14 +441,24 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
-        """Override this method to add custom fields to be picked from self._to_dict() in self._to_rest_object().
+        """List of fields to be picked from self._to_dict() in self._to_rest_object().
 
-        Pick nothing by default.
+        By default, returns an empty list.
+
+        Override this method to add custom fields.
+
+        :return: List of fields to pick
+        :rtype: List[str]
         """
+
         return []
 
     def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument
-        """Convert self to a rest object for remote call."""
+        """Convert self to a rest object for remote call.
+
+        :return: The rest object
+        :rtype: dict
+        """
         base_dict, rest_obj = self._to_dict(), {}
         for key in self._picked_fields_from_dict_to_rest_object():
             if key in base_dict:
@@ -459,7 +490,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         """Get the inputs for the object.
 
         :return: A dictionary containing the inputs for the object.
-        :rtype: Dict[str, Union[~azure.ai.ml.entities.Input, str, bool, int, float]]
+        :rtype: Dict[str, Union[Input, str, bool, int, float]]
         """
         return self._inputs
 
@@ -468,7 +499,7 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         """Get the outputs of the object.
 
         :return: A dictionary containing the outputs for the object.
-        :rtype: Dict[str, Union[str, ~azure.ai.ml.entities.Output]]
+        :rtype: Dict[str, Union[str, Output]]
         """
         return self._outputs
 
@@ -492,8 +523,12 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         # _attr_dict will return False if no extra attributes are set
         return True
 
-    def _get_origin_job_outputs(self):
-        """Restore outputs to JobOutput/BindingString and return them."""
+    def _get_origin_job_outputs(self) -> Dict[str, Union[str, Output]]:
+        """Restore outputs to JobOutput/BindingString and return them.
+
+        :return: The origin job outputs
+        :rtype: Dict[str, Union[str, Output]]
+        """
         outputs: Dict[str, Union[str, Output]] = {}
         if self.outputs is not None:
             for output_name, output_obj in self.outputs.items():
@@ -520,9 +555,17 @@ class BaseNode(Job, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin, No
         return input_name in built_inputs and built_inputs[input_name] is not None
 
     @classmethod
-    def _refine_optional_inputs_with_no_value(cls, node, kwargs):
+    def _refine_optional_inputs_with_no_value(cls, node: "BaseNode", kwargs):
         """Refine optional inputs that have no default value and no value is provided when calling command/parallel
-        function This is to align with behavior of calling component to generate a pipeline node."""
+        function.
+
+        This is to align with behavior of calling component to generate a pipeline node.
+
+        :param node: The node
+        :type node: BaseNode
+        :param kwargs: The kwargs
+        :type kwargs: dict
+        """
         for key, value in node.inputs.items():
             meta = value._data
             if (

@@ -60,6 +60,9 @@ class ServiceBusSASTokenCredential(object):
     ) -> AccessToken:
         """
         This method is automatically called when token is about to expire.
+        :param any scopes: The list of scopes for which the token has to be fetched.
+        :return: The access token.
+        :rtype: ~azure.core.credentials.AccessToken
         """
         return AccessToken(self.token, self.expiry)
 
@@ -84,7 +87,7 @@ class ServiceBusSharedKeyCredential(object):
         return _generate_sas_token(scopes[0], self.policy, self.key)
 
 
-class ServiceBusAzureNamedKeyTokenCredentialAsync(object):
+class ServiceBusAzureNamedKeyTokenCredentialAsync(object): # pylint:disable=name-too-long
     """The named key credential used for authentication.
     :param credential: The AzureNamedKeyCredential that should be used.
     :type credential: ~azure.core.credentials.AzureNamedKeyCredential
@@ -114,6 +117,9 @@ class ServiceBusAzureSasTokenCredentialAsync(object):
     async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         This method is automatically called when token is about to expire.
+        :param any scopes: The list of scopes for which the token has to be fetched.
+        :return: The access token.
+        :rtype: ~azure.core.credentials.AccessToken
         """
         signature, expiry = parse_sas_credential(self._credential)
         return AccessToken(signature, expiry)
@@ -277,7 +283,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                         self._container_id,
                         last_exception,
                     )
-                    raise last_exception
+                    raise last_exception from None
                 await self._backoff(
                     retried_times=retried_times,
                     last_exception=last_exception,
@@ -367,7 +373,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             )
         except Exception as exp:  # pylint: disable=broad-except
             if isinstance(exp, self._amqp_transport.TIMEOUT_ERROR):
-                raise OperationTimeoutError(error=exp)
+                raise OperationTimeoutError(error=exp) from exp
             raise
 
     async def _mgmt_request_response_with_retry(
@@ -388,7 +394,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             **kwargs
         )
 
-    async def _open(self):  # pylint: disable=no-self-use
+    async def _open(self):
         raise ValueError("Subclass should override the method.")
 
     async def _open_with_retry(self):

@@ -35,7 +35,7 @@ from ..exceptions import CosmosResourceNotFoundError
 from ..http_constants import StatusCodes
 from ..offer import ThroughputProperties
 from ._scripts import ScriptsProxy
-from ..partition_key import NonePartitionKeyValue
+from ..partition_key import NonePartitionKeyValue, PartitionKey
 
 __all__ = ("ContainerProxy",)
 
@@ -320,7 +320,7 @@ class ContainerProxy(object):
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
-        :keyword int response_continuation_token_limit_in_kb: **provisional keyword** The size limit in kb of the
+        :keyword int continuation_token_limit: **provisional keyword** The size limit in kb of the
         response continuation token in the query response. Valid values are positive integers.
         A value of 0 is the same as not passing a value (default no limit).
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
@@ -361,6 +361,7 @@ class ContainerProxy(object):
         partition_key = kwargs.pop('partition_key', None)
         if partition_key is not None:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
+            kwargs["containerProperties"] = self._get_properties
         else:
             feed_options["enableCrossPartitionQuery"] = True
         max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
@@ -369,9 +370,9 @@ class ContainerProxy(object):
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         correlated_activity_id = GenerateGuidId()
         feed_options["correlatedActivityId"] = correlated_activity_id
-        response_continuation_token_limit_in_kb = kwargs.pop("response_continuation_token_limit_in_kb", None)
-        if response_continuation_token_limit_in_kb is not None:
-            feed_options["responseContinuationTokenLimitInKb"] = response_continuation_token_limit_in_kb
+        continuation_token_limit = kwargs.pop("continuation_token_limit", None)
+        if continuation_token_limit is not None:
+            feed_options["responseContinuationTokenLimitInKb"] = continuation_token_limit
         if hasattr(response_hook, "clear"):
             response_hook.clear()
 

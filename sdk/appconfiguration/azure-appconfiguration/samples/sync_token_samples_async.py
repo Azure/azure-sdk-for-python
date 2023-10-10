@@ -31,7 +31,7 @@ async def handle_event_grid_notifications(event_grid_events):
         for event_grid_event in event_grid_events:
             if event_grid_event["eventType"] == "Microsoft.KeyValueModified":
                 sync_token = event_grid_event["data"]["syncToken"]
-                client.update_sync_token(sync_token)
+                await client.update_sync_token(sync_token)
 
                 new_key = await client.get_configuration_setting(
                     key=event_grid_event["data"]["key"], label=event_grid_event["data"]["label"]

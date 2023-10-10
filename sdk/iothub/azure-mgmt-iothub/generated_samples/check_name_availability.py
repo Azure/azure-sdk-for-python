@@ -35,6 +35,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/iothub/resource-manager/Microsoft.Devices/stable/2021-07-02/examples/checkNameAvailability.json
+# x-ms-original-file: specification/iothub/resource-manager/Microsoft.Devices/stable/2023-06-30/examples/checkNameAvailability.json
 if __name__ == "__main__":
     main()

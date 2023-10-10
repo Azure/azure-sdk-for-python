@@ -56,18 +56,18 @@ class StorageManagement:  # pylint: disable=client-accepts-api-version-keyword
         **kwargs: Any
     ) -> None:
         self._config = StorageManagementConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
-        self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize, "2017-06-01")
+        self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize, "2017-06-01")
         self.storage_accounts = StorageAccountsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2017-06-01"
         )
-        self.usage = UsageOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.usage = UsageOperations(self._client, self._config, self._serialize, self._deserialize, "2017-06-01")
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

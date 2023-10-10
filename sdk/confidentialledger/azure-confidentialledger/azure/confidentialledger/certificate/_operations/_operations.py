@@ -61,7 +61,7 @@ def build_get_ledger_identity_request(ledger_id: str, **kwargs: Any) -> HttpRequ
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class ConfidentialLedgerCertificateClientOperationsMixin(MixinABC):
+class ConfidentialLedgerCertificateClientOperationsMixin(MixinABC):  # pylint: disable=name-too-long
     @distributed_trace
     def get_ledger_identity(self, ledger_id: str, **kwargs: Any) -> JSON:
         """Gets identity information for a Confidential Ledger instance.

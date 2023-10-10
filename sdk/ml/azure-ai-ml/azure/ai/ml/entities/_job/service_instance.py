@@ -15,17 +15,17 @@ class ServiceInstance(RestTranslatableMixin, DictMixin):
     """Service Instance Result.
 
     :keyword type: The type of service.
-    :type type: Optional[str]
+    :paramtype type: Optional[str]
     :keyword port: The port used by the service.
-    :type port: Optional[int]
+    :paramtype port: Optional[int]
     :keyword status: The status of the service.
-    :type status: Optional[str]
+    :paramtype status: Optional[str]
     :keyword error: The error message.
-    :type error: Optional[str]
+    :paramtype error: Optional[str]
     :keyword endpoint: The service endpoint.
-    :type endpoint: Optional[str]
+    :paramtype endpoint: Optional[str]
     :keyword properties: The service instance's properties.
-    :type properties: Optional[dict[str, str]]
+    :paramtype properties: Optional[dict[str, str]]
     """
 
     def __init__(

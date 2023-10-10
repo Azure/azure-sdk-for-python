@@ -20,10 +20,9 @@ import os
 
 class ComponentConfigurationOptions(object):
     def ml_component_config(self):
-        from azure.identity import DefaultAzureCredential
-
         from azure.ai.ml import MLClient
         from azure.ai.ml.entities import Environment
+        from azure.identity import DefaultAzureCredential
 
         subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
         resource_group = os.environ["RESOURCE_GROUP_NAME"]
@@ -40,15 +39,11 @@ class ComponentConfigurationOptions(object):
         # [START configure_load_component]
         from azure.ai.ml import load_component
 
-        # Load a local component to a component function.
-        component_func = load_component(source=r"../tests/test_configs/components/helloworld_component.yml")
-
-        # Consuming the component func
-        component = component_func(component_in_number=10.99)
-
-        # Load a remote component to a component function.
-        component = ml_client.components.create_or_update(component_func, version="1")
-        component_func = load_component(client=ml_client, name=component.name, version="1")
+        component = load_component(
+            source="./sdk/ml/azure-ai-ml/tests/test_configs/components/helloworld_component.yml",
+            params_override=[{"version": "1.0.2"}],
+        )
+        registered_component = ml_client.components.create_or_update(component)
         # [END configure_load_component]
 
 
