@@ -224,7 +224,7 @@ class ChatMessageContent(object):
             ]
         else:
             participants = []
-        
+
         attachments_list = chat_message_content.attachments
         if attachments_list is not None and len(attachments_list) > 0:
             attachments = [

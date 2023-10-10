@@ -204,7 +204,7 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
     def list_read_receipts(
         self,
         **kwargs: Any
-    ) -> AsyncItemPaged[ChatMessageReadReceipt]: 
+    ) -> AsyncItemPaged[ChatMessageReadReceipt]:
         """Gets read receipts for a thread.
 
         :keyword int results_per_page: The maximum number of chat message read receipts to be returned per page.
