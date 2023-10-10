@@ -1040,6 +1040,15 @@ def test_rsa_public_key_public_bytes():
     assert public_bytes ==  crypto_public_bytes
 
 
+def test_rsa_public_key_private_key_size():
+    """Verify that KeyVaultRSAPublicKey.key_size and KeyVaultRSAPrivateKey.key_size are equal for the same key"""
+
+    client = CryptographyClient.from_jwk(jwk=TEST_JWK)
+    public_key = client.create_rsa_public_key()
+    private_key = client.create_rsa_private_key()
+    assert public_key.key_size == private_key.key_size == 2048
+
+
 def test_rsa_private_key_public_key():
     """Verify behavior of KeyVaultRSAPrivateKey.public_key against a JWK and KeyVaultRSAPublicKey instance"""
 

@@ -326,8 +326,9 @@ class KeyVaultRSAPrivateKey(RSAPrivateKey):
         :returns: The key's size.
         :rtype: int
         """
-        private_key = self.private_numbers().private_key()
-        return private_key.key_size
+        # Key size only requires public modulus, which we can always get
+        # Relying on private numbers instead would cause issues for keys stored in KV (which doesn't return private key)
+        return self.public_key().key_size
 
     def public_key(self) -> KeyVaultRSAPublicKey:
         """The `RSAPublicKey` associated with this private key, as a `KeyVaultRSAPublicKey`.
