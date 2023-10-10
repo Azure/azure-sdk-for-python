@@ -35,7 +35,7 @@ from ..exceptions import CosmosResourceNotFoundError
 from ..http_constants import StatusCodes
 from ..offer import ThroughputProperties
 from ._scripts import ScriptsProxy
-from ..partition_key import NonePartitionKeyValue
+from ..partition_key import NonePartitionKeyValue, PartitionKey
 
 __all__ = ("ContainerProxy",)
 
@@ -361,6 +361,7 @@ class ContainerProxy(object):
         partition_key = kwargs.pop('partition_key', None)
         if partition_key is not None:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
+            kwargs["containerProperties"] = self._get_properties
         else:
             feed_options["enableCrossPartitionQuery"] = True
         max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
