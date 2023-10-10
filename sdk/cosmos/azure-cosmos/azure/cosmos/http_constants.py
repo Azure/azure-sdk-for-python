@@ -389,6 +389,21 @@ class StatusCodes(object):
     OPERATION_PAUSED = 1200
     OPERATION_CANCELLED = 1201
 
+    ERROR_TRANSLATIONS = {
+        400: "BAD_REQUEST - Request being sent is invalid.",
+        401: "UNAUTHORIZED - The input authorization token can't serve the request.",
+        403: "FORBIDDEN",
+        404: "NOT_FOUND - Entity with the specified id does not exist in the system.",
+        405: "METHOD_NOT_ALLOWED",
+        408: "REQUEST_TIMEOUT",
+        409: "CONFLICT - Entity with the specified id already exists in the system.",
+        410: "GONE",
+        412: "PRECONDITION_FAILED - Operation cannot be performed because one of the specified precondition is not met",
+        413: "REQUEST_ENTITY_TOO_LARGE - Document size exceeds limit.",
+        429: "TOO_MANY_REQUESTS",
+        449: "RETRY_WITH - Transient error on write operation, safe to retry the operation."
+    }
+
 
 class SubStatusCodes(object):
     """Sub status codes returned by the REST operations specifying the details of the operation

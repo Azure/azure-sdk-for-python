@@ -128,11 +128,11 @@ class BulkTests(unittest.TestCase):
 
         assert int(lsn) == int(container.client_connection.last_response_headers.get(HttpHeaders.LSN)) - 1
         assert container.client_connection.last_response_headers.get(HttpHeaders.ItemCount) == "5"
-        assert bulk_result[0][1].get("statusCode") == StatusCodes.CREATED
-        assert bulk_result[1][1].get("statusCode") == StatusCodes.OK
-        assert bulk_result[2][1].get("statusCode") == StatusCodes.CREATED
-        assert bulk_result[3][1].get("statusCode") == StatusCodes.OK
-        assert bulk_result[4][1].get("statusCode") == StatusCodes.NO_CONTENT
+        assert bulk_result[0].operation_response.get("statusCode") == StatusCodes.CREATED
+        assert bulk_result[1].operation_response.get("statusCode") == StatusCodes.OK
+        assert bulk_result[2].operation_response.get("statusCode") == StatusCodes.CREATED
+        assert bulk_result[3].operation_response.get("statusCode") == StatusCodes.OK
+        assert bulk_result[4].operation_response.get("statusCode") == StatusCodes.NO_CONTENT
 
     def test_bulk_invalid_create(self):
         container = self.test_database.create_container_if_not_exists(id="errors_bulk_container" + str(uuid.uuid4()),
@@ -142,7 +142,8 @@ class BulkTests(unittest.TestCase):
                        "partitionKey": "create_item"}]
 
         bulk_result = container.bulk(operations=operations)
-        assert bulk_result[0][1].get("statusCode") == StatusCodes.BAD_REQUEST
+        assert bulk_result[0].is_error
+        assert bulk_result[0].operation_response.get("statusCode") == StatusCodes.BAD_REQUEST
 
     def test_bulk_read_non_existent(self):
         container = self.test_database.create_container_if_not_exists(id="errors_bulk_container" + str(uuid.uuid4()),
@@ -152,7 +153,8 @@ class BulkTests(unittest.TestCase):
                        "partitionKey": "read_item"}]
 
         bulk_result = container.bulk(operations=operations)
-        assert bulk_result[0][1].get("statusCode") == StatusCodes.NOT_FOUND
+        assert bulk_result[0].is_error
+        assert bulk_result[0].operation_response.get("statusCode") == StatusCodes.NOT_FOUND
 
     def test_bulk_delete_non_existent(self):
         container = self.test_database.create_container_if_not_exists(id="errors_bulk_container" + str(uuid.uuid4()),
@@ -162,7 +164,8 @@ class BulkTests(unittest.TestCase):
                        "partitionKey": "delete_item"}]
 
         bulk_result = container.bulk(operations=operations)
-        assert bulk_result[0][1].get("statusCode") == StatusCodes.NOT_FOUND
+        assert bulk_result[0].is_error
+        assert bulk_result[0].operation_response.get("statusCode") == StatusCodes.NOT_FOUND
 
     def test_bulk_create_conflict(self):
         container = self.test_database.create_container_if_not_exists(id="errors_bulk_container" + str(uuid.uuid4()),
@@ -178,9 +181,10 @@ class BulkTests(unittest.TestCase):
                        "partitionKey": "create_item2"}]
 
         bulk_result = container.bulk(operations=operations)
-        assert bulk_result[0][1].get("statusCode") == StatusCodes.CREATED
-        assert bulk_result[1][1].get("statusCode") == StatusCodes.CONFLICT
-        assert bulk_result[2][1].get("statusCode") == StatusCodes.CREATED
+        assert bulk_result[0].operation_response.get("statusCode") == StatusCodes.CREATED
+        assert bulk_result[1].is_error
+        assert bulk_result[1].operation_response.get("statusCode") == StatusCodes.CONFLICT
+        assert bulk_result[2].operation_response.get("statusCode") == StatusCodes.CREATED
 
     def test_bulk_large_entity(self):
         container_id = "entity_too_large_container" + str(uuid.uuid4())
@@ -202,4 +206,32 @@ class BulkTests(unittest.TestCase):
         # check no items were created in the container
         item_list = list(container.query_items("select * from x", enable_cross_partition_query=True))
         assert len(item_list) == 0
+        self.test_database.delete_container(container_id)
+
+    def test_bulk_precondition_failed(self):
+        container_id = "precondition_failed_container" + str(uuid.uuid4())
+        container = self.test_database.create_container_if_not_exists(id=container_id,
+                                                                            partition_key=PartitionKey(path="/id"))
+
+        etag = container.client_connection.last_response_headers.get('etag')
+        operations = [{"operationType": "Create",
+                       "resourceBody": {"id": "create_item", "name": str(uuid.uuid4())},
+                       "partitionKey": "create_item"},
+                      {"operationType": "Replace",
+                       "id": "create_item",
+                       "partitionKey": "create_item",
+                       "resourceBody": {"id": "create_item", "message": "item was replaced"},
+                       "ifMatch": etag},
+                      {"operationType": "Replace",
+                       "id": "create_item",
+                       "partitionKey": "create_item",
+                       "resourceBody": {"id": "create_item", "message": "item was replaced"},
+                       "ifNoneMatch": etag}]
+        bulk_result = container.bulk(operations=operations)
+        assert len(bulk_result) == len(operations)
+        assert bulk_result[0].is_error is False
+        assert bulk_result[1].is_error
+        assert bulk_result[1].operation_response.get("statusCode") == 412
+        assert bulk_result[2].is_error is False
+
         self.test_database.delete_container(container_id)

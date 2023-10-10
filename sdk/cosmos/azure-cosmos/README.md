@@ -637,8 +637,20 @@ delete_item_operation = {"operationType": "Delete",
                          "id": "delete_item",
                          "partitionKey": "delete_item"}
 ```
+You can also optionally add the `ifMatch` and `ifNoneMatch` fields to the operations above if you'd like to utilize ETags within your bulk operations:
+```python
+replace_operation_with_etag = {"operationType": "Replace",
+                               "id": "replace_item",
+                               "partitionKey": "replace_item",
+                               "resourceBody": {"id": "replace_item", "message": "item was replaced"},
+                               "ifMatch": "some-etag"}
+```
+
 The snippets above assume the container is partitioned on path id. We also have samples showing how 
 to use these bulk operations with both the [sync][sample_document_mgmt] and [async][sample_document_mgmt_async] clients.
+
+The responses for bulk requests will be either an `OperationError` or an `OperationResult` object, each containing your operation
+mapped to its response, as well as an additional error message if your operation failed. These objects can be seen in our [models][cosmos_models] file.
 
 ## Troubleshooting
 
@@ -746,6 +758,7 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [cosmos_pypi]: https://pypi.org/project/azure-cosmos/
 [cosmos_http_status_codes]: https://docs.microsoft.com/rest/api/cosmos-db/http-status-codes-for-cosmosdb
 [cosmos_item]: https://docs.microsoft.com/azure/cosmos-db/databases-containers-items#azure-cosmos-items
+[cosmos_models]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/azure/cosmos/_models.py
 [cosmos_request_units]: https://docs.microsoft.com/azure/cosmos-db/request-units
 [cosmos_resources]: https://docs.microsoft.com/azure/cosmos-db/databases-containers-items
 [cosmos_sql_queries]: https://docs.microsoft.com/azure/cosmos-db/how-to-sql-query

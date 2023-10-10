@@ -48,6 +48,7 @@ from . import documents
 from .documents import ConnectionPolicy
 from . import _constants as constants
 from . import http_constants
+from . import _models as models
 from . import _query_iterable as query_iterable
 from . import _runtime_constants as runtime_constants
 from . import _request_object
@@ -1853,8 +1854,17 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         sorted_results = sorted(zipped_list, key=lambda x: x[1])
         ordered_responses = [item[0] for item in sorted_results]
         operation_to_response_tuples = list(zip(operations, ordered_responses))
+        final_responses = []
+        for operation, response in operation_to_response_tuples:
+            status_code = response.get("statusCode")
+            if status_code >= 400:
+                final_responses.append(
+                    models.OperationError(operation=operation, operation_response=response,
+                                          error_status=http_constants.StatusCodes.ERROR_TRANSLATIONS.get(status_code)))
+            else:
+                final_responses.append(models.OperationResult(operation=operation, operation_response=response))
         self.last_response_headers = base._merge_headers(response_headers)
-        return operation_to_response_tuples
+        return final_responses
 
     def _Bulk(self, operations, pk_range_id, path, collection_id, options, **kwargs):
         if options is None:
@@ -1888,10 +1898,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return self.DeleteResource(path, "docs", document_id, None, options, **kwargs)
 
     def DeleteAllItemsByPartitionKey(
-        self,
-        collection_link,
-        options=None,
-        **kwargs
+            self,
+            collection_link,
+            options=None,
+            **kwargs
     ) -> None:
         """Exposes an API to delete all items with a single partition key without the user having
          to explicitly call delete on each record in the partition key.

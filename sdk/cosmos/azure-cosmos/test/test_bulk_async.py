@@ -132,11 +132,11 @@ class TestBulk:
 
         assert int(lsn) == int(container.client_connection.last_response_headers.get(HttpHeaders.LSN)) - 1
         assert container.client_connection.last_response_headers.get(HttpHeaders.ItemCount) == "5"
-        assert bulk_result[0][1].get("statusCode") == StatusCodes.CREATED
-        assert bulk_result[1][1].get("statusCode") == StatusCodes.OK
-        assert bulk_result[2][1].get("statusCode") == StatusCodes.CREATED
-        assert bulk_result[3][1].get("statusCode") == StatusCodes.OK
-        assert bulk_result[4][1].get("statusCode") == StatusCodes.NO_CONTENT
+        assert bulk_result[0].operation_response.get("statusCode") == StatusCodes.CREATED
+        assert bulk_result[1].operation_response.get("statusCode") == StatusCodes.OK
+        assert bulk_result[2].operation_response.get("statusCode") == StatusCodes.CREATED
+        assert bulk_result[3].operation_response.get("statusCode") == StatusCodes.OK
+        assert bulk_result[4].operation_response.get("statusCode") == StatusCodes.NO_CONTENT
 
     @pytest.mark.asyncio
     async def test_bulk_invalid_create_async(self):
@@ -148,7 +148,8 @@ class TestBulk:
                        "partitionKey": "create_item"}]
 
         bulk_result = await container.bulk(operations=operations)
-        assert bulk_result[0][1].get("statusCode") == StatusCodes.BAD_REQUEST
+        assert bulk_result[0].is_error
+        assert bulk_result[0].operation_response.get("statusCode") == StatusCodes.BAD_REQUEST
 
     @pytest.mark.asyncio
     async def test_bulk_read_non_existent_async(self):
@@ -160,7 +161,8 @@ class TestBulk:
                        "partitionKey": "read_item"}]
 
         bulk_result = await container.bulk(operations=operations)
-        assert bulk_result[0][1].get("statusCode") == StatusCodes.NOT_FOUND
+        assert bulk_result[0].is_error
+        assert bulk_result[0].operation_response.get("statusCode") == StatusCodes.NOT_FOUND
 
     @pytest.mark.asyncio
     async def test_bulk_delete_non_existent_async(self):
@@ -172,7 +174,8 @@ class TestBulk:
                        "partitionKey": "delete_item"}]
 
         bulk_result = await container.bulk(operations=operations)
-        assert bulk_result[0][1].get("statusCode") == StatusCodes.NOT_FOUND
+        assert bulk_result[0].is_error
+        assert bulk_result[0].operation_response.get("statusCode") == StatusCodes.NOT_FOUND
 
     @pytest.mark.asyncio
     async def test_bulk_create_conflict_async(self):
@@ -190,10 +193,12 @@ class TestBulk:
                        "partitionKey": "create_item2"}]
 
         bulk_result = await container.bulk(operations=operations)
-        assert bulk_result[0][1].get("statusCode") == StatusCodes.CREATED
-        assert bulk_result[1][1].get("statusCode") == StatusCodes.CONFLICT
-        assert bulk_result[2][1].get("statusCode") == StatusCodes.CREATED
+        assert bulk_result[0].operation_response.get("statusCode") == StatusCodes.CREATED
+        assert bulk_result[1].is_error
+        assert bulk_result[1].operation_response.get("statusCode") == StatusCodes.CONFLICT
+        assert bulk_result[2].operation_response.get("statusCode") == StatusCodes.CREATED
 
+    @pytest.mark.asyncio
     async def test_bulk_large_entity_async(self):
         await self._set_up()
         container_id = "entity_too_large_container" + str(uuid.uuid4())
@@ -215,4 +220,34 @@ class TestBulk:
         # check no items were created in the container
         item_list = [item async for item in container.query_items("select * from x")]
         assert len(item_list) == 0
+        await self.test_database.delete_container(container_id)
+
+    @pytest.mark.asyncio
+    async def test_bulk_precondition_failed_async(self):
+        await self._set_up()
+        container_id = "precondition_failed_container" + str(uuid.uuid4())
+        container = await self.test_database.create_container_if_not_exists(id=container_id,
+                                                                            partition_key=PartitionKey(path="/id"))
+
+        etag = container.client_connection.last_response_headers.get('etag')
+        operations = [{"operationType": "Create",
+                       "resourceBody": {"id": "create_item", "name": str(uuid.uuid4())},
+                       "partitionKey": "create_item"},
+                      {"operationType": "Replace",
+                       "id": "create_item",
+                       "partitionKey": "create_item",
+                       "resourceBody": {"id": "create_item", "message": "item was replaced"},
+                       "ifMatch": etag},
+                      {"operationType": "Replace",
+                       "id": "create_item",
+                       "partitionKey": "create_item",
+                       "resourceBody": {"id": "create_item", "message": "item was replaced"},
+                       "ifNoneMatch": etag}]
+        bulk_result = await container.bulk(operations=operations)
+        assert len(bulk_result) == len(operations)
+        assert bulk_result[0].is_error is False
+        assert bulk_result[1].is_error
+        assert bulk_result[1].operation_response.get("statusCode") == 412
+        assert bulk_result[2].is_error is False
+
         await self.test_database.delete_container(container_id)

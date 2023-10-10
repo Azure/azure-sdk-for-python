@@ -196,6 +196,17 @@ def bulk_items(database):
                               "id": "replace_item",
                               "partitionKey": "replace_item",
                               "resourceBody": {"id": "replace_item", "message": "item was replaced"}}
+    replace_item_if_match_operation = {"operationType": "Replace",
+                                       "id": "replace_item",
+                                       "partitionKey": "replace_item",
+                                       "resourceBody": {"id": "replace_item", "message": "item replaced again"},
+                                       "ifMatch": container.client_connection.last_response_headers.get("etag")}
+    replace_item_if_none_match_operation = \
+        {"operationType": "Replace",
+         "id": "replace_item",
+         "partitionKey": "replace_item",
+         "resourceBody": {"id": "replace_item", "message": "item replaced again"},
+         "ifNoneMatch": container.client_connection.last_response_headers.get("etag")}
 
     # Put our operations into a list
     bulk_operations = [
@@ -203,7 +214,9 @@ def bulk_items(database):
         upsert_item_operation,
         read_item_operation,
         delete_item_operation,
-        replace_item_operation]
+        replace_item_operation,
+        replace_item_if_match_operation,
+        replace_item_if_none_match_operation]
 
     # Run that list of operations
     bulk_response = container.bulk(bulk_operations)
