@@ -276,6 +276,7 @@ __all__ = (
     "ImageDetail",
     "IndexingSchedule",
     "IndexingParameters",
+    "IndexingParametersConfiguration",
     "IndexerExecutionStatus",
     "IndexerStatus",
     "InputFieldMappingEntry",
