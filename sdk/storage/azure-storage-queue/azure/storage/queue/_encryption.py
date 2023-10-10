@@ -16,6 +16,7 @@ from json import (
     loads,
 )
 from typing import Any, BinaryIO, Callable, Dict, Optional, Tuple, TYPE_CHECKING
+from typing import OrderedDict as TypedOrderedDict
 from typing_extensions import Protocol
 
 from cryptography.hazmat.backends import default_backend
@@ -468,7 +469,7 @@ def _generate_encryption_data_dict(
         cek: bytes,
         iv: Optional[bytes],
         version: str
-    ) -> OrderedDict:
+    ) -> TypedOrderedDict[str, Any]:
     """
     Generates and returns the encryption metadata as a dict.
 
@@ -477,7 +478,7 @@ def _generate_encryption_data_dict(
     :param Optional[bytes] iv: The initialization vector. Only required for AES-CBC.
     :param str version: The client encryption version used.
     :return: A dict containing all the encryption metadata.
-    :rtype: OrderedDict
+    :rtype: Dict[str, Any]
     """
     # Encrypt the cek.
     if version == _ENCRYPTION_PROTOCOL_V1:
@@ -508,7 +509,7 @@ def _generate_encryption_data_dict(
         encrypted_region_info['DataLength'] = _GCM_REGION_DATA_LENGTH
         encrypted_region_info['NonceLength'] = _GCM_NONCE_LENGTH
 
-    encryption_data_dict: OrderedDict[str, Any] = OrderedDict()
+    encryption_data_dict: TypedOrderedDict[str, Any] = OrderedDict()
     encryption_data_dict['WrappedContentKey'] = wrapped_content_key
     encryption_data_dict['EncryptionAgent'] = encryption_agent
     if version == _ENCRYPTION_PROTOCOL_V1:
