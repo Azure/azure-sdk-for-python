@@ -6,7 +6,7 @@
           "computeConfiguration": {
             "computeType": "ServerlessSpark",
             "instanceType": "standard_e8s_v3",
-            "runtimeVersion": "3.2",
+            "runtimeVersion": "3.3",
             "computeIdentity": {
               "computeIdentityType": "AmlToken"
             }
@@ -31,21 +31,37 @@
                 }
               },
               "inputAssets": {
-                "test_data_1": {
+                "test_fixed": {
                   "dataContext": "test",
-                  "inputDataType": "Trailing",
+                  "inputDataType": "Fixed",
                   "jobInputType": "mltable",
-                  "uri": "Direct:1",
-                  "windowSize": "P60D",
-                  "windowOffset": "P60D"
+                  "uri": "Direct:1"
                 },
-                "test_data_2": {
+                "test_trailing": {
                   "dataContext": "test",
                   "jobInputType": "mltable",
                   "inputDataType": "Trailing",
                   "uri": "Direct:1",
                   "windowSize": "P30D",
-                  "windowOffset": "P30D"
+                  "windowOffset": "P7D"
+                },
+                "test_static": {
+                  "dataContext": "test",
+                  "jobInputType": "mltable",
+                  "inputDataType": "Static",
+                  "uri": "Direct:1",
+                  "windowStart": "2023-07-12T00:00:00.000Z",
+                  "windowEnd": "2023-07-17T00:00:00.000Z"
+                }
+              },
+              "inputs":{
+                "input_1": {
+                  "jobInputType": "mltable",
+                  "uri": "Direct:1"
+                },
+                "input_2": {
+                  "jobInputType": "mltable",
+                  "uri": "Direct:2"
                 }
               },
               "metricThresholds": [

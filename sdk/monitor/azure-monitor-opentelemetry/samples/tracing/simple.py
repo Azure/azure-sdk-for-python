@@ -6,7 +6,6 @@
 
 from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry import trace
-from opentelemetry.sdk.resources import Resource, ResourceAttributes
 
 configure_azure_monitor()
 

@@ -26,7 +26,8 @@ from ._models import (
     RemoveParticipantResult,
     TransferCallResult,
     MuteParticipantsResult,
-    CallInvite
+    CallInvite,
+    CancelAddParticipantResult,
 )
 from ._generated._client import AzureCommunicationCallAutomationService
 from ._generated.models import (
@@ -43,6 +44,9 @@ from ._generated.models import (
     PlayOptions,
     RecognizeOptions,
     MuteParticipantsRequest,
+    CancelAddParticipantRequest,
+    StartHoldMusicRequest,
+    StopHoldMusicRequest,
 )
 from ._generated.models._enums import RecognizeInputType
 from ._shared.auth_policy_utils import get_authentication_policy
@@ -345,7 +349,7 @@ class CallConnectionClient:
             source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
             source_display_name=source_display_name,
             custom_context=user_custom_context,
-            invitation_timeout=invitation_timeout,
+            invitation_timeout_in_seconds=invitation_timeout,
             operation_context=operation_context,
             callback_uri=callback_url
         )
@@ -724,3 +728,104 @@ class CallConnectionClient:
             mute_participants_request,
             **kwargs)
         return MuteParticipantsResult._from_generated(response)  # pylint:disable=protected-access
+
+    @distributed_trace
+    def cancel_add_participant(
+        self,
+        invitation_id: str,
+        *,
+        operation_context: Optional[str] = None,
+        callback_url: Optional[str] = None,
+        **kwargs
+    ) -> CancelAddParticipantResult:
+        """Cancel add participant request sent out to a participant.
+
+        :param  invitation_id: The invitation ID that was used to add the participant.
+        :type invitation_id: str
+        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str
+        :keyword callback_url: Url that overrides original callback URI for this request.
+        :paramtype callback_url: str
+        :return: CancelAddParticipantResult
+        :rtype: ~azure.communication.callautomation.CancelAddParticipantResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        cancel_add_participant_request = CancelAddParticipantRequest(
+            invitation_id=invitation_id,
+            operation_context=operation_context,
+            callback_uri=callback_url)
+
+        process_repeatability_first_sent(kwargs)
+
+        response = self._call_connection_client.cancel_add_participant(
+            self._call_connection_id,
+            cancel_add_participant_request,
+            **kwargs)
+
+        return CancelAddParticipantResult._from_generated(response) # pylint:disable=protected-access
+
+    @distributed_trace
+    def start_hold_music(
+        self,
+        target_participant: 'CommunicationIdentifier',
+        play_source: MediaSources,
+        *,
+        loop: bool = True,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        """Hold participant from call while playing music.
+        :param play_source: A PlaySource representing the source to play.
+        :type play_source: ~azure.communication.callautomation.FileSource or
+         ~azure.communication.callautomation.TextSource or
+         ~azure.communication.callautomation.SsmlSource or
+         list[~azure.communication.callautomation.FileSource or
+          ~azure.communication.callautomation.TextSource or
+          ~azure.communication.callautomation.SsmlSource]
+        :param target_participant: The targets to play media to. Default value is 'all', to play media
+         to all participants in the call.
+        :type target_participant: list[~azure.communication.callautomation.CommunicationIdentifier]
+        :keyword loop: Whether the media should be repeated until stopped.
+        :paramtype loop: bool
+        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str or None
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        hold_request = StartHoldMusicRequest(
+            play_source_info=play_source._to_generated(),  # pylint:disable=protected-access
+            target_participant=serialize_identifier(target_participant),
+            operation_context=operation_context,
+            loop=loop,
+            **kwargs
+        )
+        self._call_media_client.start_hold_music(self._call_connection_id, hold_request)
+
+    @distributed_trace
+    def stop_hold_music(
+        self,
+        target_participant: 'CommunicationIdentifier',
+        *,
+        operation_context: Optional[str] = None,
+        **kwargs
+    ) -> None:
+        """Remove hold from participant.
+
+        :param target_participant: The targets to play media to. Default value is 'all', to play media
+         to all participants in the call.
+        :type target_participant: list[~azure.communication.callautomation.CommunicationIdentifier]
+        :keyword operation_context: Value that can be used to track this call and its associated events.
+        :paramtype operation_context: str or None
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        stop_hold_request = StopHoldMusicRequest(
+            target_participant=serialize_identifier(target_participant),
+            operation_context=operation_context,
+            **kwargs
+        )
+        self._call_media_client.stop_hold_music(self._call_connection_id, stop_hold_request)

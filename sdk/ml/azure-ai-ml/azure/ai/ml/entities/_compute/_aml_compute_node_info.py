@@ -10,10 +10,9 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 
 
 class AmlComputeNodeInfo:
-    def __init__(self):
-        """Compute node information related to a AmlCompute Variables are only populated by the server, and will be
-        ignored when sending a request."""
+    """Compute node information related to AmlCompute."""
 
+    def __init__(self):
         self.node_id = None
         self.private_ip_address = None
         self.port = None
@@ -22,10 +21,20 @@ class AmlComputeNodeInfo:
 
     @property
     def current_job_name(self) -> str:
+        """The run ID of the current job.
+
+        :return: The run ID of the current job.
+        :rtype: str
+        """
         return self.run_id
 
     @current_job_name.setter
     def current_job_name(self, value: str) -> None:
+        """Set the current job run ID.
+
+        :param value: The job run ID.
+        :type value: str
+        """
         self.run_id = value
 
     @classmethod

@@ -17,16 +17,12 @@ from azure.ai.ml.entities._workspace.networking import (
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory
 from azure.ai.ml._utils.utils import camel_to_snake, _snake_to_camel
 
-from azure.ai.ml._utils._experimental import experimental
 
-
-@experimental
 class ManagedNetworkStatusSchema(metaclass=PatchedSchemaMeta):
     spark_ready = fields.Bool(dump_only=True)
     status = fields.Str(dump_only=True)
 
 
-@experimental
 class FqdnOutboundRuleSchema(metaclass=PatchedSchemaMeta):
     name = fields.Str(required=True)
     type = fields.Constant("fqdn")
@@ -52,14 +48,12 @@ class FqdnOutboundRuleSchema(metaclass=PatchedSchemaMeta):
         return FqdnDestination(name=name, destination=dest, category=_snake_to_camel(category), status=status)
 
 
-@experimental
 class ServiceTagDestinationSchema(metaclass=PatchedSchemaMeta):
     service_tag = fields.Str(required=True)
     protocol = fields.Str(required=True)
     port_ranges = fields.Str(required=True)
 
 
-@experimental
 class ServiceTagOutboundRuleSchema(metaclass=PatchedSchemaMeta):
     name = fields.Str(required=True)
     type = fields.Constant("service_tag")
@@ -104,14 +98,12 @@ class ServiceTagOutboundRuleSchema(metaclass=PatchedSchemaMeta):
         return service_tag_dest
 
 
-@experimental
 class PrivateEndpointDestinationSchema(metaclass=PatchedSchemaMeta):
     service_resource_id = fields.Str(required=True)
     subresource_target = fields.Str(required=True)
     spark_enabled = fields.Bool(required=True)
 
 
-@experimental
 class PrivateEndpointOutboundRuleSchema(metaclass=PatchedSchemaMeta):
     name = fields.Str(required=True)
     type = fields.Constant("private_endpoint")
@@ -156,7 +148,6 @@ class PrivateEndpointOutboundRuleSchema(metaclass=PatchedSchemaMeta):
         return pedest
 
 
-@experimental
 class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
     isolation_mode = StringTransformedEnum(
         allowed_values=[
@@ -188,6 +179,6 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
     def make(self, data, **kwargs):
         outbound_rules = data.get("outbound_rules", False)
         if outbound_rules:
-            return ManagedNetwork(_snake_to_camel(data["isolation_mode"]), outbound_rules)
+            return ManagedNetwork(isolation_mode=_snake_to_camel(data["isolation_mode"]), outbound_rules=outbound_rules)
         else:
-            return ManagedNetwork(_snake_to_camel(data["isolation_mode"]))
+            return ManagedNetwork(isolation_mode=_snake_to_camel(data["isolation_mode"]))

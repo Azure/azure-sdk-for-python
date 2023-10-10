@@ -51,7 +51,7 @@ class TestWorkspaceOperation:
     ):
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations.get", return_value=None)
         mocker.patch(
-            "azure.ai.ml.operations._workspace_operations_base.WorkspaceOperationsBase._populate_arm_paramaters",
+            "azure.ai.ml.operations._workspace_operations_base.WorkspaceOperationsBase._populate_arm_parameters",
             return_value=({}, {}, {}),
         )
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
@@ -64,7 +64,7 @@ class TestWorkspaceOperation:
     ):
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations.get", return_value=None)
         mocker.patch(
-            "azure.ai.ml.operations._workspace_operations_base.WorkspaceOperationsBase._populate_arm_paramaters",
+            "azure.ai.ml.operations._workspace_operations_base.WorkspaceOperationsBase._populate_arm_parameters",
             return_value=({}, {}, {}),
         )
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
@@ -78,7 +78,7 @@ class TestWorkspaceOperation:
             resource_group="another_resource_group",
         )
         mocker.patch(
-            "azure.ai.ml.operations._workspace_operations_base.WorkspaceOperationsBase._populate_arm_paramaters",
+            "azure.ai.ml.operations._workspace_operations_base.WorkspaceOperationsBase._populate_arm_parameters",
             return_value=({}, {}, {}),
         )
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
@@ -99,7 +99,7 @@ class TestWorkspaceOperation:
     ):
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations.get", side_effect=Exception)
         mocker.patch(
-            "azure.ai.ml.operations._workspace_operations_base.WorkspaceOperationsBase._populate_arm_paramaters",
+            "azure.ai.ml.operations._workspace_operations_base.WorkspaceOperationsBase._populate_arm_parameters",
             return_value=({}, {}, {}),
         )
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
@@ -191,11 +191,17 @@ class TestWorkspaceOperation:
 
     def test_delete_no_wait(self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture) -> None:
         mocker.patch("azure.ai.ml.operations._workspace_operations_base.delete_resource_by_arm_id", return_value=None)
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.get_generic_arm_resource_by_arm_id", return_value=None
+        )
         mock_workspace_operation_base.begin_delete("randstr", delete_dependent_resources=True)
         mock_workspace_operation_base._operation.begin_delete.assert_called_once()
 
     def test_delete_wait(self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture) -> None:
         mocker.patch("azure.ai.ml.operations._workspace_operations_base.delete_resource_by_arm_id", return_value=None)
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.get_generic_arm_resource_by_arm_id", return_value=None
+        )
         mocker.patch("azure.ai.ml._utils._azureml_polling.polling_wait", return_value=LROPoller)
         mock_workspace_operation_base.begin_delete("randstr", delete_dependent_resources=True)
         mock_workspace_operation_base._operation.begin_delete.assert_called_once()
@@ -209,7 +215,7 @@ class TestWorkspaceOperation:
             mock_workspace_operation_base.begin_delete("randstr", delete_dependent_resources=True)
             mock_workspace_operation_base._operation.begin_delete.assert_called_once()
 
-    def test_populate_arm_paramaters(
+    def _populate_arm_parameters(
         self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture
     ) -> None:
         mocker.patch(
@@ -219,9 +225,9 @@ class TestWorkspaceOperation:
             "azure.ai.ml.operations._workspace_operations_base.get_log_analytics_arm_id",
             return_value=("random_id", True),
         )
-        mock_workspace_operation_base._populate_arm_paramaters(workspace=Workspace(name="name"))
+        mock_workspace_operation_base._populate_arm_parameters(workspace=Workspace(name="name"))
 
-    def test_populate_arm_paramaters_other_branches(
+    def test_populate_arm_parameters_other_branches(
         self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture
     ) -> None:
         mocker.patch(
@@ -244,9 +250,9 @@ class TestWorkspaceOperation:
         ws.image_build_compute = "image_build_compute"
         ws.tags = {"k": "v"}
         ws.param = {"tagValues": {"value": {}}}
-        mock_workspace_operation_base._populate_arm_paramaters(workspace=ws)
+        mock_workspace_operation_base._populate_arm_parameters(workspace=ws)
 
-    def test_populate_arm_paramaters_feature_store(
+    def test_populate_arm_parameters_feature_store(
         self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture
     ) -> None:
         mocker.patch(
@@ -258,23 +264,23 @@ class TestWorkspaceOperation:
         )
 
         feature_store = FeatureStore(name="name", resource_group="rg")
-        template, param, _ = mock_workspace_operation_base._populate_arm_paramaters(
-            workspace=feature_store, grant_materialization_identity_permissions=True
+        template, param, _ = mock_workspace_operation_base._populate_arm_parameters(
+            workspace=feature_store, grant_materialization_permissions=True
         )
 
         assert param["set_up_feature_store"] == {"value": "true"}
-        assert param["grant_materialization_identity_permissions"] == {"value": "true"}
+        assert param["grant_materialization_permissions"] == {"value": "true"}
         assert param["materialization_identity_name"] == {"value": "materialization-uai-rg-name"}
         assert param["materialization_identity_resource_id"] == {"value": ""}
 
-        template, param, _ = mock_workspace_operation_base._populate_arm_paramaters(
+        template, param, _ = mock_workspace_operation_base._populate_arm_parameters(
             workspace=feature_store,
             materialization_identity=ManagedIdentityConfiguration(client_id="client_id", resource_id="resource_id"),
-            grant_materialization_identity_permissions=False,
+            grant_materialization_permissions=False,
         )
 
         assert param["set_up_feature_store"] == {"value": "true"}
-        assert param["grant_materialization_identity_permissions"] == {"value": "false"}
+        assert param["grant_materialization_permissions"] == {"value": "false"}
         assert param["materialization_identity_name"] == {"value": "empty"}
         assert param["materialization_identity_resource_id"] == {"value": "resource_id"}
 
@@ -290,18 +296,28 @@ class TestWorkspaceOperation:
         )
         template, param, _ = mock_workspace_operation_base._populate_feature_store_role_assignment_parameters(
             workspace=FeatureStore(name="name"),
-            materialization_identity_id="mat_id",
-            offline_store_target="offline_target",
-            online_store_target="online_target",
+            materialization_identity_id="/subscriptions/sub/resourcegroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identity",
+            offline_store_target="/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/test_storage/blobServices/default/containers/offlinestore",
+            online_store_target="/subscriptions/sub1/resourceGroups/mdctest/providers/Microsoft.Cache/Redis/onlinestore",
             update_workspace_role_assignment=True,
             update_offline_store_role_assignment=True,
             update_online_store_role_assignment=True,
         )
 
         assert template is not None
-        assert param["materialization_identity_resource_id"] == {"value": "mat_id"}
-        assert param["offline_store_target"] == {"value": "offline_target"}
-        assert param["online_store_target"] == {"value": "online_target"}
+        assert param["materialization_identity_resource_id"] == {
+            "value": "/subscriptions/sub/resourcegroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identity"
+        }
+        assert param["offline_store_target"] == {
+            "value": "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/test_storage/blobServices/default/containers/offlinestore"
+        }
+        assert param["offline_store_resource_group_name"] == {"value": "rg"}
+        assert param["offline_store_subscription_id"] == {"value": "sub"}
+        assert param["online_store_target"] == {
+            "value": "/subscriptions/sub1/resourceGroups/mdctest/providers/Microsoft.Cache/Redis/onlinestore"
+        }
+        assert param["online_store_resource_group_name"] == {"value": "mdctest"}
+        assert param["online_store_subscription_id"] == {"value": "sub1"}
         assert param["update_workspace_role_assignment"] == {"value": "true"}
         assert param["update_offline_store_role_assignment"] == {"value": "true"}
         assert param["update_online_store_role_assignment"] == {"value": "true"}

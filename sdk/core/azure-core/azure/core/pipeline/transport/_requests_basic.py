@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from typing import Iterator, Optional, Union, TypeVar, overload, TYPE_CHECKING
+from typing import Iterator, Optional, Union, TypeVar, overload, cast, TYPE_CHECKING
 from urllib3.util.retry import Retry
 from urllib3.exceptions import (
     DecodeError as CoreDecodeError,
@@ -247,6 +247,8 @@ class RequestsTransport(HttpTransport):
     def __init__(self, **kwargs) -> None:
         self.session = kwargs.get("session", None)
         self._session_owner = kwargs.get("session_owner", True)
+        if not self._session_owner and not self.session:
+            raise ValueError("session_owner cannot be False if no session is provided")
         self.connection_config = ConnectionConfiguration(**kwargs)
         self._use_env_settings = kwargs.pop("use_env_settings", True)
 
@@ -274,6 +276,8 @@ class RequestsTransport(HttpTransport):
         if not self.session and self._session_owner:
             self.session = requests.Session()
             self._init_session(self.session)
+        # pyright has trouble to understand that self.session is not None, since we raised at worst in the init
+        self.session = cast(requests.Session, self.session)
 
     def close(self):
         if self._session_owner and self.session:

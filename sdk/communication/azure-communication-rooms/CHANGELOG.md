@@ -1,5 +1,11 @@
 # Release History
 
+## 1.1.0b1 (2023-10-31)
+
+### Features Added
+
+- Added support for PSTN dial-out capability
+
 ## 1.0.0 (2023-06-12)
 
 - Stable release of `azure-communication-rooms`.

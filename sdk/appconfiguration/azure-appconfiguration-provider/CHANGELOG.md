@@ -1,12 +1,31 @@
 # Release History
 
-## 1.0.1 (Unreleased)
+## 1.1.0b3 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 1.1.0b2 (2023-09-29)
+
+### Features Added
+
+* Added support for `keyvault_credential`, `keyvault_client_configs`, and `secret_resolver` as `kwargs` instead of using `AzureAppConfigurationKeyVaultOptions`.
+
+### Bugs Fixed
+
+* Fixes issue where `user_agent` was required to be set.
+
+## 1.1.0b1 (2023-09-13)
+
+### Features Added
+
+* New API for Azure App Configuration Provider, `refresh`, which can be used to refresh the configuration from the Azure App Configuration service. `refresh` by default can check every 30 seconds for changes to specified sentinel keys. If a change is detected then all configurations are reloaded. Sentinel keys can be set by passing  a list of `SentinelKey`'s to `refresh_on`.
+* Added support for customer provided user agent prefix.
 
 ### Other Changes
 

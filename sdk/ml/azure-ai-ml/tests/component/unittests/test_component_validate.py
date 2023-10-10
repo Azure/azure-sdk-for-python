@@ -80,13 +80,15 @@ class TestComponentValidate:
     @pytest.mark.parametrize(
         "expected_location,asset_object",
         [
-            (
+            pytest.param(
                 "code",
                 Code(name="AzureML-Code", version="1"),
+                id="code",
             ),
-            (
+            pytest.param(
                 "environment",
                 Environment(name="AzureML-Minimal", version="1"),
+                id="environment",
             ),
         ],
     )

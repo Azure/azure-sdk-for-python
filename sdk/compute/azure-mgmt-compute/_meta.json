@@ -1,5 +1,5 @@
 {
-  "commit": "b5f54222a4a925eb0239cd6653ab8b27185195f4",
+  "commit": "0ebd4949e8e1cd9537ca5a07384c7661162cc7a6",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.9.7",
   "use": [
@@ -46,5 +46,7 @@
   "package-compute-2017-03": "2022-07-31 21:47:43 -0400 2dcad6d6e9a96882eb6d317e7500a94be007a9c6 Microsoft.Compute/DiskRP/stable/2017-03-30/disk.json",
   "package-compute-2016-04-preview": "2022-07-31 21:47:43 -0400 2dcad6d6e9a96882eb6d317e7500a94be007a9c6 Microsoft.Compute/DiskRP/preview/2016-04-30-preview/disk.json",
   "package-compute-2016-03": "2022-07-31 21:47:43 -0400 2dcad6d6e9a96882eb6d317e7500a94be007a9c6 Microsoft.Compute/ComputeRP/stable/2016-03-30/compute.json",
-  "package-compute-2015-06": "2022-07-31 21:47:43 -0400 2dcad6d6e9a96882eb6d317e7500a94be007a9c6 Microsoft.Compute/ComputeRP/stable/2015-06-15/compute.json"
+  "package-compute-2015-06": "2022-07-31 21:47:43 -0400 2dcad6d6e9a96882eb6d317e7500a94be007a9c6 Microsoft.Compute/ComputeRP/stable/2015-06-15/compute.json",
+  "package-2023-07-01-only": "2023-08-10 16:21:40 -0400 1a925d1afe288a5f20d078bbc89214a36a0e4287 Microsoft.Compute/ComputeRP/stable/2023-07-01/virtualMachineScaleSet.json",
+  "package-2023-04-02-only": "2023-08-07 20:58:57 -0400 b9403296f0b0e112b0d8222ad05fd1d79ee10e03 Microsoft.Compute/DiskRP/stable/2023-04-02/snapshot.json"
 }

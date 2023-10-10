@@ -165,6 +165,7 @@ class EventHubProducer(
         :param outcome: The outcome of the message delivery - success or failure.
         :type outcome: ~uamqp.constants.MessageSendResult
         :param condition: Detail information of the outcome.
+        :type condition: Exception
 
         """
         self._outcome = outcome
@@ -245,14 +246,14 @@ class EventHubProducer(
         received or operation times out.
 
         :param event_data: The event to be sent. It can be an EventData object, or iterable of EventData objects
-        :type event_data: ~azure.eventhub.common.EventData, Iterator, Generator, list
-        :param partition_key: With the given partition_key, event data will land to
+        :type event_data: ~azure.eventhub.EventData, iterator, generator, list
+        :keyword partition_key: With the given partition_key, event data will land to
          a particular partition of the Event Hub decided by the service. partition_key
          could be omitted if event_data is of type ~azure.eventhub.EventDataBatch.
-        :type partition_key: str
-        :param timeout: The maximum wait time to send the event data.
+        :paramtype partition_key: str or None
+        :keyword timeout: The maximum wait time to send the event data.
          If not specified, the default wait time specified when the producer was created will be used.
-        :type timeout: float
+        :paramtype timeout: float or None
 
         :raises: ~azure.eventhub.exceptions.AuthenticationError,
                  ~azure.eventhub.exceptions.ConnectError,

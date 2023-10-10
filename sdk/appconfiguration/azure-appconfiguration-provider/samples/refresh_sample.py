@@ -3,17 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from azure.appconfiguration.provider import load
+from azure.appconfiguration.provider import load, SentinelKey
 from azure.appconfiguration import (
     AzureAppConfigurationClient,
     ConfigurationSetting,
-    SentinelKey,
 )
+from sample_utilities import get_client_modifications
 import os
 import time
 
-connection_string = os.environ.get("AZURE_APPCONFIG_CONNECTION_STRING")
-print(connection_string)
+kwargs = get_client_modifications()
+connection_string = os.environ.get("APPCONFIGURATION_CONNECTION_STRING")
 
 # Setting up a configuration setting with a known value
 client = AzureAppConfigurationClient.from_connection_string(connection_string)
@@ -33,6 +33,7 @@ config = load(
     refresh_on=[SentinelKey("message")],
     refresh_interval=1,
     on_refresh_error=my_callback_on_fail,
+    **kwargs,
 )
 
 print(config["message"])

@@ -17,7 +17,7 @@ from .environment import InternalEnvironment
 
 class InternalSparkComponent(
     InternalComponent, ParameterizedSpark, SparkJobEntryMixin
-):  # pylint: disable=too-many-instance-attributes
+):  # pylint: disable=too-many-instance-attributes, too-many-ancestors
     """Internal Spark Component
     This class is used to handle internal spark component.
     It can be loaded from internal spark component yaml or from rest object of an internal spark component.
@@ -91,13 +91,25 @@ class InternalSparkComponent(
         return InternalSparkComponentSchema(context=context)
 
     @property
-    def environment(self):
+    def environment(self) -> Union[str, Environment, dict]:
+        """Get the environment of the component.
+
+        :return: The environment of the component.
+        :rtype: Union[str, Environment, dict]
+        """
         if isinstance(self._environment, Environment) and self._environment.image is None:
             return Environment(conda_file=self._environment.conda_file, image=DUMMY_IMAGE)
         return self._environment
 
     @environment.setter
     def environment(self, value):
+        """Set the environment of the component.
+
+        :param value: The environment of the component.
+        :type value: Union[str, Environment, dict]
+        :return: No return
+        :rtype: None
+        """
         if value is None or isinstance(value, (str, Environment)):
             self._environment = value
         elif isinstance(value, dict):
@@ -119,21 +131,45 @@ class InternalSparkComponent(
             raise ValueError(f"Unsupported environment type: {type(value)}")
 
     @property
-    def jars(self):
+    def jars(self) -> List[str]:
+        """Get the jars of the component.
+
+        :return: The jars of the component.
+        :rtype: List[str]
+        """
         return self._jars
 
     @jars.setter
-    def jars(self, value):
+    def jars(self, value: Union[str, List[str]]):
+        """Set the jars of the component.
+
+        :param value: The jars of the component.
+        :type value: Union[str, List[str]]
+        :return: No return
+        :rtype: None
+        """
         if isinstance(value, str):
             value = [value]
         self._jars = value
 
     @property
-    def py_files(self):
+    def py_files(self) -> List[str]:
+        """Get the py_files of the component.
+
+        :return: The py_files of the component.
+        :rtype: List[str]
+        """
         return self._py_files
 
     @py_files.setter
     def py_files(self, value):
+        """Set the py_files of the component.
+
+        :param value: The py_files of the component.
+        :type value: Union[str, List[str]]
+        :return: No return
+        :rtype: None
+        """
         if isinstance(value, str):
             value = [value]
         self._py_files = value

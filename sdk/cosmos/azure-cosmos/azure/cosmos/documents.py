@@ -163,6 +163,7 @@ class IndexKind(object):
 
     Hash = "Hash"
     Range = "Range"
+    MultiHash = "MultiHash"
 
 
 class PartitionKind(object):
@@ -173,6 +174,7 @@ class PartitionKind(object):
     """
 
     Hash = "Hash"
+    MultiHash = "MultiHash"
 
 
 class DataType(object):

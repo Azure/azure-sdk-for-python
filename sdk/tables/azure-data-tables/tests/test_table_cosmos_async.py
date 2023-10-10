@@ -276,3 +276,6 @@ class TestTableCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
         assert ("Request url is invalid") in str(exc.value)
         assert ("Please check your account URL.") in str(exc.value)
         await valid_tc.delete_table()
+        await valid_tc.close()
+        await tc.close()
+        await tc2.close()

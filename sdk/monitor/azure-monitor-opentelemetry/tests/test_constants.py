@@ -51,28 +51,6 @@ class TestConstants(TestCase):
             _constants._get_customer_ikey_from_env_var(), "unknown"
         )
 
-    # TODO: Enabled when duplicate logging issue is solved
-    # @patch.dict(
-    #     "os.environ",
-    #     {"AZURE_MONITOR_OPENTELEMETRY_DISTRO_ENABLE_EXPORTER_DIAGNOSTICS": "True"},
-    # )
-    # def test_exporter_diagnostics_enabled(self):
-    #     reload(_constants)
-    #     self.assertTrue(_constants._EXPORTER_DIAGNOSTICS_ENABLED)
-
-    # def test_exporter_diagnostics_disabled(self):
-    #     clear_env_var("AZURE_MONITOR_OPENTELEMETRY_DISTRO_ENABLE_EXPORTER_DIAGNOSTICS")
-    #     reload(_constants)
-    #     self.assertFalse(_constants._EXPORTER_DIAGNOSTICS_ENABLED)
-
-    # @patch.dict(
-    #     "os.environ",
-    #     {"AZURE_MONITOR_OPENTELEMETRY_DISTRO_ENABLE_EXPORTER_DIAGNOSTICS": "foobar"},
-    # )
-    # def test_exporter_diagnostics_other(self):
-    #     reload(_constants)
-    #     self.assertFalse(_constants._EXPORTER_DIAGNOSTICS_ENABLED)
-
     @patch.dict("os.environ", {"WEBSITE_SITE_NAME": TEST_VALUE})
     def test_diagnostics_enabled(self):
         reload(_constants)
@@ -150,4 +128,22 @@ class TestConstants(TestCase):
     def test_env_var_or_default_empty_with_defaults(self):
         self.assertEqual(
             _constants._env_var_or_default("key", default_val="value"), "value"
+        )
+
+    @patch(
+        "azure.monitor.opentelemetry._constants.isdir",
+        return_value=True,
+    )
+    def test_attach_enabled(self, mock_isdir):
+        self.assertEqual(
+            _constants._is_attach_enabled(), True
+        )
+
+    @patch(
+        "azure.monitor.opentelemetry._constants.isdir",
+        return_value=False,
+    )
+    def test_attach_disabled(self, mock_isdir):
+        self.assertEqual(
+            _constants._is_attach_enabled(), False
         )

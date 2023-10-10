@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.appconfiguration.provider.aio import load
-from azure.appconfiguration.provider import SettingSelector
+from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from async_preparers import app_config_decorator_async
@@ -21,10 +21,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         ) as client:
             assert client.get("message") == "hi"
             assert client["my_json"]["key"] == "value"
-            assert (
-                client["FeatureManagementFeatureFlags"]["Alpha"]
-                == '{"enabled": false, "conditions": {"client_filters": []}}'
-            )
+            assert "FeatureManagementFeatureFlags" in client
+            assert "Alpha" in client["FeatureManagementFeatureFlags"]
 
     # method: provider_trim_prefixes
     @app_config_decorator_async
@@ -39,11 +37,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             assert client["message"] == "hi"
             assert client["my_json"]["key"] == "value"
             assert client["trimmed"] == "key"
-            assert "test.trimmed" not in client
-            assert (
-                client["FeatureManagementFeatureFlags"]["Alpha"]
-                == '{"enabled": false, "conditions": {"client_filters": []}}'
-            )
+            assert "FeatureManagementFeatureFlags" in client
+            assert "Alpha" in client["FeatureManagementFeatureFlags"]
 
     # method: provider_selectors
     @app_config_decorator_async
@@ -56,3 +51,56 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             assert client["message"] == "test"
             assert "test.trimmed" not in client
             assert "FeatureManagementFeatureFlags" not in client
+
+    # method: provider_selectors
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_provider_key_vault_reference(
+        self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url
+    ):
+        selects = {SettingSelector(key_filter="*", label_filter="prod")}
+        async with await self.create_aad_client(
+            appconfiguration_endpoint_string, selects=selects, keyvault_secret_url=appconfiguration_keyvault_secret_url
+        ) as client:
+            assert client["secret"] == "Very secret value"
+
+    # method: provider_selectors
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_provider_secret_resolver(self, appconfiguration_endpoint_string):
+        selects = {SettingSelector(key_filter="*", label_filter="prod")}
+        async with await self.create_aad_client(
+            appconfiguration_endpoint_string, selects=selects, secret_resolver=secret_resolver
+        ) as client:
+            assert client["secret"] == "Reslover Value"
+
+    # method: provider_selectors
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_provider_key_vault_reference_options(
+        self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url
+    ):
+        selects = {SettingSelector(key_filter="*", label_filter="prod")}
+        key_vault_options = AzureAppConfigurationKeyVaultOptions()
+        async with await self.create_aad_client(
+            appconfiguration_endpoint_string,
+            selects=selects,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            key_vault_options=key_vault_options,
+        ) as client:
+            assert client["secret"] == "Very secret value"
+
+    # method: provider_selectors
+    @app_config_decorator_async
+    @recorded_by_proxy_async
+    async def test_provider_secret_resolver_options(self, appconfiguration_endpoint_string):
+        selects = {SettingSelector(key_filter="*", label_filter="prod")}
+        key_vault_options = AzureAppConfigurationKeyVaultOptions(secret_resolver=secret_resolver)
+        async with await self.create_aad_client(
+            appconfiguration_endpoint_string, selects=selects, key_vault_options=key_vault_options
+        ) as client:
+            assert client["secret"] == "Reslover Value"
+
+
+async def secret_resolver(secret_id):
+    return "Reslover Value"

@@ -7,7 +7,13 @@ from subprocess import check_call, getoutput
 import shutil
 import re
 import os
-import pytoml as toml
+try:
+    # py 311 adds this library natively
+    import tomllib as toml
+except:
+    # otherwise fall back to pypi package tomli
+    import tomli as toml
+import tomli_w as tomlw
 
 from .swaggertosdk.SwaggerToSdkCore import (
     CONFIG_FILE,
@@ -60,7 +66,7 @@ def after_multiapi_combiner(sdk_code_path: str, package_name: str, folder_name: 
     # do not package code of v20XX_XX_XX
     exclude = lambda x: x.replace("-", ".") + ".v20*"
     if toml_file.exists():
-        with open(toml_file, "r") as file_in:
+        with open(toml_file, "rb") as file_in:
             content = toml.load(file_in)
         if package_name != "azure-mgmt-resource":
             content["packaging"]["exclude_folders"] = exclude(package_name)
@@ -70,8 +76,8 @@ def after_multiapi_combiner(sdk_code_path: str, package_name: str, folder_name: 
             subfolders_name = [s.name for s in subfolder_path.iterdir() if s.is_dir() and not s.name.startswith("_")]
             content["packaging"]["exclude_folders"] = ",".join([exclude(f"{package_name}-{s}") for s in subfolders_name])
 
-        with open(toml_file, "w") as file_out:
-            toml.dump(content, file_out)
+        with open(toml_file, "wb") as file_out:
+            tomlw.dump(content, file_out)
         call_build_config(package_name, folder_name)
         
         # remove .egg-info to reinstall package
