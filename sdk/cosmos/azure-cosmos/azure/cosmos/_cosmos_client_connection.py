@@ -52,11 +52,11 @@ from . import _runtime_constants as runtime_constants
 from . import _request_object
 from . import _synchronized_request as synchronized_request
 from . import _global_endpoint_manager as global_endpoint_manager
-from ._routing import routing_map_provider
+from ._routing import routing_map_provider, routing_range
 from ._retry_utility import ConnectionRetryPolicy
 from . import _session
 from . import _utils
-from .partition_key import _Undefined, _Empty
+from .partition_key import _Undefined, _Empty, PartitionKey
 from ._auth_policy import CosmosBearerTokenCredentialPolicy
 from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 
@@ -2539,6 +2539,59 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         # Query operations will use ReadEndpoint even though it uses POST(for regular query operations)
         request_params = _request_object.RequestObject(typ, documents._OperationType.SqlQuery)
         req_headers = base.GetHeaders(self, initial_headers, "post", path, id_, typ, options, partition_key_range_id)
+
+        #check if query has prefix partition key
+        isPrefixPartitionQuery = kwargs.pop("isPrefixPartitionQuery", None)
+        if isPrefixPartitionQuery:
+            # here get the over lapping ranges
+            partition_key_definition = kwargs.pop("partitionKeyDefinition", None)
+            pk_properties = partition_key_definition
+            partition_key_definition = PartitionKey(path=pk_properties["paths"], kind=pk_properties["kind"])
+            partition_key_value = pk_properties["partition_key"]
+            feedrangeEPK = partition_key_definition._get_epk_range_for_prefix_partition_key(partition_key_value)  # cspell:disable-line # pylint: disable=line-too-long
+            over_lapping_ranges = self._routing_map_provider.get_overlapping_ranges(id_, [feedrangeEPK])
+            # It is possible to get more than one over lapping range. We need to get the query results for each one
+            results = None
+            # For each over lapping range we will take a sub range of the feed range EPK that overlaps with the over
+            # lapping physical partition. The EPK sub range will be one of four:
+            # 1) Will have a range min equal to the feed range EPK min, and a range max equal to the over lapping
+            # partition
+            # 2) Will have a range min equal to the over lapping partition range min, and a range max equal to the
+            # feed range EPK range max.
+            # 3) will match exactly with the current over lapping physical partition, so we just return the over lapping
+            # physical partition's partition key id.
+            # 4) Will equal the feed range EPK since it is a sub range of a single physical partition
+            for over_lapping_range in over_lapping_ranges:
+                single_range = routing_range.Range.PartitionKeyRangeToRange(over_lapping_range)
+                # Since the range min and max are all Upper Cased string Hex Values,
+                # we can compare the values lexicographically
+                EPK_sub_range = routing_range.Range(range_min=max(single_range.min, feedrangeEPK.min),
+                                                    range_max=min(single_range.max, feedrangeEPK.max),
+                                                    isMinInclusive=True, isMaxInclusive=False)
+                if single_range.min == EPK_sub_range.min and EPK_sub_range.max == single_range.max:
+                    # The Epk Sub Range spans exactly one physical partition
+                    # In this case we can route to the physical pk range id
+                    req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_range["id"]
+                else:
+                    # The Epk Sub Range spans less than a single physical partition
+                    # In this case we route to the physical partition and
+                    # pass the epk sub range to the headers to filter within partition
+                    req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_range["id"]
+                    req_headers[http_constants.HttpHeaders.StartEpkString] = EPK_sub_range.min
+                    req_headers[http_constants.HttpHeaders.EndEpkString] = EPK_sub_range.max
+                req_headers[http_constants.HttpHeaders.ReadFeedKeyType] = "EffectivePartitionKeyRange"
+                r, self.last_response_headers = self.__Post(path, request_params, query, req_headers, **kwargs)
+                if results:
+                    # add up all the query results from all over lapping ranges
+                    results["Documents"].extend(r["Documents"])
+                else:
+                    results = r
+                if response_hook:
+                    response_hook(self.last_response_headers, r)
+            # if the prefix partition query has results lets return it
+            if results:
+                return __GetBodiesFromQueryResult(results)
+
         result, self.last_response_headers = self.__Post(path, request_params, query, req_headers, **kwargs)
 
         if response_hook:
@@ -2575,6 +2628,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                                 options,
                                 is_query_plan=True,
                                 **kwargs)
+
+
 
     def __CheckAndUnifyQueryFormat(self, query_body):
         """Checks and unifies the format of the query body.
@@ -2650,6 +2705,21 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
     # Extracts the partition key from the document using the partitionKey definition
     def _ExtractPartitionKey(self, partitionKeyDefinition, document):
+        if partitionKeyDefinition["kind"] == "MultiHash":
+            ret = []
+            for partition_key_level in partitionKeyDefinition.get("paths"):
+                # Parses the paths into a list of token each representing a property
+                partition_key_parts = base.ParsePaths([partition_key_level])
+                # Check if the partitionKey is system generated or not
+                is_system_key = partitionKeyDefinition["systemKey"] if "systemKey" in partitionKeyDefinition else False
+
+                # Navigates the document to retrieve the partitionKey specified in the paths
+                val = self._retrieve_partition_key(partition_key_parts, document, is_system_key)
+                if val is _Undefined:
+                    break
+                ret.append(val)
+            return ret
+
 
         # Parses the paths into a list of token each representing a property
         partition_key_parts = base.ParsePaths(partitionKeyDefinition.get("paths"))
@@ -2657,6 +2727,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         is_system_key = partitionKeyDefinition["systemKey"] if "systemKey" in partitionKeyDefinition else False
 
         # Navigates the document to retrieve the partitionKey specified in the paths
+
         return self._retrieve_partition_key(partition_key_parts, document, is_system_key)
 
     # Navigates the document to retrieve the partitionKey specified in the partition key parts
@@ -2664,7 +2735,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         expected_matchCount = len(partition_key_parts)
         matchCount = 0
         partitionKey = document
-
         for part in partition_key_parts:
             # At any point if we don't find the value of a sub-property in the document, we return as Undefined
             if part not in partitionKey:
