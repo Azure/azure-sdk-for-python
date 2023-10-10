@@ -424,11 +424,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         manifest_properties = self._client.container_registry.get_manifest_properties(
             repository, tag_or_digest, **kwargs
         )
-        if manifest_properties.manifest is not None:
-            return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-                manifest_properties.manifest, repository_name=repository, registry=self._endpoint
-            )
-        return ArtifactManifestProperties()
+        return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
+            manifest_properties.manifest,  # type: ignore[arg-type] # The property "manifest" is required in response
+            repository_name=repository,
+            registry=self._endpoint,
+        )
 
     @distributed_trace
     def get_tag_properties(self, repository: str, tag: str, **kwargs) -> ArtifactTagProperties:
@@ -452,11 +452,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 tag_properties = client.get_tag_properties("my_repository", tag.name)
         """
         tag_properties = self._client.container_registry.get_tag_properties(repository, tag, **kwargs)
-        if tag_properties.tag is not None:
-            return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-                tag_properties.tag, repository_name=repository
-            )
-        return ArtifactTagProperties()
+        return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
+            tag_properties.tag,  # type: ignore[arg-type] # The property "tag" is required in response
+            repository_name=repository,
+        )
 
     @distributed_trace
     def list_tag_properties(self, repository: str, **kwargs) -> ItemPaged[ArtifactTagProperties]:
@@ -690,11 +689,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         manifest_properties = self._client.container_registry.update_manifest_properties(
             repository, tag_or_digest, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
         )
-        if manifest_properties.manifest is not None:
-            return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-                manifest_properties.manifest, repository_name=repository, registry=self._endpoint
-            )
-        return ArtifactManifestProperties()
+        return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
+            manifest_properties.manifest,  # type: ignore[arg-type] # The property "manifest" is required in response
+            repository_name=repository,
+            registry=self._endpoint,
+        )
 
     @overload
     def update_tag_properties(
@@ -789,11 +788,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         tag_attributes = self._client.container_registry.update_tag_attributes(
             repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
         )
-        if tag_attributes.tag is not None:
-            return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-                tag_attributes.tag, repository_name=repository
-            )
-        return ArtifactTagProperties()
+        return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
+            tag_attributes.tag,  # type: ignore[arg-type] # The property "tag" is required in response
+            repository_name=repository,
+        )
 
     @overload
     def update_repository_properties(
