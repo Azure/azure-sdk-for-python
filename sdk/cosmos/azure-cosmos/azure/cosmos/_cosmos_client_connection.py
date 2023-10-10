@@ -2553,13 +2553,14 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             # It is possible to get more than one over lapping range. We need to get the query results for each one
             results = None
             # For each over lapping range we will take a sub range of the feed range EPK that overlaps with the over
-            # lapping physical partition. The EPK sub range will be one of three:
+            # lapping physical partition. The EPK sub range will be one of four:
             # 1) Will have a range min equal to the feed range EPK min, and a range max equal to the over lapping
             # partition
             # 2) Will have a range min equal to the over lapping partition range min, and a range max equal to the
             # feed range EPK range max.
             # 3) will match exactly with the current over lapping physical partition, so we just return the over lapping
             # physical partition's partition key id.
+            # 4) Will equal the feed range EPK since it is a sub range of a single physical partition
             for over_lapping_range in over_lapping_ranges:
                 single_range = routing_range.Range.PartitionKeyRangeToRange(over_lapping_range)
                 # Since the range min and max are all Upper Cased string Hex Values,
