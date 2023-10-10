@@ -83,6 +83,7 @@ from .._generated.models import (
     ImageDetail,
     IndexingSchedule,
     IndexingParameters,
+    IndexingParametersConfiguration,
     IndexerExecutionStatus,
     IndexerStatus,
     InputFieldMappingEntry,
