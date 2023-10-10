@@ -116,9 +116,7 @@ class TestQueryAsync:
         document_definition = {'pk': 'pk', 'id': 'doc3'}
         await created_collection.create_item(body=document_definition)
 
-        for pageSize in [1, 100]:
-            if pageSize == 1:
-                pageSize += 1
+        for pageSize in [2, 100]:
             # verify iterator
             query_iterable = created_collection.query_items_change_feed(
                 continuation=continuation2,
@@ -244,9 +242,7 @@ class TestQueryAsync:
         document_definition = {'pk': 'pk', 'id': 'doc3'}
         await created_collection.create_item(body=document_definition)
 
-        for pageSize in [1, 100]:
-            if pageSize == 1:
-                pageSize += 1
+        for pageSize in [2, 100]:
             # verify iterator
             query_iterable = created_collection.query_items_change_feed(
                 continuation=continuation2,
