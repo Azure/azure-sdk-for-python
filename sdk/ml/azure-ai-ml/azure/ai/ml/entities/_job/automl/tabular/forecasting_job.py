@@ -20,9 +20,8 @@ from azure.ai.ml.entities._job.automl.tabular.automl_tabular import AutoMLTabula
 from azure.ai.ml.entities._job.automl.tabular.featurization_settings import TabularFeaturizationSettings
 from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
-from azure.ai.ml.entities._job.automl.training_settings import ForecastingTrainingSettings, TrainingSettings
+from azure.ai.ml.entities._job.automl.training_settings import ForecastingTrainingSettings
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 class ForecastingJob(AutoMLTabular):
@@ -91,35 +90,19 @@ class ForecastingJob(AutoMLTabular):
             else ForecastingPrimaryMetrics[camel_to_snake(value).upper()]
         )
 
-    @property
-    def training(self) -> Optional[TrainingSettings]:
-        """Get the training settings for the AutoML job.
-
-        :return: Training settings for the AutoML job.
-        :rtype: TrainingSettings
+    @property  # type: ignore
+    def training(self) -> ForecastingTrainingSettings:
         """
-        return self._training
+        Return the forecast training settings.
+
+        :return: training settings.
+        :rtype: ~azure.ai.ml.automl.ForecastingTrainingSettings
+        """
+        return self._training or ForecastingTrainingSettings()
 
     @training.setter
-    def training(self, value: Union[Dict, TrainingSettings]) -> None:
-        """Set the training settings for the AutoML job.
-
-        :param value: typing.Dict or TrainingSettings
-        :type value: typing.Union[typing.Dict, TrainingSettings]
-        :raises ValidationException: Expected a dictionary for training settings.
-        """
-        if isinstance(value, TrainingSettings):
-            self._training = value
-        else:
-            if not isinstance(value, dict):
-                msg = "Expected a dictionary for training settings."
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=msg,
-                    target=ErrorTarget.AUTOML,
-                    error_category=ErrorCategory.USER_ERROR,
-                )
-            self.set_training(**value)
+    def training(self, value: Union[Dict, ForecastingTrainingSettings]) -> None:  # pylint: disable=unused-argument
+        ...
 
     @property
     def forecasting_settings(self) -> Optional[ForecastingSettings]:
