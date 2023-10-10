@@ -25,3 +25,22 @@ class TextTranslationTest(AzureRecordedTestCase):
         client = TextTranslationClient(
             endpoint=endpoint, credential=credential)
         return client
+
+    def create_async_getlanguage_client(self, endpoint):
+        from azure.ai.translation.text.aio import TextTranslationClient as TextTranslationClientAsync
+        client = TextTranslationClientAsync(endpoint=endpoint, credential=None)
+        return client
+
+    def create_async_client(self, endpoint, apikey, region):
+        credential = TranslatorCredential(apikey, region)
+        from azure.ai.translation.text.aio import TextTranslationClient as TextTranslationClientAsync
+        client = TextTranslationClientAsync(
+            endpoint=endpoint, credential=credential)
+        return client
+
+    def create_async_client_token(self, endpoint, apikey, region):
+        credential = StaticAccessTokenCredential(apikey, region)
+        from azure.ai.translation.text.aio import TextTranslationClient as TextTranslationClientAsync
+        client = TextTranslationClientAsync(
+            endpoint=endpoint, credential=credential)
+        return client

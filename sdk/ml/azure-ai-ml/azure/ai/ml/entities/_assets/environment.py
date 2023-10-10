@@ -40,7 +40,7 @@ class BuildContext:
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START build_context_entity_create]
             :end-before: [END build_context_entity_create]
             :language: python
@@ -100,7 +100,7 @@ class Environment(Asset, LocalizableMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START env_entity_create]
             :end-before: [END env_entity_create]
             :language: python
@@ -299,7 +299,7 @@ class Environment(Asset, LocalizableMixin):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START env_entities_validate]
                 :end-before: [END env_entities_validate]
                 :language: python

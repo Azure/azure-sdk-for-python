@@ -29,6 +29,38 @@ from .artifact import ArtifactStorageInfo
 
 @experimental
 class FeatureSet(Artifact):
+    """Feature Set
+
+    :param name: The name of the Feature Set resource.
+    :type name: str
+    :param version: The version of the Feature Set resource.
+    :type version: str
+    :param entities: Specifies list of entities.
+    :type entities: list[str]
+    :param specification: Specifies the feature set spec details.
+    :type specification: ~azure.ai.ml.entities.FeatureSetSpecification
+    :param stage: Feature set stage. Allowed values: Development, Production, Archived. Defatuls to Development.
+    :type stage: Optional[str]
+    :param description: The description of the Feature Set resource. Defaults to None.
+    :type description: Optional[str]
+    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
+    :type tags: Optional[dict[str, str]]
+    :param materialization_settings: Specifies the materialization settings. Defaults to None.
+    :type materialization_settings: Optional[~azure.ai.ml.entities.MaterializationSettings]
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
+    :raises ValidationException: Raised if stage is specified and is not valid.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_featurestore.py
+            :start-after: [START configure_feature_set]
+            :end-before: [END configure_feature_set]
+            :language: Python
+            :dedent: 8
+            :caption: Instantiating a Feature Set object
+    """
+
     def __init__(
         self,
         *,
@@ -41,28 +73,7 @@ class FeatureSet(Artifact):
         materialization_settings: Optional[MaterializationSettings] = None,
         tags: Optional[Dict] = None,
         **kwargs,
-    ):
-        """FeatureSet
-
-        :param name: Name of the resource.
-        :type name: str
-        :param version: Version of the resource.
-        :type version: str
-        :param entities: Specifies list of entities.
-        :type entities: list[str]
-        :param specification: Specifies the feature spec details.
-        :type specification: ~azure.ai.ml.entities.FeatureSetSpecification
-        :param stage: Feature set stage. Allowed values: Development, Production, Archived
-        :type stage: str
-        :param description: Description of the resource.
-        :type description: str
-        :param tags: Tag dictionary. Tags can be added, removed, and updated.
-        :type tags: dict[str, str]
-        :param materialization_settings: Specifies the materialization settings.
-        :type materialization_settings: ~azure.ai.ml.entities.MaterializationSettings
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
-        """
+    ) -> None:
         super().__init__(
             name=name,
             version=version,
@@ -176,15 +187,32 @@ class FeatureSet(Artifact):
             self.specification.path = self.path
 
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+        """Dump the asset content into a file in YAML format.
+
+        :param dest: The local path or file stream to write the YAML content to.
+            If dest is a file path, a new file will be created.
+            If dest is an open file, the file will be written to directly.
+        :type dest: Union[PathLike, str, IO[AnyStr]]
+        :keyword kwargs: Additional arguments to pass to the YAML serializer.
+        :paramtype kwargs: dict
+        :raises FileExistsError: Raised if dest is a file path and the file already exists.
+        :raises IOError: Raised if dest is an open file and the file is not writable.
+        """
+
         import os
         import shutil
+
         from azure.ai.ml._utils.utils import is_url
 
         origin_spec_path = self.specification.path
         if isinstance(dest, (PathLike, str)) and not is_url(self.specification.path):
+            if os.path.exists(dest):
+                raise FileExistsError(f"File {dest} already exists.")
             relative_path = os.path.basename(self.specification.path)
             src_spec_path = str(Path(self._base_path, self.specification.path))
             dest_spec_path = str(Path(os.path.dirname(dest), relative_path))
+            if os.path.exists(dest_spec_path):
+                shutil.rmtree(dest_spec_path)
             shutil.copytree(src=src_spec_path, dst=dest_spec_path)
             self.specification.path = str(Path("./", relative_path))
         super().dump(dest=dest, **kwargs)

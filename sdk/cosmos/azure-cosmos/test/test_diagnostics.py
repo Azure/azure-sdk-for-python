@@ -1,11 +1,9 @@
-import unittest
 import pytest
 import azure.cosmos.diagnostics as m
 
 _common = {
     'x-ms-activity-id',
     'x-ms-session-token',
-
     'x-ms-item-count',
     'x-ms-request-quota',
     'x-ms-resource-usage',
@@ -15,7 +13,8 @@ _common = {
 _headers = dict(zip(_common, _common))
 _headers['other'] = 'other'
 
-class BaseUnitTests(unittest.TestCase):
+
+class TestOldDiagnostics:
 
     def test_init(self):
         rh = m.RecordDiagnostics()

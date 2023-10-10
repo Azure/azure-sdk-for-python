@@ -7,6 +7,7 @@
 import os
 import uuid
 import concurrent
+from typing import List
 
 from azure.servicebus import ServiceBusClient, ServiceBusMessage, AutoLockRenewer, NEXT_AVAILABLE_SESSION
 from azure.servicebus.exceptions import OperationTimeoutError
@@ -56,7 +57,7 @@ def sample_session_send_receive_with_pool(connection_string, queue_name):
                     message = ServiceBusMessage("Sample message no. {}".format(i), session_id=session_id)
                     sender.send_messages(message)
 
-        all_messages = []
+        all_messages: List = []
         futures = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=concurrent_receivers) as thread_pool:
             for _ in range(concurrent_receivers):

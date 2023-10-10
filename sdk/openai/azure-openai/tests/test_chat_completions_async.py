@@ -6,7 +6,7 @@
 import pytest
 import openai
 from devtools_testutils import AzureRecordedTestCase
-from conftest import configure_async, ALL, AZURE, OPENAI
+from conftest import configure_async, ALL, AZURE, OPENAI, AZURE_AD, setup_adapter_async
 
 
 class TestChatCompletionsAsync(AzureRecordedTestCase):
@@ -317,7 +317,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
     async def test_chat_completion_rai_annotations(self, azure_openai_creds, api_type):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": "How do I rob a bank?"}
+            {"role": "user", "content": "how do I rob a bank with violence?"}
         ]
         kwargs = {"model": azure_openai_creds["chat_completions_model"]} if api_type == "openai" \
           else {"deployment_id": azure_openai_creds["chat_completions_name"]}
@@ -346,7 +346,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
             **kwargs
         )
         # prompt content filter result
-        prompt_filter_result = completion.prompt_annotations[0].content_filter_results
+        prompt_filter_result = completion.prompt_filter_results[0].content_filter_results
         assert prompt_filter_result.hate.filtered is False
         assert prompt_filter_result.hate.severity == "safe"
         assert prompt_filter_result.self_harm.filtered is False
@@ -423,7 +423,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
 
         if api_type == "azure":
             # prompt content filter result
-            prompt_filter_result = completion.prompt_annotations[0].content_filter_results
+            prompt_filter_result = completion.prompt_filter_results[0].content_filter_results
             assert prompt_filter_result.hate.filtered is False
             assert prompt_filter_result.hate.severity == "safe"
             assert prompt_filter_result.self_harm.filtered is False
@@ -633,7 +633,7 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
     async def test_chat_completion_functions_rai(self, azure_openai_creds, api_type):
         messages = [
             {"role": "system", "content": "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."},
-            {"role": "user", "content": "How do I rob a bank?"}
+            {"role": "user", "content": "how do I rob a bank with violence?"}
         ]
 
         kwargs = {"model": azure_openai_creds["chat_completions_model"]} if api_type == "openai" \
@@ -702,3 +702,81 @@ class TestChatCompletionsAsync(AzureRecordedTestCase):
         assert content_filter_result.sexual.severity == "safe"
         assert content_filter_result.violence.filtered is True
         assert content_filter_result.violence.severity is not None
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_type", [AZURE, AZURE_AD])
+    @configure_async
+    async def test_chat_completion_byod(self, azure_openai_creds, api_type):
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "How is Azure machine learning different than Azure OpenAI?"}
+        ]
+        setup_adapter_async(azure_openai_creds["chat_completions_name"])
+        completion = await openai.ChatCompletion.acreate(
+            messages=messages,
+            deployment_id=azure_openai_creds["chat_completions_name"],
+            dataSources=[
+                {
+                    "type": "AzureCognitiveSearch",
+                    "parameters": {
+                        "endpoint": azure_openai_creds["search_endpoint"],
+                        "key": azure_openai_creds["search_key"],
+                        "indexName": azure_openai_creds["search_index"]
+                    }
+                }
+            ]
+        )
+        assert completion.id
+        assert completion.object == "extensions.chat.completion"
+        assert completion.created
+        assert completion.model
+        assert len(completion.choices) == 1
+        assert completion.choices[0].finish_reason
+        assert completion.choices[0].index is not None
+        assert completion.choices[0].message.content
+        assert completion.choices[0].message.role
+        assert completion.choices[0].message.context.messages[0].role == "tool"
+        assert completion.choices[0].message.context.messages[0].content
+        openai.aiosession.set(None)
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_type", [AZURE])
+    @configure_async
+    async def test_streamed_chat_completions_byod(self, azure_openai_creds, api_type):
+        messages = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "How is Azure machine learning different than Azure OpenAI?"}
+        ]
+        setup_adapter_async(azure_openai_creds["chat_completions_name"])
+        response = await openai.ChatCompletion.acreate(
+            messages=messages,
+            deployment_id=azure_openai_creds["chat_completions_name"],
+            dataSources=[
+                {
+                    "type": "AzureCognitiveSearch",
+                    "parameters": {
+                        "endpoint": azure_openai_creds["search_endpoint"],
+                        "key": azure_openai_creds["search_key"],
+                        "indexName": azure_openai_creds["search_index"]
+                    }
+                }
+            ],
+            stream=True
+        )
+        async for chunk in response:
+            assert chunk.id
+            assert chunk.object == "extensions.chat.completion.chunk"
+            assert chunk.created
+            assert chunk.model
+            for c in chunk.choices:
+                assert c.index is not None
+                assert c.delta is not None
+                if c.delta.get("context"):
+                    assert c.delta.context.messages[0].role == "tool"
+                    assert c.delta.context.messages[0].content.find("citations") != -1
+                if c.delta.get("role"):
+                    assert c.delta.role == "assistant"
+                if c.delta.get("content"):
+                    assert c.delta.content is not None
+
+        openai.aiosession.set(None)

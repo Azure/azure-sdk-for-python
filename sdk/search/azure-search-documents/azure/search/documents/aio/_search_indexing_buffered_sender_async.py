@@ -49,6 +49,8 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
      will be assumed.
     """
 
+    _client: SearchIndexClient
+
     # pylint: disable=too-many-instance-attributes
 
     def __init__(
@@ -61,7 +63,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         audience = kwargs.pop("audience", None)
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
-            self._client: SearchIndexClient = SearchIndexClient(
+            self._client = SearchIndexClient(
                 endpoint=endpoint,
                 index_name=index_name,
                 sdk_moniker=SDK_MONIKER,
@@ -71,7 +73,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         else:
             self._aad = True
             authentication_policy = get_authentication_policy(credential, audience=audience, is_async=True)
-            self._client: SearchIndexClient = SearchIndexClient(
+            self._client = SearchIndexClient(
                 endpoint=endpoint,
                 index_name=index_name,
                 authentication_policy=authentication_policy,
@@ -146,7 +148,8 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         has_error = False
         if not self._index_key:
             try:
-                client = SearchServiceClient(self._endpoint, self._credential)
+                credential = cast(Union[AzureKeyCredential, AsyncTokenCredential], self._credential)
+                client = SearchServiceClient(self._endpoint, credential)
                 index_result = await client.get_index(self._index_name)
                 if index_result:
                     for field in index_result.fields:
@@ -162,6 +165,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             results = await self._index_documents_actions(actions=actions, timeout=timeout)
             for result in results:
                 try:
+                    assert self._index_key is not None  # Hint for mypy
                     action = next(x for x in actions if x.additional_properties.get(self._index_key) == result.key)
                     if result.succeeded:
                         await self._callback_succeed(action)

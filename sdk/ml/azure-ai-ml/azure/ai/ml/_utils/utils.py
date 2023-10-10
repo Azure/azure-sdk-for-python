@@ -12,6 +12,7 @@ import os
 import random
 import re
 import string
+import sys
 import tempfile
 import time
 import warnings
@@ -1013,6 +1014,23 @@ def is_private_preview_enabled():
     :rtype: bool
     """
     return os.getenv(AZUREML_PRIVATE_FEATURES_ENV_VAR) in ["True", "true", True]
+
+
+def is_bytecode_optimization_enabled():
+    """Check if bytecode optimization is enabled:
+    1) bytecode package is installed
+    2) private preview is enabled
+    3) python version is between 3.6 and 3.11
+
+    :return: True if bytecode optimization is enabled, False otherwise.
+    :rtype: bool
+    """
+    try:
+        import bytecode  # pylint: disable=unused-import
+
+        return is_private_preview_enabled() and (3, 6) < sys.version_info < (3, 12)
+    except ImportError:
+        return False
 
 
 def is_on_disk_cache_enabled():
