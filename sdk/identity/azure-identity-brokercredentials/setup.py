@@ -12,8 +12,8 @@ from io import open
 from setuptools import find_packages, setup  # type: ignore
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-identity-broker"
-PACKAGE_PPRINT_NAME = "Identity Broker plugin"
+PACKAGE_NAME = "azure-identity-brokercredentials"
+PACKAGE_PPRINT_NAME = "Identity Broker Credentials plugin"
 
 package_folder_path = "azure/identity/broker"
 
@@ -38,7 +38,7 @@ setup(
     license="MIT License",
     author="Microsoft Corporation",
     author_email="azpysdkhelp@microsoft.com",
-    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity-broker",
+    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity-brokercredentials",
     keywords="azure, azure sdk",
     classifiers=[
         "Development Status :: 4 - Beta",

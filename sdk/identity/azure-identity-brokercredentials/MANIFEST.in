@@ -3,4 +3,4 @@ recursive-include tests *.py
 include *.md
 include LICENSE
 include azure/__init__.py
-include azure/identity/broker/py.typed
+include azure/identity/brokercredentials/py.typed

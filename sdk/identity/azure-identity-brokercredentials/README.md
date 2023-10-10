@@ -1,31 +1,30 @@
 
 
-# Azure Identity Broker plugin for Python
+# Azure Identity Broker Credentials plugin for Python
 
 ## Getting started
 
 ### Install the package
 
-Install the Azure Identity Broker plugin for Python with [pip](https://pypi.org/project/pip/):
+Install the Azure Identity Broker Credentials plugin for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-identity-broker
+pip install azure-identity-brokercredentials
 ```
-
 
 ## Examples
 
-Now you can create `azure.identity.broker.InteractiveBrowserCredential` and `azure.identity.broker.UsernamePasswordCredential` with broker support.
+Now you can create `azure.identity.brokercredentials.InteractiveBrowserBrokerCredential` and `azure.identity.brokercredentials.UsernamePasswordBrokerCredential` with broker support.
 
 ```python
 
 import win32gui
-from azure.identity.broker import InteractiveBrowserCredential
+from azure.identity.brokercredentials import InteractiveBrowserBrokerCredential
 
 # Get the handle of the current window
 current_window_handle = win32gui.GetForegroundWindow()
 
-credential = InteractiveBrowserCredential(allow_broker=True, parent_window_handle=current_window_handle)
+credential = InteractiveBrowserBrokerCredential(allow_broker=True, parent_window_handle=current_window_handle)
 ```
 
 

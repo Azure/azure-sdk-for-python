@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pytest
-from azure.identity.broker import (
+from azure.identity.brokercredentials import (
     InteractiveBrowserBrokerCredential,
     UsernamePasswordBrokerCredential,
 )
