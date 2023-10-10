@@ -10,14 +10,14 @@ npm install -g autorest
 ### Generation
 ```ps
 cd <swagger-folder>
-autorest SWAGGER.md
+autorest SWAGGER.md --version-tolerant=false
 ```
 
 ### Settings
 
 ```yaml
-tag: package-chat-2021-09-07
-require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/communication/data-plane/Chat/readme.md
+tag: package-chat-2023-11-07
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/6733cb2b224655cbfd4b3dfa2815e7ba044933a9/specification/communication/data-plane/Chat/readme.md
 output-folder: ../azure/communication/chat/_generated
 namespace: azure.communication.chat
 no-namespace-folders: true

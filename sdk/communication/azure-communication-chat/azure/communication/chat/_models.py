@@ -6,6 +6,7 @@
 from typing import TYPE_CHECKING
 
 from ._generated.models import ChatParticipant as ChatParticipantAutorest
+from ._generated.models import ChatAttachment as ChatAttachmentAutorest
 from ._generated.models import ChatMessageType
 from ._communication_identifier_serializer import serialize_identifier, deserialize_identifier
 
@@ -34,9 +35,7 @@ class ChatParticipant(object):
     def __init__(
         self,
         **kwargs # type: Any
-    ):
-        # type: (...) -> None
-
+    ) -> None:
         self.identifier = kwargs['identifier']
         self.display_name = kwargs.get('display_name', None)
         self.share_history_time = kwargs.get('share_history_time', None)
@@ -54,6 +53,57 @@ class ChatParticipant(object):
             communication_identifier=serialize_identifier(self.identifier),
             display_name=self.display_name,
             share_history_time=self.share_history_time
+        )
+
+class ChatAttachment(object):
+    """An attachment in a chat message.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Id of the attachment. Required.
+    :vartype id: str
+    :ivar attachment_type: The type of attachment. Required. Known values are: "image" and "file".
+    :vartype attachment_type: str or ~azure.communication.chat.models.AttachmentType
+    :ivar extension: The file extension of the attachment, if available.
+    :vartype extension: str
+    :ivar name: The name of the attachment content.
+    :vartype name: str
+    :ivar url: The URL where the attachment can be downloaded.
+    :vartype url: str
+    :ivar preview_url: The URL where the preview of attachment can be downloaded.
+    :vartype preview_url: str
+    """
+
+    def __init__(
+        self,
+        **kwargs # type: Any
+    ) -> None:
+        self.id = kwargs['id']
+        self.attachment_type = kwargs['attachment_type']
+        self.extension = kwargs.get('extension', None)
+        self.name = kwargs.get('name', None)
+        self.url = kwargs.get('url', None)
+        self.preview_url = kwargs.get('preview_url', None)
+
+    @classmethod
+    def _from_generated(cls, chat_attachment):
+        return cls(
+            id=chat_attachment.id,
+            attachment_type=chat_attachment.attachment_type,
+            extension=chat_attachment.extension,
+            name=chat_attachment.name,
+            url=chat_attachment.url,
+            preview_url=chat_attachment.preview_url
+        )
+
+    def _to_generated(self):
+        return ChatAttachmentAutorest(
+            id=self.id,
+            attachment_type=self.attachment_type,
+            extension=self.extension,
+            name=self.name,
+            url=self.url,
+            preview_url=self.preview_url
         )
 
 
@@ -94,9 +144,7 @@ class ChatMessage(object): # pylint: disable=too-many-instance-attributes
     def __init__(
             self,
             **kwargs # type: Any
-    ):
-        # type: (...) -> None
-
+    ) -> None:
         self.id = kwargs['id']
         self.type = kwargs['type']
         self.sequence_id = kwargs['sequence_id']
@@ -152,18 +200,19 @@ class ChatMessageContent(object):
     :ivar initiator: Chat message content for messages of types participantAdded or
      participantRemoved.
     :type initiator: CommunicationIdentifier
+    :ivar attachments: Chat message content for messages of type text or html
+    :type attachments: List[~azure.communication.chat.models.ChatAttachment]
     """
 
     def __init__(
         self,
         **kwargs # type: Any
-    ):
-        # type: (...) -> None
-
+    ) -> None:
         self.message = kwargs.get('message', None)
         self.topic = kwargs.get('topic', None)
         self.participants = kwargs.get('participants', None)
         self.initiator = kwargs.get('initiator', None)
+        self.attachments = kwargs.get('attachments', None)
 
     @classmethod
     def _from_generated(cls, chat_message_content):
@@ -175,6 +224,15 @@ class ChatMessageContent(object):
             ]
         else:
             participants = []
+        
+        attachments_list = chat_message_content.attachments
+        if attachments_list is not None and len(attachments_list) > 0:
+            attachments = [
+                ChatAttachment._from_generated(attachment) for attachment in  # pylint:disable=protected-access
+                attachments_list
+            ]
+        else:
+            attachments = []
 
         initiator = chat_message_content.initiator_communication_identifier
         # check if initiator is populated
@@ -185,7 +243,8 @@ class ChatMessageContent(object):
             message=chat_message_content.message,
             topic=chat_message_content.topic,
             participants=participants,
-            initiator=initiator
+            initiator=initiator,
+            attachments=attachments
         )
 
 
@@ -210,8 +269,7 @@ class ChatThreadProperties(object):
     def __init__(
         self,
         **kwargs # type: Any
-    ):
-        # type: (...) -> None
+    ) -> None:
         self.id = kwargs['id']
         self.topic = kwargs.get('topic', None)
         self.created_on = kwargs['created_on']
@@ -250,8 +308,7 @@ class ChatMessageReadReceipt(object):
     def __init__(
         self,
         **kwargs # type: Any
-    ):
-        # type: (...) -> None
+    ) -> None:
         self.sender = kwargs['sender']
         self.chat_message_id = kwargs['chat_message_id']
         self.read_on = kwargs['read_on']
@@ -280,7 +337,6 @@ class CreateChatThreadResult(object):
     def __init__(
         self,
         **kwargs # type: Any
-    ):
-        # type: (...) -> None
+    ) -> None:
         self.chat_thread = kwargs['chat_thread']
         self.errors = kwargs.get('errors', None)

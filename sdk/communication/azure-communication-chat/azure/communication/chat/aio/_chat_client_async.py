@@ -62,8 +62,6 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
         credential: CommunicationTokenCredential,
         **kwargs: Any
     ) -> None:
-        # type: (...) -> None
-
         if not credential:
             raise ValueError("credential can not be None")
 
@@ -81,7 +79,8 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
         self._credential = credential
 
         self._client = AzureCommunicationChatService(
-            self._endpoint,
+            credential=self._credential,
+            endpoint=self._endpoint,
             authentication_policy=AsyncBearerTokenCredentialPolicy(self._credential),
             sdk_moniker=SDK_MONIKER,
             **kwargs)
@@ -91,8 +90,6 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
             self, thread_id: str,
             **kwargs: Any
     ) -> ChatThreadClient:
-
-        # type: (...) -> ChatThreadClient
         """
         Get ChatThreadClient by providing a thread_id.
 
@@ -126,9 +123,6 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
         self, topic: str,
         **kwargs
     ) -> CreateChatThreadResult:
-
-        # type: (...) -> CreateChatThreadResult
-
         """Creates a chat thread.
 
         :param topic: Required. The thread topic.
@@ -198,7 +192,7 @@ class ChatClient(object): # pylint: disable=client-accepts-api-version-keyword
     def list_chat_threads(
         self,
         **kwargs: Any
-    ): # type: (...) -> AsyncItemPaged[ChatThreadItem]
+    ) -> AsyncItemPaged[ChatThreadItem]:
         """Gets the list of chat threads of a user.
 
         :keyword int results_per_page: The maximum number of chat threads to be returned per page.

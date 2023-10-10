@@ -184,7 +184,17 @@ class TestChatThreadClient(unittest.TestCase):
                                 }
                             ],
                             "initiatorCommunicationIdentifier": {"rawId": "string", "communicationUser": {
-                            "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}}
+                            "id": "8:acs:8540c0de-899f-5cce-acb5-3ec493af3800_0e59221d-0c1d-46ae-9544-c963ce56c10b"}},
+                            "attachments": [
+                                {
+                                    "id": "id",
+                                    "attachmentType": "image",
+                                    "extension": "png",
+                                    "name": "name.png",
+                                    "url": "https://endpoint/threads/chatThreadId/images/imageId/views/original",
+                                    "previewUrl": "https://endpoint/threads/chatThreadId/images/imageId/views/preview",
+                                }
+                            ]
                         },
                         "senderDisplayName": "Bob",
                         "createdOn": "2021-01-27T01:37:33Z",
@@ -210,6 +220,8 @@ class TestChatThreadClient(unittest.TestCase):
         assert message.type == ChatMessageType.TEXT
         assert message.metadata["tags"] == "tag"
         assert len(message.content.participants) > 0
+        assert len(message.content.attachments) > 0
+        assert message.content.attachments[0].attachment_type == "image"
 
     def test_list_messages(self):
         thread_id = "19:bcaebfba0d314c2aa3e920d38fa3df08@thread.v2"
