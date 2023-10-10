@@ -672,6 +672,12 @@ class JobOperations(_ScopeDependentOperations):
                 ws_base_url = self._all_operations.all_operations[
                     AzureMLResourceType.WORKSPACE
                 ]._operation._client._base_url
+
+                # if ws_base_url string contains localhost, we need to change it to https://management.azure.com
+                # to make the request to MFE
+                if "localhost" in ws_base_url:
+                    ws_base_url = "https://management.azure.com"
+
                 snapshot_id = start_run_if_local(
                     result,
                     self._credential,
