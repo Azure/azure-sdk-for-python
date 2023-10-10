@@ -1,6 +1,6 @@
 
 
-from tests.async_wrapper import async_wrapper
+from async_wrapper import async_wrapper
 import pytest
 
 class TestAyncWrapper:

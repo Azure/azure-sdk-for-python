@@ -934,7 +934,7 @@
         "Accept-Encoding": "gzip, deflate",
         "client-request-id": "1c28a584-4c89-11ee-8da9-20c19bdc434a",
         "Connection": "keep-alive",
-        "Content-Length": "568",
+        "Content-Length": "546",
         "Content-Type": "application/json; odata=minimalmetadata",
         "ocp-date": "Wed, 06 Sep 2023 07:43:46 GMT",
         "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)"
@@ -959,11 +959,11 @@
         "userAccounts": [
           {
             "name": "test-user-1",
-            "password": "kt#_gahr!@aGERDXA"
+            "password": "secret"
           },
           {
             "name": "test-user-2",
-            "password": "kt#_gahr!@aGERDXA",
+            "password": "secret",
             "elevationLevel": "admin"
           }
         ],

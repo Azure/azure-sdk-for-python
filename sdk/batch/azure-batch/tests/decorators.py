@@ -19,9 +19,11 @@ from devtools_testutils.proxy_testcase import (
     stop_record_or_playback,
 )
 
-from tests.async_wrapper import async_wrapper
+from async_wrapper import async_wrapper
 
-
+# A modified version of devtools_testutils.aio.recorded_by_proxy_async
+# that modifies AioHttpTransport.send and RequestsTransport.send to make
+# both async and sync calls work with the proxy.
 def recorded_by_proxy_async(test_func):
     """Decorator that redirects network requests to target the azure-sdk-tools test proxy. Use with recorded tests.
 

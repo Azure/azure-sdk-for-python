@@ -28,6 +28,8 @@ from azure.batch import BatchClient as SyncBatchClient
 from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
 
 from batch_preparers import AccountPreparer, PoolPreparer, JobPreparer
+from async_wrapper import async_wrapper
+from decorators import recorded_by_proxy_async, client_setup
 
 from devtools_testutils import (
     AzureMgmtRecordedTestCase,
@@ -36,13 +38,10 @@ from devtools_testutils import (
     CachedResourceGroupPreparer,
     set_custom_default_matcher,
 )
-from devtools_testutils.fake_credentials import BATCH_TEST_PASSWORD
 from azure_devtools.scenario_tests.recording_processors import (
     GeneralNameReplacer,
     RecordingProcessor,
 )
-from tests.async_wrapper import async_wrapper
-from tests.decorators import recorded_by_proxy_async, client_setup
 
 # toggle to test sync or async client
 TEST_SYNC_CLIENT = False
@@ -222,10 +221,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Create Iaas Pool
         users = [
-            models.UserAccount(name="test-user-1", password=BATCH_TEST_PASSWORD),
+            models.UserAccount(name="test-user-1", password="secret"),
             models.UserAccount(
                 name="test-user-2",
-                password=BATCH_TEST_PASSWORD,
+                password="secret",
                 elevation_level=models.ElevationLevel.admin,
             ),
         ]
@@ -904,7 +903,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         user_name = "BatchPythonSDKUser"
         nodes = list(await async_wrapper(client.list_nodes(batch_pool.name)))
         user = models.BatchNodeUserCreateOptions(
-            name=user_name, password=BATCH_TEST_PASSWORD, is_admin=False
+            name=user_name, password="secret", is_admin=False
         )
         response = await async_wrapper(
             client.create_node_user(batch_pool.name, nodes[0].id, user)

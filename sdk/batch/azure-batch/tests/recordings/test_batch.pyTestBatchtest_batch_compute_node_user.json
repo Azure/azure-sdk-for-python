@@ -218,14 +218,14 @@
         "Accept-Encoding": "gzip, deflate",
         "client-request-id": "8cc67ac3-4d42-11ee-bb3d-20c19bdc434a",
         "Connection": "keep-alive",
-        "Content-Length": "81",
+        "Content-Length": "70",
         "Content-Type": "application/json; odata=minimalmetadata",
         "ocp-date": "Thu, 07 Sep 2023 05:51:12 GMT",
         "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.10 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "name": "BatchPythonSDKUser",
-        "password": "kt#_gahr!@aGERDXA",
+        "password": "secret",
         "isAdmin": false
       },
       "StatusCode": 201,
