@@ -3,10 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 # pylint: disable=unused-argument
-from enum import Enum
-from typing import Optional, List, Any, Union
+from typing import Any
 from typing_extensions import Literal
-from azure.cosmos import http_constants
 
 
 class OperationResult:

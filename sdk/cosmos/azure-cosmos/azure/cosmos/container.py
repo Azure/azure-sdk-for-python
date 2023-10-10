@@ -33,6 +33,7 @@ from ._base import build_options, validate_cache_staleness_value, _deserialize_t
     GenerateGuidId
 from .exceptions import CosmosResourceNotFoundError
 from .http_constants import StatusCodes
+from ._models import OperationError, OperationResult
 from .offer import ThroughputProperties
 from .scripts import ScriptsProxy
 from .partition_key import NonePartitionKeyValue, PartitionKey
@@ -644,7 +645,7 @@ class ContainerProxy(object):
         self,
         operations: List[Dict[str, Any]],
         **kwargs: Any
-    ) -> Dict[str, Any]:
+    ) -> List[Union[OperationResult, OperationError]]:
         """ **Provisional method** Bulk execute the list of operations on the given items.
         Can be used for create, upsert, read, replace and delete operations.
 
@@ -657,10 +658,10 @@ class ContainerProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: A dict representing the items after the bulk operations went through.
+        :returns: A list representing the items after the bulk operations went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The bulk operations failed or the item with
             given id does not exist.
-        :rtype: dict[str, Any]
+        :rtype: List[Union[OperationResult, OperationError]]
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)

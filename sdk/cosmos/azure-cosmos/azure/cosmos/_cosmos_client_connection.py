@@ -1812,7 +1812,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             container_pk = partition_key.PartitionKey(path=pk_definition.get('path'),
                                                       kind=pk_definition.get('kind'),
                                                       version=pk_definition.get('version'))
-            hashed_key = container_pk.get_effective_partition_key_string([partition_key_value])
+            hashed_key = container_pk._get_effective_partition_key_string([partition_key_value])
             for batch in batches:
                 if partition_key.is_key_in_range(batch.get("min"), batch.get("max"), hashed_key):
                     batch.get("operations").append(operation)
