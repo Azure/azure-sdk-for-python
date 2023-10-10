@@ -49,8 +49,6 @@ from ._generated.models import (
 from ._generated.models._enums import RecognizeInputType
 from ._shared.auth_policy_utils import get_authentication_policy
 from ._shared.utils import parse_connection_str
-from ._credential.call_automation_auth_policy_utils import get_call_automation_auth_policy
-from ._credential.credential_utils import get_custom_enabled, get_custom_url
 if TYPE_CHECKING:
     from ._call_automation_client import CallAutomationClient
     from ._generated.models._enums import DtmfTone
