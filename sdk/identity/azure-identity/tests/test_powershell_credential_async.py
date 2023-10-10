@@ -24,6 +24,7 @@ from azure.identity._credentials.azure_powershell import (
 import pytest
 
 from credscan_ignore import POWERSHELL_INVALID_OPERATION_EXCEPTION, POWERSHELL_NOT_LOGGED_IN_ERROR
+from helpers import INVALID_CHARACTERS
 from helpers_async import get_completed_future
 from test_powershell_credential import PREPARING_MODULES
 
@@ -57,6 +58,25 @@ async def test_cannot_execute_shell():
     with patch(CREATE_SUBPROCESS_EXEC, Mock(side_effect=OSError)):
         with pytest.raises(CredentialUnavailableError):
             await AzurePowerShellCredential().get_token("scope")
+
+
+async def test_invalid_tenant_id():
+    """Invalid tenant IDs should raise ValueErrors."""
+
+    for c in INVALID_CHARACTERS:
+        with pytest.raises(ValueError):
+            AzurePowerShellCredential(tenant_id="tenant" + c)
+
+        with pytest.raises(ValueError):
+            await AzurePowerShellCredential().get_token("scope", tenant_id="tenant" + c)
+
+
+async def test_invalid_scopes():
+    """Scopes with invalid characters should raise ValueErrors."""
+
+    for c in INVALID_CHARACTERS:
+        with pytest.raises(ValueError):
+            await AzurePowerShellCredential().get_token("scope" + c)
 
 
 @pytest.mark.parametrize("stderr", ("", PREPARING_MODULES))
