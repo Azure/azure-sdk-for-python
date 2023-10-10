@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import LearningRateScheduler, StochasticOptimizer
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -27,7 +27,7 @@ class AutoMLImageClassificationBase(AutoMLImage):
         sweep: Optional[ImageSweepSettings] = None,
         training_parameters: Optional[ImageModelSettingsClassification] = None,
         search_space: Optional[List[ImageClassificationSearchSpace]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         self._training_parameters: Optional[ImageModelSettingsClassification] = None
 
@@ -36,7 +36,7 @@ class AutoMLImageClassificationBase(AutoMLImage):
         self._search_space = search_space
 
     @property
-    def training_parameters(self) -> ImageModelSettingsClassification:
+    def training_parameters(self) -> Optional[ImageModelSettingsClassification]:
         return self._training_parameters
 
     @training_parameters.setter
@@ -63,7 +63,7 @@ class AutoMLImageClassificationBase(AutoMLImage):
             self.set_training_parameters(**value)
 
     @property
-    def search_space(self) -> List[ImageClassificationSearchSpace]:
+    def search_space(self) -> Optional[List[ImageClassificationSearchSpace]]:
         return self._search_space
 
     @search_space.setter
@@ -82,7 +82,8 @@ class AutoMLImageClassificationBase(AutoMLImage):
 
         if all_search_space_type or all_dict_type:
             self._search_space = [
-                cast_to_specific_search_space(item, ImageClassificationSearchSpace, self.task_type) for item in value
+                cast_to_specific_search_space(item, ImageClassificationSearchSpace, self.task_type)  # type: ignore
+                for item in value
             ]
         else:
             msg = "Expected all items in the list to be either dictionaries or ImageClassificationSearchSpace objects."
@@ -366,22 +367,25 @@ class AutoMLImageClassificationBase(AutoMLImage):
 
         if isinstance(value, list):
             self._search_space.extend(
-                [cast_to_specific_search_space(item, ImageClassificationSearchSpace, self.task_type) for item in value]
+                [
+                    cast_to_specific_search_space(item, ImageClassificationSearchSpace, self.task_type)  # type: ignore
+                    for item in value
+                ]
             )
         else:
             self._search_space.append(
-                cast_to_specific_search_space(value, ImageClassificationSearchSpace, self.task_type)
+                cast_to_specific_search_space(value, ImageClassificationSearchSpace, self.task_type)  # type: ignore
             )
 
     @classmethod
-    def _get_search_space_from_str(cls, search_space_str: str):
+    def _get_search_space_from_str(cls, search_space_str: str) -> Optional[List[ImageClassificationSearchSpace]]:
         return (
             [ImageClassificationSearchSpace._from_rest_object(entry) for entry in search_space_str if entry is not None]
             if search_space_str is not None
             else None
         )
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, AutoMLImageClassificationBase):
             return NotImplemented
 
@@ -390,5 +394,5 @@ class AutoMLImageClassificationBase(AutoMLImage):
 
         return self._training_parameters == other._training_parameters and self._search_space == other._search_space
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
