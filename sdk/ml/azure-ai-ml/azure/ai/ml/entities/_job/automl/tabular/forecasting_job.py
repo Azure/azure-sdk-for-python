@@ -91,20 +91,6 @@ class ForecastingJob(AutoMLTabular):
         )
 
     @property
-    def training(self) -> ForecastingTrainingSettings:
-        """
-        Return the forecast training settings.
-
-        :return: training settings.
-        :rtype: ~azure.ai.ml.automl.ForecastingTrainingSettings
-        """
-        return self._training or ForecastingTrainingSettings()
-
-    @training.setter
-    def training(self, value: Union[Dict, ForecastingTrainingSettings]) -> None:  # pylint: disable=unused-argument
-        ...
-
-    @property
     def forecasting_settings(self) -> Optional[ForecastingSettings]:
         """
         Return the forecast settings.
