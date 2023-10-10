@@ -54,28 +54,16 @@ class ArtifactOperatingSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attributes
-    """Represents properties of a registry artifact.
+    """Represents properties of a registry artifact."""
 
-    :ivar Optional[bool] can_delete: Delete Permissions for an artifact.
-    :ivar Optional[bool] can_write: Write Permissions for an artifact.
-    :ivar Optional[bool] can_read: Read Permissions for an artifact.
-    :ivar Optional[bool] can_list: List Permissions for an artifact.
-    :ivar architecture: CPU Architecture of an artifact.
-        Note: any value not listed in enum ArtifactArchitecture will be string type.
-    :vartype architecture: Optional[Union[str, ~azure.containerregistry.ArtifactArchitecture]]
-    :ivar created_on: Time and date an artifact was created.
-    :vartype created_on: ~datetime.datetime
-    :ivar str digest: Digest for the artifact.
-    :ivar last_updated_on: Time and date an artifact was last updated.
-    :vartype last_updated_on: ~datetime.datetime
-    :ivar operating_system: Operating system for the artifact.
-        Note: any value not listed in enum ArtifactOperatingSystem will be string type.
-    :vartype operating_system: Optional[Union[str, ~azure.containerregistry.ArtifactOperatingSystem]]
-    :ivar str repository_name: Repository name the artifact belongs to.
-    :ivar Optional[int] size_in_bytes: Size of the artifact.
-    :ivar Optional[List[str]] tags: Tags associated with a registry artifact.
-    :ivar str fully_qualified_reference: The fully qualified name of this artifact.
-    """
+    can_delete: Optional[bool]
+    """Delete Permissions for an artifact."""
+    can_read: Optional[bool]
+    """Read Permissions for an artifact."""
+    can_list: Optional[bool]
+    """List Permissions for an artifact."""
+    can_write: Optional[bool]
+    """Write Permissions for an artifact."""
 
     def __init__(self, **kwargs: Any) -> None:
         self._architecture = kwargs.get("cpu_architecture", None)
@@ -95,10 +83,10 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
         self._registry = kwargs.get("registry", None)
         self._size_in_bytes = kwargs.get("size_in_bytes", None)
         self._tags = kwargs.get("tags", None)
-        self.can_delete: Optional[bool] = kwargs.get("can_delete")
-        self.can_read: Optional[bool] = kwargs.get("can_read")
-        self.can_list: Optional[bool] = kwargs.get("can_list")
-        self.can_write: Optional[bool] = kwargs.get("can_write")
+        self.can_delete = kwargs.get("can_delete")
+        self.can_read = kwargs.get("can_read")
+        self.can_list = kwargs.get("can_list")
+        self.can_write = kwargs.get("can_write")
 
     @classmethod
     def _from_generated(cls, generated: ManifestAttributesBase, **kwargs) -> "ArtifactManifestProperties":
@@ -200,20 +188,16 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
 
 
 class RepositoryProperties:
-    """Represents properties of a single repository.
+    """Represents properties of a single repository."""
 
-    :ivar Optional[bool] can_delete: Delete Permissions for a repository.
-    :ivar Optional[bool] can_write: Write Permissions for a repository.
-    :ivar Optional[bool] can_read: Read Permissions for a repository.
-    :ivar Optional[bool] can_list: List Permissions for a repository.
-    :ivar created_on: Time the repository was created
-    :vartype created_on: ~datetime.datetime
-    :ivar last_updated_on: Time the repository was last updated.
-    :vartype last_updated_on: ~datetime.datetime
-    :ivar int manifest_count: Number of manifest in the repository.
-    :ivar str name: Name of the repository.
-    :ivar int tag_count: Number of tags associated with the repository.
-    """
+    can_delete: Optional[bool]
+    """Delete Permissions for a repository."""
+    can_read: Optional[bool]
+    """Read Permissions for a repository."""
+    can_list: Optional[bool]
+    """List Permissions for a repository."""
+    can_write: Optional[bool]
+    """Write Permissions for a repository."""
 
     def __init__(self, **kwargs: Any) -> None:
         self._created_on = kwargs.get("created_on", None)
@@ -221,10 +205,10 @@ class RepositoryProperties:
         self._manifest_count = kwargs.get("manifest_count", None)
         self._name = kwargs.get("name", None)
         self._tag_count = kwargs.get("tag_count", None)
-        self.can_delete: Optional[bool] = kwargs.get("can_delete")
-        self.can_read: Optional[bool] = kwargs.get("can_read")
-        self.can_list: Optional[bool] = kwargs.get("can_list")
-        self.can_write: Optional[bool] = kwargs.get("can_write")
+        self.can_delete = kwargs.get("can_delete")
+        self.can_read = kwargs.get("can_read")
+        self.can_list = kwargs.get("can_list")
+        self.can_write = kwargs.get("can_write")
 
     @classmethod
     def _from_generated(cls, generated: GeneratedRepositoryProperties) -> "RepositoryProperties":
@@ -256,7 +240,7 @@ class RepositoryProperties:
                 DeprecationWarning,
             )
             return self.last_updated_on
-        raise AttributeError(f"'RepositoryProperties' object has no attribute '{name}'")
+        return self.__getattribute__(name)
 
     @property
     def created_on(self) -> datetime:
@@ -300,20 +284,16 @@ class RepositoryProperties:
 
 
 class ArtifactTagProperties:
-    """Represents properties of a single tag.
+    """Represents properties of a single tag."""
 
-    :ivar Optional[bool] can_delete: Delete Permissions for a tag.
-    :ivar Optional[bool] can_write: Write Permissions for a tag.
-    :ivar Optional[bool] can_read: Read Permissions for a tag.
-    :ivar Optional[bool] can_list: List Permissions for a tag.
-    :ivar created_on: Time the tag was created.
-    :vartype created_on: ~datetime.datetime
-    :ivar str digest: Digest for the tag.
-    :ivar last_updated_on: Time the tag was last updated.
-    :vartype last_updated_on: ~datetime.datetime
-    :ivar str name: Name of the image the tag corresponds to.
-    :ivar str repository_name: Repository name the tag belongs to.
-    """
+    can_delete: Optional[bool]
+    """Delete Permissions for a tag."""
+    can_read: Optional[bool]
+    """Read Permissions for a tag."""
+    can_list: Optional[bool]
+    """List Permissions for a tag."""
+    can_write: Optional[bool]
+    """Write Permissions for a tag."""
 
     def __init__(self, **kwargs: Any) -> None:
         self._created_on = kwargs.get("created_on", None)
@@ -321,10 +301,10 @@ class ArtifactTagProperties:
         self._last_updated_on = kwargs.get("last_updated_on", None)
         self._name = kwargs.get("name", None)
         self._repository_name = kwargs.get("repository_name", None)
-        self.can_delete: Optional[bool] = kwargs.get("can_delete")
-        self.can_read: Optional[bool] = kwargs.get("can_read")
-        self.can_list: Optional[bool] = kwargs.get("can_list")
-        self.can_write: Optional[bool] = kwargs.get("can_write")
+        self.can_delete = kwargs.get("can_delete")
+        self.can_read = kwargs.get("can_read")
+        self.can_list = kwargs.get("can_list")
+        self.can_write = kwargs.get("can_write")
 
     @classmethod
     def _from_generated(cls, generated: TagAttributesBase, **kwargs) -> "ArtifactTagProperties":
