@@ -31,15 +31,15 @@ class TextClassificationJob(AutoMLNLPJob):
     """Configuration for AutoML Text Classification Job.
 
     :param target_column_name: The name of the target column, defaults to None
-    :type target_column_name: Optional[str], optional
+    :type target_column_name: Optional[str]
     :param training_data: Training data to be used for training, defaults to None
-    :type training_data: Optional[Input], optional
+    :type training_data: Optional[~azure.ai.ml.Input]
     :param validation_data: Validation data to be used for evaluating the trained model, defaults to None
-    :type validation_data: Optional[Input], optional
+    :type validation_data: Optional[~azure.ai.ml.Input]
     :param primary_metric: The primary metric to be displayed, defaults to None
-    :type primary_metric: Optional[ClassificationPrimaryMetrics], optional
+    :type primary_metric: Optional[~azure.ai.ml.automl.ClassificationPrimaryMetrics]
     :param log_verbosity: Log verbosity level, defaults to None
-    :type log_verbosity: Optional[str], optional
+    :type log_verbosity: Optional[str]
     """
 
     _DEFAULT_PRIMARY_METRIC = ClassificationPrimaryMetrics.ACCURACY

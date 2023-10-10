@@ -39,22 +39,22 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
     :type training_data: Input
     :param validation_data: Validation data
     :type validation_data: Input
-    :param target_column_name: Column name of the target column., defaults to None
-    :type target_column_name: Optional[str], optional
+    :param target_column_name: Column name of the target column, defaults to None
+    :type target_column_name: Optional[str]
     :param log_verbosity: The degree of verbosity used in logging, defaults to None,
-        must be one of 'NotSet', 'Debug', 'Info', 'Warning', 'Error', or 'Critical'
-    :type log_verbosity: Optional[str], optional
+        must be one of 'NotSet', 'Debug', 'Info', 'Warning', 'Error', 'Critical', or None
+    :type log_verbosity: Optional[str]
     :param featurization: Featurization settings used for NLP job, defaults to None
-    :type featurization: Optional[NlpFeaturizationSettings], optional
+    :type featurization: Optional[~azure.ai.ml.automl.NlpFeaturizationSettings]
     :param limits: Limit settings for NLP jobs, defaults to None
-    :type limits: Optional[NlpLimitSettings], optional
+    :type limits: Optional[~azure.ai.ml.automl.NlpLimitSettings]
     :param sweep: Sweep settings used for NLP job, defaults to None
-    :type sweep: Optional[NlpSweepSettings], optional
+    :type sweep: Optional[~azure.ai.ml.automl.NlpSweepSettings]
     :param training_parameters: Fixed parameters for the training of all candidates.
         , defaults to None
-    :type training_parameters: Optional[NlpFixedParameters], optional
+    :type training_parameters: Optional[~azure.ai.ml.automl.NlpFixedParameters]
     :param search_space: Search space(s) to sweep over for NLP sweep jobs, defaults to None
-    :type search_space: Optional[List[NlpSearchSpace]], optional
+    :type search_space: Optional[List[~azure.ai.ml.automl.NlpSearchSpace]]
     """
 
     def __init__(
@@ -90,7 +90,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         """Parameters that are used for all submitted jobs.
 
         :return: fixed training parameters for NLP jobs
-        :rtype: NlpFixedParameters
+        :rtype: ~azure.ai.ml.automl.NlpFixedParameters
         """
         return self._training_parameters
 
@@ -118,7 +118,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         """Search space(s) to sweep over for NLP sweep jobs
 
         :return: list of search spaces to sweep over for NLP jobs
-        :rtype: List[NlpSearchSpace]
+        :rtype: List[~azure.ai.ml.automl.NlpSearchSpace]
         """
         return self._search_space
 
@@ -165,7 +165,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         """Log verbosity configuration
 
         :return: the degree of verbosity used in logging
-        :rtype: LogVerbosity
+        :rtype: ~azure.mgmt.machinelearningservices.models.LogVerbosity
         """
         return self._log_verbosity
 
@@ -177,8 +177,8 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
     def limits(self) -> NlpLimitSettings:
         """Limit settings for NLP jobs
 
-        :return:
-        :rtype: NlpLimitSettings
+        :return: limit configuration for NLP job
+        :rtype: ~azure.ai.ml.automl.NlpLimitSettings
         """
         return self._limits
 
@@ -202,7 +202,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         """Sweep settings used for NLP job
 
         :return: sweep settings
-        :rtype: NlpSweepSettings
+        :rtype: ~azure.ai.ml.automl.NlpSweepSettings
         """
         return self._sweep
 
@@ -226,7 +226,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         """Featurization settings used for NLP job
 
         :return: featurization settings
-        :rtype: NlpFeaturizationSettings
+        :rtype: ~azure.ai.ml.automl.NlpFeaturizationSettings
         """
         return self._featurization
 
@@ -249,11 +249,11 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         """Define data configuration for NLP job
 
         :keyword training_data: Training data
-        :type training_data: Input
+        :type training_data: ~azure.ai.ml.Input
         :keyword target_column_name: Column name of the target column.
         :type target_column_name: str
         :keyword validation_data: Validation data
-        :type validation_data: Input
+        :type validation_data: ~azure.ai.ml.Input
         """
         # Properties for NlpVerticalDataSettings
         self.target_column_name = target_column_name
@@ -334,7 +334,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         :type learning_rate: Optional[float], optional
         :keyword learning_rate_scheduler: the type of learning rate scheduler. Must choose from 'linear', 'cosine',
             'cosine_with_restarts', 'polynomial', 'constant', and 'constant_with_warmup'., defaults to None
-        :type learning_rate_scheduler: Optional[Union[str, NlpLearningRateScheduler]], optional
+        :type learning_rate_scheduler: Optional[Union[str, ~azure.ai.ml.automl.NlpLearningRateScheduler]]
         :keyword model_name: the model name to use during training. Must choose from 'bert-base-cased',
             'bert-base-uncased', 'bert-base-multilingual-cased', 'bert-base-german-cased', 'bert-large-cased',
             'bert-large-uncased', 'distilbert-base-cased', 'distilbert-base-uncased', 'roberta-base', 'roberta-large',
@@ -412,7 +412,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         """Add (a) search space(s) for an AutoML NLP job.
 
         :param value: either a SearchSpace object or a list of SearchSpace objects with nlp-specific parameters.
-        :type value: Union[SearchSpace, List[SearchSpace]]
+        :type value: Union[~azure.ai.ml.automl.SearchSpace, List[~azure.ai.ml.automl.SearchSpace]]
         """
         self._search_space = self._search_space or []
         if isinstance(value, list):
