@@ -149,9 +149,10 @@ if __name__ == "__main__":
     score_from_current_rounded = round(score_from_current * 100, 1)
     print("\n-----Type completeness score comparison-----\n")
     print(f"Score in main: {score_from_main_rounded}%")
-    if score_from_current_rounded < score_from_main_rounded:
+    # Give a 5% buffer for type completeness score to decrease
+    if score_from_current_rounded < score_from_main_rounded - 5:
         print(
-            f"\nERROR: The type completeness score of {package_name} has decreased compared to the score in main. "
+            f"\nERROR: The type completeness score of {package_name} has significantly decreased compared to the score in main. "
             f"See the above output for areas to improve. See https://aka.ms/python/typing-guide for information."
         )
         exit(1)

@@ -49,8 +49,8 @@ def create_scatter_output_table(aggregated_output: Output(type="mltable"), **kwa
 
     :param aggregated_output: The aggregated output MLTable.
     :type aggregated_output: ~mldesigner.Output(type="mltable")
-    :param kwargs: Keyword arguments representing input names and URI folder paths.
-    :type kwargs: dict
+
+    Keyword arguments represent input names and URI folder paths.
     """
     # kwargs keys are inputs names (ex: silo_output_silo_1)
     # values are uri_folder paths

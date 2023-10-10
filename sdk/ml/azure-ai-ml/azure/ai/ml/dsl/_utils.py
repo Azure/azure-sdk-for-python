@@ -8,8 +8,9 @@ import inspect
 import os
 import re
 import sys
+import types
 from pathlib import Path
-from typing import Optional
+from typing import Iterable, Optional, Union
 
 from azure.ai.ml.dsl._constants import VALID_NAME_CHARS
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget
@@ -28,20 +29,35 @@ def _sanitize_python_variable_name(name: str):
     return _normalize_identifier_name(name).replace(" ", "_")
 
 
-def is_valid_name(name: str):
-    """Indicate whether the name is a valid component name."""
+def is_valid_name(name: str) -> bool:
+    """Indicate whether the name is a valid component name.
+
+    :param name: The component name
+    :type name: str
+    :return: True if name is a valid name for a component, False otherwise
+    :rtype: bool
+    """
     return all(c in VALID_NAME_CHARS for c in name)
 
 
-def _resolve_source_directory():
-    """Resolve source directory as last customer frame's module file dir position."""
+def _resolve_source_directory() -> Optional[Union[str, Path]]:
+    """Resolve source directory as last customer frame's module file dir position.
+
+    :return: The directory path of the last customer owner frame in the callstack
+    :rtype: Optional[Union[str, Path]]
+    """
     source_file = _resolve_source_file()
     # Fall back to current working directory if not found
     return os.getcwd() if not source_file else Path(os.path.dirname(source_file)).absolute()
 
 
 def _resolve_source_file() -> Optional[Path]:
-    """Resolve source file as last customer frame's module file position."""
+    """Resolve source file as last customer frame's module file position.
+
+
+    :return: The filepath of the last customer owner frame in the callstack
+    :rtype: Optional[Path]
+    """
     try:
         frame_list = inspect.stack()
         # We find the last frame which is in SDK code instead of customer code or dependencies code
@@ -58,21 +74,42 @@ def _resolve_source_file() -> Optional[Path]:
     return None
 
 
-def _assert_frame_package_name(pattern, frame):
-    """Check the package name of frame is match pattern."""
+def _assert_frame_package_name(pattern: str, frame: types.FrameType) -> bool:
+    """Check the package name of frame is match pattern.
+
+    :param pattern: The pattern to match the package name of `frame` against.
+    :type pattern: str
+    :param frame: The stack frame
+    :type frame: types.FrameType
+    :return: True if the package name of the frame matches pattern, False otherwise
+    :rtype: bool
+    """
     # f_globals records the function's module globals of the frame. And __package__ of module must be set.
     # https://docs.python.org/3/reference/import.html#__package__
     # Although __package__ is set when importing, it may happen __package__ does not exist in globals
     # when using exec to execute.
     package_name = frame.f_globals.get("__package__", "")
-    return package_name and re.match(pattern, package_name)
+    return bool(package_name and re.match(pattern, package_name))
 
 
-def _relative_to(path, basedir, raises_if_impossible=False):
+def _relative_to(
+    path: Union[str, os.PathLike], basedir: Union[str, os.PathLike], raises_if_impossible: bool = False
+) -> Optional[Path]:
     """Compute the relative path under basedir.
 
     This is a wrapper function of Path.relative_to, by default Path.relative_to raises if path is not under basedir, In
     this function, it returns None if raises_if_impossible=False, otherwise raises.
+
+    :param path: A path
+    :type path: Union[str, os.PathLike]
+    :param basedir: The base path to compute `path` relative to
+    :type basedir: Union[str, os.PathLike]
+    :param raises_if_impossible: Whether to raise if :attr:`pathlib.Path.relative_to` throws. Defaults to False.
+    :type raises_if_impossible: bool
+    :return:
+        * None if raises_if_impossible is False and basedir is not a parent of path
+        * path.relative_to(basedir) otherwise
+    :rtype: Optional[Path]
     """
     # The second resolve is to resolve possible win short path.
     path = Path(path).resolve().absolute().resolve()
@@ -106,8 +143,15 @@ def _force_reload_module(module):
 
 
 @contextlib.contextmanager
-def _change_working_dir(path, mkdir=True):
-    """Context manager for changing the current working directory."""
+# pylint: disable-next=docstring-missing-return,docstring-missing-rtype
+def _change_working_dir(path: Union[str, os.PathLike], mkdir: bool = True) -> Iterable[None]:
+    """Context manager for changing the current working directory.
+
+    :param path: The path to change to
+    :type path: Union[str, os.PathLike]
+    :param mkdir: Whether to ensure `path` exists, creating it if it doesn't exists. Defaults to True.
+    :type mkdir: bool
+    """
 
     saved_path = os.getcwd()
     if mkdir:

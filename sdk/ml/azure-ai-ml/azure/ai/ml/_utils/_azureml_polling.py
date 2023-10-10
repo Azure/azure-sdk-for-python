@@ -6,7 +6,7 @@
 import logging
 from concurrent.futures import Future
 from time import time
-from typing import Any, Optional, Union
+from typing import Optional, Union
 
 from azure.ai.ml.constants._common import LROConfigurations
 from azure.core.polling import LROPoller
@@ -28,7 +28,7 @@ def polling_wait(
     poller: Union[LROPoller, Future],
     message: Optional[str] = None,
     start_time: Optional[float] = None,
-) -> Any:
+) -> None:
     """Print out status while polling and time of operation once completed.
 
     :param poller: An poller which will return status update via function done().

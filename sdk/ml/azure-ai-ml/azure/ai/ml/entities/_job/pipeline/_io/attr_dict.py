@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from enum import Enum
-from typing import Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
@@ -104,7 +104,7 @@ class _GroupAttrDict(InputsAttrDict):
     def __dir__(self):
         return list(super().__dir__()) + list(self.keys())
 
-    def flatten(self, group_parameter_name):
+    def flatten(self, group_parameter_name: Optional[str]) -> Dict[str, Input]:
         # Return the flattened result of self
 
         group_parameter_name = group_parameter_name if group_parameter_name else ""

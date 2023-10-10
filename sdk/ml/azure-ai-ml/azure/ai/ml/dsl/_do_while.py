@@ -51,7 +51,7 @@ def do_while(body, mapping, max_iteration_count: int, condition=None):
     :param condition: The name of a boolean output of the body.
         The do-while loop stops if its value is evaluated to be negative.
         If not specified, it handles as a while-true loop.
-    :type condition:  ~azure.ai.ml.entities.Output, optional
+    :type condition:  ~azure.ai.ml.entities.Output
     :return: The do-while node.
     :rtype: ~azure.ai.ml.entities._builders.do_while.DoWhile
     """

@@ -1,6 +1,6 @@
 # Release History
 
-## 11.4.0b9 (Unreleased)
+## 11.4.0b11 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,27 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 11.4.0b10 (2023-10-10)
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 11.3.0.
+> Only code written against a beta version such as 11.4.0b6 may be affected.
+- Renamed `vector_search_configuration` to `vector_search_profile` in `SearchField`.
+- Renamed `vectors` to `vector_queries` in `Search` method.
+- Renamed `azure.search.documents.models.Vector` to `azure.search.documents.models.VectorQuery`.
+- Stopped supporting api version `V2023_07_01_PREVIEW` anymore.
+
+### Other Changes
+
+- Default to use API version `V2023_10_01_PREVIEW`
+
+## 11.4.0b9 (2023-09-12)
+
+### Bugs Fixed
+
+- Fixed the bug that list type of `order_by` was not correctly handled. #31837
 
 ## 11.4.0b8 (2023-08-08)
 

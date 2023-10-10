@@ -29,10 +29,16 @@ from .._serialize import (
     _parameter_filter_substitution,
     _prepare_key,
     _add_entity_properties,
-    _get_match_headers,
+    _get_match_condition,
 )
 from .._deserialize import deserialize_iso, _return_headers_and_deserialized, _convert_to_entity, _trim_service_metadata
-from .._error import _decode_error, _process_table_error, _reprocess_error, _reraise_error, _validate_tablename_error
+from .._error import (
+    _decode_error,
+    _process_table_error,
+    _reprocess_error,
+    _validate_tablename_error,
+    _validate_key_values,
+)
 from .._table_client import EntityType, TransactionOperationType
 from ._base_client_async import AsyncTablesBaseClient
 from ._models import TableEntityPropertiesPaged
@@ -322,12 +328,11 @@ class TableClient(AsyncTablesBaseClient):
         etag = kwargs.pop("etag", None)
         if match_condition and entity and not etag:
             try:
-                etag = entity.metadata.get("etag", None)  # type: ignore
+                etag = entity.metadata.get("etag", None)  # type: ignore[union-attr]
             except (AttributeError, TypeError):
                 pass
-        if_match = _get_match_headers(
-            etag=etag,
-            match_condition=match_condition or MatchConditions.Unconditionally,
+        match_condition = _get_match_condition(
+            etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
 
         try:
@@ -335,7 +340,8 @@ class TableClient(AsyncTablesBaseClient):
                 table=self.table_name,
                 partition_key=_prepare_key(partition_key),
                 row_key=_prepare_key(row_key),
-                if_match=if_match,
+                etag=etag,
+                match_condition=match_condition,
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -373,13 +379,10 @@ class TableClient(AsyncTablesBaseClient):
             )
         except HttpResponseError as error:
             decoded = _decode_error(error.response, error.message)
-            if decoded.error_code == "PropertiesNeedValue":
-                if entity.get("PartitionKey") is None:
-                    raise ValueError("PartitionKey must be present in an entity") from error
-                if entity.get("RowKey") is None:
-                    raise ValueError("RowKey must be present in an entity") from error
+            _validate_key_values(decoded, entity.get("PartitionKey"), entity.get("RowKey"))
             _validate_tablename_error(decoded, self.table_name)
-            _reraise_error(error)
+            # We probably should have been raising decoded error before removing _reraise_error()
+            raise error
         return _trim_service_metadata(metadata, content=content)  # type: ignore
 
     @distributed_trace_async
@@ -412,19 +415,18 @@ class TableClient(AsyncTablesBaseClient):
         """
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
-        if match_condition and entity and not etag:
+        if match_condition and not etag:
             try:
-                etag = entity.metadata.get("etag", None)  # type: ignore
+                etag = entity.metadata.get("etag", None)  # type: ignore[union-attr]
             except (AttributeError, TypeError):
                 pass
-        if_match = _get_match_headers(
-            etag=etag,
-            match_condition=match_condition or MatchConditions.Unconditionally,
+        match_condition = _get_match_condition(
+            etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
-
         partition_key = entity["PartitionKey"]
         row_key = entity["RowKey"]
         entity = _add_entity_properties(entity)
+
         try:
             metadata = None
             content = None
@@ -434,7 +436,8 @@ class TableClient(AsyncTablesBaseClient):
                     partition_key=_prepare_key(partition_key),
                     row_key=_prepare_key(row_key),
                     table_entity_properties=entity,  # type: ignore
-                    if_match=if_match,
+                    etag=etag,
+                    match_condition=match_condition,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     **kwargs,
                 )
@@ -443,7 +446,8 @@ class TableClient(AsyncTablesBaseClient):
                     table=self.table_name,
                     partition_key=_prepare_key(partition_key),
                     row_key=_prepare_key(row_key),
-                    if_match=if_match,
+                    etag=etag,
+                    match_condition=match_condition,
                     cls=kwargs.pop("cls", _return_headers_and_deserialized),
                     table_entity_properties=entity,  # type: ignore
                     **kwargs,
@@ -679,4 +683,9 @@ class TableClient(AsyncTablesBaseClient):
                     "of Tuples. Please check documentation for correct Tuple format."
                 ) from exc
 
-        return await self._batch_send(self.table_name, *batched_requests.requests, **kwargs)
+        try:
+            return await self._batch_send(self.table_name, *batched_requests.requests, **kwargs)
+        except HttpResponseError as ex:
+            if ex.status_code == 400 and not batched_requests.requests:
+                return []
+            raise

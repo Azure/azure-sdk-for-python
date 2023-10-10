@@ -44,7 +44,10 @@ def main():
                     "sendActivityLogs": "Enabled",
                     "sendSubscriptionLogs": "Enabled",
                 },
-                "metricRules": {"filteringTags": [{"action": "Include", "name": "Environment", "value": "Prod"}]},
+                "metricRules": {
+                    "filteringTags": [{"action": "Include", "name": "Environment", "value": "Prod"}],
+                    "sendingMetrics": "Enabled",
+                },
                 "provisioningState": "Accepted",
             }
         },
@@ -52,6 +55,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/dynatrace/resource-manager/Dynatrace.Observability/stable/2021-09-01/examples/TagRules_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: specification/dynatrace/resource-manager/Dynatrace.Observability/stable/2023-04-27/examples/TagRules_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

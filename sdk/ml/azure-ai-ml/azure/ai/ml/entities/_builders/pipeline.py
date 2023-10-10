@@ -9,6 +9,7 @@ from marshmallow import Schema
 
 from azure.ai.ml.entities._component.component import Component, NodeType
 from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._validation import MutableValidationResult
 
 from ..._schema import PathAwareSchema
 from .._job.pipeline.pipeline_job_settings import PipelineJobSettings
@@ -157,8 +158,12 @@ class Pipeline(BaseNode):
             settings=self.settings,
         )
 
-    def _customized_validate(self):
-        """Check unsupported settings when use as a node."""
+    def _customized_validate(self) -> MutableValidationResult:
+        """Check unsupported settings when use as a node.
+
+        :return: The validation result
+        :rtype: MutableValidationResult
+        """
         # Note: settings is not supported on node,
         # jobs.create_or_update(node) will call node._to_job() at first,
         # thus won't reach here.

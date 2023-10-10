@@ -29,12 +29,13 @@ def main():
         subscription_id="123e4567-e89b-12d3-a456-426655440000",
     )
 
-    client.storage_appliances.begin_enable_remote_vendor_management(
+    response = client.storage_appliances.begin_enable_remote_vendor_management(
         resource_group_name="resourceGroupName",
         storage_appliance_name="storageApplianceName",
     ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/preview/2023-05-01-preview/examples/StorageAppliances_EnableRemoteVendorManagement.json
+# x-ms-original-file: specification/networkcloud/resource-manager/Microsoft.NetworkCloud/stable/2023-07-01/examples/StorageAppliances_EnableRemoteVendorManagement.json
 if __name__ == "__main__":
     main()

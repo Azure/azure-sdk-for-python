@@ -28,10 +28,12 @@ class GetTokenMixin(abc.ABC):
         super(GetTokenMixin, self).__init__(*args, **kwargs)  # type: ignore
 
     @abc.abstractmethod
+    # pylint: disable-next=docstring-missing-param
     async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
         """Attempt to acquire an access token from a cache or by redeeming a refresh token."""
 
     @abc.abstractmethod
+    # pylint: disable-next=docstring-missing-param
     async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
         """Request an access token from the STS."""
 
@@ -57,6 +59,8 @@ class GetTokenMixin(abc.ABC):
             required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
             attribute gives a reason.
+        :return: The access token
+        :rtype: ~azure.core.credentials.AccessToken
         """
         if not scopes:
             msg = '"get_token" requires at least one scope'

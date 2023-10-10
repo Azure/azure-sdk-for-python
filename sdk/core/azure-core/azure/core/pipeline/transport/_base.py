@@ -23,8 +23,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from __future__ import annotations
 import abc
-from contextlib import AbstractContextManager
 from email.message import Message
 import json
 import logging
@@ -48,6 +48,8 @@ from typing import (
     List,
     Sequence,
     MutableMapping,
+    ContextManager,
+    TYPE_CHECKING,
 )
 
 from http.client import HTTPResponse as _HTTPResponse
@@ -68,8 +70,11 @@ from ...utils._pipeline_transport_rest_shared import (
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
-PipelineType = TypeVar("PipelineType")
 DataType = Union[bytes, str, Dict[str, Union[str, int]]]
+
+if TYPE_CHECKING:
+    # We need a transport to define a pipeline, this "if" avoid a circular import
+    from azure.core.pipeline import Pipeline
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -89,6 +94,7 @@ def _format_url_section(template, **kwargs):
     :rtype: str
     :returns: Template completed
     """
+    last_template = template
     components = template.split("/")
     while components:
         try:
@@ -97,7 +103,11 @@ def _format_url_section(template, **kwargs):
             formatted_components = template.split("/")
             components = [c for c in formatted_components if "{{{}}}".format(key.args[0]) not in c]
             template = "/".join(components)
-    # No URL sections left - returning None
+            if last_template == template:
+                raise ValueError(
+                    f"The value provided for the url part '{template}' was incorrect, and resulted in an invalid url"
+                ) from key
+            last_template = template
 
 
 def _urljoin(base_url: str, stub_url: str) -> str:
@@ -129,7 +139,7 @@ def _urljoin(base_url: str, stub_url: str) -> str:
     return parsed_base_url.geturl()
 
 
-class HttpTransport(AbstractContextManager, abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
+class HttpTransport(ContextManager["HttpTransport"], abc.ABC, Generic[HTTPRequestType, HTTPResponseType]):
     """An http sender ABC."""
 
     @abc.abstractmethod
@@ -410,7 +420,11 @@ class _HttpResponseBase:
     ) -> None:
         self.request: HttpRequest = request
         self.internal_response = internal_response
-        self.status_code: Optional[int] = None
+        # This is actually never None, and set by all implementations after the call to
+        # __init__ of this class. This class is also a legacy impl, so it's risky to change it
+        # for low benefits The new "rest" implementation does define correctly status_code
+        # as non-optional.
+        self.status_code: int = None  # type: ignore
         self.headers: MutableMapping[str, str] = {}
         self.reason: Optional[str] = None
         self.content_type: Optional[str] = None
@@ -484,7 +498,7 @@ class _HttpResponseBase:
 
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
-    def stream_download(self, pipeline: PipelineType, **kwargs: Any) -> Iterator[bytes]:
+    def stream_download(self, pipeline: Pipeline[HttpRequest, "HttpResponse"], **kwargs: Any) -> Iterator[bytes]:
         """Generator for streaming request body data.
 
         Should be implemented by sub-classes if streaming download
@@ -622,7 +636,7 @@ class PipelineClientBase:
 
         return request
 
-    def format_url(self, url_template: str, **kwargs) -> str:
+    def format_url(self, url_template: str, **kwargs: Any) -> str:
         """Format request URL with the client base URL, unless the
         supplied URL is already absolute.
 
@@ -816,7 +830,7 @@ class PipelineClientBase:
         return request
 
     def options(
-        self, url: str, params: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None, **kwargs
+        self, url: str, params: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None, **kwargs: Any
     ) -> HttpRequest:
         """Create a OPTIONS request object.
 

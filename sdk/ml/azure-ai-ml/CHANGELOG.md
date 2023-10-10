@@ -1,7 +1,31 @@
 # Release History
 
+## 1.12.0 (unreleased)
 
-## 1.10.0 (Unreleased)
+### Features Added
+
+### Bugs Fixed
+
+### Breaking Changes
+
+### Other Changes
+
+## 1.11.0 (2023-10-04)
+
+### Features Added
+- Now, when you specify `delete_dependent_resources` as True when deleting a workspace, the log analytics resource
+  associated with the workspace application insights resource will also be deleted.
+
+### Breaking Changes
+ - [Python 3.7 reached end-of-life on June 27th 2023](https://devguide.python.org/versions/). Consequently, 3.7 will be deprecated in azure-ai-ml starting in October 2023 and azure-ai-ml will end support for 3.7 in February 2024.
+
+## 1.10.1 (2023-09-17)
+
+### Bugs Fixed
+- Feature sets can now be registers after being dumped and reloaded.
+- SDK feature store create/update can now assign materialization identities to cross RG offline stores and online stores.
+
+## 1.10.0 (2023-09-07)
 
 ### Features Added
 - Added support of features that are known into the future/at forecast time for dnn in AutoML Forecasting jobs.
@@ -13,8 +37,6 @@
 - Local job runs will no longer fail if Docker registry has no username/password
 - Fixed an issue that code asset doesn't work with relative symbol links.
 - Fixed [Issue 31319](https://github.com/Azure/azure-sdk-for-python/issues/31319): can't accept `PathLike` for `CommandComponent.code`.
-
-### Breaking Changes
 
 ### Other Changes
 
@@ -135,6 +157,7 @@
 - Added dedicated classes for each type of job service and updated the docstrings. The classes added are `JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService` with a few properties specific to the type.
 - Added Custom Applications Support to Compute Instances.
 - Update data asset list, show and create operations to support data assets in registry.
+- Added Managed Network features to workspace to include `ManagedNetwork`, `FqdnDestination`, `PrivateEndpointDestination`, `ServiceTagDestination` as well as relevant schema.
 
 ### Bugs Fixed
 - Fixed an issue where the ordering of `.amlignore` and `.gitignore` files are not respected.

@@ -53,7 +53,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2022-09-01'
+    DEFAULT_API_VERSION = '2023-01-01'
     _PROFILE_TAG = "azure.mgmt.storage.StorageManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -72,6 +72,8 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         profile: KnownProfiles=KnownProfiles.default,
         **kwargs: Any
     ):
+        if api_version:
+            kwargs.setdefault('api_version', api_version)
         self._config = StorageManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(StorageManagementClient, self).__init__(
@@ -107,6 +109,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01: :mod:`v2021_09_01.models<azure.mgmt.storage.v2021_09_01.models>`
            * 2022-05-01: :mod:`v2022_05_01.models<azure.mgmt.storage.v2022_05_01.models>`
            * 2022-09-01: :mod:`v2022_09_01.models<azure.mgmt.storage.v2022_09_01.models>`
+           * 2023-01-01: :mod:`v2023_01_01.models<azure.mgmt.storage.v2023_01_01.models>`
         """
         if api_version == '2015-06-15':
             from .v2015_06_15 import models
@@ -168,6 +171,9 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         elif api_version == '2022-09-01':
             from .v2022_09_01 import models
             return models
+        elif api_version == '2023-01-01':
+            from .v2023_01_01 import models
+            return models
         raise ValueError("API version {} is not available".format(api_version))
 
     @property
@@ -189,6 +195,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01: :class:`BlobContainersOperations<azure.mgmt.storage.v2021_09_01.operations.BlobContainersOperations>`
            * 2022-05-01: :class:`BlobContainersOperations<azure.mgmt.storage.v2022_05_01.operations.BlobContainersOperations>`
            * 2022-09-01: :class:`BlobContainersOperations<azure.mgmt.storage.v2022_09_01.operations.BlobContainersOperations>`
+           * 2023-01-01: :class:`BlobContainersOperations<azure.mgmt.storage.v2023_01_01.operations.BlobContainersOperations>`
         """
         api_version = self._get_api_version('blob_containers')
         if api_version == '2018-02-01':
@@ -221,10 +228,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_05_01.operations import BlobContainersOperations as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import BlobContainersOperations as OperationClass
+        elif api_version == '2023-01-01':
+            from .v2023_01_01.operations import BlobContainersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'blob_containers'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def blob_inventory_policies(self):
@@ -240,6 +249,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01: :class:`BlobInventoryPoliciesOperations<azure.mgmt.storage.v2021_09_01.operations.BlobInventoryPoliciesOperations>`
            * 2022-05-01: :class:`BlobInventoryPoliciesOperations<azure.mgmt.storage.v2022_05_01.operations.BlobInventoryPoliciesOperations>`
            * 2022-09-01: :class:`BlobInventoryPoliciesOperations<azure.mgmt.storage.v2022_09_01.operations.BlobInventoryPoliciesOperations>`
+           * 2023-01-01: :class:`BlobInventoryPoliciesOperations<azure.mgmt.storage.v2023_01_01.operations.BlobInventoryPoliciesOperations>`
         """
         api_version = self._get_api_version('blob_inventory_policies')
         if api_version == '2019-06-01':
@@ -262,10 +272,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_05_01.operations import BlobInventoryPoliciesOperations as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import BlobInventoryPoliciesOperations as OperationClass
+        elif api_version == '2023-01-01':
+            from .v2023_01_01.operations import BlobInventoryPoliciesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'blob_inventory_policies'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def blob_services(self):
@@ -284,6 +296,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01: :class:`BlobServicesOperations<azure.mgmt.storage.v2021_09_01.operations.BlobServicesOperations>`
            * 2022-05-01: :class:`BlobServicesOperations<azure.mgmt.storage.v2022_05_01.operations.BlobServicesOperations>`
            * 2022-09-01: :class:`BlobServicesOperations<azure.mgmt.storage.v2022_09_01.operations.BlobServicesOperations>`
+           * 2023-01-01: :class:`BlobServicesOperations<azure.mgmt.storage.v2023_01_01.operations.BlobServicesOperations>`
         """
         api_version = self._get_api_version('blob_services')
         if api_version == '2018-07-01':
@@ -312,10 +325,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_05_01.operations import BlobServicesOperations as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import BlobServicesOperations as OperationClass
+        elif api_version == '2023-01-01':
+            from .v2023_01_01.operations import BlobServicesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'blob_services'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def deleted_accounts(self):
@@ -330,6 +345,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01: :class:`DeletedAccountsOperations<azure.mgmt.storage.v2021_09_01.operations.DeletedAccountsOperations>`
            * 2022-05-01: :class:`DeletedAccountsOperations<azure.mgmt.storage.v2022_05_01.operations.DeletedAccountsOperations>`
            * 2022-09-01: :class:`DeletedAccountsOperations<azure.mgmt.storage.v2022_09_01.operations.DeletedAccountsOperations>`
+           * 2023-01-01: :class:`DeletedAccountsOperations<azure.mgmt.storage.v2023_01_01.operations.DeletedAccountsOperations>`
         """
         api_version = self._get_api_version('deleted_accounts')
         if api_version == '2020-08-01-preview':
@@ -350,10 +366,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_05_01.operations import DeletedAccountsOperations as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import DeletedAccountsOperations as OperationClass
+        elif api_version == '2023-01-01':
+            from .v2023_01_01.operations import DeletedAccountsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'deleted_accounts'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def encryption_scopes(self):
@@ -369,6 +387,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01: :class:`EncryptionScopesOperations<azure.mgmt.storage.v2021_09_01.operations.EncryptionScopesOperations>`
            * 2022-05-01: :class:`EncryptionScopesOperations<azure.mgmt.storage.v2022_05_01.operations.EncryptionScopesOperations>`
            * 2022-09-01: :class:`EncryptionScopesOperations<azure.mgmt.storage.v2022_09_01.operations.EncryptionScopesOperations>`
+           * 2023-01-01: :class:`EncryptionScopesOperations<azure.mgmt.storage.v2023_01_01.operations.EncryptionScopesOperations>`
         """
         api_version = self._get_api_version('encryption_scopes')
         if api_version == '2019-06-01':
@@ -391,10 +410,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_05_01.operations import EncryptionScopesOperations as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import EncryptionScopesOperations as OperationClass
+        elif api_version == '2023-01-01':
+            from .v2023_01_01.operations import EncryptionScopesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'encryption_scopes'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def file_services(self):
@@ -411,6 +432,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01: :class:`FileServicesOperations<azure.mgmt.storage.v2021_09_01.operations.FileServicesOperations>`
            * 2022-05-01: :class:`FileServicesOperations<azure.mgmt.storage.v2022_05_01.operations.FileServicesOperations>`
            * 2022-09-01: :class:`FileServicesOperations<azure.mgmt.storage.v2022_09_01.operations.FileServicesOperations>`
+           * 2023-01-01: :class:`FileServicesOperations<azure.mgmt.storage.v2023_01_01.operations.FileServicesOperations>`
         """
         api_version = self._get_api_version('file_services')
         if api_version == '2019-04-01':
@@ -435,10 +457,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_05_01.operations import FileServicesOperations as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import FileServicesOperations as OperationClass
+        elif api_version == '2023-01-01':
+            from .v2023_01_01.operations import FileServicesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'file_services'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def file_shares(self):
@@ -455,6 +479,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01: :class:`FileSharesOperations<azure.mgmt.storage.v2021_09_01.operations.FileSharesOperations>`
            * 2022-05-01: :class:`FileSharesOperations<azure.mgmt.storage.v2022_05_01.operations.FileSharesOperations>`
            * 2022-09-01: :class:`FileSharesOperations<azure.mgmt.storage.v2022_09_01.operations.FileSharesOperations>`
+           * 2023-01-01: :class:`FileSharesOperations<azure.mgmt.storage.v2023_01_01.operations.FileSharesOperations>`
         """
         api_version = self._get_api_version('file_shares')
         if api_version == '2019-04-01':
@@ -479,10 +504,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_05_01.operations import FileSharesOperations as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import FileSharesOperations as OperationClass
+        elif api_version == '2023-01-01':
+            from .v2023_01_01.operations import FileSharesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'file_shares'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def local_users(self):
@@ -492,6 +519,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01: :class:`LocalUsersOperations<azure.mgmt.storage.v2021_09_01.operations.LocalUsersOperations>`
            * 2022-05-01: :class:`LocalUsersOperations<azure.mgmt.storage.v2022_05_01.operations.LocalUsersOperations>`
            * 2022-09-01: :class:`LocalUsersOperations<azure.mgmt.storage.v2022_09_01.operations.LocalUsersOperations>`
+           * 2023-01-01: :class:`LocalUsersOperations<azure.mgmt.storage.v2023_01_01.operations.LocalUsersOperations>`
         """
         api_version = self._get_api_version('local_users')
         if api_version == '2021-08-01':
@@ -502,16 +530,18 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_05_01.operations import LocalUsersOperations as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import LocalUsersOperations as OperationClass
+        elif api_version == '2023-01-01':
+            from .v2023_01_01.operations import LocalUsersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'local_users'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def management_policies(self):
         """Instance depends on the API version:
 
-           * 2018-07-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2018_07_01.operations.ManagementPoliciesOperations>`
+           * 2018-03-01-preview: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2018_03_01_preview.operations.ManagementPoliciesOperations>`
            * 2018-11-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2018_11_01.operations.ManagementPoliciesOperations>`
            * 2019-04-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2019_04_01.operations.ManagementPoliciesOperations>`
            * 2019-06-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2019_06_01.operations.ManagementPoliciesOperations>`
@@ -524,10 +554,11 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2021_09_01.operations.ManagementPoliciesOperations>`
            * 2022-05-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2022_05_01.operations.ManagementPoliciesOperations>`
            * 2022-09-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2022_09_01.operations.ManagementPoliciesOperations>`
+           * 2023-01-01: :class:`ManagementPoliciesOperations<azure.mgmt.storage.v2023_01_01.operations.ManagementPoliciesOperations>`
         """
         api_version = self._get_api_version('management_policies')
-        if api_version == '2018-07-01':
-            from .v2018_07_01.operations import ManagementPoliciesOperations as OperationClass
+        if api_version == '2018-03-01-preview':
+            from .v2018_03_01_preview.operations import ManagementPoliciesOperations as OperationClass
         elif api_version == '2018-11-01':
             from .v2018_11_01.operations import ManagementPoliciesOperations as OperationClass
         elif api_version == '2019-04-01':
@@ -552,10 +583,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_05_01.operations import ManagementPoliciesOperations as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import ManagementPoliciesOperations as OperationClass
+        elif api_version == '2023-01-01':
+            from .v2023_01_01.operations import ManagementPoliciesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'management_policies'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def object_replication_policies(self):
@@ -571,6 +604,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01: :class:`ObjectReplicationPoliciesOperations<azure.mgmt.storage.v2021_09_01.operations.ObjectReplicationPoliciesOperations>`
            * 2022-05-01: :class:`ObjectReplicationPoliciesOperations<azure.mgmt.storage.v2022_05_01.operations.ObjectReplicationPoliciesOperations>`
            * 2022-09-01: :class:`ObjectReplicationPoliciesOperations<azure.mgmt.storage.v2022_09_01.operations.ObjectReplicationPoliciesOperations>`
+           * 2023-01-01: :class:`ObjectReplicationPoliciesOperations<azure.mgmt.storage.v2023_01_01.operations.ObjectReplicationPoliciesOperations>`
         """
         api_version = self._get_api_version('object_replication_policies')
         if api_version == '2019-06-01':
@@ -593,10 +627,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_05_01.operations import ObjectReplicationPoliciesOperations as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import ObjectReplicationPoliciesOperations as OperationClass
+        elif api_version == '2023-01-01':
+            from .v2023_01_01.operations import ObjectReplicationPoliciesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'object_replication_policies'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def operations(self):
@@ -619,6 +655,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01: :class:`Operations<azure.mgmt.storage.v2021_09_01.operations.Operations>`
            * 2022-05-01: :class:`Operations<azure.mgmt.storage.v2022_05_01.operations.Operations>`
            * 2022-09-01: :class:`Operations<azure.mgmt.storage.v2022_09_01.operations.Operations>`
+           * 2023-01-01: :class:`Operations<azure.mgmt.storage.v2023_01_01.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2017-06-01':
@@ -655,10 +692,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_05_01.operations import Operations as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import Operations as OperationClass
+        elif api_version == '2023-01-01':
+            from .v2023_01_01.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def private_endpoint_connections(self):
@@ -674,6 +713,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.storage.v2021_09_01.operations.PrivateEndpointConnectionsOperations>`
            * 2022-05-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.storage.v2022_05_01.operations.PrivateEndpointConnectionsOperations>`
            * 2022-09-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.storage.v2022_09_01.operations.PrivateEndpointConnectionsOperations>`
+           * 2023-01-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.storage.v2023_01_01.operations.PrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('private_endpoint_connections')
         if api_version == '2019-06-01':
@@ -696,10 +736,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_05_01.operations import PrivateEndpointConnectionsOperations as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2023-01-01':
+            from .v2023_01_01.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def private_link_resources(self):
@@ -715,6 +757,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.storage.v2021_09_01.operations.PrivateLinkResourcesOperations>`
            * 2022-05-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.storage.v2022_05_01.operations.PrivateLinkResourcesOperations>`
            * 2022-09-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.storage.v2022_09_01.operations.PrivateLinkResourcesOperations>`
+           * 2023-01-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.storage.v2023_01_01.operations.PrivateLinkResourcesOperations>`
         """
         api_version = self._get_api_version('private_link_resources')
         if api_version == '2019-06-01':
@@ -737,10 +780,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_05_01.operations import PrivateLinkResourcesOperations as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2023-01-01':
+            from .v2023_01_01.operations import PrivateLinkResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_link_resources'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def queue(self):
@@ -756,6 +801,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01: :class:`QueueOperations<azure.mgmt.storage.v2021_09_01.operations.QueueOperations>`
            * 2022-05-01: :class:`QueueOperations<azure.mgmt.storage.v2022_05_01.operations.QueueOperations>`
            * 2022-09-01: :class:`QueueOperations<azure.mgmt.storage.v2022_09_01.operations.QueueOperations>`
+           * 2023-01-01: :class:`QueueOperations<azure.mgmt.storage.v2023_01_01.operations.QueueOperations>`
         """
         api_version = self._get_api_version('queue')
         if api_version == '2019-06-01':
@@ -778,10 +824,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_05_01.operations import QueueOperations as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import QueueOperations as OperationClass
+        elif api_version == '2023-01-01':
+            from .v2023_01_01.operations import QueueOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'queue'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def queue_services(self):
@@ -797,6 +845,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01: :class:`QueueServicesOperations<azure.mgmt.storage.v2021_09_01.operations.QueueServicesOperations>`
            * 2022-05-01: :class:`QueueServicesOperations<azure.mgmt.storage.v2022_05_01.operations.QueueServicesOperations>`
            * 2022-09-01: :class:`QueueServicesOperations<azure.mgmt.storage.v2022_09_01.operations.QueueServicesOperations>`
+           * 2023-01-01: :class:`QueueServicesOperations<azure.mgmt.storage.v2023_01_01.operations.QueueServicesOperations>`
         """
         api_version = self._get_api_version('queue_services')
         if api_version == '2019-06-01':
@@ -819,10 +868,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_05_01.operations import QueueServicesOperations as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import QueueServicesOperations as OperationClass
+        elif api_version == '2023-01-01':
+            from .v2023_01_01.operations import QueueServicesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'queue_services'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def skus(self):
@@ -845,6 +896,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01: :class:`SkusOperations<azure.mgmt.storage.v2021_09_01.operations.SkusOperations>`
            * 2022-05-01: :class:`SkusOperations<azure.mgmt.storage.v2022_05_01.operations.SkusOperations>`
            * 2022-09-01: :class:`SkusOperations<azure.mgmt.storage.v2022_09_01.operations.SkusOperations>`
+           * 2023-01-01: :class:`SkusOperations<azure.mgmt.storage.v2023_01_01.operations.SkusOperations>`
         """
         api_version = self._get_api_version('skus')
         if api_version == '2017-06-01':
@@ -881,10 +933,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_05_01.operations import SkusOperations as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import SkusOperations as OperationClass
+        elif api_version == '2023-01-01':
+            from .v2023_01_01.operations import SkusOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'skus'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def storage_accounts(self):
@@ -910,6 +964,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2021_09_01.operations.StorageAccountsOperations>`
            * 2022-05-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2022_05_01.operations.StorageAccountsOperations>`
            * 2022-09-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2022_09_01.operations.StorageAccountsOperations>`
+           * 2023-01-01: :class:`StorageAccountsOperations<azure.mgmt.storage.v2023_01_01.operations.StorageAccountsOperations>`
         """
         api_version = self._get_api_version('storage_accounts')
         if api_version == '2015-06-15':
@@ -952,10 +1007,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_05_01.operations import StorageAccountsOperations as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import StorageAccountsOperations as OperationClass
+        elif api_version == '2023-01-01':
+            from .v2023_01_01.operations import StorageAccountsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'storage_accounts'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def table(self):
@@ -971,6 +1028,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01: :class:`TableOperations<azure.mgmt.storage.v2021_09_01.operations.TableOperations>`
            * 2022-05-01: :class:`TableOperations<azure.mgmt.storage.v2022_05_01.operations.TableOperations>`
            * 2022-09-01: :class:`TableOperations<azure.mgmt.storage.v2022_09_01.operations.TableOperations>`
+           * 2023-01-01: :class:`TableOperations<azure.mgmt.storage.v2023_01_01.operations.TableOperations>`
         """
         api_version = self._get_api_version('table')
         if api_version == '2019-06-01':
@@ -993,10 +1051,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_05_01.operations import TableOperations as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import TableOperations as OperationClass
+        elif api_version == '2023-01-01':
+            from .v2023_01_01.operations import TableOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'table'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def table_services(self):
@@ -1012,6 +1072,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01: :class:`TableServicesOperations<azure.mgmt.storage.v2021_09_01.operations.TableServicesOperations>`
            * 2022-05-01: :class:`TableServicesOperations<azure.mgmt.storage.v2022_05_01.operations.TableServicesOperations>`
            * 2022-09-01: :class:`TableServicesOperations<azure.mgmt.storage.v2022_09_01.operations.TableServicesOperations>`
+           * 2023-01-01: :class:`TableServicesOperations<azure.mgmt.storage.v2023_01_01.operations.TableServicesOperations>`
         """
         api_version = self._get_api_version('table_services')
         if api_version == '2019-06-01':
@@ -1034,10 +1095,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_05_01.operations import TableServicesOperations as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import TableServicesOperations as OperationClass
+        elif api_version == '2023-01-01':
+            from .v2023_01_01.operations import TableServicesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'table_services'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def usage(self):
@@ -1066,7 +1129,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
         else:
             raise ValueError("API version {} does not have operation group 'usage'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     @property
     def usages(self):
@@ -1086,6 +1149,7 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01: :class:`UsagesOperations<azure.mgmt.storage.v2021_09_01.operations.UsagesOperations>`
            * 2022-05-01: :class:`UsagesOperations<azure.mgmt.storage.v2022_05_01.operations.UsagesOperations>`
            * 2022-09-01: :class:`UsagesOperations<azure.mgmt.storage.v2022_09_01.operations.UsagesOperations>`
+           * 2023-01-01: :class:`UsagesOperations<azure.mgmt.storage.v2023_01_01.operations.UsagesOperations>`
         """
         api_version = self._get_api_version('usages')
         if api_version == '2018-03-01-preview':
@@ -1116,10 +1180,12 @@ class StorageManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2022_05_01.operations import UsagesOperations as OperationClass
         elif api_version == '2022-09-01':
             from .v2022_09_01.operations import UsagesOperations as OperationClass
+        elif api_version == '2023-01-01':
+            from .v2023_01_01.operations import UsagesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'usages'".format(api_version))
         self._config.api_version = api_version
-        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)), api_version)
 
     def close(self):
         self._client.close()

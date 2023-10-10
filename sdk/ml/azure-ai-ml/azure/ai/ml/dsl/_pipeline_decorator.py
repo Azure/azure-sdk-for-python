@@ -10,7 +10,9 @@ from collections import OrderedDict
 from functools import wraps
 from inspect import Parameter, signature
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, TypeVar
+from typing import Callable, Dict, List, Optional, TypeVar, Union, overload
+
+from typing_extensions import ParamSpec
 
 from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.entities import Data, Model, PipelineJob, PipelineJobSettings
@@ -32,8 +34,6 @@ from ._pipeline_component_builder import PipelineComponentBuilder, _is_inside_ds
 from ._settings import _dsl_settings_stack
 from ._utils import _resolve_source_file
 
-_TFunc = TypeVar("_TFunc", bound=Callable[..., Any])
-
 SUPPORTED_INPUT_TYPES = (
     PipelineInput,
     NodeOutput,
@@ -50,9 +50,14 @@ SUPPORTED_INPUT_TYPES = (
 )
 module_logger = logging.getLogger(__name__)
 
+T = TypeVar("T")
+P = ParamSpec("P")
 
+
+# Overload the returns a decorator when func is None
+@overload
 def pipeline(
-    func=None,
+    func: None = None,
     *,
     name: Optional[str] = None,
     version: Optional[str] = None,
@@ -61,30 +66,67 @@ def pipeline(
     experiment_name: Optional[str] = None,
     tags: Optional[Dict[str, str]] = None,
     **kwargs,
-):
+) -> Callable[[Callable[P, T]], Callable[P, PipelineJob]]:
+    ...
+
+
+# Overload the returns a decorated function when func isn't None
+@overload
+def pipeline(
+    func: Callable[P, T] = None,
+    *,
+    name: Optional[str] = None,
+    version: Optional[str] = None,
+    display_name: Optional[str] = None,
+    description: Optional[str] = None,
+    experiment_name: Optional[str] = None,
+    tags: Optional[Dict[str, str]] = None,
+    **kwargs,
+) -> Callable[P, PipelineJob]:
+    ...
+
+
+def pipeline(
+    func: Optional[Callable[P, T]] = None,
+    *,
+    name: Optional[str] = None,
+    version: Optional[str] = None,
+    display_name: Optional[str] = None,
+    description: Optional[str] = None,
+    experiment_name: Optional[str] = None,
+    tags: Optional[Dict[str, str]] = None,
+    **kwargs,
+) -> Union[Callable[[Callable[P, T]], Callable[P, PipelineJob]], Callable[P, PipelineJob]]:
     """Build a pipeline which contains all component nodes defined in this function.
 
     :param func: The user pipeline function to be decorated.
     :type func: types.FunctionType
     :keyword name: The name of pipeline component, defaults to function name.
-    :type name: str
+    :paramtype name: str
     :keyword version: The version of pipeline component, defaults to "1".
-    :type version: str
+    :paramtype version: str
     :keyword display_name: The display name of pipeline component, defaults to function name.
-    :type display_name: str
+    :paramtype display_name: str
     :keyword description: The description of the built pipeline.
-    :type description: str
+    :paramtype description: str
     :keyword experiment_name: Name of the experiment the job will be created under, \
                 if None is provided, experiment will be set to current directory.
-    :type experiment_name: str
+    :paramtype experiment_name: str
     :keyword tags: The tags of pipeline component.
-    :type tags: dict[str, str]
+    :paramtype tags: dict[str, str]
     :keyword kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :paramtype kwargs: dict
+    :return: Either
+      * A decorator, if `func` is None
+      * The decorated `func`
+    :rtype: Union[
+        Callable[[Callable], Callable[..., ~azure.ai.ml.entities.PipelineJob]],
+        Callable[P, ~azure.ai.ml.entities.PipelineJob]
+      ]
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../samples/ml_samples_pipeline_job_configurations.py
+        .. literalinclude:: ../samples/ml_samples_pipeline_job_configurations.py
             :start-after: [START configure_pipeline]
             :end-before: [END configure_pipeline]
             :language: python
@@ -92,7 +134,7 @@ def pipeline(
             :caption: Shows how to create a pipeline using this decorator.
     """
 
-    def pipeline_decorator(func: _TFunc) -> _TFunc:
+    def pipeline_decorator(func: Callable[P, T]) -> Callable[P, PipelineJob]:
         if not isinstance(func, Callable):  # pylint: disable=isinstance-second-argument-not-valid-type
             raise UserErrorException(f"Dsl pipeline decorator accept only function type, got {type(func)}.")
 
@@ -137,7 +179,7 @@ def pipeline(
         )
 
         @wraps(func)
-        def wrapper(*args, **kwargs) -> PipelineJob:
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> PipelineJob:
             # Default args will be added here.
             # pylint: disable=abstract-class-instantiated
             # Node: push/pop stack here instead of put it inside build()
@@ -213,6 +255,7 @@ def pipeline(
     return pipeline_decorator
 
 
+# pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
 def _validate_args(func, args, kwargs, non_pipeline_inputs):
     """Validate customer function args and convert them to kwargs."""
     if not isinstance(non_pipeline_inputs, List) or any(not isinstance(param, str) for param in non_pipeline_inputs):

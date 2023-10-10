@@ -215,7 +215,12 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
             headers[http_constants.HttpHeaders.PartitionKey] = []
         # else serialize using json dumps method which apart from regular values will serialize None into null
         else:
-            headers[http_constants.HttpHeaders.PartitionKey] = json.dumps([options["partitionKey"]])
+            # single partitioning uses a string and needs to be turned into a list
+            if isinstance(options["partitionKey"], list) and options["partitionKey"]:
+                pk_val = json.dumps(options["partitionKey"], separators=(',', ':'))
+            else:
+                pk_val = json.dumps([options["partitionKey"]])
+            headers[http_constants.HttpHeaders.PartitionKey] = pk_val
 
     if options.get("enableCrossPartitionQuery"):
         headers[http_constants.HttpHeaders.EnableCrossPartitionQuery] = options["enableCrossPartitionQuery"]
@@ -224,7 +229,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         headers[http_constants.HttpHeaders.PopulateQueryMetrics] = options["populateQueryMetrics"]
 
     if options.get("responseContinuationTokenLimitInKb"):
-        headers[http_constants.HttpHeaders.ResponseContinuationTokenLimitInKb] = options["responseContinuationTokenLimitInKb"] # pylint: disable=line-too-long
+        headers[http_constants.HttpHeaders.ResponseContinuationTokenLimitInKb] = options["responseContinuationTokenLimitInKb"]  # pylint: disable=line-too-long
 
     if cosmos_client_connection.master_key:
         #formatedate guarantees RFC 1123 date format regardless of current locale
@@ -606,56 +611,53 @@ def TrimBeginningAndEndingSlashes(path):
 
 # Parses the paths into a list of token each representing a property
 def ParsePaths(paths):
-    if len(paths) != 1:
-        raise ValueError("Unsupported paths count.")
-
     segmentSeparator = "/"
-    path = paths[0]
     tokens = []
-    currentIndex = 0
+    for path in paths:
+        currentIndex = 0
 
-    while currentIndex < len(path):
-        if path[currentIndex] != segmentSeparator:
-            raise ValueError("Invalid path character at index " + currentIndex)
+        while currentIndex < len(path):
+            if path[currentIndex] != segmentSeparator:
+                raise ValueError("Invalid path character at index " + currentIndex)
 
-        currentIndex += 1
-        if currentIndex == len(path):
-            break
+            currentIndex += 1
+            if currentIndex == len(path):
+                break
 
-        # " and ' are treated specially in the sense that they can have the / (segment separator)
-        # between them which is considered part of the token
-        if path[currentIndex] == '"' or path[currentIndex] == "'":
-            quote = path[currentIndex]
-            newIndex = currentIndex + 1
+            # " and ' are treated specially in the sense that they can have the / (segment separator)
+            # between them which is considered part of the token
+            if path[currentIndex] == '"' or path[currentIndex] == "'":
+                quote = path[currentIndex]
+                newIndex = currentIndex + 1
 
-            while True:
-                newIndex = path.find(quote, newIndex)
-                if newIndex == -1:
-                    raise ValueError("Invalid path character at index " + currentIndex)
+                while True:
+                    newIndex = path.find(quote, newIndex)
+                    if newIndex == -1:
+                        raise ValueError("Invalid path character at index " + currentIndex)
 
-                # check if the quote itself is escaped by a preceding \ in which case it's part of the token
-                if path[newIndex - 1] != "\\":
-                    break
-                newIndex += 1
+                    # check if the quote itself is escaped by a preceding \ in which case it's part of the token
+                    if path[newIndex - 1] != "\\":
+                        break
+                    newIndex += 1
 
-            # This will extract the token excluding the quote chars
-            token = path[currentIndex + 1: newIndex]
-            tokens.append(token)
-            currentIndex = newIndex + 1
-        else:
-            newIndex = path.find(segmentSeparator, currentIndex)
-            token = None
-            if newIndex == -1:
-                # This will extract the token from currentIndex to end of the string
-                token = path[currentIndex:]
-                currentIndex = len(path)
+                # This will extract the token excluding the quote chars
+                token = path[currentIndex + 1: newIndex]
+                tokens.append(token)
+                currentIndex = newIndex + 1
             else:
-                # This will extract the token from currentIndex to the char before the segmentSeparator
-                token = path[currentIndex:newIndex]
-                currentIndex = newIndex
+                newIndex = path.find(segmentSeparator, currentIndex)
+                token = None
+                if newIndex == -1:
+                    # This will extract the token from currentIndex to end of the string
+                    token = path[currentIndex:]
+                    currentIndex = len(path)
+                else:
+                    # This will extract the token from currentIndex to the char before the segmentSeparator
+                    token = path[currentIndex:newIndex]
+                    currentIndex = newIndex
 
-            token = token.strip()
-            tokens.append(token)
+                token = token.strip()
+                tokens.append(token)
 
     return tokens
 

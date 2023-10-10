@@ -5,7 +5,8 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=anomalous-backslash-in-string
-from typing import Any, cast, List
+from datetime import timedelta, datetime
+from typing import Any, cast, Optional, Tuple, Union, Sequence
 
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials_async import AsyncTokenCredential
@@ -39,24 +40,37 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
     """
 
     def __init__(self, credential: AsyncTokenCredential, **kwargs: Any) -> None:
-        endpoint = kwargs.pop("endpoint", "https://management.azure.com")
-        audience = kwargs.pop("audience", endpoint)
-        if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
-            endpoint = "https://" + endpoint
-        self._endpoint = endpoint
-        auth_policy = kwargs.pop("authentication_policy", None)
-        self._client = MonitorMetricsClient(
-            credential=credential,
-            endpoint=self._endpoint,
-            authentication_policy=auth_policy or get_authentication_policy(credential, audience),
-            **kwargs
+        self._endpoint = kwargs.pop("endpoint", "https://management.azure.com")
+        if not self._endpoint.startswith("https://") and not self._endpoint.startswith("http://"):
+            self._endpoint = "https://" + self._endpoint
+        audience = kwargs.pop("audience", self._endpoint)
+        authentication_policy = kwargs.pop("authentication_policy", None) or get_authentication_policy(
+            credential, audience
         )
+
+        self._client = MonitorMetricsClient(
+            credential=credential, endpoint=self._endpoint, authentication_policy=authentication_policy, **kwargs
+        )
+
         self._metrics_op = self._client.metrics
         self._namespace_op = self._client.metric_namespaces
         self._definitions_op = self._client.metric_definitions
 
     @distributed_trace_async
-    async def query_resource(self, resource_uri: str, metric_names: List[str], **kwargs: Any) -> MetricsQueryResult:
+    async def query_resource(
+        self,
+        resource_uri: str,
+        metric_names: Sequence[str],
+        *,
+        timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]] = None,
+        granularity: Optional[timedelta] = None,
+        aggregations: Optional[Sequence[str]] = None,
+        max_results: Optional[int] = None,
+        order_by: Optional[str] = None,
+        filter: Optional[str] = None,
+        metric_namespace: Optional[str] = None,
+        **kwargs: Any
+    ) -> MetricsQueryResult:
         """Lists the metric values for a resource.
 
         **Note**: Although the start_time, end_time, duration are optional parameters, it is highly
@@ -100,7 +114,7 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         :paramtype metric_namespace: Optional[str]
         :return: A MetricsQueryResult object.
         :rtype: ~azure.monitor.query.MetricsQueryResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -111,23 +125,28 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
                 :dedent: 0
                 :caption: Get a response for a single metrics query.
         """
-        timespan = construct_iso8601(kwargs.pop("timespan", None))
+
         # Metric names with commas need to be encoded.
         metric_names = [x.replace(",", "%2") for x in metric_names]
-        kwargs.setdefault("metricnames", ",".join(metric_names))
-        kwargs.setdefault("timespan", timespan)
-        kwargs.setdefault("top", kwargs.pop("max_results", None))
-        kwargs.setdefault("interval", kwargs.pop("granularity", None))
-        kwargs.setdefault("orderby", kwargs.pop("order_by", None))
-        kwargs.setdefault("metricnamespace", kwargs.pop("metric_namespace", None))
-        aggregations = kwargs.pop("aggregations", None)
-        if aggregations:
-            kwargs.setdefault("aggregation", ",".join(aggregations))
-        generated = await self._metrics_op.list(resource_uri, connection_verify=False, **kwargs)
+        generated = await self._metrics_op.list(
+            resource_uri,
+            timespan=construct_iso8601(timespan),
+            interval=granularity,
+            metricnames=",".join(metric_names),
+            aggregation=",".join(aggregations) if aggregations else None,
+            top=max_results,
+            orderby=order_by,
+            filter=filter,
+            metricnamespace=metric_namespace,
+            connection_verify=False,
+            **kwargs
+        )
         return MetricsQueryResult._from_generated(generated)  # pylint: disable=protected-access
 
     @distributed_trace
-    def list_metric_namespaces(self, resource_uri: str, **kwargs: Any) -> AsyncItemPaged[MetricNamespace]:
+    def list_metric_namespaces(
+        self, resource_uri: str, *, start_time: Optional[datetime] = None, **kwargs: Any
+    ) -> AsyncItemPaged[MetricNamespace]:
         """Lists the metric namespaces for the resource.
 
         :param resource_uri: The identifier of the resource.
@@ -137,7 +156,7 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         :paramtype start_time: Optional[~datetime.datetime]
         :return: An iterator like instance of either MetricNamespace or the result of cls(response)
         :rtype: ~azure.core.paging.AsyncItemPaged[:class: `~azure.monitor.query.MetricNamespace`]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -148,12 +167,9 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
                 :dedent: 0
                 :caption: Get a response for a single metric namespaces query.
         """
-        start_time = kwargs.pop("start_time", None)
-        if start_time:
-            start_time = Serializer.serialize_iso(start_time)
         res = self._namespace_op.list(
             resource_uri,
-            start_time=start_time,
+            start_time=Serializer.serialize_iso(start_time) if start_time else None,
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [MetricNamespace._from_generated(x) for x in objs],  # pylint: disable=protected-access
@@ -163,7 +179,9 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         return cast(AsyncItemPaged[MetricNamespace], res)
 
     @distributed_trace
-    def list_metric_definitions(self, resource_uri: str, **kwargs: Any) -> AsyncItemPaged[MetricDefinition]:
+    def list_metric_definitions(
+        self, resource_uri: str, *, namespace: Optional[str] = None, **kwargs: Any
+    ) -> AsyncItemPaged[MetricDefinition]:
         """Lists the metric definitions for the resource.
 
         :param resource_uri: The identifier of the resource.
@@ -172,7 +190,7 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         :paramtype namespace: Optional[str]
         :return: An iterator like instance of either MetricDefinition or the result of cls(response)
         :rtype: ~azure.core.paging.AsyncItemPaged[:class: `~azure.monitor.query.MetricDefinition`]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         .. admonition:: Example:
 
@@ -183,10 +201,9 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
                 :dedent: 0
                 :caption: Get a response for a single metric definitions query.
         """
-        metric_namespace = kwargs.pop("namespace", None)
         res = self._definitions_op.list(
             resource_uri,
-            metricnamespace=metric_namespace,
+            metricnamespace=namespace,
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [MetricDefinition._from_generated(x) for x in objs],  # pylint: disable=protected-access
@@ -199,7 +216,7 @@ class MetricsQueryClient(object):  # pylint: disable=client-accepts-api-version-
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *args: "Any") -> None:
+    async def __aexit__(self, *args: Any) -> None:
         await self._client.__aexit__(*args)
 
     async def close(self) -> None:

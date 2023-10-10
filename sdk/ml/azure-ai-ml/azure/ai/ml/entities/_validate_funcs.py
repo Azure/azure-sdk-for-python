@@ -8,7 +8,7 @@ from marshmallow import ValidationError
 from ..exceptions import ValidationException
 from . import Component, Job
 from ._load_functions import _load_common_raising_marshmallow_error, _try_load_yaml_dict
-from ._validation import SchemaValidatableMixin, ValidationResult, _ValidationResultBuilder
+from ._validation import PathAwareSchemaValidatableMixin, ValidationResult, ValidationResultBuilder
 
 
 def validate_common(cls, path, validate_func, params_override=None) -> ValidationResult:
@@ -24,13 +24,13 @@ def validate_common(cls, path, validate_func, params_override=None) -> Validatio
 
         if validate_func is not None:
             return validate_func(entity)
-        if isinstance(entity, SchemaValidatableMixin):
+        if isinstance(entity, PathAwareSchemaValidatableMixin):
             return entity._validate()
-        return _ValidationResultBuilder.success()
+        return ValidationResultBuilder.success()
     except ValidationException as err:
-        return _ValidationResultBuilder.from_single_message(err.message)
+        return ValidationResultBuilder.from_single_message(err.message)
     except ValidationError as err:
-        return _ValidationResultBuilder.from_validation_error(err, source_path=path)
+        return ValidationResultBuilder.from_validation_error(err, source_path=path)
 
 
 def validate_component(path, ml_client=None, params_override=None) -> ValidationResult:

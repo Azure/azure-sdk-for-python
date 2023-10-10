@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
+from typing import Mapping, MutableMapping, Optional, Type, Union, cast
 import re
 import logging
 
@@ -49,7 +49,7 @@ __all__ = [
 ]
 
 
-def parse_resource_id(rid):
+def parse_resource_id(rid: str) -> Mapping[str, Union[str, int]]:
     """Parses a resource_id into its various parts.
 
     Returns a dictionary with a single key-value pair, 'name': rid, if invalid resource id.
@@ -80,19 +80,21 @@ def parse_resource_id(rid):
         return {}
     match = _ARMID_RE.match(rid)
     if match:
-        result = match.groupdict()
-        children = _CHILDREN_RE.finditer(result["children"] or "")
+        result: MutableMapping[str, Union[None, str, int]] = match.groupdict()
+        children = _CHILDREN_RE.finditer(cast(Optional[str], result["children"]) or "")
         count = None
         for count, child in enumerate(children):
             result.update({key + "_%d" % (count + 1): group for key, group in child.groupdict().items()})
         result["last_child_num"] = count + 1 if isinstance(count, int) else None
-        result = _populate_alternate_kwargs(result)
+        final_result = _populate_alternate_kwargs(result)
     else:
-        result = dict(name=rid)
-    return {key: value for key, value in result.items() if value is not None}
+        final_result = result = dict(name=rid)
+    return {key: value for key, value in final_result.items() if value is not None}
 
 
-def _populate_alternate_kwargs(kwargs):
+def _populate_alternate_kwargs(
+    kwargs: MutableMapping[str, Union[None, str, int]]
+) -> Mapping[str, Union[None, str, int]]:
     """Translates the parsed arguments into a format used by generic ARM commands
     such as the resource and lock commands.
 
@@ -112,7 +114,7 @@ def _populate_alternate_kwargs(kwargs):
     return kwargs
 
 
-def _get_parents_from_parts(kwargs):
+def _get_parents_from_parts(kwargs: MutableMapping[str, Union[None, str, int]]) -> Mapping[str, Union[None, str, int]]:
     """Get the parents given all the children parameters.
 
     :param any kwargs: The children parameters
@@ -122,7 +124,7 @@ def _get_parents_from_parts(kwargs):
     parent_builder = []
     if kwargs["last_child_num"] is not None:
         parent_builder.append("{type}/{name}/".format(**kwargs))
-        for index in range(1, kwargs["last_child_num"]):
+        for index in range(1, cast(int, kwargs["last_child_num"])):
             child_namespace = kwargs.get("child_namespace_{}".format(index))
             if child_namespace is not None:
                 parent_builder.append("providers/{}/".format(child_namespace))
@@ -136,7 +138,7 @@ def _get_parents_from_parts(kwargs):
     return kwargs
 
 
-def resource_id(**kwargs):
+def resource_id(**kwargs: Optional[str]) -> str:
     """Create a valid resource id string from the given parts.
 
     This method builds the resource id from the left until the next required id parameter
@@ -176,7 +178,7 @@ def resource_id(**kwargs):
     return "/".join(rid_builder)
 
 
-def is_valid_resource_id(rid, exception_type=None):
+def is_valid_resource_id(rid: str, exception_type: Optional[Type[BaseException]] = None) -> bool:
     """Validates the given resource id.
 
     :param rid: The resource id being validated.
@@ -186,9 +188,10 @@ def is_valid_resource_id(rid, exception_type=None):
     :returns: A boolean describing whether the id is valid.
     :rtype: bool
     """
-    is_valid = False
+    is_valid: bool = False
     try:
-        is_valid = rid and resource_id(**parse_resource_id(rid)).lower() == rid.lower()
+        # Ideally, we would make a TypedDict here, but keeping this file simple for now.
+        is_valid = rid and resource_id(**parse_resource_id(rid)).lower() == rid.lower()  # type: ignore
     except KeyError:
         pass
     if not is_valid and exception_type:
@@ -196,7 +199,7 @@ def is_valid_resource_id(rid, exception_type=None):
     return is_valid
 
 
-def is_valid_resource_name(rname, exception_type=None):
+def is_valid_resource_name(rname: str, exception_type: Optional[Type[BaseException]] = None) -> bool:
     """Validates the given resource name to ARM guidelines, individual services may be more restrictive.
 
     :param rname: The resource name being validated.

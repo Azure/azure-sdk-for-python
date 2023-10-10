@@ -1132,7 +1132,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         # Assert binding on compute not changed after resolve dependencies
         client.components._resolve_dependencies_for_pipeline_component_jobs(
-            component, resolver=client.components._orchestrators.get_asset_arm_id, resolve_inputs=False
+            component, resolver=client.components._orchestrators.get_asset_arm_id
         )
         assert component.jobs["node2"].compute == "${{parent.inputs.node_compute}}"
 
@@ -1519,7 +1519,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             node1.compute = "cpu-cluster"
 
         dsl_pipeline: PipelineJob = pipeline(10, job_input)
-        with patch("azure.ai.ml.entities._validation.module_logger.warning") as mock_logging:
+        with patch("azure.ai.ml.entities._validation.core.module_logger.warning") as mock_logging:
             _ = client.jobs.create_or_update(dsl_pipeline)
             mock_logging.assert_called_with("Warnings: [jobs.node1.jeff_special_option: Unknown field.]")
 
@@ -3284,3 +3284,74 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job.settings.default_compute = "cpu-cluster"
         job_res = client.jobs.create_or_update(job=pipeline_job, experiment_name="test_unknown_field")
         assert job_res.jobs["node"].unknown_field == "${{parent.inputs.input}}"
+
+    def test_flow_in_dsl_pipeline_with_non_existed_data_input(self, client):
+        component_func = load_component(
+            "./tests/test_configs/flows/web_classification_with_additional_includes/flow.dag.yaml"
+        )
+
+        data_input = Input(path="./tests/test_configs/flows/data/web_classification.jsonl", type=AssetTypes.URI_FILE)
+
+        @dsl.pipeline
+        def pipeline_func_with_flow_fail(data):
+            # we can't detect mismatched data binding inputs as they will be resolved in server-side
+            flow_node = component_func(data=data, non_existed_data_input=data_input)
+            flow_node.compute = "cpu-cluster"
+
+        invalid_pipeline = pipeline_func_with_flow_fail(data=data_input)
+        validation_result = client.jobs.validate(invalid_pipeline)
+        # TODO: input type mismatch won't be checked for now
+        assert validation_result.passed
+
+    def test_flow_in_dsl_pipeline(self, client):
+        component_func = load_component(
+            "./tests/test_configs/flows/web_classification_with_additional_includes/flow.dag.yaml"
+        )
+
+        data_input = Input(path="./tests/test_configs/flows/data/web_classification.jsonl", type=AssetTypes.URI_FILE)
+
+        @group
+        class Connection:
+            connection: str
+            deployment_name: str
+
+        @dsl.pipeline
+        def pipeline_func_with_flow(data):
+            flow_node = component_func(
+                data=data,
+                url="${data.url}",
+                connections={
+                    "summarize_text_content": {
+                        "connection": "azure_open_ai_connection",
+                        "deployment_name": "text-davinci-003",
+                    },
+                    "classify_with_llm": Connection(
+                        connection="azure_open_ai_connection",
+                        deployment_name="llm-davinci-003",
+                    ),
+                },
+            )
+            flow_node.compute = "cpu-cluster"
+
+        pipeline_with_flow = pipeline_func_with_flow(data=data_input)
+
+        validation_result = client.jobs.validate(pipeline_with_flow)
+
+        assert validation_result.passed
+
+        created_pipeline_job = assert_job_cancel(pipeline_with_flow, client)
+
+        node_dict = created_pipeline_job._to_dict()["jobs"]["flow_node"]
+        node_dict.pop("component")
+        assert node_dict == {
+            "compute": "azureml:cpu-cluster",
+            "inputs": {
+                "connections.classify_with_llm.connection": "azure_open_ai_connection",
+                "connections.classify_with_llm.deployment_name": "llm-davinci-003",
+                "connections.summarize_text_content.connection": "azure_open_ai_connection",
+                "connections.summarize_text_content.deployment_name": "text-davinci-003",
+                "data": {"path": "${{parent.inputs.data}}"},
+                "url": "${data.url}",
+            },
+            "type": "parallel",
+        }

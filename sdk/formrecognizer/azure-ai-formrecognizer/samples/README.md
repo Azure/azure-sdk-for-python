@@ -45,6 +45,7 @@ All of these samples need the endpoint to your Form Recognizer resource ([instru
 |[sample_classify_document_from_url.py][sample_classify_document_from_url] and [sample_classify_document_from_url_async.py][sample_classify_document_from_url_async]|Classify documents from URL with a custom classification model.|
 |[sample_build_classifier.py][sample_build_classifier] and [sample_build_classifier_async.py][sample_build_classifier_async]|Build a custom document classifier.|
 |[sample_manage_classifiers.py][sample_manage_classifiers] and [sample_manage_classifiers_async.py][sample_manage_classifiers_async]|Manage custom document classification models.|
+|[sample_send_request.py][sample_send_request] and [sample_send_request_async.py][sample_send_request_async]|Use the `send_request` client method.|
 
 
 ## Samples for client library versions 3.1.X
@@ -161,6 +162,8 @@ what you can do with the Azure Form Recognizer client library.
 [sample_build_classifier_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_build_classifier_async.py
 [sample_manage_classifiers]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_manage_classifiers.py
 [sample_manage_classifiers_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_manage_classifiers_async.py
+[sample_send_request]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/sample_send_request.py
+[sample_send_request_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/formrecognizer/azure-ai-formrecognizer/samples/v3.2_and_later/async_samples/sample_send_request_async.py
 
 
 <!-- V3.1 links -->

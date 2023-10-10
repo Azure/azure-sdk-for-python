@@ -12,6 +12,7 @@ from typing import Dict, Any
 from glob import glob
 import yaml
 
+from . import build_packaging
 from .swaggertosdk.autorest_tools import build_autorest_options, generate_code
 from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE_DPG, read_config
 from .conf import CONF_NAME
@@ -62,10 +63,17 @@ def get_package_names(sdk_folder):
 
 
 def call_build_config(package_name: str, folder_name: str):
-    check_call(
-        f"python -m packaging_tools --build-conf {package_name} -o {folder_name}",
-        shell=True,
+    build_packaging(
+        folder_name,
+        os.environ.get("GH_TOKEN", None),
+        packages=[package_name],
+        build_conf=True,
     )
+    # Replace this check_call by in process equivalent call, for better debugging
+    # check_call(
+    #     f"python -m packaging_tools --build-conf {package_name} -o {folder_name}",
+    #     shell=True,
+    # )
 
 def init_new_service(package_name, folder_name, is_typespec = False):
     if not is_typespec:

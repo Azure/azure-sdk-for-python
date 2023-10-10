@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+# cspell:ignore milli
 import uuid
 from datetime import datetime, timedelta
 import sys
@@ -253,6 +253,8 @@ class MetricsQueryResult:
         granularity = None
         if generated.get("interval"):
             granularity = Deserializer.deserialize_duration(generated.get("interval"))
+        if not generated.get("timespan"):
+            generated["timespan"] = f"{generated.get('starttime')}/{generated.get('endtime')}"
         return cls(
             cost=generated.get("cost"),
             timespan=generated.get("timespan"),
@@ -323,7 +325,7 @@ class LogsBatchQuery:
         query: str,
         *,
         timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]],
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:  # pylint: disable=super-init-not-called
         include_statistics = kwargs.pop("include_statistics", False)
         include_visualization = kwargs.pop("include_visualization", False)

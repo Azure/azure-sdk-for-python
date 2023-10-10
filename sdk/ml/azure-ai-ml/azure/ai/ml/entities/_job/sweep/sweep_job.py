@@ -71,54 +71,53 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     """Sweep job for hyperparameter tuning.
 
     :keyword name: Name of the job.
-    :type name: str
+    :paramtype name: str
     :keyword display_name: Display name of the job.
-    :type display_name: str
+    :paramtype display_name: str
     :keyword description: Description of the job.
-    :type description: str
+    :paramtype description: str
     :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
+    :paramtype tags: dict[str, str]
     :keyword properties: The asset property dictionary.
-    :type properties: dict[str, str]
+    :paramtype properties: dict[str, str]
     :keyword experiment_name:  Name of the experiment the job will be created under, if None is provided,
         job will be created under experiment 'Default'.
-    :type experiment_name: str
+    :paramtype experiment_name: str
     :keyword identity: Identity that the training job will use while running on compute.
-    :type identity: Union[~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration,
+    :paramtype identity: Union[~azure.ai.ml.ManagedIdentityConfiguration, ~azure.ai.ml.AmlTokenConfiguration,
         ~azure.ai.ml.UserIdentityConfiguration]
     :keyword inputs: Inputs to the command.
-    :type inputs: dict
+    :paramtype inputs: dict
     :keyword outputs: Mapping of output data bindings used in the job.
-    :type outputs: dict[str, ~azure.ai.ml.Output]
+    :paramtype outputs: dict[str, ~azure.ai.ml.Output]
     :keyword sampling_algorithm: The hyperparameter sampling algorithm to use over the `search_space`.
         Defaults to "random".
-    :type sampling_algorithm: str
+    :paramtype sampling_algorithm: str
     :keyword search_space: Dictionary of the hyperparameter search space. The key is the name of the
         hyperparameter and the value is the parameter expression.
-    :type search_space: Dict
+    :paramtype search_space: Dict
     :keyword objective: Metric to optimize for.
-    :type objective: Objective
+    :paramtype objective: Objective
     :keyword compute: The compute target the job runs on.
-    :type compute: str
+    :paramtype compute: str
     :keyword trial: The job configuration for each trial. Each trial will be provided with a different combination
         of hyperparameter values that the system samples from the search_space.
-    :type trial: Union[~azure.ai.ml.entities.CommandJob, ~azure.ai.ml.entities.CommandComponent]
+    :paramtype trial: Union[~azure.ai.ml.entities.CommandJob, ~azure.ai.ml.entities.CommandComponent]
     :keyword early_termination: The early termination policy to use. A trial job is canceled
         when the criteria of the specified policy are met. If omitted, no early termination policy will be applied.
-    :type early_termination:  Union[~azure.mgmt.machinelearningservices.models.BanditPolicy,
+    :paramtype early_termination:  Union[~azure.mgmt.machinelearningservices.models.BanditPolicy,
         ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
         ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
     :keyword limits: Limits for the sweep job.
-    :type limits: ~azure.ai.ml.entities.SweepJobLimits
+    :paramtype limits: ~azure.ai.ml.entities.SweepJobLimits
     :keyword queue_settings: Queue settings for the job.
-    :type queue_settings: ~azure.ai.ml.entities.QueueSettings
+    :paramtype queue_settings: ~azure.ai.ml.entities.QueueSettings
     :keyword kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :paramtype kwargs: dict
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../../samples/ml_samples_sweep_configurations.py
+        .. literalinclude:: ../samples/ml_samples_sweep_configurations.py
             :start-after: [START configure_sweep_job_bayesian_sampling_algorithm]
             :end-before: [END configure_sweep_job_bayesian_sampling_algorithm]
             :language: python

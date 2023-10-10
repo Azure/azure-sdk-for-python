@@ -1,5 +1,14 @@
 # Release History
 
+## 1.0.0 (2023-08-18)
+
+### Breaking Changes
+
+  - Removed operation BareMetalMachinesOperations.begin_validate_hardware
+  - Removed operation StorageAppliancesOperations.begin_run_read_commands
+  - Removed operation VirtualMachinesOperations.begin_attach_volume
+  - Removed operation VirtualMachinesOperations.begin_detach_volume
+
 ## 1.0.0b2 (2023-07-19)
 
 ### Features Added
