@@ -42,7 +42,7 @@ class CallAutomationRecordedTestCase(AzureRecordedTestCase):
             cls.connection_str = "endpoint=https://someEndpoint/;accesskey=someAccessKeyw=="
             cls.servicebus_connection_str =  "Endpoint=sb://someEndpoint/;SharedAccessKeyName=somekey;SharedAccessKey=someAccessKey="
             cls.dispatcher_endpoint = "https://REDACTED.azurewebsites.net"
-            cls.file_source_url = "https://REDACTED/prompt.wav"
+            cls.file_source_url = "https://REDACTED/assets/out.wav"
 
         cls.dispatcher_callback = cls.dispatcher_endpoint + '/api/servicebuscallback/events'
         cls.identity_client = CommunicationIdentityClient.from_connection_string(cls.connection_str)

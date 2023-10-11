@@ -49,7 +49,6 @@ class TestCallAutomationClient(unittest.TestCase):
         # make invitation
         call_invite = CallInvite(
             target=user,
-            voip_headers={"foo": "bar"},
             source_display_name="baz"
         )
         call_automation_client = CallAutomationClient(
@@ -64,13 +63,11 @@ class TestCallAutomationClient(unittest.TestCase):
 
         call_invite = CallInvite(
             target=user,
-            voip_headers={"foo": "bar"},
             source_display_name="WRONG"
         )
         call_connection_properties = call_automation_client.create_call(
             target_participant=call_invite,
             callback_url=self.callback_url,
-            voip_headers={"foo": "bar"},
             source_display_name="baz"
         )
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
@@ -80,7 +77,6 @@ class TestCallAutomationClient(unittest.TestCase):
         call_connection_properties = call_automation_client.create_call(
             target_participant=user,
             callback_url=self.callback_url,
-            voip_headers={"foo": "bar"},
             source_display_name="baz"
         )
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
@@ -171,7 +167,6 @@ class TestCallAutomationClient(unittest.TestCase):
         user = CommunicationUserIdentifier(self.communication_user_id)
         call_redirect_to = CallInvite(
             target=user,
-            voip_headers={"foo": "bar"},
             source_display_name="baz"
         )
 
@@ -181,12 +176,11 @@ class TestCallAutomationClient(unittest.TestCase):
             transport=Mock(send=mock_send)
         )
         call_automation_client.redirect_call(self.incoming_call_context, call_redirect_to)
-        call_automation_client.redirect_call(self.incoming_call_context, user, voip_headers={"foo": "bar"})
+        call_automation_client.redirect_call(self.incoming_call_context, user)
         with pytest.raises(ValueError) as e:
             call_automation_client.redirect_call(
                 self.incoming_call_context,
                 user,
-                voip_headers={"foo": "bar"},
                 source_display_name="baz"
             )
         assert "unexpected kwargs" in str(e.value)

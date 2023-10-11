@@ -4,8 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING, Dict, Any, List, Optional, Union
+import uuid
 from datetime import datetime
-
 from ._shared.models import (
     CommunicationIdentifier,
     CommunicationUserIdentifier,
@@ -74,13 +74,16 @@ def build_call_locator(
         raise ValueError("Call locator required. Please provide either 'group_call_id' or 'server_call_id'.")
     return request
 
-
 def process_repeatability_first_sent(keywords: Dict[str, Any]) -> None:
     if 'headers' in keywords:
         if 'Repeatability-First-Sent' not in keywords['headers']:
             keywords['headers']['Repeatability-First-Sent'] = get_repeatability_timestamp()
     else:
         keywords['headers'] = {'Repeatability-First-Sent': get_repeatability_timestamp()}
+
+
+def get_repeatability_guid():
+    return uuid.uuid4()
 
 
 def get_repeatability_timestamp() -> str:
@@ -145,8 +148,8 @@ def serialize_communication_user_identifier(
 
 
 def deserialize_identifier(
-    identifier_model:CommunicationIdentifierModel
-)->CommunicationIdentifier:
+    identifier_model: CommunicationIdentifierModel
+) -> CommunicationIdentifier:
     """
     Deserialize the CommunicationIdentifierModel into Communication Identifier
 
