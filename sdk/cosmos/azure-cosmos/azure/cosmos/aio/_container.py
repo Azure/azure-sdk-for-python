@@ -125,6 +125,9 @@ class ContainerProxy(object):
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A callable invoked with the response metadata.
+        :keyword str priority_level: Priority based execution allows users to set a priority for each request.
+            Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
             This includes if the container does not exist.
@@ -174,6 +177,9 @@ class ContainerProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword str priority_level: Priority based execution allows users to set a priority for each request.
+            Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
@@ -222,6 +228,9 @@ class ContainerProxy(object):
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
+        :keyword str priority_level: Priority based execution allows users to set a priority for each request.
+            Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
         :returns: Dict representing the item to be retrieved.
         :rtype: Dict[str, Any]
@@ -268,6 +277,9 @@ class ContainerProxy(object):
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
+        :keyword str priority_level: Priority based execution allows users to set a priority for each request.
+            Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
         """
@@ -326,6 +338,9 @@ class ContainerProxy(object):
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
+        :keyword str priority_level: Priority based execution allows users to set a priority for each request.
+            Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled.
         :returns: An AsyncItemPaged of items (dicts).
         :rtype: AsyncItemPaged[Dict[str, Any]]
 
@@ -405,6 +420,9 @@ class ContainerProxy(object):
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword partition_key: partition key at which ChangeFeed requests are targeted.
         :paramtype partition_key: Union[str, int, float, bool]
+        :keyword str priority_level: Priority based execution allows users to set a priority for each request.
+            Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], AsyncItemPaged[Dict[str, Any]]], None]
         :returns: An AsyncItemPaged of items (dicts).
@@ -457,6 +475,9 @@ class ContainerProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword str priority_level: Priority based execution allows users to set a priority for each request.
+            Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
@@ -505,6 +526,9 @@ class ContainerProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword match_condition: The match condition to use upon the etag.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword str priority_level: Priority based execution allows users to set a priority for each request.
+            Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled.
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace failed or the item with
@@ -556,6 +580,9 @@ class ContainerProxy(object):
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
+        :keyword str priority_level: Priority based execution allows users to set a priority for each request.
+            Once the user has reached their provisioned throughput, low priority requests are throttled
+            before high priority requests start getting throttled.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the item after the patch operations went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
