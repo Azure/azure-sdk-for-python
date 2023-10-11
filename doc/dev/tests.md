@@ -137,7 +137,7 @@ To run a tox command from your directory use the following commands:
 (env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e samples -c ../../../eng/tox/tox.ini --root . 
 (env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e apistub -c ../../../eng/tox/tox.ini --root . 
 ```
-A quick description of the five commands above:
+A quick description of the nine commands above:
 * sphinx: documentation generation using the inline comments written in our code
 * lint: runs pylint to make sure our code adheres to the style guidance
 * mypy: runs the mypy static type checker for Python to make sure that our types are valid.
@@ -237,47 +237,9 @@ For more details about how this fixture starts up the test proxy, or the test pr
 
 ### Deliver environment variables to tests
 
-To target the correct resources in tests, use the [EnvironmentVariableLoader][env_var_loader] from `devtools_testutils`
-to fetch environment variables and provide them to tests. The EnvironmentVariableLoader is meant to decorate test
-methods and inject environment variables particular to a given service. Below is an example of how to create a custom
-decorator, using the EnvironmentVariableLoader, that provides the values of environment variables `TESTSERVICE_ENDPOINT`
-and `TESTSERVICE_SECRET` to tests for a service called "testservice":
-
-```python
-import functools
-from devtools_testutils import EnvironmentVariableLoader
-
-ServicePreparer = functools.partial(
-    EnvironmentVariableLoader,
-    "testservice",
-    testservice_endpoint="https://fake_endpoint.testservice.windows.net",
-    testservice_secret="fakesecret"
-)
-```
-
-The parameters for the `functools.partial` method are:
-
-- The EnvironmentVariableLoader class
-- The service folder that holds your code (in this example, `sdk/testservice`). This value is used to search your
-  environment variables for the appropriate values.
-- The remaining arguments are key-value kwargs, with the keys being the environment variables needed for the tests, and
-  the value being a fake value to use in recordings.
-  - These values should have the same formatting as the real values because they are used in playback mode and will need
-  to pass any client side validation. The fake value should also be a unique value to the other key-value pairs.
-
-A method that's decorated by the ServicePreparer from the example would be called with `testservice_endpoint` and
-`testservice_secret` as keyword arguments. These arguments use the real values from your `.env` file as the variable
-values in live mode, and the fake values specified in the decorator in playback mode.
-
-**Be sure to match the formatting of live values in playback values.** For example, if the actual service endpoint in
-your `.env` file doesn't end with a trailing slash (`/`), adding a trailing slash to your playback endpoint value will
-result in playback errors. The exact value of your live variables will be replaced with the exact value of your playback
-variables in recordings.
-
-> **Note:** The EnvironmentVariableLoader expects environment variables for service tests to be prefixed with the
-> service name (e.g. `KEYVAULT_` for Key Vault tests). You'll need to set environment variables for
-> `{SERVICE}_TENANT_ID`, `{SERVICE}_CLIENT_ID`, and `{SERVICE}_CLIENT_SECRET` for a service principal when using this
-> class.
+Refer to the [documentation in `devtools_testutils`][env_var_docs] and use the
+[`devtools_testutils.EnvironmentVariableLoader`][env_var_loader] to fetch environment variables and provide them to
+tests.
 
 ### Write your tests
 
@@ -371,10 +333,13 @@ folder will be a `.json` file that captures the HTTP traffic that was generated 
 file's name.
 
 The final step in setting up recordings is to move these files out of the `azure-sdk-for-python` and into the
-`azure-sdk-assets` repository. The [recording migration guide][recording_move] describes how to do so -- this step only
-needs to be completed once, and future test sessions will automatically pull recordings from the assets repo. Your
-library will have an `assets.json` file at its root, which stores the `azure-sdk-assets` tag that contains the current
-set of recordings.
+`azure-sdk-assets` repository. The [recording migration guide][recording_move] describes how to do so. This step only
+needs to be completed once. Your library will have an `assets.json` file at its root, which stores the `azure-sdk-assets`
+tag that contains the current set of recordings.
+
+From this point on, recordings will automatically be fetched when tests are run in playback mode -- either from
+a local cache (described in [Update test recordings](#update-test-recordings)), or from `azure-sdk-assets` if they're
+not locally available.
 
 #### Update test recordings
 
@@ -387,32 +352,39 @@ set of recordings.
 - Membership in the `azure-sdk-write` GitHub group.
 
 Test recordings will be updated if tests are run while `AZURE_TEST_RUN_LIVE` is set to "true" and
-`AZURE_SKIP_LIVE_RECORDING` is unset or "false". Since the recordings themselves are no longer in the
-`azure-sdk-for-python` repo, though, these updates will be reflected in a git-excluded `.assets` folder at the root of
-the repo.
+`AZURE_SKIP_LIVE_RECORDING` is unset or "false". These recording updates will be reflected in a git-excluded `.assets`
+folder at the root of the repo.
 
 The `.assets` folder contains one or more directories with random names, which each are a git directory containing
-recordings. If you `cd` into the folder containing your package's recordings, you can use `git status` to view the
-recording updates you've made. You can also use other `git` commands; for example, `git diff {file name}` to see
-specific file changes, or `git restore {file name}` to undo changes you don't want to keep.
+recordings. To find the directory containing your package's recordings, you can use the [`manage_recordings.py`][manage_recordings]
+script from `azure-sdk-for-python/scripts`. This script accepts a verb and a **relative** path to your package's
+`assets.json` file (this path is optional, and is simply `assets.json` by default).
 
-To find the directory containing your package's recordings, open the `.breadcrumb` file in the `.assets` folder. This
-file lists a package name on each line, followed by the recording directory name; for example:
+For example, to view the location of `azure-keyvault-keys`'s recordings, from a current working directory at the root
+of the repo, run the following command:
 ```
-sdk/{service}/{package}/assets.json;2Km2Z8755;python/{service}/{package}_<10-character-commit-SHA>
+python scripts/manage_recordings.py locate -p sdk/keyvault/azure-keyvault-keys
 ```
-The recording directory in this case is `2Km2Z8755`, the string between the two semicolons.
 
-After verifying that your recording updates look correct, you can use the [`manage_recordings.py`][manage_recordings]
-script from `azure-sdk-for-python/scripts` to push these recordings to the `azure-sdk-assets` repo. This script accepts
-a verb and a **relative** path to your package's `assets.json` file (this path is optional, and is simply `assets.json`
-by default). For example, from the root of the `azure-sdk-for-python` repo:
+The output will include an absolute path to the recordings directory; in this case:
+```
+C:/azure-sdk-for-python/.assets/Y0iKQSfTwa/python
+```
+
+If you `cd` into the folder containing your package's recordings, you can use `git status` to view the recording
+updates you've made. You can also use other `git` commands; for example, `git diff {file name}` to see specific file
+changes, or `git restore {file name}` to undo changes you don't want to keep.
+
+After verifying that your recording updates look correct, you can use [`manage_recordings.py`][manage_recordings] to
+push your recordings to the `azure-sdk-assets` repo:
 ```
 python scripts/manage_recordings.py push -p sdk/{service}/{package}/assets.json
 ```
 
-The verbs that can be provided to this script are "push", "restore", and "reset":
+The verbs that can be provided to this script are "locate", "push", "show", "restore", and "reset":
+- **locate**: prints the location of the library's locally cached recordings.
 - **push**: pushes recording updates to a new assets repo tag and updates the tag pointer in `assets.json`.
+- **show**: prints the contents of the provided `assets.json` file.
 - **restore**: fetches recordings from the assets repo, based on the tag pointer in `assets.json`.
 - **reset**: discards any pending changes to recordings, based on the tag pointer in `assets.json`.
 
@@ -712,6 +684,7 @@ Tests that use the Shared Access Signature (SAS) to authenticate a client should
 [azure_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/7e66e3877519a15c1d4304eb69abf0a2281773/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L44
 
 [engsys_wiki]: https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/48/Create-a-new-Live-Test-pipeline?anchor=test-resources.json
+[env_var_docs]: https://github.com/Azure/azure-sdk-for-python/tree/main/tools/azure-sdk-tools/devtools_testutils#use-the-environmentvariableloader
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
 
 [generate_sas]: https://github.com/Azure/azure-sdk-for-python/blob/bf4749babb363e2dc972775f4408036e31f361b4/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L196

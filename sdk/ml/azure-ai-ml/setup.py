@@ -40,6 +40,7 @@ setup(
     author="Microsoft Corporation",
     author_email="azuresdkengsysadmins@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python",
+    keywords="azure, azure sdk",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
@@ -80,7 +81,7 @@ setup(
         "azure-storage-blob<13.0.0,>=12.10.0",
         "azure-storage-file-share<13.0.0",
         "azure-storage-file-datalake<13.0.0",
-        "pydash<6.0.0",
+        "pydash<7.0.6,>=6.0.0",
         "isodate",
         "azure-common<2.0.0,>=1.1",
         "typing-extensions<5.0.0",

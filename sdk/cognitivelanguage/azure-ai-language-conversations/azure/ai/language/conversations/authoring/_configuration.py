@@ -18,7 +18,9 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ConversationAuthoringClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class ConversationAuthoringClientConfiguration(  # pylint: disable=too-many-instance-attributes,name-too-long
+    Configuration
+):
     """Configuration for ConversationAuthoringClient.
 
     Note that all parameters used to create this instance are saved as instance

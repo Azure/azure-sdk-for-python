@@ -80,11 +80,11 @@ class FileStorageClient:
         :param version: The asset version
         :type version: str
         :param ignore_file: The IgnoreFile that specifies which files, if any, to ignore when uploading files
-        :type ignore_file: IgnoreFile, optional
+        :type ignore_file: IgnoreFile
         :param asset_hash: The asset hash
-        :type asset_hash: Optional[str], optional
+        :type asset_hash: Optional[str]
         :param show_progress: Whether to show progress on the console. Defaults to True.
-        :type show_progress: bool, optional
+        :type show_progress: bool
         :return: A dictionary containing info of the uploaded artifact
         :rtype: Dict[Literal["remote path", "name", "version"], str]
         """
@@ -148,17 +148,17 @@ class FileStorageClient:
         :param dest: The destination in the fileshare to upload to
         :type dest: str
         :param show_progress: Whether to show progress on the console. Defaults to False.
-        :type show_progress: bool, optional
+        :type show_progress: bool
         :param msg: Message to display on progress bar. Defaults to None.
-        :type msg: Optional[str], optional
+        :type msg: Optional[str]
         :param in_directory: Whether this function is being called by :attr:`FileStorageClient.upload_dir`. Defaults
             to False.
-        :type in_directory: bool, optional
+        :type in_directory: bool
         :param subdirectory_client: The subdirectory client.
-        :type subdirectory_client: Optional[ShareDirectoryClient], optional
+        :type subdirectory_client: Optional[ShareDirectoryClient]
         :param callback: A callback that receives the raw requests returned by the service during the upload process.
             Only used if `in_directory` and `show_progress` are True.
-        :type callback: Optional[Callable[[Dict], None]], optional
+        :type callback: Optional[Callable[[Dict], None]]
         """
         validate_content = os.stat(source).st_size > 0  # don't do checksum for empty files
 
@@ -294,11 +294,11 @@ class FileStorageClient:
         """Downloads all contents inside a specified fileshare directory.
 
         :param starts_with: The prefix used to filter files to download
-        :type starts_with: str, optional
+        :type starts_with: str
         :param destination: The destination to download to. Default to user's home directory.
-        :type destination: str, optional
+        :type destination: str
         :param max_concurrency: The maximum number of concurrent downloads. Defaults to 4.
-        :type max_concurrency: int, optional
+        :type max_concurrency: int
         """
         recursive_download(
             client=self.directory_client,
@@ -394,7 +394,7 @@ def recursive_download(
     :param max_concurrency: The maximum number of concurrent downloads
     :type max_concurrency: int
     :param starts_with: The prefix used to filter files to download. Defaults to ""
-    :type starts_with: str, optional
+    :type starts_with: str
     """
     try:
         items = list(client.list_directories_and_files(name_starts_with=starts_with))

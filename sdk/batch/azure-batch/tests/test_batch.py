@@ -14,6 +14,7 @@ import requests
 
 import azure.batch
 from azure.batch import models
+import pytest
 
 from batch_preparers import (
     AccountPreparer,
@@ -84,6 +85,7 @@ class BatchTest(AzureMgmtTestCase):
         except Exception as err:
             self.fail("Expected CreateTasksError, instead got: {!r}".format(err))
 
+    @pytest.mark.live_test_only("Can't use recordings until tests use the test proxy")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @StorageAccountPreparer(name_prefix='batch1', location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -115,6 +117,7 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsInstance(task, models.CloudTask)
         self.assertEqual(task.application_package_references[0].application_id, 'application_id')
 
+    @pytest.mark.live_test_only("Can't use recordings until tests use the test proxy")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     def test_batch_certificates(self, **kwargs):
@@ -154,6 +157,7 @@ class BatchTest(AzureMgmtTestCase):
             'cff2ab63c8c955aaf71989efa641b906558d9fb7')
         self.assertIsNone(response)
 
+    @pytest.mark.live_test_only("Can't use recordings until tests use the test proxy")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     def test_batch_create_pools(self, **kwargs):
@@ -336,6 +340,7 @@ class BatchTest(AzureMgmtTestCase):
         pools = list(client.pool.list(options))
         self.assertEqual(len(pools), 1)
 
+    @pytest.mark.live_test_only("Can't use recordings until tests use the test proxy")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     def test_batch_create_pool_with_blobfuse_mount(self, **kwargs):
@@ -371,6 +376,7 @@ class BatchTest(AzureMgmtTestCase):
         self.assertIsNotNone(mount_pool.mount_configuration[0].azure_blob_file_system_configuration)
         self.assertIsNone(mount_pool.mount_configuration[0].nfs_mount_configuration)
 
+    @pytest.mark.live_test_only("Can't use recordings until tests use the test proxy")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     def test_batch_update_pools(self, **kwargs):
@@ -438,6 +444,7 @@ class BatchTest(AzureMgmtTestCase):
         response = client.pool.delete(test_paas_pool.id)
         self.assertIsNone(response)
 
+    @pytest.mark.live_test_only("Can't use recordings until tests use the test proxy")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     @PoolPreparer(location=AZURE_LOCATION)
@@ -488,6 +495,7 @@ class BatchTest(AzureMgmtTestCase):
         info = list(client.pool.list_usage_metrics())
         self.assertEqual(info, [])
 
+    @pytest.mark.live_test_only("Can't use recordings until tests use the test proxy")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     def test_batch_job_schedules(self, **kwargs):
@@ -564,6 +572,7 @@ class BatchTest(AzureMgmtTestCase):
         response = client.job_schedule.delete(schedule_id)
         self.assertIsNone(response)
 
+    @pytest.mark.live_test_only("Can't use recordings until tests use the test proxy")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     def test_batch_network_configuration(self, **kwargs):
@@ -618,6 +627,7 @@ class BatchTest(AzureMgmtTestCase):
         self.assertEqual(nodes[0].endpoint_configuration.inbound_endpoints[0].name, 'TestEndpointConfig.0')
         self.assertEqual(nodes[0].endpoint_configuration.inbound_endpoints[0].protocol.value, 'udp')
 
+    @pytest.mark.live_test_only("Can't use recordings until tests use the test proxy")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     def test_batch_network_configuration_acceleratednetworking(self, **kwargs):
@@ -648,6 +658,7 @@ class BatchTest(AzureMgmtTestCase):
 
         self.assertTrue(network_pool.network_configuration.enable_accelerated_networking)
 
+    @pytest.mark.live_test_only("Can't use recordings until tests use the test proxy")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     @PoolPreparer(location=AZURE_LOCATION, size=2, config='iaas')
@@ -703,6 +714,7 @@ class BatchTest(AzureMgmtTestCase):
         response = client.pool.remove_nodes(batch_pool.name, options)
         self.assertIsNone(response)
 
+    @pytest.mark.live_test_only("Can't use recordings until tests use the test proxy")
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     @PoolPreparer(location=AZURE_LOCATION, size=1)
@@ -736,6 +748,7 @@ class BatchTest(AzureMgmtTestCase):
         response = client.compute_node.delete_user(batch_pool.name, nodes[0].id, user_name)
         self.assertIsNone(response)
 
+    @pytest.mark.live_test_only("Can't use recordings until tests use the test proxy")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @StorageAccountPreparer(name_prefix='batch4', location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT, name_prefix='batch4')
@@ -804,6 +817,7 @@ class BatchTest(AzureMgmtTestCase):
         response = client.file.delete_from_task(batch_job.id, task_id, only_files[0].name)
         self.assertIsNone(response)
 
+    @pytest.mark.live_test_only("Can't use recordings until tests use the test proxy")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     @JobPreparer(on_task_failure=models.OnTaskFailure.perform_exit_options_job_action)
@@ -1010,6 +1024,7 @@ class BatchTest(AzureMgmtTestCase):
         self.assertTrue(
             all(t.status == models.TaskAddStatus.success for t in result.value))
 
+    @pytest.mark.live_test_only("Can't use recordings until tests use the test proxy")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     def test_batch_jobs(self, **kwargs):

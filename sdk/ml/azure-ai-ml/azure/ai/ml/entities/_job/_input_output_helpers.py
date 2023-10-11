@@ -196,7 +196,7 @@ def to_rest_dataset_literal_inputs(
     :rtype: Dict[str, Union[ComponentJobInput, PipelineInput]]
     :keyword job_type: When job_type is pipeline, enable dot('.') in parameter keys to support parameter group.
         TODO: Remove this after move name validation to Job's customized validate.
-    :type job_type: str
+    :paramtype job_type: str
     """
     rest_inputs = {}
     # Pack up the inputs into REST format

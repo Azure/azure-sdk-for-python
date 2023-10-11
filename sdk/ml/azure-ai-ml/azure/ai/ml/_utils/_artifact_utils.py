@@ -231,7 +231,7 @@ class ArtifactCache:
         :param feed: The download feed
         :type feed: str
         :param max_retries: The number of times to retry the download. Defaults to 3
-        :type max_retries: int, optional
+        :type max_retries: int
         """
         retries = 0
         while retries <= max_retries:
@@ -307,9 +307,9 @@ class ArtifactCache:
         :param scope: Scope of the feed: 'project' if the feed was created in a project, and 'organization' otherwise.
         :type scope: Literal["project", "organization"]
         :param organization: Azure DevOps organization URL.
-        :type organization: str, optional
+        :type organization: str
         :param project: Name or ID of the project.
-        :type project: str, optional
+        :type project: str
         :param resolve: Whether download package when package does not exist in local.
         :type resolve: bool
         :return artifact_package_path: Cache path of the artifact package
@@ -373,9 +373,9 @@ class ArtifactCache:
         :param scope: Scope of the feed: 'project' if the feed was created in a project, and 'organization' otherwise.
         :type scope: Literal["project", "organization"]
         :param organization: Azure DevOps organization URL.
-        :type organization: str, optional
+        :type organization: str
         :param project: Name or ID of the project.
-        :type project: str, optional
+        :type project: str
         :return artifact_package_path: Cache path of the artifact package
         :rtype: Path
         """

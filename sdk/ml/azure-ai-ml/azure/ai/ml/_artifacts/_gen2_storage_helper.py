@@ -71,11 +71,11 @@ class Gen2StorageClient:
         :param version: The asset version
         :type version: str
         :param ignore_file: The IgnoreFile that specifies which files, if any, to ignore when uploading files
-        :type ignore_file: IgnoreFile, optional
+        :type ignore_file: IgnoreFile
         :param asset_hash: The asset hash
-        :type asset_hash: Optional[str], optional
+        :type asset_hash: Optional[str]
         :param show_progress: Whether to show progress on the console. Defaults to True.
-        :type show_progress: bool, optional
+        :type show_progress: bool
         :return: A dictionary containing info of the uploaded artifact
         :rtype: Dict[Literal["remote path", "name", "version", "indicator file"], str]
         """

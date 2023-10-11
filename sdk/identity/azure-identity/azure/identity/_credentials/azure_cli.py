@@ -16,7 +16,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._internal import _scopes_to_resource, resolve_tenant, within_dac
+from .._internal import _scopes_to_resource, resolve_tenant, within_dac, validate_tenant_id, validate_scope
 from .._internal.decorators import log_get_token
 
 
@@ -54,7 +54,8 @@ class AzureCliCredential:
         additionally_allowed_tenants: Optional[List[str]] = None,
         process_timeout: int = 10,
     ) -> None:
-
+        if tenant_id:
+            validate_tenant_id(tenant_id)
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
@@ -94,6 +95,10 @@ class AzureCliCredential:
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure CLI but didn't
           receive an access token.
         """
+        if tenant_id:
+            validate_tenant_id(tenant_id)
+        for scope in scopes:
+            validate_scope(scope)
 
         resource = _scopes_to_resource(*scopes)
         command = COMMAND_LINE.format(resource)
@@ -187,6 +192,7 @@ def _run_command(command: str, timeout: int) -> str:
 
         kwargs: Dict[str, Any] = {
             "stderr": subprocess.PIPE,
+            "stdin": subprocess.DEVNULL,
             "cwd": working_directory,
             "universal_newlines": True,
             "timeout": timeout,
@@ -198,7 +204,7 @@ def _run_command(command: str, timeout: int) -> str:
         # Fallback check in case the executable is not found while executing subprocess.
         if ex.returncode == 127 or ex.stderr.startswith("'az' is not recognized"):
             raise CredentialUnavailableError(message=CLI_NOT_FOUND) from ex
-        if "az login" in ex.stderr or "az account set" in ex.stderr:
+        if ("az login" in ex.stderr or "az account set" in ex.stderr) and "AADSTS" not in ex.stderr:
             raise CredentialUnavailableError(message=NOT_LOGGED_IN) from ex
 
         # return code is from the CLI -> propagate its output

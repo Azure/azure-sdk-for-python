@@ -13,7 +13,7 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from .azure_cli import get_safe_working_dir
 from .. import CredentialUnavailableError
-from .._internal import _scopes_to_resource, resolve_tenant, within_dac
+from .._internal import _scopes_to_resource, resolve_tenant, within_dac, validate_tenant_id, validate_scope
 from .._internal.decorators import log_get_token
 
 
@@ -68,7 +68,8 @@ class AzurePowerShellCredential:
         additionally_allowed_tenants: Optional[List[str]] = None,
         process_timeout: int = 10,
     ) -> None:
-
+        if tenant_id:
+            validate_tenant_id(tenant_id)
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
@@ -109,6 +110,11 @@ class AzurePowerShellCredential:
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked Azure PowerShell but didn't
           receive an access token
         """
+        if tenant_id:
+            validate_tenant_id(tenant_id)
+        for scope in scopes:
+            validate_scope(scope)
+
         tenant_id = resolve_tenant(
             default_tenant=self.tenant_id,
             tenant_id=tenant_id,
@@ -158,6 +164,7 @@ def start_process(args: List[str]) -> "subprocess.Popen":
         cwd=working_directory,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
+        stdin=subprocess.DEVNULL,
         universal_newlines=True,
     )
     return proc
@@ -183,7 +190,7 @@ def get_command_line(scopes: Tuple[str, ...], tenant_id: str) -> List[str]:
     script = SCRIPT.format(NO_AZ_ACCOUNT_MODULE, resource, tenant_argument)
     encoded_script = base64.b64encode(script.encode("utf-16-le")).decode()
 
-    command = "pwsh -NonInteractive -EncodedCommand " + encoded_script
+    command = "pwsh -NoProfile -NonInteractive -EncodedCommand " + encoded_script
     if sys.platform.startswith("win"):
         return ["cmd", "/c", command]
     return ["/bin/sh", "-c", command]

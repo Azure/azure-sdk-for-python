@@ -12,7 +12,7 @@ class EventHubError(Exception):
     :vartype error: str
     :ivar details: The error details, if included in the
      service response.
-    :vartype details: Dict[str, str]
+    :vartype details: dict[str, str]
     """
 
     def __init__(self, message, details=None):

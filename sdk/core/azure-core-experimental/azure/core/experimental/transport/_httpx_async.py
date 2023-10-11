@@ -183,7 +183,7 @@ class AsyncHttpXTransport(AsyncHttpTransport):
             "url": request.url,
             "headers": request.headers.items(),
             "data": request.data,
-            "content": request.content,
+            "content": request.content if hasattr(request, "content") else None,
             "files": request.files,
             **kwargs,
         }
@@ -191,10 +191,10 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         stream_ctx: Optional[ContextManager] = None
 
         try:
-            if stream_response:
+            if stream_response and self.client:
                 req = self.client.build_request(**parameters)
                 response = await self.client.send(req, stream=stream_response)
-            else:
+            elif self.client:
                 response = await self.client.request(**parameters)
         except (
             httpx.ReadTimeout,

@@ -69,7 +69,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
     :param compute: Information about the compute resources associated with the job.
     :type compute: Optional[str]
     :keyword kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :paramtype kwargs: dict
     """
 
     def __init__(
@@ -167,7 +167,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
             If dest is an open file, the file will be written to directly.
         :type dest: Union[PathLike, str, IO[AnyStr]]
         :keyword kwargs: Additional arguments to pass to the YAML serializer.
-        :type kwargs: dict
+        :paramtype kwargs: dict
         :raises FileExistsError: Raised if dest is a file path and the file already exists.
         :raises IOError: Raised if dest is an open file and the file is not writable.
         """
@@ -247,14 +247,14 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         :param cls: Indicates that this is a class method.
         :type cls: class
         :param data: Data Dictionary, defaults to None
-        :type data: Dict, optional
+        :type data: Dict
         :param yaml_path: YAML Path, defaults to None
-        :type yaml_path: Union[PathLike, str], optional
+        :type yaml_path: Union[PathLike, str]
         :param params_override: Fields to overwrite on top of the yaml file.
             Format is [{"field1": "value1"}, {"field2": "value2"}], defaults to None
-        :type params_override: List[Dict], optional
+        :type params_override: List[Dict]
         :keyword kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
+        :paramtype kwargs: dict
         :raises Exception: An exception
         :return: Loaded job object.
         :rtype: Job

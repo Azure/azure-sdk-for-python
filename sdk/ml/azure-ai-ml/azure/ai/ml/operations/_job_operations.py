@@ -10,10 +10,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Union
 
 import jwt
-from azure.core.credentials import TokenCredential
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.core.polling import LROPoller
-from azure.core.tracing.decorator import distributed_trace
+from marshmallow import ValidationError
 
 from azure.ai.ml._artifacts._artifact_utilities import (
     _upload_and_generate_remote_uri,
@@ -79,7 +76,7 @@ from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import _is_pipeline_child_job
 from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
-from azure.ai.ml.entities._validation import SchemaValidatableMixin
+from azure.ai.ml.entities._validation import PathAwareSchemaValidatableMixin
 from azure.ai.ml.exceptions import (
     ComponentException,
     ErrorCategory,
@@ -94,6 +91,10 @@ from azure.ai.ml.exceptions import (
 )
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.sweep import SweepJob
+from azure.core.credentials import TokenCredential
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.polling import LROPoller
+from azure.core.tracing.decorator import distributed_trace
 
 from .._utils._experimental import experimental
 from ..constants._component import ComponentSource
@@ -106,8 +107,8 @@ from ._job_ops_helper import get_git_properties, get_job_output_uris_from_datapl
 from ._local_job_invoker import is_local_run, start_run_if_local
 from ._model_dataplane_operations import ModelDataplaneOperations
 from ._operation_orchestrator import (
-    _AssetResolver,
     OperationOrchestrator,
+    _AssetResolver,
     is_ARM_id_for_resource,
     is_registry_id_for_resource,
     is_singularity_full_name_for_resource,
@@ -257,22 +258,22 @@ class JobOperations(_ScopeDependentOperations):
 
         :keyword parent_job_name: When provided, only returns jobs that are children of the named job. Defaults to None,
             listing all jobs in the workspace.
-        :type parent_job_name: Optional[str]
+        :paramtype parent_job_name: Optional[str]
         :keyword list_view_type: The view type for including/excluding archived jobs. Defaults to
             ~azure.mgt.machinelearningservices.models.ListViewType.ACTIVE_ONLY, excluding archived jobs.
-        :type list_view_type: ~azure.mgmt.machinelearningservices.models.ListViewType
+        :paramtype list_view_type: ~azure.mgmt.machinelearningservices.models.ListViewType
         :return: An iterator-like instance of Job objects.
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.Job]
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START job_operations_list]
                 :end-before: [END job_operations_list]
                 :language: python
                 :dedent: 8
                 :caption: Retrieving a list of the archived jobs in a workspace with parent job named
-                "iris-dataset-jobs".
+                    "iris-dataset-jobs".
         """
 
         schedule_defined = kwargs.pop("schedule_defined", None)
@@ -320,7 +321,7 @@ class JobOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START job_operations_get]
                 :end-before: [END job_operations_get]
                 :language: python
@@ -357,7 +358,7 @@ class JobOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START job_operations_show_services]
                 :end-before: [END job_operations_show_services]
                 :language: python
@@ -388,7 +389,7 @@ class JobOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START job_operations_begin_cancel]
                 :end-before: [END job_operations_begin_cancel]
                 :language: python
@@ -476,13 +477,13 @@ class JobOperations(_ScopeDependentOperations):
         :param job: The job object to be validated.
         :type job: ~azure.ai.ml.entities.Job
         :keyword raise_on_failure: Specifies if an error should be raised if validation fails. Defaults to False.
-        :type raise_on_failure: bool
+        :paramtype raise_on_failure: bool
         :return: A ValidationResult object containing all found errors.
         :rtype: ~azure.ai.ml.entities.ValidationResult
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START job_operations_validate]
                 :end-before: [END job_operations_validate]
                 :language: python
@@ -504,11 +505,11 @@ class JobOperations(_ScopeDependentOperations):
         :param job: The job to validate
         :type job: Job
         :keyword raise_on_failure: Whether to raise on validation failure
-        :type raise_on_failure: bool
+        :paramtype raise_on_failure: bool
         :return: The validation result
         :rtype: ValidationResult
         """
-        git_code_validation_result = SchemaValidatableMixin._create_empty_validation_result()
+        git_code_validation_result = PathAwareSchemaValidatableMixin._create_empty_validation_result()
         # TODO: move this check to Job._validate after validation is supported for all job types
         # If private features are enable and job has code value of type str we need to check
         # that it is a valid git path case. Otherwise we should throw a ValidationException
@@ -525,8 +526,20 @@ class JobOperations(_ScopeDependentOperations):
                 yaml_path="code",
             )
 
-        if not isinstance(job, SchemaValidatableMixin):
-            return git_code_validation_result.try_raise(error_target=ErrorTarget.JOB, raise_error=raise_on_failure)
+        if not isinstance(job, PathAwareSchemaValidatableMixin):
+
+            def error_func(msg, no_personal_data_msg):
+                return ValidationException(
+                    message=msg,
+                    no_personal_data_message=no_personal_data_msg,
+                    error_target=ErrorTarget.JOB,
+                    error_category=ErrorCategory.USER_ERROR,
+                )
+
+            return git_code_validation_result.try_raise(
+                raise_error=raise_on_failure,
+                error_func=error_func,
+            )
 
         validation_result = job._validate(raise_error=raise_on_failure)
         validation_result.merge_with(git_code_validation_result)
@@ -547,7 +560,7 @@ class JobOperations(_ScopeDependentOperations):
                     validation_result.append_error(yaml_path=f"jobs.{node_name}.compute", message=str(e))
 
         validation_result.resolve_location_for_diagnostics(job._source_path)
-        return validation_result.try_raise(raise_error=raise_on_failure, error_target=ErrorTarget.PIPELINE)
+        return job._try_raise(validation_result, raise_error=raise_on_failure)  # pylint: disable=protected-access
 
     @distributed_trace
     @monitor_with_telemetry_mixin(logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)
@@ -568,18 +581,18 @@ class JobOperations(_ScopeDependentOperations):
         :param job: The job object.
         :type job: ~azure.ai.ml.entities.Job
         :keyword description: The job description.
-        :type description: Optional[str]
+        :paramtype description: Optional[str]
         :keyword compute: The compute target for the job.
-        :type compute: Optional[str]
+        :paramtype compute: Optional[str]
         :keyword tags: The tags for the job.
-        :type tags: Optional[dict]
+        :paramtype tags: Optional[dict]
         :keyword experiment_name: The name of the experiment the job will be created under. If None is provided,
             job will be created under experiment 'Default'.
-        :type experiment_name: Optional[str]
+        :paramtype experiment_name: Optional[str]
         :keyword skip_validation: Specifies whether or not to skip validation before creating or updating the job. Note
             that validation for dependent resources such as an anonymous component will not be skipped. Defaults to
             False.
-        :type skip_validation: bool
+        :paramtype skip_validation: bool
         :raises Union[~azure.ai.ml.exceptions.UserErrorException, ~azure.ai.ml.exceptions.ValidationException]: Raised
             if Job cannot be successfully validated. Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.AssetException: Raised if Job assets
@@ -598,105 +611,101 @@ class JobOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START job_operations_create_and_update]
                 :end-before: [END job_operations_create_and_update]
                 :language: python
                 :dedent: 8
                 :caption: Creating a new job and then updating its compute.
         """
+        if isinstance(job, BaseNode) and not (
+            isinstance(job, (Command, Spark))
+        ):  # Command/Spark objects can be used directly
+            job = job._to_job()
+
+        # Set job properties before submission
+        if description is not None:
+            job.description = description
+        if compute is not None:
+            job.compute = compute
+        if tags is not None:
+            job.tags = tags
+        if experiment_name is not None:
+            job.experiment_name = experiment_name
+
+        if job.compute == LOCAL_COMPUTE_TARGET:
+            job.environment_variables[COMMON_RUNTIME_ENV_VAR] = "true"
+
+        # TODO: why we put log logic here instead of inside self._validate()?
         try:
-            if isinstance(job, BaseNode) and not (
-                isinstance(job, (Command, Spark))
-            ):  # Command/Spark objects can be used directly
-                job = job._to_job()
-
-            # Set job properties before submission
-            if description is not None:
-                job.description = description
-            if compute is not None:
-                job.compute = compute
-            if tags is not None:
-                job.tags = tags
-            if experiment_name is not None:
-                job.experiment_name = experiment_name
-
-            if job.compute == LOCAL_COMPUTE_TARGET:
-                job.environment_variables[COMMON_RUNTIME_ENV_VAR] = "true"
-
             if not skip_validation:
                 self._validate(job, raise_on_failure=True)
 
             # Create all dependent resources
             self._resolve_arm_id_or_upload_dependencies(job)
+        except (ValidationException, ValidationError) as ex:  # pylint: disable=broad-except
+            log_and_raise_error(ex)
 
-            git_props = get_git_properties()
-            # Do not add git props if they already exist in job properties.
-            # This is for update specifically-- if the user switches branches and tries to update
-            # their job, the request will fail since the git props will be repopulated.
-            # MFE does not allow existing properties to be updated, only for new props to be added
-            if not any(prop_name in job.properties for prop_name in git_props):
-                job.properties = {**job.properties, **git_props}
-            rest_job_resource = to_rest_job_object(job)
+        git_props = get_git_properties()
+        # Do not add git props if they already exist in job properties.
+        # This is for update specifically-- if the user switches branches and tries to update
+        # their job, the request will fail since the git props will be repopulated.
+        # MFE does not allow existing properties to be updated, only for new props to be added
+        if not any(prop_name in job.properties for prop_name in git_props):
+            job.properties = {**job.properties, **git_props}
+        rest_job_resource = to_rest_job_object(job)
 
-            # Make a copy of self._kwargs instead of contaminate the original one
-            kwargs = dict(**self._kwargs)
-            # set headers with user aml token if job is a pipeline or has a user identity setting
-            if (rest_job_resource.properties.job_type == RestJobType.PIPELINE) or (
-                hasattr(rest_job_resource.properties, "identity")
-                and (isinstance(rest_job_resource.properties.identity, UserIdentity))
-            ):
-                self._set_headers_with_user_aml_token(kwargs)
+        # Make a copy of self._kwargs instead of contaminate the original one
+        kwargs = dict(**self._kwargs)
+        # set headers with user aml token if job is a pipeline or has a user identity setting
+        if (rest_job_resource.properties.job_type == RestJobType.PIPELINE) or (
+            hasattr(rest_job_resource.properties, "identity")
+            and (isinstance(rest_job_resource.properties.identity, UserIdentity))
+        ):
+            self._set_headers_with_user_aml_token(kwargs)
+
+        result = self._operation_2023_02_preview.create_or_update(
+            id=rest_job_resource.name,  # type: ignore
+            resource_group_name=self._operation_scope.resource_group_name,
+            workspace_name=self._workspace_name,
+            body=rest_job_resource,
+            **kwargs,
+        )
+
+        if is_local_run(result):
+            ws_base_url = self._all_operations.all_operations[
+                AzureMLResourceType.WORKSPACE
+            ]._operation._client._base_url
+            snapshot_id = start_run_if_local(
+                result,
+                self._credential,
+                ws_base_url,
+                self._requests_pipeline,
+            )
+            # in case of local run, the first create/update call to MFE returns the
+            # request for submitting to ES. Once we request to ES and start the run, we
+            # need to put the same body to MFE to append user tags etc.
+            job_object = self._get_job(rest_job_resource.name)
+            if result.properties.tags is not None:
+                for tag_name, tag_value in rest_job_resource.properties.tags.items():
+                    job_object.properties.tags[tag_name] = tag_value
+            if result.properties.properties is not None:
+                for (
+                    prop_name,
+                    prop_value,
+                ) in rest_job_resource.properties.properties.items():
+                    job_object.properties.properties[prop_name] = prop_value
+            if snapshot_id is not None:
+                job_object.properties.properties["ContentSnapshotId"] = snapshot_id
 
             result = self._operation_2023_02_preview.create_or_update(
                 id=rest_job_resource.name,  # type: ignore
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._workspace_name,
-                body=rest_job_resource,
+                body=job_object,
                 **kwargs,
             )
-
-            if is_local_run(result):
-                ws_base_url = self._all_operations.all_operations[
-                    AzureMLResourceType.WORKSPACE
-                ]._operation._client._base_url
-                snapshot_id = start_run_if_local(
-                    result,
-                    self._credential,
-                    ws_base_url,
-                    self._requests_pipeline,
-                )
-                # in case of local run, the first create/update call to MFE returns the
-                # request for submitting to ES. Once we request to ES and start the run, we
-                # need to put the same body to MFE to append user tags etc.
-                job_object = self._get_job(rest_job_resource.name)
-                if result.properties.tags is not None:
-                    for tag_name, tag_value in rest_job_resource.properties.tags.items():
-                        job_object.properties.tags[tag_name] = tag_value
-                if result.properties.properties is not None:
-                    for (
-                        prop_name,
-                        prop_value,
-                    ) in rest_job_resource.properties.properties.items():
-                        job_object.properties.properties[prop_name] = prop_value
-                if snapshot_id is not None:
-                    job_object.properties.properties["ContentSnapshotId"] = snapshot_id
-
-                result = self._operation_2023_02_preview.create_or_update(
-                    id=rest_job_resource.name,  # type: ignore
-                    resource_group_name=self._operation_scope.resource_group_name,
-                    workspace_name=self._workspace_name,
-                    body=job_object,
-                    **kwargs,
-                )
-            return self._resolve_azureml_id(Job._from_rest_object(result))
-        except Exception as ex:  # pylint: disable=broad-except
-            from marshmallow.exceptions import ValidationError as SchemaValidationError
-
-            if isinstance(ex, (ValidationException, SchemaValidationError)):
-                log_and_raise_error(ex)
-            else:
-                raise ex
+        return self._resolve_azureml_id(Job._from_rest_object(result))
 
     def _archive_or_restore(self, name: str, is_archived: bool):
         job_object = self._get_job(name)
@@ -722,7 +731,7 @@ class JobOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START job_operations_archive]
                 :end-before: [END job_operations_archive]
                 :language: python
@@ -743,7 +752,7 @@ class JobOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START job_operations_restore]
                 :end-before: [END job_operations_restore]
                 :language: python
@@ -764,7 +773,7 @@ class JobOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START job_operations_stream_logs]
                 :end-before: [END job_operations_stream_logs]
                 :language: python
@@ -795,11 +804,11 @@ class JobOperations(_ScopeDependentOperations):
         :param name: The name of a job.
         :type name: str
         :keyword download_path: The local path to be used as the download destination. Defaults to ".".
-        :type download_path: Union[PathLike, str]
+        :paramtype download_path: Union[PathLike, str]
         :keyword output_name: The name of the output to download. Defaults to None.
-        :type output_name: Optional[str]
+        :paramtype output_name: Optional[str]
         :keyword all: Specifies if all logs and named outputs should be downloaded. Defaults to False.
-        :type all: bool
+        :paramtype all: bool
         :raises ~azure.ai.ml.exceptions.JobException: Raised if Job is not yet in a terminal state.
             Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.MlException: Raised if logs and outputs cannot be successfully downloaded.
@@ -807,7 +816,7 @@ class JobOperations(_ScopeDependentOperations):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../../../../samples/ml_samples_misc.py
+            .. literalinclude:: ../samples/ml_samples_misc.py
                 :start-after: [START job_operations_download]
                 :end-before: [END job_operations_download]
                 :language: python

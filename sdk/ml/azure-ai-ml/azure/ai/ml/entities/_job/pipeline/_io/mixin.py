@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import copy
-from typing import Dict, List, Optional, Type, Union
+from typing import Dict, List, Optional, Tuple, Type, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
@@ -95,7 +95,7 @@ class NodeIOMixin:
         :param inputs: Provided kwargs when parameterizing component func.
         :type inputs: Dict[str, Union[Input, str, bool, int, float]]
         :keyword input_definition_dict: Static input definition dict. If not provided, will build inputs without meta.
-        :type input_definition_dict: dict, optional
+        :paramtype input_definition_dict: dict
         :return: Built dynamic input attribute dict.
         :rtype: InputsAttrDict
         """
@@ -124,9 +124,9 @@ class NodeIOMixin:
         :param outputs: Provided kwargs when parameterizing component func.
         :type outputs: Dict[str, Output]
         :keyword output_definition_dict: Static output definition dict.
-        :type output_definition_dict: Dict
+        :paramtype output_definition_dict: Dict
         :keyword none_data: If True, will set output data to None.
-        :type none_data: bool
+        :paramtype none_data: bool
         :return: Built dynamic output attribute dict.
         :rtype: OutputsAttrDict
         """
@@ -324,17 +324,6 @@ class NodeIOMixin:
                     rest_output["job_output_type"] = "uri_file"
 
 
-def _flatten_dict(dictionary, parent_key="", separator="."):
-    items = []
-    for key, value in dictionary.items():
-        new_key = parent_key + separator + key if parent_key else key
-        if isinstance(value, dict):
-            items.extend(_flatten_dict(value, new_key, separator=separator).items())
-        else:
-            items.append((new_key, value))
-    return dict(items)
-
-
 def flatten_dict(
     dct: Dict, _type: Union[Type["_GroupAttrDict"], Type[GroupInput]], *, allow_dict_fields: Optional[List[str]] = None
 ) -> Dict:
@@ -345,7 +334,7 @@ def flatten_dict(
     :param _type: Either _GroupAttrDict or GroupInput (both have the method `flatten`)
     :type _type: Union[Type["_GroupAttrDict"], Type[GroupInput]]
     :keyword allow_dict_fields: A list of keys for dictionary values that will be included in flattened output
-    :type allow_dict_fields: Optional[List[str]], optional
+    :paramtype allow_dict_fields: Optional[List[str]]
     :return: The flattened dict
     :rtype: Dict
     """
@@ -353,7 +342,9 @@ def flatten_dict(
     for key, val in dct.items():
         # to support passing dict value as parameter group
         if allow_dict_fields and key in allow_dict_fields and isinstance(val, dict):
-            _result.update(_flatten_dict(val, parent_key=key))
+            # for child dict, all values are allowed to be dict
+            for flattened_key, flattened_val in flatten_dict(val, _type, allow_dict_fields=list(val.keys())).items():
+                _result[key + "." + flattened_key] = flattened_val
             continue
         val = GroupInput.custom_class_value_to_attr_dict(val)
         if isinstance(val, _type):
@@ -366,8 +357,9 @@ def flatten_dict(
 class NodeWithGroupInputMixin(NodeIOMixin):
     """This class provide build_inputs_dict for a node to use ParameterGroup as an input."""
 
+    @classmethod
     def _validate_group_input_type(
-        self,
+        cls,
         input_definition_dict: dict,
         inputs: Dict[str, Union[Input, str, bool, int, float]],
     ):
@@ -404,6 +396,63 @@ class NodeWithGroupInputMixin(NodeIOMixin):
                     type=ValidationErrorType.INVALID_VALUE,
                 )
 
+    @classmethod
+    def _flatten_inputs_and_definition(
+        cls,
+        inputs: Dict[str, Union[Input, str, bool, int, float]],
+        input_definition_dict: dict,
+    ) -> Tuple[Dict, Dict]:
+        """
+        Flatten all GroupInput(definition) and GroupAttrDict recursively and build input dict.
+        For example:
+        input_definition_dict = {
+            "group1": GroupInput(
+                values={
+                    "param1": GroupInput(
+                         values={
+                             "param1_1": Input(type="str"),
+                         }
+                    ),
+                    "param2": Input(type="int"),
+                }
+            ),
+            "group2": GroupInput(
+                values={
+                    "param3": Input(type="str"),
+                }
+            ),
+        } => {
+            "group1.param1.param1_1": Input(type="str"),
+            "group1.param2": Input(type="int"),
+            "group2.param3": Input(type="str"),
+        }
+        inputs = {
+            "group1": {
+                "param1": {
+                    "param1_1": "value1",
+                },
+                "param2": 2,
+            },
+            "group2": {
+                "param3": "value3",
+            },
+        } => {
+            "group1.param1.param1_1": "value1",
+            "group1.param2": 2,
+            "group2.param3": "value3",
+        }
+        :param inputs: The inputs
+        :type inputs: Dict[str, Union[Input, str, bool, int, float]]
+        :param input_definition_dict: The input definition dict
+        :type input_definition_dict: dict
+        :return: The flattened inputs and definition
+        :rtype: Tuple[Dict, Dict]
+        """
+        group_input_names = [key for key, val in input_definition_dict.items() if isinstance(val, GroupInput)]
+        flattened_inputs = flatten_dict(inputs, _GroupAttrDict, allow_dict_fields=group_input_names)
+        flattened_definition_dict = flatten_dict(input_definition_dict, GroupInput)
+        return flattened_inputs, flattened_definition_dict
+
     def _build_inputs_dict(
         self,
         inputs: Dict[str, Union[Input, str, bool, int, float]],
@@ -416,7 +465,7 @@ class NodeWithGroupInputMixin(NodeIOMixin):
         :param inputs: Provided kwargs when parameterizing component func.
         :type inputs: Dict[str, Union[Input, str, bool, int, float]]
         :keyword input_definition_dict: Input definition dict from component entity.
-        :type input_definition_dict: dict, optional
+        :paramtype input_definition_dict: dict
         :return: Built input attribute dict.
         :rtype: InputsAttrDict
         """
@@ -426,10 +475,10 @@ class NodeWithGroupInputMixin(NodeIOMixin):
             # Validate group mismatch
             self._validate_group_input_type(input_definition_dict, inputs)
 
-            allow_dict_fields = [key for key, val in input_definition_dict.items() if isinstance(val, GroupInput)]
-            # Flatten all GroupInput(definition) and GroupAttrDict.
-            flattened_inputs = flatten_dict(inputs, _GroupAttrDict, allow_dict_fields=allow_dict_fields)
-            flattened_definition_dict = flatten_dict(input_definition_dict, GroupInput)
+            # Flatten inputs and definition
+            flattened_inputs, flattened_definition_dict = self._flatten_inputs_and_definition(
+                inputs, input_definition_dict
+            )
             # Build: zip all flattened parameter with definition
             inputs = super()._build_inputs_dict(flattened_inputs, input_definition_dict=flattened_definition_dict)
             return InputsAttrDict(GroupInput.restore_flattened_inputs(inputs))
@@ -465,6 +514,7 @@ class PipelineJobIOMixin(NodeWithGroupInputMixin):
         """
         input_dict = super()._build_inputs_dict(inputs, input_definition_dict=input_definition_dict)
         # TODO: should we do this when input_definition_dict is not None?
+        # TODO: should we put this in super()._build_inputs_dict?
         if input_definition_dict is None:
             return InputsAttrDict(GroupInput.restore_flattened_inputs(input_dict))
         return input_dict

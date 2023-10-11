@@ -327,7 +327,7 @@ def get_content_hash(path: Union[str, os.PathLike], ignore_file: IgnoreFile = Ig
     :param path: The directory to calculate the size of
     :type path: Union[str, os.PathLike]
     :param ignore_file: An ignore file that specifies files to ignore when computing the size
-    :type ignore_file: IgnoreFile, optional
+    :type ignore_file: IgnoreFile
     :return: The content hash if the content is a link, directory, or file. None otherwise
     :rtype: Optional[str]
     """
@@ -404,9 +404,9 @@ def traverse_directory(  # pylint: disable=unused-argument
     :param files: List of all file paths in the directory
     :type files: List[str]
     :keyword prefix: Remote upload path for project directory (e.g. LocalUpload/<guid>/project_dir)
-    :type prefix: str
+    :paramtype prefix: str
     :keyword ignore_file: The .amlignore or .gitignore file in the project directory
-    :type ignore_file: azure.ai.ml._utils._asset_utils.IgnoreFile
+    :paramtype ignore_file: azure.ai.ml._utils._asset_utils.IgnoreFile
     :return: Zipped list of tuples representing the local path and remote destination path for each file
     :rtype: Iterable[Tuple[str, Union[str, Any]]]
     """
@@ -458,7 +458,7 @@ def get_directory_size(
     :param root: The directory to calculate the size of
     :type root: Union[str, os.PathLike]
     :param ignore_file: An ignore file that specifies files to ignore when computing the size
-    :type ignore_file: IgnoreFile, optional
+    :type ignore_file: IgnoreFile
     :return: The computed size of the directory, and the sizes of the child paths
     :rtype: Tuple[int, Dict[str, int]]
     """
@@ -816,11 +816,11 @@ def _get_latest(
     :param resource_group_name: The resource group name
     :type resource_group_name: str
     :param workspace_name: The workspace name
-    :type workspace_name: Optional[str], optional
+    :type workspace_name: Optional[str]
     :param registry_name: The registry name
-    :type registry_name: Optional[str], optional
+    :type registry_name: Optional[str]
     :param order_by: Specifies how to order the results. Defaults to :attr:`OrderString.CREATED_AT_DESC`
-    :type order_by: Literal[OrderString.CREATED_AT, OrderString.CREATED_AT_DESC], optional
+    :type order_by: Literal[OrderString.CREATED_AT, OrderString.CREATED_AT_DESC]
     :return: The latest version of the requested asset
     :rtype: Union[ModelVersionData, DataVersionBaseData]
     """

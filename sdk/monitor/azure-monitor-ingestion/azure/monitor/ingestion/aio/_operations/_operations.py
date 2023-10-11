@@ -19,8 +19,7 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
@@ -45,7 +44,6 @@ class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
         body: List[JSON],
         *,
         content_encoding: Optional[str] = None,
-        x_ms_client_request_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
@@ -59,7 +57,6 @@ class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
         body: IO,
         *,
         content_encoding: Optional[str] = None,
-        x_ms_client_request_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
@@ -73,7 +70,6 @@ class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
         body: Union[List[JSON], IO],
         *,
         content_encoding: Optional[str] = None,
-        x_ms_client_request_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Ingestion API used to directly ingest data using Data Collection Rules.
@@ -89,8 +85,6 @@ class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
         :type body: list[JSON] or IO
         :keyword content_encoding: gzip. Default value is None.
         :paramtype content_encoding: str
-        :keyword x_ms_client_request_id: Client request Id. Default value is None.
-        :paramtype x_ms_client_request_id: str
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -124,7 +118,6 @@ class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
             rule_id=rule_id,
             stream=stream,
             content_encoding=content_encoding,
-            x_ms_client_request_id=x_ms_client_request_id,
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -145,6 +138,8 @@ class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 

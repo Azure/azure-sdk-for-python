@@ -29,14 +29,13 @@ def main():
         subscription_id="{subscription-id}",
     )
 
-    response = client.local_users.delete(
+    client.local_users.delete(
         resource_group_name="res6977",
         account_name="sto2527",
         username="user1",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2022-09-01/examples/LocalUserDelete.json
+# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2023-01-01/examples/LocalUserDelete.json
 if __name__ == "__main__":
     main()

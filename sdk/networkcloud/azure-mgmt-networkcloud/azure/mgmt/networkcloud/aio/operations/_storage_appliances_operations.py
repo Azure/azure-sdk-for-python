@@ -39,7 +39,6 @@ from ...operations._storage_appliances_operations import (
     build_get_request,
     build_list_by_resource_group_request,
     build_list_by_subscription_request,
-    build_run_read_commands_request,
     build_update_request,
 )
 
@@ -929,9 +928,9 @@ class StorageAppliancesOperations:
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/storageAppliances/{storageApplianceName}"
     }
 
-    async def _disable_remote_vendor_management_initial(  # pylint: disable=inconsistent-return-statements
+    async def _disable_remote_vendor_management_initial(
         self, resource_group_name: str, storage_appliance_name: str, **kwargs: Any
-    ) -> None:
+    ) -> Optional[_models.OperationStatusResult]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -944,7 +943,7 @@ class StorageAppliancesOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[_models.OperationStatusResult]] = kwargs.pop("cls", None)
 
         request = build_disable_remote_vendor_management_request(
             resource_group_name=resource_group_name,
@@ -965,17 +964,23 @@ class StorageAppliancesOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = None
         response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize("OperationStatusResult", pipeline_response)
+
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
     _disable_remote_vendor_management_initial.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/storageAppliances/{storageApplianceName}/disableRemoteVendorManagement"
@@ -984,7 +989,7 @@ class StorageAppliancesOperations:
     @distributed_trace_async
     async def begin_disable_remote_vendor_management(
         self, resource_group_name: str, storage_appliance_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.OperationStatusResult]:
         """Turn off remote vendor management for a storage appliance, if supported.
 
         Disable remote vendor management of the provided storage appliance.
@@ -1002,20 +1007,22 @@ class StorageAppliancesOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns either OperationStatusResult or the result
+         of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._disable_remote_vendor_management_initial(  # type: ignore
+            raw_result = await self._disable_remote_vendor_management_initial(
                 resource_group_name=resource_group_name,
                 storage_appliance_name=storage_appliance_name,
                 api_version=api_version,
@@ -1026,9 +1033,11 @@ class StorageAppliancesOperations:
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("OperationStatusResult", pipeline_response)
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
@@ -1051,7 +1060,7 @@ class StorageAppliancesOperations:
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/storageAppliances/{storageApplianceName}/disableRemoteVendorManagement"
     }
 
-    async def _enable_remote_vendor_management_initial(  # pylint: disable=inconsistent-return-statements
+    async def _enable_remote_vendor_management_initial(
         self,
         resource_group_name: str,
         storage_appliance_name: str,
@@ -1059,7 +1068,7 @@ class StorageAppliancesOperations:
             Union[_models.StorageApplianceEnableRemoteVendorManagementParameters, IO]
         ] = None,
         **kwargs: Any
-    ) -> None:
+    ) -> Optional[_models.OperationStatusResult]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1073,7 +1082,7 @@ class StorageAppliancesOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[_models.OperationStatusResult]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1111,17 +1120,23 @@ class StorageAppliancesOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [200, 202, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = None
         response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize("OperationStatusResult", pipeline_response)
+
         if response.status_code == 202:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
     _enable_remote_vendor_management_initial.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/storageAppliances/{storageApplianceName}/enableRemoteVendorManagement"
@@ -1138,7 +1153,7 @@ class StorageAppliancesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.OperationStatusResult]:
         """Turn on remote vendor management for a storage appliance, if supported.
 
         Enable remote vendor management of the provided storage appliance.
@@ -1163,8 +1178,10 @@ class StorageAppliancesOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns either OperationStatusResult or the result
+         of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1177,7 +1194,7 @@ class StorageAppliancesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.OperationStatusResult]:
         """Turn on remote vendor management for a storage appliance, if supported.
 
         Enable remote vendor management of the provided storage appliance.
@@ -1201,8 +1218,10 @@ class StorageAppliancesOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns either OperationStatusResult or the result
+         of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1215,7 +1234,7 @@ class StorageAppliancesOperations:
             Union[_models.StorageApplianceEnableRemoteVendorManagementParameters, IO]
         ] = None,
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.OperationStatusResult]:
         """Turn on remote vendor management for a storage appliance, if supported.
 
         Enable remote vendor management of the provided storage appliance.
@@ -1241,8 +1260,10 @@ class StorageAppliancesOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns either OperationStatusResult or the result
+         of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1250,12 +1271,12 @@ class StorageAppliancesOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._enable_remote_vendor_management_initial(  # type: ignore
+            raw_result = await self._enable_remote_vendor_management_initial(
                 resource_group_name=resource_group_name,
                 storage_appliance_name=storage_appliance_name,
                 storage_appliance_enable_remote_vendor_management_parameters=storage_appliance_enable_remote_vendor_management_parameters,
@@ -1268,9 +1289,11 @@ class StorageAppliancesOperations:
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("OperationStatusResult", pipeline_response)
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
@@ -1291,233 +1314,4 @@ class StorageAppliancesOperations:
 
     begin_enable_remote_vendor_management.metadata = {
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/storageAppliances/{storageApplianceName}/enableRemoteVendorManagement"
-    }
-
-    async def _run_read_commands_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        storage_appliance_name: str,
-        storage_appliance_run_read_commands_parameters: Union[_models.StorageApplianceRunReadCommandsParameters, IO],
-        **kwargs: Any
-    ) -> None:
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(storage_appliance_run_read_commands_parameters, (IOBase, bytes)):
-            _content = storage_appliance_run_read_commands_parameters
-        else:
-            _json = self._serialize.body(
-                storage_appliance_run_read_commands_parameters, "StorageApplianceRunReadCommandsParameters"
-            )
-
-        request = build_run_read_commands_request(
-            resource_group_name=resource_group_name,
-            storage_appliance_name=storage_appliance_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            template_url=self._run_read_commands_initial.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)
-
-    _run_read_commands_initial.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/storageAppliances/{storageApplianceName}/runReadCommands"
-    }
-
-    @overload
-    async def begin_run_read_commands(
-        self,
-        resource_group_name: str,
-        storage_appliance_name: str,
-        storage_appliance_run_read_commands_parameters: _models.StorageApplianceRunReadCommandsParameters,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Retrieve output from read-only commands exercised against a storage appliance.
-
-        Run and retrieve output from read only commands on the provided storage appliance.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param storage_appliance_name: The name of the storage appliance. Required.
-        :type storage_appliance_name: str
-        :param storage_appliance_run_read_commands_parameters: The request body. Required.
-        :type storage_appliance_run_read_commands_parameters:
-         ~azure.mgmt.networkcloud.models.StorageApplianceRunReadCommandsParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_run_read_commands(
-        self,
-        resource_group_name: str,
-        storage_appliance_name: str,
-        storage_appliance_run_read_commands_parameters: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Retrieve output from read-only commands exercised against a storage appliance.
-
-        Run and retrieve output from read only commands on the provided storage appliance.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param storage_appliance_name: The name of the storage appliance. Required.
-        :type storage_appliance_name: str
-        :param storage_appliance_run_read_commands_parameters: The request body. Required.
-        :type storage_appliance_run_read_commands_parameters: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def begin_run_read_commands(
-        self,
-        resource_group_name: str,
-        storage_appliance_name: str,
-        storage_appliance_run_read_commands_parameters: Union[_models.StorageApplianceRunReadCommandsParameters, IO],
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Retrieve output from read-only commands exercised against a storage appliance.
-
-        Run and retrieve output from read only commands on the provided storage appliance.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param storage_appliance_name: The name of the storage appliance. Required.
-        :type storage_appliance_name: str
-        :param storage_appliance_run_read_commands_parameters: The request body. Is either a
-         StorageApplianceRunReadCommandsParameters type or a IO type. Required.
-        :type storage_appliance_run_read_commands_parameters:
-         ~azure.mgmt.networkcloud.models.StorageApplianceRunReadCommandsParameters or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._run_read_commands_initial(  # type: ignore
-                resource_group_name=resource_group_name,
-                storage_appliance_name=storage_appliance_name,
-                storage_appliance_run_read_commands_parameters=storage_appliance_run_read_commands_parameters,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_run_read_commands.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/storageAppliances/{storageApplianceName}/runReadCommands"
     }

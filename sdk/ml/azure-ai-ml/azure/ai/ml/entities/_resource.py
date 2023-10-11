@@ -15,6 +15,7 @@ from azure.ai.ml._restclient.v2022_10_01 import models
 from azure.ai.ml._telemetry.logging_handler import in_jupyter_notebook
 from azure.ai.ml._utils.utils import dump_yaml
 
+from ..constants._common import BASE_PATH_CONTEXT_KEY
 from ._system_data import SystemData
 
 
@@ -37,7 +38,7 @@ class Resource(abc.ABC):
     :keyword print_as_yaml: Specifies if the the resource should print out as a YAML-formatted object. If False,
         the resource will print out in a more-compact style. By default, the YAML output is only used in Jupyter
         notebooks. Be aware that some bookkeeping values are shown only in the non-YAML output.
-    :type print_as_yaml: bool
+    :paramtype print_as_yaml: bool
     """
 
     def __init__(
@@ -61,7 +62,7 @@ class Resource(abc.ABC):
         # Hide read only properties in kwargs
         self._id = kwargs.pop("id", None)
         self.__source_path: Optional[str] = kwargs.pop("source_path", None)
-        self._base_path = kwargs.pop("base_path", None) or os.getcwd()  # base path should never be None
+        self._base_path = kwargs.pop(BASE_PATH_CONTEXT_KEY, None) or os.getcwd()  # base path should never be None
         self._creation_context = kwargs.pop("creation_context", None)
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -149,7 +150,7 @@ class Resource(abc.ABC):
         :param params_override: Parameters to override, defaults to None
         :type params_override: typing.Optional[list]
         :keyword kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
+        :paramtype kwargs: dict
         :return: Resource
         :rtype: Resource
         """
@@ -162,7 +163,7 @@ class Resource(abc.ABC):
         """Get arm resource.
 
         :keyword kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
+        :paramtype kwargs: dict
 
         :return: Resource
         :rtype: dict
@@ -179,7 +180,7 @@ class Resource(abc.ABC):
         """Get arm resource and parameters.
 
         :keyword kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
+        :paramtype kwargs: dict
 
         :return: Resource and parameters
         :rtype: dict

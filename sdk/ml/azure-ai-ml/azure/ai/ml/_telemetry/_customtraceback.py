@@ -143,9 +143,9 @@ def format_exc(limit: Optional[int] = None, chain: bool = True) -> str:
     """Like print_exc() but return a string.
 
     :param limit: None to include all frames or the number of frames to include.
-    :type limit: Optional[int], optional
+    :type limit: Optional[int]
     :param chain: Whether to format __cause__ and __context__. Defaults to True
-    :type chain: bool, optional
+    :type chain: bool
     :return: The formatted exception string
     :rtype: str
     """
@@ -170,9 +170,9 @@ def format_exception(  # pylint: disable=unused-argument
     :param tb: The exception traceback
     :type tb: types.TracebackType
     :param limit: None to include all frames or the number of frames to include.
-    :type limit: Optional[int], optional
+    :type limit: Optional[int]
     :param chain: Whether to format __cause__ and __context__. Defaults to True
-    :type chain: bool, optional
+    :type chain: bool
     :return: A list of strings, each ending in a newline and some containing internal newlines.
       When these lines are concatenated and printed, exactly the same text is printed as does print_exception().
     :rtype: List[str]

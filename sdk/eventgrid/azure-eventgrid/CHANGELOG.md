@@ -1,14 +1,16 @@
 # Release History
 
-## 4.13.1 (Unreleased)
+## 4.15.0 (2023-10-10)
 
 ### Features Added
 
-### Breaking Changes
+- Added new enum values to `SystemEventNames` related to Azure Communication Services and Azure Resource Notifications.
 
-### Bugs Fixed
+## 4.14.0 (2023-09-13)
 
-### Other Changes
+### Features Added
+
+- Added new enum values to `SystemEventNames` related to Azure App Configuration and Azure EventGrid.
 
 ## 4.13.0 (2023-06-08)
 

@@ -123,9 +123,9 @@ def _get_base_url_from_metadata(cloud_name: Optional[str] = None, is_local_mfe: 
     """Retrieve the base url for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
-    :type cloud_name: Optional[str], optional
+    :type cloud_name: Optional[str]
     :param is_local_mfe: Whether is local Management Front End. Defaults to False.
-    :type is_local_mfe: bool, optional
+    :type is_local_mfe: bool
     :return: base url for a cloud
     :rtype: str
     """
@@ -142,7 +142,7 @@ def _get_aml_resource_id_from_metadata(cloud_name: Optional[str] = None) -> str:
     """Retrieve the aml_resource_id for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
-    :type cloud_name: str, optional
+    :type cloud_name: str
     :return: aml_resource_id for a cloud
     :rtype: str
     """
@@ -155,7 +155,7 @@ def _get_active_directory_url_from_metadata(cloud_name: Optional[str] = None) ->
     """Retrieve the active_directory_url for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
-    :type cloud_name: str, optional
+    :type cloud_name: str
     :return: active_directory for a cloud
     :rtype: str
     """
@@ -168,7 +168,7 @@ def _get_storage_endpoint_from_metadata(cloud_name: Optional[str] = None) -> str
     """Retrieve the storage_endpoint for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
-    :type cloud_name: str, optional
+    :type cloud_name: str
     :return: storage_endpoint for a cloud
     :rtype: str
     """
@@ -181,7 +181,7 @@ def _get_azure_portal_id_from_metadata(cloud_name: Optional[str] = None) -> str:
     """Retrieve the azure_portal_id for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
-    :type cloud_name: str, optional
+    :type cloud_name: str
     :return: azure_portal_id for a cloud
     :rtype: str
     """
@@ -194,7 +194,7 @@ def _get_cloud_information_from_metadata(cloud_name: Optional[str] = None, **kwa
     """Retrieve the cloud information from the metadata in SDK.
 
     :param cloud_name: cloud name
-    :type cloud_name: str, optional
+    :type cloud_name: str
     :return: A dictionary of additional configuration parameters required for passing in cloud information.
     :rtype: Dict
     """
@@ -213,7 +213,7 @@ def _get_registry_discovery_endpoint_from_metadata(cloud_name: Optional[str] = N
     """Retrieve the registry_discovery_endpoint for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
-    :type cloud_name: str, optional
+    :type cloud_name: str
     :return: registry_discovery_endpoint for a cloud
     :rtype: str
     """

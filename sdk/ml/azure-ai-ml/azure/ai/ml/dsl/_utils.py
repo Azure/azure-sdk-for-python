@@ -105,7 +105,7 @@ def _relative_to(
     :param basedir: The base path to compute `path` relative to
     :type basedir: Union[str, os.PathLike]
     :param raises_if_impossible: Whether to raise if :attr:`pathlib.Path.relative_to` throws. Defaults to False.
-    :type raises_if_impossible: bool, optional
+    :type raises_if_impossible: bool
     :return:
         * None if raises_if_impossible is False and basedir is not a parent of path
         * path.relative_to(basedir) otherwise
@@ -150,7 +150,7 @@ def _change_working_dir(path: Union[str, os.PathLike], mkdir: bool = True) -> It
     :param path: The path to change to
     :type path: Union[str, os.PathLike]
     :param mkdir: Whether to ensure `path` exists, creating it if it doesn't exists. Defaults to True.
-    :type mkdir: bool, optional
+    :type mkdir: bool
     """
 
     saved_path = os.getcwd()

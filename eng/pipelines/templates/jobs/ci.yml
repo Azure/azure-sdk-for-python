@@ -5,9 +5,6 @@ parameters:
   - name: Artifacts
     type: object
     default: []
-  - name: CondaArtifacts
-    type: object
-    default: []
   - name: TestPipeline
     type: boolean
     default: false
@@ -115,12 +112,6 @@ jobs:
         BuildDocs: ${{ parameters.BuildDocs }}
         TestPipeline: ${{ parameters.TestPipeline }}
         Artifacts: ${{ parameters.Artifacts }}
-
-    - template: ../steps/build-conda-artifacts.yml
-      parameters:
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        TestPipeline: ${{ parameters.TestPipeline }}
-        CondaArtifacts: ${{ parameters.CondaArtifacts }}
 
   - job: 'Analyze'
     condition: and(succeededOrFailed(), ne(variables['Skip.Analyze'], 'true'))

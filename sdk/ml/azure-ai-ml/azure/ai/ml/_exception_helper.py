@@ -240,9 +240,9 @@ def format_create_validation_error(
     :param yaml_operation: Whether the exception was caused by yaml validation.
     :type yaml_operation: bool
     :param cli: Whether is invoked from Azure CLI AzureML Extension. Defaults to False
-    :type cli: bool, optional
+    :type cli: bool
     :param raw_error: The raw exception message
-    :type raw_error: Optional[str], optional
+    :type raw_error: Optional[str]
     :return: Formatted error message
     :rtype: str
     """

@@ -10,7 +10,7 @@ from typing import Iterable, List, Optional, Union
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._asset_utils import IgnoreFile, get_ignore_file
 from azure.ai.ml._utils.utils import is_private_preview_enabled
-from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AzureMLResourceType
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._validation import MutableValidationResult
 
@@ -22,11 +22,11 @@ class ComponentIgnoreFile(IgnoreFile):
     :param directory_path: The directory path for the ignore file.
     :type directory_path: Union[str, Path]
     :param additional_includes_file_name: Name of the additional includes file in the root directory to be ignored.
-    :type additional_includes_file_name: str, optional
+    :type additional_includes_file_name: str
     :param skip_ignore_file: Whether to skip the ignore file, defaults to False.
-    :type skip_ignore_file: bool, optional
+    :type skip_ignore_file: bool
     :param extra_ignore_list: List of additional ignore files to be considered during file exclusion.
-    :type extra_ignore_list: List[~azure.ai.ml._utils._asset_utils.IgnoreFile], optional
+    :type extra_ignore_list: List[~azure.ai.ml._utils._asset_utils.IgnoreFile]
     :raises ValueError: If additional include file is not found.
     :return: The ComponentIgnoreFile object.
     :rtype: ComponentIgnoreFile
@@ -164,8 +164,8 @@ class ComponentCodeMixin:
         :return: The base path
         :rtype: Path
         """
-        if hasattr(self, "base_path"):
-            return Path(self.base_path)
+        if hasattr(self, BASE_PATH_CONTEXT_KEY):
+            return Path(getattr(self, BASE_PATH_CONTEXT_KEY))
         raise NotImplementedError(
             "Component must have a base_path attribute to use ComponentCodeMixin. "
             "Please set base_path in __init__ or override _get_base_path_for_code."
@@ -189,6 +189,16 @@ class ComponentCodeMixin:
         to a temp folder along with additional includes to form a new code content.
         """
         return getattr(self, self._get_code_field_name(), None)
+
+    def _fill_back_code_value(self, value: str) -> None:
+        """Fill resolved code value back to the component.
+
+        :param value: resolved code value
+        :type value: str
+        :return: no return
+        :rtype: None
+        """
+        return setattr(self, self._get_code_field_name(), value)
 
     def _get_origin_code_in_str(self) -> Optional[str]:
         """Get origin code value in str to simplify following logic."""

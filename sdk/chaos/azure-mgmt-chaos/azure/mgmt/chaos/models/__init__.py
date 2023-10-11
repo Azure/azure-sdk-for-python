@@ -32,11 +32,14 @@ from ._models_py3 import ExperimentListResult
 from ._models_py3 import ExperimentStartOperationResult
 from ._models_py3 import ExperimentStatus
 from ._models_py3 import ExperimentStatusListResult
+from ._models_py3 import ExperimentUpdate
 from ._models_py3 import Filter
 from ._models_py3 import KeyValuePair
+from ._models_py3 import ListSelector
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
+from ._models_py3 import QuerySelector
 from ._models_py3 import Resource
 from ._models_py3 import ResourceIdentity
 from ._models_py3 import Selector
@@ -51,6 +54,7 @@ from ._models_py3 import TargetReference
 from ._models_py3 import TargetType
 from ._models_py3 import TargetTypeListResult
 from ._models_py3 import TrackedResource
+from ._models_py3 import UserAssignedIdentity
 
 from ._chaos_management_client_enums import ActionType
 from ._chaos_management_client_enums import CreatedByType
@@ -58,6 +62,7 @@ from ._chaos_management_client_enums import FilterType
 from ._chaos_management_client_enums import Origin
 from ._chaos_management_client_enums import ResourceIdentityType
 from ._chaos_management_client_enums import SelectorType
+from ._chaos_management_client_enums import TargetReferenceType
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -89,11 +94,14 @@ __all__ = [
     "ExperimentStartOperationResult",
     "ExperimentStatus",
     "ExperimentStatusListResult",
+    "ExperimentUpdate",
     "Filter",
     "KeyValuePair",
+    "ListSelector",
     "Operation",
     "OperationDisplay",
     "OperationListResult",
+    "QuerySelector",
     "Resource",
     "ResourceIdentity",
     "Selector",
@@ -108,12 +116,14 @@ __all__ = [
     "TargetType",
     "TargetTypeListResult",
     "TrackedResource",
+    "UserAssignedIdentity",
     "ActionType",
     "CreatedByType",
     "FilterType",
     "Origin",
     "ResourceIdentityType",
     "SelectorType",
+    "TargetReferenceType",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

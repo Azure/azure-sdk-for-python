@@ -1,5 +1,16 @@
 # Release History
 
+## 3.1.0 (2023-09-21)
+
+### Features Added
+
+  - Model FluxConfiguration has a new parameter reconciliation_wait_duration
+  - Model FluxConfiguration has a new parameter wait_for_reconciliation
+  - Model KustomizationDefinition has a new parameter post_build
+  - Model KustomizationDefinition has a new parameter wait
+  - Model KustomizationPatchDefinition has a new parameter post_build
+  - Model KustomizationPatchDefinition has a new parameter wait
+
 ## 3.0.0 (2023-05-22)
 
 ### Features Added

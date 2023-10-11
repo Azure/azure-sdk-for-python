@@ -127,7 +127,7 @@ class GroupInput(Input):
         :param value: The value to convert.
         :type value: any
         :param group_names: The names of the parent groups.
-        :type group_names: list, optional
+        :type group_names: list
         :return: The converted value as a GroupAttrDict.
         :rtype: GroupAttrDict or any
         """

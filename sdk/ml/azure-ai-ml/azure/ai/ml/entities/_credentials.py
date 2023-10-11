@@ -25,29 +25,30 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
 )
 from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestManagedServiceIdentityConfiguration
 from azure.ai.ml._restclient.v2022_05_01.models import UserAssignedIdentity as RestUserAssignedIdentityConfiguration
-from azure.ai.ml._restclient.v2022_10_01.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     AccountKeyDatastoreCredentials as RestAccountKeyDatastoreCredentials,
 )
-from azure.ai.ml._restclient.v2022_10_01.models import AccountKeyDatastoreSecrets as RestAccountKeyDatastoreSecrets
-from azure.ai.ml._restclient.v2022_10_01.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    AccountKeyDatastoreSecrets as RestAccountKeyDatastoreSecrets,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken as RestAmlToken
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     CertificateDatastoreCredentials as RestCertificateDatastoreCredentials,
 )
-from azure.ai.ml._restclient.v2022_10_01.models import CertificateDatastoreSecrets, CredentialsType
-from azure.ai.ml._restclient.v2022_10_01.models import NoneDatastoreCredentials as RestNoneDatastoreCredentials
-from azure.ai.ml._restclient.v2022_10_01.models import SasDatastoreCredentials as RestSasDatastoreCredentials
-from azure.ai.ml._restclient.v2022_10_01.models import SasDatastoreSecrets as RestSasDatastoreSecrets
-from azure.ai.ml._restclient.v2022_10_01.models import (
-    ServicePrincipalDatastoreCredentials as RestServicePrincipalDatastoreCredentials,
-)
-from azure.ai.ml._restclient.v2022_10_01.models import (
-    ServicePrincipalDatastoreSecrets as RestServicePrincipalDatastoreSecrets,
-)
-
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken as RestAmlToken
+from azure.ai.ml._restclient.v2023_04_01_preview.models import CertificateDatastoreSecrets, CredentialsType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
 from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfigurationType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedIdentity as RestJobManagedIdentity
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedServiceIdentity as RestRegistryManagedIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import NoneDatastoreCredentials as RestNoneDatastoreCredentials
+from azure.ai.ml._restclient.v2023_04_01_preview.models import SasDatastoreCredentials as RestSasDatastoreCredentials
+from azure.ai.ml._restclient.v2023_04_01_preview.models import SasDatastoreSecrets as RestSasDatastoreSecrets
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    ServicePrincipalDatastoreCredentials as RestServicePrincipalDatastoreCredentials,
+)
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    ServicePrincipalDatastoreSecrets as RestServicePrincipalDatastoreSecrets,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     WorkspaceConnectionAccessKey as RestWorkspaceConnectionAccessKey,
@@ -56,11 +57,11 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthTyp
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     WorkspaceConnectionApiKey as RestWorkspaceConnectionApiKey,
 )
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
 from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin, YamlTranslatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException, ValidationErrorType, ValidationException
-from azure.ai.ml._utils._experimental import experimental
 
 
 class _BaseIdentityConfiguration(ABC, DictMixin, RestTranslatableMixin):
@@ -138,7 +139,7 @@ class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START personal_access_token_configuration]
             :end-before: [END personal_access_token_configuration]
             :language: python
@@ -239,7 +240,7 @@ class ServicePrincipalConfiguration(BaseTenantCredentials):
     :param client_secret: The client secret.
     :type client_secret: str
     :keyword kwargs: Additional arguments to pass to the parent class.
-    :type kwargs: Optional[dict]
+    :paramtype kwargs: Optional[dict]
     """
 
     def __init__(
@@ -256,7 +257,7 @@ class ServicePrincipalConfiguration(BaseTenantCredentials):
         secrets = RestServicePrincipalDatastoreSecrets(client_secret=self.client_secret)
         return RestServicePrincipalDatastoreCredentials(
             authority_url=self.authority_url,
-            resource_uri=self.resource_url,
+            resource_url=self.resource_url,
             tenant_id=self.tenant_id,
             client_id=self.client_id,
             secrets=secrets,
@@ -415,13 +416,13 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
     """Managed Identity credential configuration.
 
     :keyword client_id: The client ID of the managed identity.
-    :type client_id: Optional[str]
+    :paramtype client_id: Optional[str]
     :keyword resource_id: The resource ID of the managed identity.
-    :type resource_id: Optional[str]
+    :paramtype resource_id: Optional[str]
     :keyword object_id: The object ID.
-    :type object_id: Optional[str]
+    :paramtype object_id: Optional[str]
     :keyword principal_id: The principal ID.
-    :type principal_id: Optional[str]
+    :paramtype principal_id: Optional[str]
     """
 
     def __init__(
@@ -518,7 +519,7 @@ class UserIdentityConfiguration(_BaseIdentityConfiguration):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../samples/ml_samples_authentication.py
+        .. literalinclude:: ../samples/ml_samples_authentication.py
             :start-after: [START user_identity_configuration]
             :end-before: [END user_identity_configuration]
             :language: python
@@ -562,7 +563,7 @@ class AmlTokenConfiguration(_BaseIdentityConfiguration):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../samples/ml_samples_authentication.py
+        .. literalinclude:: ../samples/ml_samples_authentication.py
             :start-after: [START aml_token_configuration]
             :end-before: [END aml_token_configuration]
             :language: python

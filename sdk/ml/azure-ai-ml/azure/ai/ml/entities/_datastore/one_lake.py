@@ -4,6 +4,7 @@
 
 # pylint: disable=protected-access,no-member
 
+from abc import ABC
 from pathlib import Path
 from typing import Dict, Optional, Union
 
@@ -11,16 +12,51 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     OneLakeDatastore as RestOneLakeDatastore,
     Datastore as DatastoreData,
     DatastoreType,
-    OneLakeArtifact,
+    LakeHouseArtifact as RestLakeHouseArtifact,
+    NoneDatastoreCredentials as RestNoneDatastoreCredentials,
 )
 from azure.ai.ml._schema._datastore.one_lake import OneLakeSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration, ServicePrincipalConfiguration
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.entities._datastore.utils import from_rest_datastore_credentials
+from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml._utils._experimental import experimental
 
 
+@experimental
+class OneLakeArtifact(RestTranslatableMixin, DictMixin, ABC):
+    """OneLake artifact (data source) backing the OneLake workspace.
+
+    :param name: OneLake artifact name/GUID. ex) 01234567-abcd-1234-5678-012345678901
+    :type name: str
+    :param type: OneLake artifact type. Only LakeHouse artifacts are currently supported.
+    :type type: str
+    """
+
+    def __init__(self, *, name: str, type: Optional[str] = None):
+        super().__init__()
+        self.name = name
+        self.type = type
+
+
+@experimental
+class LakeHouseArtifact(OneLakeArtifact):
+    """LakeHouse artifact type for OneLake.
+
+    :param artifact_name: OneLake LakeHouse artifact name/GUID. ex) 01234567-abcd-1234-5678-012345678901
+    :type artifact_name: str
+    """
+
+    def __init__(self, *, name: str):
+        super(LakeHouseArtifact, self).__init__(name=name, type="lake_house")
+
+    def _to_datastore_rest_object(self) -> RestLakeHouseArtifact:
+        return RestLakeHouseArtifact(artifact_name=self.name)
+
+
+@experimental
 class OneLakeDatastore(Datastore):
     """OneLake datastore that is linked to an Azure ML workspace.
 
@@ -40,8 +76,7 @@ class OneLakeDatastore(Datastore):
     :type properties: dict[str, str]
     :param credentials: Credentials to use to authenticate against OneLake.
     :type credentials: Union[
-        ~azure.ai.ml.entities.ServicePrincipalConfiguration, ~azure.ai.ml.entities.NoneCredentialConfiguration
-        ]
+        ~azure.ai.ml.entities.ServicePrincipalConfiguration, ~azure.ai.ml.entities.NoneCredentialConfiguration]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -69,8 +104,10 @@ class OneLakeDatastore(Datastore):
 
     def _to_rest_object(self) -> DatastoreData:
         one_lake_ds = RestOneLakeDatastore(
-            credentials=self.credentials._to_datastore_rest_object(),
-            artifact=self.artifact,
+            credentials=RestNoneDatastoreCredentials()
+            if self.credentials is None
+            else self.credentials._to_datastore_rest_object(),
+            artifact=RestLakeHouseArtifact(artifact_name=self.artifact["name"]),
             one_lake_workspace_name=self.one_lake_workspace_name,
             endpoint=self.endpoint,
             description=self.description,
@@ -88,7 +125,7 @@ class OneLakeDatastore(Datastore):
         return OneLakeDatastore(
             name=datastore_resource.name,
             id=datastore_resource.id,
-            artifact=properties.artifact,
+            artifact=LakeHouseArtifact(name=properties.artifact.artifact_name),
             one_lake_workspace_name=properties.one_lake_workspace_name,
             endpoint=properties.endpoint,
             credentials=from_rest_datastore_credentials(properties.credentials),
@@ -100,7 +137,8 @@ class OneLakeDatastore(Datastore):
         return (
             super().__eq__(other)
             and self.one_lake_workspace_name == other.one_lake_workspace_name
-            and self.artifact == other.artifact
+            and self.artifact.type == other.artifact["type"]
+            and self.artifact.name == other.artifact["name"]
             and self.endpoint == other.endpoint
         )
 

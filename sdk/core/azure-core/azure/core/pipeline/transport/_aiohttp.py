@@ -23,20 +23,17 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from __future__ import annotations
 import sys
-from typing import (
-    Any,
-    Optional,
-    AsyncIterator as AsyncIteratorType,
-    TYPE_CHECKING,
-    overload,
-)
+from typing import Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload, cast, Union, Type
+from types import TracebackType
 from collections.abc import AsyncIterator
 
 import logging
 import asyncio
 import codecs
 import aiohttp
+import aiohttp.client_exceptions
 from multidict import CIMultiDict
 
 from azure.core.configuration import ConnectionConfiguration
@@ -60,6 +57,7 @@ if TYPE_CHECKING:
         HttpRequest as RestHttpRequest,
         AsyncHttpResponse as RestAsyncHttpResponse,
     )
+    from ...rest._aiohttp import RestAioHttpTransportResponse
 
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
@@ -95,6 +93,8 @@ class AioHttpTransport(AsyncHttpTransport):
         self._loop = loop
         self._session_owner = session_owner
         self.session = session
+        if not self._session_owner and not self.session:
+            raise ValueError("session_owner cannot be False if no session is provided")
         self.connection_config = ConnectionConfiguration(**kwargs)
         self._use_env_settings = kwargs.pop("use_env_settings", True)
 
@@ -102,7 +102,12 @@ class AioHttpTransport(AsyncHttpTransport):
         await self.open()
         return self
 
-    async def __aexit__(self, *args):  # pylint: disable=arguments-differ
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
         await self.close()
 
     async def open(self):
@@ -117,8 +122,9 @@ class AioHttpTransport(AsyncHttpTransport):
             if self._loop is not None:
                 clientsession_kwargs["loop"] = self._loop
             self.session = aiohttp.ClientSession(**clientsession_kwargs)
-        if self.session is not None:
-            await self.session.__aenter__()
+        # pyright has trouble to understand that self.session is not None, since we raised at worst in the init
+        self.session = cast(aiohttp.ClientSession, self.session)
+        await self.session.__aenter__()
 
     async def close(self):
         """Closes the connection."""
@@ -169,7 +175,7 @@ class AioHttpTransport(AsyncHttpTransport):
         return request.data
 
     @overload
-    async def send(self, request: HttpRequest, **config: Any) -> Optional[AsyncHttpResponse]:
+    async def send(self, request: HttpRequest, **config: Any) -> AsyncHttpResponse:
         """Send the request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.
@@ -187,7 +193,7 @@ class AioHttpTransport(AsyncHttpTransport):
         """
 
     @overload
-    async def send(self, request: "RestHttpRequest", **config: Any) -> Optional["RestAsyncHttpResponse"]:
+    async def send(self, request: RestHttpRequest, **config: Any) -> RestAsyncHttpResponse:
         """Send the `azure.core.rest` request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.
@@ -204,7 +210,9 @@ class AioHttpTransport(AsyncHttpTransport):
         :keyword str proxy: will define the proxy to use all the time
         """
 
-    async def send(self, request, **config):
+    async def send(
+        self, request: Union[HttpRequest, RestHttpRequest], **config
+    ) -> Union[AsyncHttpResponse, RestAsyncHttpResponse]:
         """Send the request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.
@@ -237,7 +245,7 @@ class AioHttpTransport(AsyncHttpTransport):
                     config["proxy"] = proxies[protocol]
                     break
 
-        response: Optional["HTTPResponseType"] = None
+        response: Optional[Union[AsyncHttpResponse, RestAsyncHttpResponse]] = None
         config["ssl"] = self._build_ssl_config(
             cert=config.pop("connection_cert", self.connection_config.cert),
             verify=config.pop("connection_verify", self.connection_config.verify),
@@ -259,7 +267,7 @@ class AioHttpTransport(AsyncHttpTransport):
                 data=self._get_request_data(request),
                 timeout=socket_timeout,
                 allow_redirects=False,
-                **config
+                **config,
             )
             if _is_rest(request):
                 from azure.core.rest._aiohttp import RestAioHttpTransportResponse
@@ -273,6 +281,9 @@ class AioHttpTransport(AsyncHttpTransport):
                 if not stream_response:
                     await _handle_no_stream_rest_response(response)
             else:
+                # Given the associated "if", this else is legacy implementation
+                # but mypy do not know it, so using a cast
+                request = cast(HttpRequest, request)
                 response = AioHttpTransportResponse(
                     request,
                     result,
@@ -301,7 +312,33 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         on the *content-encoding* header.
     """
 
-    def __init__(self, pipeline: AsyncPipeline, response: AsyncHttpResponse, *, decompress: bool = True) -> None:
+    @overload
+    def __init__(
+        self,
+        pipeline: AsyncPipeline[HttpRequest, AsyncHttpResponse],
+        response: AioHttpTransportResponse,
+        *,
+        decompress: bool = True,
+    ) -> None:
+        ...
+
+    @overload
+    def __init__(
+        self,
+        pipeline: AsyncPipeline[RestHttpRequest, RestAsyncHttpResponse],
+        response: RestAioHttpTransportResponse,
+        *,
+        decompress: bool = True,
+    ) -> None:
+        ...
+
+    def __init__(
+        self,
+        pipeline: AsyncPipeline,
+        response: Union[AioHttpTransportResponse, RestAioHttpTransportResponse],
+        *,
+        decompress: bool = True,
+    ) -> None:
         self.pipeline = pipeline
         self.request = response.request
         self.response = response
@@ -374,7 +411,7 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         aiohttp_response: aiohttp.ClientResponse,
         block_size: Optional[int] = None,
         *,
-        decompress: bool = True
+        decompress: bool = True,
     ) -> None:
         super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
@@ -433,7 +470,9 @@ class AioHttpTransportResponse(AsyncHttpResponse):
                         import chardet  # type: ignore
                     except ImportError:  # pragma: no cover
                         import charset_normalizer as chardet  # type: ignore[no-redef]
-                encoding = chardet.detect(body)["encoding"]
+                # While "detect" can return a dict of float, in this context this won't happen
+                # The cast is for pyright to be happy
+                encoding = cast(Optional[str], chardet.detect(body)["encoding"])
         if encoding == "utf-8" or encoding is None:
             encoding = "utf-8-sig"
 
@@ -454,7 +493,9 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         except aiohttp.client_exceptions.ClientError as err:
             raise ServiceRequestError(err, error=err) from err
 
-    def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:
+    def stream_download(
+        self, pipeline: AsyncPipeline[HttpRequest, AsyncHttpResponse], **kwargs
+    ) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
 
         :param pipeline: The pipeline object

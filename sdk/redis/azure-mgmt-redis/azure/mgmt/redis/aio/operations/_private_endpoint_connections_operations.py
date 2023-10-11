@@ -67,7 +67,8 @@ class PrivateEndpointConnectionsOperations:
     ) -> AsyncIterable["_models.PrivateEndpointConnection"]:
         """List all the private endpoint connections associated with the redis cache.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param cache_name: The name of the Redis cache. Required.
         :type cache_name: str
@@ -160,7 +161,8 @@ class PrivateEndpointConnectionsOperations:
     ) -> _models.PrivateEndpointConnection:
         """Gets the specified private endpoint connection associated with the redis cache.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param cache_name: The name of the Redis cache. Required.
         :type cache_name: str
@@ -309,7 +311,8 @@ class PrivateEndpointConnectionsOperations:
     ) -> AsyncLROPoller[_models.PrivateEndpointConnection]:
         """Update the state of specified private endpoint connection associated with the redis cache.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param cache_name: The name of the Redis cache. Required.
         :type cache_name: str
@@ -348,7 +351,8 @@ class PrivateEndpointConnectionsOperations:
     ) -> AsyncLROPoller[_models.PrivateEndpointConnection]:
         """Update the state of specified private endpoint connection associated with the redis cache.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param cache_name: The name of the Redis cache. Required.
         :type cache_name: str
@@ -385,7 +389,8 @@ class PrivateEndpointConnectionsOperations:
     ) -> AsyncLROPoller[_models.PrivateEndpointConnection]:
         """Update the state of specified private endpoint connection associated with the redis cache.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param cache_name: The name of the Redis cache. Required.
         :type cache_name: str
@@ -466,7 +471,8 @@ class PrivateEndpointConnectionsOperations:
     ) -> None:
         """Deletes the specified private endpoint connection associated with the redis cache.
 
-        :param resource_group_name: The name of the resource group. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param cache_name: The name of the Redis cache. Required.
         :type cache_name: str
