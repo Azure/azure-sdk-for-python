@@ -4,6 +4,7 @@
 
 #### Features Added
 * Added Support for Subpartitioning in Python SDK. See [PR 31121](https://github.com/Azure/azure-sdk-for-python/pull/31121)
+* Added Support for Priority Based Throttling (Also known as Priority Based Execution). See [PR 32441](https://github.com/Azure/azure-sdk-for-python/pull/32441/)
 
 #### Breaking Changes
 
