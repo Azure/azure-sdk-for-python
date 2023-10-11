@@ -15,11 +15,11 @@ def test_interactive_browser_cred_with_broker():
     assert cred._allow_broker
     assert cred._get_app()._enable_broker
 
+    cred = InteractiveBrowserBrokerCredential()
+    assert cred._allow_broker
+    assert cred._get_app()._enable_broker
 
 def test_interactive_browser_cred_without_broker():
-    cred = InteractiveBrowserBrokerCredential()
-    assert not cred._allow_broker
-
     cred = InteractiveBrowserBrokerCredential(allow_broker=False)
     assert not cred._allow_broker
 
@@ -30,10 +30,10 @@ def test_username_password_cred_with_broker():
     assert cred._allow_broker
     assert cred._get_app()._enable_broker
 
-
-def test_username_password_cred_without_broker():
     cred = UsernamePasswordBrokerCredential("client-id", "username", "password")
     assert not cred._allow_broker
+    assert cred._get_app()._enable_broker
 
+def test_username_password_cred_without_broker():
     cred = UsernamePasswordBrokerCredential("client-id", "username", "password", allow_broker=False)
     assert not cred._allow_broker
