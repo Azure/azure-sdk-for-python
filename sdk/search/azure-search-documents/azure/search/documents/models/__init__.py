@@ -40,6 +40,7 @@ from .._generated.models import (
     SearchMode,
     SemanticErrorHandling,
     QueryDebugMode,
+    VectorFilterMode,
     VectorQuery,
     VectorQueryKind,
 )
@@ -63,6 +64,7 @@ __all__ = (
     "SearchMode",
     "SemanticErrorHandling",
     "QueryDebugMode",
+    "VectorFilterMode",
     "VectorQuery",
-    "VectorQueryKind",
+    "VectorQueryKind",""
 )

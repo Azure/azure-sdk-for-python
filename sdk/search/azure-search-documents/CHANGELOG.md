@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `vector_filter_mode` support for `Search` method.
+
 ### Breaking Changes
 
 ### Bugs Fixed
