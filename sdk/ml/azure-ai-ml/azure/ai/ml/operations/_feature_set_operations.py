@@ -6,6 +6,7 @@
 
 import json
 import os
+from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Union
@@ -14,7 +15,7 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
+from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningServices as ServiceClient082023Preview
 from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningServices as ServiceClient102023
 from azure.ai.ml._restclient.v2023_10_01.models import (
     FeaturesetVersion,
@@ -151,23 +152,24 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :return: An instance of LROPoller that returns a FeatureSet.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureSet]
         """
+        featureset_copy = deepcopy(featureset)
 
-        featureset_spec = self._validate_and_get_feature_set_spec(featureset)
-        featureset.properties["featuresetPropertiesVersion"] = "1"
-        featureset.properties["featuresetProperties"] = json.dumps(featureset_spec._to_dict())
+        featureset_spec = self._validate_and_get_feature_set_spec(featureset_copy)
+        featureset_copy.properties["featuresetPropertiesVersion"] = "1"
+        featureset_copy.properties["featuresetProperties"] = json.dumps(featureset_spec._to_dict())
 
         sas_uri = None
-        featureset, _ = _check_and_upload_path(
-            artifact=featureset, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.FEATURE_SET
+        featureset_copy, _ = _check_and_upload_path(
+            artifact=featureset_copy, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.FEATURE_SET
         )
 
-        featureset_resource = FeatureSet._to_rest_object(featureset)
+        featureset_resource = FeatureSet._to_rest_object(featureset_copy)
 
         return self._operation.begin_create_or_update(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
-            name=featureset.name,
-            version=featureset.version,
+            name=featureset_copy.name,
+            version=featureset_copy.version,
             body=featureset_resource,
             **kwargs,
             cls=lambda response, deserialized, headers: FeatureSet._from_rest_object(deserialized),

@@ -10,7 +10,7 @@
       "windows-2022": { "OSVmImage": "MMS2022", "Pool": "azsdk-pool-mms-win-2022-general" },
       "macos-11": { "OSVmImage": "macos-11", "Pool": "Azure Pipelines" }
     },
-    "PythonVersion": [ "pypy3.9", "3.7", "3.8", "3.10" ],
+    "PythonVersion": [ "pypy3.9", "3.7", "3.8", "3.10", "3.11" ],
     "CoverageArg": "--disablecov",
     "TestSamples": "false"
   },
@@ -28,10 +28,10 @@
     },
     {
       "Config": {
-        "Ubuntu2004_311": {
+        "Ubuntu2004_3120": {
           "OSVmImage": "MMSUbuntu20.04",
           "Pool": "azsdk-pool-mms-ubuntu-2004-general",
-          "PythonVersion": "3.11",
+          "PythonVersion": "3.12.0",
           "CoverageArg": "--disablecov",
           "TestSamples": "false"
         }
