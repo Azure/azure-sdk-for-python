@@ -63,6 +63,47 @@ class AutoMLNLPSamples(object):
         )
         # [END automl.text_ner]
 
+        # [START automl.automl_nlp_job.text_classification_job]
+        from azure.ai.ml import automl, Input
+        from azure.ai.ml.constants import AssetTypes
+        text_classification_job = automl.TextClassificationJob(
+            experiment_name="my_experiment",
+            compute="my_compute",
+            training_data=Input(type=AssetTypes.MLTABLE, path="./training-mltable-folder"),
+            validation_data=Input(type=AssetTypes.MLTABLE, path="./validation-mltable-folder"),
+            target_column_name="terms",
+            tags={"my_custom_tag": "My custom value"},
+        )
+        # [END automl.automl_nlp_job.text_classification_job]
+
+        # [START automl.text_classification_multilabel_job]
+        from azure.ai.ml import automl, Input
+        from azure.ai.ml.constants import AssetTypes
+
+        text_classification_multilabel_job = automl.TextClassificationMultilabelJob(
+            experiment_name="my_experiment",
+            compute="my_compute",
+            training_data=Input(type=AssetTypes.MLTABLE, path="./training-mltable-folder"),
+            validation_data=Input(type=AssetTypes.MLTABLE, path="./validation-mltable-folder"),
+            target_column_name="terms",
+            primary_metric="accuracy",
+            tags={"my_custom_tag": "My custom value"},
+        )
+        # [END automl.text_classification_multilabel_job]
+
+        # [START automl.text_ner_job]
+        from azure.ai.ml import automl, Input
+        from azure.ai.ml.constants import AssetTypes
+
+        text_ner_job = automl.TextNerJob(
+            experiment_name="my_experiment",
+            compute="my_compute",
+            training_data=Input(type=AssetTypes.MLTABLE, path="./training-mltable-folder"),
+            validation_data=Input(type=AssetTypes.MLTABLE, path="./validation-mltable-folder"),
+            tags={"my_custom_tag": "My custom value"},
+        )
+        # [END automl.text_ner_job]
+
 
 if __name__ == "__main__":
     sample = AutoMLNLPSamples()

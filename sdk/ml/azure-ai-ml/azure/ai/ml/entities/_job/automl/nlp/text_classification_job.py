@@ -40,6 +40,15 @@ class TextClassificationJob(AutoMLNLPJob):
     :type primary_metric: Optional[~azure.ai.ml.automl.ClassificationPrimaryMetrics]
     :param log_verbosity: Log verbosity level, defaults to None
     :type log_verbosity: Optional[str]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_nlp.py
+                :start-after: [START automl.automl_nlp_job.text_classification_job]
+                :end-before: [END automl.automl_nlp_job.text_classification_job]
+                :language: python
+                :dedent: 8
+                :caption: creating an automl text classification job
     """
 
     _DEFAULT_PRIMARY_METRIC = ClassificationPrimaryMetrics.ACCURACY

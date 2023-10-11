@@ -39,6 +39,15 @@ class TextNerJob(AutoMLNLPJob):
     :type primary_metric: Optional[str]
     :param log_verbosity: Log verbosity level, defaults to None
     :type log_verbosity: Optional[str]
+
+    .. admonition:: Example:
+
+    .. literalinclude:: ../samples/ml_samples_automl_nlp.py
+            :start-after: [START automl.text_ner_job]
+            :end-before: [END automl.text_ner_job]
+            :language: python
+            :dedent: 8
+            :caption: creating an automl text ner job
     """
 
     _DEFAULT_PRIMARY_METRIC = ClassificationPrimaryMetrics.ACCURACY
