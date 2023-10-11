@@ -31,7 +31,6 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
 )
 
-from .models import LocationMode
 from .authentication import SharedKeyCredentialPolicy
 from .constants import CONNECTION_TIMEOUT, DEFAULT_OAUTH_SCOPE, READ_TIMEOUT, SERVICE_HOST_BASE, STORAGE_OAUTH_SCOPE
 from .models import LocationMode, StorageConfiguration
