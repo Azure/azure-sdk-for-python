@@ -402,10 +402,13 @@ def find_sdist(dist_dir: str, pkg_name: str, pkg_version: str) -> str:
     return packages[0]
 
 
-def pip_install(requirements: List[str], include_dependencies: bool = True) -> bool:
+def pip_install(requirements: List[str], include_dependencies: bool = True, python_executable: str = None) -> bool:
     """
     Attempts to invoke an install operation using the invoking python's pip. Empty requirements are auto-success.
     """
+
+    exe = python_executable or sys.executable
+
     command = [sys.executable, "-m", "pip", "install"]
 
     if requirements:
@@ -420,11 +423,12 @@ def pip_install(requirements: List[str], include_dependencies: bool = True) -> b
         return False
 
 
-def pip_uninstall(requirements: List[str]) -> bool:
+def pip_uninstall(requirements: List[str], python_executable: str) -> bool:
     """
     Attempts to invoke an install operation using the invoking python's pip. Empty requirements are auto-success.
     """
-    command = [sys.executable, "-m", "pip", "uninstall", "-y"]
+    exe = python_executable or sys.executable
+    command = [exe, "-m", "pip", "uninstall", "-y"]
 
     if requirements:
         command.extend([req.strip() for req in requirements])
@@ -438,14 +442,16 @@ def pip_uninstall(requirements: List[str]) -> bool:
         return False
 
 
-def pip_install_requirements_file(requirements_file: str) -> bool:
-    return pip_install(["-r", requirements_file])
+def pip_install_requirements_file(requirements_file: str, python_executable: str = None) -> bool:
+    return pip_install(["-r", requirements_file], True, python_executable)
 
 
-def get_pip_list_output():
+def get_pip_list_output(python_executable: str = None):
     """Uses the invoking python executable to get the output from pip list."""
+    exe = python_executable or sys.executable
+
     out = subprocess.Popen(
-        [sys.executable, "-m", "pip", "list", "--disable-pip-version-check", "--format", "freeze"],
+        [exe, "-m", "pip", "list", "--disable-pip-version-check", "--format", "freeze"],
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
     )
@@ -466,10 +472,12 @@ def get_pip_list_output():
     return collected_output
 
 
-def pytest(args: [], cwd: str = None) -> bool:
+def pytest(args: [], cwd: str = None, python_executable: str = None) -> bool:
     """
     Invokes a set of tests, returns true if successful, false otherwise.
     """
+
+    exe = python_executable or sys.executable
 
     commands = [
         sys.executable,

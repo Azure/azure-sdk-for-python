@@ -22,73 +22,24 @@ from ci_tools.functions import (
     pip_install_requirements_file,
     pip_install,
     pip_uninstall,
+    cleanup_directory,
 )
 from ci_tools.build import cleanup_build_artifacts, create_package
 from ci_tools.parsing import ParsedSetup, parse_require, parse_freeze_output
 from ci_tools.functions import get_package_from_repo, find_whl, get_pip_list_output, pytest
+from ci_tools.scenario import ManagedVirtualEnv
 
 
-PACKAGES_EXCLUDED_FROM_CLEANUP: List[str] = [
-    "azure-sdk-tools",
-    "certifi",
-    "cffi",
-    "azure-devtools",
-    "packaging",
-    "pip",
-    "pluggy",
-    "typing-extensions",
-    "execnet",
-    "tomli",
-    "tomli-w",
-    "wheel",
-    "wrapt",
-    "six",
-    "urllib3",
-    "setuptools",
-    "pyproject-api",
-    "pytest",
-    "pytest-asyncio",
-    "pytest-cov",
-    "pytest-custom-exit-code",
-    "pytest-xdist",
-    "python-dotenv",
-]
-
-
-def clean_environment(
-    package_folder: str, config: str, excluded_packages: List[str] = PACKAGES_EXCLUDED_FROM_CLEANUP
-) -> None:
+def prepare_environment(package_folder: str, venv_directory: str) -> str:
     """
-    Takes an existing temp directory which contains a scenario_<scenarioname>_pin file. This file is the result of a pip freeze()
-    operation _after_ the scenario file has been installed.
+    Empties the venv_directory directory and creates a virtual environment within. Returns the path to the new python executable.
     """
-    freeze_file = os.path.join(package_folder, f"scenario_{config}_freeze.txt")
+    if os.path.exists(venv_directory):
+        cleanup_directory(venv_directory)
 
-    if not os.path.exists(freeze_file):
-        return
+    venv = ManagedVirtualEnv(venv_directory)
 
-    all = list(parse_freeze_output(freeze_file).keys())
-    remainder = list(set(all) - set(excluded_packages))
-
-    pip_uninstall(remainder)
-
-
-def freeze_environment(package_folder: str, config: str) -> List[str]:
-    freeze_file = os.path.join(package_folder, f"scenario_{config}_freeze.txt")
-    packages = get_pip_list_output()
-
-    with open(freeze_file, "w", encoding="utf-8") as f:
-        f.write("\n".join([f"{key}=={packages[key]}" for key in packages.keys()]))
-
-    return packages
-
-
-def create_requirements_file(package_folder: str, optional_definition: str):
-    pass
-
-
-def run_tests(package_folder: str):
-    pass
+    return venv.python_executable
 
 
 def create_scenario_file(package_folder: str, optional_config: str) -> str:
@@ -123,11 +74,15 @@ def create_package_and_install(
     force_create: bool,
     package_type: str,
     pre_download_disabled: bool,
+    python_executable: str = None,
 ) -> None:
     """
     Workhorse for singular package installation given a package and a possible prebuilt wheel directory. Handles installation of both package AND dependencies, handling compatibility
     issues where possible.
     """
+
+    python_exe = python_executable or sys.executable
+
     commands_options = []
     built_pkg_path = ""
     setup_py_path = os.path.join(target_setup, "setup.py")
@@ -179,7 +134,7 @@ def create_package_and_install(
                     )
 
                     download_command = [
-                        sys.executable,
+                        python_exe,
                         "-m",
                         "pip",
                         "download",
@@ -195,7 +150,7 @@ def create_package_and_install(
                     for req in azure_requirements:
                         addition_necessary = True
                         # get all installed packages
-                        installed_pkgs = get_pip_list_output()
+                        installed_pkgs = get_pip_list_output(python_exe)
 
                         # parse the specifier
                         req_name, req_specifier = parse_require(req)
@@ -232,7 +187,7 @@ def create_package_and_install(
                             os.path.abspath(os.path.join(tmp_dl_folder, pth)) for pth in os.listdir(tmp_dl_folder)
                         ] + [get_package_from_repo(relative_req).folder for relative_req in non_present_reqs]
 
-            commands = [sys.executable, "-m", "pip", "install", built_pkg_path]
+            commands = [python_exe, "-m", "pip", "install", built_pkg_path]
             commands.extend(additional_downloaded_reqs)
             commands.extend(commands_options)
 
@@ -402,9 +357,7 @@ def prepare_and_test(mapped_args: argparse.Namespace) -> int:
 
     for config in optional_configs:
         env_name = config.get("name")
-
-        # clean if necessary
-        clean_environment(mapped_args.target, env_name)
+        environment_exe = prepare_environment(mapped_args.target, mapped_args.temp_dir)
 
         # install package
         create_package_and_install(
@@ -416,31 +369,38 @@ def prepare_and_test(mapped_args: argparse.Namespace) -> int:
             force_create=False,
             package_type="wheel",
             pre_download_disabled=False,
+            python_executable=environment_exe,
         )
 
         # install the dev requirements
-        install_result = pip_install_requirements_file(os.path.join(mapped_args.target, "dev_requirements.txt"))
+        install_result = pip_install_requirements_file(
+            os.path.join(mapped_args.target, "dev_requirements.txt"), environment_exe
+        )
 
         if not install_result:
-            logging.error(f"Unable to complete installation of dev_requirements.txt for {parsed_package.name}, check command output above.")
+            logging.error(
+                f"Unable to complete installation of dev_requirements.txt for {parsed_package.name}, check command output above."
+            )
             config_results.append(False)
             break
 
         additional_installs = config.get("install", [])
-        install_result = pip_install(additional_installs)
+        install_result = pip_install(additional_installs, python_executable=environment_exe)
         if not install_result:
-            logging.error(f"Unable to complete installation of additional packages {additional_installs} for {parsed_package.name}, check command output above.")
+            logging.error(
+                f"Unable to complete installation of additional packages {additional_installs} for {parsed_package.name}, check command output above."
+            )
             config_results.append(False)
             break
 
         # uninstall anything additional
         uninstall_result = pip_uninstall(config.get("uninstall", []))
         if not uninstall_result:
-            logging.error(f"Unable to complete installation of additional packages {additional_installs} for {parsed_package.name}, check command output above.")
+            logging.error(
+                f"Unable to complete installation of additional packages {additional_installs} for {parsed_package.name}, check command output above."
+            )
             config_results.append(False)
             break
-
-        packages = freeze_environment(mapped_args.target, env_name)
 
         # invoke tests with custom arguments if need be
         pytest_args = [
@@ -459,7 +419,7 @@ def prepare_and_test(mapped_args: argparse.Namespace) -> int:
 
         logging.info(f"Invoking tests for package {parsed_package.name} and optional environment {env_name}")
 
-        config_results.append(pytest(pytest_args))
+        config_results.append(pytest(pytest_args, python_executable=environment_exe))
 
     if all(config_results):
         logging.info(f"All optional environment(s) for {parsed_package.name} completed successfully.")
