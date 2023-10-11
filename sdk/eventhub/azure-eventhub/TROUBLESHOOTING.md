@@ -201,6 +201,7 @@ When filing GitHub issues, the following details are requested:
 [GetConnectionString]: https://docs.microsoft.com/azure/event-hubs/event-hubs-get-connection-string
 [IoTEventHubEndpoint]: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messages-read-builtin
 [IoTHubSAS]: https://docs.microsoft.com/azure/iot-hub/iot-hub-dev-guide-sas#security-tokens
+[TroubleshootAuthenticationAuthorization]: https://docs.microsoft.com/azure/event-hubs/troubleshoot-authentication-authorization
 
 <!-- external links -->
 [AuthenticationAndTheAzureSDK]: https://devblogs.microsoft.com/azure-sdk/authentication-and-the-azure-sdk
