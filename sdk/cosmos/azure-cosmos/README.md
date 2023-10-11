@@ -631,6 +631,19 @@ replace_item_operation = {"operationType": "Replace",
                           "partitionKey": "replace_item",
                           "resourceBody": {"id": "replace_item", "message": "item was replaced"}}
 ```
+- Patch
+```python
+patch_item_operation = {"operationType": "Patch",
+                        "id": "patch_item",
+                        "partitionKey": "patch_item",
+                        "resourceBody": {"operations": [
+                            {"op": "add", "path": "/favorite_color", "value": "red"},
+                            {"op": "remove", "path": "/ttl"},
+                            {"op": "replace", "path": "/tax_amount", "value": 14},
+                            {"op": "set", "path": "/items/0/discount", "value": 20.0512},
+                            {"op": "incr", "path": "/total_due", "value": 5},
+                            {"op": "move", "from": "/freight", "path": "/service_addition"}]}}
+```
 - Delete
 ```python
 delete_item_operation = {"operationType": "Delete",
