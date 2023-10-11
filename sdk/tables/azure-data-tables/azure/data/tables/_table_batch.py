@@ -71,6 +71,8 @@ class TableBatchOperations(object):
         return len(self.requests)
 
     def _verify_partition_key(self, entity: EntityType) -> None:
+        if "PartitionKey" not in entity or "RowKey" not in entity:
+            raise ValueError("PartitionKey and/or RowKey were not provided in entity")
         if self._partition_key is None:
             self._partition_key = entity["PartitionKey"]
         elif entity["PartitionKey"] != self._partition_key:
@@ -95,6 +97,7 @@ class TableBatchOperations(object):
         except AttributeError as exc:
             raise ValueError(f"Unrecognized operation: {operation}") from exc
 
+
     def create(self, entity: EntityType, **kwargs) -> None:
         """Adds an insert operation to the current batch.
 
@@ -113,13 +116,10 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
-        if "PartitionKey" in entity and "RowKey" in entity:
-            entity = _add_entity_properties(entity)
-        else:
-            raise ValueError("PartitionKey and/or RowKey were not provided in entity")
+        entity = _add_entity_properties(entity)
         request = build_table_insert_entity_request(
             table=self.table_name,
-            json=cast(Mapping[str, Any], entity),
+            json=entity,
             version=self._config.version,
             **kwargs
         )

@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from binascii import hexlify
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Union, Any, Mapping
 from uuid import UUID
 from datetime import datetime
 from math import isnan
@@ -12,7 +12,7 @@ from enum import Enum
 
 from azure.core import MatchConditions
 
-from ._entity import EdmType
+from ._entity import EdmType, TableEntity
 from ._common_conversion import _encode_base64, _to_utc_datetime
 from ._error import _ERROR_VALUE_TOO_LARGE, _ERROR_TYPE_NOT_SUPPORTED
 
@@ -189,7 +189,7 @@ _EDM_TO_ENTITY_CONVERSIONS = {
 }
 
 
-def _add_entity_properties(source):
+def _add_entity_properties(source: Union[TableEntity, Mapping[str, Any]]) -> Dict[str, Any]:
     """Converts an entity object to json to send.
     The entity format is:
     {
