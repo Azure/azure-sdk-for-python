@@ -10,6 +10,8 @@ from functools import partial
 from pathlib import Path
 from typing import Any, Dict, Generator, List, Optional, Union
 
+from typing_extensions import Literal
+
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2023_04_01_preview.models import PipelineJob as RestPipelineJob
 from azure.ai.ml._schema import PathAwareSchema
@@ -255,7 +257,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         return ["component", "jobs"]
 
     @property
-    def _skip_required_compute_missing_validation(self) -> bool:
+    def _skip_required_compute_missing_validation(self) -> Literal[True]:
         return True
 
     def _validate_compute_is_set(self) -> MutableValidationResult:
