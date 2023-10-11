@@ -184,7 +184,7 @@ class PartitionKey(dict):
 
         kind = self.kind
         if kind == 'Hash':
-            version = self.version or 1
+            version = self.version or 2
             if version == 1:
                 return self._get_effective_partition_key_for_hash_partitioning()
             elif version == 2:
