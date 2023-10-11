@@ -13,6 +13,7 @@ inputs:
     type: uri_file
     path: https://azuremlexamples.blob.core.windows.net/datasets/iris.csv
     mode: ro_mount
+  instance_count: 1
 
 outputs:
   job_out_path_1:
@@ -25,12 +26,12 @@ jobs:
     type: parallel
     compute: "azureml:cpu-cluster"
     inputs:
-      test1: ${{parent.inputs.job_data_path}}
+      job_data_path: ${{parent.inputs.job_data_path}}
     outputs:
       scored_result: ${{parent.outputs.job_out_path_1}}
 
     resources:
-      instance_count: 3
+      instance_count: ${{parent.inputs.instance_count}}
     mini_batch_size: "100kb"
     mini_batch_error_threshold: 5
     logging_level: "DEBUG"
@@ -42,4 +43,4 @@ jobs:
       code: "../python"
       entry_script: pass_through.py
       append_row_to: ${{outputs.scored_result}} # optional, If Null, equals to summary_only mode in v1.
-      environment: azureml:my-env:1
+      environment: azureml:AzureML-Minimal:2
