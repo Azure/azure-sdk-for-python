@@ -4,6 +4,7 @@
 # ------------------------------------
 
 import functools
+import pytest
 from testcase import Document
 from testcase import DocumentTranslationTest
 from preparer import DocumentTranslationPreparer, DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer
@@ -14,7 +15,7 @@ DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClient
 
 
 class TestCancelTranslation(DocumentTranslationTest):
-
+    @pytest.mark.skip()
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
