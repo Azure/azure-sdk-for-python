@@ -1,9 +1,10 @@
 # Release History
 
-## 12.14.0b1 (Unreleased)
+## 12.13.2 (2023-10-10)
 
-### Features Added
-
+### Bugs Fixed
+- Fixed an issue when an invalid type was provided for `credential` during client construction, the
+`__str__` of the object would be present in the exception message and therefore potentially logged.
 
 ## 12.13.1 (2023-09-13)
 

@@ -136,7 +136,7 @@ class ContainerProxy(object):
             range statistics in response headers.
         :keyword bool populate_quota_info: Enable returning collection storage quota information in response headers.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be retrieved.
             This includes if the container does not exist.
@@ -158,15 +158,12 @@ class ContainerProxy(object):
             request_options["populatePartitionKeyRangeStatistics"] = populate_partition_key_range_statistics
         if populate_quota_info is not None:
             request_options["populateQuotaInfo"] = populate_quota_info
-
         collection_link = self.container_link
         self._properties = self.client_connection.ReadContainer(
             collection_link, options=request_options, **kwargs
         )
-
         if response_hook:
             response_hook(self.client_connection.last_response_headers, self._properties)
-
         return cast('Dict[str, Any]', self._properties)
 
     @distributed_trace
@@ -174,7 +171,7 @@ class ContainerProxy(object):
         self,
         item,  # type: Union[str, Dict[str, Any]]
         partition_key,  # type: Any
-        populate_query_metrics=None,  # type: Optional[bool]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         post_trigger_include=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
@@ -182,10 +179,12 @@ class ContainerProxy(object):
         """Get the item identified by `item`.
 
         :param item: The ID (name) or dict representing item to retrieve.
+        :type item: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the item to retrieve.
-        :param post_trigger_include: trigger id to be used as post operation trigger.
+        :type partition_key: Union[str, int, float, bool]
+        :param str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
@@ -193,9 +192,7 @@ class ContainerProxy(object):
         :returns: Dict representing the item to be retrieved.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
         :rtype: dict[str, Any]
-
         .. admonition:: Example:
-
             .. literalinclude:: ../samples/examples.py
                 :start-after: [START update_item]
                 :end-before: [END update_item]
@@ -216,6 +213,7 @@ class ContainerProxy(object):
                 UserWarning,
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
+
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
         max_integrated_cache_staleness_in_ms = kwargs.pop('max_integrated_cache_staleness_in_ms', None)
@@ -232,21 +230,21 @@ class ContainerProxy(object):
     def read_all_items(
         self,
         max_item_count=None,  # type: Optional[int]
-        populate_query_metrics=None,  # type: Optional[bool]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
         """List all the items in the container.
 
-        :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
         :returns: An Iterable of items (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :rtype: Iterable[Dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -285,13 +283,14 @@ class ContainerProxy(object):
         # type: (...) -> Iterable[Dict[str, Any]]
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
-        :param partition_key_range_id: ChangeFeed requests can be executed against specific partition key ranges.
+        :param str partition_key_range_id: ChangeFeed requests can be executed against specific partition key ranges.
             This is used to process the change feed in parallel across multiple consumers.
-        :param partition_key: partition key at which ChangeFeed requests are targetted.
-        :param is_start_from_beginning: Get whether change feed should start from
+        :param bool is_start_from_beginning: Get whether change feed should start from
             beginning (true) or from current (false). By default, it's start from current (false).
-        :param continuation: e_tag value to be used as continuation for reading change feed.
-        :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :param str continuation: e_tag value to be used as continuation for reading change feed.
+        :param int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword partition_key: partition key at which ChangeFeed requests are targeted.
+        :paramtype partition_key: Union[str, int, float, bool]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[dict[str, Any]]
@@ -329,7 +328,7 @@ class ContainerProxy(object):
         enable_cross_partition_query=None,  # type: Optional[bool]
         max_item_count=None,  # type: Optional[int]
         enable_scan_in_query=None,  # type: Optional[bool]
-        populate_query_metrics=None,  # type: Optional[bool]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
@@ -340,20 +339,22 @@ class ContainerProxy(object):
         name is "products," and is aliased as "p" for easier referencing in
         the WHERE clause.
 
-        :param query: The Azure Cosmos DB SQL query to execute.
+        :param str query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.
-        :param partition_key: Specifies the partition key value for the item.
-        :param enable_cross_partition_query: Allows sending of more than one request to
+        :type parameters: [List[Dict[str, object]]]
+        :param partition_key: partition key at which the query request is targeted.
+        :type partition_key: Union[str, int, float, bool]
+        :param bool enable_cross_partition_query: Allows sending of more than one request to
             execute the query in the Azure Cosmos DB service.
             More than one request is necessary if the query is not scoped to single partition key value.
-        :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param enable_scan_in_query: Allow scan on the queries which couldn't be served as
+        :param int max_item_count: Max number of items to be returned in the enumeration operation.
+        :param bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
+        :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :keyword int continuation_token_limit: **provisional keyword** The size limit in kb of the
         response continuation token in the query response. Valid values are positive integers.
@@ -439,7 +440,7 @@ class ContainerProxy(object):
         self,
         item,  # type: Union[str, Dict[str, Any]]
         body,  # type: Dict[str, Any]
-        populate_query_metrics=None,  # type: Optional[bool]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         pre_trigger_include=None,  # type: Optional[str]
         post_trigger_include=None,  # type: Optional[str]
         **kwargs  # type: Any
@@ -450,19 +451,21 @@ class ContainerProxy(object):
         If the item does not already exist in the container, an exception is raised.
 
         :param item: The ID (name) or dict representing item to be replaced.
+        :type item: Union[str, Dict[str, Any]]
         :param body: A dict-like object representing the item to replace.
-        :param pre_trigger_include: trigger id to be used as pre operation trigger.
-        :param post_trigger_include: trigger id to be used as post operation trigger.
+        :type body: Dict[str, Any]
+        :param str pre_trigger_include: trigger id to be used as pre operation trigger.
+        :param str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the item after replace went through.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace failed or the item with
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace operation failed or the item with
             given id does not exist.
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         item_link = self._get_document_link(item)
         request_options = build_options(kwargs)
@@ -490,7 +493,7 @@ class ContainerProxy(object):
     def upsert_item(
         self,
         body,  # type: Dict[str, Any]
-        populate_query_metrics=None,  # type: Optional[bool]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         pre_trigger_include=None,  # type: Optional[str]
         post_trigger_include=None,  # type: Optional[str]
         **kwargs  # type: Any
@@ -502,17 +505,18 @@ class ContainerProxy(object):
         does not already exist, it is inserted.
 
         :param body: A dict-like object representing the item to update or insert.
-        :param pre_trigger_include: trigger id to be used as pre operation trigger.
-        :param post_trigger_include: trigger id to be used as post operation trigger.
+        :type body: Dict[str, Any]
+        :param str pre_trigger_include: trigger id to be used as pre operation trigger.
+        :param str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the upserted item.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -542,10 +546,10 @@ class ContainerProxy(object):
     def create_item(
         self,
         body,  # type: Dict[str, Any]
-        populate_query_metrics=None,  # type: Optional[bool]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         pre_trigger_include=None,  # type: Optional[str]
         post_trigger_include=None,  # type: Optional[str]
-        indexing_directive=None,  # type: Optional[Any]
+        indexing_directive=None,  # type: Optional[Union[int, ~azure.cosmos.documents.IndexingDirective]]
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
@@ -555,19 +559,22 @@ class ContainerProxy(object):
         :func:`ContainerProxy.upsert_item` method.
 
         :param body: A dict-like object representing the item to create.
-        :param pre_trigger_include: trigger id to be used as pre operation trigger.
-        :param post_trigger_include: trigger id to be used as post operation trigger.
-        :param indexing_directive: Indicate whether the document should be omitted from indexing.
+        :type body: Dict[str, Any]
+        :param str pre_trigger_include: trigger id to be used as pre operation trigger.
+        :param str post_trigger_include: trigger id to be used as post operation trigger.
+        :param indexing_directive: Enumerates the possible values to indicate whether the document should
+            be omitted from indexing. Possible values include: 0 for Default, 1 for Exclude, or 2 for Include.
+        :type indexing_directive: Union[int, ~azure.cosmos.documents.IndexingDirective]
         :keyword bool enable_automatic_id_generation: Enable automatic id generation if no id present.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the new item.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -601,7 +608,7 @@ class ContainerProxy(object):
         patch_operations: List[Dict[str, Any]],
         **kwargs: Any
     ) -> Dict[str, Any]:
-        """ **Provisional method** Patches the specified item with the provided operations if it
+        """ Patches the specified item with the provided operations if it
          exists in the container.
 
         If the item does not already exist in the container, an exception is raised.
@@ -677,8 +684,8 @@ class ContainerProxy(object):
     def delete_item(
         self,
         item,  # type: Union[Dict[str, Any], str]
-        partition_key,  # type: Any
-        populate_query_metrics=None,  # type: Optional[bool]
+        partition_key,  # type: Union[str, int, float, bool]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         pre_trigger_include=None,  # type: Optional[str]
         post_trigger_include=None,  # type: Optional[str]
         **kwargs  # type: Any
@@ -689,11 +696,13 @@ class ContainerProxy(object):
         If the item does not already exist in the container, an exception is raised.
 
         :param item: The ID (name) or dict representing item to be deleted.
+        :type item: Union[str, Dict[str, Any]]
         :param partition_key: Specifies the partition key value for the item.
-        :param pre_trigger_include: trigger id to be used as pre operation trigger.
-        :param post_trigger_include: trigger id to be used as post operation trigger.
+        :type partition_key: Union[str, int, float, bool]
+        :param str pre_trigger_include: trigger id to be used as pre operation trigger.
+        :param str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
@@ -727,6 +736,7 @@ class ContainerProxy(object):
         # type: (Any) -> Offer
         """Get the ThroughputProperties object for this container.
         If no ThroughputProperties already exist for the container, an exception is raised.
+
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: Throughput for the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
@@ -745,6 +755,7 @@ class ContainerProxy(object):
         """Get the ThroughputProperties object for this container.
 
         If no ThroughputProperties already exist for the container, an exception is raised.
+
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: Throughput for the container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
@@ -776,7 +787,8 @@ class ContainerProxy(object):
 
         If no ThroughputProperties already exist for the container, an exception is raised.
 
-        :param throughput: The throughput to be set (an integer).
+        :param throughput: The throughput to be set.
+        :type throughput: Union[int, ThroughputProperties]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: ThroughputProperties for the container, updated with new throughput.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exist for the container
@@ -810,7 +822,7 @@ class ContainerProxy(object):
         # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
         """List all the conflicts in the container.
 
-        :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of conflicts (dicts).
         :rtype: Iterable[dict[str, Any]]
@@ -831,25 +843,27 @@ class ContainerProxy(object):
     def query_conflicts(
         self,
         query,  # type: str
-        parameters=None,  # type: Optional[List[str]]
+        parameters=None,  # type: Optional[List[Dict[str, object]]]
         enable_cross_partition_query=None,  # type: Optional[bool]
-        partition_key=None,  # type: Optional[Any]
+        partition_key=None,  # type: Optional[Union[str, int, float, bool]]
         max_item_count=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
         """Return all conflicts matching a given `query`.
 
-        :param query: The Azure Cosmos DB SQL query to execute.
+        :param str query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :param enable_cross_partition_query: Allows sending of more than one request to execute
+        :type parameters: List[Dict[str, object]]
+        :param bool enable_cross_partition_query: Allows sending of more than one request to execute
             the query in the Azure Cosmos DB service.
             More than one request is necessary if the query is not scoped to single partition key value.
         :param partition_key: Specifies the partition key value for the item.
-        :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :type partition_key: Union[str, int, float, bool]
+        :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of conflicts (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :rtype: Iterable[Dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -872,15 +886,17 @@ class ContainerProxy(object):
 
     @distributed_trace
     def get_conflict(self, conflict, partition_key, **kwargs):
-        # type: (Union[str, Dict[str, Any]], Any, Any) -> Dict[str, Any]
+        # type: (Union[str, Dict[str, Any]], Union[str, int, float, bool], Any) -> Dict[str, Any]
         """Get the conflict identified by `conflict`.
 
         :param conflict: The ID (name) or dict representing the conflict to retrieve.
+        :type conflict: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the conflict to retrieve.
+        :type partition_key: Union[str, int, float, bool]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the retrieved conflict.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given conflict couldn't be retrieved.
-        :rtype: dict[str, Any]
+        :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -896,13 +912,15 @@ class ContainerProxy(object):
 
     @distributed_trace
     def delete_conflict(self, conflict, partition_key, **kwargs):
-        # type: (Union[str, Dict[str, Any]], Any, Any) -> None
+        # type: (Union[str, Dict[str, Any]], Union[str, int, float, bool], Any) -> None
         """Delete a specified conflict from the container.
 
         If the conflict does not already exist in the container, an exception is raised.
 
         :param conflict: The ID (name) or dict representing the conflict to be deleted.
+        :type conflict: Union[str, Dict[str, Any]]
         :param partition_key: Partition key for the conflict to delete.
+        :type partition_key: Union[str, int, float, bool]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The conflict wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The conflict does not exist in the container.
@@ -932,7 +950,7 @@ class ContainerProxy(object):
         this background task.
 
         :param partition_key: Partition key for the items to be deleted.
-        :type partition_key: Any
+        :type partition_key: Union[str, int, float, bool]
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
