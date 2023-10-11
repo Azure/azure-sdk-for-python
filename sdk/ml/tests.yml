@@ -14,11 +14,6 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: ml
-      MatrixConfigs:
-        - Name: ml_ci_matrix
-          Path: eng/pipelines/templates/stages/platform-matrix-ml.json
-          Selection: sparse
-          GenerateVMJobs: true
       MatrixReplace:
         - TestSamples=.*/true
       TestTimeoutInMinutes: 270
