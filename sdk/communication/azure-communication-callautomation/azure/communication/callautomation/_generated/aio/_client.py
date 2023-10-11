@@ -19,7 +19,6 @@ from ._configuration import AzureCommunicationCallAutomationServiceConfiguration
 from .operations import (
     AzureCommunicationCallAutomationServiceOperationsMixin,
     CallConnectionOperations,
-    CallDialogOperations,
     CallMediaOperations,
     CallRecordingOperations,
 )
@@ -35,8 +34,6 @@ class AzureCommunicationCallAutomationService(
      azure.communication.callautomation.aio.operations.CallConnectionOperations
     :ivar call_media: CallMediaOperations operations
     :vartype call_media: azure.communication.callautomation.aio.operations.CallMediaOperations
-    :ivar call_dialog: CallDialogOperations operations
-    :vartype call_dialog: azure.communication.callautomation.aio.operations.CallDialogOperations
     :ivar call_recording: CallRecordingOperations operations
     :vartype call_recording:
      azure.communication.callautomation.aio.operations.CallRecordingOperations
@@ -44,8 +41,8 @@ class AzureCommunicationCallAutomationService(
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword api_version: Api Version. Default value is "2023-01-15-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-10-15". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -63,7 +60,6 @@ class AzureCommunicationCallAutomationService(
         self._serialize.client_side_validation = False
         self.call_connection = CallConnectionOperations(self._client, self._config, self._serialize, self._deserialize)
         self.call_media = CallMediaOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.call_dialog = CallDialogOperations(self._client, self._config, self._serialize, self._deserialize)
         self.call_recording = CallRecordingOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
