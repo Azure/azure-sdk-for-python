@@ -184,6 +184,7 @@ When filing GitHub issues, the following details are requested:
 
 <!-- repo links -->
 [IoTConnectionString]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/samples/async_samples/iot_hub_connection_string_receive_async.py
+[PublishEventsWithWebSocketsAndProxy]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/samples/sync_samples/proxy.py
 [MigrationGuide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/migration_guide.md
 [SUPPORT]: https://github.com/Azure/azure-sdk-for-python/blob/main/SUPPORT.md
 
@@ -200,7 +201,6 @@ When filing GitHub issues, the following details are requested:
 [GetConnectionString]: https://docs.microsoft.com/azure/event-hubs/event-hubs-get-connection-string
 [IoTEventHubEndpoint]: https://docs.microsoft.com/azure/iot-hub/iot-hub-devguide-messages-read-builtin
 [IoTHubSAS]: https://docs.microsoft.com/azure/iot-hub/iot-hub-dev-guide-sas#security-tokens
-[TroubleshootAuthenticationAuthorization]: https://docs.microsoft.com/azure/event-hubs/troubleshoot-authentication-authorization
 
 <!-- external links -->
 [AuthenticationAndTheAzureSDK]: https://devblogs.microsoft.com/azure-sdk/authentication-and-the-azure-sdk
