@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Union, Any, Dict, Mapping, Optional, List, Tuple, TYPE_CHECKING
+from typing import Union, Any, Dict, Mapping, Optional, List, Tuple, TYPE_CHECKING, cast
 
 from azure.core import MatchConditions
 
@@ -12,9 +12,7 @@ from ._common_conversion import _transform_patch_to_cosmos_post
 from ._models import UpdateMode, TransactionOperation
 from ._serialize import _add_entity_properties, _prepare_key, _get_match_condition
 from ._entity import TableEntity
-from ._generated import models, AzureTable
 from ._generated._configuration import AzureTableConfiguration
-from ._generated._vendor import prep_if_match
 
 from ._generated.operations._operations import (
     build_table_insert_entity_request,
@@ -25,7 +23,6 @@ from ._generated.operations._operations import (
 
 if TYPE_CHECKING:
     from azure.core.rest import HttpRequest
-
 
 EntityType = Union[TableEntity, Mapping[str, Any]]
 OperationType = Union[TransactionOperation, str]
@@ -122,7 +119,7 @@ class TableBatchOperations(object):
             raise ValueError("PartitionKey and/or RowKey were not provided in entity")
         request = build_table_insert_entity_request(
             table=self.table_name,
-            json=entity,
+            json=cast(Mapping[str, Any], entity),
             version=self._config.version,
             **kwargs
         )
@@ -190,6 +187,9 @@ class TableBatchOperations(object):
                 version=self._config.version,
                 **kwargs,
             )
+            if self._is_cosmos_endpoint:
+                _transform_patch_to_cosmos_post(request)
+            self.requests.append(request)
         else:
             raise ValueError(f"Mode type '{mode}' is not supported.")
 
@@ -261,17 +261,7 @@ class TableBatchOperations(object):
         entity = _add_entity_properties(entity)
         partition_key = _prepare_key(entity["PartitionKey"])
         row_key = _prepare_key(entity["RowKey"])
-        if mode == UpdateMode.MERGE:
-            request = build_table_merge_entity_request(
-                table=self.table_name,
-                partition_key=partition_key,
-                row_key=row_key,
-                json=entity,
-                version=self._config.version,
-                **kwargs,
-            )
-            self.requests.append(request)
-        elif mode == UpdateMode.REPLACE:
+        if mode == UpdateMode.REPLACE:
             request = build_table_update_entity_request(
                 table=self.table_name,
                 partition_key=partition_key,
@@ -280,5 +270,18 @@ class TableBatchOperations(object):
                 version=self._config.version,
                 **kwargs,
             )
+            self.requests.append(request)
+        elif mode == UpdateMode.MERGE:
+            request = build_table_merge_entity_request(
+                table=self.table_name,
+                partition_key=partition_key,
+                row_key=row_key,
+                json=entity,
+                version=self._config.version,
+                **kwargs,
+            )
+            if self._is_cosmos_endpoint:
+                _transform_patch_to_cosmos_post(request)
+            self.requests.append(request)
         else:
             raise ValueError(f"Mode type '{mode}' is not supported.")
