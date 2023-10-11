@@ -6,6 +6,8 @@
 
 ### Breaking Changes
 
+The 'content' parameter for Translate and Transliterate has been renamed 'request_body'.  All tests, samples and documentation have been updated.
+
 ### Bugs Fixed
 
 ### Other Changes
