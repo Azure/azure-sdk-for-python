@@ -212,7 +212,7 @@ class BulkTests(unittest.TestCase):
         container_id = "precondition_failed_container" + str(uuid.uuid4())
         container = self.test_database.create_container_if_not_exists(id=container_id,
                                                                             partition_key=PartitionKey(path="/id"))
-
+        container.read()
         etag = container.client_connection.last_response_headers.get('etag')
         operations = [{"operationType": "Create",
                        "resourceBody": {"id": "create_item", "name": str(uuid.uuid4())},

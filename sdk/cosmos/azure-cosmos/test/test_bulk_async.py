@@ -228,7 +228,7 @@ class TestBulk:
         container_id = "precondition_failed_container" + str(uuid.uuid4())
         container = await self.test_database.create_container_if_not_exists(id=container_id,
                                                                             partition_key=PartitionKey(path="/id"))
-
+        await container.read()
         etag = container.client_connection.last_response_headers.get('etag')
         operations = [{"operationType": "Create",
                        "resourceBody": {"id": "create_item", "name": str(uuid.uuid4())},
