@@ -8,31 +8,22 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, List, Optional, Union
 
-
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
-    PackageRequest,
-    PackageResponse,
-    ModelPackageInput as RestModelPackageInput,
-    PackageInputPathId as RestPackageInputPathId,
-    PackageInputPathVersion as RestPackageInputPathVersion,
-    PackageInputPathUrl as RestPackageInputPathUrl,
-    CodeConfiguration,
-)
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
-    PackageRequest as DataPlanePackageRequest,
-)
-from azure.ai.ml.entities._resource import Resource
+from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import PackageRequest as DataPlanePackageRequest
+from azure.ai.ml._restclient.v2023_02_01_preview.models import CodeConfiguration
+from azure.ai.ml._restclient.v2023_02_01_preview.models import ModelPackageInput as RestModelPackageInput
+from azure.ai.ml._restclient.v2023_02_01_preview.models import PackageInputPathId as RestPackageInputPathId
+from azure.ai.ml._restclient.v2023_02_01_preview.models import PackageInputPathUrl as RestPackageInputPathUrl
+from azure.ai.ml._restclient.v2023_02_01_preview.models import PackageInputPathVersion as RestPackageInputPathVersion
+from azure.ai.ml._restclient.v2023_02_01_preview.models import PackageRequest, PackageResponse
 from azure.ai.ml._schema.assets.package.model_package import ModelPackageSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import dump_yaml_to_file, snake_to_pascal
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 
 from .base_environment_source import BaseEnvironment
-from .inferencing_server import (
-    AzureMLBatchInferencingServer,
-    AzureMLOnlineInferencingServer,
-)
+from .inferencing_server import AzureMLBatchInferencingServer, AzureMLOnlineInferencingServer
 from .model_configuration import ModelConfiguration
 
 
@@ -156,7 +147,7 @@ class ModelPackageInput:
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START model_package_input_entity_create]
             :end-before: [END model_package_input_entity_create]
             :language: python
@@ -219,7 +210,7 @@ class ModelPackage(Resource, PackageRequest):
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../../../../../../samples/ml_samples_misc.py
+        .. literalinclude:: ../samples/ml_samples_misc.py
             :start-after: [START model_package_entity_create]
             :end-before: [END model_package_entity_create]
             :language: python

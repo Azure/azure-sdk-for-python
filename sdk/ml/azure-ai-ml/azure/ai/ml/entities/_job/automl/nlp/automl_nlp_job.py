@@ -210,9 +210,9 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         """Sweep settings for all AutoML NLP tasks.
 
         :keyword sampling_algorithm: Required. Specifies type of hyperparameter sampling algorithm.
-        Possible values include: "Grid", "Random", and "Bayesian".
+            Possible values include: "Grid", "Random", and "Bayesian".
         :keyword early_termination: Optional early termination policy to end poorly performing training candidates.
-        :return: None.
+        :return: None
         """
         if self._sweep:
             self._sweep.sampling_algorithm = sampling_algorithm

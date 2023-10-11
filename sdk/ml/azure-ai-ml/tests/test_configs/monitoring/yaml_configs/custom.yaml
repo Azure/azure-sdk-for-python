@@ -20,7 +20,7 @@ trigger:
 create_monitor:
   compute:
     instance_type: "standard_e8s_v3"
-    runtime_version: "3.2"
+    runtime_version: "3.3"
   monitoring_target:
     endpoint_deployment_id: fake_endpoint_id
     ml_task: classification
@@ -36,19 +36,35 @@ create_monitor:
         secret_config:
           SECRET_1: secret1
           SECRET_2: secret2
-      input_datasets:
-        test_data_1:
+      input_data:
+        test_fixed:
           input_data:
             type: mltable
             path: azureml:Direct:1
           data_context: test
-          data_window_size: P60D
-        test_data_2:
+        test_trailing:
           input_data:
             type: mltable
             path: azureml:Direct:1
           data_context: test
-          data_window_size: P30D
+          data_window:
+            trailing_window_size: P30D
+            trailing_window_offset: P7D
+        test_static:
+          input_data:
+            type: mltable
+            path: azureml:Direct:1
+          data_context: test
+          data_window:
+            window_start: "2023-07-12"
+            window_end: "2023-07-17"
+      inputs:
+        input_1:
+          type: mltable
+          path: azureml:Direct:1
+        input_2:
+          type: mltable
+          path: azureml:Direct:2
       metric_thresholds:
         - metric_name: metric1
           threshold: 0.1

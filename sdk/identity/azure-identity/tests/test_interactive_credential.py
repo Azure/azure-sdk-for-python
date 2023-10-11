@@ -77,6 +77,31 @@ def test_authentication_record_argument():
     assert mock_client_application.call_count == 1, "credential didn't create an msal application"
 
 
+def test_enable_support_logging():
+    """The keyword argument for enabling PII in MSAL should be passed."""
+
+    record = AuthenticationRecord("tenant-id", "client-id", "localhost", "object.tenant", "username")
+
+    def validate_app_parameters(authority, client_id, **_):
+        # the 'authority' argument to msal.ClientApplication should be a URL of the form https://authority/tenant
+        assert authority == "https://{}/{}".format(record.authority, record.tenant_id)
+        assert client_id == record.client_id
+        return Mock(get_accounts=Mock(return_value=[]))
+
+    mock_client_application = Mock(wraps=validate_app_parameters)
+
+    credential = MockCredential(
+        authentication_record=record, disable_automatic_authentication=True, enable_support_logging=True
+    )
+    with pytest.raises(AuthenticationRequiredError):
+        with patch("msal.PublicClientApplication", mock_client_application):
+            credential.get_token("scope")
+
+    assert mock_client_application.call_count == 1, "credential didn't create an msal application"
+    _, kwargs = mock_client_application.call_args
+    assert kwargs["enable_pii_log"]
+
+
 def test_tenant_argument_overrides_record():
     """The 'tenant_ic' keyword argument should override a given record's value"""
 

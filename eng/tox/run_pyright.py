@@ -12,6 +12,7 @@ import argparse
 import os
 import logging
 import sys
+import json
 
 from ci_tools.environment_exclusions import (
     is_check_enabled, is_typing_ignored
@@ -22,6 +23,40 @@ from gh_tools.vnext_issue_creator import create_vnext_issue
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
+
+
+def get_pyright_config_path(args):
+    """Give pyright an execution environment when running with tox. Otherwise 
+    we use pyright's default for import resolution which doesn't work well
+    in our monorepo.
+
+    Since we don't want to be burdened with upkeep of this config for every library
+    that runs pyright checks, nor do we need this when running pyright without tox,
+    we'll add the config on the fly when invoked with tox.
+    """
+
+    # find the repo-level or package-level pyrightconfig.json
+    user_config_path = args.target_package if os.path.exists(os.path.join(args.target_package, "pyrightconfig.json")) else root_dir
+
+    # read the config and adjust relative paths
+    with open(os.path.join(user_config_path, "pyrightconfig.json"), "r") as f:
+        config_text = f.read()
+        config_text = config_text.replace("\"**", "\"../../../../**")
+        config = json.loads(config_text)
+
+    # add or update the execution environment for tox
+    if config.get("executionEnvironments"):
+        config["executionEnvironments"].append({"root": args.target_package})
+    else:
+        config.update({"executionEnvironments": [{"root": args.target_package}]})
+
+    # write the pyrightconfig.json to the tox environment and return the path so we can point to it
+    pyright_env = "pyright" if not args.next else "next-pyright"
+    pyright_config_path = os.path.join(args.target_package, ".tox", pyright_env, "tmp", "pyrightconfig.json")
+    with open(pyright_config_path, "w+") as f:
+        f.write(json.dumps(config, indent=4))
+    return pyright_config_path
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run pyright against target folder. ")
@@ -63,10 +98,14 @@ if __name__ == "__main__":
             )
             paths = paths[:-1]
 
+    pyright_config_path = get_pyright_config_path(args)
+
     commands = [
         sys.executable,
         "-m",
         "pyright",
+        "--project",
+        pyright_config_path,
     ]
     commands.extend(paths)
     try:

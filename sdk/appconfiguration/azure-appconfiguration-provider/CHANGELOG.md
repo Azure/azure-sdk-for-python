@@ -1,5 +1,25 @@
 # Release History
 
+## 1.1.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.1.0b2 (2023-09-29)
+
+### Features Added
+
+* Added support for `keyvault_credential`, `keyvault_client_configs`, and `secret_resolver` as `kwargs` instead of using `AzureAppConfigurationKeyVaultOptions`.
+
+### Bugs Fixed
+
+* Fixes issue where `user_agent` was required to be set.
+
 ## 1.1.0b1 (2023-09-13)
 
 ### Features Added

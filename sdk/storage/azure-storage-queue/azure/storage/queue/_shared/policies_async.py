@@ -14,7 +14,7 @@ from azure.core.exceptions import AzureError
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, AsyncHTTPPolicy
 
 from .authentication import StorageHttpChallenge
-from .constants import DEFAULT_OAUTH_SCOPE, STORAGE_OAUTH_SCOPE
+from .constants import DEFAULT_OAUTH_SCOPE
 from .policies import is_retry, StorageRetryPolicy
 
 if TYPE_CHECKING:
@@ -249,8 +249,8 @@ class LinearRetry(AsyncStorageRetryPolicy):
 class AsyncStorageBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
     """ Custom Bearer token credential policy for following Storage Bearer challenges """
 
-    def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
-        super(AsyncStorageBearerTokenCredentialPolicy, self).__init__(credential, STORAGE_OAUTH_SCOPE, **kwargs)
+    def __init__(self, credential: "AsyncTokenCredential", audience: str, **kwargs: Any) -> None:
+        super(AsyncStorageBearerTokenCredentialPolicy, self).__init__(credential, audience, **kwargs)
 
     async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
         try:
