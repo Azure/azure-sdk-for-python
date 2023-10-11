@@ -286,7 +286,7 @@ class TablesBaseClient(AccountHostsMixin):
             enforce_https=False,
             boundary=f"batch_{uuid4()}",
         )
-        response = self._client.send_request(request, **kwargs)
+        response = self._client.send_request(request, stream=True, **kwargs)
         if response.status_code == 413:
             raise _decode_error(
                 response, error_message="The transaction request was too large", error_type=RequestTooLargeError
