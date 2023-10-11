@@ -15,7 +15,7 @@ from setuptools import find_packages, setup  # type: ignore
 PACKAGE_NAME = "azure-identity-brokercredentials"
 PACKAGE_PPRINT_NAME = "Identity Broker Credentials plugin"
 
-package_folder_path = "azure/identity/broker"
+package_folder_path = "azure/identity/brokercredentials"
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
