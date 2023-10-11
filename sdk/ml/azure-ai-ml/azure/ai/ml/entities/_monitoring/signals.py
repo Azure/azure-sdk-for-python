@@ -965,7 +965,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
 
 
 @experimental
-class LlmRequestResponseData(RestTranslatableMixin):
+class LlmData(RestTranslatableMixin):
     """LLM Request Response Data
 
     :keyword input_data: Input data used by the monitor.
@@ -1000,7 +1000,7 @@ class LlmRequestResponseData(RestTranslatableMixin):
         )._to_rest_object()
 
     @classmethod
-    def _from_rest_object(cls, obj: RestMonitoringInputData) -> "LlmRequestResponseData":
+    def _from_rest_object(cls, obj: RestMonitoringInputData) -> "LlmData":
         return cls(
             input_data=Input(
                 path=obj.uri,
@@ -1018,7 +1018,7 @@ class GenerationSafetyQualitySignal(RestTranslatableMixin):
     :ivar type: The type of the signal. Set to "generationsafetyquality" for this class.
     :vartype type: str
     :keyword production_data: A list of input datasets for monitoring.
-    :paramtype input_datasets: Optional[dict[str, ~azure.ai.ml.entities.LlmRequestResponseData]]
+    :paramtype input_datasets: Optional[dict[str, ~azure.ai.ml.entities.LlmData]]
     :keyword metric_thresholds: Metrics to calculate and their associated thresholds.
     :paramtype metric_thresholds: ~azure.ai.ml.entities.GenerationSafetyQualityMonitoringMetricThreshold
     :keyword alert_enabled: Whether or not to enable alerts for the signal. Defaults to True.
@@ -1036,7 +1036,7 @@ class GenerationSafetyQualitySignal(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        production_data: List[LlmRequestResponseData] = None,
+        production_data: List[LlmData] = None,
         workspace_connection_id: Optional[str] = None,
         metric_thresholds: GenerationSafetyQualityMonitoringMetricThreshold,
         alert_enabled: bool = True,
@@ -1065,7 +1065,7 @@ class GenerationSafetyQualitySignal(RestTranslatableMixin):
     @classmethod
     def _from_rest_object(cls, obj: RestGenerationSafetyQualityMonitoringSignal) -> "GenerationSafetyQualitySignal":
         return cls(
-            production_data=[LlmRequestResponseData._from_rest_object(data) for data in obj.production_data],
+            production_data=[LlmData._from_rest_object(data) for data in obj.production_data],
             workspace_connection_id=obj.workspace_connection_id,
             metric_thresholds=GenerationSafetyQualityMonitoringMetricThreshold._from_rest_object(obj.metric_thresholds),
             alert_enabled=False

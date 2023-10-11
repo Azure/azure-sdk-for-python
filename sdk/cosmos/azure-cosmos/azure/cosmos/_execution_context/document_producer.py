@@ -112,7 +112,7 @@ def _compare_helper(a, b):
     return (a > b) - (a < b)
 
 
-class _PartitionKeyRangeDocumentProduerComparator(object):
+class _PartitionKeyRangeDocumentProducerComparator(object):
     """
     Provides a Comparator for document producers using the min value of the
     corresponding target partition.
@@ -121,7 +121,7 @@ class _PartitionKeyRangeDocumentProduerComparator(object):
     def __init__(self):
         pass
 
-    def compare(self, doc_producer1, doc_producer2):  # pylint: disable=no-self-use
+    def compare(self, doc_producer1, doc_producer2):
         return _compare_helper(
             doc_producer1.get_target_range()["minInclusive"], doc_producer2.get_target_range()["minInclusive"]
         )
@@ -185,8 +185,7 @@ class _OrderByHelper(object):
 
         :param dict orderby_item1:
         :param dict orderby_item2:
-        :return:
-            Integer comparison result.
+        :return: Integer comparison result.
             The comparator acts such that
             - if the types are different we get:
                 Undefined value < Null < booleans < Numbers < Strings
@@ -214,7 +213,7 @@ def _peek_order_by_items(peek_result):
     return peek_result["orderByItems"]
 
 
-class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerComparator):
+class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProducerComparator):
     """Provide a Comparator for document producers which respects orderby sort order.
     """
 
@@ -239,8 +238,8 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerCompar
         If the peek results are equal based on the sort order, this comparator
         compares the target partition key range of the two DocumentProducers.
 
-        :param _DocumentProducer doc_producers1: first instance
-        :param _DocumentProducer doc_producers2: first instance
+        :param _DocumentProducer doc_producer1: first instance to be compared
+        :param _DocumentProducer doc_producer2: second instance to be compared
         :return:
             Integer value of compare result.
                 positive integer if doc_producers1 > doc_producers2
@@ -261,7 +260,7 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerCompar
                 if self._sort_order[i] == "Descending":
                     return -res
 
-        return _PartitionKeyRangeDocumentProduerComparator.compare(self, doc_producer1, doc_producer2)
+        return _PartitionKeyRangeDocumentProducerComparator.compare(self, doc_producer1, doc_producer2)
 
     def _validate_orderby_items(self, res1, res2):
         if len(res1) != len(res2):

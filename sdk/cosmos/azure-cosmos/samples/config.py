@@ -13,4 +13,5 @@ settings = {
     'tenant_id': os.environ.get('TENANT_ID', '[YOUR TENANT ID]'),
     'client_id': os.environ.get('CLIENT_ID', '[YOUR CLIENT ID]'),
     'client_secret': os.environ.get('CLIENT_SECRET', '[YOUR CLIENT SECRET]'),
+    'container_mh_id': os.environ.get('COSMOS_CONTAINER_MH', '[YOUR MH CONTAINER]'),
 }

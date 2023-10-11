@@ -49,11 +49,11 @@ class _TimeoutFailoverRetryPolicy(object):
         return False
 
     def ShouldRetry(self, _exception):
-        """Returns true if should retry based on the passed-in exception.
+        """Returns true if the request should retry based on the passed-in exception.
 
-        :param (exceptions.CosmosHttpResponseError instance) _exception:
-        :rtype: boolean
-
+        :param exceptions.CosmosHttpResponseError _exception:
+        :returns: a boolean stating whether the request should be retried
+        :rtype: bool
         """
         if not self.needsRetry():
             return False

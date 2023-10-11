@@ -4864,10 +4864,17 @@ class TranscriptionStopped(_serialization.Model):
 class TranscriptionUpdate(_serialization.Model):
     """TranscriptionUpdate.
 
-    :ivar transcription_status:
-    :vartype transcription_status: str
-    :ivar transcription_status_details:
-    :vartype transcription_status_details: str
+    :ivar transcription_status: Known values are: "transcriptionStarted", "transcriptionFailed",
+     "transcriptionResumed", "transcriptionLocaleUpdated", "transcriptionStopped", and
+     "unspecifiedError".
+    :vartype transcription_status: str or
+     ~azure.communication.callautomation.models.TranscriptionStatus
+    :ivar transcription_status_details: Known values are: "subscriptionStarted",
+     "streamConnectionReestablished", "streamConnectionUnsuccessful", "streamUrlMissing",
+     "serviceShutdown", "streamConnectionInterrupted", "speechServicesConnectionError",
+     "subscriptionStopped", and "unspecifiedError".
+    :vartype transcription_status_details: str or
+     ~azure.communication.callautomation.models.TranscriptionStatusDetails
     """
 
     _attribute_map = {
@@ -4878,15 +4885,22 @@ class TranscriptionUpdate(_serialization.Model):
     def __init__(
         self,
         *,
-        transcription_status: Optional[str] = None,
-        transcription_status_details: Optional[str] = None,
+        transcription_status: Optional[Union[str, "_models.TranscriptionStatus"]] = None,
+        transcription_status_details: Optional[Union[str, "_models.TranscriptionStatusDetails"]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword transcription_status:
-        :paramtype transcription_status: str
-        :keyword transcription_status_details:
-        :paramtype transcription_status_details: str
+        :keyword transcription_status: Known values are: "transcriptionStarted", "transcriptionFailed",
+         "transcriptionResumed", "transcriptionLocaleUpdated", "transcriptionStopped", and
+         "unspecifiedError".
+        :paramtype transcription_status: str or
+         ~azure.communication.callautomation.models.TranscriptionStatus
+        :keyword transcription_status_details: Known values are: "subscriptionStarted",
+         "streamConnectionReestablished", "streamConnectionUnsuccessful", "streamUrlMissing",
+         "serviceShutdown", "streamConnectionInterrupted", "speechServicesConnectionError",
+         "subscriptionStopped", and "unspecifiedError".
+        :paramtype transcription_status_details: str or
+         ~azure.communication.callautomation.models.TranscriptionStatusDetails
         """
         super().__init__(**kwargs)
         self.transcription_status = transcription_status

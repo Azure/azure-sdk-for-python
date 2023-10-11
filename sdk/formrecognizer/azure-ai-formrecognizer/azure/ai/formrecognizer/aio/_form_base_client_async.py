@@ -3,10 +3,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from copy import deepcopy
 from typing import Any, Union
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import HttpLoggingPolicy
+from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.tracing.decorator_async import distributed_trace_async
+from .._form_base_client import _format_api_version, _SERIALIZER
 from .._generated.aio._form_recognizer_client import (
     FormRecognizerClient as FormRecognizer,
 )
@@ -85,3 +89,32 @@ class FormRecognizerClientBaseAsync:
         )
         self._deserialize = _get_deserialize(self._api_version)
         self._generated_models = self._client.models(self._api_version)
+
+    @distributed_trace_async
+    async def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs) -> AsyncHttpResponse:
+        """Runs a network request using the client's existing pipeline.
+
+        The request URL can be relative to the base URL. The service API version used for the request is the same as
+        the client's unless otherwise specified. Overriding the client's configured API version is only supported on
+        API version 2022-08-31 and later. This method does not raise if the response is an error; to raise an
+        exception, call `raise_for_status()` on the returned response object. For more information about how to send
+        custom requests with this method, see https://aka.ms/azsdk/dpcodegen/python/send_request.
+
+        :param request: The network request you want to make.
+        :type request: ~azure.core.rest.HttpRequest
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+        """
+        api_version = self._api_version
+        if hasattr(api_version, "value"):
+            api_version = api_version.value
+        if self._api_version.startswith("v"):
+            # Skip the API version formatting for v2 API versions
+            request_copy = deepcopy(request)
+        else:
+            request_copy = _format_api_version(request, api_version)
+        path_format_arguments = {
+            "endpoint": _SERIALIZER.url("endpoint", self._endpoint, "str", skip_quote=True),
+        }
+        request_copy.url = self._client._client.format_url(request_copy.url, **path_format_arguments)  # pylint:disable=protected-access
+        return await self._client._client.send_request(request_copy, stream=stream, **kwargs)  # pylint:disable=protected-access

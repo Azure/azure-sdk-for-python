@@ -97,6 +97,9 @@
     "sdk/translation/azure-ai-translation-text/tests/test_break_sentence.py",
     "sdk/translation/azure-ai-translation-text/tests/test_translation.py",
     "sdk/translation/azure-ai-translation-text/tests/test_transliteration.py",
+    "sdk/translation/azure-ai-translation-text/tests/test_break_sentence_async.py",
+    "sdk/translation/azure-ai-translation-text/tests/test_translation_async.py",
+    "sdk/translation/azure-ai-translation-text/tests/test_transliteration_async.py",    
     "sdk/translation/test-resources.json",
     "eng/**/*.json",
     "eng/*.txt",
@@ -120,6 +123,10 @@
     "conda/conda-releaselogs/azure-mgmt.md"
   ],
   "words": [
+    "certifi",
+    "cffi",
+    "tomlw",
+    "xdist",
     "pyprojecttoml",
     "tomli",
     "sdkrel",

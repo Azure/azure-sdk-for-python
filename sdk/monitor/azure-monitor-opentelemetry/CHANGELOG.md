@@ -2,6 +2,9 @@
 
 ## 1.0.1 (Unreleased)
 
+- Add message ids for AppLens
+    ([#32195](https://github.com/Azure/azure-sdk-for-python/pull/32195))
+
 ### Features Added
 
 - Add ability to specify which logger to export telemetry for via `logger_name` configuration
@@ -19,6 +22,8 @@
 
 - Add Azure resource detectors
     ([#32087](https://github.com/Azure/azure-sdk-for-python/pull/32087))
+- Add instrumentation_options
+    ([#31793](https://github.com/Azure/azure-sdk-for-python/pull/31793))
 
 ### Other Changes
 

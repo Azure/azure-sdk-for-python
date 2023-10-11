@@ -33,7 +33,7 @@ from ._blob_client import BlobClient
 from ._deserialize import service_stats_deserialize, service_properties_deserialize
 from ._encryption import StorageEncryptionMixin
 from ._list_blobs_helper import FilteredBlobPaged
-from ._models import ContainerPropertiesPaged
+from ._models import BlobProperties, ContainerPropertiesPaged
 from ._serialize import get_api_version
 
 if TYPE_CHECKING:
@@ -43,7 +43,6 @@ if TYPE_CHECKING:
     from ._lease import BlobLeaseClient
     from ._models import (
         ContainerProperties,
-        BlobProperties,
         PublicAccess,
         BlobAnalyticsLogging,
         Metrics,
@@ -572,11 +571,10 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def delete_container(
-            self, container,  # type: Union[ContainerProperties, str]
-            lease=None,  # type: Optional[Union[BlobLeaseClient, str]]
-            **kwargs
-        ):
-        # type: (...) -> None
+        self, container: Union["ContainerProperties", str],
+        lease: Optional[Union["BlobLeaseClient", str]] = None,
+        **kwargs: Any
+    ) -> None:
         """Marks the specified container for deletion.
 
         The container and any blobs contained within it are later deleted during garbage collection.
@@ -742,11 +740,11 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
 
     def get_blob_client(
-            self, container,  # type: Union[ContainerProperties, str]
-            blob,  # type: Union[BlobProperties, str]
-            snapshot=None,  # type: Optional[Union[Dict[str, Any], str]]
+            self, container: Union["ContainerProperties", str],
+            blob: str,
+            snapshot: Optional[Union[Dict[str, Any], str]] = None,
             *,
-            version_id=None  # type: Optional[str]
+            version_id: Optional[str] = None
         ):
         # type: (...) -> BlobClient
         """Get a client to interact with the specified blob.
@@ -757,10 +755,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             The container that the blob is in. This can either be the name of the container,
             or an instance of ContainerProperties.
         :type container: str or ~azure.storage.blob.ContainerProperties
-        :param blob:
-            The blob with which to interact. This can either be the name of the blob,
-            or an instance of BlobProperties.
-        :type blob: str or ~azure.storage.blob.BlobProperties
+        :param str blob: The name of the blob with which to interact.
         :param snapshot:
             The optional blob snapshot on which to operate. This can either be the ID of the snapshot,
             or a dictionary output returned by :func:`~azure.storage.blob.BlobClient.create_snapshot()`.
@@ -779,6 +774,11 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :dedent: 12
                 :caption: Getting the blob client to interact with a specific blob.
         """
+        if isinstance(blob, BlobProperties):
+            warnings.warn(
+                "The use of a 'BlobProperties' instance for param blob is deprecated. Please use str instead.",
+                DeprecationWarning
+            )
         try:
             container_name = container.name
         except AttributeError:

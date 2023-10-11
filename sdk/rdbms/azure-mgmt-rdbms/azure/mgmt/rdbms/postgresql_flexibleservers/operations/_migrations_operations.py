@@ -28,7 +28,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import PostgreSQLManagementClientMixinABC, _convert_request, _format_url_section
+from .._vendor import PostgreSQLManagementClientMixinABC, _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -68,7 +68,7 @@ def build_create_request(
         "migrationName": _SERIALIZER.url("migration_name", migration_name, "str", pattern=r"^[a-z][a-z0-9]*$"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -111,7 +111,7 @@ def build_get_request(
         "migrationName": _SERIALIZER.url("migration_name", migration_name, "str", pattern=r"^[a-z][a-z0-9]*$"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -153,7 +153,7 @@ def build_update_request(
         "migrationName": _SERIALIZER.url("migration_name", migration_name, "str", pattern=r"^[a-z][a-z0-9]*$"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -196,7 +196,7 @@ def build_delete_request(
         "migrationName": _SERIALIZER.url("migration_name", migration_name, "str", pattern=r"^[a-z][a-z0-9]*$"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -241,7 +241,7 @@ def build_list_by_target_server_request(
         ),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
