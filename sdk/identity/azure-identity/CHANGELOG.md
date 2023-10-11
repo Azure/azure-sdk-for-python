@@ -18,6 +18,12 @@
 
 ### Other Changes
 
+## 1.14.1 (2023-10-09)
+
+### Bugs Fixed
+
+- Bug fixes for developer credentials
+
 ## 1.15.0b1 (2023-09-12)
 
 ### Features Added

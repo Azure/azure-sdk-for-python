@@ -6,6 +6,7 @@
 # --------------------------------------------------------------------------
 
 import functools
+import warnings
 from typing import (
     Any, AnyStr, Dict, List, IO, Iterable, Iterator, Optional, overload, Union,
     TYPE_CHECKING
@@ -958,7 +959,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @distributed_trace
     def upload_blob(
-            self, name: Union[str, BlobProperties],
+            self, name: str,
             data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
             blob_type: Union[str, BlobType] = BlobType.BlockBlob,
             length: Optional[int] = None,
@@ -967,9 +968,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         ) -> BlobClient:
         """Creates a new blob from a data source with automatic chunking.
 
-        :param name: The blob with which to interact. If specified, this value will override
-            a blob value specified in the blob URL.
-        :type name: str or ~azure.storage.blob.BlobProperties
+        :param str name: The blob with which to interact.
         :param data: The blob data to upload.
         :param ~azure.storage.blob.BlobType blob_type: The type of the blob. This can be
             either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
@@ -1079,6 +1078,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 :dedent: 8
                 :caption: Upload blob to the container.
         """
+        if isinstance(name, BlobProperties):
+            warnings.warn(
+                "The use of a 'BlobProperties' instance for param blob is deprecated. Please use str instead.",
+                DeprecationWarning
+            )
         blob = self.get_blob_client(name)
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
@@ -1096,9 +1100,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @distributed_trace
     def delete_blob(
-            self, blob,  # type: Union[str, BlobProperties]
-            delete_snapshots=None,  # type: Optional[str]
-            **kwargs
+            self, blob: str,
+            delete_snapshots: Optional[str] = None,
+            **kwargs: Any
         ):
         # type: (...) -> None
         """Marks the specified blob or snapshot for deletion.
@@ -1114,9 +1118,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         Soft deleted blob or snapshot is accessible through :func:`list_blobs()` specifying `include=["deleted"]`
         option. Soft-deleted blob or snapshot can be restored using :func:`~azure.storage.blob.BlobClient.undelete()`
 
-        :param blob: The blob with which to interact. If specified, this value will override
-            a blob value specified in the blob URL.
-        :type blob: str or ~azure.storage.blob.BlobProperties
+        :param str blob: The blob with which to interact.
         :param str delete_snapshots:
             Required if the blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
@@ -1163,6 +1165,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             #other-client--per-operation-configuration>`_.
         :rtype: None
         """
+        if isinstance(blob, BlobProperties):
+            warnings.warn(
+                "The use of a 'BlobProperties' instance for param blob is deprecated. Please use str instead.",
+                DeprecationWarning
+            )
         blob_client = self.get_blob_client(blob) # type: ignore
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
@@ -1173,39 +1180,40 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
     @overload
     def download_blob(
-            self, blob: Union[str, BlobProperties],
+            self, blob: str,
             offset: int = None,
             length: int = None,
             *,
             encoding: str,
-            **kwargs) -> StorageStreamDownloader[str]:
+            **kwargs: Any
+    ) -> StorageStreamDownloader[str]:
         ...
 
     @overload
     def download_blob(
-            self, blob: Union[str, BlobProperties],
+            self, blob: str,
             offset: int = None,
             length: int = None,
             *,
             encoding: None = None,
-            **kwargs) -> StorageStreamDownloader[bytes]:
+            **kwargs: Any
+    ) -> StorageStreamDownloader[bytes]:
         ...
 
     @distributed_trace
     def download_blob(
-            self, blob: Union[str, BlobProperties],
+            self, blob: str,
             offset: int = None,
             length: int = None,
             *,
             encoding: Optional[str] = None,
-            **kwargs) -> StorageStreamDownloader:
+            **kwargs: Any
+    ) -> StorageStreamDownloader:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
 
-        :param blob: The blob with which to interact. If specified, this value will override
-            a blob value specified in the blob URL.
-        :type blob: str or ~azure.storage.blob.BlobProperties
+        :param str blob: The blob with which to interact.
         :param int offset:
             Start of byte range to use for downloading a section of the blob.
             Must be set if length is provided.
@@ -1282,6 +1290,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :returns: A streaming object (StorageStreamDownloader)
         :rtype: ~azure.storage.blob.StorageStreamDownloader
         """
+        if isinstance(blob, BlobProperties):
+            warnings.warn(
+                "The use of a 'BlobProperties' instance for param blob is deprecated. Please use str instead.",
+                DeprecationWarning
+            )
         blob_client = self.get_blob_client(blob) # type: ignore
         kwargs.setdefault('merge_span', True)
         return blob_client.download_blob(
@@ -1723,19 +1736,17 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         return self._batch_send(*reqs, **options)
 
     def get_blob_client(
-            self, blob,  # type: Union[str, BlobProperties]
-            snapshot=None,  # type: str
+            self, blob: str,
+            snapshot: Optional[str] = None,
             *,
-            version_id=None  # type: Optional[str]
-        ):
-        # type: (...) -> BlobClient
+            version_id: Optional[str] = None
+    ) -> BlobClient:
         """Get a client to interact with the specified blob.
 
         The blob need not already exist.
 
-        :param blob:
+        :param str blob:
             The blob with which to interact.
-        :type blob: str or ~azure.storage.blob.BlobProperties
         :param str snapshot:
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`~BlobClient.create_snapshot()`.
@@ -1753,6 +1764,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 :dedent: 8
                 :caption: Get the blob client.
         """
+        if isinstance(blob, BlobProperties):
+            warnings.warn(
+                "The use of a 'BlobProperties' instance for param blob is deprecated. Please use str instead.",
+                DeprecationWarning
+            )
         blob_name = _get_blob_name(blob)
         _pipeline = Pipeline(
             transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
