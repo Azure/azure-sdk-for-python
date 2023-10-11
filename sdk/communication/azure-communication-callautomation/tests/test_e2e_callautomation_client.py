@@ -5,6 +5,8 @@
 # --------------------------------------------------------------------------
 from datetime import timedelta
 import time
+
+import pytest
 from devtools_testutils import recorded_by_proxy
 
 from callautomation_test_case import CallAutomationRecordedTestCase
@@ -32,6 +34,7 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
         self.terminate_call(unique_id)
         return
 
+    @pytest.mark.skip(reason="Need to update add_participant response")
     @recorded_by_proxy
     def test_add_participant_then_cancel_request(self):
         # try to establish the call

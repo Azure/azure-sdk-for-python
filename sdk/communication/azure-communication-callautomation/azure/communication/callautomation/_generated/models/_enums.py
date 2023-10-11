@@ -54,13 +54,6 @@ class CommunicationIdentifierModelKind(str, Enum, metaclass=CaseInsensitiveEnumM
     MICROSOFT_TEAMS_USER = "microsoftTeamsUser"
 
 
-class DialogInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Determines the type of the dialog."""
-
-    POWER_VIRTUAL_AGENTS = "powerVirtualAgents"
-    AZURE_OPEN_AI = "azureOpenAI"
-
-
 class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DtmfTone."""
 
@@ -80,32 +73,6 @@ class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     D = "d"
     POUND = "pound"
     ASTERISK = "asterisk"
-
-
-class Gender(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Voice gender type."""
-
-    MALE = "male"
-    FEMALE = "female"
-
-
-class MediaStreamingAudioChannelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Audio channel type to stream, eg. unmixed audio, mixed audio."""
-
-    MIXED = "mixed"
-    UNMIXED = "unmixed"
-
-
-class MediaStreamingContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Content type to stream, eg. audio, audio/video."""
-
-    AUDIO = "audio"
-
-
-class MediaStreamingTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of transport to be used for media streaming, eg. Websocket."""
-
-    WEBSOCKET = "websocket"
 
 
 class PlaySourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -164,46 +131,8 @@ class RecordingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INACTIVE = "inactive"
 
 
-class RecordingStorage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the type of external storage."""
+class VoiceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Voice kind type."""
 
-    ACS = "acs"
-    BLOB_STORAGE = "blobStorage"
-
-
-class RecordingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """RecordingType."""
-
-    ACS = "acs"
-    TEAMS = "teams"
-
-
-class TranscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """TranscriptionStatus."""
-
-    TRANSCRIPTION_STARTED = "transcriptionStarted"
-    TRANSCRIPTION_FAILED = "transcriptionFailed"
-    TRANSCRIPTION_RESUMED = "transcriptionResumed"
-    TRANSCRIPTION_LOCALE_UPDATED = "transcriptionLocaleUpdated"
-    TRANSCRIPTION_STOPPED = "transcriptionStopped"
-    UNSPECIFIED_ERROR = "unspecifiedError"
-
-
-class TranscriptionStatusDetails(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """TranscriptionStatusDetails."""
-
-    SUBSCRIPTION_STARTED = "subscriptionStarted"
-    STREAM_CONNECTION_REESTABLISHED = "streamConnectionReestablished"
-    STREAM_CONNECTION_UNSUCCESSFUL = "streamConnectionUnsuccessful"
-    STREAM_URL_MISSING = "streamUrlMissing"
-    SERVICE_SHUTDOWN = "serviceShutdown"
-    STREAM_CONNECTION_INTERRUPTED = "streamConnectionInterrupted"
-    SPEECH_SERVICES_CONNECTION_ERROR = "speechServicesConnectionError"
-    SUBSCRIPTION_STOPPED = "subscriptionStopped"
-    UNSPECIFIED_ERROR = "unspecifiedError"
-
-
-class TranscriptionTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of transport to be used for live transcription, eg. Websocket."""
-
-    WEBSOCKET = "websocket"
+    MALE = "male"
+    FEMALE = "female"

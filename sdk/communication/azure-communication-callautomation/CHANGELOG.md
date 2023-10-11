@@ -1,12 +1,24 @@
 # Release History
 
-## 1.1.0b1 (Unreleased)
+## 1.1.0 (Unreleased)
+### Features Added
+- Mid Call actions support overriding callback url.
+- Cancel adding Participant invitation.
+- Support transfer a participant in a group call to another participant.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.1.0b1 (2023-08-17)
 ### Features Added
 - Play and recognize supports TTS and SSML source prompts.
 - Recognize supports choices and freeform speech.
 - Start/Stop continuous DTMF recognition by subscribing/unsubscribing to tones.
 - Send DTMF tones to a participant in the call.
-- Mute participants in the call.
+- Mute participant in the call.
 
 ### Other Changes
 - The models `ServerCallLocator` and `GroupCallLocator` have been deprecated, and the ID values can now be passed directly into `CallAutomationClient.start_recording` as keyword arguments.
