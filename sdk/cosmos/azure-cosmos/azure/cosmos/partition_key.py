@@ -69,49 +69,6 @@ class PartitionKeyComponentType:
     Float = 0x14
     Infinity = 0xFF
 
-from typing import Union  # pylint: disable=unused-import
-from io import BytesIO
-from ._cosmos_integers import UInt64, UInt128
-from ._cosmos_murmurhash3 import murmurhash3_128
-import binascii
-
-MaximumExclusiveEffectivePartitionKey = 0xFF
-MinimumInclusiveEffectivePartitionKey = 0x00
-MaxStringChars = 100
-MaxStringBytesToAppend = 100
-MaxPartitionKeyBinarySize = (
-                                    1  # type marker
-                                    + 9  # hash value
-                                    + 1  # type marker
-                                    + MaxStringBytesToAppend
-                                    + 1  # trailing zero
-                            ) * 3
-
-
-class PartitionKeyComponentType:
-    Undefined = 0x0,
-    Null = 0x1,
-    PFalse = 0x2
-    PTrue = 0x3
-    MinNumber = 0x4
-    Number = 0x5
-    MaxNumber = 0x6
-    MinString = 0x7
-    String = 0x8
-    MaxString = 0x9
-    Int64 = 0xA
-    Int32 = 0xB
-    Int16 = 0xC
-    Int8 = 0xD
-    Uint64 = 0xE
-    Uint32 = 0xF
-    Uint16 = 0x10
-    Uint8 = 0x11
-    Binary = 0x12
-    Guid = 0x13
-    Float = 0x14
-    Infinity = 0xFF
-
 
 class NonePartitionKeyValue(object):
     """Represents None value for partitionKey when it's missing in a container.
