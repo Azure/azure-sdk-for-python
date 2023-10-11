@@ -184,10 +184,10 @@ class PartitionKey(dict):
 
         kind = self.kind
         if kind == 'Hash':
-            version = self.version or 'V1'
-            if version == 'V1':
+            version = self.version or 1
+            if version == 1:
                 return self._get_effective_partition_key_for_hash_partitioning()
-            elif version == 'V2':
+            elif version == 2:
                 return self._get_effective_partition_key_for_hash_partitioning_v2(pk_value)
         elif kind == 'MultiHash':
             return self._get_effective_partition_key_for_multi_hash_partitioning_v2(pk_value)
