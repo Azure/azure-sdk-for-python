@@ -1,18 +1,24 @@
 # Release History
 
-## 1.5.0b3 (Unreleased)
+## 1.5.0b4 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
-- Rename parameter `name` in `list_snapshot_configuration_settings()` to `snapshot_name`.
-- Remove keyword argument `accept_datetime` in `list_snapshot_configuration_settings()`.
-- Rename `Snapshot` property `items_count` to `item_count`.
-- Publish enum `SnapshotStatus`, and accept the type for `status` parameter in `list_snapshots()` and `status` property in `Snapshot` model.
 
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.5.0b3 (2023-10-10)
+
+### Breaking Changes
+- Renamed parameter `name` in `list_snapshot_configuration_settings()` to `snapshot_name`.
+- Removed keyword argument `accept_datetime` in `list_snapshot_configuration_settings()`.
+- Moved operation `list_snapshot_configuration_settings()` to an overload of `list_configuration_settings()`, and moved the parameter `snapshot_name` to keyword.
+- Published enum `SnapshotStatus`, and accepted the type for `status` parameter in `list_snapshots()` and `status` property in `Snapshot` model.
+- Renamed model `Snapshot` to `ConfigurationSnapshot`.
+- Renamed model `ConfigurationSettingFilter` to `ConfigurationSettingsFilter`.
 
 ## 1.5.0b2 (2023-08-02)
 
@@ -26,7 +32,7 @@
 - Added support for `Snapshot` CRUD operations.
 
 ### Bugs Fixed
-- Fixed async `update_sync_token` to use async/await keywords
+- Fixed async `update_sync_token()` to use async/await keywords.
 
 ### Other Changes
 - Bumped minimum dependency on `azure-core` to `>=1.25.0`.
@@ -44,7 +50,7 @@
 ## 1.3.0 (2021-11-10)
 
 ### Bugs Fixed
-- Fix the issue that data was persisted according to an incorrect schema/in an incorrect format ([#20518](https://github.com/Azure/azure-sdk-for-python/issues/20518))
+- Fixed the issue that data was persisted according to an incorrect schema/in an incorrect format ([#20518](https://github.com/Azure/azure-sdk-for-python/issues/20518))
 
   `SecretReferenceConfigurationSetting` in 1.2.0 used "secret_uri" rather than "uri" as the schema keywords which 
   broken inter-operation of `SecretReferenceConfigurationSetting` between SDK and the portal. 
@@ -55,37 +61,37 @@
 
 ## 1.2.0 (2021-07-06)
 ### Features Added
-* Adds `FeatureFlagConfigurationSetting` and `SecretReferenceConfigurationSetting` models
+* Added `FeatureFlagConfigurationSetting` and `SecretReferenceConfigurationSetting` models
 * `AzureAppConfigurationClient` can now be used as a context manager.
-* Adds `update_sync_token` to update sync tokens from Event Grid notifications.
+* Added `update_sync_token()` to update sync tokens from Event Grid notifications.
 
 ## 1.2.0b2 (2021-06-08)
 
 ### Features
-- Adds context manager functionality to the sync and async `AzureAppConfigurationClient`s.
+- Added context manager functionality to the sync and async `AzureAppConfigurationClient`s.
 
 ### Fixes
-- Fixes a deserialization bug for `FeatureFlagConfigurationSetting` and `SecretReferenceConfigurationSetting`.
+- Fixed a deserialization bug for `FeatureFlagConfigurationSetting` and `SecretReferenceConfigurationSetting`.
 
 ## 1.2.0b1 (2021-04-06)
 
 ### Features
 
-- Adds method `update_sync_token` to include sync tokens from EventGrid notifications.
+- Added method `update_sync_token()` to include sync tokens from EventGrid notifications.
 - Added `SecretReferenceConfigurationSetting` type to represent a configuration setting that references a KeyVault Secret.
-Added `FeatureFlagConfigurationSetting` type to represent a configuration setting that controls a feature flag.
+- Added `FeatureFlagConfigurationSetting` type to represent a configuration setting that controls a feature flag.
 
 ## 1.1.1 (2020-10-05)
 
 ### Features
 
-- Improve error message if Connection string secret has incorrect padding. ([#14140](https://github.com/Azure/azure-sdk-for-python/issues/14140))
+- Improved error message if Connection string secret has incorrect padding. ([#14140](https://github.com/Azure/azure-sdk-for-python/issues/14140))
 
 ## 1.1.0 (2020-09-08)
 
 ### Features
 
-- Added match condition support for `set_read_only` method. ([#13276](https://github.com/Azure/azure-sdk-for-python/issues/13276))
+- Added match condition support for `set_read_only()` method. ([#13276](https://github.com/Azure/azure-sdk-for-python/issues/13276))
 
 ## 1.0.1 (2020-08-10)
 
@@ -97,32 +103,32 @@ Added `FeatureFlagConfigurationSetting` type to represent a configuration settin
 
 ### Features
 
-- Add AAD auth support. ([#8924](https://github.com/Azure/azure-sdk-for-python/issues/8924))
+- Added AAD auth support. ([#8924](https://github.com/Azure/azure-sdk-for-python/issues/8924))
 
 ### Breaking changes
 
-- List_configuration_settings & list_revisions now take string key/label filter instead of keys/labels list. ([#9066](https://github.com/Azure/azure-sdk-for-python/issues/9066))
+- `list_configuration_settings()` & `list_revisions()` now take string key/label filter instead of keys/labels list. ([#9066](https://github.com/Azure/azure-sdk-for-python/issues/9066))
 
 ## 1.0.0b6 (2019-12-03)
 
 ### Features
 
-- Add sync-token support. ([#8418](https://github.com/Azure/azure-sdk-for-python/issues/8418))
+- Added sync-token support. ([#8418](https://github.com/Azure/azure-sdk-for-python/issues/8418))
 
 ### Breaking changes
 
-- Combine set_read_only & clear_read_only to be set_read_only(True/False). ([#8453](https://github.com/Azure/azure-sdk-for-python/issues/8453))
+- Combined set_read_only & clear_read_only to be set_read_only(True/False). ([#8453](https://github.com/Azure/azure-sdk-for-python/issues/8453))
 
 ## 1.0.0b5 (2019-10-30)
 
 ### Breaking changes
 
-- etag and match_condition of delete_configuration_setting are now keyword argument only. ([#8161](https://github.com/Azure/azure-sdk-for-python/issues/8161))
+- `etag` and `match_condition` of `delete_configuration_setting()` are now keyword argument only. ([#8161](https://github.com/Azure/azure-sdk-for-python/issues/8161))
 
 ## 1.0.0b4 (2019-10-07)
 
-- Add conditional operation support
-- Add set_read_only and clear_read_only methods
+- Added conditional operation support
+- Added `set_read_only()` and `clear_read_only()` methods
 
 ## 1.0.0b3 (2019-09-09)
 

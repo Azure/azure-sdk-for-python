@@ -54,6 +54,9 @@ class DeviceCodeCredential(InteractiveCredential):
         https://login.microsoft.com/ to validate the authority. By setting this to **True**, the validation of the
         authority is disabled. As a result, it is crucial to ensure that the configured authority host is valid and
         trustworthy.
+    :keyword bool enable_support_logging: Enables additional support logging in the underlying MSAL library.
+        This logging potentially contains personally identifiable information and is intended to be used only for
+        troubleshooting purposes.
 
     .. admonition:: Example:
 

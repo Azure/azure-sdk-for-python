@@ -103,9 +103,9 @@ To instantiate the `SearchClient`, you'll need the **endpoint**, **API key** and
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
 
-service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
-index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
-key = os.getenv("AZURE_SEARCH_API_KEY")
+service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
+index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
+key = os.environ["AZURE_SEARCH_API_KEY"]
 
 search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 ```
@@ -259,7 +259,7 @@ fields = [
     ),
 ]
 cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
-scoring_profiles = []
+scoring_profiles: List[ScoringProfile] = []
 index = SearchIndex(name=name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options)
 
 result = client.create_index(index)
@@ -310,7 +310,7 @@ endpoint = os.environ["SEARCH_ENDPOINT"]
 key = os.environ["SEARCH_API_KEY"]
 credential = DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_CHINA)
 
-search_client = SearchClient(endpoint, index_name, crdential=credential, audience="https://search.azure.cn")
+search_client = SearchClient(endpoint, index_name, credential=credential, audience="https://search.azure.cn")
 ```
 
 ### Retrieving a specific document from your index

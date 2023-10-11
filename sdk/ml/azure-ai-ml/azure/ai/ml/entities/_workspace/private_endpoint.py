@@ -6,6 +6,20 @@ from typing import Dict, Optional
 
 
 class EndpointConnection:
+    """Private Endpoint Connection related to a workspace private endpoint.
+
+    :param subscription_id: Subscription id of the connection.
+    :type subscription_id: str
+    :param resource_group: Resource group of the connection.
+    :type resource_group: str
+    :param vnet_name: Name of the virtual network of the connection.
+    :type vnet_name: str
+    :param subnet_name: Name of the subnet of the connection.
+    :type subnet_name: str
+    :param location: Location of the connection.
+    :type location: str
+    """
+
     def __init__(
         self,
         subscription_id: str,
@@ -22,6 +36,14 @@ class EndpointConnection:
 
 
 class PrivateEndpoint:
+    """Private Endpoint of a workspace.
+
+    :param approval_type: Approval type of the private endpoint.
+    :type approval_type: str
+    :param connections: List of private endpoint connections.
+    :type connections: List[~azure.ai.ml.entities.EndpointConnection]
+    """
+
     def __init__(
         self,
         approval_type: Optional[str] = None,

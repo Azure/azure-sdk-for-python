@@ -50,12 +50,11 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         self._last_received_sequenced_number = None
         self._message_iter = None
         self._connection = kwargs.get("connection")
-        prefetch_count = kwargs.get("prefetch_count", 0)
-        if int(prefetch_count) < 0 or int(prefetch_count) > 50000:
+        self._prefetch_count = int(kwargs.get("prefetch_count", 0))
+        if self._prefetch_count < 0 or self._prefetch_count > 50000:
             raise ValueError(
                 "prefetch_count must be an integer between 0 and 50000 inclusive."
             )
-        self._prefetch_count = prefetch_count + 1
         # The relationship between the amount can be received and the time interval is linear: amount ~= perf * interval
         # In large max_message_count case, like 5000, the pull receive would always return hundreds of messages limited
         # by the perf and time.

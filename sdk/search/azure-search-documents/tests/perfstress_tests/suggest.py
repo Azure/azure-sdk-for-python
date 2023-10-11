@@ -29,7 +29,11 @@ class SuggestTest(PerfStressTest):
     def add_arguments(parser):
         super(SuggestTest, SuggestTest).add_arguments(parser)
         parser.add_argument(
-            "--num-documents", nargs="?", type=int, help="The number of results expect to be returned.", default=-1
+            "--num-documents",
+            nargs="?",
+            type=int,
+            help="The number of results expect to be returned.",
+            default=-1,
         )
 
     def run_sync(self):

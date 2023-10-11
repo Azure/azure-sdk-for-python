@@ -20,7 +20,7 @@ trigger:
 create_monitor:
   compute:
     instance_type: "standard_e8s_v3"
-    runtime_version: "3.2"
+    runtime_version: "3.3"
   monitoring_target:
     endpoint_deployment_id: fake_endpoint_id
     ml_task: classification
