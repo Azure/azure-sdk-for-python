@@ -36,10 +36,11 @@ class ResourceThrottleRetryPolicy(object):
         self.is_bulk_retry = False
 
     def ShouldRetry(self, exception):
-        """Returns true if should retry based on the passed-in exception.
+        """Returns true if the request should retry based on the passed-in exception.
 
-        :param (exceptions.CosmosHttpResponseError instance) exception:
-        :rtype: boolean
+        :param exceptions.CosmosHttpResponseError exception:
+        :returns: a boolean stating whether the request should be retried
+        :rtype: bool
         """
         # logic needed for bulk requests - retry until batch is completed
         if self.is_bulk_retry:
