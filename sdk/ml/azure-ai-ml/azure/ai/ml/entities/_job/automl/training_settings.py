@@ -115,9 +115,17 @@ class TrainingSettings(RestTranslatableMixin):
     def allowed_training_algorithms(self) -> Optional[List[str]]:
         return self._allowed_training_algorithms
 
+    @allowed_training_algorithms.setter
+    def allowed_training_algorithms(self, value):
+        self._allowed_training_algorithms = value
+
     @property
     def blocked_training_algorithms(self) -> Optional[List[str]]:
         return self._blocked_training_algorithms
+
+    @blocked_training_algorithms.setter
+    def blocked_training_algorithms(self, value):
+        self._blocked_training_algorithms = value
 
     def _to_rest_object(self) -> RestTrainingSettings:
         return RestTrainingSettings(
@@ -168,14 +176,6 @@ class TrainingSettings(RestTranslatableMixin):
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
-
-    @blocked_training_algorithms.setter
-    def blocked_training_algorithms(self, value):
-        self._blocked_training_algorithms = value
-
-    @allowed_training_algorithms.setter
-    def allowed_training_algorithms(self, value):
-        self._allowed_training_algorithms = value
 
 
 class ClassificationTrainingSettings(TrainingSettings):
