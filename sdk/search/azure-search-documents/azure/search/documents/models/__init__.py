@@ -66,5 +66,5 @@ __all__ = (
     "QueryDebugMode",
     "VectorFilterMode",
     "VectorQuery",
-    "VectorQueryKind",""
+    "VectorQueryKind",
 )
