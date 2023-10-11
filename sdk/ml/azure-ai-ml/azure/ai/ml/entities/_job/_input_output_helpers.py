@@ -147,7 +147,7 @@ def _validate_inputs_for(input_consumer_name: str, input_consumer: str, inputs: 
             )
 
 
-def validate_inputs_for_command(command: str, inputs: Dict[str, Any]) -> None:
+def validate_inputs_for_command(command: str, inputs: Optional[Dict]) -> None:
     _validate_inputs_for("command", command, inputs)
 
 

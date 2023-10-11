@@ -100,7 +100,7 @@ class SweepJobLimits(JobLimits):
         max_concurrent_trials: Optional[int] = None,
         max_total_trials: Optional[int] = None,
         timeout: Optional[int] = None,
-        trial_timeout: Optional[int] = None,
+        trial_timeout: Optional[Union[int, str]] = None,
     ) -> None:
         super().__init__()
         self.type = JobType.SWEEP
@@ -128,7 +128,7 @@ class SweepJobLimits(JobLimits):
         self._timeout = _get_floored_timeout(value)
 
     @property
-    def trial_timeout(self) -> int:
+    def trial_timeout(self) -> Optional[Union[int, str]]:
         """The timeout value, in seconds, for each Sweep Job trial.
 
         :return: The timeout value, in seconds, for each Sweep Job trial.

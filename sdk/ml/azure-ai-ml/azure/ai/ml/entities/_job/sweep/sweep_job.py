@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, NoReturn, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2023_04_01_preview.models import SweepJob as RestSweepJob
@@ -183,25 +183,31 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         )
 
     def _to_dict(self) -> Dict:
-        return SweepJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        res: dict = SweepJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        return res
 
     def _to_rest_object(self) -> JobBase:
         self._override_missing_properties_from_trial()
-        self.trial.command = map_single_brackets_and_warn(self.trial.command)
-        search_space = {param: space._to_rest_object() for (param, space) in self.search_space.items()}
+        if self.trial is not None:
+            self.trial.command = map_single_brackets_and_warn(self.trial.command)
 
-        validate_inputs_for_command(self.trial.command, self.inputs)
+        if self.search_space is not None:
+            search_space = {param: space._to_rest_object() for (param, space) in self.search_space.items()}
+
+        if self.trial is not None:
+            validate_inputs_for_command(self.trial.command, self.inputs)
         for key in search_space.keys():
             validate_key_contains_allowed_characters(key)
 
-        trial_component = TrialComponent(
-            code_id=self.trial.code,
-            distribution=self.trial.distribution._to_rest_object() if self.trial.distribution else None,
-            environment_id=self.trial.environment,
-            command=self.trial.command,
-            environment_variables=self.trial.environment_variables,
-            resources=self.trial.resources._to_rest_object() if self.trial.resources else None,
-        )
+        if self.trial is not None:
+            trial_component = TrialComponent(
+                code_id=self.trial.code,
+                distribution=self.trial.distribution._to_rest_object() if self.trial.distribution else None,
+                environment_id=self.trial.environment,
+                command=self.trial.command,
+                environment_variables=self.trial.environment_variables,
+                resources=self.trial.resources._to_rest_object() if self.trial.resources else None,
+            )
 
         sweep_job = RestSweepJob(
             display_name=self.display_name,
@@ -210,7 +216,9 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             search_space=search_space,
             sampling_algorithm=self._get_rest_sampling_algorithm() if self.sampling_algorithm else None,
             limits=self.limits._to_rest_object() if self.limits else None,
-            early_termination=self.early_termination._to_rest_object() if self.early_termination else None,
+            early_termination=self.early_termination._to_rest_object()
+            if self.early_termination and not isinstance(self.early_termination, str)
+            else None,
             properties=self.properties,
             compute_id=self.compute,
             objective=self.objective._to_rest_object() if self.objective else None,
@@ -225,7 +233,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         sweep_job_resource.name = self.name
         return sweep_job_resource
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs: Any) -> NoReturn:
         msg = "no sweep component entity"
         raise JobException(
             message=msg,
@@ -235,7 +243,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         )
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "SweepJob":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "SweepJob":
         loaded_schema = load_from_dict(SweepJobSchema, data, context, additional_message, **kwargs)
         loaded_schema["trial"] = ParameterizedCommand(**(loaded_schema["trial"]))
         sweep_job = SweepJob(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_schema)
@@ -283,7 +291,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             queue_settings=properties.queue_settings,
         )
 
-    def _override_missing_properties_from_trial(self):
+    def _override_missing_properties_from_trial(self) -> None:
         if not isinstance(self.trial, CommandJob):
             return
 
@@ -296,6 +304,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
 
         has_trial_limits_timeout = self.trial.limits and self.trial.limits.timeout
         if has_trial_limits_timeout and not self.limits:
-            self.limits = SweepJobLimits(trial_timeout=self.trial.limits.timeout)
+            time_out = self.trial.limits.timeout if self.trial.limits is not None else None
+            self.limits = SweepJobLimits(trial_timeout=time_out)
         elif has_trial_limits_timeout and not self.limits.trial_timeout:
-            self.limits.trial_timeout = self.trial.limits.timeout
+            self.limits.trial_timeout = self.trial.limits.timeout if self.trial.limits is not None else None
