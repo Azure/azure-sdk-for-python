@@ -3,17 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Union, Any, Dict, Mapping, Optional, List, Tuple, TYPE_CHECKING, cast
+from typing import Union, Any, Mapping, Optional, List, Tuple, TYPE_CHECKING
 
 from azure.core import MatchConditions
-
 
 from ._common_conversion import _transform_patch_to_cosmos_post
 from ._models import UpdateMode, TransactionOperation
 from ._serialize import _add_entity_properties, _prepare_key, _get_match_condition
 from ._entity import TableEntity
 from ._generated._configuration import AzureTableConfiguration
-
 from ._generated.operations._operations import (
     build_table_insert_entity_request,
     build_table_merge_entity_request,
@@ -89,9 +87,9 @@ class TableBatchOperations(object):
         :return: None
         """
         try:
-            operation_type, entity, kwargs = operation  # type: ignore
+            operation_type, entity, kwargs = operation
         except ValueError:
-            operation_type, entity, kwargs = operation[0], operation[1], {}  # type: ignore
+            operation_type, entity, kwargs = operation[0], operation[1], {}
         try:
             getattr(self, operation_type.lower())(entity, **kwargs)
         except AttributeError as exc:
