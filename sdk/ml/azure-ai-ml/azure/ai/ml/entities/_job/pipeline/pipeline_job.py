@@ -376,10 +376,9 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
 
         def _is_isolated_job(_validate_job_name: str) -> bool:
             def _try_get_data_bindings(
-                _name: str, _input_output_data: Union["_GroupAttrDict", str, "InputOutputBase"]
+                _name: str, _input_output_data: Union["_GroupAttrDict", "InputOutputBase"]
             ) -> Optional[List[str]]:
                 """Try to get data bindings from input/output data, return None if not found.
-
                 :param _name: The name to use when flattening GroupAttrDict
                 :type _name: str
                 :param _input_output_data: The input/output data
@@ -389,21 +388,18 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
                 """
                 # handle group input
                 if GroupInput._is_group_attr_dict(_input_output_data):
-                    if not isinstance(_input_output_data, str):
-                        # flatten to avoid nested cases
-                        flattened_values: List[Input] = list(_input_output_data.flatten(_name).values())
-                        # handle invalid empty group
-                        if len(flattened_values) == 0:
-                            return None
-                        return [_value.path for _value in flattened_values]
-
-                if not isinstance(_input_output_data, str):
-                    _input_output_data_object = _input_output_data._data
-                    if not hasattr(_input_output_data_object, "_data_binding"):
+                    # flatten to avoid nested cases
+                    flattened_values: List[Input] = list(_input_output_data.flatten(_name).values())
+                    # handle invalid empty group
+                    if len(flattened_values) == 0:
                         return None
-                    return [_input_output_data_object._data_binding()]
-
-                return [_input_output_data]
+                    return [_value.path for _value in flattened_values]
+                _input_output_data = _input_output_data._data
+                if isinstance(_input_output_data, str):
+                    return [_input_output_data]
+                if not hasattr(_input_output_data, "_data_binding"):
+                    return None
+                return [_input_output_data._data_binding()]
 
             _validate_job = self.jobs[_validate_job_name]
             # no input to validate job
