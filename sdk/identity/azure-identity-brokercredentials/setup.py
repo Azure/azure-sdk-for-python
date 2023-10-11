@@ -54,7 +54,7 @@ setup(
     ],
     zip_safe=False,
     packages=[
-        "azure.identity.broker",
+        "azure.identity.brokercredentials",
     ],
     include_package_data=True,
     package_data={
