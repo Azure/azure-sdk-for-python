@@ -136,7 +136,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
             boundary=f"batch_{uuid4()}",
         )
 
-        response = self._client.send_request(request, stream=True, **kwargs)
+        response = await self._client.send_request(request, stream=True, **kwargs)
         # TODO: Check for proper error model deserialization
         if response.status_code == 413:
             raise _decode_error(

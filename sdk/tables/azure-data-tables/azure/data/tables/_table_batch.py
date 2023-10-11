@@ -11,7 +11,6 @@ from ._common_conversion import _transform_patch_to_cosmos_post
 from ._models import UpdateMode, TransactionOperation
 from ._serialize import _add_entity_properties, _prepare_key, _get_match_condition
 from ._entity import TableEntity
-from ._generated._configuration import AzureTableConfiguration
 from ._generated.operations._operations import (
     build_table_insert_entity_request,
     build_table_merge_entity_request,
@@ -21,6 +20,8 @@ from ._generated.operations._operations import (
 
 if TYPE_CHECKING:
     from azure.core.rest import HttpRequest
+    from ._generated._configuration import AzureTableConfiguration
+    from ._generated.aio._configuration import AzureTableConfiguration as AsyncAzureTableConfiguration
 
 EntityType = Union[TableEntity, Mapping[str, Any]]
 OperationType = Union[TransactionOperation, str]
@@ -44,7 +45,7 @@ class TableBatchOperations(object):
 
     def __init__(
         self,
-        config: AzureTableConfiguration,
+        config: Union["AzureTableConfiguration", "AsyncAzureTableConfiguration"],
         table_name: str,
         is_cosmos_endpoint: bool = False,
         **kwargs,
@@ -58,7 +59,7 @@ class TableBatchOperations(object):
         :param is_cosmos_endpoint: True if the client endpoint is for Tables Cosmos. False if not. Default is False.
         :type is_cosmos_endpoint: bool
         """
-        self._config: AzureTableConfiguration = config
+        self._config: Union["AzureTableConfiguration", "AsyncAzureTableConfiguration"] = config
         self._is_cosmos_endpoint: bool = is_cosmos_endpoint
         self.table_name: str = table_name
 
@@ -95,7 +96,6 @@ class TableBatchOperations(object):
         except AttributeError as exc:
             raise ValueError(f"Unrecognized operation: {operation}") from exc
 
-
     def create(self, entity: EntityType, **kwargs) -> None:
         """Adds an insert operation to the current batch.
 
@@ -122,7 +122,6 @@ class TableBatchOperations(object):
             **kwargs
         )
         self.requests.append(request)
-
 
     def update(self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs) -> None:
         """Adds an update operation to the current batch.
@@ -191,7 +190,6 @@ class TableBatchOperations(object):
         else:
             raise ValueError(f"Mode type '{mode}' is not supported.")
 
-
     def delete(self, entity: EntityType, **kwargs) -> None:
         """Adds a delete operation to the current branch.
 
@@ -234,7 +232,6 @@ class TableBatchOperations(object):
             **kwargs,
         )
         self.requests.append(request)
-
 
     def upsert(self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs) -> None:
         """Adds an upsert (update/merge) operation to the batch.

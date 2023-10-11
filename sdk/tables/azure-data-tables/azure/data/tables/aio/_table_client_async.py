@@ -667,12 +667,12 @@ class TableClient(AsyncTablesBaseClient):
             is_cosmos_endpoint=self._cosmos_endpoint,
             **kwargs,
         )
-        try:
-            for operation in operations:
+        if isinstance(operations, AsyncIterable):
+            async for operation in operations:
                 batched_requests.add_operation(operation)
-        except TypeError:
+        else:
             try:
-                async for operation in operations:
+                for operation in operations:
                     batched_requests.add_operation(operation)
             except TypeError as exc:
                 raise TypeError(

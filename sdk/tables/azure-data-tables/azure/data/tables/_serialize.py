@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from binascii import hexlify
-from typing import Dict, Optional, Union, Any, Mapping
+from typing import Callable, Dict, Optional, Union, Any, Mapping, Type, Tuple
 from uuid import UUID
 from datetime import datetime
 from math import isnan
@@ -144,30 +144,16 @@ def _to_entity_none(value):  # pylint: disable=unused-argument
 
 # Conversion from Python type to a function which returns a tuple of the
 # type string and content string.
-_PYTHON_TO_ENTITY_CONVERSIONS = {
+_PYTHON_TO_ENTITY_CONVERSIONS: Dict[Type, Callable[[Any], Tuple[Optional[EdmType], Any]]] = {
     int: _to_entity_int32,
     bool: _to_entity_bool,
     datetime: _to_entity_datetime,
     float: _to_entity_float,
     UUID: _to_entity_guid,
     Enum: _to_entity_str,
+    str: _to_entity_str,
+    bytes: _to_entity_binary,
 }
-try:
-    _PYTHON_TO_ENTITY_CONVERSIONS.update(
-        {
-            unicode: _to_entity_str,  # type: ignore
-            str: _to_entity_binary,
-            long: _to_entity_int32,  # type: ignore
-        }
-    )
-except NameError:
-    _PYTHON_TO_ENTITY_CONVERSIONS.update(
-        {
-            str: _to_entity_str,
-            bytes: _to_entity_binary,
-        }
-    )
-
 # cspell:ignore Odatatype
 
 # Conversion from Edm type to a function which returns a tuple of the
@@ -177,7 +163,7 @@ except NameError:
 # boolean and int32 have special processing below, as we would not normally add the
 # Odatatype tags for these to keep payload size minimal.
 # This is also necessary for CLI compatibility.
-_EDM_TO_ENTITY_CONVERSIONS = {
+_EDM_TO_ENTITY_CONVERSIONS: Dict[EdmType, Callable[[Any], Tuple[Optional[EdmType], Any]]] = {
     EdmType.BINARY: _to_entity_binary,
     EdmType.BOOLEAN: lambda v: (EdmType.BOOLEAN, v),
     EdmType.DATETIME: _to_entity_datetime,
@@ -223,10 +209,7 @@ def _add_entity_properties(source: Union[TableEntity, Mapping[str, Any]]) -> Dic
         mtype = ""
 
         if isinstance(value, Enum):
-            try:
-                convert = _PYTHON_TO_ENTITY_CONVERSIONS.get(unicode)  # type: ignore
-            except NameError:
-                convert = _PYTHON_TO_ENTITY_CONVERSIONS.get(str)
+            convert = _PYTHON_TO_ENTITY_CONVERSIONS.get(str)
             mtype, value = convert(value)
         elif isinstance(value, datetime):
             mtype, value = _to_entity_datetime(value)
