@@ -44,13 +44,14 @@ class RunOperations(_ScopeDependentOperations):
             run_id,
         )
 
-    def get_run_children(self, run_id: str) -> Iterable[_BaseJob]:
+    def get_run_children(self, run_id: str, top: int) -> Iterable[_BaseJob]:
         return self._operation.get_child(
             self._subscription_id,
             self._resource_group_name,
             self._workspace_name,
             run_id,
             cls=lambda objs: [self._translate_from_rest_object(obj) for obj in objs],
+            top=top,
         )
 
     def _translate_from_rest_object(self, job_object: Run) -> Optional[_BaseJob]:
