@@ -14,6 +14,7 @@ except ImportError:  # python < 3.3
 
 
 FAKE_CLIENT_ID = "fake-client-id"
+INVALID_CHARACTERS = "|\\`;{&' "
 
 
 def build_id_token(

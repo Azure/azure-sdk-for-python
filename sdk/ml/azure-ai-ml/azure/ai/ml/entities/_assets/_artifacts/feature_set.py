@@ -206,9 +206,13 @@ class FeatureSet(Artifact):
 
         origin_spec_path = self.specification.path
         if isinstance(dest, (PathLike, str)) and not is_url(self.specification.path):
+            if os.path.exists(dest):
+                raise FileExistsError(f"File {dest} already exists.")
             relative_path = os.path.basename(self.specification.path)
             src_spec_path = str(Path(self._base_path, self.specification.path))
             dest_spec_path = str(Path(os.path.dirname(dest), relative_path))
+            if os.path.exists(dest_spec_path):
+                shutil.rmtree(dest_spec_path)
             shutil.copytree(src=src_spec_path, dst=dest_spec_path)
             self.specification.path = str(Path("./", relative_path))
         super().dump(dest=dest, **kwargs)

@@ -71,12 +71,16 @@ class DatabaseAccount(object):  # pylint: disable=too-many-instance-attributes
     @property
     def WritableLocations(self):
         """The list of writable locations for a geo-replicated database account.
+        :returns: List of writable locations for the database account.
+        :rtype: List[str]
         """
         return self._WritableLocations
 
     @property
     def ReadableLocations(self):
         """The list of readable locations for a geo-replicated database account.
+        :returns: List of readable locations for the database account.
+        :rtype: List[str]
         """
         return self._ReadableLocations
 
@@ -163,6 +167,7 @@ class IndexKind(object):
 
     Hash = "Hash"
     Range = "Range"
+    MultiHash = "MultiHash"
 
 
 class PartitionKind(object):
@@ -173,6 +178,7 @@ class PartitionKind(object):
     """
 
     Hash = "Hash"
+    MultiHash = "MultiHash"
 
 
 class DataType(object):
