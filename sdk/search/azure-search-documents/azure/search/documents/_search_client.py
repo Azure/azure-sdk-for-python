@@ -22,6 +22,7 @@ from ._generated.models import (
     QueryType,
     SearchMode,
     ScoringStatistics,
+    VectorFilterMode,
     VectorQuery,
     SemanticErrorHandling,
     QueryDebugMode,
@@ -166,6 +167,7 @@ class SearchClient(HeadersMixin):
         scoring_statistics: Optional[Union[str, ScoringStatistics]] = None,
         session_id: Optional[str] = None,
         vector_queries: Optional[List[VectorQuery]] = None,
+        vector_filter_mode: Optional[Union[str, VectorFilterMode]] = None,
         semantic_error_handling: Optional[Union[str, SemanticErrorHandling]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
         debug: Optional[Union[str, QueryDebugMode]] = None,
@@ -278,6 +280,9 @@ class SearchClient(HeadersMixin):
         :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
         :keyword vector_queries: The query parameters for vector and hybrid search queries.
         :paramtype vector_queries: list[VectorQuery]
+        :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
+          vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
+        :paramtype vector_filter_mode: str or VectorFilterMode
         :rtype:  SearchItemPaged[Dict]
 
         .. admonition:: Example:
@@ -349,6 +354,7 @@ class SearchClient(HeadersMixin):
             session_id=session_id,
             scoring_statistics=scoring_statistics,
             vector_queries=vector_queries,
+            vector_filter_mode=vector_filter_mode,
             semantic_error_handling=semantic_error_handling,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
             debug=debug,
