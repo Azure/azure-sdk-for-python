@@ -19,7 +19,7 @@ import os
 
 
 class AutoMLNLPSamples(object):
-    def automl_nlp_jobs():
+    def automl_nlp_jobs(self):
         # [START automl.text_classification]
         from azure.ai.ml import automl, Input
         from azure.ai.ml.constants import AssetTypes
@@ -104,6 +104,62 @@ class AutoMLNLPSamples(object):
         )
         # [END automl.text_ner_job]
 
+        # [START automl.nlp_sweep_settings]
+        from azure.ai.ml import automl
+        from azure.ai.ml.sweep import BanditPolicy
+
+        nlp_sweep_settings = automl.NlpSweepSettings(
+            sampling_algorithm="Grid",
+            early_termination=BanditPolicy(
+                evaluation_interval=2, slack_factor=0.05, delay_evaluation=6
+            ),
+        )
+        # [END automl.nlp_sweep_settings]
+
+        # [START automl.nlp_search_space]
+        from azure.ai.ml import automl
+        from azure.ai.ml.constants import NlpLearningRateScheduler
+        from azure.ai.ml.sweep import Uniform
+
+        nlp_search_space = automl.NlpSearchSpace(
+            learning_rate_scheduler=NlpLearningRateScheduler.LINEAR,
+            warmup_ratio=0.1,
+            model_name="roberta-base",
+            weight_decay=Uniform(0.01, 0.1)
+        )
+        # [END automl.nlp_search_space]
+
+        # [START automl.nlp_limit_settings]
+        from azure.ai.ml import automl
+
+        nlp_limit_settings = automl.NlpLimitSettings(
+            max_concurrent_trials=2,
+            max_trials=4,
+            max_nodes=4,
+            timeout_minutes=120
+
+        )
+        # [END automl.nlp_limit_settings]
+
+        # [START automl.nlp_fixed_parameters]
+        from azure.ai.ml import automl
+        from azure.ai.ml.constants import NlpLearningRateScheduler
+
+        nlp_fixed_parameters = automl.NlpFixedParameters(
+            model_name="roberta-base",
+            learning_rate_scheduler=NlpLearningRateScheduler.LINEAR,
+            warmup_ratio=0.1,
+        )
+        # [END automl.nlp_fixed_parameters]
+
+
+        # [START automl.nlp_featurization_settings]
+        from azure.ai.ml import automl
+
+        nlp_featurization_settings = automl.NlpFeaturizationSettings(
+            dataset_language="eng"
+        )
+        # [END automl.nlp_featurization_settings]
 
 if __name__ == "__main__":
     sample = AutoMLNLPSamples()

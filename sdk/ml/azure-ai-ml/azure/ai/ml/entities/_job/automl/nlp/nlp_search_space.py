@@ -42,6 +42,16 @@ class NlpSearchSpace(RestTranslatableMixin):
     :param weight_decay: value of weight decay when optimizer is sgd, adam, or adamw. This must be a float in
             the range [0, 1], defaults to None
     :type weight_decay: Optional[Union[float, SweepDistribution]]
+
+
+    .. admonition:: Example:
+
+    .. literalinclude:: ../samples/ml_samples_automl_nlp.py
+            :start-after: [START automl.nlp_search_space]
+            :end-before: [END automl.nlp_search_space]
+            :language: python
+            :dedent: 8
+            :caption: creating an nlp search space
     """
 
     def __init__(

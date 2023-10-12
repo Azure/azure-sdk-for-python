@@ -20,6 +20,15 @@ class NlpSweepSettings(RestTranslatableMixin):
     :param early_termination: Early termination policy to end poorly performing training candidates,
         defaults to None.
     :type early_termination: Optional[~azure.mgmt.machinelearningservices.models.EarlyTerminationPolicy]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_nlp.py
+                :start-after: [START automl.nlp_sweep_settings]
+                :end-before: [END automl.nlp_sweep_settings]
+                :language: python
+                :dedent: 8
+                :caption: creating an nlp sweep settings
     """
 
     def __init__(
