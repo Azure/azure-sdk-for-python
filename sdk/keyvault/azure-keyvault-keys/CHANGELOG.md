@@ -1,14 +1,12 @@
 # Release History
 
-## 4.9.0b2 (Unreleased)
+## 4.9.0b2 (2023-10-12)
 
 ### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- The `cryptography` library's `RSAPrivateKey` and `RSAPublicKey` interfaces are now implemented by
+  `KeyVaultRSAPrivateKey` and `KeyVaultRSAPublicKey` classes that can use keys managed by Key Vault
+- `CryptographyClient` has `create_rsa_private_key` and `create_rsa_public_key` methods that return a
+  `KeyVaultRSAPrivateKey` and `KeyVaultRSAPublicKey`, respectively
 
 ## 4.9.0b1 (2023-05-16)
 

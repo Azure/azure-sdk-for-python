@@ -1,14 +1,26 @@
 # Release History
 
-## 1.15.0b2 (Unreleased)
+## 1.15.0b2 (2023-10-12)
 
 ### Features Added
 
+- Added `enable_support_logging` as a keyword argument to credentials using MSAL's `PublicClientApplication`. This allows additional support logging which may contain PII. ([#32135](https://github.com/Azure/azure-sdk-for-python/pull/32135))
+
 ### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 1.14.0.
+> Only code written against a beta version such as 1.15.0b1 may be affected.
+- Windows Web Account Manager (WAM) Brokered Authentication is moved into another package.
 
 ### Bugs Fixed
 
-### Other Changes
+- `ManagedIdentityCredential` will now correctly retry when the instance metadata endpoint returns a 410 response.  ([#32200](https://github.com/Azure/azure-sdk-for-python/pull/32200))
+
+## 1.14.1 (2023-10-09)
+
+### Bugs Fixed
+
+- Bug fixes for developer credentials
 
 ## 1.15.0b1 (2023-09-12)
 

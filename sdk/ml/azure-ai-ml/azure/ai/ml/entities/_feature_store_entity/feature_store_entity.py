@@ -27,6 +27,35 @@ from .data_column import DataColumn
 
 @experimental
 class FeatureStoreEntity(Asset):
+    """Feature Store Entity
+
+    :param name: The name of the feature store entity resource.
+    :type name: str
+    :param version: The version of the feature store entity resource.
+    :type version: str
+    :param index_columns: Specifies index columns of the feature-store entity resource.
+    :type index_columns: list[~azure.ai.ml.entities.DataColumn]
+    :param stage: The feature store entity stage. Allowed values: Development, Production, Archived.
+        Defaults to "Development".
+    :type stage: Optional[str]
+    :param description: The description of the feature store entity resource. Defaults to None.
+    :type description: Optional[str]
+    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
+    :type tags: Optional[dict[str, str]]
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
+    :raises ValidationException: Raised if stage is specified and is not valid.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_featurestore.py
+            :start-after: [START configure_feature_store_entity]
+            :end-before: [END configure_feature_store_entity]
+            :language: Python
+            :dedent: 8
+            :caption: Configuring a Feature Store Entity
+    """
+
     def __init__(
         self,
         *,
@@ -37,24 +66,7 @@ class FeatureStoreEntity(Asset):
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs,
-    ):
-        """FeatureStoreEntity
-
-        :param name: Name of the resource.
-        :type name: str
-        :param version: Version of the resource.
-        :type version: str
-        :param index_columns: Specifies index columns.
-        :type index_columns: list[~azure.ai.ml.entities.DataColumn]
-        :param stage: Feature store entity stage. Allowed values: Development, Production, Archived
-        :type stage: str
-        :param description: Description of the resource.
-        :type description: str
-        :param tags: Tag dictionary. Tags can be added, removed, and updated.
-        :type tags: dict[str, str]
-        :param kwargs: A dictionary of additional configuration parameters.
-        :type kwargs: dict
-        """
+    ) -> None:
         super().__init__(
             name=name,
             version=version,

@@ -54,7 +54,7 @@ class _GlobalEndpointManager(object):
         self.refresh_lock = asyncio.Lock()
         self.last_refresh_time = 0
 
-    def get_refresh_time_interval_in_ms_stub(self):  # pylint: disable=no-self-use
+    def get_refresh_time_interval_in_ms_stub(self):
         return constants._Constants.DefaultUnavailableLocationExpirationTime
 
     def get_write_endpoint(self):
@@ -113,6 +113,8 @@ class _GlobalEndpointManager(object):
         First tries by using the default endpoint, and if that doesn't work,
         use the endpoints for the preferred locations in the order they are
         specified, to get the database account.
+        :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
+        :rtype: ~azure.cosmos.DatabaseAccount
         """
         try:
             database_account = await self._GetDatabaseAccountStub(self.DefaultEndpoint, **kwargs)
@@ -135,8 +137,11 @@ class _GlobalEndpointManager(object):
 
     async def _GetDatabaseAccountStub(self, endpoint, **kwargs):
         """Stub for getting database account from the client.
-
         This can be used for mocking purposes as well.
+
+        :param str endpoint: the endpoint being used to get the database account
+        :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
+        :rtype: ~azure.cosmos.DatabaseAccount
         """
         return await self.client.GetDatabaseAccount(endpoint, **kwargs)
 

@@ -18,21 +18,22 @@ from azure.ai.ml._utils._experimental import experimental
 
 @experimental
 class WorkspaceHubConfig:
+    """WorkspaceHubConfig.
+
+    :keyword additional_workspace_storage_accounts: A list of resource IDs of existing storage accounts that will be
+        utilized in addition to the default one.
+    :paramtype additional_workspace_storage_accounts: List[str]
+    :keyword default_workspace_resource_group: A destination resource group for any Project workspaces that join the
+        workspaceHub, it will be the workspaceHub's resource group by default.
+    :paramtype default_workspace_resource_group: str
+    """
+
     def __init__(
         self,
         *,
         additional_workspace_storage_accounts: Optional[List[str]] = None,
         default_workspace_resource_group: Optional[str] = None,
     ) -> None:
-        """WorkspaceHubConfig.
-
-        :keyword additional_workspace_storage_accounts: A list of resource IDs of existing storage accounts that will be
-            utilized in addition to the default one.
-        :paramtype additional_workspace_storage_accounts: List[str]
-        :keyword default_workspace_resource_group: A destination resource group for any Project workspaces that join the
-            workspaceHub, it will be the workspaceHub's resource group by default.
-        :paramtype default_workspace_resource_group: str
-        """
         self.additional_workspace_storage_accounts = additional_workspace_storage_accounts
         self.default_workspace_resource_group = default_workspace_resource_group
 

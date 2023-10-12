@@ -6,7 +6,7 @@
           "computeConfiguration": {
             "computeType": "ServerlessSpark",
             "instanceType": "standard_e8s_v3",
-            "runtimeVersion": "3.2",
+            "runtimeVersion": "3.3",
             "computeIdentity": {
               "computeIdentityType": "AmlToken"
             }
