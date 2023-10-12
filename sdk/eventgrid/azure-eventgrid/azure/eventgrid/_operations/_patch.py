@@ -257,7 +257,6 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         response = pipeline_response.http_response
 
-
         if response.status_code not in [200]:
             if _stream:
                  response.read()  # Load the body in memory and close the socket
@@ -327,10 +326,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
             _headers['ce-dataschema'] = _SERIALIZER.header('ce-dataschema', event.dataschema, 'str')
         if event.subject:
             _headers['ce-subject'] = _SERIALIZER.header('ce-subject', event.subject, 'str')
-
-        # TODO: Generated cloud event doesn't support extensions
-        # if event.extensions:
-        #     _headers['ce-extensions'] = event.extensions
+        if event.extensions:
+            _headers['ce-extensions'] = _SERIALIZER.header('ce-extensions', event.extensions, 'dict')
 
         return HttpRequest(
             method="POST",
