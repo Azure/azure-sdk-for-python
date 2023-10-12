@@ -7,9 +7,9 @@
 import logging
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SweepJob as RestSweepJob
-from azure.ai.ml._restclient.v2023_04_01_preview.models import TrialComponent
+from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2023_08_01_preview.models import SweepJob as RestSweepJob
+from azure.ai.ml._restclient.v2023_08_01_preview.models import TrialComponent
 from azure.ai.ml._schema._sweep.sweep_job import SweepJobSchema
 from azure.ai.ml._utils.utils import map_single_brackets_and_warn
 from azure.ai.ml.constants import JobType
@@ -277,9 +277,8 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             outputs=to_rest_data_outputs(self.outputs),
             identity=self.identity._to_job_rest_object() if self.identity else None,
             queue_settings=self.queue_settings._to_rest_object() if self.queue_settings else None,
+            resources=self.resources._to_rest_object() if self.resources else None,
         )
-        if hasattr(sweep_job, "resources"):
-            sweep_job.resources = self.resources._to_rest_object() if self.resources else None
         sweep_job_resource = JobBase(properties=sweep_job)
         sweep_job_resource.name = self.name
         return sweep_job_resource
