@@ -71,7 +71,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
 
     parser.add_argument(
         "--service",
-        help=("Name of service directory (under sdk/) to test." "Example: --service applicationinsights"),
+        help=("Name of service directory (under sdk/) to test. Example: --service applicationinsights"),
     )
 
     parser.add_argument(
