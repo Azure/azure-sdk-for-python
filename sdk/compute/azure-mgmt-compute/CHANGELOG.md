@@ -1,5 +1,12 @@
 # Release History
 
+## 30.3.0 (2023-10-23)
+
+### Features Added
+
+  - Model CreationData has a new parameter elastic_san_resource_id
+  - Model Disk has a new parameter last_ownership_update_time
+
 ## 30.2.0 (2023-09-15)
 
 ### Features Added

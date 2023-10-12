@@ -19,7 +19,7 @@ load-plugins=pylint_guidelines_checker
 # Let's black deal with bad-continuation
 
 # Added disables from super-with-arguments
-disable=useless-object-inheritance,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,too-few-public-methods,consider-using-f-string,super-with-arguments,redefined-builtin,import-outside-toplevel,client-suffix-needed,unnecessary-dunder-call,unnecessary-ellipsis,client-paging-methods-use-list
+disable=useless-object-inheritance,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,too-few-public-methods,consider-using-f-string,super-with-arguments,redefined-builtin,import-outside-toplevel,client-suffix-needed,unnecessary-dunder-call,unnecessary-ellipsis,client-paging-methods-use-list,no-legacy-azure-core-http-response-import,do-not-import-legacy-six
 
 [FORMAT]
 max-line-length=120

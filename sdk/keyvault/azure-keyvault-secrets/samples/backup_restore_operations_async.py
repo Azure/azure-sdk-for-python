@@ -4,6 +4,7 @@
 # ------------------------------------
 import asyncio
 import os
+
 from azure.keyvault.secrets.aio import SecretClient
 from azure.identity.aio import DefaultAzureCredential
 
@@ -41,6 +42,7 @@ async def run_sample():
     # if the secret already exists in the Key Vault, then a new version of the secret is created.
     print("\n.. Create Secret")
     secret = await client.set_secret("backupRestoreSecretNameAsync", "backupRestoreSecretValue")
+    assert secret.name
     print(f"Secret with name '{secret.name}' created with value '{secret.value}'")
 
     # Backups are good to have, if in case secrets gets deleted accidentally.
@@ -63,8 +65,8 @@ async def run_sample():
 
     # In the future, if the secret is required again, we can use the backup value to restore it in the Key Vault.
     print("\n.. Restore the secret using the backed up secret bytes")
-    secret = await client.restore_secret_backup(secret_backup)
-    print(f"Restored secret with name '{secret.name}'")
+    secret_properties = await client.restore_secret_backup(secret_backup)
+    print(f"Restored secret with name '{secret_properties.name}'")
 
     print("\nrun_sample done")
     await credential.close()

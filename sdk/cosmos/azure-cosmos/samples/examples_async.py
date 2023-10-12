@@ -176,6 +176,51 @@ async def examples_async():
             print(json.dumps(item, indent=True))
         # [END delete_all_items_by_partition_key]
 
+        # insert items in a subpartitioned container
+        # [START create_container]
+        location_container_name = "locations"
+        try:
+            container = await database.create_container(
+                id=location_container_name,
+                partition_key=PartitionKey(path=["/state", "/city", "/zipcode"], kind="MultiHash")
+            )
+        except exceptions.CosmosResourceExistsError:
+            container = database.get_container_client(location_container_name)
+        # [END create_container]
+        # [START upsert_items]
+        for i in range(1, 10):
+            await container.upsert_item(
+                dict(id="item{}".format(i), state="WA", city="Redmond", zipcode=98052)
+            )
+        # [END upsert_items]
+
+        # Modify an existing item in the container
+        # [START update_item]
+        item = await container.read_item("item2", partition_key=["WA", "Redmond", 98052])
+        item["state"] = "GA"
+        item["city"] = "Atlanta"
+        item["zipcode"] = 30363
+        updated_item = await container.upsert_item(item)
+        # [END update_item]
+
+        # Query the items in a container using SQL-like syntax. This example
+        # gets all items whose product model hasn't been discontinued.
+        # [START query_items]
+        import json
+
+        async for item in container.query_items(
+                query='SELECT * FROM location l WHERE l.state = "WA"'
+        ):
+            print(json.dumps(item, indent=True))
+        # [END query_items]
+
+         # [START delete_items]
+        async for item in container.query_items(
+                query='SELECT * FROM location p WHERE p.state = "GA"'
+        ):
+            await container.delete_item(item, partition_key=["GA", "Atlanta", 30363])
+        # [END delete_items]
+
         await client.delete_database(database_name)
         print("Sample done running!")
 

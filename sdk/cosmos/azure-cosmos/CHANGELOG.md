@@ -3,6 +3,7 @@
 ### 4.5.2 (Unreleased)
 
 #### Features Added
+* Added Support for Subpartitioning in Python SDK. See [PR 31121](https://github.com/Azure/azure-sdk-for-python/pull/31121)
 
 #### Breaking Changes
 
