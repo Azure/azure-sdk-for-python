@@ -47,7 +47,7 @@ class UsernamePasswordBrokerCredential(_UsernamePasswordCredential):
     :keyword bool allow_broker: An authentication broker is an application that runs on a user's machine that manages
         the authentication handshakes and token maintenance for connected accounts. The Windows operating system uses
         the Web Account Manager (WAM) as its authentication broker. If this parameter is set to True, the broker will
-        be used when possible. Defaults to False.
+        be used when possible. Defaults to True.
         Check https://learn.microsoft.com/azure/active-directory/develop/scenario-desktop-acquire-token-wam for more
         information about WAM.
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
@@ -60,7 +60,7 @@ class UsernamePasswordBrokerCredential(_UsernamePasswordCredential):
         # first time it's asked for a token. However, we want to ensure this first authentication is not silent, to
         # validate the given password. This class therefore doesn't document the authentication_record argument, and we
         # discard it here.
-        self._allow_broker = kwargs.pop("allow_broker", None)
+        self._allow_broker = kwargs.pop("allow_broker", True)
         super(UsernamePasswordBrokerCredential, self).__init__(
             client_id=client_id, username=username, password=password, **kwargs
         )
