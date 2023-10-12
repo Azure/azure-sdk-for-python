@@ -5,7 +5,8 @@ from .parse_functions import (
     get_name_from_specifier,
     ParsedSetup,
     read_setup_py_content,
-    get_build_config
+    get_build_config,
+    update_build_config
 )
 
 __all__ = [
@@ -15,5 +16,6 @@ __all__ = [
     "get_name_from_specifier",
     "ParsedSetup",
     "read_setup_py_content",
-    "get_build_config"
+    "get_build_config",
+    "update_build_config"
 ]
