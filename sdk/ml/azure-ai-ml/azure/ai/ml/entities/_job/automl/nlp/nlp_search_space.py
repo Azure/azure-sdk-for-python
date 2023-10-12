@@ -46,12 +46,12 @@ class NlpSearchSpace(RestTranslatableMixin):
 
     .. admonition:: Example:
 
-    .. literalinclude:: ../samples/ml_samples_automl_nlp.py
-            :start-after: [START automl.nlp_search_space]
-            :end-before: [END automl.nlp_search_space]
-            :language: python
-            :dedent: 8
-            :caption: creating an nlp search space
+        .. literalinclude:: ../samples/ml_samples_automl_nlp.py
+                :start-after: [START automl.nlp_search_space]
+                :end-before: [END automl.nlp_search_space]
+                :language: python
+                :dedent: 8
+                :caption: creating an nlp search space
     """
 
     def __init__(
