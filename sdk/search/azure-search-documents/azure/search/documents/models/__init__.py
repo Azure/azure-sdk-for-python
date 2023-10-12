@@ -40,8 +40,10 @@ from .._generated.models import (
     SearchMode,
     SemanticErrorHandling,
     QueryDebugMode,
+    VectorFilterMode,
     VectorQuery,
     VectorQueryKind,
+    VectorizableTextQuery,
 )
 from .._utils import odata
 
@@ -63,6 +65,8 @@ __all__ = (
     "SearchMode",
     "SemanticErrorHandling",
     "QueryDebugMode",
+    "VectorFilterMode",
     "VectorQuery",
     "VectorQueryKind",
+    "VectorizableTextQuery",
 )
