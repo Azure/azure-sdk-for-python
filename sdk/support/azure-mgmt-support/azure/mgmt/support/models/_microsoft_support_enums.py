@@ -24,6 +24,22 @@ class CommunicationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PHONE = "phone"
 
 
+class Consent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Advanced diagnostic consent to be updated on the support ticket."""
+
+    YES = "Yes"
+    NO = "No"
+
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+
 class PreferredContactMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Preferred contact method."""
 
@@ -51,8 +67,19 @@ class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CLOSED = "closed"
 
 
+class TranscriptContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Content type."""
+
+
 class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of resource."""
 
     MICROSOFT_SUPPORT_SUPPORT_TICKETS = "Microsoft.Support/supportTickets"
     MICROSOFT_SUPPORT_COMMUNICATIONS = "Microsoft.Support/communications"
+
+
+class UserConsent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """User consent value provided."""
+
+    YES = "Yes"
+    NO = "No"
