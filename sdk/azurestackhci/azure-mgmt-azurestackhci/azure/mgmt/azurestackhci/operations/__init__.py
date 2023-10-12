@@ -6,42 +6,34 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._arc_settings_operations import ArcSettingsOperations
-from ._clusters_operations import ClustersOperations
-from ._extensions_operations import ExtensionsOperations
-from ._galleryimages_operations import GalleryimagesOperations
-from ._marketplacegalleryimages_operations import MarketplacegalleryimagesOperations
-from ._networkinterfaces_operations import NetworkinterfacesOperations
+from ._gallery_images_operations import GalleryImagesOperations
 from ._operations import Operations
-from ._storagecontainers_operations import StoragecontainersOperations
-from ._virtualharddisks_operations import VirtualharddisksOperations
-from ._virtualmachines_operations import VirtualmachinesOperations
+from ._logical_networks_operations import LogicalNetworksOperations
+from ._marketplace_gallery_images_operations import MarketplaceGalleryImagesOperations
+from ._network_interfaces_operations import NetworkInterfacesOperations
+from ._storage_containers_operations import StorageContainersOperations
+from ._virtual_hard_disks_operations import VirtualHardDisksOperations
+from ._virtual_machine_instances_operations import VirtualMachineInstancesOperations
 from ._hybrid_identity_metadata_operations import HybridIdentityMetadataOperations
-from ._machine_extensions_operations import MachineExtensionsOperations
 from ._guest_agent_operations import GuestAgentOperations
 from ._guest_agents_operations import GuestAgentsOperations
-from ._virtualnetworks_operations import VirtualnetworksOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "ArcSettingsOperations",
-    "ClustersOperations",
-    "ExtensionsOperations",
-    "GalleryimagesOperations",
-    "MarketplacegalleryimagesOperations",
-    "NetworkinterfacesOperations",
+    "GalleryImagesOperations",
     "Operations",
-    "StoragecontainersOperations",
-    "VirtualharddisksOperations",
-    "VirtualmachinesOperations",
+    "LogicalNetworksOperations",
+    "MarketplaceGalleryImagesOperations",
+    "NetworkInterfacesOperations",
+    "StorageContainersOperations",
+    "VirtualHardDisksOperations",
+    "VirtualMachineInstancesOperations",
     "HybridIdentityMetadataOperations",
-    "MachineExtensionsOperations",
     "GuestAgentOperations",
     "GuestAgentsOperations",
-    "VirtualnetworksOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
