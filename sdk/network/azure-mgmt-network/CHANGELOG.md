@@ -1,5 +1,28 @@
 # Release History
 
+## 25.1.0 (2023-09-15)
+
+### Features Added
+
+  - Model BastionHost has a new parameter network_acls
+  - Model BastionHost has a new parameter virtual_network
+  - Model FirewallPolicy has a new parameter size
+  - Model FirewallPolicyRuleCollectionGroup has a new parameter size
+  - Model Subnet has a new parameter default_outbound_access
+  - Model VirtualNetworkGateway has a new parameter auto_scale_configuration
+
+## 25.0.0 (2023-08-18)
+
+### Features Added
+
+  - Added operation LoadBalancersOperations.migrate_to_ip_based
+  - Model BackendAddressPool has a new parameter sync_mode
+
+### Breaking Changes
+
+  - Removed operation group NspLinkReconcileOperations
+  - Removed operation group NspLinkReferenceReconcileOperations
+
 ## 24.0.0 (2023-07-21)
 
 ### Breaking Changes

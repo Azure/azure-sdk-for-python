@@ -296,7 +296,9 @@ class TestSearchClient:
 
     def test_request_too_large_error(self):
         with mock.patch.object(
-            SearchClient, "_index_documents_actions", side_effect=RequestEntityTooLargeError("Error")
+            SearchClient,
+            "_index_documents_actions",
+            side_effect=RequestEntityTooLargeError("Error"),
         ):
             client = SearchClient("endpoint", "index name", CREDENTIAL)
             batch = IndexDocumentsBatch()

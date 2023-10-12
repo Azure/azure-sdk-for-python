@@ -1684,39 +1684,6 @@ class BareMetalMachineRunReadCommandsParameters(_serialization.Model):
         self.limit_time_seconds = limit_time_seconds
 
 
-class BareMetalMachineValidateHardwareParameters(_serialization.Model):
-    """BareMetalMachineValidateHardwareParameters represents the body of the request to validate the
-    physical hardware of a bare metal machine.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar validation_category: The category of hardware validation to perform. Required.
-     "BasicValidation"
-    :vartype validation_category: str or
-     ~azure.mgmt.networkcloud.models.BareMetalMachineHardwareValidationCategory
-    """
-
-    _validation = {
-        "validation_category": {"required": True},
-    }
-
-    _attribute_map = {
-        "validation_category": {"key": "validationCategory", "type": "str"},
-    }
-
-    def __init__(
-        self, *, validation_category: Union[str, "_models.BareMetalMachineHardwareValidationCategory"], **kwargs: Any
-    ) -> None:
-        """
-        :keyword validation_category: The category of hardware validation to perform. Required.
-         "BasicValidation"
-        :paramtype validation_category: str or
-         ~azure.mgmt.networkcloud.models.BareMetalMachineHardwareValidationCategory
-        """
-        super().__init__(**kwargs)
-        self.validation_category = validation_category
-
-
 class BgpAdvertisement(_serialization.Model):
     """BgpAdvertisement represents the association of IP address pools to the communities and peers.
 
@@ -5844,6 +5811,95 @@ class OperationListResult(_serialization.Model):
         self.next_link = None
 
 
+class OperationStatusResult(_serialization.Model):
+    """The current status of an async operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified ID for the async operation.
+    :vartype id: str
+    :ivar resource_id: Fully qualified ID of the resource against which the original async
+     operation was started.
+    :vartype resource_id: str
+    :ivar name: Name of the async operation.
+    :vartype name: str
+    :ivar status: Operation status. Required.
+    :vartype status: str
+    :ivar percent_complete: Percent of the operation that is complete.
+    :vartype percent_complete: float
+    :ivar start_time: The start time of the operation.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the operation.
+    :vartype end_time: ~datetime.datetime
+    :ivar operations: The operations list.
+    :vartype operations: list[~azure.mgmt.networkcloud.models.OperationStatusResult]
+    :ivar error: If present, details of the operation error.
+    :vartype error: ~azure.mgmt.networkcloud.models.ErrorDetail
+    """
+
+    _validation = {
+        "resource_id": {"readonly": True},
+        "status": {"required": True},
+        "percent_complete": {"maximum": 100, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "percent_complete": {"key": "percentComplete", "type": "float"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "operations": {"key": "operations", "type": "[OperationStatusResult]"},
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        percent_complete: Optional[float] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        operations: Optional[List["_models.OperationStatusResult"]] = None,
+        error: Optional["_models.ErrorDetail"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: Fully qualified ID for the async operation.
+        :paramtype id: str
+        :keyword name: Name of the async operation.
+        :paramtype name: str
+        :keyword status: Operation status. Required.
+        :paramtype status: str
+        :keyword percent_complete: Percent of the operation that is complete.
+        :paramtype percent_complete: float
+        :keyword start_time: The start time of the operation.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: The end time of the operation.
+        :paramtype end_time: ~datetime.datetime
+        :keyword operations: The operations list.
+        :paramtype operations: list[~azure.mgmt.networkcloud.models.OperationStatusResult]
+        :keyword error: If present, details of the operation error.
+        :paramtype error: ~azure.mgmt.networkcloud.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.resource_id = None
+        self.name = name
+        self.status = status
+        self.percent_complete = percent_complete
+        self.start_time = start_time
+        self.end_time = end_time
+        self.operations = operations
+        self.error = error
+
+
 class OsDisk(_serialization.Model):
     """OsDisk represents configuration of the boot disk.
 
@@ -6666,41 +6722,6 @@ class StorageAppliance(TrackedResource):  # pylint: disable=too-many-instance-at
         self.storage_appliance_sku_id = storage_appliance_sku_id
 
 
-class StorageApplianceCommandSpecification(_serialization.Model):
-    """StorageApplianceCommandSpecification represents the read-only command and optional arguments to
-    execute against a storage appliance.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar arguments: The list of string arguments that will be passed to the script in order as
-     separate arguments.
-    :vartype arguments: list[str]
-    :ivar command: The read-only command to execute against the storage appliance. Required.
-    :vartype command: str
-    """
-
-    _validation = {
-        "command": {"required": True},
-    }
-
-    _attribute_map = {
-        "arguments": {"key": "arguments", "type": "[str]"},
-        "command": {"key": "command", "type": "str"},
-    }
-
-    def __init__(self, *, command: str, arguments: Optional[List[str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword arguments: The list of string arguments that will be passed to the script in order as
-         separate arguments.
-        :paramtype arguments: list[str]
-        :keyword command: The read-only command to execute against the storage appliance. Required.
-        :paramtype command: str
-        """
-        super().__init__(**kwargs)
-        self.arguments = arguments
-        self.command = command
-
-
 class StorageApplianceConfigurationData(_serialization.Model):
     """StorageApplianceConfigurationData represents configuration for the storage application.
 
@@ -6848,48 +6869,6 @@ class StorageAppliancePatchParameters(_serialization.Model):
         super().__init__(**kwargs)
         self.tags = tags
         self.serial_number = serial_number
-
-
-class StorageApplianceRunReadCommandsParameters(_serialization.Model):
-    """StorageApplianceRunReadCommandsParameters represents the body of request containing list of
-    read-only commands to run for a storage appliance.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar commands: The list of read-only commands to run. Required.
-    :vartype commands: list[~azure.mgmt.networkcloud.models.StorageApplianceCommandSpecification]
-    :ivar limit_time_seconds: The maximum time the commands are allowed to run.
-     If the execution time exceeds the maximum, the script will be stopped, any output produced
-     until then will be captured, and the exit code matching a timeout will be returned (252).
-     Required.
-    :vartype limit_time_seconds: int
-    """
-
-    _validation = {
-        "commands": {"required": True, "min_items": 1},
-        "limit_time_seconds": {"required": True, "maximum": 14400, "minimum": 60},
-    }
-
-    _attribute_map = {
-        "commands": {"key": "commands", "type": "[StorageApplianceCommandSpecification]"},
-        "limit_time_seconds": {"key": "limitTimeSeconds", "type": "int"},
-    }
-
-    def __init__(
-        self, *, commands: List["_models.StorageApplianceCommandSpecification"], limit_time_seconds: int, **kwargs: Any
-    ) -> None:
-        """
-        :keyword commands: The list of read-only commands to run. Required.
-        :paramtype commands: list[~azure.mgmt.networkcloud.models.StorageApplianceCommandSpecification]
-        :keyword limit_time_seconds: The maximum time the commands are allowed to run.
-         If the execution time exceeds the maximum, the script will be stopped, any output produced
-         until then will be captured, and the exit code matching a timeout will be returned (252).
-         Required.
-        :paramtype limit_time_seconds: int
-        """
-        super().__init__(**kwargs)
-        self.commands = commands
-        self.limit_time_seconds = limit_time_seconds
 
 
 class StorageApplianceSkuSlot(_serialization.Model):
@@ -7765,33 +7744,6 @@ class VirtualMachinePowerOffParameters(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.skip_shutdown = skip_shutdown
-
-
-class VirtualMachineVolumeParameters(_serialization.Model):
-    """VirtualMachineVolumeParameters represents the body of the request to handle attachment and
-    detachment of volumes for the virtual machine.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar volume_id: The resource ID of the volume. Required.
-    :vartype volume_id: str
-    """
-
-    _validation = {
-        "volume_id": {"required": True},
-    }
-
-    _attribute_map = {
-        "volume_id": {"key": "volumeId", "type": "str"},
-    }
-
-    def __init__(self, *, volume_id: str, **kwargs: Any) -> None:
-        """
-        :keyword volume_id: The resource ID of the volume. Required.
-        :paramtype volume_id: str
-        """
-        super().__init__(**kwargs)
-        self.volume_id = volume_id
 
 
 class Volume(TrackedResource):  # pylint: disable=too-many-instance-attributes

@@ -3,4 +3,4 @@ mypy = false
 pyright = false
 type_check_samples = false
 verifytypes = false
-pylint = false
+pylint = true

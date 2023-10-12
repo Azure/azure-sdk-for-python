@@ -437,18 +437,46 @@
                 "description": "Feature store online store config"
             }
         },
-        "offline_store_connection_target": {
+        "offline_store_target": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "Feature store offline store connection target"
             }
         },
-        "online_store_connection_target": {
+        "offline_store_resource_group_name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store offline store resource group"
+            }
+        },
+        "offline_store_subscription_id": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store offline store subscription id"
+            }
+        },
+        "online_store_target": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "Feature store online store connection target"
+            }
+        },
+        "online_store_resource_group_name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store online store resource group"
+            }
+        },
+        "online_store_subscription_id": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store online store subscription id"
             }
         },
         "materialization_identity_client_id": {
@@ -520,6 +548,49 @@
             "defaultValue": "",
             "metadata": {
                 "description": "Resource Id of Hub used for lean workspace."
+            }
+        },
+        "materialization_identity_name": {
+            "defaultValue": "empty",
+            "type": "string",
+            "metadata": {
+                "description": "Feature store materialization identity name"
+            }
+        },
+        "grant_materialization_permissions": {
+            "type": "string",
+            "defaultValue": "false",
+            "allowedValues": [
+                "false",
+                "true"
+            ],
+            "metadata": {
+                "description": "Whether to grant materialization identity permissions"
+            }
+        },        
+        "workspace_hub_config" : {
+            "type": "object",
+            "defaultValue": {},
+            "metadata": {
+                "description": "Additional configuration for WorkspaceHub."
+            }
+        },        
+        "set_up_feature_store" : {
+            "type": "string",
+            "defaultValue": "false",
+            "allowedValues": [
+                "false",
+                "true"
+            ],
+            "metadata": {
+                "description": "A flag to determine whether to set up feature store"
+            }
+        },
+        "byo_open_ai_resource_id": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Resource Id of BYO open ai resource."
             }
         }
     },
@@ -606,7 +677,10 @@
                 "description": "[parameters('description')]",
                 "applicationInsights": "[variables('applicationInsights')]",
                 "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
-                "hubResourceId": "[parameters('workspace_hub')]"
+                "hubResourceId": "[parameters('workspace_hub')]",
+                "azureOpenAI": {
+                    "resourceId": "[parameters('byo_open_ai_resource_id')]"
+                }
             }
         }
     ]

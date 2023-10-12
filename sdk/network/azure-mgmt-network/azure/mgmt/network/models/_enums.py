@@ -50,6 +50,7 @@ class ApplicationGatewaySkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WAF_LARGE = "WAF_Large"
     STANDARD_V2 = "Standard_v2"
     WAF_V2 = "WAF_v2"
+    BASIC = "Basic"
 
 class ApplicationGatewayTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tier of an application gateway."""
@@ -58,6 +59,7 @@ class ApplicationGatewayTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WAF = "WAF"
     STANDARD_V2 = "Standard_v2"
     WAF_V2 = "WAF_v2"
+    BASIC = "Basic"
 
 class AuthorizationUseStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The authorization use status."""
@@ -1847,4 +1849,10 @@ class WebApplicationFirewallState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DISABLED = "Disabled"
     ENABLED = "Enabled"
+
+class SyncMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Backend address synchronous mode for the backend pool."""
+
+    AUTOMATIC = "Automatic"
+    MANUAL = "Manual"
 

@@ -9,14 +9,13 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import CreateMonitorAction, RecurrenceFrequency
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Schedule as RestSchedule
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleProperties
+from azure.ai.ml._restclient.v2023_06_01_preview.models import CreateMonitorAction, RecurrenceFrequency
+from azure.ai.ml._restclient.v2023_06_01_preview.models import Schedule as RestSchedule
+from azure.ai.ml._restclient.v2023_06_01_preview.models import ScheduleProperties
 from azure.ai.ml._schema.monitoring.schedule import MonitorScheduleSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
-from azure.ai.ml.constants._monitoring import SPARK_INSTANCE_TYPE_KEY, SPARK_RUNTIME_VERSION
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._monitoring.definition import MonitorDefinition
 from azure.ai.ml.entities._schedule.schedule import Schedule
@@ -93,10 +92,6 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
     def _to_rest_object(self) -> RestSchedule:
         tags = {
             **self.tags,
-            **{
-                SPARK_INSTANCE_TYPE_KEY: self.create_monitor.compute.instance_type,
-                SPARK_RUNTIME_VERSION: self.create_monitor.compute.runtime_version,
-            },
         }
         # default data window size is calculated based on the trigger frequency
         # by default 7 days if user provides incorrect recurrence frequency

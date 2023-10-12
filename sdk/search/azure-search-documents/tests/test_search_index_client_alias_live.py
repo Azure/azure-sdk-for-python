@@ -100,6 +100,9 @@ class TestSearchClientAlias(AzureRecordedTestCase):
         scoring_profiles.append(scoring_profile)
         cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
         index = SearchIndex(
-            name=index_name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options
+            name=index_name,
+            fields=fields,
+            scoring_profiles=scoring_profiles,
+            cors_options=cors_options,
         )
         result = client.create_index(index)

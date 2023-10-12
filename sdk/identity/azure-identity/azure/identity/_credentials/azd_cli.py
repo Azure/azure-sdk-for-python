@@ -16,7 +16,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._internal import resolve_tenant, within_dac
+from .._internal import resolve_tenant, within_dac, validate_tenant_id, validate_scope
 from .._internal.decorators import log_get_token
 
 CLI_NOT_FOUND = (
@@ -76,7 +76,8 @@ class AzureDeveloperCliCredential:
         additionally_allowed_tenants: Optional[List[str]] = None,
         process_timeout: int = 10,
     ) -> None:
-
+        if tenant_id:
+            validate_tenant_id(tenant_id)
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
@@ -121,6 +122,11 @@ class AzureDeveloperCliCredential:
         if not scopes:
             raise ValueError("Missing scope in request. \n")
 
+        if tenant_id:
+            validate_tenant_id(tenant_id)
+        for scope in scopes:
+            validate_scope(scope)
+
         commandString = " --scope ".join(scopes)
         command = COMMAND_LINE.format(commandString)
         tenant = resolve_tenant(
@@ -137,7 +143,7 @@ class AzureDeveloperCliCredential:
         if not token:
             sanitized_output = sanitize_output(output)
             message = (
-                f"Unexpected output from Azure CLI: '{sanitized_output}'. \n"
+                f"Unexpected output from Azure Developer CLI: '{sanitized_output}'. \n"
                 f"To mitigate this issue, please refer to the troubleshooting guidelines here at "
                 f"https://aka.ms/azsdk/python/identity/azdevclicredential/troubleshoot."
             )
@@ -211,6 +217,7 @@ def _run_command(command: str, timeout: int) -> str:
 
         kwargs: Dict[str, Any] = {
             "stderr": subprocess.PIPE,
+            "stdin": subprocess.DEVNULL,
             "cwd": working_directory,
             "universal_newlines": True,
             "env": dict(os.environ, NO_COLOR="true"),
@@ -223,7 +230,7 @@ def _run_command(command: str, timeout: int) -> str:
         # Fallback check in case the executable is not found while executing subprocess.
         if ex.returncode == 127 or ex.stderr.startswith("'azd' is not recognized"):
             raise CredentialUnavailableError(message=CLI_NOT_FOUND) from ex
-        if "not logged in, run `azd auth login` to login" in ex.stderr:
+        if "not logged in, run `azd auth login` to login" in ex.stderr and "AADSTS" not in ex.stderr:
             raise CredentialUnavailableError(message=NOT_LOGGED_IN) from ex
 
         # return code is from the CLI -> propagate its output

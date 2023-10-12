@@ -25,10 +25,7 @@ from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode, Lo
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-from azure.ai.ml.entities._job.pipeline._attr_dict import (
-    has_attr_safe,
-    try_get_non_arbitrary_attr,
-)
+from azure.ai.ml.entities._job.pipeline._attr_dict import has_attr_safe, try_get_non_arbitrary_attr
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.entities._validation import MutableValidationResult
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -274,7 +271,7 @@ class PipelineComponent(Component):
                 # not check optional/required for pipeline input used in pipeline expression
                 if name in optional_binding_in_expression_dict.get(pipeline_input_name, []):
                     continue
-                if component_definition_inputs[name].optional is not True:
+                if name in component_definition_inputs and component_definition_inputs[name].optional is not True:
                     required_bindings.append(f"{node.name}.inputs.{name}")
             if pipeline_input.optional is None and not required_bindings:
                 # Set input as optional if all binding is optional and optional not set.
@@ -439,10 +436,7 @@ class PipelineComponent(Component):
         return init_params_dict
 
     def _to_dict(self) -> Dict:
-        # Replace the name of $schema to schema.
-        component_schema_dict = self._dump_for_validation()
-        component_schema_dict.pop("base_path", None)
-        return {**self._other_parameter, **component_schema_dict}
+        return {**self._other_parameter, **super()._to_dict()}
 
     def _build_rest_component_jobs(self) -> Dict[str, dict]:
         """Build pipeline component jobs to rest.

@@ -89,12 +89,6 @@ class BareMetalMachineEvacuate(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FALSE = "False"
 
 
-class BareMetalMachineHardwareValidationCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The category of hardware validation to perform."""
-
-    BASIC_VALIDATION = "BasicValidation"
-
-
 class BareMetalMachineHardwareValidationResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The outcome of the hardware validation."""
 

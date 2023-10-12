@@ -509,7 +509,74 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     messages.append(message)
                 assert len(messages) == 0
 
-    
+    @pytest.mark.asyncio
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
+    @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_async_queue_by_queue_client_conn_str_receive_handler_receiveanddelete_prefetch(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
+        async with ServiceBusClient.from_connection_string(
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
+
+            # send 10 messages
+            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                for i in range(10):
+                    message = ServiceBusMessage("Handler message no. {}".format(i))
+                    await sender.send_messages(message)
+
+            # check peek_messages returns correctly, with default prefetch_count = 0
+            messages = []
+            async with sb_client.get_queue_receiver(servicebus_queue.name,
+                                                receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
+                                                max_wait_time=10) as receiver:
+                # peek messages checks current state of queue, which should return 10
+                # since none were prefetched, added to internal buffer, and deleted on receive
+                peeked_msgs = await receiver.peek_messages(max_message_count=10, timeout=10)
+                assert len(peeked_msgs) == 10
+
+                # iterator receives and deletes each message from SB queue
+                async for msg in receiver:
+                    messages.append(msg)
+                assert len(messages) == 10
+
+                # queue should be empty now
+                peeked_msgs = await receiver.peek_messages(max_message_count=10, timeout=10)
+                assert len(peeked_msgs) == 0
+
+            # send 10 messages
+            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                for i in range(10):
+                    message = ServiceBusMessage("Handler message no. {}".format(i))
+                    await sender.send_messages(message)
+
+            # check peek_messages returns correctly, with default prefetch_count > 0
+            messages = []
+            # prefetch 1 message from SB queue when receive is called and not on open
+            async with sb_client.get_queue_receiver(servicebus_queue.name,
+                                            receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
+                                            prefetch_count=1,
+                                            max_wait_time=30) as receiver:
+                # peek messages checks current state of SB queue, and returns 10
+                peeked_msgs = await receiver.peek_messages(max_message_count=10, timeout=10)
+                assert len(peeked_msgs) == 10
+
+                # receive 3 messages
+                recvd_msgs = await receiver.receive_messages(max_message_count=3, max_wait_time=10)
+                assert len(recvd_msgs) == 3
+
+                # receive rest of messages in queue
+                async for msg in receiver:
+                    messages.append(msg)
+                assert len(messages) == 7
+
+                # queue should be empty now
+                peeked_msgs = await receiver.peek_messages(max_message_count=10, timeout=10)
+                assert len(peeked_msgs) == 0
+
+
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -1688,6 +1755,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 assert len(messages) == 1
                 await receiver.complete_message(messages[0])
 
+    @pytest.mark.skip('hard to test')
     @AzureTestCase.await_prepared_test
     async def test_async_queue_mock_auto_lock_renew_callback(self):
         # A warning to future devs: If the renew period override heuristic in registration

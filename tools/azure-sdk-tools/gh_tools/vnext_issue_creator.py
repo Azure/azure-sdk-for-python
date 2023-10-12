@@ -114,7 +114,7 @@ def create_vnext_issue(package_name: str, check_type: Literal["mypy", "pylint", 
         f"\n**{check_type.capitalize()} errors:** [Link to build ({today.strftime('%Y-%m-%d')})]({build_link})"
         f"\n**How to fix:** Run the `next-{check_type}` tox command at the library package-level and resolve "
         f"the {error_type} errors.\n"
-        f"1) `../{package_name}>pip install tox<5`\n"
+        f"1) `../{package_name}>pip install \"tox<5\"`\n"
         f"2) `../{package_name}>tox run -e next-{check_type} -c ../../../eng/tox/tox.ini --root .`\n\n"
         f"See the {guide_link} for more information."
     )

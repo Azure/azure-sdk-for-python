@@ -255,7 +255,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         :rtype: MutableValidationResult
         """
         # pylint: disable=protected-access
-        validation_result = self._validate_body(raise_error=False)
+        validation_result = self._validate_body()
         validation_result.merge_with(
             self._validate_items(items=self.items, raise_error=False, body_component=self.body._component)
         )
@@ -289,10 +289,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
                 yaml_path="items",
                 message="Items is required for parallel_for node",
             )
-        return validation_result.try_raise(
-            cls._get_validation_error_target(),
-            raise_error=raise_error,
-        )
+        return cls._try_raise(validation_result, raise_error=raise_error)
 
     @classmethod
     def _validate_items_list(cls, items: list, validation_result, body_component=None):

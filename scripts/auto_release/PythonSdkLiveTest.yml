@@ -91,7 +91,8 @@ jobs:
         export AZURE_SUBSCRIPTION_ID=$(ENV-SUBSCRIPTION-ID)
         export ISSUE_LINK=$(ISSUE_LINK)
         export SCRIPT_PATH=$script_path
-        export GIT_TOKEN=$(azuresdk-github-pat)
+        export BOT_TOKEN=$(azuresdk-github-pat)
+        export GIT_TOKEN=$(Yuchao-GitToken)
         export STORAGE_CONN_STR=$(storage-conn-str)
         export STORAGE_ENDPOINT=$(storage-endpoint)
         export PYTHON_TAG=$(PYTHON_TAG)

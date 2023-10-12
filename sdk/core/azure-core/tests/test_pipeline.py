@@ -50,7 +50,7 @@ from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     SensitiveHeaderCleanupPolicy,
 )
-from azure.core.pipeline.transport._base import PipelineClientBase
+from azure.core.pipeline.transport._base import PipelineClientBase, _format_url_section
 from azure.core.pipeline.transport import (
     HttpTransport,
     RequestsTransport,
@@ -206,16 +206,14 @@ def test_format_url_double_query():
 
 def test_format_url_braces_with_dot():
     base_url = "https://bing.com/{aaa.bbb}"
-    client = PipelineClientBase(base_url)
-    request = client._request("GET", base_url, None, None, None, None, None)
-    assert request
+    with pytest.raises(ValueError):
+        url = _format_url_section(base_url)
 
 
 def test_format_url_single_brace():
     base_url = "https://bing.com/{aaa.bbb"
-    client = PipelineClientBase(base_url)
-    request = client._request("GET", base_url, None, None, None, None, None)
-    assert request
+    with pytest.raises(ValueError):
+        url = _format_url_section(base_url)
 
 
 def test_format_incorrect_endpoint():
@@ -366,12 +364,7 @@ def test_add_custom_policy():
     pos_retry = policies.index(retry_policy)
     assert pos_boo > pos_retry
 
-    client = PipelineClient(
-        base_url="test",
-        config=config,
-        per_call_policies=boo_policy,
-        per_retry_policies=foo_policy,
-    )
+    client = PipelineClient(base_url="test", config=config, per_call_policies=boo_policy, per_retry_policies=foo_policy)
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
     assert foo_policy in policies
@@ -382,10 +375,7 @@ def test_add_custom_policy():
     assert pos_foo > pos_retry
 
     client = PipelineClient(
-        base_url="test",
-        config=config,
-        per_call_policies=[boo_policy],
-        per_retry_policies=[foo_policy],
+        base_url="test", config=config, per_call_policies=[boo_policy], per_retry_policies=[foo_policy]
     )
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
@@ -412,19 +402,13 @@ def test_add_custom_policy():
     assert foo_policy == actual_policies[2]
 
     client = PipelineClient(
-        base_url="test",
-        policies=policies,
-        per_call_policies=boo_policy,
-        per_retry_policies=foo_policy,
+        base_url="test", policies=policies, per_call_policies=boo_policy, per_retry_policies=foo_policy
     )
     actual_policies = client._pipeline._impl_policies
     assert boo_policy == actual_policies[0]
     assert foo_policy == actual_policies[3]
     client = PipelineClient(
-        base_url="test",
-        policies=policies,
-        per_call_policies=[boo_policy],
-        per_retry_policies=[foo_policy],
+        base_url="test", policies=policies, per_call_policies=[boo_policy], per_retry_policies=[foo_policy]
     )
     actual_policies = client._pipeline._impl_policies
     assert boo_policy == actual_policies[0]

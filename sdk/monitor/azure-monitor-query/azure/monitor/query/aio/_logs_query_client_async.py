@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime, timedelta
-from typing import Any, cast, Tuple, Union, Sequence, Dict, List, Optional
+from typing import Any, cast, Tuple, Union, Sequence, Dict, List, Optional, MutableMapping
 from urllib.parse import urlparse
 
 from azure.core.credentials_async import AsyncTokenCredential
@@ -17,6 +17,8 @@ from .._helpers import construct_iso8601, order_results, process_error, process_
 from .._models import LogsQueryResult, LogsBatchQuery, LogsQueryPartialResult
 from ._helpers_async import get_authentication_policy
 from .._exceptions import LogsQueryError
+
+JSON = MutableMapping[str, Any]
 
 
 class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-keyword
@@ -67,6 +69,10 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
         query: str,
         *,
         timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]],
+        server_timeout: Optional[int] = None,
+        include_statistics: bool = False,
+        include_visualization: bool = False,
+        additional_workspaces: Optional[Sequence[str]] = None,
         **kwargs: Any,
     ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
         """Execute an Analytics query.
@@ -107,15 +113,11 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
                 :caption: Get a response for a single log query.
         """
         timespan_iso = construct_iso8601(timespan)
-        include_statistics = kwargs.pop("include_statistics", False)
-        include_visualization = kwargs.pop("include_visualization", False)
-        server_timeout = kwargs.pop("server_timeout", None)
-        additional_workspaces = kwargs.pop("additional_workspaces", None)
-
         prefer = process_prefer(server_timeout, include_statistics, include_visualization)
 
         body = {"query": query, "timespan": timespan_iso, "workspaces": additional_workspaces}
 
+        generated_response: JSON = {}
         try:
             generated_response = await self._query_op.execute(  # pylint: disable=protected-access
                 workspace_id=workspace_id, body=body, prefer=prefer, **kwargs
@@ -184,6 +186,10 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
         query: str,
         *,
         timespan: Optional[Union[timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]]],
+        server_timeout: Optional[int] = None,
+        include_statistics: bool = False,
+        include_visualization: bool = False,
+        additional_workspaces: Optional[Sequence[str]] = None,
         **kwargs: Any,
     ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
         """Execute a Kusto query on a resource.
@@ -224,11 +230,6 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
                 :caption: Get a response for a single query on a resource's logs.
         """
         timespan_iso = construct_iso8601(timespan)
-        include_statistics = kwargs.pop("include_statistics", False)
-        include_visualization = kwargs.pop("include_visualization", False)
-        server_timeout = kwargs.pop("server_timeout", None)
-        additional_workspaces = kwargs.pop("additional_workspaces", None)
-
         prefer = process_prefer(server_timeout, include_statistics, include_visualization)
 
         body = {
@@ -237,6 +238,7 @@ class LogsQueryClient(object):  # pylint: disable=client-accepts-api-version-key
             "additional_workspaces": additional_workspaces,
         }
 
+        generated_response: JSON = {}
         try:
             generated_response = await self._query_op.resource_execute(  # pylint: disable=protected-access
                 resource_id=resource_id, body=body, prefer=prefer, **kwargs

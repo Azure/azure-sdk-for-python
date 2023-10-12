@@ -25,10 +25,11 @@ USAGE:
 import logging
 import os
 import sys
-import time
+from typing import Optional, Union, cast
 import uuid
+from datetime import datetime
 
-from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials import AzureKeyCredential, AccessToken, TokenCredential
 from azure.core.pipeline.policies import NetworkTraceLoggingPolicy
 from azure.mixedreality.authentication import MixedRealityStsClient
 from azure.mixedreality.remoterendering import (AssetConversion,
@@ -37,7 +38,8 @@ from azure.mixedreality.remoterendering import (AssetConversion,
                                                 AssetConversionStatus,
                                                 RemoteRenderingClient,
                                                 RenderingSessionSize,
-                                                RenderingSessionStatus)
+                                                RenderingSessionStatus,
+                                                AssetConversionOutput)
 
 # Create a logger for the 'azure' SDK
 logger = logging.getLogger("azure")
@@ -72,21 +74,23 @@ account_key = os.environ.get("ARR_ACCOUNT_KEY", None)
 if not account_key:
     raise ValueError("Set ARR_ACCOUNT_KEY env before run this sample.")
 
-storage_container_uri = os.environ.get("ARR_STORAGE_CONTAINER_URI", None)
-if not storage_container_uri:
+storage_container_uri_optional: Optional[str] = os.environ.get("ARR_STORAGE_CONTAINER_URI", None)
+if not storage_container_uri_optional:
     raise ValueError("Set ARR_STORAGE_CONTAINER_URI env before run this sample.")
+storage_container_uri: str = storage_container_uri_optional
 
 input_blob_prefix = os.environ.get("ARR_STORAGE_INPUT_BLOB_PREFIX", None)
 # if no input_blob_prefix is specified the whole content of the storage container will be retrieved for conversions
 # this is not recommended since copying lots of unneeded files will slow down conversions
 
-relative_input_asset_path = os.environ.get("ARR_STORAGE_INPUT_ASSET_PATH", None)
-if not relative_input_asset_path:
+relative_input_asset_path_optional: Optional[str] = os.environ.get("ARR_STORAGE_INPUT_ASSET_PATH", None)
+if not relative_input_asset_path_optional:
     raise ValueError("Set ARR_STORAGE_INPUT_ASSET_PATH env before run this sample.")
+relative_input_asset_path: str = relative_input_asset_path_optional
 
 # use AzureKeyCredentials to authenticate to the service - other auth options include AAD and getting
 # STS token using the mixed reality STS client
-key_credential = AzureKeyCredential(account_key)
+key_credential: Union[AzureKeyCredential, TokenCredential, AccessToken] = AzureKeyCredential(account_key)
 
 client = RemoteRenderingClient(
     endpoint=arr_endpoint,
@@ -128,7 +132,10 @@ def perform_asset_conversion():
         print("conversion with id:", conversion_id, "created. Waiting for completion.")
         conversion = conversion_poller.result()
         print("conversion with id:", conversion_id, "finished with result:", conversion.status)
-        print(conversion.output.asset_uri)
+        if conversion.output is not None:
+            print(conversion.output.asset_uri)
+        else:
+            print("conversion had no output asset_uri")
 
         # a poller can also be acquired by id
         # id_poller = await client.get_asset_conversion_poller(conversion_id=conversion_id)
@@ -151,7 +158,10 @@ def list_all_asset_conversions():
         created_on = c.created_on.strftime("%m/%d/%Y, %H:%M:%S")
         print("\t conversion:  id:", c.id, "status:", c.status, "created on:", created_on)
         if c.status == AssetConversionStatus.SUCCEEDED:
-            print("\t\tconversion result URI:", c.output.asset_uri)
+            if c.output is not None:
+                print("\t\tconversion result URI:", c.output.asset_uri)
+            else:
+                print("conversion result returned with empty URI")
 
 
 def demonstrate_rendering_session_lifecycle():
@@ -179,9 +189,9 @@ def demonstrate_rendering_session_lifecycle():
 
         # if the session should run longer than initially requested we can extend the lifetime of the session
         session = client.get_rendering_session(session_id)
-        if session.lease_time_minutes - session.elapsed_time_minutes < 2:
+        if cast(int, session.lease_time_minutes) - cast(int, session.elapsed_time_minutes) < 2:
             session = client.update_rendering_session(
-                session_id=session_id, lease_time_minutes=session.lease_time_minutes + 10)
+                session_id=session_id, lease_time_minutes=cast(int, session.lease_time_minutes) + 10)
             print("session with id:", session.id, "updated. New lease time:", session.lease_time_minutes, "minutes",)
 
         # once we do not need the session anymore we can stop the session
@@ -196,7 +206,7 @@ def list_all_rendering_sessions():
     print("sessions:")
     rendering_sessions = client.list_rendering_sessions()
     for session in rendering_sessions:
-        created_on = session.created_on.strftime("%m/%d/%Y, %H:%M:%S")
+        created_on = cast(datetime, session.created_on).strftime("%m/%d/%Y, %H:%M:%S")
         print("\t session:  id:", session.id, "status:", session.status, "created on:", created_on,)
 
 
