@@ -42,6 +42,7 @@ Currently the Azure App Configuration Provider enables:
 
 * Connecting to an App Configuration Store using a connection string or Azure Active Directory.
 * Selecting multiple sets of configurations using `SettingSelector`.
+* Dynamic Refresh
 * Trim prefixes off key names.
 * Resolving Key Vault References, requires AAD.
 * Secret Resolver, resolve Key Vault References locally without connecting to Key Vault.
@@ -53,7 +54,6 @@ List of features we are going to add to the Python Provider in the future.
 
 * Geo-Replication support
 * Feature Management
-* Dynamic Refresh
 * Configuration Placeholders
 
 ## Examples
@@ -71,6 +71,38 @@ config = load(endpoint=endpoint, credential=DefaultAzureCredential(), selects=se
 ```
 
 In this example all configuration with empty label and the dev label are loaded. Because the dev selector is listed last, any configurations from dev take priority over those with `(No Label)` when duplicates are found.
+
+## Dynamic Refresh
+
+The provider can be configured to refresh configurations from the store on a set interval. This is done by providing a `refresh_on` to the provider, which is a list of key(s) that will be watched for changes, and when they do change a refresh can happen. `refresh_interval` is the period of time in seconds between refreshes. `on_refresh_error` is a callback that will be called when a refresh fails.
+
+```python
+from azure.appconfiguration.provider import load, SentinelKey
+import os
+
+connection_string = os.environ.get("APPCONFIGURATION_CONNECTION_STRING")
+
+def my_callback_on_fail(error):
+    print("Refresh failed!")
+
+config = load(
+    connection_string=connection_string,
+    refresh_on=[SentinelKey("Sentinel")],
+    refresh_interval=60,
+    on_refresh_error=my_callback_on_fail,
+    **kwargs,
+)
+```
+
+In this example, the sentinel key will be checked for changes no sooner than every 60 seconds. In order to check for changes, the provider's `refresh` method needs to be called.
+
+```python
+config.refresh()
+```
+
+Once the provider is refreshed, the configurations can be accessed as normal. And if any changes have been made it will be updated with the latest values. If the `refresh_interval` hasn't passed since the last refresh check, the provider will not check for changes.
+
+For additional info check out [Dynamic Refresh](https://learn.microsoft.com/azure/azure-app-configuration/enable-dynamic-configuration-python) on MS Learn.
 
 ### Trimming Keys
 

@@ -50,6 +50,9 @@ class InteractiveBrowserCredential(InteractiveCredential):
         https://login.microsoft.com/ to validate the authority. By setting this to **True**, the validation of the
         authority is disabled. As a result, it is crucial to ensure that the configured authority host is valid and
         trustworthy.
+    :keyword bool enable_support_logging: Enables additional support logging in the underlying MSAL library.
+        This logging potentially contains personally identifiable information and is intended to be used only for
+        troubleshooting purposes.
     :raises ValueError: invalid **redirect_uri**
 
     .. admonition:: Example:
@@ -135,8 +138,6 @@ class InteractiveBrowserCredential(InteractiveCredential):
                 timeout=self._timeout,
                 prompt="select_account",
                 port=port,
-                parent_window_handle=self._parent_window_handle,
-                enable_msa_passthrough=self._enable_msa_passthrough,
             )
         except socket.error as ex:
             raise CredentialUnavailableError(message="Couldn't start an HTTP server.") from ex

@@ -14,7 +14,7 @@ from azure.core.pipeline import policies
 VERSION = "unknown"
 
 
-class MonitorQueryClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class MonitorQueryClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for MonitorQueryClient.
 
     Note that all parameters used to create this instance are saved as instance

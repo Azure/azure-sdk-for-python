@@ -6,6 +6,7 @@
 # pylint: disable=too-many-lines, invalid-overridden-method
 
 import functools
+import warnings
 from typing import (  # pylint: disable=unused-import
     Any, AnyStr, AsyncIterable, AsyncIterator, Dict, List, IO, Iterable, Optional, overload, Union,
     TYPE_CHECKING
@@ -14,7 +15,6 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -43,6 +43,7 @@ from ._models import FilteredBlobPaged
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.pipeline.transport import AsyncHttpResponse  # pylint: disable=C4756
     from datetime import datetime
     from .._models import ( # pylint: disable=unused-import
         AccessPolicy,
@@ -94,6 +95,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
     :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
         or 4MB.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
 
     .. admonition:: Example:
 
@@ -823,7 +827,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
 
     @distributed_trace_async
     async def upload_blob(
-            self, name: Union[str, BlobProperties],
+            self, name: str,
             data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
             blob_type: Union[str, BlobType] = BlobType.BlockBlob,
             length: Optional[int] = None,
@@ -832,9 +836,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         ) -> BlobClient:
         """Creates a new blob from a data source with automatic chunking.
 
-        :param name: The blob with which to interact. If specified, this value will override
-            a blob value specified in the blob URL.
-        :type name: str or ~azure.storage.blob.BlobProperties
+        :param str name: The blob with which to interact.
         :param data: The blob data to upload.
         :param ~azure.storage.blob.BlobType blob_type: The type of the blob. This can be
             either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
@@ -946,6 +948,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
                 :dedent: 12
                 :caption: Upload blob to the container.
         """
+        if isinstance(name, BlobProperties):
+            warnings.warn(
+                "The use of a 'BlobProperties' instance for param blob is deprecated. Please use str instead.",
+                DeprecationWarning
+            )
         blob = self.get_blob_client(name)
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
@@ -963,11 +970,10 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
 
     @distributed_trace_async
     async def delete_blob(
-            self, blob,  # type: Union[str, BlobProperties]
-            delete_snapshots=None,  # type: Optional[str]
-            **kwargs
-        ):
-        # type: (...) -> None
+            self, blob: str,
+            delete_snapshots: Optional[str] = None,
+            **kwargs: Any
+    ) -> None:
         """Marks the specified blob or snapshot for deletion.
 
         The blob is later deleted during garbage collection.
@@ -981,9 +987,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         Soft deleted blobs or snapshots are accessible through :func:`list_blobs()` specifying `include=["deleted"]`
         Soft-deleted blob or snapshot can be restored using :func:`~azure.storage.blob.aio.BlobClient.undelete()`
 
-        :param blob: The blob with which to interact. If specified, this value will override
-            a blob value specified in the blob URL.
-        :type blob: str or ~azure.storage.blob.BlobProperties
+        :param str blob: The blob with which to interact.
         :param str delete_snapshots:
             Required if the blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
@@ -1030,6 +1034,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             #other-client--per-operation-configuration>`_.
         :rtype: None
         """
+        if isinstance(blob, BlobProperties):
+            warnings.warn(
+                "The use of a 'BlobProperties' instance for param blob is deprecated. Please use str instead.",
+                DeprecationWarning
+            )
         blob = self.get_blob_client(blob) # type: ignore
         kwargs.setdefault('merge_span', True)
         timeout = kwargs.pop('timeout', None)
@@ -1040,39 +1049,40 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
 
     @overload
     async def download_blob(
-            self, blob: Union[str, BlobProperties],
+            self, blob: str,
             offset: int = None,
             length: int = None,
             *,
             encoding: str,
-            **kwargs) -> StorageStreamDownloader[str]:
+            **kwargs: Any
+    ) -> StorageStreamDownloader[str]:
         ...
 
     @overload
     async def download_blob(
-            self, blob: Union[str, BlobProperties],
+            self, blob: str,
             offset: int = None,
             length: int = None,
             *,
             encoding: None = None,
-            **kwargs) -> StorageStreamDownloader[bytes]:
+            **kwargs: Any
+    ) -> StorageStreamDownloader[bytes]:
         ...
 
     @distributed_trace_async
     async def download_blob(
-            self, blob: Union[str, BlobProperties],
+            self, blob: str,
             offset: int = None,
             length: int = None,
             *,
             encoding: Optional[str] = None,
-            **kwargs) -> StorageStreamDownloader:
+            **kwargs: Any
+    ) -> StorageStreamDownloader:
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an async iterator which allows the user to iterate over the content in chunks.
 
-        :param blob: The blob with which to interact. If specified, this value will override
-            a blob value specified in the blob URL.
-        :type blob: str or ~azure.storage.blob.BlobProperties
+        :param str blob: The blob with which to interact.
         :param int offset:
             Start of byte range to use for downloading a section of the blob.
             Must be set if length is provided.
@@ -1149,6 +1159,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         :returns: A streaming object. (StorageStreamDownloader)
         :rtype: ~azure.storage.blob.aio.StorageStreamDownloader
         """
+        if isinstance(blob, BlobProperties):
+            warnings.warn(
+                "The use of a 'BlobProperties' instance for param blob is deprecated. Please use str instead.",
+                DeprecationWarning
+            )
         blob_client = self.get_blob_client(blob) # type: ignore
         kwargs.setdefault('merge_span', True)
         return await blob_client.download_blob(
@@ -1161,7 +1176,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
     async def delete_blobs(
         self, *blobs: Union[str, Dict[str, Any], BlobProperties],
         **kwargs: Any
-    ) -> AsyncIterator[AsyncHttpResponse]:
+    ) -> AsyncIterator["AsyncHttpResponse"]:
         """Marks the specified blobs or snapshots for deletion.
 
         The blobs are later deleted during garbage collection.
@@ -1259,7 +1274,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         self, standard_blob_tier: Union[str, 'StandardBlobTier'],
         *blobs: Union[str, Dict[str, Any], BlobProperties],
         **kwargs: Any
-    ) -> AsyncIterator[AsyncHttpResponse]:
+    ) -> AsyncIterator["AsyncHttpResponse"]:
         """This operation sets the tier on block blobs.
 
         A block blob's tier determines Hot/Cool/Archive storage type.
@@ -1330,7 +1345,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         self, premium_page_blob_tier: Union[str, 'PremiumPageBlobTier'],
         *blobs: Union[str, Dict[str, Any], BlobProperties],
         **kwargs: Any
-    ) -> AsyncIterator[AsyncHttpResponse]:
+    ) -> AsyncIterator["AsyncHttpResponse"]:
         """Sets the page blob tiers on the blobs. This API is only supported for page blobs on premium accounts.
 
         The maximum number of blobs that can be updated in a single request is 256.
@@ -1379,19 +1394,17 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         return await self._batch_send(*reqs, **options)
 
     def get_blob_client(
-            self, blob,  # type: Union[BlobProperties, str]
-            snapshot=None,  # type: str
+            self, blob: str,
+            snapshot: str = None,
             *,
-            version_id=None  # type: Optional[str]
-        ):
-        # type: (...) -> BlobClient
+            version_id: Optional[str] = None
+    ) -> BlobClient:
         """Get a client to interact with the specified blob.
 
         The blob need not already exist.
 
-        :param blob:
+        :param str blob:
             The blob with which to interact.
-        :type blob: str or ~azure.storage.blob.BlobProperties
         :param str snapshot:
             The optional blob snapshot on which to operate. This can be the snapshot ID string
             or the response returned from :func:`~BlobClient.create_snapshot()`.
@@ -1409,6 +1422,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
                 :dedent: 12
                 :caption: Get the blob client.
         """
+        if isinstance(blob, BlobProperties):
+            warnings.warn(
+                "The use of a 'BlobProperties' instance for param blob is deprecated. Please use str instead.",
+                DeprecationWarning
+            )
         blob_name = _get_blob_name(blob)
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport), # pylint: disable = protected-access

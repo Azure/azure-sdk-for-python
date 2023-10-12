@@ -1,2 +1,3 @@
 apiview-stub-generator==0.3.8
 azure-pylint-guidelines-checker==0.0.7
+pylint<3.0.0
