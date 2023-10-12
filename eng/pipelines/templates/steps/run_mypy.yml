@@ -26,7 +26,7 @@ steps:
   - task: PythonScript@0
     displayName: 'Run MyPy'
     inputs:
-      scriptPath: 'scripts/devops_tasks/dispatch_check.py'
+      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
       arguments: >-
         "$(TargetingString)" 
         --mark_arg="${{ parameters.TestMarkArgument }}" 
