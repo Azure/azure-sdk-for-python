@@ -44,7 +44,7 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
     :keyword bool allow_broker: An authentication broker is an application that runs on a user's machine that manages
         the authentication handshakes and token maintenance for connected accounts. The Windows operating system uses
         the Web Account Manager (WAM) as its authentication broker. If this parameter is set to True, the broker will
-        be used when possible. Defaults to False.
+        be used when possible. Defaults to True.
         Check https://learn.microsoft.com/azure/active-directory/develop/scenario-desktop-acquire-token-wam for more
         information about WAM.
     :keyword int parent_window_handle: If your app is a GUI app running on a modern Windows system,
@@ -63,7 +63,7 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        self._allow_broker = kwargs.pop("allow_broker", None)
+        self._allow_broker = kwargs.pop("allow_broker", True)
         self._parent_window_handle = kwargs.pop("parent_window_handle", None)
         self._enable_msa_passthrough = kwargs.pop("enable_msa_passthrough", False)
         super().__init__(**kwargs)

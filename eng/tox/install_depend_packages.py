@@ -20,6 +20,7 @@ from packaging.version import Version, parse
 import pdb
 
 from ci_tools.parsing import ParsedSetup, parse_require
+from ci_tools.functions import compare_python_version
 
 
 from typing import List
@@ -30,7 +31,9 @@ PKGS_TXT_FILE = "packages.txt"
 
 logging.getLogger().setLevel(logging.INFO)
 
-# both min and max overrides are *inclusive* of the version targeted
+# GENERIC_OVERRIDES dictionaries pair a specific dependency with a MINIMUM or MAXIMUM inclusive bound.
+# During LATEST and MINIMUM dependency checks, we sometimes need to ignore versions for various compatibility
+# reasons.
 MINIMUM_VERSION_GENERIC_OVERRIDES = {
     "azure-common": "1.1.10",
     "msrest": "0.6.10",
@@ -44,16 +47,18 @@ MINIMUM_VERSION_GENERIC_OVERRIDES = {
     "msal": "1.23.0",
 }
 
-# this array contains overrides ONLY IF the package being processed the key of each item
+MAXIMUM_VERSION_GENERIC_OVERRIDES = {}
+
+# SPECIFIC OVERRIDES provide additional filtering of upper and lower bound by 
+# binding an override to the specific package being processed. As an example, when
+# processing the latest or minimum deps for "azure-eventhub", the minimum version of "azure-core"
+# will be overridden to 1.25.0.
 MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
     "azure-eventhub": {"azure-core": "1.25.0"},
-    "azure-eventhub-checkpointstoreblob-aio": {"azure-core": "1.25.0"},
-    "azure-eventhub-checkpointstoreblob": {"azure-core": "1.25.0"},
+    "azure-eventhub-checkpointstoreblob-aio": {"azure-core": "1.25.0", "azure-eventhub": "5.11.0"},
+    "azure-eventhub-checkpointstoreblob": {"azure-core": "1.25.0", "azure-eventhub": "5.11.0"},
+    "azure-eventhub-checkpointstoretable": {"azure-core": "1.25.0", "azure-eventhub": "5.11.0"},
     "azure-identity": {"msal": "1.23.0"},
-}
-
-MAXIMUM_VERSION_GENERIC_OVERRIDES = {
-    "typing-extensions": "4.6.3",
 }
 
 MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {
@@ -62,6 +67,21 @@ MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {
     }
 }
 
+# PLATFORM SPECIFIC OVERRIDES provide additional generic (EG not tied to the package whos dependencies are being processed)
+# filtering on a _per platform_ basis. Primarily used to limit certain packages due to platform compatbility
+PLATFORM_SPECIFIC_MINIMUM_OVERRIDES = {
+    ">=3.12.0": {
+        "azure-core": "1.23.1",
+        "aiohttp": "3.8.6",
+        "six": "1.16.0",
+        "requests": "2.30.0"
+    }
+}
+
+PLATFORM_SPECIFIC_MAXIMUM_OVERRIDES = {}
+
+# This is used to actively _add_ requirements to the install set. These are used to actively inject
+# a new requirement specifier to the set of packages being installed.
 SPECIAL_CASE_OVERRIDES = {
     # this package has an override
     "azure-core": {
@@ -142,6 +162,73 @@ def find_released_packages(setup_py_path, dependency_type):
 
     return avlble_packages
 
+def process_bounded_versions(originating_pkg_name: str, pkg_name: str, versions: List[str]) -> List[str]:
+    """
+    Processes a target package based on an originating package (target is a dep of originating) and the versions available from pypi for the target package.
+
+    Returns the set of versions AFTER general, platform, and package-specific overrides have been applied.
+
+    :param str originating_pkg_name: The name of the package whos requirements are being processed.
+    :param str pkg_name: A specific requirement of the originating package being processed.
+    :param List[str] versions: All the versions available on pypi for pkg_name.
+    """
+
+    # lower bound general
+    if pkg_name in MINIMUM_VERSION_GENERIC_OVERRIDES:
+        versions = [
+            v for v in versions if parse_version(v) >= parse_version(MINIMUM_VERSION_GENERIC_OVERRIDES[pkg_name])
+        ]
+
+    # lower bound platform-specific
+    for platform_bound in PLATFORM_SPECIFIC_MINIMUM_OVERRIDES.keys():
+        if compare_python_version(platform_bound):
+            restrictions = PLATFORM_SPECIFIC_MINIMUM_OVERRIDES[platform_bound]
+
+            if pkg_name in restrictions:
+                versions = [
+                    v for v in versions if parse_version(v) >= parse_version(restrictions[pkg_name])
+                ]
+
+    # lower bound package-specific
+    if (
+        originating_pkg_name in MINIMUM_VERSION_SPECIFIC_OVERRIDES
+        and pkg_name in MINIMUM_VERSION_SPECIFIC_OVERRIDES[originating_pkg_name]
+    ):
+        versions = [
+            v
+            for v in versions
+            if parse_version(v) >= parse_version(MINIMUM_VERSION_SPECIFIC_OVERRIDES[originating_pkg_name][pkg_name])
+        ]
+
+    # upper bound general
+    if pkg_name in MAXIMUM_VERSION_GENERIC_OVERRIDES:
+        versions = [
+            v for v in versions if parse_version(v) <= parse_version(MAXIMUM_VERSION_GENERIC_OVERRIDES[pkg_name])
+        ]
+
+    # upper bound platform
+    for platform_bound in PLATFORM_SPECIFIC_MAXIMUM_OVERRIDES.keys():
+        if compare_python_version(platform_bound):
+            restrictions = PLATFORM_SPECIFIC_MAXIMUM_OVERRIDES[platform_bound]
+
+            if pkg_name in restrictions:
+                versions = [
+                    v for v in versions if parse_version(v) <= parse_version(restrictions[pkg_name])
+                ]
+
+    # upper bound package-specific 
+    if (
+        originating_pkg_name in MAXIMUM_VERSION_SPECIFIC_OVERRIDES
+        and pkg_name in MAXIMUM_VERSION_SPECIFIC_OVERRIDES[originating_pkg_name]
+    ):
+        versions = [
+            v
+            for v in versions
+            if parse_version(v) <= parse_version(MAXIMUM_VERSION_SPECIFIC_OVERRIDES[originating_pkg_name][pkg_name])
+        ]
+
+    return versions
+
 
 def process_requirement(req, dependency_type, orig_pkg_name):
     # this method finds either latest or minimum version of a package that is available on PyPI
@@ -154,35 +241,10 @@ def process_requirement(req, dependency_type, orig_pkg_name):
     versions = [str(v) for v in client.get_ordered_versions(pkg_name, True)]
     logging.info("Versions available on PyPI for %s: %s", pkg_name, versions)
 
-    if pkg_name in MINIMUM_VERSION_GENERIC_OVERRIDES:
-        versions = [
-            v for v in versions if parse_version(v) >= parse_version(MINIMUM_VERSION_GENERIC_OVERRIDES[pkg_name])
-        ]
+    # think of the various versions that come back from pypi as the top of a funnel
+    # We apply generic overrides -> platform specific overrides -> package specific overrides
 
-    if (
-        orig_pkg_name in MINIMUM_VERSION_SPECIFIC_OVERRIDES
-        and pkg_name in MINIMUM_VERSION_SPECIFIC_OVERRIDES[orig_pkg_name]
-    ):
-        versions = [
-            v
-            for v in versions
-            if parse_version(v) >= parse_version(MINIMUM_VERSION_SPECIFIC_OVERRIDES[orig_pkg_name][pkg_name])
-        ]
-
-    if pkg_name in MAXIMUM_VERSION_GENERIC_OVERRIDES:
-        versions = [
-            v for v in versions if parse_version(v) <= parse_version(MAXIMUM_VERSION_GENERIC_OVERRIDES[pkg_name])
-        ]
-
-    if (
-        orig_pkg_name in MAXIMUM_VERSION_SPECIFIC_OVERRIDES
-        and pkg_name in MAXIMUM_VERSION_SPECIFIC_OVERRIDES[orig_pkg_name]
-    ):
-        versions = [
-            v
-            for v in versions
-            if parse_version(v) <= parse_version(MAXIMUM_VERSION_SPECIFIC_OVERRIDES[orig_pkg_name][pkg_name])
-        ]
+    versions = process_bounded_versions(orig_pkg_name, pkg_name, versions)
 
     # Search from lowest to latest in case of finding minimum dependency
     # Search from latest to lowest in case of finding latest required version
