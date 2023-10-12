@@ -3,12 +3,19 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
+import os
 from uuid import uuid4
+from urllib.parse import urlparse
 from typing import Any, List, Mapping, Optional, Union
 from typing_extensions import Self
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.pipeline.transport import (
+    AsyncHttpTransport,
+    HttpRequest,
+)
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     AsyncRedirectPolicy,
@@ -20,26 +27,189 @@ from azure.core.pipeline.policies import (
     CustomHookPolicy,
     NetworkTraceLoggingPolicy,
 )
-from azure.core.pipeline.transport import (
-    AsyncHttpTransport,
-    HttpRequest,
-)
 
 from ._authentication_async import _configure_credential
+from .._common_conversion import _is_cosmos_endpoint
+from .._constants import DEFAULT_STORAGE_ENDPOINT_SUFFIX
 from .._generated.aio import AzureTable
-from .._base_client import AccountHostsMixin, extract_batch_part_metadata
+from .._base_client import extract_batch_part_metadata, parse_query, format_query_string, get_api_version
 from .._error import (
     RequestTooLargeError,
     TableTransactionError,
     _decode_error,
     _validate_tablename_error,
 )
-from .._policies import StorageHosts, StorageHeadersPolicy
+from .._models import LocationMode
+from .._policies import CosmosPatchTransformPolicy, StorageHeadersPolicy, StorageHosts
 from .._sdk_moniker import SDK_MONIKER
 from ._policies_async import AsyncTablesRetryPolicy
 
 
-class AsyncTablesBaseClient(AccountHostsMixin):
+class AsyncAccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
+    def __init__(  # pylint: disable=too-many-statements
+        self,
+        account_url: str,
+        credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]] = None,
+        **kwargs: Any,
+    ) -> None:
+        try:
+            if not account_url.lower().startswith("http"):
+                account_url = "https://" + account_url
+        except AttributeError as exc:
+            raise ValueError("Account URL must be a string.") from exc
+        parsed_url = urlparse(account_url.rstrip("/"))
+        if not parsed_url.netloc:
+            raise ValueError(f"Invalid URL: {account_url}")
+
+        _, sas_token = parse_query(parsed_url.query)
+        if not sas_token and not credential:
+            raise ValueError("You need to provide either an AzureSasCredential or AzureNamedKeyCredential")
+        self._query_str, credential = format_query_string(sas_token, credential)
+        self._location_mode: str = kwargs.get("location_mode", LocationMode.PRIMARY)
+        self.scheme: str = parsed_url.scheme
+        self._cosmos_endpoint = _is_cosmos_endpoint(parsed_url)
+        self.account_name: Optional[str] = None
+        if ".core." in parsed_url.netloc or ".cosmos." in parsed_url.netloc:
+            account = parsed_url.netloc.split(".table.core.")
+            if "cosmos" in parsed_url.netloc:
+                account = parsed_url.netloc.split(".table.cosmos.")
+            self.account_name = account[0] if len(account) > 1 else None
+        else:
+            path_account_name = parsed_url.path.split("/")
+            if len(path_account_name) > 1:
+                self.account_name = path_account_name[1]
+                account = [self.account_name, parsed_url.netloc]
+            else:
+                # If format doesn't fit Azurite, default to standard parsing
+                account = parsed_url.netloc.split(".table.core.")
+                self.account_name = account[0] if len(account) > 1 else None
+
+        secondary_hostname: str = ""
+        self.credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]] = credential
+        if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
+            raise ValueError("Token credential is only supported with HTTPS.")
+        if isinstance(self.credential, AzureNamedKeyCredential):
+            self.account_name = self.credential.named_key.name
+            endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
+            secondary_hostname = f"{self.account_name}-secondary.table.{endpoint_suffix}"
+
+        _hosts = kwargs.get("_hosts")
+        if not _hosts:
+            if len(account) > 1:
+                secondary_hostname = parsed_url.netloc.replace(
+                    account[0], account[0] + "-secondary"
+                ) + parsed_url.path.replace(account[0], account[0] + "-secondary").rstrip("/")
+            if kwargs.get("secondary_hostname"):
+                secondary_hostname = kwargs["secondary_hostname"]
+            primary_hostname = (parsed_url.netloc + parsed_url.path).rstrip("/")
+            _hosts = {
+                LocationMode.PRIMARY: primary_hostname,
+                LocationMode.SECONDARY: secondary_hostname,
+            }
+        self._hosts = _hosts
+
+        self._policies = self._configure_policies(hosts=self._hosts, **kwargs)
+        if self._cosmos_endpoint:
+            self._policies.insert(0, CosmosPatchTransformPolicy())
+
+        self._api_version = get_api_version(kwargs, "2019-02-02")
+
+    def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+
+        :param str hostname: The current location mode hostname.
+        :returns: The full URL to the Tables account.
+        :rtype: str
+        """
+        return f"{self.scheme}://{hostname}{self._query_str}"
+
+    def _configure_policies(self, **kwargs):
+        credential_policy = _configure_credential(self.credential)
+        return [
+            RequestIdPolicy(**kwargs),
+            StorageHeadersPolicy(**kwargs),
+            UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
+            ProxyPolicy(**kwargs),
+            credential_policy,
+            ContentDecodePolicy(response_encoding="utf-8"),
+            AsyncRedirectPolicy(**kwargs),
+            StorageHosts(**kwargs),
+            AsyncTablesRetryPolicy(**kwargs),
+            CustomHookPolicy(**kwargs),
+            NetworkTraceLoggingPolicy(**kwargs),
+            DistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs),
+        ]
+
+    @property
+    def url(self) -> str:
+        """The full endpoint URL to this entity, including SAS token if used.
+
+        This could be either the primary endpoint,
+        or the secondary endpoint depending on the current :func:`location_mode`.
+
+        :return: The full endpoint URL including SAS token if used.
+        :rtype: str
+        """
+        return self._format_url(self._hosts[self._location_mode])
+
+    @property
+    def _primary_endpoint(self):
+        """The full primary endpoint URL.
+
+        :return: The full primary endpoint URL.
+        :rtype: str
+        """
+        return self._format_url(self._hosts[LocationMode.PRIMARY])
+
+    @property
+    def _primary_hostname(self):
+        """The hostname of the primary endpoint.
+
+        :return: The hostname of the primary endpoint.
+        :type: str
+        """
+        return self._hosts[LocationMode.PRIMARY]
+
+    @property
+    def _secondary_endpoint(self):
+        """The full secondary endpoint URL if configured.
+
+        If not available a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+
+        :return: The full secondary endpoint URL.
+        :type: str
+        :raise ValueError: If the secondary endpoint URL is not configured.
+        """
+        if not self._hosts[LocationMode.SECONDARY]:
+            raise ValueError("No secondary host configured.")
+        return self._format_url(self._hosts[LocationMode.SECONDARY])
+
+    @property
+    def _secondary_hostname(self):
+        """The hostname of the secondary endpoint.
+
+        If not available this will be None. To explicitly specify a secondary hostname, use the optional
+        `secondary_hostname` keyword argument on instantiation.
+
+        :return: The hostname of the secondary endpoint.
+        :type: str or None
+        """
+        return self._hosts[LocationMode.SECONDARY]
+
+    @property
+    def api_version(self) -> str:
+        """The version of the Storage API used for requests.
+
+        :return: The Storage API version.
+        :type: str
+        """
+        return self._api_version
+
+
+class AsyncTablesBaseClient(AsyncAccountHostsMixin):
     """Base class for TableClient
 
     :ivar str account_name: The name of the Tables account.
@@ -87,24 +257,6 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         It need not be used when using with a context manager.
         """
         await self._client.close()
-
-    def _configure_policies(self, **kwargs):
-        credential_policy = _configure_credential(self.credential)
-        return [
-            RequestIdPolicy(**kwargs),
-            StorageHeadersPolicy(**kwargs),
-            UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
-            ProxyPolicy(**kwargs),
-            credential_policy,
-            ContentDecodePolicy(response_encoding="utf-8"),
-            AsyncRedirectPolicy(**kwargs),
-            StorageHosts(**kwargs),
-            AsyncTablesRetryPolicy(**kwargs),
-            CustomHookPolicy(**kwargs),
-            NetworkTraceLoggingPolicy(**kwargs),
-            DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
-        ]
 
     async def _batch_send(self, table_name: str, *reqs: HttpRequest, **kwargs: Any) -> List[Mapping[str, Any]]:
         # pylint:disable=docstring-should-be-keyword

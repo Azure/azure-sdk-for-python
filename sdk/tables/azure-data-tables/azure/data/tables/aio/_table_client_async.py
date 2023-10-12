@@ -49,10 +49,10 @@ class TableClient(AsyncTablesBaseClient):
     :ivar str scheme: The scheme component in the full URL to the Tables account.
     :ivar str url: The full endpoint URL to this entity, including SAS token if used.
     :ivar str api_version: The version of the Storage API used for requests.
-    :ivar Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]]:
+    :ivar Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]]:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
-        AzureSasCredential (azure-core), or a TokenCredential implementation from azure-identity.
+        AzureSasCredential (azure-core), or a AsyncTokenCredential implementation from azure-identity.
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
@@ -229,14 +229,14 @@ class TableClient(AsyncTablesBaseClient):
         """
         table_properties = TableProperties(table_name=self.table_name)
         try:
-            result = await self._client.table.create(table_properties, **kwargs)
+            await self._client.table.create(table_properties, **kwargs)
         except HttpResponseError as error:
             try:
                 _process_table_error(error, table_name=self.table_name)
             except HttpResponseError as decoded_error:
                 _reprocess_error(decoded_error)
                 raise
-        return TableItem(name=result.table_name)  # type: ignore[union-attr, arg-type]
+        return TableItem(name=self.table_name)
 
     @distributed_trace_async
     async def delete_table(self, **kwargs) -> None:
@@ -409,10 +409,8 @@ class TableClient(AsyncTablesBaseClient):
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
-            try:
-                etag = entity.metadata.get("etag", None)  # type: ignore[union-attr]
-            except (AttributeError, TypeError):
-                pass
+            if isinstance(entity, TableEntity):
+                etag = entity.metadata.get("etag", None)
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
@@ -671,17 +669,17 @@ class TableClient(AsyncTablesBaseClient):
             **kwargs,
         )
         try:
-            for operation in operations:  # type: ignore[union-attr]
-                batched_requests.add_operation(operation)
-        except TypeError:
-            try:
-                async for operation in operations:  # type: ignore[union-attr]
+            if hasattr(operations, "__iter__"):
+                for operation in operations:
                     batched_requests.add_operation(operation)
-            except TypeError as exc:
-                raise TypeError(
-                    "The value of 'operations' must be an iterator or async iterator "
-                    "of Tuples. Please check documentation for correct Tuple format."
-                ) from exc
+            else:
+                async for operation in operations:
+                    batched_requests.add_operation(operation)
+        except TypeError as exc:
+            raise TypeError(
+                "The value of 'operations' must be an iterator or async iterator "
+                "of Tuples. Please check documentation for correct Tuple format."
+            ) from exc
 
         try:
             return await self._batch_send(self.table_name, *batched_requests.requests, **kwargs)

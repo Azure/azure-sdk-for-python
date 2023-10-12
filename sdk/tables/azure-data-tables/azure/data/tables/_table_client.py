@@ -222,14 +222,14 @@ class TableClient(TablesBaseClient):
         """
         table_properties = TableProperties(table_name=self.table_name)
         try:
-            result = self._client.table.create(table_properties, **kwargs)
+            self._client.table.create(table_properties, **kwargs)
         except HttpResponseError as error:
             try:
                 _process_table_error(error, table_name=self.table_name)
             except HttpResponseError as decoded_error:
                 _reprocess_error(decoded_error)
                 raise
-        return TableItem(name=result.table_name)  # type: ignore[union-attr, arg-type]
+        return TableItem(name=self.table_name)
 
     @distributed_trace
     def delete_table(self, **kwargs) -> None:
@@ -400,10 +400,8 @@ class TableClient(TablesBaseClient):
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
-            try:
-                etag = entity.metadata.get("etag", None)  # type: ignore[union-attr]
-            except (AttributeError, TypeError):
-                pass
+            if isinstance(entity, TableEntity):
+                etag = entity.metadata.get("etag", None)
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )

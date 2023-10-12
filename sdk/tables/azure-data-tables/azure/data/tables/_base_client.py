@@ -11,7 +11,6 @@ from typing import Any, Dict, List, Optional, Mapping, Union
 from typing_extensions import Self
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential, TokenCredential
-from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.utils import parse_connection_string
 from azure.core.pipeline.transport import (
     HttpTransport,
@@ -64,9 +63,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def __init__(  # pylint: disable=too-many-statements
         self,
         account_url: str,
-        credential: Optional[
-            Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential, AsyncTokenCredential]
-        ] = None,
+        credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = None,
         **kwargs: Any,
     ) -> None:
         try:
@@ -102,9 +99,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
                 self.account_name = account[0] if len(account) > 1 else None
 
         secondary_hostname: str = ""
-        self.credential: Optional[
-            Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential, AsyncTokenCredential]
-        ] = credential
+        self.credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = credential
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
         if isinstance(self.credential, AzureNamedKeyCredential):
@@ -363,7 +358,7 @@ class TransportWrapper(HttpTransport):
 
 def parse_connection_str(
     conn_str: str,
-    credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential, AsyncTokenCredential]],
+    credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential]],
     keyword_args: Any,
 ):
     if conn_str.lower() == "usedevelopmentstorage=true":

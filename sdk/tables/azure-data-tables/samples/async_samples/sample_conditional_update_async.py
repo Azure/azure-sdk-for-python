@@ -122,8 +122,8 @@ class ConditionalUpdateSamples(object):
                 if target_field not in entity:
                     await table_client.update_entity(
                         entity={
-                            "PartitionKey": self.entity2["PartitionKey"],  # type: ignore[arg-type]
-                            "RowKey": self.entity2["RowKey"],  # type: ignore[arg-type]
+                            "PartitionKey": self.entity2["PartitionKey"],
+                            "RowKey": self.entity2["RowKey"],
                             target_field: "foo",
                         },
                         mode=UpdateMode.MERGE,

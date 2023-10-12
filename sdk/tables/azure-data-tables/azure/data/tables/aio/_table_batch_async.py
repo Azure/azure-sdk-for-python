@@ -9,6 +9,7 @@ from azure.core import MatchConditions
 from azure.core.pipeline.transport import HttpRequest
 
 from .._common_conversion import _transform_patch_to_cosmos_post
+from .._entity import TableEntity
 from .._models import UpdateMode
 from .._table_batch import EntityType, TransactionOperationType
 from .._serialize import (
@@ -120,13 +121,12 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
-        temp = entity.copy()  # type: ignore[union-attr]
 
-        if "PartitionKey" in temp and "RowKey" in temp:
-            temp = _add_entity_properties(temp)
+        if "PartitionKey" in entity and "RowKey" in entity:
+            entity = _add_entity_properties(entity)
         else:
             raise ValueError("PartitionKey and/or RowKey were not provided in entity")
-        self._batch_create_entity(table=self.table_name, entity=temp, **kwargs)
+        self._batch_create_entity(table=self.table_name, entity=entity, **kwargs)
 
     def _batch_create_entity(
         self,
@@ -236,10 +236,8 @@ class TableBatchOperations(object):
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
-            try:
-                etag = entity.metadata.get("etag", None)  # type: ignore[union-attr] # It doesn't have attribute "metadata" when entity in type Mapping[str, Any]
-            except (AttributeError, TypeError):
-                pass
+            if isinstance(entity, TableEntity):
+                etag = entity.metadata.get("etag", None)
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
@@ -464,10 +462,8 @@ class TableBatchOperations(object):
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
-            try:
-                etag = entity.metadata.get("etag", None)  # type: ignore[union-attr] # It doesn't have attribute "metadata" when entity in type Mapping[str, Any]
-            except (AttributeError, TypeError):
-                pass
+            if isinstance(entity, TableEntity):
+                etag = entity.metadata.get("etag", None)
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
@@ -572,18 +568,17 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
-        temp = entity.copy()  # type: ignore[union-attr]
 
-        partition_key = _prepare_key(temp["PartitionKey"])
-        row_key = _prepare_key(temp["RowKey"])
-        temp = _add_entity_properties(temp)
+        partition_key = _prepare_key(entity["PartitionKey"])
+        row_key = _prepare_key(entity["RowKey"])
+        entity = _add_entity_properties(entity)
 
         if mode == UpdateMode.MERGE:
             self._batch_merge_entity(
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                table_entity_properties=temp,
+                table_entity_properties=entity,
                 **kwargs,
             )
         elif mode == UpdateMode.REPLACE:
@@ -591,7 +586,7 @@ class TableBatchOperations(object):
                 table=self.table_name,
                 partition_key=partition_key,
                 row_key=row_key,
-                table_entity_properties=temp,
+                table_entity_properties=entity,
                 **kwargs,
             )
         else:

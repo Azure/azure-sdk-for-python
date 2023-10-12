@@ -50,18 +50,18 @@ class TableAccessPolicy(GenAccessPolicy):
     request will fail with status code 400 (Bad Request).
     """
 
-    start: Optional[Union[datetime, str]]  # type: ignore[assignment] # Base class defined the class as "str"
+    start: Optional[Union[datetime, str]]  # type: ignore[assignment] # Base class defined the property as "str"
     """The time at which the shared access signature becomes valid.
         If omitted, start time for this call is assumed to be the time when the storage service receives the request.
         Azure will always convert values to UTC. If a date is passed in without timezone info, it is assumed to be UTC.
     """
-    expiry: Optional[Union[datetime, str]]  # type: ignore[assignment] # Base class defined the class as "str"
+    expiry: Optional[Union[datetime, str]]  # type: ignore[assignment] # Base class defined the property as "str"
     """The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy which contains this field.
         This field must be omitted if it has been specified in an associated stored access policy. Azure will always
         convert values to UTC. If a date is passed in without timezone info, it is assumed to be UTC.
     """
-    permission: Optional[str]  # type: ignore[assignment] # Base class defined the class as "str"
+    permission: Optional[str]  # type: ignore[assignment] # Base class defined the property as "str"
     """The permissions associated with the shared access signature.
         The user is restricted to operations allowed by the permissions. Required unless an id is given referencing
         a stored access policy which contains this field. This field must be omitted if it has been specified in
@@ -469,10 +469,8 @@ class TableItem:
         self.name = name
 
     @classmethod
-    def _from_generated(
-        cls, generated: TableResponseProperties, **kwargs  # pylint: disable=unused-argument
-    ) -> "TableItem":
-        return cls(generated.table_name)  # type:ignore[arg-type]
+    def _from_generated(cls, generated: TableResponseProperties) -> "TableItem":
+        return cls(generated.table_name)  # type: ignore[arg-type] # table_name in generated model is not required.
 
     def __repr__(self) -> str:
         return f"TableItem(name={self.name})"[1024:]
