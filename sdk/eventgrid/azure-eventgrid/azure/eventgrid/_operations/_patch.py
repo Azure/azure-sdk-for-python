@@ -149,7 +149,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         if isinstance(body, CloudEvent):
             kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
             if self._binary_mode:
-                self._publish_binary_mode(topic_name, body, **kwargs)
+                _publish_binary_mode(topic_name, body, self._config.api_version, **kwargs)
             else:
                 internal_body = _cloud_event_to_generated(body)
                 self._publish_cloud_event(topic_name, internal_body, **kwargs)
@@ -215,131 +215,131 @@ class EventGridClientOperationsMixin(OperationsMixin):
         return receive_result_deserialized
 
 
-    def _publish_binary_mode(self, topic_name: str, event: Any, **kwargs: Any) -> None:
+def _publish_binary_mode(topic_name: str, event: Any, api_version, **kwargs: Any) -> None:
 
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+    error_map = {
+        401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+    }
+    error_map.update(kwargs.pop('error_map', {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.PublishResult] = kwargs.pop(  # pylint: disable=protected-access
-            'cls', None
-        )
+    cls: ClsType[_models._models.PublishResult] = kwargs.pop(  # pylint: disable=protected-access
+        'cls', None
+    )
 
-        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/cloudevents+json; charset=utf-8"))
+    content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/cloudevents+json; charset=utf-8"))
 
-        # Given that we know the cloud event is binary mode, we can convert it to a HTTP request
-        http_request = self._to_http_request(            
-            topic_name=topic_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-            content_type=content_type,
-            event=event,
-        )
+    # Given that we know the cloud event is binary mode, we can convert it to a HTTP request
+    http_request = _to_http_request(            
+        topic_name=topic_name,
+        api_version=api_version,
+        headers=_headers,
+        params=_params,
+        content_type=content_type,
+        event=event,
+    )
 
-        _stream = kwargs.pop("stream", False)
+    _stream = kwargs.pop("stream", False)
 
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-        }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+    path_format_arguments = {
+        "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+    }
+    http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
 
-        # pipeline_response: PipelineResponse = self.send_request(http_request, **kwargs)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-            http_request,
-            stream=_stream,
-            **kwargs
-        )
+    # pipeline_response: PipelineResponse = self.send_request(http_request, **kwargs)
+    pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+        http_request,
+        stream=_stream,
+        **kwargs
+    )
 
-        response = pipeline_response.http_response
+    response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
-            if _stream:
-                 response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
+    if response.status_code not in [200]:
         if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(
-                _models._models.PublishResult,  # pylint: disable=protected-access
-                response.json()
-            )
+                response.read()  # Load the body in memory and close the socket
+        map_error(status_code=response.status_code, response=response, error_map=error_map)
+        raise HttpResponseError(response=response)
 
-        if cls:
-            return cls(pipeline_response, deserialized, {}) # type: ignore
-
-        return deserialized # type: ignore
-
-
-    def _to_http_request(self, topic_name: str, **kwargs: Any) -> HttpRequest:   
-        # Create a HTTP request for a binary mode CloudEvent
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        event = kwargs.pop("event")
-
-        # Content of the request is the data
-        # Check if there is data_base64 or data
-        if event.data_base64:
-            _content = json.dumps(event.data_base64, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
-        else:
-            _content = json.dumps(event.data, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        # content_type must be CloudEvent DataContentType when in binary mode
-        default_content_type = kwargs.pop('content_type', _headers.pop('content-type', "application/cloudevents+json; charset=utf-8"))
-        content_type: str = event.datacontenttype or default_content_type
-
-        api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-06-01-preview"))
-        accept = _headers.pop('Accept', "application/json")
-
-        # Construct URL
-        _url = "/topics/{topicName}:publish"
-        path_format_arguments = {
-            "topicName": _SERIALIZER.url("topic_name", topic_name, 'str'),
-        }
-
-        _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-        # Construct parameters
-        _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-        # Construct headers
-        _headers['content-type'] = _SERIALIZER.header("content_type", content_type, 'str')
-        _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
-        # Cloud Headers
-        _headers['ce-source'] = _SERIALIZER.header('ce-source', event.source, 'str')
-        _headers['ce-type'] = _SERIALIZER.header('ce-type', event.type, 'str')
-        if event.specversion:
-            _headers['ce-specversion'] = _SERIALIZER.header('ce-specversion', event.specversion, 'str')
-        if event.id:
-            _headers['ce-id'] = _SERIALIZER.header('ce-id', event.id, 'str')
-        if event.time:
-            _headers['ce-time'] = _SERIALIZER.header('ce-time', event.time, 'str')
-        if event.dataschema:
-            _headers['ce-dataschema'] = _SERIALIZER.header('ce-dataschema', event.dataschema, 'str')
-        if event.subject:
-            _headers['ce-subject'] = _SERIALIZER.header('ce-subject', event.subject, 'str')
-        if event.extensions:
-            _headers['ce-extensions'] = _SERIALIZER.header('ce-extensions', event.extensions, 'dict')
-
-        return HttpRequest(
-            method="POST",
-            url=_url,
-            params=_params,
-            headers=_headers,
-            content=_content, # pass through content
-            **kwargs
+    if _stream:
+        deserialized = response.iter_bytes()
+    else:
+        deserialized = _deserialize(
+            _models._models.PublishResult,  # pylint: disable=protected-access
+            response.json()
         )
 
-    def _from_http_response():
-        pass
+    if cls:
+        return cls(pipeline_response, deserialized, {}) # type: ignore
+
+    return deserialized # type: ignore
+
+
+def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:   
+    # Create a HTTP request for a binary mode CloudEvent
+
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    event = kwargs.pop("event")
+
+    # Content of the request is the data
+    # Check if there is data_base64 or data
+    if event.data_base64:
+        _content = json.dumps(event.data_base64, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+    else:
+        _content = json.dumps(event.data, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+
+    # content_type must be CloudEvent DataContentType when in binary mode
+    default_content_type = kwargs.pop('content_type', _headers.pop('content-type', "application/cloudevents+json; charset=utf-8"))
+    content_type: str = event.datacontenttype or default_content_type
+
+    api_version: str = kwargs.pop('api_version', _params.pop('api-version', "2023-06-01-preview"))
+    accept = _headers.pop('Accept', "application/json")
+
+    # Construct URL
+    _url = "/topics/{topicName}:publish"
+    path_format_arguments = {
+        "topicName": _SERIALIZER.url("topic_name", topic_name, 'str'),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+
+    # Construct headers
+    _headers['content-type'] = _SERIALIZER.header("content_type", content_type, 'str')
+    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    # Cloud Headers
+    _headers['ce-source'] = _SERIALIZER.header('ce-source', event.source, 'str')
+    _headers['ce-type'] = _SERIALIZER.header('ce-type', event.type, 'str')
+    if event.specversion:
+        _headers['ce-specversion'] = _SERIALIZER.header('ce-specversion', event.specversion, 'str')
+    if event.id:
+        _headers['ce-id'] = _SERIALIZER.header('ce-id', event.id, 'str')
+    if event.time:
+        _headers['ce-time'] = _SERIALIZER.header('ce-time', event.time, 'str')
+    if event.dataschema:
+        _headers['ce-dataschema'] = _SERIALIZER.header('ce-dataschema', event.dataschema, 'str')
+    if event.subject:
+        _headers['ce-subject'] = _SERIALIZER.header('ce-subject', event.subject, 'str')
+    if event.extensions:
+        _headers['ce-extensions'] = _SERIALIZER.header('ce-extensions', event.extensions, 'dict')
+
+    return HttpRequest(
+        method="POST",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        content=_content, # pass through content
+        **kwargs
+    )
+
+def _from_http_response():
+    pass
 
 
 
