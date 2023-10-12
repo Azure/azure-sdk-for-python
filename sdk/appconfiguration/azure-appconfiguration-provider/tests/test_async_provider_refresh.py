@@ -73,7 +73,8 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
     async def test_empty_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         mock_callback = AsyncMock()
         async with await self.create_aad_client(
-            appconfiguration_endpoint_string, keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            appconfiguration_endpoint_string,
+            keyvault_secret_url=appconfiguration_keyvault_secret_url,
             on_refresh_success=mock_callback,
         ) as client:
             assert client["refresh_message"] == "original value"

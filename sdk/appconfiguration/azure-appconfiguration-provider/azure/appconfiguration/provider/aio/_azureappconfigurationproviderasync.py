@@ -312,6 +312,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                     logging.debug("Refresh called but refresh interval not elapsed.")
                     return
                 need_refresh = False
+                updated_sentinel_keys = dict(self._refresh_on)
                 for (key, label), etag in self._refresh_on.items():
                     updated_sentinel = await self._client.get_configuration_setting(
                         key=key, label=label, etag=etag, match_condition=MatchConditions.IfModified, **kwargs
@@ -323,10 +324,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                             label,
                         )
                         need_refresh = True
+
+                        updated_sentinel_keys[(key, label)] = updated_sentinel.etag
                 # Need to only update once, no matter how many sentinels are updated
                 if need_refresh:
                     await self._load_all(**kwargs)
-                    self._refresh_on[(key, label)] = updated_sentinel.etag
+                    self._refresh_on = updated_sentinel_keys
                     if self.on_refresh_success:
                         await self.on_refresh_success()
                 # Even if we don't need to refresh, we should reset the timer

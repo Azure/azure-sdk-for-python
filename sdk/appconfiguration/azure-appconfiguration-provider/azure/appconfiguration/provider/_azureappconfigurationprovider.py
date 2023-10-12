@@ -419,7 +419,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         try:
             with self._update_lock:
                 need_refresh = False
-                for (key, label), etag in self._refresh_on.items():
+                updated_sentinel_keys = dict(self._refresh_on)
+                for (key, label), etag in updated_sentinel_keys.items():
                     updated_sentinel = self._client.get_configuration_setting(
                         key=key, label=label, etag=etag, match_condition=MatchConditions.IfModified, **kwargs
                     )
@@ -430,10 +431,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                             label,
                         )
                         need_refresh = True
+
+                        updated_sentinel_keys[(key, label)] = updated_sentinel.etag
                 # Need to only update once, no matter how many sentinels are updated
                 if need_refresh:
                     self._load_all(**kwargs)
-                    self._refresh_on[(key, label)] = updated_sentinel.etag
+                    self._refresh_on = updated_sentinel_keys
                     if self.on_refresh_success:
                         self.on_refresh_success()
                 # Even if we don't need to refresh, we should reset the timer
