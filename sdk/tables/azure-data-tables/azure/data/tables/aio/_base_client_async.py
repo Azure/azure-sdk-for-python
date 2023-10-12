@@ -137,6 +137,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         )
 
         response = await self._client.send_request(request, stream=True, **kwargs)
+        await response.read()
         # TODO: Check for proper error model deserialization
         if response.status_code == 413:
             raise _decode_error(

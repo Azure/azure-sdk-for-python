@@ -206,30 +206,28 @@ def _add_entity_properties(source: Union[TableEntity, Mapping[str, Any]]) -> Dic
     # set properties type for types we know if value has no type info.
     # if value has type info, then set the type to value.type
     for name, value in to_send.items():
-        mtype = ""
-
+        if value is None:
+            continue
+        mtype: Optional[EdmType] = None
         if isinstance(value, Enum):
-            convert = _PYTHON_TO_ENTITY_CONVERSIONS.get(str)
+            convert = _PYTHON_TO_ENTITY_CONVERSIONS[str]
             mtype, value = convert(value)
         elif isinstance(value, datetime):
             mtype, value = _to_entity_datetime(value)
         elif isinstance(value, tuple):
-            convert = _EDM_TO_ENTITY_CONVERSIONS.get(value[1])
+            convert = _EDM_TO_ENTITY_CONVERSIONS[EdmType(value[1])]
             mtype, value = convert(value[0])
         else:
-            convert = _PYTHON_TO_ENTITY_CONVERSIONS.get(type(value))
-            if convert is None and value is not None:
-                raise TypeError(_ERROR_TYPE_NOT_SUPPORTED.format(type(value)))
-            if value is None:
-                convert = _to_entity_none
-
+            try:
+                convert = _PYTHON_TO_ENTITY_CONVERSIONS[type(value)]
+            except KeyError:
+                raise TypeError(_ERROR_TYPE_NOT_SUPPORTED.format(type(value))) from None
             mtype, value = convert(value)
 
         # form the property node
-        if value is not None:
-            properties[name] = value
-            if mtype:
-                properties[name + "@odata.type"] = mtype.value
+        properties[name] = value
+        if mtype:
+            properties[name + "@odata.type"] = mtype.value
 
     # generate the entity_body
     return properties

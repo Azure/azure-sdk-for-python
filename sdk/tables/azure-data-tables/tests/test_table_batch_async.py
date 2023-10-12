@@ -947,7 +947,7 @@ class CheckBatchURL(AsyncHTTPPolicy):
         payload = request.http_request.body
         for line in payload.split(b"\r\n\r\n"):
             if line.startswith(b"PATCH") or line.startswith(b"POST"):
-                assert line[line.index(b" ") + 1 :].decode().startswith("/" + self.table)
+                assert line[line.index(b" ") + 1 :].decode().startswith(self.url + "/" + self.table)
                 raise RequestCorrect()
         raise AssertionError("No matching PATCH/POST requests found in batch:\n{}".format(payload.decode()))
 

@@ -60,6 +60,7 @@ class TableBatchOperations(object):
         :type is_cosmos_endpoint: bool
         """
         self._config: Union["AzureTableConfiguration", "AsyncAzureTableConfiguration"] = config
+        self._base_url: str = self._config.url.rstrip("/")
         self._is_cosmos_endpoint: bool = is_cosmos_endpoint
         self.table_name: str = table_name
 
@@ -121,6 +122,7 @@ class TableBatchOperations(object):
             version=self._config.version,
             **kwargs
         )
+        request.url = self._base_url + request.url
         self.requests.append(request)
 
     def update(self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs) -> None:
@@ -172,7 +174,6 @@ class TableBatchOperations(object):
                 version=self._config.version,
                 **kwargs,
             )
-            self.requests.append(request)
         elif mode == UpdateMode.MERGE:
             request = build_table_merge_entity_request(
                 table=self.table_name,
@@ -186,9 +187,11 @@ class TableBatchOperations(object):
             )
             if self._is_cosmos_endpoint:
                 _transform_patch_to_cosmos_post(request)
-            self.requests.append(request)
         else:
             raise ValueError(f"Mode type '{mode}' is not supported.")
+
+        request.url = self._base_url + request.url
+        self.requests.append(request)
 
     def delete(self, entity: EntityType, **kwargs) -> None:
         """Adds a delete operation to the current branch.
@@ -231,6 +234,7 @@ class TableBatchOperations(object):
             version=self._config.version,
             **kwargs,
         )
+        request.url = self._base_url + request.url
         self.requests.append(request)
 
     def upsert(self, entity: EntityType, mode: Union[str, UpdateMode] = UpdateMode.MERGE, **kwargs) -> None:
@@ -265,7 +269,6 @@ class TableBatchOperations(object):
                 version=self._config.version,
                 **kwargs,
             )
-            self.requests.append(request)
         elif mode == UpdateMode.MERGE:
             request = build_table_merge_entity_request(
                 table=self.table_name,
@@ -277,6 +280,8 @@ class TableBatchOperations(object):
             )
             if self._is_cosmos_endpoint:
                 _transform_patch_to_cosmos_post(request)
-            self.requests.append(request)
         else:
             raise ValueError(f"Mode type '{mode}' is not supported.")
+
+        request.url = self._base_url + request.url
+        self.requests.append(request)
