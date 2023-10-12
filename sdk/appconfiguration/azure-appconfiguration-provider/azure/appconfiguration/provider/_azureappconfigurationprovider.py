@@ -89,6 +89,8 @@ def load(
     :paramtype refresh_on: List[Tuple[str, str]]
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
+    :paramtype on_refresh_success: Optional[Callable]
+    :keyword on_refresh_success: Optional callback to be invoked when a change is found and a successful refresh has happened.
     :paramtype on_refresh_error: Optional[Callable[[Exception], None]]
     :keyword on_refresh_error: Optional callback to be invoked when an error occurs while refreshing settings. If not
     specified, errors will be raised.
@@ -129,6 +131,8 @@ def load(
     :paramtype refresh_on: List[Tuple[str, str]]
     :keyword int refresh_interval: The minimum time in seconds between when a call to `refresh` will actually trigger a
      service call to update the settings. Default value is 30 seconds.
+    :paramtype on_refresh_success: Optional[Callable]
+    :keyword on_refresh_success: Optional callback to be invoked when a change is found and a successful refresh has happened.
     :paramtype on_refresh_error: Optional[Callable[[Exception], None]]
     :keyword on_refresh_error: Optional callback to be invoked when an error occurs while refreshing settings. If not
     specified, errors will be raised.
@@ -397,6 +401,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
         refresh_on: List[Tuple[str, str]] = kwargs.pop("refresh_on", None) or []
         self._refresh_on: Mapping[Tuple[str, str] : Optional[str]] = {_build_sentinel(s): None for s in refresh_on}
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
+        self.on_refresh_success: Optional[Callable] = kwargs.pop("on_refresh_success", None)
         self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
         self._keyvault_credential = kwargs.pop("keyvault_credential", None)
         self._secret_resolver = kwargs.pop("secret_resolver", None)
@@ -413,6 +418,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             return
         try:
             with self._update_lock:
+                need_refresh = False
                 for (key, label), etag in self._refresh_on.items():
                     updated_sentinel = self._client.get_configuration_setting(
                         key=key, label=label, etag=etag, match_condition=MatchConditions.IfModified, **kwargs
@@ -423,10 +429,16 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                             key,
                             label,
                         )
-                        self._load_all(**kwargs)
-                        self._refresh_on[(key, label)] = updated_sentinel.etag
-                        self._refresh_timer.reset()
-                        return
+                        need_refresh = True
+                # Need to only update once, no matter how many sentinels are updated
+                if need_refresh:
+                    self._load_all(**kwargs)
+                    self._refresh_on[(key, label)] = updated_sentinel.etag
+                    if self.on_refresh_success:
+                        self.on_refresh_success()
+                # Even if we don't need to refresh, we should reset the timer
+                self._refresh_timer.reset()
+                return
         except (ServiceRequestError, ServiceResponseError) as e:
             logging.debug("Failed to refresh, retrying: %r", e)
             self._refresh_timer.retry()

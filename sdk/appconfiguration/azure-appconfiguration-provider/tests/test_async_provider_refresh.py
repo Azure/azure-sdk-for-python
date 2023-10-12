@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 import time
 import unittest
+from unittest.mock import AsyncMock
 from azure.appconfiguration.provider import SettingSelector, SentinelKey
 from azure.appconfiguration.provider.aio import load
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -18,11 +19,13 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
+        mock_callback = AsyncMock()
         async with await self.create_aad_client(
             appconfiguration_endpoint_string,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
             refresh_on=[SentinelKey("refresh_message")],
             refresh_interval=1,
+            on_refresh_success=mock_callback,
         ) as client:
             assert client["refresh_message"] == "original value"
             assert client["my_json"]["key"] == "value"
@@ -37,6 +40,7 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
 
             await client.refresh()
             assert client["refresh_message"] == "updated value"
+            assert mock_callback.call_count == 1
 
             setting.value = "original value"
             await client._client.set_configuration_setting(setting)
@@ -46,6 +50,7 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
 
             await client.refresh()
             assert client["refresh_message"] == "original value"
+            assert mock_callback.call_count == 2
 
             setting.value = "updated value 2"
             await client._client.set_configuration_setting(setting)
@@ -53,19 +58,23 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
             # Not waiting for the refresh interval to pass
             await client.refresh()
             assert client["refresh_message"] == "original value"
+            assert mock_callback.call_count == 2
 
             setting.value = "original value"
             await client._client.set_configuration_setting(setting)
 
             await client.refresh()
             assert client["refresh_message"] == "original value"
+            assert mock_callback.call_count == 2
 
     # method: refresh
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_empty_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
+        mock_callback = AsyncMock()
         async with await self.create_aad_client(
-            appconfiguration_endpoint_string, keyvault_secret_url=appconfiguration_keyvault_secret_url
+            appconfiguration_endpoint_string, keyvault_secret_url=appconfiguration_keyvault_secret_url,
+            on_refresh_success=mock_callback,
         ) as client:
             assert client["refresh_message"] == "original value"
             assert client["non_refreshed_message"] == "Static"
@@ -85,14 +94,9 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
             await client.refresh()
             assert client["refresh_message"] == "original value"
             assert client["non_refreshed_message"] == "Static"
+            assert mock_callback.call_count == 0
 
             setting.value = "original value"
             await client._client.set_configuration_setting(setting)
             static_setting.value = "Static"
             await client._client.set_configuration_setting(static_setting)
-
-    def my_callback(self):
-        assert True
-
-    def my_callback_on_fail(self):
-        assert False
