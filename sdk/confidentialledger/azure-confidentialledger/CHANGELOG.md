@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.2 (2023-09-26)
+## 1.1.2 (Unreleased)
 ### Other Changes
 - Replace legacy azure core http response import with the one from azure.core.rest
 
