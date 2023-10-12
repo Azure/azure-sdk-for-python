@@ -87,7 +87,7 @@ class _VSCodeCredentialBase(abc.ABC):
                 # we can't guess confidently.
                 self._unavailable_reason = (
                     'VS Code is configured to use a custom cloud. Set keyword argument "authority"'
-                    + ' with the Azure Active Directory endpoint for cloud "{}"'.format(self._cloud)
+                    + ' with the Microsoft Entra endpoint for cloud "{}"'.format(self._cloud)
                 )
                 return
 
@@ -114,13 +114,13 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
     versions newer than **0.9.11**. A long-term fix to this problem is in progress. In the meantime, consider
     authenticating with :class:`AzureCliCredential`.
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com".
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example "login.microsoftonline.com".
         This argument is required for a custom cloud and usually unnecessary otherwise. Defaults to the authority
         matching the "Azure: Cloud" setting in VS Code's user settings or, when that setting has no value, the
         authority for Azure Public Cloud.
     :keyword str tenant_id: ID of the tenant the credential should authenticate in. Defaults to the "Azure: Tenant"
         setting in VS Code's user settings or, when that setting has no value, the "organizations" tenant, which
-        supports only Azure Active Directory work or school accounts.
+        supports only Microsoft Entra work or school accounts.
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
