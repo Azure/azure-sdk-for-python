@@ -7,7 +7,7 @@
 import copy
 import logging
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import CommandJob as RestCommandJob
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
@@ -15,6 +15,7 @@ from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._utils.utils import map_single_brackets_and_warn
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, LOCAL_COMPUTE_PROPERTY, LOCAL_COMPUTE_TARGET, TYPE
+from azure.ai.ml.entities import Environment
 from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
     ManagedIdentityConfiguration,
@@ -30,15 +31,7 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     validate_inputs_for_command,
 )
 from azure.ai.ml.entities._job.distribution import DistributionConfiguration
-from azure.ai.ml.entities._job.job_service import (
-    JobService,
-    JobServiceBase,
-    JupyterLabJobService,
-    SshJobService,
-    TensorBoardJobService,
-    VsCodeJobService,
-)
-from azure.ai.ml.entities import Environment
+from azure.ai.ml.entities._job.job_service import JobServiceBase
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
@@ -89,13 +82,11 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         identity: Optional[
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
-        services: Optional[
-            Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
-        ] = None,
-        **kwargs,
+        services: Optional[Dict] = None,
+        **kwargs: Any,
     ) -> None:
         kwargs[TYPE] = JobType.COMMAND
-        self._parameters = kwargs.pop("parameters", {})
+        self._parameters: dict = kwargs.pop("parameters", {})
 
         super().__init__(**kwargs)
 
@@ -116,7 +107,8 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return CommandJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = CommandJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     def _to_rest_object(self) -> JobBase:
         self._validate()
@@ -161,7 +153,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         return result
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "CommandJob":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "CommandJob":
         loaded_data = load_from_dict(CommandJobSchema, data, context, additional_message, **kwargs)
         return CommandJob(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
@@ -206,7 +198,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             command_job.resources.properties.pop(LOCAL_COMPUTE_PROPERTY)
         return command_job
 
-    def _to_component(self, context: Optional[Dict] = None, **kwargs) -> "CommandComponent":
+    def _to_component(self, context: Optional[Dict] = None, **kwargs: Any) -> "CommandComponent":
         """Translate a command job to component.
 
         :param context: Context of command job YAML file.
@@ -235,7 +227,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             distribution=self.distribution if self.distribution else None,
         )
 
-    def _to_node(self, context: Optional[Dict] = None, **kwargs) -> "Command":
+    def _to_node(self, context: Optional[Dict] = None, **kwargs: Any) -> "Command":
         """Translate a command job to a pipeline node.
 
         :param context: Context of command job YAML file.

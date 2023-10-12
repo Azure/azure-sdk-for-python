@@ -98,10 +98,7 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
     @classmethod
     def _to_rest_job_services(
         cls,
-        services: Dict[
-            str,
-            Union["JobService", "JupyterLabJobService", "SshJobService", "TensorBoardJobService", "VsCodeJobService"],
-        ],
+        services: Optional[Dict],
     ) -> Dict[str, RestJobService]:
         if services is None:
             return None
