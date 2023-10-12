@@ -15,6 +15,22 @@ module_logger = logging.getLogger(__name__)
 
 
 class ComputeConfiguration(RestTranslatableMixin, DictMixin):
+    """Compute resource configuration
+
+    :param target: The compute target.
+    :type target: Optional[str]
+    :param instance_count: The number of instances.
+    :type instance_count: Optional[int]
+    :param is_local: Specifies if the compute will be on the local machine.
+    :type is_local: Optional[bool]
+    :param location: The location of the compute resource.
+    :type location: Optional[str]
+    :param properties: The resource properties
+    :type properties: Optional[Dict[str, Any]]
+    :param deserialize_properties: Specifies if property bag should be deserialized. Defaults to False.
+    :type deserialize_properties: bool
+    """
+
     def __init__(
         self,
         *,
@@ -25,7 +41,7 @@ class ComputeConfiguration(RestTranslatableMixin, DictMixin):
         location: Optional[str] = None,
         properties: Optional[Dict[str, Any]] = None,
         deserialize_properties: bool = False,
-    ):
+    ) -> None:
         self.instance_count = instance_count
         self.target = target or LOCAL_COMPUTE_TARGET
         self.is_local = is_local or self.target == LOCAL_COMPUTE_TARGET

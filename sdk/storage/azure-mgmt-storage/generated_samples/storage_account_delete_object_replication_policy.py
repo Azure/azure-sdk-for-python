@@ -29,14 +29,13 @@ def main():
         subscription_id="{subscription-id}",
     )
 
-    response = client.object_replication_policies.delete(
+    client.object_replication_policies.delete(
         resource_group_name="res6977",
         account_name="sto2527",
         object_replication_policy_id="{objectReplicationPolicy-Id}",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2022-09-01/examples/StorageAccountDeleteObjectReplicationPolicy.json
+# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2023-01-01/examples/StorageAccountDeleteObjectReplicationPolicy.json
 if __name__ == "__main__":
     main()

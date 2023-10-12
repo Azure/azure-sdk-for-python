@@ -573,7 +573,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
     @classmethod
     def deserialize_from_text(
         cls,
-        data: Optional[Union[AnyStr, IO]],
+        data: Optional[Union[AnyStr, IO[AnyStr]]],
         mime_type: Optional[str] = None,
         response: Optional[HTTPResponseType] = None,
     ) -> Any:

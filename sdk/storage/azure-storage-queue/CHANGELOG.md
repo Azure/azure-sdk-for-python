@@ -1,8 +1,32 @@
 # Release History
 
-## 12.7.0 (Unreleased)
+## 12.8.0b1 (Unreleased)
 
 ### Features Added
+
+
+## 12.7.3 (2023-10-10)
+
+### Bugs Fixed
+- Fixed an issue when an invalid type was provided for `credential` during client construction, the
+`__str__` of the object would be present in the exception message and therefore potentially logged.
+
+## 12.7.2 (2023-09-25)
+
+### Bugs Fixed
+- Fixed an issue where `user_agent` was being ignored on `send_message`, `receive_message`, `receive_messages`,
+`update_message`, and `peek_messages` if client was configured for encryption.
+
+## 12.7.1 (2023-09-13)
+
+### Bugs Fixed
+- Fixed breaking `KeyError: 'sdk_moniker'` in `create_configuration`.
+NOTE: This is not an exported method and therefore should not be imported/called directly.
+
+## 12.7.0 (2023-09-12)
+
+### Features Added
+- Stable release of features from 12.7.0b1
 
 ## 12.7.0b1 (2023-08-08)
 

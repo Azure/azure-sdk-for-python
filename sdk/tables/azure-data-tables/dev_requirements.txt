@@ -4,6 +4,6 @@
 -e ../../resources/azure-mgmt-resource
 ../../core/azure-core
 ../../nspkg/azure-data-nspkg
-aiohttp>=3.0
+aiohttp
 azure-identity
 python-dateutil>=2.8.0

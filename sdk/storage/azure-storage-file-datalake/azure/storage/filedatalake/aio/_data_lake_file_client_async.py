@@ -56,6 +56,9 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
 
     .. admonition:: Example:
 
@@ -160,9 +163,9 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :return: response dict (Etag and last modified).
         :keyword str encryption_context:
             Specifies the encryption context to set on the file.
+        :return: response dict (Etag and last modified).
 
         .. admonition:: Example:
 

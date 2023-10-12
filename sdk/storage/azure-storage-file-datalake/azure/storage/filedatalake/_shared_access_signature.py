@@ -11,8 +11,14 @@ from azure.storage.blob import generate_account_sas as generate_blob_account_sas
 from azure.storage.blob import generate_container_sas, generate_blob_sas
 if TYPE_CHECKING:
     from datetime import datetime
-    from ._models import AccountSasPermissions, FileSystemSasPermissions, FileSasPermissions, ResourceTypes, \
+    from ._models import (
+        AccountSasPermissions,
+        DirectorySasPermissions,
+        FileSasPermissions,
+        FileSystemSasPermissions,
+        ResourceTypes,
         UserDelegationKey
+    )
 
 
 def generate_account_sas(
@@ -186,7 +192,7 @@ def generate_directory_sas(
         file_system_name,  # type: str
         directory_name,  # type: str
         credential,  # type: Union[str, UserDelegationKey]
-        permission=None,  # type: Optional[Union[FileSasPermissions, str]]
+        permission=None,  # type: Optional[Union[DirectorySasPermissions, str]]
         expiry=None,  # type: Optional[Union[datetime, str]]
         **kwargs # type: Any
     ):
@@ -218,7 +224,7 @@ def generate_directory_sas(
         Required unless an id is given referencing a stored access policy
         which contains this field. This field must be omitted if it has been
         specified in an associated stored access policy.
-    :type permission: str or ~azure.storage.filedatalake.FileSasPermissions
+    :type permission: str or ~azure.storage.filedatalake.DirectorySasPermissions
     :param expiry:
         The time at which the shared access signature becomes invalid.
         Required unless an id is given referencing a stored access policy

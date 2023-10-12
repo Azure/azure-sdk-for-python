@@ -74,25 +74,29 @@ class AzureRedHatOpenShiftClient:  # pylint: disable=client-accepts-api-version-
         self._config = AzureRedHatOpenShiftClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize, "2022-09-04")
         self.open_shift_versions = OpenShiftVersionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-09-04"
         )
         self.open_shift_clusters = OpenShiftClustersOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-09-04"
         )
-        self.machine_pools = MachinePoolsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.secrets = SecretsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.machine_pools = MachinePoolsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2022-09-04"
+        )
+        self.secrets = SecretsOperations(self._client, self._config, self._serialize, self._deserialize, "2022-09-04")
         self.sync_identity_providers = SyncIdentityProvidersOperations(
-            self._client, self._config, self._serialize, self._deserialize
+            self._client, self._config, self._serialize, self._deserialize, "2022-09-04"
         )
-        self.sync_sets = SyncSetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.sync_sets = SyncSetsOperations(
+            self._client, self._config, self._serialize, self._deserialize, "2022-09-04"
+        )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

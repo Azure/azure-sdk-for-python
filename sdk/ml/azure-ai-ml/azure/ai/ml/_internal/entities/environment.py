@@ -7,8 +7,8 @@ from pathlib import Path
 from typing import Dict, Optional, Union
 
 from ..._utils.utils import load_yaml
-from ...constants._common import DefaultOpenEncoding, FILE_PREFIX
-from ...entities._validation import MutableValidationResult, _ValidationResultBuilder
+from ...constants._common import FILE_PREFIX, DefaultOpenEncoding
+from ...entities._validation import MutableValidationResult, ValidationResultBuilder
 
 
 class InternalEnvironment:
@@ -45,7 +45,7 @@ class InternalEnvironment:
     def _validate_conda_section(
         self, base_path: Union[str, PathLike], skip_path_validation: bool
     ) -> MutableValidationResult:
-        validation_result = _ValidationResultBuilder.success()
+        validation_result = ValidationResultBuilder.success()
         if not self.conda:
             return validation_result
         dependencies_field_names = {self.CONDA_DEPENDENCIES, self.CONDA_DEPENDENCIES_FILE, self.PIP_REQUIREMENTS_FILE}
@@ -74,7 +74,7 @@ class InternalEnvironment:
     def _validate_docker_section(
         self, base_path: Union[str, PathLike], skip_path_validation: bool
     ) -> MutableValidationResult:
-        validation_result = _ValidationResultBuilder.success()
+        validation_result = ValidationResultBuilder.success()
         if not self.docker:
             return validation_result
         if not self.docker.get(self.BUILD) or not self.docker[self.BUILD].get(self.DOCKERFILE):
@@ -104,7 +104,7 @@ class InternalEnvironment:
         :return: The validation result
         :rtype: MutableValidationResult
         """
-        validation_result = _ValidationResultBuilder.success()
+        validation_result = ValidationResultBuilder.success()
         if self.os is not None and self.os not in {"Linux", "Windows", "linux", "windows"}:
             validation_result.append_error(
                 yaml_path="os",

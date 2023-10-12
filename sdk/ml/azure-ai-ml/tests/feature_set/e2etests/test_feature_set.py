@@ -8,8 +8,6 @@ from pathlib import Path
 from typing import Callable
 
 import pytest
-from azure.core.paging import ItemPaged
-from azure.core.polling import LROPoller
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import verify_entity_load_and_dump
 
@@ -17,6 +15,8 @@ from azure.ai.ml import MLClient
 from azure.ai.ml.entities import FeatureSet, MaterializationComputeResource, MaterializationSettings
 from azure.ai.ml.entities._assets._artifacts.feature_set import FeatureSet
 from azure.ai.ml.entities._load_functions import load_feature_set
+from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
 
 
 @pytest.mark.e2etest
@@ -61,6 +61,7 @@ class TestFeatureSet(AzureRecordedTestCase):
     # ---------------------------------------------------------------------------------------------------------------#
     # NOTE Please enable materialization store on test featurestore 'sdk_vnext_cli_fs' to run this test in live mode.
     # ---------------------------------------------------------------------------------------------------------------#
+    @pytest.mark.skip(reason="Skip the test until list jobs API in v2023-10-01 version is working well")
     def test_list_materialization_jobs(
         self, feature_store_client: MLClient, tmp_path: Path, randstr: Callable[[], str]
     ) -> None:

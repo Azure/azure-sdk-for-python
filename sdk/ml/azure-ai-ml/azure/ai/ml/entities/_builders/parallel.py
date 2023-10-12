@@ -17,6 +17,7 @@ from ..._schema import PathAwareSchema
 from ...constants._common import ARM_ID_PREFIX
 from ...constants._component import NodeType
 from .._component.component import Component
+from .._component.flow import FlowComponent
 from .._component.parallel_component import ParallelComponent
 from .._inputs_outputs import Input, Output
 from .._job.job_resource_configuration import JobResourceConfiguration
@@ -122,15 +123,28 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
         kwargs.pop("type", None)
 
-        BaseNode.__init__(
-            self,
-            type=NodeType.PARALLEL,
-            component=component,
-            inputs=inputs,
-            outputs=outputs,
-            compute=compute,
-            **kwargs,
-        )
+        if isinstance(component, FlowComponent):
+            # make input definition fit actual inputs for flow component
+            with component._inputs._fit_inputs(inputs):  # pylint: disable=protected-access
+                BaseNode.__init__(
+                    self,
+                    type=NodeType.PARALLEL,
+                    component=component,
+                    inputs=inputs,
+                    outputs=outputs,
+                    compute=compute,
+                    **kwargs,
+                )
+        else:
+            BaseNode.__init__(
+                self,
+                type=NodeType.PARALLEL,
+                component=component,
+                inputs=inputs,
+                outputs=outputs,
+                compute=compute,
+                **kwargs,
+            )
         # init mark for _AttrDict
         self._init = True
 
@@ -309,7 +323,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
     @classmethod
     def _attr_type_map(cls) -> dict:
         return {
-            "component": (str, ParallelComponent),
+            "component": (str, ParallelComponent, FlowComponent),
             "retry_settings": (dict, RetrySettings),
             "resources": (dict, JobResourceConfiguration),
             "task": (dict, ParallelTask),

@@ -116,6 +116,11 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
                 sampling_algorithm="Grid",
                 early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
             )
+            image_instance_segmentation_job_individual = copy.deepcopy(image_instance_segmentation_job)
+            image_instance_segmentation_job_individual.set_training_parameters(
+                model_name="mask_rcnn_swin-s-p4-w7_fpn_fp16_ms-crop-3x_coco", number_of_epochs=1
+            )
+            image_instance_segmentation_job_reuse = copy.deepcopy(image_instance_segmentation_job_individual)
         else:
             # Configure runtime sweep job search space
             image_instance_segmentation_job_sweep.extend_search_space(
@@ -140,7 +145,12 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
 
         # Trigger sweep job and then AutoMode job
         submitted_job_sweep = client.jobs.create_or_update(image_instance_segmentation_job_sweep)
-        if not components:
+        if components:
+            submitted_job_individual_components = client.jobs.create_or_update(
+                image_instance_segmentation_job_individual
+            )
+            submitted_job_components_reuse = client.jobs.create_or_update(image_instance_segmentation_job_reuse)
+        else:
             submitted_job_automode = client.jobs.create_or_update(image_instance_segmentation_job_automode)
 
         # Assert completion of sweep job
@@ -148,7 +158,18 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
             submitted_job_sweep, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=3600
         )
 
-        if not components:
+        if components:
+            assert_final_job_status(
+                submitted_job_individual_components,
+                client,
+                ImageInstanceSegmentationJob,
+                JobStatus.COMPLETED,
+                deadline=3600,
+            )
+            assert_final_job_status(
+                submitted_job_components_reuse, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=3600
+            )
+        else:
             # Assert completion of Automode job
             assert_final_job_status(
                 submitted_job_automode, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=3600

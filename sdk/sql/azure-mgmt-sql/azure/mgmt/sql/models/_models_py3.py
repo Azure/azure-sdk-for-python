@@ -973,6 +973,19 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar preferred_enclave_type: Type of enclave requested on the database i.e. Default or VBS
      enclaves. Known values are: "Default" and "VBS".
     :vartype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+    :ivar use_free_limit: Whether or not the database uses free monthly limits. Allowed on one
+     database in a subscription.
+    :vartype use_free_limit: bool
+    :ivar free_limit_exhaustion_behavior: Specifies the behavior when monthly free limits are
+     exhausted for the free database.
+
+     AutoPause: The database will be auto paused upon exhaustion of free limits for remainder of
+     the month.
+
+     BillForUsage: The database will continue to be online upon exhaustion of free limits and any
+     overage will be billed. Known values are: "AutoPause" and "BillOverUsage".
+    :vartype free_limit_exhaustion_behavior: str or
+     ~azure.mgmt.sql.models.FreeLimitExhaustionBehavior
     :ivar source_resource_id: The resource identifier of the source associated with the create
      operation of this database.
 
@@ -1024,6 +1037,9 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar availability_zone: Specifies the availability zone the database is pinned to. Known
      values are: "NoPreference", "1", "2", and "3".
     :vartype availability_zone: str or ~azure.mgmt.sql.models.AvailabilityZoneType
+    :ivar encryption_protector_auto_rotation: The flag to enable or disable auto rotation of
+     database encryption protector AKV key.
+    :vartype encryption_protector_auto_rotation: bool
     """
 
     _validation = {
@@ -1103,10 +1119,13 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "keys": {"key": "properties.keys", "type": "{DatabaseKey}"},
         "encryption_protector": {"key": "properties.encryptionProtector", "type": "str"},
         "preferred_enclave_type": {"key": "properties.preferredEnclaveType", "type": "str"},
+        "use_free_limit": {"key": "properties.useFreeLimit", "type": "bool"},
+        "free_limit_exhaustion_behavior": {"key": "properties.freeLimitExhaustionBehavior", "type": "str"},
         "source_resource_id": {"key": "properties.sourceResourceId", "type": "str"},
         "manual_cutover": {"key": "properties.manualCutover", "type": "bool"},
         "perform_cutover": {"key": "properties.performCutover", "type": "bool"},
         "availability_zone": {"key": "properties.availabilityZone", "type": "str"},
+        "encryption_protector_auto_rotation": {"key": "properties.encryptionProtectorAutoRotation", "type": "bool"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -1143,10 +1162,13 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
         keys: Optional[Dict[str, "_models.DatabaseKey"]] = None,
         encryption_protector: Optional[str] = None,
         preferred_enclave_type: Optional[Union[str, "_models.AlwaysEncryptedEnclaveType"]] = None,
+        use_free_limit: Optional[bool] = None,
+        free_limit_exhaustion_behavior: Optional[Union[str, "_models.FreeLimitExhaustionBehavior"]] = None,
         source_resource_id: Optional[str] = None,
         manual_cutover: Optional[bool] = None,
         perform_cutover: Optional[bool] = None,
         availability_zone: Optional[Union[str, "_models.AvailabilityZoneType"]] = None,
+        encryption_protector_auto_rotation: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1283,6 +1305,19 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :keyword preferred_enclave_type: Type of enclave requested on the database i.e. Default or VBS
          enclaves. Known values are: "Default" and "VBS".
         :paramtype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+        :keyword use_free_limit: Whether or not the database uses free monthly limits. Allowed on one
+         database in a subscription.
+        :paramtype use_free_limit: bool
+        :keyword free_limit_exhaustion_behavior: Specifies the behavior when monthly free limits are
+         exhausted for the free database.
+
+         AutoPause: The database will be auto paused upon exhaustion of free limits for remainder of
+         the month.
+
+         BillForUsage: The database will continue to be online upon exhaustion of free limits and any
+         overage will be billed. Known values are: "AutoPause" and "BillOverUsage".
+        :paramtype free_limit_exhaustion_behavior: str or
+         ~azure.mgmt.sql.models.FreeLimitExhaustionBehavior
         :keyword source_resource_id: The resource identifier of the source associated with the create
          operation of this database.
 
@@ -1334,6 +1369,9 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :keyword availability_zone: Specifies the availability zone the database is pinned to. Known
          values are: "NoPreference", "1", "2", and "3".
         :paramtype availability_zone: str or ~azure.mgmt.sql.models.AvailabilityZoneType
+        :keyword encryption_protector_auto_rotation: The flag to enable or disable auto rotation of
+         database encryption protector AKV key.
+        :paramtype encryption_protector_auto_rotation: bool
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
@@ -1381,10 +1419,13 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.keys = keys
         self.encryption_protector = encryption_protector
         self.preferred_enclave_type = preferred_enclave_type
+        self.use_free_limit = use_free_limit
+        self.free_limit_exhaustion_behavior = free_limit_exhaustion_behavior
         self.source_resource_id = source_resource_id
         self.manual_cutover = manual_cutover
         self.perform_cutover = perform_cutover
         self.availability_zone = availability_zone
+        self.encryption_protector_auto_rotation = encryption_protector_auto_rotation
 
 
 class DatabaseAdvancedThreatProtection(ProxyResource):
@@ -2950,6 +2991,19 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
     :ivar preferred_enclave_type: Type of enclave requested on the database i.e. Default or VBS
      enclaves. Known values are: "Default" and "VBS".
     :vartype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+    :ivar use_free_limit: Whether or not the database uses free monthly limits. Allowed on one
+     database in a subscription.
+    :vartype use_free_limit: bool
+    :ivar free_limit_exhaustion_behavior: Specifies the behavior when monthly free limits are
+     exhausted for the free database.
+
+     AutoPause: The database will be auto paused upon exhaustion of free limits for remainder of
+     the month.
+
+     BillForUsage: The database will continue to be online upon exhaustion of free limits and any
+     overage will be billed. Known values are: "AutoPause" and "BillOverUsage".
+    :vartype free_limit_exhaustion_behavior: str or
+     ~azure.mgmt.sql.models.FreeLimitExhaustionBehavior
     :ivar manual_cutover: Whether or not customer controlled manual cutover needs to be done during
      Update Database operation to Hyperscale tier.
 
@@ -2974,6 +3028,9 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
      When performCutover is specified, the scaling operation will trigger cutover and perform
      role-change to Hyperscale database.
     :vartype perform_cutover: bool
+    :ivar encryption_protector_auto_rotation: The flag to enable or disable auto rotation of
+     database encryption protector AKV key.
+    :vartype encryption_protector_auto_rotation: bool
     """
 
     _validation = {
@@ -3041,8 +3098,11 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
         "keys": {"key": "properties.keys", "type": "{DatabaseKey}"},
         "encryption_protector": {"key": "properties.encryptionProtector", "type": "str"},
         "preferred_enclave_type": {"key": "properties.preferredEnclaveType", "type": "str"},
+        "use_free_limit": {"key": "properties.useFreeLimit", "type": "bool"},
+        "free_limit_exhaustion_behavior": {"key": "properties.freeLimitExhaustionBehavior", "type": "str"},
         "manual_cutover": {"key": "properties.manualCutover", "type": "bool"},
         "perform_cutover": {"key": "properties.performCutover", "type": "bool"},
+        "encryption_protector_auto_rotation": {"key": "properties.encryptionProtectorAutoRotation", "type": "bool"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -3078,8 +3138,11 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
         keys: Optional[Dict[str, "_models.DatabaseKey"]] = None,
         encryption_protector: Optional[str] = None,
         preferred_enclave_type: Optional[Union[str, "_models.AlwaysEncryptedEnclaveType"]] = None,
+        use_free_limit: Optional[bool] = None,
+        free_limit_exhaustion_behavior: Optional[Union[str, "_models.FreeLimitExhaustionBehavior"]] = None,
         manual_cutover: Optional[bool] = None,
         perform_cutover: Optional[bool] = None,
+        encryption_protector_auto_rotation: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3199,6 +3262,19 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
         :keyword preferred_enclave_type: Type of enclave requested on the database i.e. Default or VBS
          enclaves. Known values are: "Default" and "VBS".
         :paramtype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+        :keyword use_free_limit: Whether or not the database uses free monthly limits. Allowed on one
+         database in a subscription.
+        :paramtype use_free_limit: bool
+        :keyword free_limit_exhaustion_behavior: Specifies the behavior when monthly free limits are
+         exhausted for the free database.
+
+         AutoPause: The database will be auto paused upon exhaustion of free limits for remainder of
+         the month.
+
+         BillForUsage: The database will continue to be online upon exhaustion of free limits and any
+         overage will be billed. Known values are: "AutoPause" and "BillOverUsage".
+        :paramtype free_limit_exhaustion_behavior: str or
+         ~azure.mgmt.sql.models.FreeLimitExhaustionBehavior
         :keyword manual_cutover: Whether or not customer controlled manual cutover needs to be done
          during Update Database operation to Hyperscale tier.
 
@@ -3223,6 +3299,9 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
          When performCutover is specified, the scaling operation will trigger cutover and perform
          role-change to Hyperscale database.
         :paramtype perform_cutover: bool
+        :keyword encryption_protector_auto_rotation: The flag to enable or disable auto rotation of
+         database encryption protector AKV key.
+        :paramtype encryption_protector_auto_rotation: bool
         """
         super().__init__(**kwargs)
         self.sku = sku
@@ -3269,8 +3348,11 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
         self.keys = keys
         self.encryption_protector = encryption_protector
         self.preferred_enclave_type = preferred_enclave_type
+        self.use_free_limit = use_free_limit
+        self.free_limit_exhaustion_behavior = free_limit_exhaustion_behavior
         self.manual_cutover = manual_cutover
         self.perform_cutover = perform_cutover
+        self.encryption_protector_auto_rotation = encryption_protector_auto_rotation
 
 
 class DatabaseUsage(ProxyResource):
@@ -6981,7 +7063,7 @@ class ImportNewDatabaseDefinition(_serialization.Model):  # pylint: disable=too-
     :ivar authentication_type: Authentication type.
     :vartype authentication_type: str
     :ivar network_isolation: Optional resource information to enable network isolation for request.
-    :vartype network_isolation: ~azure.mgmt.sql.models.NetworkIsolationSettings
+    :vartype network_isolation: ~azure.mgmt.sql.models.NetworkIsolationSettingsAutoGenerated
     """
 
     _validation = {
@@ -7003,7 +7085,7 @@ class ImportNewDatabaseDefinition(_serialization.Model):  # pylint: disable=too-
         "administrator_login": {"key": "administratorLogin", "type": "str"},
         "administrator_login_password": {"key": "administratorLoginPassword", "type": "str"},
         "authentication_type": {"key": "authenticationType", "type": "str"},
-        "network_isolation": {"key": "networkIsolation", "type": "NetworkIsolationSettings"},
+        "network_isolation": {"key": "networkIsolation", "type": "NetworkIsolationSettingsAutoGenerated"},
     }
 
     def __init__(
@@ -7019,7 +7101,7 @@ class ImportNewDatabaseDefinition(_serialization.Model):  # pylint: disable=too-
         service_objective_name: Optional[str] = None,
         max_size_bytes: Optional[str] = None,
         authentication_type: Optional[str] = None,
-        network_isolation: Optional["_models.NetworkIsolationSettings"] = None,
+        network_isolation: Optional["_models.NetworkIsolationSettingsAutoGenerated"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7046,7 +7128,7 @@ class ImportNewDatabaseDefinition(_serialization.Model):  # pylint: disable=too-
         :paramtype authentication_type: str
         :keyword network_isolation: Optional resource information to enable network isolation for
          request.
-        :paramtype network_isolation: ~azure.mgmt.sql.models.NetworkIsolationSettings
+        :paramtype network_isolation: ~azure.mgmt.sql.models.NetworkIsolationSettingsAutoGenerated
         """
         super().__init__(**kwargs)
         self.database_name = database_name
@@ -13946,6 +14028,46 @@ class Name(_serialization.Model):
 
 
 class NetworkIsolationSettings(_serialization.Model):
+    """Contains the ARM resources for which to create private endpoint connection.
+
+    :ivar storage_account_resource_id: The resource id for the storage account used to store BACPAC
+     file. If set, private endpoint connection will be created for the storage account. Must match
+     storage account used for StorageUri parameter.
+    :vartype storage_account_resource_id: str
+    :ivar sql_server_resource_id: The resource id for the SQL server which is the target of this
+     request. If set, private endpoint connection will be created for the SQL server. Must match
+     server which is target of the operation.
+    :vartype sql_server_resource_id: str
+    """
+
+    _attribute_map = {
+        "storage_account_resource_id": {"key": "storageAccountResourceId", "type": "str"},
+        "sql_server_resource_id": {"key": "sqlServerResourceId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        storage_account_resource_id: Optional[str] = None,
+        sql_server_resource_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword storage_account_resource_id: The resource id for the storage account used to store
+         BACPAC file. If set, private endpoint connection will be created for the storage account. Must
+         match storage account used for StorageUri parameter.
+        :paramtype storage_account_resource_id: str
+        :keyword sql_server_resource_id: The resource id for the SQL server which is the target of this
+         request. If set, private endpoint connection will be created for the SQL server. Must match
+         server which is target of the operation.
+        :paramtype sql_server_resource_id: str
+        """
+        super().__init__(**kwargs)
+        self.storage_account_resource_id = storage_account_resource_id
+        self.sql_server_resource_id = sql_server_resource_id
+
+
+class NetworkIsolationSettingsAutoGenerated(_serialization.Model):
     """Contains the ARM resources for which to create private endpoint connection.
 
     :ivar storage_account_resource_id: The resource id for the storage account used to store BACPAC

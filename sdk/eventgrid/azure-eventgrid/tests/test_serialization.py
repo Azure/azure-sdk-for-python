@@ -4,18 +4,11 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import logging
 import sys
-import os
 import pytest
-import json
 import base64
-import datetime as dt
 
-from devtools_testutils import AzureMgmtTestCase
-from msrest.serialization import UTC
 from azure.core.messaging import CloudEvent
-from azure.eventgrid._generated import models as internal_models
 from azure.eventgrid._helpers import _cloud_event_to_generated
 from azure.eventgrid import SystemEventNames, EventGridEvent
 from _mocks import (
@@ -24,7 +17,7 @@ from _mocks import (
     cloud_storage_bytes,
     )
 
-class EventGridSerializationTests(AzureMgmtTestCase):
+class EventGridSerializationTests:
 
     def _assert_cloud_event_serialized(self, expected, actual):
         assert expected['source'] == actual['source']
