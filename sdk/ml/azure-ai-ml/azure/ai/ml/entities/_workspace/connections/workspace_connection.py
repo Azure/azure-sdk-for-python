@@ -97,6 +97,11 @@ class WorkspaceConnection(Resource):
 
     @type.setter
     def type(self, value: str):
+        """Set the type of the workspace connection, supported are 'git', 'python_feed' and 'container_registry'.
+
+        :param value: value for the type of workspace connection.
+        :type: str
+        """
         if not value:
             return
         self._type = camel_to_snake(value)

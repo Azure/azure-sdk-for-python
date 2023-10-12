@@ -3,6 +3,7 @@ import subprocess
 import shutil
 import zipfile
 import tarfile
+import stat
 from ast import Not
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse, InvalidVersion
@@ -235,7 +236,7 @@ def get_config_setting(package_path: str, setting: str, default: Any = True) -> 
 def is_package_active(package_path: str):
     disabled = INACTIVE_CLASSIFIER in ParsedSetup.from_path(package_path).classifiers
 
-    override_value = os.getenv(f"ENABLE_{os.path.basename(package_path).upper()}", None)
+    override_value = os.getenv(f"ENABLE_{os.path.basename(package_path).upper().replace('-', '_')}", None)
 
     if override_value:
         return str_to_bool(override_value)
@@ -542,6 +543,28 @@ def find_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> str:
             sys.exit(1)
 
     return None
+
+
+def error_handler_git_access(func, path, exc):
+    """
+    This function exists because the git idx file is written with strange permissions that prevent it from being
+    deleted. Due to this, we need to register an error handler that attempts to fix the file permissions before
+    re-attempting the delete operations.
+    """
+
+    if not os.access(path, os.W_OK):
+        os.chmod(path, stat.S_IWUSR)
+        func(path)
+    else:
+        raise
+
+
+def cleanup_directory(target_directory: str) -> None:
+    """Invokes a directory delete. Specifically handles the case where bad permissions on a git .idx file
+    prevent cleanup of the directory with a generic error.
+    """
+    if os.path.exists(target_directory):
+        shutil.rmtree(target_directory, ignore_errors=False, onerror=error_handler_git_access)
 
 
 def discover_prebuilt_package(dist_directory: str, setup_path: str, package_type: str) -> List[str]:

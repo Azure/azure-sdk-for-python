@@ -347,8 +347,9 @@ class ScheduleOperations(_ScopeDependentOperations):
                     self._job_operations._resolve_job_input(llm_data.input_data, schedule._base_path)
                 continue
             if signal.type == MonitorSignalType.CUSTOM:
-                for inputs in signal.inputs.values():
-                    self._job_operations._resolve_job_input(inputs, schedule._base_path)
+                if signal.inputs:
+                    for inputs in signal.inputs.values():
+                        self._job_operations._resolve_job_input(inputs, schedule._base_path)
                 for data in signal.input_data.values():
                     data.pre_processing_component = self._orchestrators.get_asset_arm_id(
                         asset=data.pre_processing_component if hasattr(data, "pre_processing_component") else None,

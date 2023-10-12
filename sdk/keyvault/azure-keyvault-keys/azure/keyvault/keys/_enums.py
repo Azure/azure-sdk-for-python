@@ -46,6 +46,13 @@ class KeyRotationPolicyAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     rotate = "Rotate"  #: Rotate the key based on the key policy.
     notify = "Notify"  #: Trigger Event Grid events.
 
+    @classmethod
+    def _missing_(cls, value):
+        for member in cls:
+            if member.value.lower() == value.lower():
+                return member
+        raise ValueError(f"{value} is not a valid KeyRotationPolicyAction")
+
 
 class KeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported key types"""

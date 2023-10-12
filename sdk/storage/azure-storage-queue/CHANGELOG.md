@@ -5,6 +5,18 @@
 ### Features Added
 
 
+## 12.7.3 (2023-10-10)
+
+### Bugs Fixed
+- Fixed an issue when an invalid type was provided for `credential` during client construction, the
+`__str__` of the object would be present in the exception message and therefore potentially logged.
+
+## 12.7.2 (2023-09-25)
+
+### Bugs Fixed
+- Fixed an issue where `user_agent` was being ignored on `send_message`, `receive_message`, `receive_messages`,
+`update_message`, and `peek_messages` if client was configured for encryption.
+
 ## 12.7.1 (2023-09-13)
 
 ### Bugs Fixed
