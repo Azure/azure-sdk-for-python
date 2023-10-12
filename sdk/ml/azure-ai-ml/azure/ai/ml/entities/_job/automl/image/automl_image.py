@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from abc import ABC
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import LogVerbosity, SamplingAlgorithmType
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -26,7 +26,7 @@ class AutoMLImage(AutoMLVertical, ABC):
         task_type: str,
         limits: Optional[ImageLimitSettings] = None,
         sweep: Optional[ImageSweepSettings] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         self.log_verbosity = kwargs.pop("log_verbosity", LogVerbosity.INFO)
         self.target_column_name = kwargs.pop("target_column_name", None)
@@ -48,7 +48,7 @@ class AutoMLImage(AutoMLVertical, ABC):
         return self._log_verbosity
 
     @log_verbosity.setter
-    def log_verbosity(self, value: Union[str, LogVerbosity]):
+    def log_verbosity(self, value: Union[str, LogVerbosity]) -> None:
         self._log_verbosity = None if value is None else LogVerbosity[camel_to_snake(value).upper()]
 
     @property
@@ -71,7 +71,7 @@ class AutoMLImage(AutoMLVertical, ABC):
             self.set_limits(**value)
 
     @property
-    def sweep(self) -> ImageSweepSettings:
+    def sweep(self) -> Optional[ImageSweepSettings]:
         return self._sweep
 
     @sweep.setter
@@ -149,7 +149,7 @@ class AutoMLImage(AutoMLVertical, ABC):
 
         self._sweep.early_termination = early_termination or self._sweep.early_termination
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, AutoMLImage):
             return NotImplemented
 
@@ -162,5 +162,5 @@ class AutoMLImage(AutoMLVertical, ABC):
             and self._sweep == other._sweep
         )
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
