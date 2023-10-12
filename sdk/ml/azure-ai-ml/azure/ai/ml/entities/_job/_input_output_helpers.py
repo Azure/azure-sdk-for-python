@@ -249,9 +249,7 @@ def to_rest_dataset_literal_inputs(
     return rest_inputs
 
 
-def from_rest_inputs_to_dataset_literal(
-    inputs: Dict[str, RestJobInput]
-) -> Dict[str, Union[int, str, float, bool, Input]]:
+def from_rest_inputs_to_dataset_literal(inputs: Dict[str, RestJobInput]) -> Dict:
     """Turns REST dataset and literal inputs into the SDK format.
 
     :param inputs: Dictionary mapping input name to ComponentJobInput or PipelineInput
