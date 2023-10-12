@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import Dict
+from typing import Any, Dict
 
 from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._schema.job import BaseJobSchema
@@ -46,17 +46,18 @@ class _BaseJob(Job):
     :type kwargs: dict
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any):
         kwargs[TYPE] = JobType.BASE
 
         super().__init__(**kwargs)
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return BaseJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = BaseJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "_BaseJob":
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs: Any) -> "_BaseJob":
         loaded_data = load_from_dict(BaseJobSchema, data, context, additional_message, **kwargs)
         return _BaseJob(**loaded_data)
 
