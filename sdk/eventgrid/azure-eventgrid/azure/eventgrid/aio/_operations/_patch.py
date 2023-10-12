@@ -7,9 +7,10 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import List, overload, Union, Any, Optional
 from azure.core.messaging import CloudEvent
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ...models._patch import ReceiveResult, ReceiveDetails
-from ..._operations._patch import _cloud_event_to_generated
+from ..._operations._patch import _cloud_event_to_generated, _publish_binary_mode
 from ._operations import EventGridClientOperationsMixin as OperationsMixin
 
 
@@ -97,6 +98,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
         """
         if isinstance(body, CloudEvent):
             kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
+            if self._binary_mode:
+                _publish_binary_mode(topic_name, body, self._config.api_version, **kwargs)
             internal_body = _cloud_event_to_generated(body)
             await self._publish_cloud_event(topic_name, internal_body, **kwargs)
         else:
@@ -104,6 +107,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
             internal_body_list = []
             for item in body:
                 internal_body_list.append(_cloud_event_to_generated(item))
+            if self._binary_mode:
+                raise HttpResponseError("Binary mode is not supported for batch events.")
             await self._publish_cloud_events(topic_name, internal_body_list, **kwargs)
 
     @distributed_trace_async
