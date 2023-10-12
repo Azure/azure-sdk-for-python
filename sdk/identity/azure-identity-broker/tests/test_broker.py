@@ -32,7 +32,7 @@ def test_username_password_cred_with_broker():
     assert cred._get_app()._enable_broker
 
     cred = UsernamePasswordBrokerCredential("client-id", "username", "password")
-    assert not cred._allow_broker
+    assert cred._allow_broker
     assert cred._get_app()._enable_broker
 
 
