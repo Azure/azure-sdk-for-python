@@ -43,6 +43,7 @@ from .._generated.models import (
     VectorFilterMode,
     VectorQuery,
     VectorQueryKind,
+    VectorizableTextQuery,
 )
 from .._utils import odata
 
@@ -67,4 +68,5 @@ __all__ = (
     "VectorFilterMode",
     "VectorQuery",
     "VectorQueryKind",
+    "VectorizableTextQuery",
 )

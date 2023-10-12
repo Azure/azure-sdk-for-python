@@ -1,16 +1,11 @@
 # Release History
 
-## 11.4.0b11 (Unreleased)
+## 11.4.0b11 (2023-10-11)
 
 ### Features Added
 
 - Added `vector_filter_mode` support for `Search` method.
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Exposed `VectorizableTextQuery` in `azure.search.document.models`.
 
 ## 11.4.0b10 (2023-10-10)
 
