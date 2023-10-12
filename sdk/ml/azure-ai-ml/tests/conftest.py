@@ -55,6 +55,8 @@ from azure.identity import AzureCliCredential, ClientSecretCredential, DefaultAz
 
 E2E_TEST_LOGGING_ENABLED = "E2E_TEST_LOGGING_ENABLED"
 test_folder = Path(os.path.abspath(__file__)).parent.absolute()
+os.environ['AZURE_TEST_RUN_LIVE'] = 'True'
+os.environ['AZURE_SKIP_LIVE_RECORDING'] = 'False'
 
 
 @pytest.fixture(scope="session", autouse=True)
