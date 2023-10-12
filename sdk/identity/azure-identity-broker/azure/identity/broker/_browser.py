@@ -30,8 +30,8 @@ class InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
         unspecified, users will authenticate to an Azure development application.
     :keyword str login_hint: a username suggestion to pre-fill the login page's username/email address field. A user
         may still log in with a different username.
-    :keyword str redirect_uri: a redirect URI for the application identified by `client_id` as configured in Azure
-        Active Directory, for example "http://localhost:8400". This is only required when passing a value for
+    :keyword str redirect_uri: a redirect URI for the application identified by `client_id` as configured in Microsoft 
+        Entra ID, for example "http://localhost:8400". This is only required when passing a value for
         **client_id**, and must match a redirect URI in the application's registration. The credential must be able to
         bind a socket to this URI.
     :keyword AuthenticationRecord authentication_record: :class:`AuthenticationRecord` returned by :func:`authenticate`
