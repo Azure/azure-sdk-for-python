@@ -7,6 +7,7 @@ import logging
 import uuid
 from typing import (
     Any,
+    cast,
     Dict,
     Iterator,
     Optional,
@@ -16,7 +17,7 @@ from typing import (
 )
 from urllib.parse import parse_qs, quote
 
-from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential, TokenCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpTransport, RequestsTransport  # pylint: disable=non-abstract-transport-import, no-name-in-module
@@ -50,7 +51,6 @@ from .shared_access_signature import QueryStringConstants
 from .._version import VERSION
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
@@ -69,7 +69,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         self,
         parsed_url: Any,
         service: str,
-        credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential", "TokenCredential"]] = None, # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential", TokenCredential]] = None, # pylint: disable=line-too-long
         **kwargs: Any
     ) -> None:
         self._location_mode = kwargs.get("_location_mode", LocationMode.PRIMARY)
@@ -200,10 +200,10 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
 
     def _format_query_string(
         self, sas_token: Optional[str],
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]],  # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", TokenCredential]],  # pylint: disable=line-too-long
         snapshot: Optional[str] = None,
         share_snapshot: Optional[str] = None
-    ) -> Tuple[str, Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]]:  # pylint: disable=line-too-long
+    ) -> Tuple[str, Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", TokenCredential]]]:  # pylint: disable=line-too-long
         query_str = "?"
         if snapshot:
             query_str += f"snapshot={snapshot}&"
@@ -213,14 +213,15 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
             raise ValueError(
                 "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
         if is_credential_sastoken(credential):
-            query_str += credential.lstrip("?")  # type: ignore [union-attr]
+            credential = cast(str, credential)
+            query_str += credential.lstrip("?")
             credential = None
         elif sas_token:
             query_str += sas_token
         return query_str.rstrip("?&"), credential
 
     def _create_pipeline(
-        self, credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] = None, # pylint: disable=line-too-long
+        self, credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = None, # pylint: disable=line-too-long
         **kwargs: Any
     ) -> Tuple[StorageConfiguration, Pipeline]:
         self._credential_policy: Any = None
@@ -229,7 +230,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
                 audience = str(kwargs.pop('audience')).rstrip('/') + DEFAULT_OAUTH_SCOPE
             else:
                 audience = STORAGE_OAUTH_SCOPE
-            self._credential_policy = BearerTokenCredentialPolicy(credential, audience)
+            self._credential_policy = BearerTokenCredentialPolicy(cast(TokenCredential, credential), audience)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
@@ -360,7 +361,7 @@ class TransportWrapper(HttpTransport):
 
 def _format_shared_key_credential(
     account_name: str,
-    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential", "TokenCredential"]] = None, # pylint: disable=line-too-long
+    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential", TokenCredential]] = None, # pylint: disable=line-too-long
 ) -> Any:
     if isinstance(credential, str):
         if not account_name:
@@ -379,16 +380,15 @@ def _format_shared_key_credential(
 
 def parse_connection_str(
     conn_str: str,
-    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]], # pylint: disable=line-too-long
+    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]], # pylint: disable=line-too-long
     service: str
-) -> Tuple[Optional[str], Optional[str], Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]]]: # pylint: disable=line-too-long
+) -> Tuple[str, Optional[str], Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]]]: # pylint: disable=line-too-long
     conn_str = conn_str.rstrip(";")
     conn_settings_list = [s.split("=", 1) for s in conn_str.split(";")]
     if any(len(tup) != 2 for tup in conn_settings_list):
         raise ValueError("Connection string is either blank or malformed.")
     conn_settings = dict((key.upper(), val) for key, val in conn_settings_list)
     endpoints = _SERVICE_PARAMS[service]
-    primary = None
     secondary = None
     if not credential:
         try:
@@ -440,28 +440,6 @@ def create_configuration(**kwargs: Any) -> StorageConfiguration:
     config.retry_policy = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
     config.logging_policy = StorageLoggingPolicy(**kwargs)
     config.proxy_policy = ProxyPolicy(**kwargs)
-
-    # Storage settings
-    config.max_single_put_size = kwargs.get("max_single_put_size", 64 * 1024 * 1024)
-    config.copy_polling_interval = 15
-
-    # Block blob uploads
-    config.max_block_size = kwargs.get("max_block_size", 4 * 1024 * 1024)
-    config.min_large_block_upload_threshold = kwargs.get("min_large_block_upload_threshold", 4 * 1024 * 1024 + 1)
-    config.use_byte_buffer = kwargs.get("use_byte_buffer", False)
-
-    # Page blob uploads
-    config.max_page_size = kwargs.get("max_page_size", 4 * 1024 * 1024)
-
-    # Datalake file uploads
-    config.min_large_chunk_upload_threshold = kwargs.get("min_large_chunk_upload_threshold", 100 * 1024 * 1024 + 1)
-
-    # Blob downloads
-    config.max_single_get_size = kwargs.get("max_single_get_size", 32 * 1024 * 1024)
-    config.max_chunk_get_size = kwargs.get("max_chunk_get_size", 4 * 1024 * 1024)
-
-    # File uploads
-    config.max_range_size = kwargs.get("max_range_size", 4 * 1024 * 1024)
     return config
 
 

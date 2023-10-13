@@ -22,7 +22,7 @@ from ._queue_client_async import QueueClient
 from .._encryption import StorageEncryptionMixin
 from .._generated.aio import AzureQueueStorage
 from .._generated.models import StorageServiceProperties
-from .._models import QueueProperties, service_properties_deserialize, service_stats_deserialize
+from .._models import CorsRule, QueueProperties, service_properties_deserialize, service_stats_deserialize
 from .._queue_service_client_helpers import _parse_url
 from .._serialize import get_api_version
 from .._shared.base_client import StorageAccountHostsMixin
@@ -34,7 +34,7 @@ from .._shared.response_handlers import process_storage_error
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
-    from .._models import CorsRule, Metrics, QueueAnalyticsLogging
+    from .._models import Metrics, QueueAnalyticsLogging
 
 
 class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin):  # type: ignore [misc]  # pylint: disable=line-too-long
@@ -146,7 +146,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
             conn_str, credential, 'queue')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
-        return cls(account_url, credential=credential, **kwargs)  # type: ignore [arg-type]
+        return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace_async
     async def get_service_stats(self, **kwargs: Any) -> Dict[str, Any]:
@@ -213,7 +213,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         self, analytics_logging: Optional["QueueAnalyticsLogging"] = None,
         hour_metrics: Optional["Metrics"] = None,
         minute_metrics: Optional["Metrics"] = None,
-        cors: Optional[List["CorsRule"]] = None,
+        cors: Optional[List[CorsRule]] = None,
         **kwargs: Any
     ) -> None:
         """Sets the properties of a storage account's Queue service, including
@@ -255,7 +255,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=cors  # type: ignore [arg-type]
+            cors=CorsRule.to_generated(cors)
         )
         try:
             await self._client.service.set_properties(props, timeout=timeout, **kwargs)
@@ -390,8 +390,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         await queue_client.delete_queue(timeout=timeout, **kwargs)
 
     def get_queue_client(
-        self,
-        queue: Union["QueueProperties", str],
+        self, queue: Union["QueueProperties", str],
         **kwargs: Any
     ) -> QueueClient:
         """Get a client to interact with the specified queue.

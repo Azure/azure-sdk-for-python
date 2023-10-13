@@ -6,11 +6,12 @@
 # mypy: disable-error-code="attr-defined"
 
 import logging
-from typing import Any, Dict, Optional, Tuple, TYPE_CHECKING, Union
+from typing import Any, cast, Dict, Optional, Tuple, TYPE_CHECKING, Union
 from urllib.parse import parse_qs
 
 from azure.core.async_paging import AsyncList
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
@@ -39,8 +40,6 @@ from .response_handlers import PartialBatchErrorException, process_storage_error
 from .shared_access_signature import QueryStringConstants
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-    from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 _LOGGER = logging.getLogger(__name__)
 
@@ -75,10 +74,10 @@ class AsyncStorageAccountHostsMixin(object):
 
     def _format_query_string(
         self, sas_token: Optional[str],
-        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]],  # pylint: disable=line-too-long
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", AsyncTokenCredential]],  # pylint: disable=line-too-long
         snapshot: Optional[str] = None,
         share_snapshot: Optional[str] = None
-    ) -> Tuple[str, Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]]]:  # pylint: disable=line-too-long
+    ) -> Tuple[str, Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", AsyncTokenCredential]]]:  # pylint: disable=line-too-long
         query_str = "?"
         if snapshot:
             query_str += f"snapshot={snapshot}&"
@@ -95,7 +94,7 @@ class AsyncStorageAccountHostsMixin(object):
         return query_str.rstrip("?&"), credential
 
     def _create_pipeline(
-        self, credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential"]] = None, # pylint: disable=line-too-long
+        self, credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]] = None, # pylint: disable=line-too-long
         **kwargs: Any
     ) -> Tuple[StorageConfiguration, AsyncPipeline]:
         self._credential_policy: Optional[
@@ -107,7 +106,7 @@ class AsyncStorageAccountHostsMixin(object):
                 audience = str(kwargs.pop('audience')).rstrip('/') + DEFAULT_OAUTH_SCOPE
             else:
                 audience = STORAGE_OAUTH_SCOPE
-            self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, audience)
+            self._credential_policy = AsyncBearerTokenCredentialPolicy(cast(AsyncTokenCredential, credential), audience)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
@@ -213,16 +212,15 @@ class AsyncStorageAccountHostsMixin(object):
 
 def parse_connection_str(
     conn_str: str,
-    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential"]], # pylint: disable=line-too-long
+    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]], # pylint: disable=line-too-long
     service: str
-) -> Tuple[Optional[str], Optional[str], Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "AsyncTokenCredential"]]]: # pylint: disable=line-too-long
+) -> Tuple[str, Optional[str], Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]]]: # pylint: disable=line-too-long
     conn_str = conn_str.rstrip(";")
     conn_settings_list = [s.split("=", 1) for s in conn_str.split(";")]
     if any(len(tup) != 2 for tup in conn_settings_list):
         raise ValueError("Connection string is either blank or malformed.")
     conn_settings = dict((key.upper(), val) for key, val in conn_settings_list)
     endpoints = _SERVICE_PARAMS[service]
-    primary = None
     secondary = None
     if not credential:
         try:

@@ -42,7 +42,10 @@ except NameError:
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import PipelineRequest, PipelineResponse  # pylint: disable=C4750
+    from azure.core.pipeline.transport import (
+        PipelineRequest,
+        PipelineResponse
+    )
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -391,15 +394,15 @@ class StorageRetryPolicy(HTTPPolicy):
     The base class for Exponential and Linear retries containing shared code.
     """
 
-    total_retries: int = 10
+    total_retries: int
     """The max number of retries."""
-    connect_retries: int = 3
+    connect_retries: int
     """The max number of connect retries."""
-    retry_read: int = 3
+    retry_read: int
     """The max number of read retries."""
-    retry_status:int = 3
+    retry_status: int
     """The max number of status retries."""
-    retry_to_secondary: bool = False
+    retry_to_secondary: bool
     """Whether the secondary endpoint should be retried."""
 
     def __init__(self, **kwargs: Any) -> None:
@@ -467,8 +470,7 @@ class StorageRetryPolicy(HTTPPolicy):
         transport.sleep(backoff)
 
     def increment(
-        self,
-        settings: Dict[str, Any],
+        self, settings: Dict[str, Any],
         request: "PipelineRequest",
         response: Optional["PipelineResponse"] = None,
         error: Optional[Union[ServiceRequestError, ServiceResponseError]] = None
@@ -566,9 +568,16 @@ class StorageRetryPolicy(HTTPPolicy):
 class ExponentialRetry(StorageRetryPolicy):
     """Exponential retry."""
 
+    initial_backoff: int
+    """The initial backoff interval, in seconds, for the first retry."""
+    increment_base: int
+    """The base, in seconds, to increment the initial_backoff by after the
+    first retry."""
+    random_jitter_range: int
+    """A number in seconds which indicates a range to jitter/randomize for the back-off interval."""
+
     def __init__(
-        self,
-        initial_backoff: int = 15,
+        self, initial_backoff: int = 15,
         increment_base: int = 3,
         retry_total: int = 3,
         retry_to_secondary: bool = False,
@@ -619,6 +628,11 @@ class ExponentialRetry(StorageRetryPolicy):
 
 class LinearRetry(StorageRetryPolicy):
     """Linear retry."""
+
+    initial_backoff: int
+    """The backoff interval, in seconds, between retries."""
+    random_jitter_range: int
+    """A number in seconds which indicates a range to jitter/randomize for the back-off interval."""
 
     def __init__(
         self, backoff: int = 15,

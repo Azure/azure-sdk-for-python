@@ -74,8 +74,7 @@ def _validate_key_encryption_key_wrap(kek: KeyEncryptionKey):
         raise AttributeError(_ERROR_OBJECT_INVALID.format('key encryption key', 'wrap_key'))
     if not hasattr(kek, 'get_kid') or not callable(kek.get_kid):
         raise AttributeError(_ERROR_OBJECT_INVALID.format('key encryption key', 'get_kid'))
-    if not (hasattr(kek, 'get_key_wrap_algorithm') or
-       not callable(kek.get_key_wrap_algorithm)):
+    if not hasattr(kek, 'get_key_wrap_algorithm') or not callable(kek.get_key_wrap_algorithm):
         raise AttributeError(_ERROR_OBJECT_INVALID.format('key encryption key', 'get_key_wrap_algorithm'))
 
 
@@ -286,7 +285,7 @@ class GCMBlobEncryptionStream:
         return nonce + ciphertext_with_tag
 
 
-def is_encryption_v2(encryption_data: Optional[_EncryptionData]) ->  bool:
+def is_encryption_v2(encryption_data: Optional[_EncryptionData]) -> bool:
     """
     Determine whether the given encryption data signifies version 2.0.
 
@@ -649,8 +648,9 @@ def _validate_and_unwrap_cek(
     if encryption_data.wrapped_content_key.key_id != key_encryption_key.get_kid():
         raise ValueError('Provided or resolved key-encryption-key does not match the id of key used to encrypt.')
     # Will throw an exception if the specified algorithm is not supported.
-    content_encryption_key = key_encryption_key.unwrap_key(encryption_data.wrapped_content_key.encrypted_key,
-                                                               encryption_data.wrapped_content_key.algorithm)
+    content_encryption_key = key_encryption_key.unwrap_key(
+        encryption_data.wrapped_content_key.encrypted_key,
+        encryption_data.wrapped_content_key.algorithm)
 
     # For V2, the version is included with the cek. We need to validate it
     # and remove it from the actual cek.
@@ -984,7 +984,6 @@ def get_blob_encryptor_and_padder(
         cipher = _generate_AES_CBC_cipher(cek, iv)
         encryptor = cipher.encryptor()
         padder = PKCS7(128).padder() if should_pad else None
-        return encryptor, padder
 
     return encryptor, padder
 

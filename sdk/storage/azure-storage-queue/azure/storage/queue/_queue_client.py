@@ -33,7 +33,6 @@ from ._shared.response_handlers import (
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from azure.core.credentials_async import AsyncTokenCredential
     from ._models import QueueProperties
 
 
@@ -183,7 +182,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             conn_str, credential, 'queue')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
-        return cls(account_url, queue_name=queue_name, credential=credential, **kwargs)  #type: ignore [arg-type]
+        return cls(account_url, queue_name=queue_name, credential=credential, **kwargs)
 
     @distributed_trace
     def create_queue(

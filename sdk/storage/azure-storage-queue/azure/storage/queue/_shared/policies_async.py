@@ -19,7 +19,10 @@ from .policies import is_retry, StorageRetryPolicy
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.pipeline.transport import PipelineRequest, PipelineResponse  # pylint: disable=C4750
+    from azure.core.pipeline.transport import (
+        PipelineRequest,
+        PipelineResponse
+    )
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -144,6 +147,14 @@ class AsyncStorageRetryPolicy(StorageRetryPolicy):
 class ExponentialRetry(AsyncStorageRetryPolicy):
     """Exponential retry."""
 
+    initial_backoff: int
+    """The initial backoff interval, in seconds, for the first retry."""
+    increment_base: int
+    """The base, in seconds, to increment the initial_backoff by after the
+    first retry."""
+    random_jitter_range: int
+    """A number in seconds which indicates a range to jitter/randomize for the back-off interval."""
+
     def __init__(
         self,
         initial_backoff: int = 15,
@@ -199,6 +210,11 @@ class ExponentialRetry(AsyncStorageRetryPolicy):
 
 class LinearRetry(AsyncStorageRetryPolicy):
     """Linear retry."""
+
+    initial_backoff: int
+    """The backoff interval, in seconds, between retries."""
+    random_jitter_range: int
+    """A number in seconds which indicates a range to jitter/randomize for the back-off interval."""
 
     def __init__(
         self, backoff: int = 15,

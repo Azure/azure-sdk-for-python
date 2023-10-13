@@ -190,7 +190,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
             conn_str, credential, 'queue')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
-        return cls(account_url, queue_name=queue_name, credential=credential, **kwargs)  #type: ignore [arg-type]
+        return cls(account_url, queue_name=queue_name, credential=credential, **kwargs)
 
     @distributed_trace_async
     async def create_queue(
@@ -272,7 +272,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_queue_properties(self, **kwargs: Any) -> "QueueProperties":  # type: ignore[override]
+    async def get_queue_properties(self, **kwargs: Any) -> "QueueProperties":
         """Returns all user-defined metadata for the specified queue.
 
         The data returned does not include the queue's list of messages.
@@ -342,7 +342,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_queue_access_policy(self, **kwargs: Any) -> Dict[str, AccessPolicy]:  # type: ignore[override]
+    async def get_queue_access_policy(self, **kwargs: Any) -> Dict[str, AccessPolicy]:
         """Returns details about any stored access policies specified on the
         queue that may be used with Shared Access Signatures.
 
@@ -365,7 +365,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace_async
-    async def set_queue_access_policy(  # type: ignore[override]
+    async def set_queue_access_policy(
         self, signed_identifiers: Dict[str, AccessPolicy],
         **kwargs: Any
     ) -> None:
@@ -422,7 +422,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
             process_storage_error(error)
 
     @distributed_trace_async
-    async def send_message(  # type: ignore[override]
+    async def send_message(
         self, content: Any,
         *,
         visibility_timeout: Optional[int] = None,
@@ -525,7 +525,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
             process_storage_error(error)
 
     @distributed_trace_async
-    async def receive_message(  # type: ignore[override]
+    async def receive_message(
         self, *,
         visibility_timeout: Optional[int] = None,
         **kwargs: Any
@@ -595,7 +595,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
             process_storage_error(error)
 
     @distributed_trace
-    def receive_messages(  # type: ignore[override]
+    def receive_messages(
         self, *,
         messages_per_page: Optional[int] = None,
         visibility_timeout: Optional[int] = None,
@@ -796,7 +796,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
                 cls=return_response_headers,
                 queue_message_id=message_id,
                 **kwargs
-                ))
+            ))
             new_message = QueueMessage(content=message_text)
             new_message.id = message_id
             new_message.inserted_on = inserted_on
@@ -809,7 +809,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
             process_storage_error(error)
 
     @distributed_trace_async
-    async def peek_messages(  # type: ignore[override]
+    async def peek_messages(
         self, max_messages: Optional[int] = None,
         **kwargs: Any
     ) -> List[QueueMessage]:
@@ -880,7 +880,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
             process_storage_error(error)
 
     @distributed_trace_async
-    async def clear_messages(self, **kwargs: Any) -> None:  # type: ignore[override]
+    async def clear_messages(self, **kwargs: Any) -> None:
         """Deletes all messages from the specified queue.
 
         :keyword int timeout:
@@ -906,7 +906,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
             process_storage_error(error)
 
     @distributed_trace_async
-    async def delete_message(  # type: ignore[override]
+    async def delete_message(
         self, message: Union[str, QueueMessage],
         pop_receipt: Optional[str] = None,
         **kwargs: Any

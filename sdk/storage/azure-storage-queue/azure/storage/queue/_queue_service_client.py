@@ -19,6 +19,7 @@ from ._encryption import StorageEncryptionMixin
 from ._generated import AzureQueueStorage
 from ._generated.models import StorageServiceProperties
 from ._models import (
+    CorsRule,
     QueueProperties,
     QueuePropertiesPaged,
     service_properties_deserialize,
@@ -33,8 +34,7 @@ from ._shared.response_handlers import process_storage_error
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from azure.core.credentials_async import AsyncTokenCredential
-    from ._models import CorsRule, Metrics, QueueAnalyticsLogging
+    from ._models import Metrics, QueueAnalyticsLogging
 
 
 class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
@@ -150,7 +150,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             conn_str, credential, 'queue')
         if 'secondary_hostname' not in kwargs:
             kwargs['secondary_hostname'] = secondary
-        return cls(account_url, credential=credential, **kwargs)  #type: ignore [arg-type]
+        return cls(account_url, credential=credential, **kwargs)
 
     @distributed_trace
     def get_service_stats(self, **kwargs: Any) -> Dict[str, Any]:
@@ -217,7 +217,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         self, analytics_logging: Optional["QueueAnalyticsLogging"] = None,
         hour_metrics: Optional["Metrics"] = None,
         minute_metrics: Optional["Metrics"] = None,
-        cors: Optional[List["CorsRule"]] = None,
+        cors: Optional[List[CorsRule]] = None,
         **kwargs: Any
     ) -> None:
         """Sets the properties of a storage account's Queue service, including
@@ -259,7 +259,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=cors  # type: ignore [arg-type]
+            cors=CorsRule.to_generated(cors)
         )
         try:
             self._client.service.set_properties(props, timeout=timeout, **kwargs)
@@ -358,8 +358,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def delete_queue(
-        self,
-        queue: Union["QueueProperties", str],
+        self, queue: Union["QueueProperties", str],
         **kwargs: Any
     ) -> None:
         """Deletes the specified queue and any messages it contains.
@@ -395,8 +394,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         queue_client.delete_queue(timeout=timeout, **kwargs)
 
     def get_queue_client(
-        self,
-        queue: Union["QueueProperties", str],
+        self, queue: Union["QueueProperties", str],
         **kwargs: Any
     ) -> QueueClient:
         """Get a client to interact with the specified queue.

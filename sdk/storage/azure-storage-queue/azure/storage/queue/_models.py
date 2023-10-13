@@ -194,6 +194,19 @@ class CorsRule(GeneratedCorsRule):
         self.exposed_headers = ','.join(kwargs.get('exposed_headers', []))
         self.max_age_in_seconds = kwargs.get('max_age_in_seconds', 0)
 
+    @staticmethod
+    def to_generated(rules: Optional[List["CorsRule"]]) -> List[GeneratedCorsRule]:
+        if rules is not None:
+            cors_rules = rules[0]
+            generated_cors = [GeneratedCorsRule(
+                allowed_origins=cors_rules.allowed_origins,
+                allowed_methods=cors_rules.allowed_methods,
+                allowed_headers=cors_rules.allowed_headers,
+                exposed_headers=cors_rules.exposed_headers,
+                max_age_in_seconds=cors_rules.max_age_in_seconds
+            )]
+        return generated_cors
+
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
         return cls(
@@ -489,12 +502,12 @@ class QueueProperties(DictMixin):
     """The name of the queue."""
     metadata: Optional[Dict[str, str]]
     """A dict containing name-value pairs associated with the queue as metadata."""
-    approximate_message_count: int
+    approximate_message_count: Optional[int]
     """The approximate number of messages contained in the queue."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.metadata = kwargs.get('metadata')
-        self.approximate_message_count = kwargs.get('x-ms-approximate-messages-count') #type: ignore [assignment]
+        self.approximate_message_count = kwargs.get('x-ms-approximate-messages-count')
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:
@@ -567,8 +580,7 @@ class QueuePropertiesPaged(PageIterator):
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         props_list = [QueueProperties._from_generated(q) for q in self._response.queue_items] # pylint: disable=protected-access
-        next_marker = self._response.next_marker
-        return next_marker or None, props_list
+        return self._response.next_marker or None, props_list
 
 
 def service_stats_deserialize(generated: Any) -> Dict[str, Any]:
