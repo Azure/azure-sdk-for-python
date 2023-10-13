@@ -88,14 +88,15 @@ class TableBatchOperations(object):
             ~azure.data.tables.TableEntity or Mapping[str, Any], and Mapping[str, Any]
         :return: None
         """
+        operation_type = operation[0].lower()
+        entity = operation[1]
+        kwargs = {}
+        if len(operation) > 2:
+            kwargs = operation[2]
         try:
-            operation_type, entity, kwargs = operation
-        except ValueError:
-            operation_type, entity, kwargs = operation[0], operation[1], {}
-        try:
-            getattr(self, operation_type.lower())(entity, **kwargs)
+            getattr(self, operation_type)(entity, **kwargs)
         except AttributeError as exc:
-            raise ValueError(f"Unrecognized operation: {operation}") from exc
+            raise ValueError(f"Unrecognized operation: {operation_type}") from exc
 
     def create(self, entity: EntityType, **kwargs) -> None:
         """Adds an insert operation to the current batch.

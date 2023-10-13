@@ -152,6 +152,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
         parts_iter = response.parts()  # type: ignore[attr-defined]
         parts = []
         async for p in parts_iter:
+            await p.read()
             parts.append(p)
         error_parts = [p for p in parts if not 200 <= p.status_code < 300]
         if any(error_parts):
