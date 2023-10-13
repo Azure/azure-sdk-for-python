@@ -20,15 +20,15 @@ from .._internal import AuthCodeRedirectServer, InteractiveCredential, wrap_exce
 class InteractiveBrowserCredential(InteractiveCredential):
     """Opens a browser to interactively authenticate a user.
 
-    :func:`~get_token` opens a browser to a login URL provided by Azure Active Directory and authenticates a user
+    :func:`~get_token` opens a browser to a login URL provided by Microsoft Entra ID and authenticates a user
     there with the authorization code flow, using PKCE (Proof Key for Code Exchange) internally to protect the code.
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
-    :keyword str tenant_id: an Azure Active Directory tenant ID. Defaults to the "organizations" tenant, which can
+    :keyword str tenant_id: a Microsoft Entra tenant ID. Defaults to the "organizations" tenant, which can
         authenticate work or school accounts.
-    :keyword str client_id: Client ID of the Azure Active Directory application users will sign in to. If
+    :keyword str client_id: Client ID of the Microsoft Entra application users will sign in to. If
         unspecified, users will authenticate to an Azure development application.
     :keyword str login_hint: a username suggestion to pre-fill the login page's username/email address field. A user
         may still log in with a different username.
