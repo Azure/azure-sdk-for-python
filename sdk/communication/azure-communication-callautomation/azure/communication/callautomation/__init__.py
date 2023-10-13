@@ -30,7 +30,6 @@ from ._shared.models import (
     CommunicationUserIdentifier,
     CommunicationIdentifierKind,
     CommunicationCloudEnvironment,
-    MicrosoftBotIdentifier,
     UnknownIdentifier,
 )
 from ._generated.models._enums import (
@@ -77,7 +76,6 @@ __all__ = [
     "CommunicationUserIdentifier",
     "CommunicationIdentifierKind",
     "CommunicationCloudEnvironment",
-    "MicrosoftBotIdentifier",
     "UnknownIdentifier",
 
     # enums
