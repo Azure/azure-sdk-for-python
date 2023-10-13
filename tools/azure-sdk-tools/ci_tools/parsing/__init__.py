@@ -6,7 +6,8 @@ from .parse_functions import (
     ParsedSetup,
     read_setup_py_content,
     get_build_config,
-    update_build_config
+    get_config_setting,
+    update_build_config,
 )
 
 __all__ = [
@@ -17,5 +18,6 @@ __all__ = [
     "ParsedSetup",
     "read_setup_py_content",
     "get_build_config",
-    "update_build_config"
+    "get_config_setting",
+    "update_build_config",
 ]
