@@ -107,7 +107,7 @@
 /sdk/confidentialledger/azure-confidentialledger/                    @lynshi
 
 # PRLabel: %KeyVault
-/sdk/keyvault/                                                       @schaabs @mccoyp
+/sdk/keyvault/                                                       @schaabs @mccoyp @Azure/azsdk-keyvault
 
 # PRLabel: %Load Testing
 /sdk/loadtestservice/azure-developer-loadtesting/                    @msyyc @iscai-msft
@@ -134,7 +134,7 @@
 /sdk/containerinstance/                                              @samkreter @xizhamsft
 
 # PRLabel: %Container Registry
-/sdk/containerregistry/                                              @YalinLi0312
+/sdk/containerregistry/                                              @YalinLi0312 @Azure/azsdk-acr
 
 # PRLabel: %Container Service
 /sdk/containerservice/                                               @zqingqing1
@@ -281,7 +281,7 @@
 /sdk/schemaregistry/                                                 @kashifkhan @swathipil
 
 # PRLabel: %Search
-/sdk/search/                                                         @xiangyan99
+/sdk/search/                                                         @xiangyan99 @Azure/azsdk-search
 
 # PRLabel: %Service Fabric
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
