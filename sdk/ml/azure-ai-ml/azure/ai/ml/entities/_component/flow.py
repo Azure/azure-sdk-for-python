@@ -24,6 +24,7 @@ from ..._restclient.v2022_10_01.models import ComponentVersion
 from ..._schema import PathAwareSchema
 from ..._schema.component.flow import FlowComponentSchema, FlowSchema, RunSchema
 from ...exceptions import ErrorCategory, ErrorTarget, ValidationException
+from .. import Environment
 from .._assets import Code
 from .._inputs_outputs import GroupInput, Input, Output
 from ._additional_includes import AdditionalIncludesMixin
@@ -214,6 +215,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         variant: Optional[str] = None,
         connections: Optional[Dict[str, Dict[str, str]]] = None,
         environment_variables: Optional[Dict[str, str]] = None,
+        environment: Optional[Union[str, Environment]] = None,
         is_deterministic: bool = True,
         additional_includes: Optional[List] = None,
         properties: Optional[Dict] = None,
@@ -245,6 +247,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
             properties=properties,
             **kwargs,
         )
+        self._environment = environment
         self._column_mapping = column_mapping or {}
         self._variant = variant
         self._connections = connections or {}
@@ -274,6 +277,23 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         :rtype: str
         """
         return self._flow
+
+    @property
+    def environment(self) -> Union[str, Environment]:
+        """The environment for the flow component. Defaults to None.
+
+        :rtype: Union[str, Environment])
+        """
+        return self._environment
+
+    @environment.setter
+    def environment(self, value: Union[str, Environment]) -> None:
+        """The environment for the flow component. Defaults to None.
+
+        :param value: The column mapping for the flow.
+        :type value: Union[str, Environment])
+        """
+        self._environment = value
 
     @property
     def column_mapping(self) -> Dict[str, str]:

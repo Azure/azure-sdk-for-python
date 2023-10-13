@@ -1189,3 +1189,23 @@ class TestComponent(AzureRecordedTestCase):
         assert created_component.version == "2"
 
         assert component._get_origin_code_value() == created_component._get_origin_code_value()
+
+    def test_load_component_from_flow_in_registry(self, registry_client: MLClient, randstr):
+        target_path: str = "./tests/test_configs/flows/runs/with_environment.yml"
+        component = load_component(
+            target_path,
+            params_override=[
+                {
+                    "name": randstr("component_name"),
+                    "version": "1",
+                    "description": "test load component from flow",
+                }
+            ],
+        )
+
+        created_component = registry_client.components.create_or_update(component, version="2")
+
+        assert created_component.name == component.name
+        assert created_component.version == "2"
+
+        assert component._get_origin_code_value() == created_component._get_origin_code_value()

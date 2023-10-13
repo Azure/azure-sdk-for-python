@@ -9,7 +9,13 @@ from marshmallow import fields
 from azure.ai.ml._schema import YamlFileSchema
 from azure.ai.ml._schema.component import ComponentSchema
 from azure.ai.ml._schema.component.component import ComponentNameStr
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, LocalPathField, StringTransformedEnum, UnionField
+from azure.ai.ml._schema.core.fields import (
+    ArmVersionedStr,
+    EnvironmentField,
+    LocalPathField,
+    StringTransformedEnum,
+    UnionField,
+)
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._component import NodeType
@@ -57,6 +63,8 @@ class RunSchema(YamlFileSchema, _ComponentMetadataSchema, _FlowAttributesSchema)
     """Schema for run.yaml file."""
 
     flow = LocalPathField(required=True)
+    # TODO: this is not a valid field for run.yaml. is it possible to pass it somewhere else?
+    environment = EnvironmentField()
 
 
 class FlowComponentSchema(ComponentSchema, _FlowAttributesSchema):
@@ -86,4 +94,6 @@ class FlowComponentSchema(ComponentSchema, _FlowAttributesSchema):
         ],
         metadata={"description": "A local path or http:, https:, azureml: url pointing to a remote location."},
     )
+
+    environment = EnvironmentField()
     additional_includes = fields.List(LocalPathField(), load_only=True)
