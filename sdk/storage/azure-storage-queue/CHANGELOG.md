@@ -3,7 +3,8 @@
 ## 12.8.0b1 (Unreleased)
 
 ### Features Added
-
+- Added `audience` as an optional keyword that can be specified on APIs that have a `credential` parameter. This
+keyword only has an effect when the credential provided is of type `TokenCredential`.
 
 ## 12.7.3 (2023-10-10)
 
