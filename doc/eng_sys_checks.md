@@ -203,7 +203,7 @@ Note that the `pylint` environment is configured to run against the **earliest s
 
 ### Sphinx and docstring checker
 
-[`Sphinx`](https://www.sphinx-doc.org/en/master/) is the prefered documentation builder for Python libraries. The documentation is always built and attached to each PR builds. Sphinx can be configuired to
+[`Sphinx`](https://www.sphinx-doc.org/en/master/) is the preferred documentation builder for Python libraries. The documentation is always built and attached to each PR builds. Sphinx can be configured to
 fail if docstring are invalid, helping to ensure the resulting documentation will be of high quality. Following are the steps to run `sphinx` locally for a specific package with strict docstring checking:
 
 1. Go to root of the package.
