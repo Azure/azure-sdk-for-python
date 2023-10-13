@@ -62,7 +62,6 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
         internal_event.update(cloud_event.extensions)
     return internal_event
 
-
 class EventGridClientOperationsMixin(OperationsMixin):
     @overload
     def publish_cloud_events(
@@ -149,7 +148,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         if isinstance(body, CloudEvent):
             kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
             if self._binary_mode:
-                _publish_binary_mode(topic_name, body, self._config.api_version, **kwargs)
+                self._publish_binary_mode(topic_name, body, self._config.api_version, self._binary_mode, **kwargs)
             else:
                 internal_body = _cloud_event_to_generated(body)
                 self._publish_cloud_event(topic_name, internal_body, **kwargs)
@@ -214,67 +213,67 @@ class EventGridClientOperationsMixin(OperationsMixin):
         receive_result_deserialized = ReceiveResult(value=detail_items)
         return receive_result_deserialized
 
+    def _publish_binary_mode(self, topic_name: str, event: Any, api_version, **kwargs: Any) -> None:
 
-def _publish_binary_mode(topic_name: str, event: Any, api_version, **kwargs: Any) -> None:
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
-    error_map = {
-        401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
-    }
-    error_map.update(kwargs.pop('error_map', {}) or {})
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = kwargs.pop("params", {}) or {}
-
-    cls: ClsType[_models._models.PublishResult] = kwargs.pop(  # pylint: disable=protected-access
-        'cls', None
-    )
-
-    content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/cloudevents+json; charset=utf-8"))
-
-    # Given that we know the cloud event is binary mode, we can convert it to a HTTP request
-    http_request = _to_http_request(            
-        topic_name=topic_name,
-        api_version=api_version,
-        headers=_headers,
-        params=_params,
-        content_type=content_type,
-        event=event,
-    )
-
-    _stream = kwargs.pop("stream", False)
-
-    path_format_arguments = {
-        "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-    }
-    http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-
-    # pipeline_response: PipelineResponse = self.send_request(http_request, **kwargs)
-    pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
-        http_request,
-        stream=_stream,
-        **kwargs
-    )
-
-    response = pipeline_response.http_response
-
-    if response.status_code not in [200]:
-        if _stream:
-                response.read()  # Load the body in memory and close the socket
-        map_error(status_code=response.status_code, response=response, error_map=error_map)
-        raise HttpResponseError(response=response)
-
-    if _stream:
-        deserialized = response.iter_bytes()
-    else:
-        deserialized = _deserialize(
-            _models._models.PublishResult,  # pylint: disable=protected-access
-            response.json()
+        cls: ClsType[_models._models.PublishResult] = kwargs.pop(  # pylint: disable=protected-access
+            'cls', None
         )
 
-    if cls:
-        return cls(pipeline_response, deserialized, {}) # type: ignore
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/cloudevents+json; charset=utf-8"))
 
-    return deserialized # type: ignore
+        # Given that we know the cloud event is binary mode, we can convert it to a HTTP request
+        http_request = _to_http_request(            
+            topic_name=topic_name,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+            content_type=content_type,
+            event=event,
+            **kwargs
+        )
+
+        _stream = kwargs.pop("stream", False)
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+
+        # pipeline_response: PipelineResponse = self.send_request(http_request, **kwargs)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            http_request,
+            stream=_stream,
+            **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                    response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.PublishResult,  # pylint: disable=protected-access
+                response.json()
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, {}) # type: ignore
+
+        return deserialized # type: ignore
 
 
 def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:   
@@ -284,14 +283,10 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     event = kwargs.pop("event")
+    binary_mode = kwargs.pop("binary_mode")
 
     # Content of the request is the data
-    # Check if there is data_base64 or data
-    # TODO: Check this -- is this the right way to do this?
-    if isinstance(event.data, bytes):
-        _content = json.dumps(base64.b64encode(event.data), cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
-    else:
-        _content = json.dumps(event.data, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+    _content = json.dumps(base64.b64encode(event.data), cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
     # content_type must be CloudEvent DataContentType when in binary mode
     default_content_type = kwargs.pop('content_type', _headers.pop('content-type', "application/cloudevents+json; charset=utf-8"))
