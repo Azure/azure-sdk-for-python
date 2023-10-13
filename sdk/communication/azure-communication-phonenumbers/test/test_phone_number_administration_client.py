@@ -306,6 +306,8 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         expected_area_codes = { "888", "877", "866", "855", "844", "800", "833", "88" }
         for area_code in area_codes:
             assert area_code in expected_area_codes
+        
+        assert area_codes is not None
 
     @recorded_by_proxy
     def test_list_toll_free_area_codes(self):
@@ -315,6 +317,8 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         expected_area_codes = { "888", "877", "866", "855", "844", "800", "833", "88" }
         for area_code in area_codes:
             assert area_code in expected_area_codes
+
+        assert area_codes is not None
 
     @recorded_by_proxy
     def test_list_geographic_area_codes_from_managed_identity(self):

@@ -333,6 +333,8 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         for area_code in items:
             assert area_code in expected_area_codes
 
+        assert area_codes is not None
+
     @recorded_by_proxy_async
     async def test_list_toll_free_area_codes(self):
         async with self.phone_number_client:
@@ -345,6 +347,8 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         expected_area_codes = { "888", "877", "866", "855", "844", "800", "833", "88" }
         for area_code in items:
             assert area_code in expected_area_codes
+        
+        assert area_codes is not None
 
     @recorded_by_proxy_async
     async def test_list_geographic_area_codes_with_managed_identity(self):
