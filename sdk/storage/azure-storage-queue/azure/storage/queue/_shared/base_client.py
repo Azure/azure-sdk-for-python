@@ -389,6 +389,7 @@ def parse_connection_str(
         raise ValueError("Connection string is either blank or malformed.")
     conn_settings = dict((key.upper(), val) for key, val in conn_settings_list)
     endpoints = _SERVICE_PARAMS[service]
+    primary = None
     secondary = None
     if not credential:
         try:
