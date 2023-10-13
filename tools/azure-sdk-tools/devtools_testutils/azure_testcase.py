@@ -76,13 +76,12 @@ def get_qualified_method_name(obj, method_name):
 
 def is_live():
     """A module version of is_live, that could be used in pytest marker."""
-    # if not hasattr(is_live, "_cache"):
-    #     config_file = os.path.join(os.path.dirname(__file__), TEST_SETTING_FILENAME)
-    #     if not os.path.exists(config_file):
-    #         config_file = None
-    #     is_live._cache = TestConfig(config_file=config_file).record_mode
-    # return is_live._cache
-    return True
+    if not hasattr(is_live, "_cache"):
+        config_file = os.path.join(os.path.dirname(__file__), TEST_SETTING_FILENAME)
+        if not os.path.exists(config_file):
+            config_file = None
+        is_live._cache = TestConfig(config_file=config_file).record_mode
+    return is_live._cache
 
 
 def get_region_override(default="westus"):

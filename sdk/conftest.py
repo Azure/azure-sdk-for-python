@@ -28,8 +28,6 @@ import pytest
 
 from devtools_testutils import environment_variables, recorded_test, test_proxy, variable_recorder
 
-os.environ['AZURE_TEST_RUN_LIVE'] = 'True'
-os.environ['AZURE_SKIP_LIVE_RECORDING'] = 'False'
 
 def pytest_configure(config):
     # register an additional marker
