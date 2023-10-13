@@ -97,7 +97,7 @@ class ParsedSetup:
 
 
 def update_build_config(package_path: str, new_build_config: Dict[str, Any]) -> Dict[str, Any]:
-    if package_path.lower().endswith("setup.py"):
+    if os.path.isfile(package_path):
         package_path = os.path.dirname(package_path)
 
     toml_file = os.path.join(package_path, "pyproject.toml")
