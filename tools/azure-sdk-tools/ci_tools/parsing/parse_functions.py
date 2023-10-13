@@ -97,6 +97,11 @@ class ParsedSetup:
 
 
 def update_build_config(package_path: str, new_build_config: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Attempts to update a pyproject.toml's [tools.azure-sdk-tools] section with a new check configuration.
+    
+    This function can only append or override existing check values. It cannot delete them.
+    """
     if os.path.isfile(package_path):
         package_path = os.path.dirname(package_path)
 
@@ -119,6 +124,10 @@ def update_build_config(package_path: str, new_build_config: Dict[str, Any]) -> 
 
 
 def get_config_setting(package_path: str, setting: str, default: Any = True) -> Any:
+    """
+    Attempts to retrieve a specific setting within the [tools.azure-sdk-tools] section of a discovered
+    pyproject.toml. If the input 'setting' does NOT exist, the provided default value will be returned.
+    """
     # we should always take the override if one is present
     override_value = os.getenv(f"{os.path.basename(package_path).upper()}_{setting.upper()}", None)
     if override_value:
