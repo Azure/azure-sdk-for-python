@@ -1,6 +1,6 @@
 # Release History
 
-## 11.4.0b12 (Unreleased)
+## 11.4.0 (Unreleased)
 
 ### Features Added
 
