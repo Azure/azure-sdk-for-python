@@ -47,6 +47,8 @@ class SearchIndexerSkillset(_SearchIndexerSkillset):
     :keyword knowledge_store: Definition of additional projections to azure blob, table, or files, of
      enriched data.
     :paramtype knowledge_store: ~azure.search.documents.indexes.models.SearchIndexerKnowledgeStore
+    :keyword index_projections: Definition of additional projections to secondary search index(es).
+    :paramtype index_projections: ~azure.search.documents.indexes.models.SearchIndexerIndexProjections
     :keyword e_tag: The ETag of the skillset.
     :paramtype e_tag: str
     :keyword encryption_key: A description of an encryption key that you create in Azure Key Vault.
