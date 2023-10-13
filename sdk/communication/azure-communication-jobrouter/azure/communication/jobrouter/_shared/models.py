@@ -22,7 +22,6 @@ class CommunicationIdentifierKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COMMUNICATION_USER = "communication_user"
     PHONE_NUMBER = "phone_number"
     MICROSOFT_TEAMS_USER = "microsoft_teams_user"
-    MICROSOFT_BOT = "microsoft_bot"
 
 
 class CommunicationCloudEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -50,12 +49,6 @@ class CommunicationIdentifier(Protocol):
 CommunicationUserProperties = TypedDict("CommunicationUserProperties", {"id": str})
 
 PHONE_NUMBER_PREFIX = "4:"
-BOT_PREFIX = "28:"
-BOT_PUBLIC_CLOUD_PREFIX = "28:orgid:"
-BOT_DOD_CLOUD_PREFIX = "28:dod:"
-BOT_DOD_CLOUD_GLOBAL_PREFIX = "28:dod-global:"
-BOT_GCCH_CLOUD_PREFIX = "28:gcch:"
-BOT_GCCH_CLOUD_GLOBAL_PREFIX = "28:gcch-global:"
 TEAMS_USER_ANONYMOUS_PREFIX = "8:teamsvisitor:"
 TEAMS_USER_PUBLIC_CLOUD_PREFIX = "8:orgid:"
 TEAMS_USER_DOD_CLOUD_PREFIX = "8:dod:"
@@ -235,75 +228,6 @@ def _microsoft_teams_user_raw_id(identifier: MicrosoftTeamsUserIdentifier) -> st
         return f"{TEAMS_USER_PUBLIC_CLOUD_PREFIX}{user_id}"
     return f"{TEAMS_USER_PUBLIC_CLOUD_PREFIX}{user_id}"
 
-
-MicrosoftBotProperties = TypedDict(
-    "MicrosoftBotProperties",
-    {
-        "bot_id": str,
-        "is_resource_account_configured": bool,
-        "cloud": Union[CommunicationCloudEnvironment, str],
-    },
-)
-
-
-class MicrosoftBotIdentifier:
-    """Represents an identifier for a Microsoft bot.
-
-    :ivar str raw_id: Optional raw ID of the identifier.
-    :ivar kind: The type of identifier.
-    :vartype kind: str or CommunicationIdentifierKind
-    :ivar MicrosoftBotProperties: The properties of the identifier.
-     The keys in this mapping include:
-        - `bot_id`(str): The id of the Microsoft bot.
-        - `is_resource_account_configured` (bool): Set this to false if the bot is global.
-        The default is `true` for tennantized bots.
-        - `cloud` (str): Cloud environment that this identifier belongs to.
-
-    :param str bot_id: Microsoft bot id.
-    :keyword bool is_resource_account_configured: `False` if the identifier is global.
-    Default value is `True` for tennantzed bots.
-    :keyword cloud: Cloud environment that the bot belongs to. Default value is `PUBLIC`.
-    :paramtype cloud: str or ~azure.communication.chat.CommunicationCloudEnvironment
-    """
-
-    kind = CommunicationIdentifierKind.MICROSOFT_BOT
-
-    def __init__(self, bot_id: str, **kwargs: Any) -> None:
-        self.raw_id = kwargs.get("raw_id")
-        self.properties = MicrosoftBotProperties(
-            bot_id=bot_id,
-            is_resource_account_configured=kwargs.get("is_resource_account_configured", True),
-            cloud=kwargs.get("cloud") or CommunicationCloudEnvironment.PUBLIC,
-        )
-        if self.raw_id is None:
-            self.raw_id = _microsoft_bot_raw_id(self)
-
-    def __eq__(self, other):
-        try:
-            return self.raw_id == _microsoft_bot_raw_id(other)
-        except Exception:  # pylint: disable=broad-except
-            return False
-
-
-def _microsoft_bot_raw_id(identifier: MicrosoftBotIdentifier) -> str:  # pylint: disable=too-many-return-statements
-    if identifier.raw_id:
-        return str(identifier.raw_id)
-    bot_id = identifier.properties["bot_id"]
-    cloud = identifier.properties["cloud"]
-    if identifier.properties["is_resource_account_configured"] is False:
-        if cloud == CommunicationCloudEnvironment.DOD:
-            return f"{BOT_DOD_CLOUD_GLOBAL_PREFIX}{bot_id}"
-        if cloud == CommunicationCloudEnvironment.GCCH:
-            return f"{BOT_GCCH_CLOUD_GLOBAL_PREFIX}{bot_id}"
-        return f"{BOT_PREFIX}{bot_id}"
-
-    if cloud == CommunicationCloudEnvironment.DOD:
-        return f"{BOT_DOD_CLOUD_PREFIX}{bot_id}"
-    if cloud == CommunicationCloudEnvironment.GCCH:
-        return f"{BOT_GCCH_CLOUD_PREFIX}{bot_id}"
-    return f"{BOT_PUBLIC_CLOUD_PREFIX}{bot_id}"
-
-
 def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: disable=too-many-return-statements
     """
     Creates a CommunicationIdentifier from a given raw ID.
@@ -318,14 +242,7 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: d
         return PhoneNumberIdentifier(value=raw_id[len(PHONE_NUMBER_PREFIX) :], raw_id=raw_id)  # type: ignore
 
     segments = raw_id.split(":", maxsplit=2)
-    if len(segments) != 3:
-        if len(segments) == 2 and raw_id.startswith(BOT_PREFIX):
-            return MicrosoftBotIdentifier(
-                bot_id=segments[1],
-                is_resource_account_configured=False,
-                cloud=CommunicationCloudEnvironment.PUBLIC,
-                raw_id=raw_id,
-            )  # type: ignore
+    if len(segments) < 3:
         return UnknownIdentifier(identifier=raw_id)  # type: ignore
 
     prefix = f"{segments[0]}:{segments[1]}:"
@@ -360,39 +277,4 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: d
         SPOOL_USER_PREFIX,
     ]:
         return CommunicationUserIdentifier(id=raw_id, raw_id=raw_id)  # type: ignore
-    if prefix == BOT_GCCH_CLOUD_GLOBAL_PREFIX:
-        return MicrosoftBotIdentifier(
-            bot_id=suffix,
-            is_resource_account_configured=False,
-            cloud=CommunicationCloudEnvironment.GCCH,
-            raw_id=raw_id,
-        )  # type: ignore
-    if prefix == BOT_PUBLIC_CLOUD_PREFIX:
-        return MicrosoftBotIdentifier(
-            bot_id=suffix,
-            is_resource_account_configured=True,
-            cloud=CommunicationCloudEnvironment.PUBLIC,
-            raw_id=raw_id,
-        )  # type: ignore
-    if prefix == BOT_DOD_CLOUD_GLOBAL_PREFIX:
-        return MicrosoftBotIdentifier(
-            bot_id=suffix,
-            is_resource_account_configured=False,
-            cloud=CommunicationCloudEnvironment.DOD,
-            raw_id=raw_id,
-        )  # type: ignore
-    if prefix == BOT_GCCH_CLOUD_PREFIX:
-        return MicrosoftBotIdentifier(
-            bot_id=suffix,
-            is_resource_account_configured=True,
-            cloud=CommunicationCloudEnvironment.GCCH,
-            raw_id=raw_id,
-        )  # type: ignore
-    if prefix == BOT_DOD_CLOUD_PREFIX:
-        return MicrosoftBotIdentifier(
-            bot_id=suffix,
-            is_resource_account_configured=True,
-            cloud=CommunicationCloudEnvironment.DOD,
-            raw_id=raw_id,
-        )  # type: ignore
     return UnknownIdentifier(identifier=raw_id)  # type: ignore
