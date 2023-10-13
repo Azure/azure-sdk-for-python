@@ -46,9 +46,7 @@ class ClientSecretCredential(ClientCredentialBase):
         if not client_secret:
             raise ValueError("secret should be a Microsoft Entra application's client secret")
         if not tenant_id:
-            raise ValueError(
-                "tenant_id should be a Microsoft Entra tenant's id (also called its 'directory id')"
-            )
+            raise ValueError("tenant_id should be a Microsoft Entra tenant's id (also called its 'directory id')")
 
         super(ClientSecretCredential, self).__init__(
             client_id=client_id, client_credential=client_secret, tenant_id=tenant_id, **kwargs

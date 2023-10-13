@@ -41,8 +41,8 @@ class AzureApplicationCredential(ChainedTokenCredential):
 
     When this environment configuration is incomplete, the credential will attempt to authenticate a managed identity.
     See `Microsoft Entra ID documentation
-    <https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview>`_ for an overview of
-    managed identities.
+    <https://learn.microsoft.com/azure/active-directory/managed-identities-azure-resources/overview>`_ for an overview
+    of managed identities.
 
     :keyword str authority: Authority of a Microsoft Entra endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud, which is the default when no value is given for this keyword argument or

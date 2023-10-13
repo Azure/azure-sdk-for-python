@@ -162,9 +162,7 @@ class AadClientBase(abc.ABC):
             expires_on = request_time + int(content["expires_in"])
         else:
             _scrub_secrets(content)
-            raise ClientAuthenticationError(
-                message="Unexpected response from Microsoft Entra ID: {}".format(content)
-            )
+            raise ClientAuthenticationError(message="Unexpected response from Microsoft Entra ID: {}".format(content))
 
         token = AccessToken(content["access_token"], expires_on)
 

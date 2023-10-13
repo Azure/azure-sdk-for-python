@@ -45,9 +45,7 @@ class ClientSecretCredential(AsyncContextManager, GetTokenMixin):
         if not client_secret:
             raise ValueError("secret should be a Microsoft Entra application's client secret")
         if not tenant_id:
-            raise ValueError(
-                "tenant_id should be a Microsoft Entra tenant's id (also called its 'directory id')"
-            )
+            raise ValueError("tenant_id should be a Microsoft Entra tenant's id (also called its 'directory id')")
         validate_tenant_id(tenant_id)
 
         self._client = AadClient(tenant_id, client_id, **kwargs)
