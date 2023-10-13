@@ -80,6 +80,7 @@ class SearchIndexerSkillset(_SearchIndexerSkillset):
             skills=generated_skills,
             cognitive_services_account=getattr(self, "cognitive_services_account", None),
             knowledge_store=getattr(self, "knowledge_store", None),
+            index_projections=getattr(self, "index_projections", None),
             e_tag=getattr(self, "e_tag", None),
             encryption_key=getattr(self, "encryption_key", None),
         )
