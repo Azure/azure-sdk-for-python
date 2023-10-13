@@ -10,11 +10,11 @@ from typing import List,  Any, TYPE_CHECKING, Union
 from azure.core.credentials import AzureKeyCredential
 from .._legacy.aio import EventGridPublisherClient
 
+from ._client import EventGridClient as InternalEventGridClient
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
-
-from ._client import EventGridClient as InternalEventGridClient
 
 
 class EventGridClient(InternalEventGridClient):

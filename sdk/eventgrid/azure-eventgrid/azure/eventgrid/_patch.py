@@ -9,9 +9,6 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import List,  Any, TYPE_CHECKING, Union
 from azure.core.credentials import AzureKeyCredential
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import TokenCredential
 from ._legacy import (
     EventGridPublisherClient,
     SystemEventNames,
@@ -20,6 +17,9 @@ from ._legacy import (
 )
 from ._client import EventGridClient as InternalEventGridClient
 
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials import TokenCredential
 
 class EventGridClient(InternalEventGridClient):
     """Azure Messaging EventGrid Client.
