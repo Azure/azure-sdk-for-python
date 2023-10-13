@@ -10,7 +10,7 @@
 
 ### Other Changes
 
-## 1.11.1 (unreleased)
+## 1.11.1 (2023-10-13)
 
 ### Bugs Fixed
  - pydash dependency version was upgraded to >=6.0.0 to patch [security vulnerability in versions below 6.0.0](https://github.com/advisories/GHSA-8mjr-6c96-39w8)
