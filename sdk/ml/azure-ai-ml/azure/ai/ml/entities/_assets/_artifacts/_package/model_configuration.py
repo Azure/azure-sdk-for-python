@@ -14,7 +14,7 @@ from azure.ai.ml._utils.utils import snake_to_camel
 class ModelConfiguration:
     """ModelConfiguration.
 
-    :param mode: The mode of the model.
+    :param mode: The mode of the model. Possible values include: "Copy", "Download".
     :type mode: str
     :param mount_path: The mount path of the model.
     :type mount_path: str

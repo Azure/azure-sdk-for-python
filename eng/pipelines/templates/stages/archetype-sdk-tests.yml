@@ -174,7 +174,7 @@ stages:
             displayName: 'Run Pylint Next'
             continueOnError: true
             inputs:
-              scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+              scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
               arguments: >-
                 "azure*" 
                 --mark_arg="${{ parameters.TestMarkArgument }}" 
@@ -189,7 +189,7 @@ stages:
             displayName: 'Run MyPy Next'
             continueOnError: true
             inputs:
-              scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+              scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
               arguments: >-
                 "azure*" 
                 --mark_arg="${{ parameters.TestMarkArgument }}" 
@@ -203,7 +203,7 @@ stages:
             displayName: 'Run Pyright Next'
             continueOnError: true
             inputs:
-              scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+              scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
               arguments: >-
                 "azure*"
                 --mark_arg="${{ parameters.TestMarkArgument }}"
@@ -217,7 +217,7 @@ stages:
             displayName: 'Run Ruff'
             continueOnError: true
             inputs:
-              scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+              scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
               arguments: >-
                 "azure*" 
                 --mark_arg="${{ parameters.TestMarkArgument }}" 

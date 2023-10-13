@@ -21,7 +21,7 @@ class ClientAssertionCredential(GetTokenMixin):
         acquires a new token.
     :paramtype func: Callable[[], str]
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example
         "login.microsoftonline.com", the authority for Azure Public Cloud (which is the default).
         :class:`~azure.identity.AzureAuthorityHosts` defines authorities for other clouds.
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
