@@ -38,3 +38,20 @@ class _Constants(object):
 
     # ServiceDocument Resource
     EnableMultipleWritableLocations = "enableMultipleWriteLocations"
+
+    # Error code translations
+    ERROR_TRANSLATIONS = {
+        400: "BAD_REQUEST - Request being sent is invalid.",
+        401: "UNAUTHORIZED - The input authorization token can't serve the request.",
+        403: "FORBIDDEN",
+        404: "NOT_FOUND - Entity with the specified id does not exist in the system.",
+        405: "METHOD_NOT_ALLOWED",
+        408: "REQUEST_TIMEOUT",
+        409: "CONFLICT - Entity with the specified id already exists in the system.",
+        410: "GONE",
+        412: "PRECONDITION_FAILED - Operation cannot be performed because one of the specified precondition is not met",
+        413: "REQUEST_ENTITY_TOO_LARGE - Document size exceeds limit.",
+        424: "FAILED_DEPENDENCY - There is a failure in the transactional batch.",
+        429: "TOO_MANY_REQUESTS",
+        449: "RETRY_WITH - Conflicting request to resource has been attempted. Retry to avoid conflicts."
+    }

@@ -233,7 +233,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
             "responseContinuationTokenLimitInKb"]
 
     if cosmos_client_connection.master_key:
-        # formatedate guarantees RFC 1123 date format regardless of current locale
+        # formatdate guarantees RFC 1123 date format regardless of current locale
         headers[http_constants.HttpHeaders.XDate] = formatdate(timeval=None, localtime=False, usegmt=True)
 
     if cosmos_client_connection.master_key or cosmos_client_connection.resource_tokens:
@@ -758,3 +758,38 @@ def _internal_resourcetype(resource_type: str) -> str:
     if resource_type.lower() == "partitionkey":
         return "colls"
     return resource_type
+
+def _populate_batch_headers(current_headers):
+    current_headers.update({http_constants.HttpHeaders.IsBatchRequest: True})
+    current_headers.update({http_constants.HttpHeaders.IsBatchAtomic: True})
+    current_headers.update({http_constants.HttpHeaders.ShouldBatchContinueOnError: False})
+
+def _merge_headers(headers):
+    if len(headers) == 1:
+        return headers[0]
+    else:
+        initial_headers = headers.pop()
+        partition_key_range_ids = [initial_headers.get(http_constants.HttpHeaders.PartitionKeyRangeID)]
+        activity_ids = [initial_headers.get(http_constants.HttpHeaders.ActivityId)]
+        for current_header in headers:
+            initial_headers.update({http_constants.HttpHeaders.RequestCharge: str(
+                float(initial_headers.get(http_constants.HttpHeaders.RequestCharge)) + float(
+                    current_header.get(http_constants.HttpHeaders.RequestCharge)))})
+            initial_headers.update({http_constants.HttpHeaders.RequestDurationMs: str(
+                float(initial_headers.get(http_constants.HttpHeaders.RequestDurationMs)) + float(
+                    current_header.get(http_constants.HttpHeaders.RequestDurationMs)))})
+            initial_headers.update({http_constants.HttpHeaders.ItemCount:
+                                        initial_headers.get(http_constants.HttpHeaders.ItemCount, '0') +
+                                        current_header.get(http_constants.HttpHeaders.ItemCount, '0')})
+            initial_headers.update({http_constants.HttpHeaders.ContentLength:
+                                        initial_headers.get(http_constants.HttpHeaders.ContentLength, '0') +
+                                        current_header.get(http_constants.HttpHeaders.ContentLength, '0')})
+            initial_headers.update({http_constants.HttpHeaders.ThrottleRetryCount:
+                                        int(initial_headers.get(http_constants.HttpHeaders.ThrottleRetryCount, 0)) +
+                                        int(current_header.get(http_constants.HttpHeaders.ThrottleRetryCount, 0))})
+            partition_key_range_ids.append(current_header.get(http_constants.HttpHeaders.PartitionKeyRangeID))
+            activity_ids.append(current_header.get(http_constants.HttpHeaders.ActivityId))
+        initial_headers.update({http_constants.HttpHeaders.PartitionKeyRangeID: partition_key_range_ids})
+        initial_headers.update({http_constants.HttpHeaders.PhysicalPartitionID: partition_key_range_ids})
+        initial_headers.update({http_constants.HttpHeaders.ActivityId: activity_ids})
+        return initial_headers

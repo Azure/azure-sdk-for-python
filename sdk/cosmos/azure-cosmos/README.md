@@ -153,7 +153,7 @@ Currently, the features below are **not supported**. For alternatives options, c
 
 * Group By queries
 * Queries with COUNT from a DISTINCT subquery: SELECT COUNT (1) FROM (SELECT DISTINCT C.ID FROM C)
-* Bulk/Transactional batch processing
+* Transactional batch processing
 * Direct TCP Mode access
 * Continuation token support for aggregate cross-partition queries like sorting, counting, and distinct.
 Streamable queries like `SELECT * FROM WHERE` *do* support continuation tokens.
@@ -173,10 +173,6 @@ Streamable queries like `SELECT * FROM WHERE` *do* support continuation tokens.
 * Get the minimum RU/s of a container
 
 ## Workarounds
-
-### Bulk processing Limitation Workaround
-
-If you want to use Python SDK to perform bulk inserts to Cosmos DB, the best alternative is to use [stored procedures](https://docs.microsoft.com/azure/cosmos-db/how-to-write-stored-procedures-triggers-udfs) to write multiple items with the same partition key.
 
 ### Control Plane Limitations Workaround
 
@@ -588,6 +584,73 @@ def integrated_cache_snippet():
 ```
 For more information on Integrated Cache, see [Azure Cosmos DB integrated cache - Overview][cosmos_integrated_cache].
 
+### Using Transactional Batch requests
+Transactional batch requests allow you to send several operations to be executed at once within the same partition key.
+If all operations succeed in the order they're described within the transactional batch operation, the transaction will be committed.
+However, if any operation fails, the entire transaction is rolled back.
+
+Transactional batches have a limit of 100 operations per batch, and a total size limit of 1.2Mb for the
+batch operations being passed in.
+```python
+batch_operations = [{"operationType": "Create", "resourceBody": {"id": "create_item", "pk": "mypk"}}]
+batch_results = container.execute_item_batch(batch_operations=batch_operations, partition_key="mypk")
+```
+
+Available Transactional Batch operation types are:
+- Create
+```python
+create_item_operation = {"operationType": "Create",
+                         "resourceBody": {"id": "create_item"}}
+```
+- Upsert
+```python
+upsert_item_operation = {"operationType": "Upsert",
+                         "resourceBody": {"id": "upsert_item"}}
+```
+- Read
+```python
+read_item_operation = {"operationType": "Read",
+                       "id": "read_item"}
+```
+- Replace
+```python
+replace_item_operation = {"operationType": "Replace",
+                          "id": "replace_item",
+                          "resourceBody": {"id": "replace_item", "message": "item was replaced"}}
+```
+- Patch
+```python
+patch_item_operation = {"operationType": "Patch",
+                        "id": "patch_item",
+                        "resourceBody": {"operations": [
+                            {"op": "add", "path": "/favorite_color", "value": "red"},
+                            {"op": "remove", "path": "/ttl"},
+                            {"op": "replace", "path": "/tax_amount", "value": 14},
+                            {"op": "set", "path": "/items/0/discount", "value": 20.0512},
+                            {"op": "incr", "path": "/total_due", "value": 5},
+                            {"op": "move", "from": "/freight", "path": "/service_addition"}]}}
+```
+- Delete
+```python
+delete_item_operation = {"operationType": "Delete",
+                         "id": "delete_item"}
+```
+You can also optionally add the `ifMatch` and `ifNoneMatch` fields to the operations above if you'd like to utilize ETags within your bulk operations:
+```python
+replace_operation_with_etag = {"operationType": "Replace",
+                               "id": "replace_item",
+                               "resourceBody": {"id": "replace_item", "message": "item was replaced"},
+                               "ifMatch": "some-etag"}
+```
+
+We also have some samples showing these transactional batch operations in action with both the [sync][sample_document_mgmt]
+and [async][sample_document_mgmt_async] clients.
+
+The responses for transactional batch requests will be either an `BatchOperationError` or an `BatchOperationResult` object, each containing your operation
+mapped to its response, as well as an additional error message if your operation failed. These objects can be seen in our [models][cosmos_models] file.
+
+For more information on Transactional Batch, see [Azure Cosmos DB Transactional Batch][cosmos_transactional_batch].
+
 ## Troubleshooting
 
 ### General
@@ -694,6 +757,7 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [cosmos_pypi]: https://pypi.org/project/azure-cosmos/
 [cosmos_http_status_codes]: https://docs.microsoft.com/rest/api/cosmos-db/http-status-codes-for-cosmosdb
 [cosmos_item]: https://docs.microsoft.com/azure/cosmos-db/databases-containers-items#azure-cosmos-items
+[cosmos_models]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/azure/cosmos/_models.py
 [cosmos_request_units]: https://docs.microsoft.com/azure/cosmos-db/request-units
 [cosmos_resources]: https://docs.microsoft.com/azure/cosmos-db/databases-containers-items
 [cosmos_sql_queries]: https://docs.microsoft.com/azure/cosmos-db/how-to-sql-query
@@ -712,11 +776,14 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [ref_httpfailure]: https://aka.ms/azsdk-python-cosmos-ref-http-failure
 [sample_database_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/database_management.py
 [sample_document_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/document_management.py
+[sample_document_mgmt_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/document_management_async.py
 [sample_examples_misc]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/examples.py
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos
 [venv]: https://docs.python.org/3/library/venv.html
 [virtualenv]: https://virtualenv.pypa.io
 [telemetry_sample]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/tracing_open_telemetry.py
+[timeouts_document]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/docs/TimeoutAndRetriesConfig.md
+[cosmos_transactional_batch]: https://learn.microsoft.com/azure/cosmos-db/nosql/transactional-batch
 
 ## Contributing
 

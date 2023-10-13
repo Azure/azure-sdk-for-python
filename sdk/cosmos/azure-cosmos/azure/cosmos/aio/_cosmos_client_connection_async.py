@@ -46,8 +46,9 @@ from .. import _base as base
 from .. import documents
 from .._routing import routing_range
 from ..documents import ConnectionPolicy
-from .. import _constants as constants
+from .._constants import _Constants as Constants
 from .. import http_constants
+from .. import _models as models
 from . import _query_iterable_async as query_iterable
 from .. import _runtime_constants as runtime_constants
 from .. import _request_object
@@ -279,7 +280,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         """
         # Set to default level present in account
         user_consistency_policy = database_account.ConsistencyPolicy
-        consistency_level = user_consistency_policy.get(constants._Constants.DefaultConsistencyLevel)
+        consistency_level = user_consistency_policy.get(Constants.DefaultConsistencyLevel)
 
         if consistency_level == documents.ConsistencyLevel.Session:
             # We only set the header if we're using session consistency in the account in order to keep
@@ -359,16 +360,16 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             database_account.CurrentMediaStorageUsageInMB = self.last_response_headers[
                 http_constants.HttpHeaders.CurrentMediaStorageUsageInMB
             ]
-        database_account.ConsistencyPolicy = result.get(constants._Constants.UserConsistencyPolicy)
+        database_account.ConsistencyPolicy = result.get(Constants.UserConsistencyPolicy)
 
         # WritableLocations and ReadableLocations fields will be available only for geo-replicated database accounts
-        if constants._Constants.WritableLocations in result:
-            database_account._WritableLocations = result[constants._Constants.WritableLocations]
-        if constants._Constants.ReadableLocations in result:
-            database_account._ReadableLocations = result[constants._Constants.ReadableLocations]
-        if constants._Constants.EnableMultipleWritableLocations in result:
+        if Constants.WritableLocations in result:
+            database_account._WritableLocations = result[Constants.WritableLocations]
+        if Constants.ReadableLocations in result:
+            database_account._ReadableLocations = result[Constants.ReadableLocations]
+        if Constants.EnableMultipleWritableLocations in result:
             database_account._EnableMultipleWritableLocations = result[
-                constants._Constants.EnableMultipleWritableLocations
+                Constants.EnableMultipleWritableLocations
             ]
 
         self._useMultipleWriteLocations = (
@@ -1515,6 +1516,56 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             request_data=None,
             **kwargs
         )
+    
+    async def Batch(self, collection_link, batch_operations, options=None, **kwargs):
+        """Executes the given operations in transactional batch.
+
+        :param str collection_link: The link to the collection
+        :param list batch_operations: The batch of operations for the batch request.
+        :param dict options: The request options for the request.
+
+        :return:
+            The result of the batch operation.
+        :rtype:
+            dict
+
+        """
+        if options is None:
+            options = {}
+
+        path = base.GetPathFromLink(collection_link, "docs")
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+
+        result, self.last_response_headers = await self._Batch(
+            batch_operations,
+            path,
+            collection_id,
+            options,
+            **kwargs)
+
+        final_responses = []
+        is_error = False
+        for i in range(len(result)):
+            status_code = result[i].get("statusCode")
+            if status_code >= 400:
+                is_error = True
+                final_responses.append(models.BatchOperationError(operation=batch_operations[i],
+                                                                  operation_response=result[i],
+                                                                  error=Constants.ERROR_TRANSLATIONS.get(status_code)))
+            else:
+                final_responses.append(models.BatchOperationResponse(operation=batch_operations[i],
+                                                                     operation_response=result[i]))
+
+        return {"is_error": is_error, "results": final_responses}
+
+    async def _Batch(self, batch_operations, path, collection_id, options, **kwargs):
+        initial_headers = self.default_headers.copy()
+        base._populate_batch_headers(initial_headers)
+        headers = base.GetHeaders(self, initial_headers, "post", path, collection_id, "docs", options)
+        request_params = _request_object.RequestObject("docs", documents._OperationType.Batch)
+
+        return await self.__Post(path, request_params, batch_operations, headers, **kwargs)
+
 
     def _ReadPartitionKeyRanges(self, collection_link, feed_options=None, **kwargs):
         """Reads Partition Key Ranges.
