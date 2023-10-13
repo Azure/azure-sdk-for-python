@@ -23,7 +23,7 @@ steps:
     condition: and(succeededOrFailed(), ne(variables['Skip.ApiStubGen'],'true'))
     displayName: 'Generate API stub files'
     inputs:
-      scriptPath: 'scripts/devops_tasks/dispatch_check.py'
+      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
       arguments: >-
         "$(TargetingString)"
         ${{ parameters.AdditionalTestArgs }}
