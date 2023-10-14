@@ -174,7 +174,6 @@ class TestTransactionalBatch:
         assert operation_results[0].operation_response.get("statusCode") == StatusCodes.NOT_FOUND
         assert operation_results[0].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
-
     def test_batch_replace(self):
         self._set_up()
         container = self.test_database.create_container_if_not_exists(id="batch_replace" + str(uuid.uuid4()),
@@ -276,6 +275,45 @@ class TestTransactionalBatch:
         assert operation_results[1].operation_response.get("resourceBody").get("port") == 9005
         assert operation_results[1].operation_response.get("resourceBody").get("move_path") is None
         assert operation_results[1].operation_response.get("resourceBody").get("moved_path") is True
+
+        # With conditional patching
+        item_id = str(uuid.uuid4())
+        batch = [{"operationType": "Upsert",
+                  "resourceBody": {"id": item_id,
+                                   "company": "Microsoft",
+                                   "city": "Seattle",
+                                   "port": 9000,
+                                   "remove_path": True,
+                                   "move_path": "yes",
+                                   "set_path": 1}},
+                 {"operationType": "Patch",
+                  "id": item_id,
+                  "resourceBody": {"operations": [{"op": "add", "path": "/favorite_color", "value": "red"}],
+                                   "condition": "from c where c.set_path = 0"}}]
+        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+        assert batch_response.get("is_error")
+        operation_results = batch_response.get("results")
+        assert len(operation_results) == 2
+        assert operation_results[0].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
+        assert operation_results[1].operation_response.get("statusCode") == StatusCodes.PRECONDITION_FAILED
+
+        # With correct filter
+        batch = [{"operationType": "Upsert",
+                  "resourceBody": {"id": item_id,
+                                   "company": "Microsoft",
+                                   "city": "Seattle",
+                                   "port": 9000,
+                                   "remove_path": True,
+                                   "move_path": "yes",
+                                   "set_path": 1}},
+                 {"operationType": "Patch",
+                  "id": item_id,
+                  "resourceBody": {"operations": [{"op": "add", "path": "/favorite_color", "value": "red"}],
+                                   "condition": "from c where c.set_path = 1"}}]
+        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+        assert batch_response.get("is_error") is False
+        operation_results = batch_response.get("results")
+        assert len(operation_results) == 2
 
     def test_batch_delete(self):
         self._set_up()

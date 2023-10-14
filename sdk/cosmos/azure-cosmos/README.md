@@ -642,6 +642,16 @@ replace_operation_with_etag = {"operationType": "Replace",
                                "resourceBody": {"id": "replace_item", "message": "item was replaced"},
                                "ifMatch": "some-etag"}
 ```
+And for conditional patching you can just add the `condition` field to your operation's resource body:
+```python
+patch_item_operation = {"operationType": "Patch",
+                        "id": "patch_item",
+                        "resourceBody": 
+                            {"operations": [
+                                {"op": "add", "path": "/favorite_color", "value": "red"},
+                                {"op": "remove", "path": "/ttl"}],
+                             "condition": "from c where c.number = 5"}}
+```
 
 We also have some samples showing these transactional batch operations in action with both the [sync][sample_document_mgmt]
 and [async][sample_document_mgmt_async] clients.
