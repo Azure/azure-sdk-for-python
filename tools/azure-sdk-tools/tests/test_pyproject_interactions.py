@@ -14,8 +14,8 @@ pyproject_file = os.path.join(integration_folder, "scenarios", "sample_pyproject
     "target",
     [
         # check is true
-        # pyproject_folder,
-        # pyproject_folder,
+        pyproject_file,
+        pyproject_folder,
         os.path.join(pyproject_folder, "setup.py"),
     ],
 )
