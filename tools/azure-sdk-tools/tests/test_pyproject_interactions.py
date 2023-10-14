@@ -78,6 +78,4 @@ def test_pyproject_update_check_override():
         assert update_result == build_config
 
         reloaded_build_config = get_build_config(temp_dir)
-
-        print(reloaded_build_config)
         assert reloaded_build_config == update_result
