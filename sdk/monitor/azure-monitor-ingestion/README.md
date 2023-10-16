@@ -64,6 +64,14 @@ credential = DefaultAzureCredential()
 logs_client = LogsIngestionClient(endpoint, credential)
 ```
 
+#### Configure clients for non-public Azure clouds
+
+By default, `LogsIngestionClient` is configured to connect to the public Azure cloud. To connect to non-public Azure clouds, some additional configuration is required. The appropriate scope for authentication must be provided using the `credential_scopes` keyword argument. The following example shows how to configure the client to connect to Azure US Government:
+
+```python
+logs_client = LogsIngestionClient(endpoint, credential_scopes=["https://monitor.azure.us//.default"])
+```
+
 ## Key concepts
 
 ### Data Collection Endpoint

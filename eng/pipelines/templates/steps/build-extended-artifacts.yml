@@ -65,7 +65,7 @@ steps:
     displayName: 'Generate Docs'
     condition: and(succeededOrFailed(), ${{parameters.BuildDocs}})
     inputs:
-      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
       arguments: >-
         "$(TargetingString)" 
         --service="${{ parameters.ServiceDirectory }}" 

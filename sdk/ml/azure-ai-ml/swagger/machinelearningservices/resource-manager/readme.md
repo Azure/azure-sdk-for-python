@@ -204,6 +204,19 @@ input-file:
   - Microsoft.MachineLearningServices/preview/2023-08-01-preview/workspaceRP.json
 output-folder: $(python-sdks-folder)/v2023_08_01_preview
 ```
+
+### Tag: v2023-10-01
+
+These settings apply only when `--tag=v2023-10-01` is specified on the command line.
+
+```yaml $(tag) == 'v2023-10-01'
+input-file:
+  - Microsoft.MachineLearningServices/stable/2023-10-01/machineLearningServices.json
+  - Microsoft.MachineLearningServices/stable/2023-10-01/registries.json
+  - Microsoft.MachineLearningServices/stable/2023-10-01/workspaceFeatures.json
+  - Microsoft.MachineLearningServices/stable/2023-10-01/mfe.json
+output-folder: $(python-sdks-folder)/v2023_10_01
+```
 ### Tag: multiapi
 
 These settings apply only when `--multiapi` is specified on the command line.
@@ -225,6 +238,8 @@ batch:
   - tag: v2023-04-01-preview
   - tag: v2023-04-01
   - tag: v2023-06-01-preview
+  - tag: v2023-08-01-preview
+  - tag: v2023-10-01
   #unstable tags
   - tag: v2021-10-01-dataplanepreview
   - multiapiscript: true
