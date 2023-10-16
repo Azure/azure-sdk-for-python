@@ -107,7 +107,7 @@ class TestTransactionalBatch:
                           "resourceBody": {"id": "item" + str(i), "company": "Microsoft"}})
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert batch_response.get("is_error") is False
-        assert len(batch_response.get("results") == 100)
+        assert len(batch_response.get("results")) == 100
 
         # Create the same item twice
         item_id = str(uuid.uuid4())
@@ -173,7 +173,7 @@ class TestTransactionalBatch:
         operation_results = batch_response.get("results")
         assert len(operation_results) == 2
         assert operation_results[0].operation_response.get("statusCode") == StatusCodes.NOT_FOUND
-        assert operation_results[0].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
+        assert operation_results[1].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
     def test_batch_replace(self):
         self._set_up()
