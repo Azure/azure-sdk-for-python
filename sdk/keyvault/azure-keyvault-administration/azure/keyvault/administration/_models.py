@@ -160,7 +160,7 @@ class KeyVaultBackupResult(object):
     # pylint:disable=unused-argument
 
     def __init__(self, **kwargs) -> None:
-        self.folder_url = kwargs.get("folder_url")
+        self.folder_url: Optional[str] = kwargs.get("folder_url")
 
     @classmethod
     def _from_generated(

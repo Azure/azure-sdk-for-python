@@ -4,8 +4,8 @@
 # ------------------------------------
 """
 
-This sample is intended to assist in authenticating with AAD via redis-py library. 
-It focuses on displaying the logic required to fetch an AAD access token and to use it as password when setting up the redis client.
+This sample is intended to assist in authenticating with Microsoft Entra ID via redis-py library. 
+It focuses on displaying the logic required to fetch a Microsoft Entra access token and to use it as password when setting up the redis client.
 
 """
 

@@ -186,6 +186,10 @@ class HttpHeaders(object):
     EnableCrossPartitionQuery = "x-ms-documentdb-query-enablecrosspartition"
     PartitionKeyRangeID = "x-ms-documentdb-partitionkeyrangeid"
     PartitionKeyDeletePending = "x-ms-cosmos-is-partition-key-delete-pending"
+    StartEpkString = "x-ms-start-epk"
+    EndEpkString = "x-ms-end-epk"
+    ReadFeedKeyType = "x-ms-read-key-type"
+    SDKSupportedCapabilities = "x-ms-cosmos-sdk-supportedcapabilities"
 
     # Upsert header
     IsUpsert = "x-ms-documentdb-is-upsert"
@@ -296,7 +300,7 @@ class CookieHeaders(object):
 class Versions(object):
     """Constants of versions.
     """
-    CurrentVersion = "2018-12-31"
+    CurrentVersion = "2020-07-15"
     SDKName = "azure-cosmos"
     QueryVersion = "1.0"
 

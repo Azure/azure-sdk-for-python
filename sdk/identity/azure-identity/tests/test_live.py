@@ -10,6 +10,9 @@ from azure.identity import (
     ClientSecretCredential,
     DeviceCodeCredential,
     UsernamePasswordCredential,
+    AzureCliCredential,
+    AzurePowerShellCredential,
+    AzureDeveloperCliCredential,
 )
 from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 
@@ -73,6 +76,24 @@ def test_username_password_auth(live_user_details):
         password=live_user_details["password"],
         tenant_id=live_user_details["tenant"],
     )
+    get_token(credential)
+
+
+@pytest.mark.manual
+def test_cli_credential():
+    credential = AzureCliCredential()
+    get_token(credential)
+
+
+@pytest.mark.manual
+def test_dev_cli_credential():
+    credential = AzureDeveloperCliCredential()
+    get_token(credential)
+
+
+@pytest.mark.manual
+def test_powershell_credential():
+    credential = AzurePowerShellCredential()
     get_token(credential)
 
 
