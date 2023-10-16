@@ -104,7 +104,7 @@ class TestTransactionalBatch:
         batch = []
         for i in range(100):
             batch.append({"operationType": "Create",
-                          "resourceBody": {"id": "item" + str(i)}, "company": "Microsoft"})
+                          "resourceBody": {"id": "item" + str(i), "company": "Microsoft"}})
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert batch_response.get("is_error") is False
         assert len(batch_response.get("results") == 100)
@@ -160,6 +160,7 @@ class TestTransactionalBatch:
         operation_results = batch_response.get("results")
         assert len(operation_results) == 100
         for result in operation_results:
+            result = result.operation_response
             assert result.get("statusCode") == 200
 
         # Read non-existent item
@@ -206,6 +207,7 @@ class TestTransactionalBatch:
         container.read()
         etag = container.client_connection.last_response_headers.get('etag')
 
+        item_id = str(uuid.uuid4())
         batch = [{"operationType": "Create",
                   "resourceBody": {"id": item_id, "company": "Microsoft"}},
                  {"operationType": "Replace",
@@ -274,7 +276,7 @@ class TestTransactionalBatch:
         assert operation_results[1].operation_response.get("resourceBody").get("set_path") == 0
         assert operation_results[1].operation_response.get("resourceBody").get("port") == 9005
         assert operation_results[1].operation_response.get("resourceBody").get("move_path") is None
-        assert operation_results[1].operation_response.get("resourceBody").get("moved_path") is True
+        assert operation_results[1].operation_response.get("resourceBody").get("moved_path") == "yes"
 
         # With conditional patching
         item_id = str(uuid.uuid4())
@@ -350,7 +352,7 @@ class TestTransactionalBatch:
         operation_results = batch_response.get("results")
         assert len(operation_results) == 2
         assert operation_results[0].operation_response.get("statusCode") == StatusCodes.NOT_FOUND
-        assert operation_results[1].operation_response.get("statusCode") == StatusCodes.PRECONDITION_FAILED
+        assert operation_results[1].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
     def test_batch_lsn(self):
         container = self.test_database.create_container_if_not_exists(id="batch_lsn" + str(uuid.uuid4()),
