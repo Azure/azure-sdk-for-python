@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
-import azure.communication.rooms._shared.models as models 
+import azure.communication.rooms as models 
 
 class TestDeprecations:
     

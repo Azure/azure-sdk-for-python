@@ -8,14 +8,6 @@ from warnings import warn
 from typing_extensions import TypedDict, Protocol
 from azure.core import CaseInsensitiveEnumMeta
 
-DEPRECATED_NAMES = ["MicrosoftBotProperties", "MicrosoftBotIdentifier"]
-
-def __getattr__(name):
-    if name in DEPRECATED_NAMES:
-        warn(f"{name} is deprecated.", DeprecationWarning)
-        return globals()[f"_{name}"]
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-
 class CommunicationIdentifierKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Communication Identifier Kind.
 

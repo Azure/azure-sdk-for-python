@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
-import azure.communication.callautomation._shared.models as models 
+import azure.communication.callautomation as models 
 
 class TestDeprecations:
     
