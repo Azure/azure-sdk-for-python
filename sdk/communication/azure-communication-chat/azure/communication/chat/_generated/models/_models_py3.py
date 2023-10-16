@@ -1027,6 +1027,8 @@ class SendChatMessageRequest(_serialization.Model):
     :ivar type: The chat message type. Known values are: "text", "html", "topicUpdated",
      "participantAdded", and "participantRemoved".
     :vartype type: str or ~azure.communication.chat.models.ChatMessageType
+    :ivar metadata: Message metadata.
+    :vartype metadata: dict[str, str]
     """
 
     _validation = {
@@ -1037,6 +1039,7 @@ class SendChatMessageRequest(_serialization.Model):
         "content": {"key": "content", "type": "str"},
         "sender_display_name": {"key": "senderDisplayName", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "metadata": {"key": "metadata", "type": "{str}"},
     }
 
     def __init__(
@@ -1045,6 +1048,7 @@ class SendChatMessageRequest(_serialization.Model):
         content: str,
         sender_display_name: Optional[str] = None,
         type: Optional[Union[str, "_models.ChatMessageType"]] = None,
+        metadata: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1056,11 +1060,14 @@ class SendChatMessageRequest(_serialization.Model):
         :keyword type: The chat message type. Known values are: "text", "html", "topicUpdated",
          "participantAdded", and "participantRemoved".
         :paramtype type: str or ~azure.communication.chat.models.ChatMessageType
+        :keyword metadata: Message metadata.
+        :paramtype metadata: dict[str, str]
         """
         super().__init__(**kwargs)
         self.content = content
         self.sender_display_name = sender_display_name
         self.type = type
+        self.metadata = metadata
 
 
 class SendChatMessageResult(_serialization.Model):

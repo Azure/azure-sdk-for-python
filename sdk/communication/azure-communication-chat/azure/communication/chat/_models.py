@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
 
 
-class ChatParticipant(object):
+class ChatParticipant:
     """A participant of the chat thread.
 
     All required parameters must be populated in order to send to Azure.
@@ -55,7 +55,7 @@ class ChatParticipant(object):
             share_history_time=self.share_history_time
         )
 
-class ChatAttachment(object):
+class ChatAttachment:
     """An attachment in a chat message.
 
     All required parameters must be populated in order to send to Azure.
@@ -107,7 +107,7 @@ class ChatAttachment(object):
         )
 
 
-class ChatMessage(object): # pylint: disable=too-many-instance-attributes
+class ChatMessage: # pylint: disable=too-many-instance-attributes
     """Chat message.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -187,7 +187,7 @@ class ChatMessage(object): # pylint: disable=too-many-instance-attributes
         )
 
 
-class ChatMessageContent(object):
+class ChatMessageContent:
     """Content of a chat message.
 
     :ivar message: Chat message content for messages of types text or html.
@@ -201,7 +201,7 @@ class ChatMessageContent(object):
      participantRemoved.
     :type initiator: CommunicationIdentifier
     :ivar attachments: Chat message content for messages of type text or html
-    :type attachments: List[~azure.communication.chat.models.ChatAttachment]
+    :vartype attachments: List[~azure.communication.chat.models.ChatAttachment]
     """
 
     def __init__(
@@ -248,7 +248,7 @@ class ChatMessageContent(object):
         )
 
 
-class ChatThreadProperties(object):
+class ChatThreadProperties:
     """ChatThreadProperties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -290,7 +290,7 @@ class ChatThreadProperties(object):
         )
 
 
-class ChatMessageReadReceipt(object):
+class ChatMessageReadReceipt:
     """A chat message read receipt indicates the time a chat message was read by a recipient.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -325,7 +325,7 @@ class ChatMessageReadReceipt(object):
             read_on=read_receipt.read_on
         )
 
-class CreateChatThreadResult(object):
+class CreateChatThreadResult:
     """Result of the create chat thread operation.
 
     :ivar chat_thread: Chat thread.
