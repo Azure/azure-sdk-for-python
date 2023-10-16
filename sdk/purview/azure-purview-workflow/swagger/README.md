@@ -2,7 +2,7 @@
 
 ```yaml
 input-file:
- - https://github.com/Azure/azure-rest-api-specs/blob/main/specification/purview/data-plane/Azure.Analytics.Purview.Workflow/preview/2022-05-01-preview/purviewWorkflow.json
+ - https://github.com/Azure/azure-rest-api-specs/blob/main/specification/purview/data-plane/Azure.Analytics.Purview.Workflow/preview/2023-10-01-preview/purviewWorkflow.json
 output-folder: ../
 namespace: azure.purview.workflow
 package-name: azure-purview-workflow
