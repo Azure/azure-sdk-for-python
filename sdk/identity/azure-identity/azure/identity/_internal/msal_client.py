@@ -43,16 +43,16 @@ class MsalResponse:
         if ContentDecodePolicy.CONTEXT_NAME in self._response.context:
             content = self._response.context[ContentDecodePolicy.CONTEXT_NAME]
             if not content:
-                message = "Unexpected response from Azure Active Directory"
+                message = "Unexpected response from Microsoft Entra ID"
             elif "error" in content or "error_description" in content:
                 message = "Authentication failed: {}".format(content.get("error_description") or content.get("error"))
             else:
                 for secret in ("access_token", "refresh_token"):
                     if secret in content:
                         content[secret] = "***"
-                message = 'Unexpected response from Azure Active Directory: "{}"'.format(content)
+                message = 'Unexpected response from Microsoft Entra ID: "{}"'.format(content)
         else:
-            message = "Unexpected response from Azure Active Directory"
+            message = "Unexpected response from Microsoft Entra ID"
 
         raise ClientAuthenticationError(message=message, response=self._response.http_response)
 

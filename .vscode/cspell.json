@@ -208,6 +208,7 @@
     "ekus",
     "encryptor",
     "engsys",
+    "entra",
     "envname",
     "evals",
     "fileno",
@@ -835,7 +836,8 @@
     {
       "filename": "sdk/keyvault/**",
       "words": [
-        "eddsa"
+        "eddsa",
+        "Thawte"
       ]
     },
     {

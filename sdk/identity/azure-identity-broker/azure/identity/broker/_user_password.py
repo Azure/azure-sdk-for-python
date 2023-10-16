@@ -21,19 +21,19 @@ class UsernamePasswordBrokerCredential(_UsernamePasswordCredential):
     a directory admin.
 
     This credential can only authenticate work and school accounts; Microsoft accounts are not supported.
-    See `Azure Active Directory documentation
-    <https://docs.microsoft.com/azure/active-directory/fundamentals/sign-up-organization>`_ for more information about
+    See `Microsoft Entra ID documentation
+    <https://learn.microsoft.com/azure/active-directory/fundamentals/sign-up-organization>`_ for more information about
     account types.
 
     :param str client_id: The application's client ID
     :param str username: The user's username (usually an email address)
     :param str password: The user's password
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
     :keyword str tenant_id: Tenant ID or a domain associated with a tenant. If not provided, defaults to the
-        "organizations" tenant, which supports only Azure Active Directory work or school accounts.
+        "organizations" tenant, which supports only Microsoft Entra work or school accounts.
     :keyword cache_persistence_options: Configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
@@ -47,7 +47,7 @@ class UsernamePasswordBrokerCredential(_UsernamePasswordCredential):
     :keyword bool allow_broker: An authentication broker is an application that runs on a user's machine that manages
         the authentication handshakes and token maintenance for connected accounts. The Windows operating system uses
         the Web Account Manager (WAM) as its authentication broker. If this parameter is set to True, the broker will
-        be used when possible. Defaults to False.
+        be used when possible. Defaults to True.
         Check https://learn.microsoft.com/azure/active-directory/develop/scenario-desktop-acquire-token-wam for more
         information about WAM.
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
@@ -60,7 +60,7 @@ class UsernamePasswordBrokerCredential(_UsernamePasswordCredential):
         # first time it's asked for a token. However, we want to ensure this first authentication is not silent, to
         # validate the given password. This class therefore doesn't document the authentication_record argument, and we
         # discard it here.
-        self._allow_broker = kwargs.pop("allow_broker", None)
+        self._allow_broker = kwargs.pop("allow_broker", True)
         super(UsernamePasswordBrokerCredential, self).__init__(
             client_id=client_id, username=username, password=password, **kwargs
         )

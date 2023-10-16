@@ -25,7 +25,7 @@ steps:
   - task: PythonScript@0
     displayName: 'Run Pyright'
     inputs:
-      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
       arguments: >-
         "$(TargetingString)"
         --mark_arg="${{ parameters.TestMarkArgument }}"
@@ -37,7 +37,7 @@ steps:
   - task: PythonScript@0
     displayName: 'Run verifytypes'
     inputs:
-      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
       arguments: >-
         "$(TargetingString)"
         --mark_arg="${{ parameters.TestMarkArgument }}"
