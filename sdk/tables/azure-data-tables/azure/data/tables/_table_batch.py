@@ -55,6 +55,8 @@ class TableBatchOperations(object):
 
         :param config: An AzureTableConfiguration object.
         :type config: ~azure.data.tables._generated._configuration.AzureTableConfiguration
+        :param endpoint: The primary account URL.
+        :type endpoint: str
         :param table_name: The name of the Table to perform operations on.
         :type table_name: str
         :param is_cosmos_endpoint: True if the client endpoint is for Tables Cosmos. False if not. Default is False.
@@ -94,7 +96,7 @@ class TableBatchOperations(object):
         else:
             operation_type, entity, kwargs = operation[0], operation[1], {}
         try:
-            getattr(self, operation_type)(entity, **kwargs)
+            getattr(self, operation_type.lower())(entity, **kwargs)
         except AttributeError as exc:
             raise ValueError(f"Unrecognized operation: {operation_type}") from exc
 

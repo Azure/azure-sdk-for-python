@@ -1182,21 +1182,21 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
 
     @pytest.mark.asyncio
     async def test_decode_string_body(self):
-        async def patch_run(request: PipelineRequest, **kwargs) -> PipelineResponse:
+        async def patch_run(request, **kwargs) -> PipelineResponse:
             aiohttp_response = Mock()
             aiohttp_response.status = 405
             aiohttp_response.reason = "Method Not Allowed"
             aiohttp_response.headers = {"x-ms-error-code": "UnsupportedHttpVerb", "content-type": "text/html"}
             core_response = RestAioHttpTransportResponse(
-                request=request.http_request,
+                request=request,
                 internal_response=aiohttp_response,
                 decompress=False
             )
             core_response._content = b"<!DOCTYPE html><html><head><title>UnsupportedHttpVerb</title></head><body><h1>The resource doesn't support specified Http Verb.</h1><p><ul><li>HttpStatusCode: 405</li><li>ErrorCode: UnsupportedHttpVerb</li><li>RequestId : 98adf858-a01e-0071-2580-bfe811000000</li><li>TimeStamp : 2023-07-26T05:19:26.9825582Z</li></ul></p></body></html>"
             return PipelineResponse(
-                http_request=request.http_request,
+                http_request=request,
                 http_response=core_response,
-                context=request.context,
+                context={},
             )
 
         client = TableClient(
