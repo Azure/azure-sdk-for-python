@@ -305,7 +305,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         
         expected_area_codes = { "888", "877", "866", "855", "844", "800", "833", "88" }
         for area_code in area_codes:
-            assert area_code in expected_area_codes
+            assert area_code.area_code in expected_area_codes
         
         assert area_codes is not None
 
@@ -316,7 +316,7 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         
         expected_area_codes = { "888", "877", "866", "855", "844", "800", "833", "88" }
         for area_code in area_codes:
-            assert area_code in expected_area_codes
+            assert area_code.area_code in expected_area_codes
 
         assert area_codes is not None
 
