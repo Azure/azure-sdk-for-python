@@ -1,8 +1,9 @@
 # Release History
 
-## 12.8.0b1 (2023-10-16)
+## 12.8.0b1 (2023-10-17)
 
 ### Features Added
+- Added support for service version 2023-11-03.
 - Added `audience` as an optional keyword that can be specified on APIs that have a `credential` parameter. This
 keyword only has an effect when the credential provided is of type `TokenCredential`.
 
