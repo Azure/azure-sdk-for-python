@@ -525,7 +525,7 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
 
     def _validate_offline_store(self, offline_store: MaterializationStore):
         store_regex = re.compile(STORE_REGEX_PATTERN)
-        if offline_store and store_regex.match(offline_store.target) == None:
+        if offline_store and store_regex.match(offline_store.target) is None:
             raise ValidationError(f"Invalid AzureML offlinestore target ARM Id {offline_store.target}")
         if offline_store and offline_store.type != OFFLINE_MATERIALIZATION_STORE_TYPE:
             raise ValidationError("offline store type should be azure_data_lake_gen2")
