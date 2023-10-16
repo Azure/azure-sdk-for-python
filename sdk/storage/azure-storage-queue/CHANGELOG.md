@@ -1,6 +1,6 @@
 # Release History
 
-## 12.8.0b1 (Unreleased)
+## 12.8.0b1 (2023-10-16)
 
 ### Features Added
 - Added `audience` as an optional keyword that can be specified on APIs that have a `credential` parameter. This
