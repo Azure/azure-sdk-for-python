@@ -90,7 +90,7 @@ class TableBatchOperations(object):
         :return: None
         """
         if len(operation) == 3:
-            operation_type, entity, kwargs = operation
+            operation_type, entity, kwargs = operation  # type: ignore[misc]
         else:
             operation_type, entity, kwargs = operation[0], operation[1], {}
         try:
