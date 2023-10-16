@@ -89,11 +89,10 @@ class TableBatchOperations(object):
             ~azure.data.tables.TableEntity or Mapping[str, Any], and Mapping[str, Any]
         :return: None
         """
-        operation_type = operation[0].lower()
-        entity = operation[1]
-        kwargs = {}
-        if len(operation) > 2:
-            kwargs = operation[2]
+        if len(operation) == 3:
+            operation_type, entity, kwargs = operation
+        else:
+            operation_type, entity, kwargs = operation[0], operation[1], {}
         try:
             getattr(self, operation_type)(entity, **kwargs)
         except AttributeError as exc:
