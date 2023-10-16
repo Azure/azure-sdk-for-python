@@ -19,7 +19,7 @@ steps:
   - task: PythonScript@0
     displayName: 'Run Bandit'
     inputs:
-      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
       arguments: >-
         "$(TargetingString)" 
         --mark_arg="${{ parameters.TestMarkArgument }}" 

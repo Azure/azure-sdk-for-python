@@ -17,7 +17,7 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
     """Authenticates as a service principal using a certificate.
 
     The certificate must have an RSA private key, because this credential signs assertions using RS256. See
-    `Azure Active Directory documentation
+    `Microsoft Entra ID documentation
     <https://docs.microsoft.com/azure/active-directory/develop/active-directory-certificate-credentials#register-your-certificate-with-microsoft-identity-platform>`_
     for more information on configuring certificate authentication.
 
@@ -26,7 +26,7 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
     :param str certificate_path: Path to a PEM-encoded certificate file including the private key. If not provided,
           `certificate_data` is required.
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example 'login.microsoftonline.com',
           the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
           defines authorities for other clouds.
     :keyword bytes certificate_data: The bytes of a certificate in PEM format, including the private key

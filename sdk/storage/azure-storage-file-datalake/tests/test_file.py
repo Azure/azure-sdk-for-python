@@ -1579,6 +1579,59 @@ class TestFile(StorageRecordedTestCase):
         assert file_properties['group'] is not None
         assert file_properties['permissions'] is not None
 
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_storage_account_audience_file_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        file_client = self._create_file_and_return_client()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        fc = DataLakeFileClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            file_client.file_system_name + '/',
+            '/' + file_client.path_name,
+            credential=token_credential,
+            audience=f'https://{datalake_storage_account_name}.blob.core.windows.net/'
+        )
+
+        # Assert
+        data = b'Hello world'
+        response1 = fc.get_file_properties()
+        response2 = fc.upload_data(data, overwrite=True)
+        assert response1 is not None
+        assert response2 is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_bad_audience_file_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        file_client = self._create_file_and_return_client()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        fc = DataLakeFileClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            file_client.file_system_name + '/',
+            '/' + file_client.path_name,
+            credential=token_credential,
+            audience=f'https://badaudience.blob.core.windows.net/'
+        )
+
+        # Assert
+        data = b'Hello world'
+        with pytest.raises(ClientAuthenticationError):
+            fc.get_file_properties()
+            fc.upload_data(data, overwrite=True)
+
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

@@ -38,6 +38,7 @@ from .documents import IndexingMode
 
 __all__ = ("DatabaseProxy",)
 
+
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
@@ -115,7 +116,9 @@ class DatabaseProxy(object):
         return self._properties
 
     @distributed_trace
-    def read(self, populate_query_metrics=None, **kwargs):
+    def read(self,
+             populate_query_metrics=None,  # pylint:disable=docstring-missing-param
+             **kwargs):
         # type: (Optional[bool], Any) -> Dict[str, Any]
         """Read the database properties.
 
@@ -151,10 +154,10 @@ class DatabaseProxy(object):
     def create_container(
         self,
         id,  # type: str  # pylint: disable=redefined-builtin
-        partition_key,  # type: Any
+        partition_key,  # type: ~azure.cosmos.PartitionKey
         indexing_policy=None,  # type: Optional[Dict[str, Any]]
         default_ttl=None,  # type: Optional[int]
-        populate_query_metrics=None,  # type: Optional[bool]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         offer_throughput=None,  # type: Optional[Union[int, ThroughputProperties]]
         unique_key_policy=None,  # type: Optional[Dict[str, Any]]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
@@ -165,16 +168,16 @@ class DatabaseProxy(object):
 
         If a container with the given ID already exists, a CosmosResourceExistsError is raised.
 
-        :param id: ID (name) of container to create.
-        :param partition_key: The partition key to use for the container.
-        :param indexing_policy: The indexing policy to apply to the container.
-        :param default_ttl: Default time to live (TTL) for items in the container. If unspecified, items do not expire.
+        :param str id: ID (name) of container to create.
+        :param ~azure.cosmos.PartitionKey partition_key: The partition key to use for the container.
+        :param Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
+        :param int default_ttl: Default time to live (TTL) for items in the container. If unused, items do not expire.
         :param offer_throughput: The provisioned throughput for this offer.
-        :type offer_throughput: int or ~azure.cosmos.ThroughputProperties.
-        :param unique_key_policy: The unique key policy to apply to the container.
-        :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :type offer_throughput: Union[int, ~azure.cosmos.ThroughputProperties]
+        :param Dict[str, Any] unique_key_policy: The unique key policy to apply to the container.
+        :param Dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
@@ -185,9 +188,7 @@ class DatabaseProxy(object):
         :returns: A `ContainerProxy` instance representing the new container.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
-
         .. admonition:: Example:
-
             .. literalinclude:: ../samples/examples.py
                 :start-after: [START create_container]
                 :end-before: [END create_container]
@@ -195,7 +196,6 @@ class DatabaseProxy(object):
                 :dedent: 0
                 :caption: Create a container with default settings:
                 :name: create_container
-
             .. literalinclude:: ../samples/examples.py
                 :start-after: [START create_container_with_settings]
                 :end-before: [END create_container_with_settings]
@@ -220,7 +220,6 @@ class DatabaseProxy(object):
             definition["uniqueKeyPolicy"] = unique_key_policy
         if conflict_resolution_policy is not None:
             definition["conflictResolutionPolicy"] = conflict_resolution_policy
-
         analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         if analytical_storage_ttl is not None:
             definition["analyticalStorageTtl"] = analytical_storage_ttl
@@ -250,7 +249,7 @@ class DatabaseProxy(object):
         partition_key,  # type: Any
         indexing_policy=None,  # type: Optional[Dict[str, Any]]
         default_ttl=None,  # type: Optional[int]
-        populate_query_metrics=None,  # type: Optional[bool]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         offer_throughput=None,  # type: Optional[Union[int, ThroughputProperties]]
         unique_key_policy=None,  # type: Optional[Dict[str, Any]]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
@@ -267,13 +266,12 @@ class DatabaseProxy(object):
         :param partition_key: The partition key to use for the container.
         :param indexing_policy: The indexing policy to apply to the container.
         :param default_ttl: Default time to live (TTL) for items in the container. If unspecified, items do not expire.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
         :param offer_throughput: The provisioned throughput for this offer.
         :paramtype offer_throughput: int or ~azure.cosmos.ThroughputProperties.
         :param unique_key_policy: The unique key policy to apply to the container.
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
@@ -285,7 +283,6 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
         """
-
         analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
         try:
             container_proxy = self.get_container_client(id)
@@ -311,7 +308,7 @@ class DatabaseProxy(object):
     def delete_container(
         self,
         container,  # type: Union[str, ContainerProxy, Dict[str, Any]]
-        populate_query_metrics=None,  # type: Optional[bool]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -320,8 +317,9 @@ class DatabaseProxy(object):
         :param container: The ID (name) of the container to delete. You can either
             pass in the ID of the container to delete, a :class:`ContainerProxy` instance or
             a dict representing the properties of the container.
+        :type container: Union[str, ContainerProxy, Dict[str, Any]]
         :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
@@ -349,6 +347,7 @@ class DatabaseProxy(object):
 
         :param container: The ID (name) of the container, a :class:`ContainerProxy` instance,
             or a dict representing the properties of the container to be retrieved.
+        :type container: Union[str, ContainerProxy, Dict[str, Any]]
         :returns: A `ContainerProxy` instance representing the retrieved database.
         :rtype: ~azure.cosmos.ContainerProxy
 
@@ -373,16 +372,19 @@ class DatabaseProxy(object):
         return ContainerProxy(self.client_connection, self.database_link, id_value)
 
     @distributed_trace
-    def list_containers(self, max_item_count=None, populate_query_metrics=None, **kwargs):
+    def list_containers(self,
+                        max_item_count=None,
+                        populate_query_metrics=None, # pylint:disable=docstring-missing-param
+                        **kwargs):
         # type: (Optional[int], Optional[bool], Any) -> Iterable[Dict[str, Any]]
         """List the containers in the database.
 
-        :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of container properties (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :rtype: Iterable[Dict[str, Any]]
 
         .. admonition:: Example:
 
@@ -416,22 +418,23 @@ class DatabaseProxy(object):
     def query_containers(
         self,
         query=None,  # type: Optional[str]
-        parameters=None,  # type: Optional[List[str]]
+        parameters=None,  # type: Optional[List[Dict[str, Any]]]
         max_item_count=None,  # type: Optional[int]
-        populate_query_metrics=None,  # type: Optional[bool]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
         """List the properties for containers in the current database.
 
-        :param query: The Azure Cosmos DB SQL query to execute.
+        :param str query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :type parameters: List[Dict[str, Any]]
+        :param int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword str session_token: Token for use with Session consistency.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of container properties (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :rtype: Iterable[Dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -462,7 +465,7 @@ class DatabaseProxy(object):
         indexing_policy=None,  # type: Optional[Dict[str, Any]]
         default_ttl=None,  # type: Optional[int]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
-        populate_query_metrics=None,  # type: Optional[bool]
+        populate_query_metrics=None,  # type: Optional[bool] # pylint:disable=docstring-missing-param
         **kwargs  # type: Any
     ):
         # type: (...) -> ContainerProxy
@@ -473,17 +476,18 @@ class DatabaseProxy(object):
 
         :param container: The ID (name), dict representing the properties or
             :class:`ContainerProxy` instance of the container to be replaced.
-        :param partition_key: The partition key to use for the container.
-        :param indexing_policy: The indexing policy to apply to the container.
-        :param default_ttl: Default time to live (TTL) for items in the container.
+        :type container: Union[str, ContainerProxy, Dict[str, Any]]
+        :param ~azure.cosmos.PartitionKey partition_key: The partition key to use for the container.
+        :param Dict[str, Any] indexing_policy: The indexing policy to apply to the container.
+        :param int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
-        :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :param Dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :keyword str session_token: Token for use with Session consistency.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
-        :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
+        :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Raised if the container couldn't be replaced.
             This includes if the container with given id does not exist.
@@ -492,9 +496,7 @@ class DatabaseProxy(object):
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
         :returns: A `ContainerProxy` instance representing the container after replace completed.
         :rtype: ~azure.cosmos.ContainerProxy
-
         .. admonition:: Example:
-
             .. literalinclude:: ../samples/examples.py
                 :start-after: [START reset_container_properties]
                 :end-before: [END reset_container_properties]
@@ -544,10 +546,10 @@ class DatabaseProxy(object):
         # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
         """List all the users in the container.
 
-        :param max_item_count: Max number of users to be returned in the enumeration operation.
+        :param int max_item_count: Max number of users to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of user properties (dicts).
-        :rtype: Iterable[dict[str, Any]]
+        :rtype: Iterable[Dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -566,12 +568,13 @@ class DatabaseProxy(object):
         # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
         """Return all users matching the given `query`.
 
-        :param query: The Azure Cosmos DB SQL query to execute.
+        :param str query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :param max_item_count: Max number of users to be returned in the enumeration operation.
+        :type parameters: Dict[str, Any]
+        :param int max_item_count: Max number of users to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: An Iterable of user properties (dicts).
-        :rtype: Iterable[str, Any]
+        :rtype: Iterable[Dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -594,6 +597,7 @@ class DatabaseProxy(object):
 
         :param user: The ID (name), dict representing the properties or :class:`UserProxy`
             instance of the user to be retrieved.
+        :type user: Union[str, UserProxy, Dict[str, Any]]
         :returns: A `UserProxy` instance representing the retrieved user.
         :rtype: ~azure.cosmos.UserProxy
         """
@@ -615,7 +619,7 @@ class DatabaseProxy(object):
         To update or replace an existing user, use the
         :func:`ContainerProxy.upsert_user` method.
 
-        :param body: A dict-like object with an `id` key and value representing the user to be created.
+        :param Dict[str, Any] body: A dict-like object with an `id` key and value representing the user to be created.
             The user ID must be unique within the database, and consist of no more than 255 characters.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A `UserProxy` instance representing the new user.
@@ -653,7 +657,7 @@ class DatabaseProxy(object):
         If the user already exists in the container, it is replaced. If the user
         does not already exist, it is inserted.
 
-        :param body: A dict-like object representing the user to update or insert.
+        :param Dict[str, Any] body: A dict-like object representing the user to update or insert.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A `UserProxy` instance representing the upserted user.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user could not be upserted.
@@ -675,21 +679,22 @@ class DatabaseProxy(object):
 
     @distributed_trace
     def replace_user(
-        self,
-        user,  # type: Union[str, UserProxy, Dict[str, Any]]
-        body,  # type: Dict[str, Any]
-        **kwargs  # type: Any
+            self,
+            user,  # type: Union[str, UserProxy, Dict[str, Any]]
+            body,  # type: Dict[str, Any]
+            **kwargs  # type: Any
     ):
         # type: (...) -> UserProxy
         """Replaces the specified user if it exists in the container.
 
         :param user: The ID (name), dict representing the properties or :class:`UserProxy`
             instance of the user to be replaced.
-        :param body: A dict-like object representing the user to replace.
+        :type user: Union[str, UserProxy, Dict[str, Any]]
+        :param Dict[str, Any] body: A dict-like object representing the user to replace.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A `UserProxy` instance representing the user after replace went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
-            If the replace failed or the user with given ID does not exist.
+            If the replace operation failed or the user with given ID does not exist.
         :rtype: ~azure.cosmos.UserProxy
         """
         request_options = build_options(kwargs)
@@ -716,6 +721,7 @@ class DatabaseProxy(object):
 
         :param user: The ID (name), dict representing the properties or :class:`UserProxy`
             instance of the user to be deleted.
+        :type user: Union[str, UserProxy, Dict[str, Any]]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The user wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The user does not exist in the container.
@@ -734,7 +740,9 @@ class DatabaseProxy(object):
     def read_offer(self, **kwargs):
         # type: (Any) -> ThroughputProperties
         """Get the ThroughputProperties object for this database.
+
         If no ThroughputProperties already exist for the database, an exception is raised.
+
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: ThroughputProperties for the database.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
@@ -751,7 +759,9 @@ class DatabaseProxy(object):
     def get_throughput(self, **kwargs):
         # type: (Any) -> ThroughputProperties
         """Get the ThroughputProperties object for this database.
+
         If no ThroughputProperties already exist for the database, an exception is raised.
+
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: ThroughputProperties for the database.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: No throughput properties exists for the container or
@@ -782,6 +792,7 @@ class DatabaseProxy(object):
         """Replace the database-level throughput.
 
         :param throughput: The throughput to be set (an integer).
+        :type throughput: Union[int, ThroughputProperties]
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: ThroughputProperties for the database, updated with new throughput.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
