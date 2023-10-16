@@ -15,10 +15,8 @@ from azure.core.utils import case_insensitive_dict
 from ...models._patch import ReceiveResult, ReceiveDetails
 from ..._operations._patch import _cloud_event_to_generated, _to_http_request
 from ._operations import EventGridClientOperationsMixin as OperationsMixin
-from .. import models as _models
-from .._model_base import AzureJSONEncoder, _deserialize
-from .._serialization import Serializer
-from .._vendor import EventGridClientMixinABC
+from ... import models as _models
+from ..._model_base import _deserialize
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
