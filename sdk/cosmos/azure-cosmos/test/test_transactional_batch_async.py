@@ -209,20 +209,17 @@ class TestTransactionalBatchAsync:
         assert operation_results[0].operation_response.get("statusCode") == StatusCodes.NOT_FOUND
 
         # Replace with wrong etag
-        await container.read()
-        etag = container.client_connection.last_response_headers.get('etag')
-
         item_id = str(uuid.uuid4())
         batch = [{"operationType": "Create",
                   "resourceBody": {"id": item_id, "company": "Microsoft"}},
                  {"operationType": "Replace",
                   "id": item_id,
                   "resourceBody": {"id": item_id, "company": "Microsoft", "message": "item was replaced"},
-                  "ifMatch": etag},
+                  "ifMatch": "some-tag"},
                  {"operationType": "Replace",
                   "id": item_id,
                   "resourceBody": {"id": item_id, "company": "Microsoft", "message": "item was replaced"},
-                  "ifNoneMatch": etag}]
+                  "ifNoneMatch": "some-tag"}]
 
         batch_response = await container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert batch_response.get("is_error")
