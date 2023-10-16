@@ -5,14 +5,27 @@
 """Customize generated code here.
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, overload, Union, Any, Optional
+from typing import List, overload, Union, Any, Optional, Callable, Dict, TypeVar
 from azure.core.messaging import CloudEvent
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, ResourceNotModifiedError, map_error
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.pipeline import PipelineResponse
+from azure.core.rest import HttpRequest, AsyncHttpResponse
+from azure.core.utils import case_insensitive_dict
 from ...models._patch import ReceiveResult, ReceiveDetails
-from ..._operations._patch import _cloud_event_to_generated, EventGridClient
+from ..._operations._patch import _cloud_event_to_generated, _to_http_request
 from ._operations import EventGridClientOperationsMixin as OperationsMixin
-
+from .. import models as _models
+from .._model_base import AzureJSONEncoder, _deserialize
+from .._serialization import Serializer
+from .._vendor import EventGridClientMixinABC
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
+T = TypeVar('T')
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 class EventGridClientOperationsMixin(OperationsMixin):
     @overload
@@ -99,7 +112,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         if isinstance(body, CloudEvent):
             kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
             if self._binary_mode:
-                EventGridClient._publish_binary_mode(topic_name, body, self._config.api_version, **kwargs)
+                self._publish_binary_mode(topic_name, body, self._config.api_version, **kwargs)
             internal_body = _cloud_event_to_generated(body)
             await self._publish_cloud_event(topic_name, internal_body, **kwargs)
         else:
@@ -162,6 +175,68 @@ class EventGridClientOperationsMixin(OperationsMixin):
             )
         receive_result_deserialized = ReceiveResult(value=detail_items)
         return receive_result_deserialized
+
+    def _publish_binary_mode(self, topic_name: str, event: Any, api_version, **kwargs: Any) -> None:
+
+        error_map = {
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
+        }
+        error_map.update(kwargs.pop('error_map', {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.PublishResult] = kwargs.pop(  # pylint: disable=protected-access
+            'cls', None
+        )
+
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/cloudevents+json; charset=utf-8"))
+
+        # Given that we know the cloud event is binary mode, we can convert it to a HTTP request
+        http_request = _to_http_request(            
+            topic_name=topic_name,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+            content_type=content_type,
+            event=event,
+            **kwargs
+        )
+
+        _stream = kwargs.pop("stream", False)
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+        }
+        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+
+        # pipeline_response: PipelineResponse = self.send_request(http_request, **kwargs)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(   # pylint: disable=protected-access
+            http_request,
+            stream=_stream,
+            **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                    response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.PublishResult,  # pylint: disable=protected-access
+                response.json()
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, {}) # type: ignore
+
+        return deserialized # type: ignore
 
 
 __all__: List[str] = [
