@@ -9,12 +9,12 @@ from pathlib import Path
 from typing import IO, AnyStr, Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import PackageRequest as DataPlanePackageRequest
-from azure.ai.ml._restclient.v2023_02_01_preview.models import CodeConfiguration
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ModelPackageInput as RestModelPackageInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import PackageInputPathId as RestPackageInputPathId
-from azure.ai.ml._restclient.v2023_02_01_preview.models import PackageInputPathUrl as RestPackageInputPathUrl
-from azure.ai.ml._restclient.v2023_02_01_preview.models import PackageInputPathVersion as RestPackageInputPathVersion
-from azure.ai.ml._restclient.v2023_02_01_preview.models import PackageRequest, PackageResponse
+from azure.ai.ml._restclient.v2023_08_01_preview.models import CodeConfiguration
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ModelPackageInput as RestModelPackageInput
+from azure.ai.ml._restclient.v2023_08_01_preview.models import PackageInputPathId as RestPackageInputPathId
+from azure.ai.ml._restclient.v2023_08_01_preview.models import PackageInputPathUrl as RestPackageInputPathUrl
+from azure.ai.ml._restclient.v2023_08_01_preview.models import PackageInputPathVersion as RestPackageInputPathVersion
+from azure.ai.ml._restclient.v2023_08_01_preview.models import PackageRequest, PackageResponse
 from azure.ai.ml._schema.assets.package.model_package import ModelPackageSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import dump_yaml_to_file, snake_to_pascal
@@ -237,6 +237,7 @@ class ModelPackage(Resource, PackageRequest):
             name=target_environment_name,
             target_environment_name=target_environment_name,
             target_environment_version=target_environment_version,
+            target_environment_id=target_environment_id,
             base_environment_source=base_environment_source,
             inferencing_server=inferencing_server,
             model_configuration=model_configuration,
@@ -244,7 +245,6 @@ class ModelPackage(Resource, PackageRequest):
             tags=tags,
             environment_variables=environment_variables,
         )
-        self.target_environment_id = target_environment_id
 
     @classmethod
     def _load(
