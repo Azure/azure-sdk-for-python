@@ -42,7 +42,7 @@ class EventGridClient(InternalEventGridClient):
         **kwargs: Any
     ) -> None:
         
-        self._binary_mode = kwargs.pop("binary_mode", False)
+        self._binary_mode = kwargs.get("binary_mode", False)
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
 
