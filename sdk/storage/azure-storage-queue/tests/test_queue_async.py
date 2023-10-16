@@ -1428,7 +1428,8 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        queue = QueueClient(self.account_url(storage_account_name, "queue"), 'testqueue1', storage_account_key)
+        queue_name = self.get_resource_name(TEST_QUEUE_PREFIX)
+        queue = QueueClient(self.account_url(storage_account_name, "queue"), queue_name, storage_account_key)
         await queue.create_queue()
 
         # Act
@@ -1449,7 +1450,8 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        queue = QueueClient(self.account_url(storage_account_name, "queue"), 'testqueue2', storage_account_key)
+        queue_name = self.get_resource_name(TEST_QUEUE_PREFIX)
+        queue = QueueClient(self.account_url(storage_account_name, "queue"), queue_name, storage_account_key)
         await queue.create_queue()
 
         # Act
