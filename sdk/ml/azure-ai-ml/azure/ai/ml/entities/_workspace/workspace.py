@@ -8,9 +8,9 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.v2023_06_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
+from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
+from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
 )
