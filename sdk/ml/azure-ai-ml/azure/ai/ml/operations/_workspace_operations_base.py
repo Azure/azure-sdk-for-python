@@ -6,7 +6,7 @@
 
 import time
 from abc import ABC
-from typing import Any, Callable, Dict, MutableMapping, Optional, Protocol, Tuple
+from typing import Any, Callable, Dict, MutableMapping, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
@@ -44,13 +44,6 @@ from azure.core.polling import LROPoller, PollingMethod
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
-
-JSON = MutableMapping[str, Any]
-
-
-class Serializable(Protocol):
-    def serialize(self) -> JSON:
-        ...
 
 
 class WorkspaceOperationsBase(ABC):
@@ -809,19 +802,19 @@ def _set_val(dict: dict, val: str) -> None:
     dict["value"] = val
 
 
-def _set_obj_val(dict: dict, val: Serializable) -> None:
+def _set_obj_val(dict: dict, val: Any) -> None:
     """Serializes a JSON string into the parameters dict.
 
     :param dict: Parameters dict.
     :type dict: dict
     :param val: The obj to serialize.
-    :type val: Serializable
+    :type val: Any type. Must have `.serialize() -> MutableMapping[str, Any]` method.
     :return: No Return.
     :rtype: None
     """
     from copy import deepcopy
 
-    json = val.serialize()
+    json: MutableMapping[str, Any] = val.serialize()
     dict["value"] = deepcopy(json)
 
 
