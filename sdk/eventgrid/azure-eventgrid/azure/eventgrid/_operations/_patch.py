@@ -283,7 +283,7 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     event = kwargs.pop("event")
-    binary_mode = kwargs.pop("binary_mode")
+    binary_mode = kwargs.pop("binary_mode", True)
 
     # Content of the request is the data
     _content = json.dumps(base64.b64encode(event.data), cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
