@@ -666,7 +666,7 @@ class DataOperations(_ScopeDependentOperations):
         if persistent and ci_name is not None:
             raise NotImplementedError("TODO")
         else:
-            rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess(uri, mount_point, read_only, debug)
+            rslex_fuse_subprocess_wrapper.start_fuse_mount_subprocess(uri, mount_point, read_only, debug, credential=self._operation._config.credential)
 
     @contextmanager
     def _set_registry_client(self, registry_name: str) -> None:
