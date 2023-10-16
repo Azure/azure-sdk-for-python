@@ -327,7 +327,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
                 "US", PhoneNumberType.TOLL_FREE, assignment_type=PhoneNumberAssignmentType.APPLICATION)
             items = []
             async for item in area_codes:
-                items.append(item)
+                items.append(item.area_code)
         
         expected_area_codes = { "888", "877", "866", "855", "844", "800", "833", "88" }
         for area_code in items:
@@ -342,7 +342,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
                 "US", PhoneNumberType.TOLL_FREE, assignment_type=PhoneNumberAssignmentType.APPLICATION)
             items = []
             async for item in area_codes:
-                items.append(item)
+                items.append(item.area_code)
         
         expected_area_codes = { "888", "877", "866", "855", "844", "800", "833", "88" }
         for area_code in items:
