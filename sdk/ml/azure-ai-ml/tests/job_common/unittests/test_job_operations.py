@@ -6,9 +6,6 @@ from unittest.mock import Mock, patch
 import jwt
 import pytest
 import yaml
-from azure.core.credentials import AccessToken
-from azure.core.exceptions import HttpResponseError
-from azure.identity import DefaultAzureCredential
 from msrest import Deserializer
 from pytest_mock import MockFixture
 
@@ -28,6 +25,9 @@ from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._job_ops_helper import get_git_properties
 from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
 from azure.ai.ml.operations._run_operations import RunOperations
+from azure.core.credentials import AccessToken
+from azure.core.exceptions import HttpResponseError
+from azure.identity import DefaultAzureCredential
 
 from .test_vcr_utils import before_record_cb, vcr_header_filters
 
@@ -120,7 +120,7 @@ def mock_job_operation(
     yield JobOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client_02_2023_preview=mock_aml_services_2023_02_01_preview,
+        service_client=mock_aml_services_2023_02_01_preview,
         service_client_run_history=mock_aml_services_run_history,
         all_operations=mock_machinelearning_client._operation_container,
         credential=Mock(spec_set=DefaultAzureCredential),

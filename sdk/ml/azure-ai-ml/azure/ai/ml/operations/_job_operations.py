@@ -27,7 +27,7 @@ from azure.ai.ml._restclient.dataset_dataplane import AzureMachineLearningWorksp
 from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataplane
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningWorkspaces as ServiceClient022023Preview
+from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningWorkspaces as ServiceClient102023
 from azure.ai.ml._restclient.v2023_10_01.models import JobBase
 from azure.ai.ml._restclient.v2023_10_01.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2023_10_01.models import ListViewType, UserIdentity
@@ -139,9 +139,9 @@ class JobOperations(_ScopeDependentOperations):
     :type operation_scope: ~azure.ai.ml._scope_dependent_operations.OperationScope
     :param operation_config: Common configuration for operations classes of an MLClient object.
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
-    :param service_client_02_2023_preview: Service client to allow end users to operate on Azure Machine Learning
+    :param service_client: Service client to allow end users to operate on Azure Machine Learning
         Workspace resources.
-    :type service_client_02_2023_preview: ~azure.ai.ml._restclient.v2023_02_01_preview.AzureMachineLearningWorkspaces
+    :type service_client: ~azure.ai.ml._restclient.v2023_10_01.AzureMachineLearningWorkspaces
     :param all_operations: All operations classes of an MLClient object.
     :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
     :param credential: Credential to use for authentication.
@@ -152,15 +152,15 @@ class JobOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client_02_2023_preview: ServiceClient022023Preview,
+        service_client: ServiceClient102023,
         all_operations: OperationsContainer,
         credential: TokenCredential,
         **kwargs: Any,
     ) -> None:
         super(JobOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
-        self._operation_2023_02_preview = service_client_02_2023_preview.jobs
-        self._service_client = service_client_02_2023_preview
+        self._operation_2023_02_preview = service_client.jobs
+        self._service_client = service_client
         self._all_operations = all_operations
         self._stream_logs_until_completion = stream_logs_until_completion
         # Dataplane service clients are lazily created as they are needed
