@@ -17,3 +17,7 @@ class TestDeprecations:
     def test_deprecated_bot_properties(self):
         with pytest.deprecated_call():
             props = models.MicrosoftBotProperties()
+    
+    def test_deprecated_bot_kind(self):
+        with pytest.deprecated_call():
+            props = models.CommunicationIdentifierKind.MICROSOFT_BOT

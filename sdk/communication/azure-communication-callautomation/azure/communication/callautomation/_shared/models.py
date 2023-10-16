@@ -2,13 +2,20 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from enum import Enum
+from enum import Enum, EnumMeta
 from typing import Mapping, Optional, Union, Any
-from warnings import warn
+import warnings
 from typing_extensions import TypedDict, Protocol
 from azure.core import CaseInsensitiveEnumMeta
 
-class CommunicationIdentifierKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class DeprecatedEnumMeta(CaseInsensitiveEnumMeta):
+
+    def __getattribute__(cls, item):
+        if item == "MICROSOFT_BOT":
+            warnings.warn("MICROSOFT_BOT is deprecated and should not be used.", DeprecationWarning)
+        return EnumMeta.__getattribute__(cls, item)
+
+class CommunicationIdentifierKind(str, Enum, metaclass=DeprecatedEnumMeta):
     """Communication Identifier Kind.
 
     For checking yet unknown identifiers it is better to rely on the presence of the `raw_id` property,

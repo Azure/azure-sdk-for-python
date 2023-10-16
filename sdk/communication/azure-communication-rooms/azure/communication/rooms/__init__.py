@@ -48,10 +48,8 @@ def __getattr__(name):
         warnings.warn(f"{name} is deprecated and should not be used.", DeprecationWarning)
         from ._shared.models  import _MicrosoftBotProperties
         return _MicrosoftBotProperties
-    
     if name == 'MicrosoftBotIdentifier':
         warnings.warn(f"{name} is deprecated and should not be used.", DeprecationWarning)
         from ._shared.models  import _MicrosoftBotIdentifier
         return _MicrosoftBotIdentifier
-    
     raise AttributeError(f"module 'azure.communication.rooms' has no attribute {name}")
