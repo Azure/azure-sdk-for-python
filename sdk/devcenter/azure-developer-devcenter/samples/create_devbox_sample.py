@@ -31,9 +31,11 @@ from azure.developer.devcenter import DevCenterClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
+
 def get_project_name(LOG, client):
     projects = list(client.projects.list_by_dev_center(top=1))
     return projects[0].name
+
 
 def main():
     logging.basicConfig(level=logging.DEBUG)
@@ -52,13 +54,15 @@ def main():
 
     # Fetch control plane resource dependencies
     projects = list(client.dev_center.list_projects(top=1))
-    target_project_name = projects[0]['name']
+    target_project_name = projects[0]["name"]
 
     pools = list(client.dev_boxes.list_pools(target_project_name, top=1))
-    target_pool_name = pools[0]['name']
+    target_pool_name = pools[0]["name"]
 
     # Stand up a new dev box
-    create_response = client.dev_boxes.begin_create_dev_box(target_project_name, "Test_DevBox", {"poolName": target_pool_name})
+    create_response = client.dev_boxes.begin_create_dev_box(
+        target_project_name, "Test_DevBox", {"poolName": target_pool_name}
+    )
     devbox_result = create_response.result()
 
     LOG.info(f"Provisioned dev box with status {devbox_result['provisioningState']}.")
