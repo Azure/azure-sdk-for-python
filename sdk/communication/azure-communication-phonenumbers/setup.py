@@ -68,9 +68,6 @@ setup(
         "msrest>=0.7.1",
         'azure-core<2.0.0,>=1.24.0',
     ],
-    extras_require={
-        ":python_version<'3.10'": ["typing-extensions"]
-    },
     project_urls={
         'Bug Reports': 'https://github.com/Azure/azure-sdk-for-python/issues',
         'Source': 'https://github.com/Azure/azure-sdk-for-python',
