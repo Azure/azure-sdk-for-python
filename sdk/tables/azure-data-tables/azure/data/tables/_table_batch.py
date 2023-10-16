@@ -46,6 +46,7 @@ class TableBatchOperations(object):
     def __init__(
         self,
         config: Union["AzureTableConfiguration", "AsyncAzureTableConfiguration"],
+        endpoint: str,
         table_name: str,
         is_cosmos_endpoint: bool = False,
         **kwargs,
@@ -60,7 +61,7 @@ class TableBatchOperations(object):
         :type is_cosmos_endpoint: bool
         """
         self._config: Union["AzureTableConfiguration", "AsyncAzureTableConfiguration"] = config
-        self._base_url: str = self._config.url.rstrip("/")
+        self._base_url: str = endpoint
         self._is_cosmos_endpoint: bool = is_cosmos_endpoint
         self.table_name: str = table_name
 

@@ -16,7 +16,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core import MatchConditions
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
-from azure.core.pipeline.transport._requests_asyncio import AsyncioRequestsTransportResponse
+from azure.core.rest._aiohttp import RestAioHttpTransportResponse
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError, HttpResponseError
 from azure.data.tables.aio import TableServiceClient, TableClient
@@ -1190,10 +1190,7 @@ class TestBatchUnitTestsAsync(AsyncTableTestCase):
             response.headers = {"x-ms-error-code": "UnsupportedHttpVerb", "content-type": "text/html"}
             return PipelineResponse(
                 http_request=None,
-                http_response=AsyncioRequestsTransportResponse(
-                    requests_response=response,
-                    request=None,
-                ),
+                http_response=RestAioHttpTransportResponse(internal_response=response),
                 context=None,
             )
 
