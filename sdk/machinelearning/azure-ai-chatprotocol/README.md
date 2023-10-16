@@ -1,5 +1,5 @@
 
-# Azure Ai Chat client library for Python
+# Azure Ai Chatprotocol client library for Python
 <!-- write necessary description of service -->
 
 ## Getting started
@@ -7,14 +7,14 @@
 ### Installating the package
 
 ```bash
-python -m pip install azure-ai-chat
+python -m pip install azure-ai-chatprotocol
 ```
 
 #### Prequisites
 
 - Python 3.7 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
-- An existing Azure Ai Chat instance.
+- An existing Azure Ai Chatprotocol instance.
 
 ## Contributing
 

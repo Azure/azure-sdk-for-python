@@ -12,8 +12,8 @@ import re
 from setuptools import setup, find_packages
 
 
-PACKAGE_NAME = "azure-ai-chat"
-PACKAGE_PPRINT_NAME = "Azure Ai Chat"
+PACKAGE_NAME = "azure-ai-chatprotocol"
+PACKAGE_PPRINT_NAME = "Azure Ai Chatprotocol"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")

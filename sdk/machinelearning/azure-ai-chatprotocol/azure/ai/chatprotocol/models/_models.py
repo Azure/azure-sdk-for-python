@@ -24,34 +24,36 @@ if TYPE_CHECKING:
 
 
 class ChatChoice(_model_base.Model):
-    """placeholder.
+    """The representation of a single generated completion.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar index: placeholder. Required.
+    :ivar index: The index of the of the chat choice, relative to the other choices in the same
+     completion. Required.
     :vartype index: int
-    :ivar message: placeholder. Required.
-    :vartype message: ~azure.ai.chat.models.ChatMessage
-    :ivar extra_arguments: placeholder. Required.
-    :vartype extra_arguments: dict[str, any]
-    :ivar session_state: placeholder. Required.
+    :ivar message: The chat message for a given chat completion. Required.
+    :vartype message: ~azure.ai.chatprotocol.models.ChatMessage
+    :ivar session_state: Backend-specific information for the tracking of a session.
     :vartype session_state: any
-    :ivar finish_reason: placeholder. Required. Known values are: "stop", "length",
-     "content_filter", and "function_call".
-    :vartype finish_reason: str or ~azure.ai.chat.models.FinishReason
+    :ivar context: Backend-specific context or arguments.
+    :vartype context: dict[str, any]
+    :ivar finish_reason: The reason this chat completion completed its generation. Required. Known
+     values are: "stop" and "length".
+    :vartype finish_reason: str or ~azure.ai.chatprotocol.models.FinishReason
     """
 
     index: int = rest_field()
-    """placeholder. Required."""
+    """The index of the of the chat choice, relative to the other choices in the same completion.
+     Required."""
     message: "_models.ChatMessage" = rest_field()
-    """placeholder. Required."""
-    extra_arguments: Dict[str, Any] = rest_field(name="extra_args")
-    """placeholder. Required."""
-    session_state: Any = rest_field()
-    """placeholder. Required."""
-    finish_reason: Union[str, "_models.FinishReason"] = rest_field(name="finishReason")
-    """placeholder. Required. Known values are: \"stop\", \"length\", \"content_filter\", and
-     \"function_call\"."""
+    """The chat message for a given chat completion. Required."""
+    session_state: Optional[Any] = rest_field()
+    """Backend-specific information for the tracking of a session."""
+    context: Optional[Dict[str, Any]] = rest_field()
+    """Backend-specific context or arguments."""
+    finish_reason: Union[str, "_models.FinishReason"] = rest_field()
+    """The reason this chat completion completed its generation. Required. Known values are: \"stop\"
+     and \"length\"."""
 
     @overload
     def __init__(
@@ -59,9 +61,9 @@ class ChatChoice(_model_base.Model):
         *,
         index: int,
         message: "_models.ChatMessage",
-        extra_arguments: Dict[str, Any],
-        session_state: Any,
         finish_reason: Union[str, "_models.FinishReason"],
+        session_state: Optional[Any] = None,
+        context: Optional[Dict[str, Any]] = None,
     ):
         ...
 
@@ -77,16 +79,16 @@ class ChatChoice(_model_base.Model):
 
 
 class ChatCompletion(_model_base.Model):
-    """placeholder.
+    """Representation of the response to a chat completion request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar choices: placeholder. Required.
-    :vartype choices: list[~azure.ai.chat.models.ChatChoice]
+    :ivar choices: The collection of generated completions. Required.
+    :vartype choices: list[~azure.ai.chatprotocol.models.ChatChoice]
     """
 
     choices: List["_models.ChatChoice"] = rest_field()
-    """placeholder. Required."""
+    """The collection of generated completions. Required."""
 
     @overload
     def __init__(
@@ -108,16 +110,16 @@ class ChatCompletion(_model_base.Model):
 
 
 class ChatCompletionChunk(_model_base.Model):
-    """placeholder.
+    """A single response to a streaming completion request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar choices: placeholder. Required.
-    :vartype choices: list[~azure.ai.chat.models.ChoiceDelta]
+    :ivar choices: The collection of choice deltas received in this chunk. Required.
+    :vartype choices: list[~azure.ai.chatprotocol.models.ChoiceDelta]
     """
 
     choices: List["_models.ChoiceDelta"] = rest_field()
-    """placeholder. Required."""
+    """The collection of choice deltas received in this chunk. Required."""
 
     @overload
     def __init__(
@@ -139,38 +141,41 @@ class ChatCompletionChunk(_model_base.Model):
 
 
 class ChatCompletionOptions(_model_base.Model):
-    """ChatCompletionOptions.
+    """The configuration for a chat completion request.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar messages: Required.
-    :vartype messages: list[~azure.ai.chat.models.ChatMessage]
-    :ivar stream: Required. Default value is True.
+    :ivar messages: The collection of context messages associated with this completion request.
+     Required.
+    :vartype messages: list[~azure.ai.chatprotocol.models.ChatMessage]
+    :ivar stream: Indicates whether the completion is a streaming or non-streaming completion.
+     Required. Default value is False.
     :vartype stream: bool
-    :ivar session_state: Required.
+    :ivar session_state: Backend-specific information for the tracking of a session.
     :vartype session_state: any
-    :ivar extra_arguments: Required.
-    :vartype extra_arguments: dict[str, any]
+    :ivar context: Backend-specific context or arguments.
+    :vartype context: dict[str, any]
     """
 
     messages: List["_models.ChatMessage"] = rest_field()
-    """Required."""
-    stream: Literal[True] = rest_field()
-    """Required. Default value is True."""
-    session_state: Any = rest_field()
-    """Required."""
-    extra_arguments: Dict[str, Any] = rest_field(name="extra_args")
-    """Required."""
+    """The collection of context messages associated with this completion request. Required."""
+    stream: Literal[False] = rest_field()
+    """Indicates whether the completion is a streaming or non-streaming completion. Required. Default
+     value is False."""
+    session_state: Optional[Any] = rest_field()
+    """Backend-specific information for the tracking of a session."""
+    context: Optional[Dict[str, Any]] = rest_field()
+    """Backend-specific context or arguments."""
 
     @overload
     def __init__(
         self,
         *,
         messages: List["_models.ChatMessage"],
-        session_state: Any,
-        extra_arguments: Dict[str, Any],
+        session_state: Optional[Any] = None,
+        context: Optional[Dict[str, Any]] = None,
     ):
         ...
 
@@ -183,28 +188,30 @@ class ChatCompletionOptions(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.stream: Literal[True] = True
+        self.stream: Literal[False] = False
 
 
 class ChatMessage(_model_base.Model):
-    """placeholder.
+    """A single, role-attributed message within a chat completion interaction.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar content: placeholder. Required.
+    :ivar content: The text associated with the message. Required.
     :vartype content: str
-    :ivar role: placeholder. Required. Known values are: "user", "system", and "assistant".
-    :vartype role: str or ~azure.ai.chat.models.ChatRole
-    :ivar session_state: placeholder. Required.
+    :ivar role: The role associated with the message. Required. Known values are: "user", "system",
+     and "assistant".
+    :vartype role: str or ~azure.ai.chatprotocol.models.ChatRole
+    :ivar session_state: Backend-specific information for the tracking of a session.
     :vartype session_state: any
     """
 
     content: str = rest_field()
-    """placeholder. Required."""
+    """The text associated with the message. Required."""
     role: Union[str, "_models.ChatRole"] = rest_field()
-    """placeholder. Required. Known values are: \"user\", \"system\", and \"assistant\"."""
-    session_state: Any = rest_field()
-    """placeholder. Required."""
+    """The role associated with the message. Required. Known values are: \"user\", \"system\", and
+     \"assistant\"."""
+    session_state: Optional[Any] = rest_field()
+    """Backend-specific information for the tracking of a session."""
 
     @overload
     def __init__(
@@ -212,7 +219,7 @@ class ChatMessage(_model_base.Model):
         *,
         content: str,
         role: Union[str, "_models.ChatRole"],
-        session_state: Any,
+        session_state: Optional[Any] = None,
     ):
         ...
 
@@ -228,22 +235,24 @@ class ChatMessage(_model_base.Model):
 
 
 class ChatMessageDelta(_model_base.Model):
-    """placeholder.
+    """The representation of a delta message received in a streaming completion.
 
-    :ivar content: placeholder.
+    :ivar content: An incremental part of the text associated with the message.
     :vartype content: str
-    :ivar role: placeholder. Known values are: "user", "system", and "assistant".
-    :vartype role: str or ~azure.ai.chat.models.ChatRole
-    :ivar session_state: placeholder.
+    :ivar role: The role associated with the message. Known values are: "user", "system", and
+     "assistant".
+    :vartype role: str or ~azure.ai.chatprotocol.models.ChatRole
+    :ivar session_state: Backend-specific information for the tracking of a session.
     :vartype session_state: any
     """
 
     content: Optional[str] = rest_field()
-    """placeholder."""
+    """An incremental part of the text associated with the message."""
     role: Optional[Union[str, "_models.ChatRole"]] = rest_field()
-    """placeholder. Known values are: \"user\", \"system\", and \"assistant\"."""
+    """The role associated with the message. Known values are: \"user\", \"system\", and
+     \"assistant\"."""
     session_state: Optional[Any] = rest_field()
-    """placeholder."""
+    """Backend-specific information for the tracking of a session."""
 
     @overload
     def __init__(
@@ -267,33 +276,36 @@ class ChatMessageDelta(_model_base.Model):
 
 
 class ChoiceDelta(_model_base.Model):
-    """placeholder.
+    """The representation of an incremental choice received in a streaming completion.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar index: placeholder. Required.
+    :ivar index: The index of the of the chat choice, relative to the other choices in the same
+     completion. Required.
     :vartype index: int
-    :ivar delta: placeholder. Required.
-    :vartype delta: ~azure.ai.chat.models.ChatMessageDelta
-    :ivar extra_arguments: placeholder.
-    :vartype extra_arguments: dict[str, any]
-    :ivar session_state: placeholder.
+    :ivar delta: The partial message received for this choice. Required.
+    :vartype delta: ~azure.ai.chatprotocol.models.ChatMessageDelta
+    :ivar session_state: Backend-specific information for the tracking of a session.
     :vartype session_state: any
-    :ivar finish_reason: placeholder. Known values are: "stop", "length", "content_filter", and
-     "function_call".
-    :vartype finish_reason: str or ~azure.ai.chat.models.FinishReason
+    :ivar context: Backend-specific context or arguments.
+    :vartype context: dict[str, any]
+    :ivar finish_reason: The reason this chat completion completed its generation. Known values
+     are: "stop" and "length".
+    :vartype finish_reason: str or ~azure.ai.chatprotocol.models.FinishReason
     """
 
     index: int = rest_field()
-    """placeholder. Required."""
+    """The index of the of the chat choice, relative to the other choices in the same completion.
+     Required."""
     delta: "_models.ChatMessageDelta" = rest_field()
-    """placeholder. Required."""
-    extra_arguments: Optional[Dict[str, Any]] = rest_field(name="extra_args")
-    """placeholder."""
+    """The partial message received for this choice. Required."""
     session_state: Optional[Any] = rest_field()
-    """placeholder."""
-    finish_reason: Optional[Union[str, "_models.FinishReason"]] = rest_field(name="finishReason")
-    """placeholder. Known values are: \"stop\", \"length\", \"content_filter\", and \"function_call\"."""
+    """Backend-specific information for the tracking of a session."""
+    context: Optional[Dict[str, Any]] = rest_field()
+    """Backend-specific context or arguments."""
+    finish_reason: Optional[Union[str, "_models.FinishReason"]] = rest_field()
+    """The reason this chat completion completed its generation. Known values are: \"stop\" and
+     \"length\"."""
 
     @overload
     def __init__(
@@ -301,8 +313,8 @@ class ChoiceDelta(_model_base.Model):
         *,
         index: int,
         delta: "_models.ChatMessageDelta",
-        extra_arguments: Optional[Dict[str, Any]] = None,
         session_state: Optional[Any] = None,
+        context: Optional[Dict[str, Any]] = None,
         finish_reason: Optional[Union[str, "_models.FinishReason"]] = None,
     ):
         ...
@@ -319,38 +331,41 @@ class ChoiceDelta(_model_base.Model):
 
 
 class StreamingChatCompletionOptions(_model_base.Model):
-    """placeholder.
+    """The configuration for a streaming chat completion request.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar messages: placeholder. Required.
-    :vartype messages: list[~azure.ai.chat.models.ChatMessage]
-    :ivar stream: placeholder. Required. Default value is False.
+    :ivar messages: The collection of context messages associated with this completion request.
+     Required.
+    :vartype messages: list[~azure.ai.chatprotocol.models.ChatMessage]
+    :ivar stream: Indicates whether the completion is a streaming or non-streaming completion.
+     Required. Default value is True.
     :vartype stream: bool
-    :ivar session_state: placeholder. Required.
+    :ivar session_state: Backend-specific information for the tracking of a session.
     :vartype session_state: any
-    :ivar extra_arguments: placeholder. Required.
-    :vartype extra_arguments: dict[str, any]
+    :ivar context: Backend-specific context or arguments.
+    :vartype context: dict[str, any]
     """
 
     messages: List["_models.ChatMessage"] = rest_field()
-    """placeholder. Required."""
-    stream: Literal[False] = rest_field()
-    """placeholder. Required. Default value is False."""
-    session_state: Any = rest_field()
-    """placeholder. Required."""
-    extra_arguments: Dict[str, Any] = rest_field(name="extra_args")
-    """placeholder. Required."""
+    """The collection of context messages associated with this completion request. Required."""
+    stream: Literal[True] = rest_field()
+    """Indicates whether the completion is a streaming or non-streaming completion. Required. Default
+     value is True."""
+    session_state: Optional[Any] = rest_field()
+    """Backend-specific information for the tracking of a session."""
+    context: Optional[Dict[str, Any]] = rest_field()
+    """Backend-specific context or arguments."""
 
     @overload
     def __init__(
         self,
         *,
         messages: List["_models.ChatMessage"],
-        session_state: Any,
-        extra_arguments: Dict[str, Any],
+        session_state: Optional[Any] = None,
+        context: Optional[Dict[str, Any]] = None,
     ):
         ...
 
@@ -363,4 +378,4 @@ class StreamingChatCompletionOptions(_model_base.Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.stream: Literal[False] = False
+        self.stream: Literal[True] = True

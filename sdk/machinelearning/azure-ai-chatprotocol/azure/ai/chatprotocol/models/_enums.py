@@ -11,24 +11,20 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ChatRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """placeholder."""
+    """A representation of the intended purpose of a message."""
 
     USER = "user"
-    """placeholder"""
+    """The role that provides input to the completion."""
     SYSTEM = "system"
-    """placeholder"""
+    """The role that instructs or configures the behavior of the assistant."""
     ASSISTANT = "assistant"
-    """placeholder"""
+    """The role that provides responses to the system-instructed, user-prompted input."""
 
 
 class FinishReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """placeholder."""
+    """Representation of the reason why a chat session has finished processing."""
 
     STOPPED = "stop"
-    """placeholder"""
+    """Completion ended normally."""
     TOKEN_LIMIT_REACHED = "length"
-    """placeholder"""
-    CONTENT_FILTERED = "content_filter"
-    """placeholder"""
-    FUNCTION_CALL = "function_call"
-    """placeholder"""
+    """The completion exhausted available tokens before generation could complete."""

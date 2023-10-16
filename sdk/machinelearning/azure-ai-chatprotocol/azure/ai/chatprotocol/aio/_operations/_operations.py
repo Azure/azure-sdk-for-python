@@ -26,8 +26,8 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._model_base import AzureJSONEncoder, _deserialize
-from ..._operations._operations import build_chat_create_request, build_chat_create_streaming_request
-from .._vendor import ChatClientMixinABC
+from ..._operations._operations import build_chat_protocol_create_request, build_chat_protocol_create_streaming_request
+from .._vendor import ChatProtocolClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -38,22 +38,22 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class ChatClientOperationsMixin(ChatClientMixinABC):
+class ChatProtocolClientOperationsMixin(ChatProtocolClientMixinABC):
     @overload
     async def create(
         self, body: _models.ChatCompletionOptions, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ChatCompletion:
-        """placeholder.
+        """Creates a new chat completion.
 
         :param body: Required.
-        :type body: ~azure.ai.chat.models.ChatCompletionOptions
+        :type body: ~azure.ai.chatprotocol.models.ChatCompletionOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ChatCompletion. The ChatCompletion is compatible with MutableMapping
-        :rtype: ~azure.ai.chat.models.ChatCompletion
+        :rtype: ~azure.ai.chatprotocol.models.ChatCompletion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -61,7 +61,7 @@ class ChatClientOperationsMixin(ChatClientMixinABC):
     async def create(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ChatCompletion:
-        """placeholder.
+        """Creates a new chat completion.
 
         :param body: Required.
         :type body: JSON
@@ -71,7 +71,7 @@ class ChatClientOperationsMixin(ChatClientMixinABC):
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ChatCompletion. The ChatCompletion is compatible with MutableMapping
-        :rtype: ~azure.ai.chat.models.ChatCompletion
+        :rtype: ~azure.ai.chatprotocol.models.ChatCompletion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -79,7 +79,7 @@ class ChatClientOperationsMixin(ChatClientMixinABC):
     async def create(
         self, body: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ChatCompletion:
-        """placeholder.
+        """Creates a new chat completion.
 
         :param body: Required.
         :type body: IO
@@ -89,7 +89,7 @@ class ChatClientOperationsMixin(ChatClientMixinABC):
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ChatCompletion. The ChatCompletion is compatible with MutableMapping
-        :rtype: ~azure.ai.chat.models.ChatCompletion
+        :rtype: ~azure.ai.chatprotocol.models.ChatCompletion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -97,17 +97,17 @@ class ChatClientOperationsMixin(ChatClientMixinABC):
     async def create(
         self, body: Union[_models.ChatCompletionOptions, JSON, IO], **kwargs: Any
     ) -> _models.ChatCompletion:
-        """placeholder.
+        """Creates a new chat completion.
 
         :param body: Is one of the following types: ChatCompletionOptions, JSON, IO Required.
-        :type body: ~azure.ai.chat.models.ChatCompletionOptions or JSON or IO
+        :type body: ~azure.ai.chatprotocol.models.ChatCompletionOptions or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ChatCompletion. The ChatCompletion is compatible with MutableMapping
-        :rtype: ~azure.ai.chat.models.ChatCompletion
+        :rtype: ~azure.ai.chatprotocol.models.ChatCompletion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -131,8 +131,9 @@ class ChatClientOperationsMixin(ChatClientMixinABC):
         else:
             _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_chat_create_request(
+        request = build_chat_protocol_create_request(
             content_type=content_type,
+            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -169,17 +170,17 @@ class ChatClientOperationsMixin(ChatClientMixinABC):
     async def create_streaming(
         self, body: _models.StreamingChatCompletionOptions, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ChatCompletionChunk:
-        """placeholder.
+        """Creates a new streaming chat completion.
 
         :param body: Required.
-        :type body: ~azure.ai.chat.models.StreamingChatCompletionOptions
+        :type body: ~azure.ai.chatprotocol.models.StreamingChatCompletionOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ChatCompletionChunk. The ChatCompletionChunk is compatible with MutableMapping
-        :rtype: ~azure.ai.chat.models.ChatCompletionChunk
+        :rtype: ~azure.ai.chatprotocol.models.ChatCompletionChunk
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -187,7 +188,7 @@ class ChatClientOperationsMixin(ChatClientMixinABC):
     async def create_streaming(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ChatCompletionChunk:
-        """placeholder.
+        """Creates a new streaming chat completion.
 
         :param body: Required.
         :type body: JSON
@@ -197,7 +198,7 @@ class ChatClientOperationsMixin(ChatClientMixinABC):
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ChatCompletionChunk. The ChatCompletionChunk is compatible with MutableMapping
-        :rtype: ~azure.ai.chat.models.ChatCompletionChunk
+        :rtype: ~azure.ai.chatprotocol.models.ChatCompletionChunk
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -205,7 +206,7 @@ class ChatClientOperationsMixin(ChatClientMixinABC):
     async def create_streaming(
         self, body: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ChatCompletionChunk:
-        """placeholder.
+        """Creates a new streaming chat completion.
 
         :param body: Required.
         :type body: IO
@@ -215,7 +216,7 @@ class ChatClientOperationsMixin(ChatClientMixinABC):
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ChatCompletionChunk. The ChatCompletionChunk is compatible with MutableMapping
-        :rtype: ~azure.ai.chat.models.ChatCompletionChunk
+        :rtype: ~azure.ai.chatprotocol.models.ChatCompletionChunk
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -223,17 +224,17 @@ class ChatClientOperationsMixin(ChatClientMixinABC):
     async def create_streaming(
         self, body: Union[_models.StreamingChatCompletionOptions, JSON, IO], **kwargs: Any
     ) -> _models.ChatCompletionChunk:
-        """placeholder.
+        """Creates a new streaming chat completion.
 
         :param body: Is one of the following types: StreamingChatCompletionOptions, JSON, IO Required.
-        :type body: ~azure.ai.chat.models.StreamingChatCompletionOptions or JSON or IO
+        :type body: ~azure.ai.chatprotocol.models.StreamingChatCompletionOptions or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
         :return: ChatCompletionChunk. The ChatCompletionChunk is compatible with MutableMapping
-        :rtype: ~azure.ai.chat.models.ChatCompletionChunk
+        :rtype: ~azure.ai.chatprotocol.models.ChatCompletionChunk
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -257,8 +258,9 @@ class ChatClientOperationsMixin(ChatClientMixinABC):
         else:
             _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_chat_create_streaming_request(
+        request = build_chat_protocol_create_streaming_request(
             content_type=content_type,
+            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
