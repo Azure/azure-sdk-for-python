@@ -1,8 +1,17 @@
 {
   "main": "dist/src/index.js",
   "dependencies": {
-    "@azure-tools/typespec-python": "0.13.5",
-    "@azure-tools/typespec-autorest": "0.34.0",
-    "@azure-tools/typespec-azure-resource-manager": "0.34.0"
+    "@azure-tools/typespec-python": "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-js-test-autorest@local/npm/registry/@azure-tools/typespec-python/-/typespec-python-0.15.3-alpha.20231016.3.tgz"
+  },
+  "devDependencies": {
+    "@typespec/compiler": "~0.49.0",
+    "@azure-tools/typespec-azure-core": "~0.35.0",
+    "@typespec/http": "~0.49.0",
+    "@typespec/versioning": "~0.49.0",
+    "@typespec/rest": "~0.49.0",
+    "@azure-tools/typespec-client-generator-core": "~0.35.0"
+  },
+  "overrides": {
+    "@autorest/python": "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-js-test-autorest@local/npm/registry/@autorest/python/-/python-6.9.2-alpha.20231016.3.tgz"
   }
 }
