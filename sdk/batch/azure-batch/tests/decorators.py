@@ -141,8 +141,8 @@ def recorded_by_proxy_async(test_func):
     return record_wrap
 
 
-def client_setup(BatchClient):
-    """Decorator that sets up a shared key client for a test method."""
+
+def client_setup(test_func):
 
     def _batch_url(batch):
         if batch.account_endpoint.startswith("https://"):
@@ -150,20 +150,17 @@ def client_setup(BatchClient):
         else:
             return "https://" + batch.account_endpoint
 
-    def create_sharedkey_client(batch_account, credential, **kwargs):
+    def create_sharedkey_client(BatchClient, batch_account, credential, **kwargs):
         client = BatchClient(credential=credential, endpoint=_batch_url(batch_account))
         return client
 
-    def decorator(test_func):
-        async def wrapper(self, **kwargs):
-            client = create_sharedkey_client(**kwargs)
-            try:
-                await test_func(self, client, **kwargs)
-            except Exception as err:
-                raise err
-            finally:
-                await async_wrapper(client.close())
+    async def wrapper(self, BatchClient, **kwargs):
+        client = create_sharedkey_client(BatchClient, **kwargs)
+        try:
+            await test_func(self, client, **kwargs)
+        except Exception as err:
+            raise err
+        finally:
+            await async_wrapper(client.close())
 
-        return wrapper
-
-    return decorator
+    return wrapper

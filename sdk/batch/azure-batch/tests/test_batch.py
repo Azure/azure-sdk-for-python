@@ -33,7 +33,6 @@ from decorators import recorded_by_proxy_async, client_setup
 
 from devtools_testutils import (
     AzureMgmtRecordedTestCase,
-    ResourceGroupPreparer,
     StorageAccountPreparer,
     CachedResourceGroupPreparer,
     set_custom_default_matcher,
@@ -120,11 +119,14 @@ class TestBatch(AzureMgmtRecordedTestCase):
         except Exception as err:
             self.fail("Expected CreateTasksError, instead got: {!r}".format(err))
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @StorageAccountPreparer(name_prefix="batch1", location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     @JobPreparer()
-    @client_setup(BatchClient)
+    @pytest.mark.parametrize(
+        "BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"]
+    )
+    @client_setup
     @recorded_by_proxy_async
     async def test_batch_applications(self, client: BatchClient, **kwargs):
         batch_job = kwargs.pop("batch_job")
@@ -157,9 +159,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert isinstance(task, models.BatchTask)
         assert task.application_package_references[0].application_id == "application_id"
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
-    @client_setup(BatchClient)
+    @pytest.mark.parametrize(
+        "BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"]
+    )
+    @client_setup
     @recorded_by_proxy_async
     async def test_batch_certificates(self, client: BatchClient, **kwargs):
         # Test Add Certificate
@@ -208,9 +213,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
         )
         assert response is None
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
-    @client_setup(BatchClient)
+    @pytest.mark.parametrize(
+        "BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"]
+    )
+    @client_setup
     @recorded_by_proxy_async
     async def test_batch_create_pools(self, client: BatchClient, **kwargs):
         # Test List Node Agent SKUs
@@ -396,9 +404,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
         )
         assert len(pools) == 1
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
-    @client_setup(BatchClient)
+    @pytest.mark.parametrize(
+        "BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"]
+    )
+    @client_setup
     @recorded_by_proxy_async
     async def test_batch_create_pool_with_blobfuse_mount(
         self, client: BatchClient, **kwargs
@@ -444,9 +455,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
         )
         assert mount_pool.mount_configuration[0].nfs_mount_configuration is None
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
-    @client_setup(BatchClient)
+    @pytest.mark.parametrize(
+        "BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"]
+    )
+    @client_setup
     @recorded_by_proxy_async
     async def test_batch_update_pools(self, client: BatchClient, **kwargs):
         # Test Create Paas Pool
@@ -528,10 +542,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await async_wrapper(client.delete_pool(test_paas_pool.id))
         assert response is None
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     @PoolPreparer(location=AZURE_LOCATION)
-    @client_setup(BatchClient)
+    @pytest.mark.parametrize(
+        "BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"]
+    )
+    @client_setup
     @recorded_by_proxy_async
     async def test_batch_scale_pools(self, client: BatchClient, **kwargs):
         batch_pool = kwargs.pop("batch_pool")
@@ -595,9 +612,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
         info = list(await async_wrapper(client.list_pool_usage_metrics()))
         assert info == []
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
-    @client_setup(BatchClient)
+    @pytest.mark.parametrize(
+        "BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"]
+    )
+    @client_setup
     @recorded_by_proxy_async
     async def test_batch_job_schedules(self, client: BatchClient, **kwargs):
         # Test Create Job Schedule
@@ -666,9 +686,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await async_wrapper(client.delete_job_schedule(schedule_id))
         assert response is None
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
-    @client_setup(BatchClient)
+    @pytest.mark.parametrize(
+        "BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"]
+    )
+    @client_setup
     @recorded_by_proxy_async
     async def test_batch_network_configuration(self, client: BatchClient, **kwargs):
         # Test Create Pool with Network Config
@@ -726,10 +749,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
         )
         assert nodes[0].endpoint_configuration.inbound_endpoints[0].protocol == "udp"
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     @PoolPreparer(location=AZURE_LOCATION, size=2, config="iaas")
-    @client_setup(BatchClient)
+    @pytest.mark.parametrize(
+        "BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"]
+    )
+    @client_setup
     @recorded_by_proxy_async
     async def test_batch_compute_nodes(self, client: BatchClient, **kwargs):
         batch_pool = kwargs.pop("batch_pool")
@@ -808,9 +834,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
         response = await async_wrapper(client.remove_nodes(batch_pool.name, options))
         assert response is None
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
-    @client_setup(BatchClient)
+    @pytest.mark.parametrize(
+        "BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"]
+    )
+    @client_setup
     @recorded_by_proxy_async
     async def test_batch_compute_node_extensions(self, client: BatchClient, **kwargs):
         # Test Create Iaas Pool
@@ -887,7 +916,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     @PoolPreparer(location=AZURE_LOCATION, size=1)
-    @client_setup(BatchClient)
+    @pytest.mark.parametrize(
+        "BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"]
+    )
+    @client_setup
     @recorded_by_proxy_async
     async def test_batch_compute_node_user(self, client: BatchClient, **kwargs):
         batch_pool = kwargs.pop("batch_pool")
@@ -936,7 +968,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     @PoolPreparer(location=AZURE_LOCATION, size=1, config="paas")
-    @client_setup(BatchClient)
+    @pytest.mark.parametrize(
+        "BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"]
+    )
+    @client_setup
     @recorded_by_proxy_async
     async def test_batch_compute_node_remote_desktop(
         self, client: BatchClient, **kwargs
@@ -961,7 +996,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 file_length += len(data)
         assert "full address" in str(data)
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @StorageAccountPreparer(name_prefix="batch4", location=AZURE_LOCATION)
     @AccountPreparer(
         location=AZURE_LOCATION,
@@ -970,7 +1005,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
     )
     @PoolPreparer(os="Windows", size=1)
     @JobPreparer()
-    @client_setup(BatchClient)
+    @pytest.mark.parametrize(
+        "BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"]
+    )
+    @client_setup
     @recorded_by_proxy_async
     async def test_batch_files(self, client: BatchClient, **kwargs):
         batch_pool = kwargs.pop("batch_pool")
@@ -1056,10 +1094,13 @@ class TestBatch(AzureMgmtRecordedTestCase):
         )
         assert response is None
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
     @JobPreparer(on_task_failure=models.OnTaskFailure.perform_exit_options_job_action)
-    @client_setup(BatchClient)
+    @pytest.mark.parametrize(
+        "BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"]
+    )
+    @client_setup
     @recorded_by_proxy_async
     async def test_batch_tasks(self, client: BatchClient, **kwargs):
         batch_job = kwargs.pop("batch_job")
@@ -1321,9 +1362,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert result.value[0].status == models.TaskAddStatus.success
         assert all(t.status == models.TaskAddStatus.success for t in result.value)
 
-    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
-    @client_setup(BatchClient)
+    @pytest.mark.parametrize(
+        "BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"]
+    )
+    @client_setup
     @recorded_by_proxy_async
     async def test_batch_jobs(self, client: BatchClient, **kwargs):
         # Test Create Job
