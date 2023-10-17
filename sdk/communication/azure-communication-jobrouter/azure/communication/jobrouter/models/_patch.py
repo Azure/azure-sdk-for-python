@@ -101,7 +101,7 @@ class RouterJob(RouterJobGenerated):
             requested_worker_selectors: Optional[List[RouterWorkerSelector]] = None,
             labels: Optional[Dict[str, Union[int, float, str, bool, None]]] = None,
             tags: Optional[Dict[str, Union[int, float, str, bool, None]]] = None,
-            notes: Dict[Union[str, datetime], str] = None,
+            notes: Dict[Union[str, datetime.datetime], str] = None,
             matching_mode: Optional[JobMatchingMode] = None,
             **kwargs):
         """
