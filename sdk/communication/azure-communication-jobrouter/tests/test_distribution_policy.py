@@ -14,9 +14,10 @@ from _decorators import RouterPreparers
 from _validators import DistributionPolicyValidator
 from azure.communication.jobrouter._shared.utils import parse_connection_str  # pylint:disable=protected-access
 from azure.core.exceptions import ResourceNotFoundError
-
 from azure.communication.jobrouter import (
     JobRouterAdministrationClient,
+)
+from azure.communication.jobrouter.models import (
     BestWorkerMode,
     LongestIdleMode,
     RoundRobinMode,

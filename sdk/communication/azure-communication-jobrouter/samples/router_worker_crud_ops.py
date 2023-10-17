@@ -31,11 +31,12 @@ class RouterWorkerSamples(object):
         connection_string = self.endpoint
         distribution_policy_id = self._distribution_policy_id
 
-        from azure.communication.jobrouter import JobRouterAdministrationClient, LongestIdleMode, DistributionPolicy
+        from azure.communication.jobrouter import JobRouterAdministrationClient
+        from azure.communication.jobrouter.models import LongestIdleMode, DistributionPolicy
 
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
         distribution_policy = router_admin_client.create_distribution_policy(
-            distribution_policy_id=distribution_policy_id,
+            id=distribution_policy_id,
             distribution_policy=DistributionPolicy(
                 offer_expires_after_seconds=10 * 60,
                 mode=LongestIdleMode(min_concurrent_offers=1, max_concurrent_offers=1),
@@ -47,25 +48,26 @@ class RouterWorkerSamples(object):
         connection_string = self.endpoint
         distribution_policy_id = self._distribution_policy_id
 
-        from azure.communication.jobrouter import JobRouterAdministrationClient, RouterQueue
+        from azure.communication.jobrouter import JobRouterAdministrationClient
+        from azure.communication.jobrouter.models import RouterQueue
 
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
         job_queue1: RouterQueue = router_admin_client.create_queue(
-            queue_id="worker-q-1",
+            id="worker-q-1",
             queue=RouterQueue(
                 distribution_policy_id=distribution_policy_id,
             ),
         )
 
         job_queue2: RouterQueue = router_admin_client.create_queue(
-            queue_id="worker-q-2",
+            id="worker-q-2",
             queue=RouterQueue(
                 distribution_policy_id=distribution_policy_id,
             ),
         )
 
         job_queue3: RouterQueue = router_admin_client.create_queue(
-            queue_id="worker-q-3",
+            id="worker-q-3",
             queue=RouterQueue(
                 distribution_policy_id=distribution_policy_id,
             ),
@@ -79,6 +81,8 @@ class RouterWorkerSamples(object):
         # [START create_worker]
         from azure.communication.jobrouter import (
             JobRouterClient,
+        )
+        from azure.communication.jobrouter.models import (
             RouterWorker,
             ChannelConfiguration,
         )
@@ -112,6 +116,8 @@ class RouterWorkerSamples(object):
         # [START update_worker]
         from azure.communication.jobrouter import (
             JobRouterClient,
+        )
+        from azure.communication.jobrouter.models import (
             RouterWorker,
             ChannelConfiguration,
         )

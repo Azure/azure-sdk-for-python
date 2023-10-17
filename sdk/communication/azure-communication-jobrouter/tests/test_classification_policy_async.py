@@ -15,7 +15,7 @@ from _decorators_async import RouterPreparersAsync
 from _validators import ClassificationPolicyValidator
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.communication.jobrouter.aio import JobRouterAdministrationClient
-from azure.communication.jobrouter import (
+from azure.communication.jobrouter.models import (
     RoundRobinMode,
     ClassificationPolicy,
     LabelOperator,

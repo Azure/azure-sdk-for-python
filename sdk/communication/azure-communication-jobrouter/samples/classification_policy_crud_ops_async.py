@@ -32,7 +32,7 @@ class ClassificationPolicySamplesAsync(object):
         policy_id = self._cp_policy_id
         # [START create_classification_policy_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
-        from azure.communication.jobrouter import (
+        from azure.communication.jobrouter.models import (
             ClassificationPolicy,
             StaticRouterRule,
             ExpressionRouterRule,
@@ -50,7 +50,7 @@ class ClassificationPolicySamplesAsync(object):
 
         async with router_admin_client:
             classification_policy: ClassificationPolicy = await router_admin_client.create_classification_policy(
-                classification_policy_id=policy_id,
+                id=policy_id,
                 classification_policy=ClassificationPolicy(
                     prioritization_rule=StaticRouterRule(value=10),
                     queue_selectors=[
@@ -98,7 +98,7 @@ class ClassificationPolicySamplesAsync(object):
         policy_id = self._cp_policy_id
         # [START update_classification_policy_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
-        from azure.communication.jobrouter import (
+        from azure.communication.jobrouter.models import (
             ClassificationPolicy,
             ExpressionRouterRule,
         )
@@ -110,7 +110,7 @@ class ClassificationPolicySamplesAsync(object):
         async with router_admin_client:
             updated_classification_policy: ClassificationPolicy = (
                 await router_admin_client.update_classification_policy(
-                    classification_policy_id=policy_id,
+                    id=policy_id,
                     prioritization_rule=ExpressionRouterRule(expression='If(job.HighPriority = "true", 50, 10)'),
                 )
             )
@@ -128,7 +128,7 @@ class ClassificationPolicySamplesAsync(object):
 
         async with router_admin_client:
             classification_policy = await router_admin_client.get_classification_policy(
-                classification_policy_id=policy_id
+                id=policy_id
             )
 
             print(f"Successfully fetched classification policy with id: {classification_policy.id}")
@@ -180,7 +180,7 @@ class ClassificationPolicySamplesAsync(object):
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
         async with router_admin_client:
-            await router_admin_client.delete_classification_policy(classification_policy_id=policy_id)
+            await router_admin_client.delete_classification_policy(id=policy_id)
 
         # [END delete_classification_policy_async]
 

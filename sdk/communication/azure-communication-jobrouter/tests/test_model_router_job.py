@@ -7,7 +7,7 @@
 import unittest
 from datetime import datetime
 from azure.core.serialization import _datetime_as_isostr  # pylint:disable=protected-access
-from azure.communication.jobrouter import RouterJob
+from azure.communication.jobrouter.models import RouterJob
 
 
 class TestRouterJob(object):

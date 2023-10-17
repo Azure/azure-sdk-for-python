@@ -19,6 +19,8 @@ from _decorators import RouterPreparers
 from azure.communication.jobrouter import (
     JobRouterClient,
     JobRouterAdministrationClient,
+)
+from azure.communication.jobrouter.models import (
     LongestIdleMode,
     ChannelConfiguration,
     RouterJobStatus,

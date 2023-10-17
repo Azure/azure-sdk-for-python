@@ -17,7 +17,12 @@ from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.communication.jobrouter.aio import JobRouterAdministrationClient
-from azure.communication.jobrouter import BestWorkerMode, LongestIdleMode, RoundRobinMode, DistributionPolicy
+from azure.communication.jobrouter.models import (
+    BestWorkerMode,
+    LongestIdleMode,
+    RoundRobinMode,
+    DistributionPolicy
+)
 
 min_concurrent_offer_count = 1
 max_concurrent_offer_count = 1
