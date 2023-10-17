@@ -307,29 +307,16 @@ class ModelPackage(Resource, PackageRequest):
             )
             self.inferencing_server.code_configuration = code
 
-        if self.target_environment_id:
-            package_request = DataPlanePackageRequest(
-                target_environment_id=self.target_environment_id,
-                base_environment_source=self.base_environment_source._to_rest_object()
-                if self.base_environment_source
-                else None,
-                inferencing_server=self.inferencing_server._to_rest_object() if self.inferencing_server else None,
-                model_configuration=self.model_configuration._to_rest_object() if self.model_configuration else None,
-                inputs=[input._to_rest_object() for input in self.inputs] if self.inputs else None,
-                tags=self.tags,
-                environment_variables=self.environment_variables,
-            )
-        else:
-            package_request = PackageRequest(
-                target_environment_name=self.name,
-                base_environment_source=self.base_environment_source._to_rest_object()
-                if self.base_environment_source
-                else None,
-                inferencing_server=self.inferencing_server._to_rest_object() if self.inferencing_server else None,
-                model_configuration=self.model_configuration._to_rest_object() if self.model_configuration else None,
-                inputs=[input._to_rest_object() for input in self.inputs] if self.inputs else None,
-                tags=self.tags,
-                environment_variables=self.environment_variables,
-            )
+        package_request = PackageRequest(
+            target_environment_id=self.target_environment_id,
+            base_environment_source=self.base_environment_source._to_rest_object()
+            if self.base_environment_source
+            else None,
+            inferencing_server=self.inferencing_server._to_rest_object() if self.inferencing_server else None,
+            model_configuration=self.model_configuration._to_rest_object() if self.model_configuration else None,
+            inputs=[input._to_rest_object() for input in self.inputs] if self.inputs else None,
+            tags=self.tags,
+            environment_variables=self.environment_variables,
+        )
 
         return package_request
