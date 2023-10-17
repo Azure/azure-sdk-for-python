@@ -27,38 +27,24 @@
 # pylint: skip-file
 # pyright: reportUnnecessaryTypeIgnoreComment=false
 
-from base64 import b64decode, b64encode
 import calendar
+import codecs
 import datetime
 import decimal
 import email
-from enum import Enum
 import json
 import logging
 import re
 import sys
-import codecs
-from typing import (
-    Dict,
-    Any,
-    cast,
-    Optional,
-    Union,
-    AnyStr,
-    IO,
-    Mapping,
-    Callable,
-    TypeVar,
-    MutableMapping,
-    Type,
-    List,
-    Mapping,
-)
+from base64 import b64decode, b64encode
+from enum import Enum
+from typing import IO, Any, AnyStr, Callable, Dict, List, Mapping, MutableMapping, Optional, Type, TypeVar, Union, cast
 
 try:
     from urllib import quote  # type: ignore
 except ImportError:
     from urllib.parse import quote
+
 import xml.etree.ElementTree as ET
 
 import isodate  # type: ignore
@@ -742,6 +728,8 @@ class Serializer(object):
 
         :param data: The data to be serialized.
         :param str data_type: The type to be serialized from.
+        :keyword bool skip_quote: Whether to skip quote the serialized result.
+        Defaults to False.
         :rtype: str
         :raises: TypeError if serialization fails.
         :raises: ValueError if data is None
@@ -750,10 +738,8 @@ class Serializer(object):
             # Treat the list aside, since we don't want to encode the div separator
             if data_type.startswith("["):
                 internal_data_type = data_type[1:-1]
-                data = [self.serialize_data(d, internal_data_type, **kwargs) if d is not None else "" for d in data]
-                if not kwargs.get("skip_quote", False):
-                    data = [quote(str(d), safe="") for d in data]
-                return str(self.serialize_iter(data, internal_data_type, **kwargs))
+                do_quote = not kwargs.get("skip_quote", False)
+                return str(self.serialize_iter(data, internal_data_type, do_quote=do_quote, **kwargs))
 
             # Not a list, regular serialization
             output = self.serialize_data(data, data_type, **kwargs)
@@ -892,6 +878,8 @@ class Serializer(object):
          not be None or empty.
         :param str div: If set, this str will be used to combine the elements
          in the iterable into a combined string. Default is 'None'.
+        :keyword bool do_quote: Whether to quote the serialized result of each iterable element.
+        Defaults to False.
         :rtype: list, str
         """
         if isinstance(data, str):
@@ -908,6 +896,9 @@ class Serializer(object):
                 if isinstance(err, SerializationError):
                     raise
                 serialized.append(None)
+
+        if kwargs.get("do_quote", False):
+            serialized = ["" if s is None else quote(str(s), safe="") for s in serialized]
 
         if div:
             serialized = ["" if s is None else str(s) for s in serialized]

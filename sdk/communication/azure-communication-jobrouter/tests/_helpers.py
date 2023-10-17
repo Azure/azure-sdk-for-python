@@ -7,7 +7,8 @@
 from typing import TYPE_CHECKING
 from datetime import datetime
 from dateutil.parser import parse
-from msrest.serialization import TZ_UTC
+from azure.core.serialization import TZ_UTC
+
 try:
     from typing import TypedDict
 except ImportError:
@@ -20,9 +21,9 @@ if TYPE_CHECKING:
 
 # cSpell:ignore tzinfos
 def _convert_str_to_datetime(
-        datetime_as_str,  # type: str
-        **kwargs,  # type: Any
+    datetime_as_str,  # type: str
+    **kwargs,  # type: Any
 ):
     #  type: (...) -> datetime
-    dt = parse(datetime_as_str, tzinfos = [TZ_UTC])
+    dt = parse(datetime_as_str, tzinfos=[TZ_UTC])
     return dt
