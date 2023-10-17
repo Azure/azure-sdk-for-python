@@ -84,6 +84,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
 
         # start an HTTP server to receive the redirect
         server = None
+        redirect_uri: str = ""
         if self._parsed_url:
             try:
                 redirect_uri = "http://{}:{}".format(self._parsed_url.hostname, self._parsed_url.port)
