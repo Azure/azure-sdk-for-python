@@ -52,7 +52,7 @@ class NodeIOMixin:
             )
 
     def _build_input(
-        self, name: str, meta: Input, data: Optional[Union[int, bool, float, str, Output, "PipelineInput", Input]]
+        self, name: str, meta: Input, data: Optional[Union[dict, int, bool, float, str, Output, "PipelineInput", Input]]
     ) -> NodeInput:
         # output mode of last node should not affect input mode of next node
         if isinstance(data, NodeOutput):
@@ -67,9 +67,9 @@ class NodeIOMixin:
             # parse dict to allowed type
             data = Input(**data)
 
-        # parameter group can be of custom type, so we don't check it here
-        if meta is not None and not isinstance(meta, GroupInput):
-            self._validate_io(data, self._get_supported_inputs_types(), key=name)
+            # parameter group can be of custom type, so we don't check it here
+            if meta is not None and not isinstance(meta, GroupInput):
+                self._validate_io(data, self._get_supported_inputs_types(), key=name)
         return NodeInput(port_name=name, meta=meta, data=data, owner=self)
 
     def _build_output(self, name: str, meta: Output, data: Optional[Union[Output, str]]) -> NodeOutput:

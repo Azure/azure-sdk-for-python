@@ -115,7 +115,7 @@ class ClassificationJob(AutoMLTabular):
             else ClassificationPrimaryMetrics[camel_to_snake(value).upper()]
         )
 
-    @property
+    @property  # type: ignore
     def training(self) -> ClassificationTrainingSettings:
         """Training Settings for AutoML Classification Job.
 
