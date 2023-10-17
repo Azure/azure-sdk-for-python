@@ -1,5 +1,15 @@
 # Release History
 
+## 12.8.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 12.8.0b1 (2023-10-17)
 
 ### Features Added
