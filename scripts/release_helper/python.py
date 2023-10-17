@@ -10,7 +10,7 @@ from utils import AUTO_CLOSE_LABEL, get_last_released_date, record_release, get_
 
 # assignee dict which will be assigned to handle issues
 _PYTHON_OWNER = {'azure-sdk', 'msyyc'}
-_PYTHON_ASSIGNEE = {'Wzb123456789'}
+_PYTHON_ASSIGNEE = {'ChenxiJiang333'}
 
 # labels
 _CONFIGURED = 'Configured'
@@ -19,7 +19,7 @@ _BRANCH_ATTENTION = 'base-branch-attention'
 _MultiAPI = 'MultiAPI'
 # record published issues
 _FILE_OUT = 'published_issues_python.csv'
-_HINTS = ["FirstGA", "FirstBeta", "HoldOn", "OnTime"]
+_HINTS = ["FirstGA", "FirstBeta", "HoldOn", "OnTime", "ForCLI"]
 
 
 class IssueProcessPython(IssueProcess):
@@ -92,7 +92,8 @@ class IssueProcessPython(IssueProcess):
                                            pipeline_url=release_pipeline_url,
                                            spec_readme=self.readme_link + '/readme.md',
                                            python_tag=self.python_tag,
-                                           rest_repo_hash=self.rest_repo_hash
+                                           rest_repo_hash=self.rest_repo_hash,
+                                           target_date=self.target_date,
                                            )
                     if res_run:
                         self.log(f'{issue_number} run pipeline successfully')

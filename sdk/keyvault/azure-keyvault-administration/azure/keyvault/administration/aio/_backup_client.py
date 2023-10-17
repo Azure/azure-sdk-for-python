@@ -7,6 +7,8 @@ import functools
 import pickle
 from typing import TYPE_CHECKING
 
+from azure.core.tracing.decorator_async import distributed_trace_async
+
 from .._backup_client import _parse_status_url
 from .._internal import AsyncKeyVaultClientBase, parse_folder_url
 from .._internal.async_polling import KeyVaultAsyncBackupClientPollingMethod
@@ -15,7 +17,6 @@ from .._models import KeyVaultBackupResult
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any
     from azure.core.polling import AsyncLROPoller
 
 
@@ -30,12 +31,13 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
     :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
 
     :keyword api_version: Version of the service API to use. Defaults to the most recent.
-    :paramtype api_version: ~azure.keyvault.administration.ApiVersion
+    :paramtype api_version: ~azure.keyvault.administration.ApiVersion or str
     :keyword bool verify_challenge_resource: Whether to verify the authentication challenge resource matches the Key
         Vault or Managed HSM domain. Defaults to True.
     """
 
     # pylint:disable=protected-access
+    @distributed_trace_async
     async def begin_backup(
         self, blob_storage_url: str, sas_token: str, **kwargs
     ) -> "AsyncLROPoller[KeyVaultBackupResult]":
@@ -91,6 +93,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
             **kwargs
         )
 
+    @distributed_trace_async
     async def begin_restore(self, folder_url: str, sas_token: str, **kwargs) -> "AsyncLROPoller":
         """Restore a Key Vault backup.
 
@@ -105,6 +108,8 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         :keyword str continuation_token: a continuation token to restart polling from a saved state
         :keyword str key_name: name of a single key in the backup. When set, only this key will be restored.
 
+        :returns: An AsyncLROPoller. Call `wait()` or `result()` on this object to wait for the operation to complete
+            (the return value is None in either case).
         :rtype: ~azure.core.polling.AsyncLROPoller
 
         Examples:

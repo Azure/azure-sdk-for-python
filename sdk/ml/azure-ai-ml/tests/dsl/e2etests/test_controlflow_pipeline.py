@@ -1,14 +1,14 @@
 from pathlib import Path
 
 import pytest
-from azure.ai.ml.dsl._group_decorator import group
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard
 
-from azure.ai.ml import Input, MLClient, load_component, Output
+from azure.ai.ml import Input, MLClient, Output, load_component
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._condition import condition
 from azure.ai.ml.dsl._do_while import do_while
+from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.dsl._parallel_for import parallel_for
 
 from .._util import _DSL_TIMEOUT_SECOND, include_private_preview_nodes_in_pipeline
@@ -35,6 +35,7 @@ omit_fields = [
     "mock_component_hash",
     "mock_set_headers_with_user_aml_token",
     "recorded_test",
+    "use_python_amlignore_during_upload",
 )
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
@@ -43,6 +44,7 @@ class TestControlFlowPipeline(AzureRecordedTestCase):
     pass
 
 
+@pytest.mark.usefixtures("mock_anon_component_version")
 class TestIfElse(TestControlFlowPipeline):
     def test_dsl_condition_pipeline(self, client: MLClient):
         # update jobs field to include private preview nodes
@@ -182,10 +184,10 @@ class TestIfElse(TestControlFlowPipeline):
         # Assert is_control with correct bool type
         expected_dict = {
             "output_data": {"type": "uri_folder"},
-            "bool_param_output": {"type": "boolean", "is_control": True, "early_available": True},
-            "int_param_output": {"type": "integer", "is_control": True},
-            "float_param_output": {"type": "number", "is_control": True},
-            "str_param_output": {"type": "string", "is_control": True},
+            "bool_param_output": {"type": "boolean", "early_available": True},
+            "int_param_output": {"type": "integer"},
+            "float_param_output": {"type": "number"},
+            "str_param_output": {"type": "string"},
         }
         assert rest_dict["outputs"] == expected_dict
 
@@ -397,11 +399,17 @@ class TestIfElse(TestControlFlowPipeline):
         }
 
 
+@pytest.mark.usefixtures("mock_anon_component_version")
 class TestDoWhilePipeline(TestControlFlowPipeline):
     @property
     def _basic_component_func(self):
         return load_component("./tests/test_configs/dsl_pipeline/do_while/basic_component/component.yml")
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="TODO (2374610): hash sanitizer is being applied unnecessarily and forcing playback failures",
+    )
+    @pytest.mark.usefixtures("mock_anon_component_version")
     def test_do_while_pipeline(self, client: MLClient):
         @pipeline
         def do_while_body_pipeline_component(
@@ -899,7 +907,7 @@ class TestParallelForPipeline(TestControlFlowPipeline):
 
         rest_pipeline_component = pipeline_job.jobs["parallel_for_pipeline"].component._to_rest_object().as_dict()
         assert rest_pipeline_component["properties"]["component_spec"]["outputs"] == {
-            "component_out_boolean": {"is_control": True, "type": "string"},
+            "component_out_boolean": {"type": "string"},
             "component_out_number": {"type": "string"},
             "component_out_path": {"type": "mltable"},
         }

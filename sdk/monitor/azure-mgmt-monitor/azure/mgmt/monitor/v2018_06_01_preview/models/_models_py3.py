@@ -24,12 +24,11 @@ class DataSource(_serialization.Model):
 
     :ivar kind: Datasource kind. Required. Known values are: "PerformanceCounter", "ETWProviders",
      and "WindowsEventLogs".
-    :vartype kind: str or ~$(python-base-namespace).v2018_06_01_preview.models.DataSourceKind
+    :vartype kind: str or ~azure.mgmt.monitor.v2018_06_01_preview.models.DataSourceKind
     :ivar configuration: Required.
-    :vartype configuration:
-     ~$(python-base-namespace).v2018_06_01_preview.models.DataSourceConfiguration
+    :vartype configuration: ~azure.mgmt.monitor.v2018_06_01_preview.models.DataSourceConfiguration
     :ivar sinks: Required.
-    :vartype sinks: list[~$(python-base-namespace).v2018_06_01_preview.models.SinkConfiguration]
+    :vartype sinks: list[~azure.mgmt.monitor.v2018_06_01_preview.models.SinkConfiguration]
     """
 
     _validation = {
@@ -55,12 +54,12 @@ class DataSource(_serialization.Model):
         """
         :keyword kind: Datasource kind. Required. Known values are: "PerformanceCounter",
          "ETWProviders", and "WindowsEventLogs".
-        :paramtype kind: str or ~$(python-base-namespace).v2018_06_01_preview.models.DataSourceKind
+        :paramtype kind: str or ~azure.mgmt.monitor.v2018_06_01_preview.models.DataSourceKind
         :keyword configuration: Required.
         :paramtype configuration:
-         ~$(python-base-namespace).v2018_06_01_preview.models.DataSourceConfiguration
+         ~azure.mgmt.monitor.v2018_06_01_preview.models.DataSourceConfiguration
         :keyword sinks: Required.
-        :paramtype sinks: list[~$(python-base-namespace).v2018_06_01_preview.models.SinkConfiguration]
+        :paramtype sinks: list[~azure.mgmt.monitor.v2018_06_01_preview.models.SinkConfiguration]
         """
         super().__init__(**kwargs)
         self.kind = kind
@@ -73,13 +72,12 @@ class DataSourceConfiguration(_serialization.Model):
 
     :ivar providers: ETW providers configuration.
     :vartype providers:
-     list[~$(python-base-namespace).v2018_06_01_preview.models.EtwProviderConfiguration]
+     list[~azure.mgmt.monitor.v2018_06_01_preview.models.EtwProviderConfiguration]
     :ivar perf_counters: Performance counter configuration.
     :vartype perf_counters:
-     list[~$(python-base-namespace).v2018_06_01_preview.models.PerformanceCounterConfiguration]
+     list[~azure.mgmt.monitor.v2018_06_01_preview.models.PerformanceCounterConfiguration]
     :ivar event_logs: Windows event logs configuration.
-    :vartype event_logs:
-     list[~$(python-base-namespace).v2018_06_01_preview.models.EventLogConfiguration]
+    :vartype event_logs: list[~azure.mgmt.monitor.v2018_06_01_preview.models.EventLogConfiguration]
     """
 
     _attribute_map = {
@@ -99,13 +97,13 @@ class DataSourceConfiguration(_serialization.Model):
         """
         :keyword providers: ETW providers configuration.
         :paramtype providers:
-         list[~$(python-base-namespace).v2018_06_01_preview.models.EtwProviderConfiguration]
+         list[~azure.mgmt.monitor.v2018_06_01_preview.models.EtwProviderConfiguration]
         :keyword perf_counters: Performance counter configuration.
         :paramtype perf_counters:
-         list[~$(python-base-namespace).v2018_06_01_preview.models.PerformanceCounterConfiguration]
+         list[~azure.mgmt.monitor.v2018_06_01_preview.models.PerformanceCounterConfiguration]
         :keyword event_logs: Windows event logs configuration.
         :paramtype event_logs:
-         list[~$(python-base-namespace).v2018_06_01_preview.models.EventLogConfiguration]
+         list[~azure.mgmt.monitor.v2018_06_01_preview.models.EventLogConfiguration]
         """
         super().__init__(**kwargs)
         self.providers = providers
@@ -193,8 +191,7 @@ class EtwProviderConfiguration(_serialization.Model):
     :ivar id: Required.
     :vartype id: str
     :ivar events: Required.
-    :vartype events:
-     list[~$(python-base-namespace).v2018_06_01_preview.models.EtwEventConfiguration]
+    :vartype events: list[~azure.mgmt.monitor.v2018_06_01_preview.models.EtwEventConfiguration]
     """
 
     _validation = {
@@ -218,8 +215,7 @@ class EtwProviderConfiguration(_serialization.Model):
         :keyword id: Required.
         :paramtype id: str
         :keyword events: Required.
-        :paramtype events:
-         list[~$(python-base-namespace).v2018_06_01_preview.models.EtwEventConfiguration]
+        :paramtype events: list[~azure.mgmt.monitor.v2018_06_01_preview.models.EtwEventConfiguration]
         """
         super().__init__(**kwargs)
         self.id = id
@@ -265,7 +261,7 @@ class GuestDiagnosticSettingsAssociationList(_serialization.Model):
 
     :ivar value: The list of guest diagnostic settings association.
     :vartype value:
-     list[~$(python-base-namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsAssociationResource]
+     list[~azure.mgmt.monitor.v2018_06_01_preview.models.GuestDiagnosticSettingsAssociationResource]
     :ivar next_link: Provides the link to retrieve the next set of elements.
     :vartype next_link: str
     """
@@ -285,7 +281,7 @@ class GuestDiagnosticSettingsAssociationList(_serialization.Model):
         """
         :keyword value: The list of guest diagnostic settings association.
         :paramtype value:
-         list[~$(python-base-namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsAssociationResource]
+         list[~azure.mgmt.monitor.v2018_06_01_preview.models.GuestDiagnosticSettingsAssociationResource]
         :keyword next_link: Provides the link to retrieve the next set of elements.
         :paramtype next_link: str
         """
@@ -438,7 +434,7 @@ class GuestDiagnosticSettingsList(_serialization.Model):
 
     :ivar value: The list of guest diagnostic settings.
     :vartype value:
-     list[~$(python-base-namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsResource]
+     list[~azure.mgmt.monitor.v2018_06_01_preview.models.GuestDiagnosticSettingsResource]
     :ivar next_link: Provides the link to retrieve the next set of elements.
     :vartype next_link: str
     """
@@ -458,7 +454,7 @@ class GuestDiagnosticSettingsList(_serialization.Model):
         """
         :keyword value: The list of guest diagnostic settings.
         :paramtype value:
-         list[~$(python-base-namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsResource]
+         list[~azure.mgmt.monitor.v2018_06_01_preview.models.GuestDiagnosticSettingsResource]
         :keyword next_link: Provides the link to retrieve the next set of elements.
         :paramtype next_link: str
         """
@@ -475,10 +471,10 @@ class GuestDiagnosticSettingsPatchResource(_serialization.Model):
     :ivar os_type: Operating system type for the configuration. Known values are: "Windows" and
      "Linux".
     :vartype os_type: str or
-     ~$(python-base-namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsOsType
+     ~azure.mgmt.monitor.v2018_06_01_preview.models.GuestDiagnosticSettingsOsType
     :ivar data_sources: the array of data source object which are configured to collect and send
      data.
-    :vartype data_sources: list[~$(python-base-namespace).v2018_06_01_preview.models.DataSource]
+    :vartype data_sources: list[~azure.mgmt.monitor.v2018_06_01_preview.models.DataSource]
     :ivar proxy_setting:
     :vartype proxy_setting: str
     """
@@ -505,10 +501,10 @@ class GuestDiagnosticSettingsPatchResource(_serialization.Model):
         :keyword os_type: Operating system type for the configuration. Known values are: "Windows" and
          "Linux".
         :paramtype os_type: str or
-         ~$(python-base-namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsOsType
+         ~azure.mgmt.monitor.v2018_06_01_preview.models.GuestDiagnosticSettingsOsType
         :keyword data_sources: the array of data source object which are configured to collect and send
          data.
-        :paramtype data_sources: list[~$(python-base-namespace).v2018_06_01_preview.models.DataSource]
+        :paramtype data_sources: list[~azure.mgmt.monitor.v2018_06_01_preview.models.DataSource]
         :keyword proxy_setting:
         :paramtype proxy_setting: str
         """
@@ -539,10 +535,10 @@ class GuestDiagnosticSettingsResource(Resource):
     :ivar os_type: Operating system type for the configuration. Known values are: "Windows" and
      "Linux".
     :vartype os_type: str or
-     ~$(python-base-namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsOsType
+     ~azure.mgmt.monitor.v2018_06_01_preview.models.GuestDiagnosticSettingsOsType
     :ivar data_sources: the array of data source object which are configured to collect and send
      data.
-    :vartype data_sources: list[~$(python-base-namespace).v2018_06_01_preview.models.DataSource]
+    :vartype data_sources: list[~azure.mgmt.monitor.v2018_06_01_preview.models.DataSource]
     :ivar proxy_setting:
     :vartype proxy_setting: str
     """
@@ -583,10 +579,10 @@ class GuestDiagnosticSettingsResource(Resource):
         :keyword os_type: Operating system type for the configuration. Known values are: "Windows" and
          "Linux".
         :paramtype os_type: str or
-         ~$(python-base-namespace).v2018_06_01_preview.models.GuestDiagnosticSettingsOsType
+         ~azure.mgmt.monitor.v2018_06_01_preview.models.GuestDiagnosticSettingsOsType
         :keyword data_sources: the array of data source object which are configured to collect and send
          data.
-        :paramtype data_sources: list[~$(python-base-namespace).v2018_06_01_preview.models.DataSource]
+        :paramtype data_sources: list[~azure.mgmt.monitor.v2018_06_01_preview.models.DataSource]
         :keyword proxy_setting:
         :paramtype proxy_setting: str
         """
@@ -641,8 +637,7 @@ class SinkConfiguration(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar kind: Required. Known values are: "EventHub", "ApplicationInsights", and "LogAnalytics".
-    :vartype kind: str or
-     ~$(python-base-namespace).v2018_06_01_preview.models.SinkConfigurationKind
+    :vartype kind: str or ~azure.mgmt.monitor.v2018_06_01_preview.models.SinkConfigurationKind
     """
 
     _validation = {
@@ -657,8 +652,7 @@ class SinkConfiguration(_serialization.Model):
         """
         :keyword kind: Required. Known values are: "EventHub", "ApplicationInsights", and
          "LogAnalytics".
-        :paramtype kind: str or
-         ~$(python-base-namespace).v2018_06_01_preview.models.SinkConfigurationKind
+        :paramtype kind: str or ~azure.mgmt.monitor.v2018_06_01_preview.models.SinkConfigurationKind
         """
         super().__init__(**kwargs)
         self.kind = kind

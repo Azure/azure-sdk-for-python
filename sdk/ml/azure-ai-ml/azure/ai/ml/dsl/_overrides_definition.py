@@ -15,6 +15,7 @@ def get_override_definition_from_schema(
     """Ger override definition from a json schema.
 
     :param schema: Json schema of component job.
+    :type schema: str
     :return: A dictionary from a override definition name to a override definition.
     """
     # TODO: gen override definition

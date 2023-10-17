@@ -118,6 +118,12 @@ class StorageAccountType(str, Enum):
     premium_lrs = "premium_lrs"  #: The data disk should use premium locally redundant storage.
 
 
+class ContainerType(str, Enum):
+
+    docker_compatible = "dockerCompatible"  #: A Docker compatible container technology will be used to launch the containers.
+    cri_compatible = "criCompatible"  #: A CRI based technology will be used to launch the containers.
+
+
 class DiskEncryptionTarget(str, Enum):
 
     os_disk = "osdisk"  #: The OS Disk on the compute node is encrypted.
@@ -227,11 +233,6 @@ class JobReleaseTaskState(str, Enum):
 
     running = "running"  #: The Task is currently running (including retrying).
     completed = "completed"  #: The Task has exited with exit code 0, or the Task has exhausted its retry limit, or the Batch service was unable to start the Task due to Task preparation errors (such as resource file download failures).
-
-
-class ContainerType(str, Enum):
-
-    docker_compatible = "dockerCompatible"  #: A Docker compatible container technology will be used to launch the containers.
 
 
 class StatusLevelTypes(str, Enum):

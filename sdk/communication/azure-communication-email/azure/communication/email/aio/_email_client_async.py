@@ -10,7 +10,8 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.polling import AsyncLROPoller
 from azure.core.tracing.decorator_async import distributed_trace_async
-from .._shared.utils import parse_connection_str, get_authentication_policy
+from .._shared.auth_policy_utils import get_authentication_policy
+from .._shared.utils import parse_connection_str
 from .._generated.aio._client import AzureCommunicationEmailService
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
@@ -45,7 +46,7 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
             if not endpoint.lower().startswith('http'):
                 endpoint = "https://" + endpoint
         except AttributeError:
-            raise ValueError("Account URL must be a string.")
+            raise ValueError("Account URL must be a string.") # pylint: disable=raise-missing-from
 
         if endpoint.endswith("/"):
             endpoint = endpoint[:-1]

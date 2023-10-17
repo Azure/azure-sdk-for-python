@@ -4,8 +4,7 @@
 # ------------------------------------
 import os
 
-from azure.keyvault.administration import KeyVaultSetting, KeyVaultSettingsClient, KeyVaultSettingType
-from azure.identity import DefaultAzureCredential
+from azure.keyvault.administration import KeyVaultSetting, KeyVaultSettingType
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
@@ -26,12 +25,16 @@ from azure.identity import DefaultAzureCredential
 # 2. Update a setting (update_setting)
 # ----------------------------------------------------------------------------------------------------------
 
-MANAGED_HSM_URL = os.environ["MANAGED_HSM_URL"]
-
 # Instantiate an access control client that will be used to call the service.
 # Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
+# [START create_a_settings_client]
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.administration import KeyVaultSettingsClient
+
+MANAGED_HSM_URL = os.environ["MANAGED_HSM_URL"]
 credential = DefaultAzureCredential()
 client = KeyVaultSettingsClient(vault_url=MANAGED_HSM_URL, credential=credential)
+# [END create_a_settings_client]
 
 # First, let's fetch the settings that apply to our Managed HSM
 # Each setting has a name, value, and type (for example, KeyVaultSettingType.BOOLEAN)
@@ -42,6 +45,7 @@ for setting in settings:
     if setting.setting_type == KeyVaultSettingType.BOOLEAN:
         boolean_setting = setting
     print(f"{setting.name}: {setting.value} (type: {setting.setting_type})")
+assert boolean_setting
 
 # Now, let's flip the value of a boolean setting
 # The `value` property is a string, but you can get the value of a boolean setting as a bool with `getboolean`

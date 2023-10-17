@@ -9,7 +9,7 @@ from azure.identity import CredentialUnavailableError
 from azure.identity._credentials.application import AzureApplicationCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
-from six.moves.urllib_parse import urlparse
+from urllib.parse import urlparse
 
 try:
     from unittest.mock import Mock, patch
@@ -22,7 +22,10 @@ from helpers import build_aad_response, get_discovery_response, mock_response
 def test_get_token():
     expected_token = "***"
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         parsed = urlparse(request.url)
         tenant_id = parsed.path.split("/")[1]
         if "/oauth2/v2.0/token" in request.url:

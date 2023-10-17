@@ -29,12 +29,11 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.instance_failover_groups.begin_delete(
+    client.instance_failover_groups.begin_delete(
         resource_group_name="Default",
         location_name="Japan East",
         failover_group_name="failover-group-test-1",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-05-01-preview/examples/InstanceFailoverGroupDelete.json

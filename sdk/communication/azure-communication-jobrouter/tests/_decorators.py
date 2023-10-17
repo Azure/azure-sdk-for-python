@@ -45,7 +45,10 @@ class RouterPreparers(object):
                 except Exception as e:
                     raise e
                 finally:
-                    first_method()
+                    try:
+                        first_method()
+                    except:
+                        print("") # Consume exceptions
 
             return wrapper
 

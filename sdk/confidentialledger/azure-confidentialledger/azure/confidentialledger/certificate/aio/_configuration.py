@@ -11,10 +11,10 @@ from typing import Any
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
-from .._version import VERSION
+from ..._version import VERSION
 
 
-class ConfidentialLedgerCertificateClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class ConfidentialLedgerCertificateClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for ConfidentialLedgerCertificateClient.
 
     Note that all parameters used to create this instance are saved as instance

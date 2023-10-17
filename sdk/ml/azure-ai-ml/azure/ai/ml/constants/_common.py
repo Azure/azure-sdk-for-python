@@ -26,6 +26,7 @@ ARM_ID_FULL_PREFIX = "/subscriptions/"
 AZUREML_RESOURCE_PROVIDER = "Microsoft.MachineLearningServices"
 RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}"
 NAMED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}"
+NAMED_RESOURCE_ID_FORMAT_WITH_PARENT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/{}/{}"
 LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/{}/{}"
 VERSIONED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/versions/{}"
 LABELLED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/labels/{}"
@@ -36,8 +37,16 @@ PROVIDER_RESOURCE_ID_WITH_VERSION = (
     "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/{}/{}/versions/{}"
 )
 SINGULARITY_ID_FORMAT = (
+    "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/virtualclusters/{}"
+)
+SINGULARITY_ID_REGEX_FORMAT = (
     "/subscriptions/.*/resourceGroups/.*/providers/Microsoft.MachineLearningServices/virtualclusters/.*"
 )
+SINGULARITY_FULL_NAME_REGEX_FORMAT = (
+    "^(azureml:)?//subscriptions/(?P<subscription_id>[^/]+)/resourceGroups/(?P<resource_group_name>[^/]+)/"
+    "virtualclusters/(?P<name>[^/]+)"
+)
+SINGULARITY_SHORT_NAME_REGEX_FORMAT = "^(azureml:)?//virtualclusters/(?P<name>[^/]+)"
 ASSET_ID_FORMAT = "azureml://locations/{}/workspaces/{}/{}/{}/versions/{}"
 VERSIONED_RESOURCE_NAME = "{}:{}"
 LABELLED_RESOURCE_NAME = "{}@{}"
@@ -128,7 +137,6 @@ API_URL_KEY = "api"
 ANONYMOUS_ENV_NAME = "CliV2AnonymousEnvironment"
 SKIP_VALIDATION_MESSAGE = "To skip this validation use the --skip-validation param"
 MLTABLE_METADATA_SCHEMA_URL_FALLBACK = "https://azuremlschemasprod.azureedge.net/latest/MLTable.schema.json"
-INVOCATION_ZIP_FILE = "invocation.zip"
 INVOCATION_BAT_FILE = "Invocation.bat"
 INVOCATION_BASH_FILE = "Invocation.sh"
 AZUREML_RUN_SETUP_DIR = "azureml-setup"
@@ -174,6 +182,15 @@ SPARK_ENVIRONMENT_WARNING_MESSAGE = (
     "Spark job will only install the packages defined in the Conda configuration. It "
     "will not create a docker container using the image defined in the environment."
 )
+
+
+class DefaultOpenEncoding:
+    """Enum that captures SDK's default values for the encoding param of open(...)"""
+
+    READ = "utf-8-sig"
+    """SDK Default Encoding when reading a file"""
+    WRITE = "utf-8"
+    """SDK Default Encoding when writing a file"""
 
 
 class AzureMLResourceType:
@@ -223,6 +240,8 @@ class AzureMLResourceType:
     """Feature store entity resource type."""
     FEATURE_STORE = "feature_store"
     """Feature store resource type."""
+    WORKSPACE_HUB = "workspace_hub"
+    """WorkspaceHub resource type."""
 
     NAMED_TYPES = {
         JOB,
@@ -275,6 +294,7 @@ class ArmConstants:
     STORAGE_ACCOUNT_PARAMETER_NAME = "storageAccounts"
     APP_INSIGHTS_PARAMETER_NAME = "components"
     CONTAINER_REGISTRY_PARAMETER_NAME = "registries"
+    USER_ASSIGNED_IDENTITIES = "userAssignedIdentities"
 
     CODE_TYPE = "code"
     CODE_VERSION_TYPE = "code_version"
@@ -288,6 +308,9 @@ class ArmConstants:
     BASE_TYPE = "base"
     WORKSPACE_BASE = "workspace_base"
     WORKSPACE_PARAM = "workspace_param"
+    FEATURE_STORE_ROLE_ASSIGNMENTS = "feature_store_role_assignments"
+    FEATURE_STORE_ROLE_ASSIGNMENTS_PARAM = "feature_store_role_assignments_param"
+    WORKSPACE_PROJECT = "workspace_project"
 
     OPERATION_CREATE = "create"
     OPERATION_UPDATE = "update"
@@ -309,6 +332,7 @@ class ArmConstants:
     AZURE_MGMT_RESOURCE_API_VERSION = "2020-06-01"
     AZURE_MGMT_STORAGE_API_VERSION = "2019-06-01"
     AZURE_MGMT_APPINSIGHT_API_VERSION = "2015-05-01"
+    AZURE_MGMT_LOGANALYTICS_API_VERSION = "2015-03-20"
     AZURE_MGMT_KEYVAULT_API_VERSION = "2019-09-01"
     AZURE_MGMT_CONTAINER_REG_API_VERSION = "2019-05-01"
 
@@ -356,6 +380,18 @@ class CommonYamlFields:
     """Name."""
     SCHEMA = "$schema"
     """Schema."""
+
+
+class SchemaUrl:
+    """Schema urls.
+
+    Schema urls will be used in VSCode extension to validate yaml files. It will also be used to identify the
+    corresponding entity type of a yaml file, especially for some internal yaml files.
+    """
+
+    PROMPTFLOW_PREFIX = "https://azuremlschemas.azureedge.net/promptflow/"
+    PROMPTFLOW_FLOW = PROMPTFLOW_PREFIX + "latest/Flow.schema.json"
+    PROMPTFLOW_RUN = PROMPTFLOW_PREFIX + "latest/Run.schema.json"
 
 
 class GitProperties:
@@ -439,11 +475,12 @@ class YAMLRefDocLinks:
     BATCH_DEPLOYMENT = "https://aka.ms/ml-cli-v2-deployment-batch-yaml-reference"
     COMMAND_COMPONENT = "https://aka.ms/ml-cli-v2-component-command-yaml-reference"
     PARALLEL_COMPONENT = "https://aka.ms/ml-cli-v2-component-parallel-yaml-reference"
-    SCHEDULE = "https://aka.ms/ml-cli-v2-schedule-yaml-reference"
+    JOB_SCHEDULE = "https://aka.ms/ml-cli-v2-schedule-yaml-reference"
     REGISTRY = "https://aka.ms/ml-cli-v2-registry-yaml-reference"
     FEATURE_STORE = "https://aka.ms/ml-cli-v2-featurestore-yaml-reference"
     FEATURE_SET = "https://aka.ms/ml-cli-v2-featureset-yaml-reference"
     FEATURE_STORE_ENTITY = "https://aka.ms/ml-cli-v2-featurestore-entity-yaml-reference"
+    WORKSPACEHUB = "https://aka.ms/ml-cli-v2-workspace-hub-entity-yaml-reference"
 
 
 class YAMLRefDocSchemaNames:
@@ -496,8 +533,8 @@ class YAMLRefDocSchemaNames:
     """Command component."""
     PARALLEL_COMPONENT = "ParallelComponent"
     """Parallel component."""
-    SCHEDULE = "Schedule"
-    """Schedule."""
+    JOB_SCHEDULE = "JobSchedule"
+    """Job Schedule."""
 
 
 class DockerTypes:
@@ -836,6 +873,23 @@ class Boolean:
     """False boolean type."""
 
 
-class IPProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    ALL = "all"
-    NONE = "none"
+class InferenceServerType:
+    AZUREML_ONLINE = "azureml_online"
+    AZUREML_BATCH = "azureml_batch"
+    TRITON = "triton"
+    CUSTOM = "custom"
+
+
+class AzureDevopsArtifactsType:
+    ARTIFACT = "artifact"
+
+
+class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    JOB = "job"
+    MONITOR = "monitor"
+    DATA_IMPORT = "data_import"
+
+
+class AutoDeleteCondition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    CREATED_GREATER_THAN = "created_greater_than"
+    LAST_ACCESSED_GREATER_THAN = "last_accessed_greater_than"

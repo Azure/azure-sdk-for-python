@@ -29,11 +29,10 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.managed_instances.begin_stop(
+    client.managed_instances.begin_stop(
         resource_group_name="stoprg",
         managed_instance_name="mitostop",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-08-01-preview/examples/StopManagedInstance.json

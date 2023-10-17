@@ -22,6 +22,7 @@ from ._models_py3 import ClientDiscoveryResponse
 from ._models_py3 import ClientDiscoveryValueForSingleApi
 from ._models_py3 import CmkKekIdentity
 from ._models_py3 import CmkKeyVaultProperties
+from ._models_py3 import CrossSubscriptionRestoreSettings
 from ._models_py3 import DNSZone
 from ._models_py3 import DNSZoneResponse
 from ._models_py3 import Error
@@ -50,8 +51,10 @@ from ._models_py3 import ResourceCapabilitiesBase
 from ._models_py3 import ResourceCertificateAndAadDetails
 from ._models_py3 import ResourceCertificateAndAcsDetails
 from ._models_py3 import ResourceCertificateDetails
+from ._models_py3 import RestoreSettings
 from ._models_py3 import SecuritySettings
 from ._models_py3 import Sku
+from ._models_py3 import SoftDeleteSettings
 from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
 from ._models_py3 import UpgradeDetails
@@ -72,14 +75,18 @@ from ._recovery_services_client_enums import AuthType
 from ._recovery_services_client_enums import BackupStorageVersion
 from ._recovery_services_client_enums import CreatedByType
 from ._recovery_services_client_enums import CrossRegionRestore
+from ._recovery_services_client_enums import CrossSubscriptionRestoreState
 from ._recovery_services_client_enums import ImmutabilityState
 from ._recovery_services_client_enums import InfrastructureEncryptionState
+from ._recovery_services_client_enums import MultiUserAuthorization
 from ._recovery_services_client_enums import PrivateEndpointConnectionStatus
 from ._recovery_services_client_enums import ProvisioningState
 from ._recovery_services_client_enums import PublicNetworkAccess
 from ._recovery_services_client_enums import ResourceIdentityType
 from ._recovery_services_client_enums import ResourceMoveState
+from ._recovery_services_client_enums import SecureScoreLevel
 from ._recovery_services_client_enums import SkuName
+from ._recovery_services_client_enums import SoftDeleteState
 from ._recovery_services_client_enums import StandardTierStorageRedundancy
 from ._recovery_services_client_enums import TriggerType
 from ._recovery_services_client_enums import UsagesUnit
@@ -107,6 +114,7 @@ __all__ = [
     "ClientDiscoveryValueForSingleApi",
     "CmkKekIdentity",
     "CmkKeyVaultProperties",
+    "CrossSubscriptionRestoreSettings",
     "DNSZone",
     "DNSZoneResponse",
     "Error",
@@ -135,8 +143,10 @@ __all__ = [
     "ResourceCertificateAndAadDetails",
     "ResourceCertificateAndAcsDetails",
     "ResourceCertificateDetails",
+    "RestoreSettings",
     "SecuritySettings",
     "Sku",
+    "SoftDeleteSettings",
     "SystemData",
     "TrackedResource",
     "UpgradeDetails",
@@ -156,14 +166,18 @@ __all__ = [
     "BackupStorageVersion",
     "CreatedByType",
     "CrossRegionRestore",
+    "CrossSubscriptionRestoreState",
     "ImmutabilityState",
     "InfrastructureEncryptionState",
+    "MultiUserAuthorization",
     "PrivateEndpointConnectionStatus",
     "ProvisioningState",
     "PublicNetworkAccess",
     "ResourceIdentityType",
     "ResourceMoveState",
+    "SecureScoreLevel",
     "SkuName",
+    "SoftDeleteState",
     "StandardTierStorageRedundancy",
     "TriggerType",
     "UsagesUnit",

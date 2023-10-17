@@ -57,7 +57,7 @@ class Condition(_serialization.Model):
     :ivar time_aggregation: Aggregation type. Relevant and required only for rules of the kind
      LogAlert. Known values are: "Count", "Average", "Minimum", "Maximum", and "Total".
     :vartype time_aggregation: str or
-     ~$(python-base-namespace).v2022_08_01_preview.models.TimeAggregation
+     ~azure.mgmt.monitor.v2022_08_01_preview.models.TimeAggregation
     :ivar metric_measure_column: The column containing the metric measure number. Relevant only for
      rules of the kind LogAlert.
     :vartype metric_measure_column: str
@@ -65,19 +65,18 @@ class Condition(_serialization.Model):
      be a uri formatted as resource id. Relevant only for rules of the kind LogAlert.
     :vartype resource_id_column: str
     :ivar dimensions: List of Dimensions conditions.
-    :vartype dimensions: list[~$(python-base-namespace).v2022_08_01_preview.models.Dimension]
+    :vartype dimensions: list[~azure.mgmt.monitor.v2022_08_01_preview.models.Dimension]
     :ivar operator: The criteria operator. Relevant and required only for rules of the kind
      LogAlert. Known values are: "Equals", "GreaterThan", "GreaterThanOrEqual", "LessThan", and
      "LessThanOrEqual".
-    :vartype operator: str or
-     ~$(python-base-namespace).v2022_08_01_preview.models.ConditionOperator
+    :vartype operator: str or ~azure.mgmt.monitor.v2022_08_01_preview.models.ConditionOperator
     :ivar threshold: the criteria threshold value that activates the alert. Relevant and required
      only for rules of the kind LogAlert.
     :vartype threshold: float
     :ivar failing_periods: The minimum number of violations required within the selected lookback
      time window required to raise an alert. Relevant only for rules of the kind LogAlert.
     :vartype failing_periods:
-     ~$(python-base-namespace).v2022_08_01_preview.models.ConditionFailingPeriods
+     ~azure.mgmt.monitor.v2022_08_01_preview.models.ConditionFailingPeriods
     :ivar metric_name: The name of the metric to be sent. Relevant and required only for rules of
      the kind LogToMetric.
     :vartype metric_name: str
@@ -115,7 +114,7 @@ class Condition(_serialization.Model):
         :keyword time_aggregation: Aggregation type. Relevant and required only for rules of the kind
          LogAlert. Known values are: "Count", "Average", "Minimum", "Maximum", and "Total".
         :paramtype time_aggregation: str or
-         ~$(python-base-namespace).v2022_08_01_preview.models.TimeAggregation
+         ~azure.mgmt.monitor.v2022_08_01_preview.models.TimeAggregation
         :keyword metric_measure_column: The column containing the metric measure number. Relevant only
          for rules of the kind LogAlert.
         :paramtype metric_measure_column: str
@@ -123,19 +122,18 @@ class Condition(_serialization.Model):
          must be a uri formatted as resource id. Relevant only for rules of the kind LogAlert.
         :paramtype resource_id_column: str
         :keyword dimensions: List of Dimensions conditions.
-        :paramtype dimensions: list[~$(python-base-namespace).v2022_08_01_preview.models.Dimension]
+        :paramtype dimensions: list[~azure.mgmt.monitor.v2022_08_01_preview.models.Dimension]
         :keyword operator: The criteria operator. Relevant and required only for rules of the kind
          LogAlert. Known values are: "Equals", "GreaterThan", "GreaterThanOrEqual", "LessThan", and
          "LessThanOrEqual".
-        :paramtype operator: str or
-         ~$(python-base-namespace).v2022_08_01_preview.models.ConditionOperator
+        :paramtype operator: str or ~azure.mgmt.monitor.v2022_08_01_preview.models.ConditionOperator
         :keyword threshold: the criteria threshold value that activates the alert. Relevant and
          required only for rules of the kind LogAlert.
         :paramtype threshold: float
         :keyword failing_periods: The minimum number of violations required within the selected
          lookback time window required to raise an alert. Relevant only for rules of the kind LogAlert.
         :paramtype failing_periods:
-         ~$(python-base-namespace).v2022_08_01_preview.models.ConditionFailingPeriods
+         ~azure.mgmt.monitor.v2022_08_01_preview.models.ConditionFailingPeriods
         :keyword metric_name: The name of the metric to be sent. Relevant and required only for rules
          of the kind LogToMetric.
         :paramtype metric_name: str
@@ -196,8 +194,7 @@ class Dimension(_serialization.Model):
     :vartype name: str
     :ivar operator: Operator for dimension values. Required. Known values are: "Include" and
      "Exclude".
-    :vartype operator: str or
-     ~$(python-base-namespace).v2022_08_01_preview.models.DimensionOperator
+    :vartype operator: str or ~azure.mgmt.monitor.v2022_08_01_preview.models.DimensionOperator
     :ivar values: List of dimension values. Required.
     :vartype values: list[str]
     """
@@ -222,8 +219,7 @@ class Dimension(_serialization.Model):
         :paramtype name: str
         :keyword operator: Operator for dimension values. Required. Known values are: "Include" and
          "Exclude".
-        :paramtype operator: str or
-         ~$(python-base-namespace).v2022_08_01_preview.models.DimensionOperator
+        :paramtype operator: str or ~azure.mgmt.monitor.v2022_08_01_preview.models.DimensionOperator
         :keyword values: List of dimension values. Required.
         :paramtype values: list[str]
         """
@@ -237,7 +233,7 @@ class ErrorContract(_serialization.Model):
     """Describes the format of Error response.
 
     :ivar error: The error details.
-    :vartype error: ~$(python-base-namespace).v2022_08_01_preview.models.ErrorResponseDetails
+    :vartype error: ~azure.mgmt.monitor.v2022_08_01_preview.models.ErrorResponseDetails
     """
 
     _attribute_map = {
@@ -247,7 +243,7 @@ class ErrorContract(_serialization.Model):
     def __init__(self, *, error: Optional["_models.ErrorResponseDetails"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error details.
-        :paramtype error: ~$(python-base-namespace).v2022_08_01_preview.models.ErrorResponseDetails
+        :paramtype error: ~azure.mgmt.monitor.v2022_08_01_preview.models.ErrorResponseDetails
         """
         super().__init__(**kwargs)
         self.error = error
@@ -294,11 +290,10 @@ class ErrorResponseDetails(_serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details:
-     list[~$(python-base-namespace).v2022_08_01_preview.models.ErrorResponseDetails]
+    :vartype details: list[~azure.mgmt.monitor.v2022_08_01_preview.models.ErrorResponseDetails]
     :ivar additional_info: The error additional info.
     :vartype additional_info:
-     list[~$(python-base-namespace).v2022_08_01_preview.models.ErrorResponseAdditionalInfo]
+     list[~azure.mgmt.monitor.v2022_08_01_preview.models.ErrorResponseAdditionalInfo]
     """
 
     _validation = {
@@ -340,12 +335,12 @@ class Identity(_serialization.Model):
     :vartype tenant_id: str
     :ivar type: Type of managed service identity. Required. Known values are: "SystemAssigned",
      "UserAssigned", and "None".
-    :vartype type: str or ~$(python-base-namespace).v2022_08_01_preview.models.IdentityType
+    :vartype type: str or ~azure.mgmt.monitor.v2022_08_01_preview.models.IdentityType
     :ivar user_assigned_identities: The list of user identities associated with the resource. The
      user identity dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :vartype user_assigned_identities: dict[str,
-     ~$(python-base-namespace).v2022_08_01_preview.models.UserIdentityProperties]
+     ~azure.mgmt.monitor.v2022_08_01_preview.models.UserIdentityProperties]
     """
 
     _validation = {
@@ -371,12 +366,12 @@ class Identity(_serialization.Model):
         """
         :keyword type: Type of managed service identity. Required. Known values are: "SystemAssigned",
          "UserAssigned", and "None".
-        :paramtype type: str or ~$(python-base-namespace).v2022_08_01_preview.models.IdentityType
+        :paramtype type: str or ~azure.mgmt.monitor.v2022_08_01_preview.models.IdentityType
         :keyword user_assigned_identities: The list of user identities associated with the resource.
          The user identity dictionary key references will be ARM resource ids in the form:
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
         :paramtype user_assigned_identities: dict[str,
-         ~$(python-base-namespace).v2022_08_01_preview.models.UserIdentityProperties]
+         ~azure.mgmt.monitor.v2022_08_01_preview.models.UserIdentityProperties]
         """
         super().__init__(**kwargs)
         self.principal_id = None
@@ -423,7 +418,7 @@ class ScheduledQueryRuleCriteria(_serialization.Model):
     """The rule criteria that defines the conditions of the scheduled query rule.
 
     :ivar all_of: A list of conditions to evaluate against the specified scopes.
-    :vartype all_of: list[~$(python-base-namespace).v2022_08_01_preview.models.Condition]
+    :vartype all_of: list[~azure.mgmt.monitor.v2022_08_01_preview.models.Condition]
     """
 
     _attribute_map = {
@@ -433,7 +428,7 @@ class ScheduledQueryRuleCriteria(_serialization.Model):
     def __init__(self, *, all_of: Optional[List["_models.Condition"]] = None, **kwargs: Any) -> None:
         """
         :keyword all_of: A list of conditions to evaluate against the specified scopes.
-        :paramtype all_of: list[~$(python-base-namespace).v2022_08_01_preview.models.Condition]
+        :paramtype all_of: list[~azure.mgmt.monitor.v2022_08_01_preview.models.Condition]
         """
         super().__init__(**kwargs)
         self.all_of = all_of
@@ -455,14 +450,14 @@ class ScheduledQueryRuleResource(_serialization.Model):  # pylint: disable=too-m
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar identity: The identity of the resource.
-    :vartype identity: ~$(python-base-namespace).v2022_08_01_preview.models.Identity
+    :vartype identity: ~azure.mgmt.monitor.v2022_08_01_preview.models.Identity
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar kind: Indicates the type of scheduled query rule. The default is LogAlert. Known values
      are: "LogAlert" and "LogToMetric".
-    :vartype kind: str or ~$(python-base-namespace).v2022_08_01_preview.models.Kind
+    :vartype kind: str or ~azure.mgmt.monitor.v2022_08_01_preview.models.Kind
     :ivar etag: The etag field is *not* required. If it is provided in the response body, it must
      also be provided as a header per the normal etag convention.  Entity tags are used for
      comparing two or more entities from the same requested resource. HTTP/1.1 uses entity tags in
@@ -470,7 +465,7 @@ class ScheduledQueryRuleResource(_serialization.Model):  # pylint: disable=too-m
      (section 14.27) header fields.
     :vartype etag: str
     :ivar system_data: SystemData of ScheduledQueryRule.
-    :vartype system_data: ~$(python-base-namespace).v2022_08_01_preview.models.SystemData
+    :vartype system_data: ~azure.mgmt.monitor.v2022_08_01_preview.models.SystemData
     :ivar created_with_api_version: The api-version used when creating this alert rule.
     :vartype created_with_api_version: str
     :ivar is_legacy_log_analytics_rule: True if alert rule is legacy Log Analytic rule.
@@ -482,14 +477,14 @@ class ScheduledQueryRuleResource(_serialization.Model):  # pylint: disable=too-m
     :ivar severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
      severest. Relevant and required only for rules of the kind LogAlert. Known values are: 0, 1, 2,
      3, and 4.
-    :vartype severity: int or ~$(python-base-namespace).v2022_08_01_preview.models.AlertSeverity
+    :vartype severity: int or ~azure.mgmt.monitor.v2022_08_01_preview.models.AlertSeverity
     :ivar enabled: The flag which indicates whether this scheduled query rule is enabled. Value
      should be true or false.
     :vartype enabled: bool
     :ivar public_network_access: This determines if traffic is allowed over public network. By
      default it is enabled. Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
     :vartype public_network_access: str or
-     ~$(python-base-namespace).v2022_08_01_preview.models.PublicNetworkAccess
+     ~azure.mgmt.monitor.v2022_08_01_preview.models.PublicNetworkAccess
     :ivar scopes: The list of resource id's that this scheduled query rule is scoped to.
     :vartype scopes: list[str]
     :ivar evaluation_frequency: How often the scheduled query rule is evaluated represented in ISO
@@ -508,13 +503,12 @@ class ScheduledQueryRuleResource(_serialization.Model):  # pylint: disable=too-m
      kind LogAlert.
     :vartype target_resource_types: list[str]
     :ivar criteria: The rule criteria that defines the conditions of the scheduled query rule.
-    :vartype criteria:
-     ~$(python-base-namespace).v2022_08_01_preview.models.ScheduledQueryRuleCriteria
+    :vartype criteria: ~azure.mgmt.monitor.v2022_08_01_preview.models.ScheduledQueryRuleCriteria
     :ivar mute_actions_duration: Mute actions for the chosen period of time (in ISO 8601 duration
      format) after the alert is fired. Relevant only for rules of the kind LogAlert.
     :vartype mute_actions_duration: ~datetime.timedelta
     :ivar actions: Actions to invoke when the alert fires.
-    :vartype actions: ~$(python-base-namespace).v2022_08_01_preview.models.Actions
+    :vartype actions: ~azure.mgmt.monitor.v2022_08_01_preview.models.Actions
     :ivar is_workspace_alerts_storage_configured: The flag which indicates whether this scheduled
      query rule has been configured to be stored in the customer's storage. The default is false.
     :vartype is_workspace_alerts_storage_configured: bool
@@ -531,7 +525,7 @@ class ScheduledQueryRuleResource(_serialization.Model):  # pylint: disable=too-m
     :ivar rule_resolve_configuration: Defines the configuration for resolving fired alerts.
      Relevant only for rules of the kind LogAlert.
     :vartype rule_resolve_configuration:
-     ~$(python-base-namespace).v2022_08_01_preview.models.RuleResolveConfiguration
+     ~azure.mgmt.monitor.v2022_08_01_preview.models.RuleResolveConfiguration
     """
 
     _validation = {
@@ -615,14 +609,14 @@ class ScheduledQueryRuleResource(_serialization.Model):  # pylint: disable=too-m
     ) -> None:
         """
         :keyword identity: The identity of the resource.
-        :paramtype identity: ~$(python-base-namespace).v2022_08_01_preview.models.Identity
+        :paramtype identity: ~azure.mgmt.monitor.v2022_08_01_preview.models.Identity
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword kind: Indicates the type of scheduled query rule. The default is LogAlert. Known
          values are: "LogAlert" and "LogToMetric".
-        :paramtype kind: str or ~$(python-base-namespace).v2022_08_01_preview.models.Kind
+        :paramtype kind: str or ~azure.mgmt.monitor.v2022_08_01_preview.models.Kind
         :keyword description: The description of the scheduled query rule.
         :paramtype description: str
         :keyword display_name: The display name of the alert rule.
@@ -630,14 +624,14 @@ class ScheduledQueryRuleResource(_serialization.Model):  # pylint: disable=too-m
         :keyword severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
          severest. Relevant and required only for rules of the kind LogAlert. Known values are: 0, 1, 2,
          3, and 4.
-        :paramtype severity: int or ~$(python-base-namespace).v2022_08_01_preview.models.AlertSeverity
+        :paramtype severity: int or ~azure.mgmt.monitor.v2022_08_01_preview.models.AlertSeverity
         :keyword enabled: The flag which indicates whether this scheduled query rule is enabled. Value
          should be true or false.
         :paramtype enabled: bool
         :keyword public_network_access: This determines if traffic is allowed over public network. By
          default it is enabled. Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
         :paramtype public_network_access: str or
-         ~$(python-base-namespace).v2022_08_01_preview.models.PublicNetworkAccess
+         ~azure.mgmt.monitor.v2022_08_01_preview.models.PublicNetworkAccess
         :keyword scopes: The list of resource id's that this scheduled query rule is scoped to.
         :paramtype scopes: list[str]
         :keyword evaluation_frequency: How often the scheduled query rule is evaluated represented in
@@ -656,13 +650,12 @@ class ScheduledQueryRuleResource(_serialization.Model):  # pylint: disable=too-m
          kind LogAlert.
         :paramtype target_resource_types: list[str]
         :keyword criteria: The rule criteria that defines the conditions of the scheduled query rule.
-        :paramtype criteria:
-         ~$(python-base-namespace).v2022_08_01_preview.models.ScheduledQueryRuleCriteria
+        :paramtype criteria: ~azure.mgmt.monitor.v2022_08_01_preview.models.ScheduledQueryRuleCriteria
         :keyword mute_actions_duration: Mute actions for the chosen period of time (in ISO 8601
          duration format) after the alert is fired. Relevant only for rules of the kind LogAlert.
         :paramtype mute_actions_duration: ~datetime.timedelta
         :keyword actions: Actions to invoke when the alert fires.
-        :paramtype actions: ~$(python-base-namespace).v2022_08_01_preview.models.Actions
+        :paramtype actions: ~azure.mgmt.monitor.v2022_08_01_preview.models.Actions
         :keyword check_workspace_alerts_storage_configured: The flag which indicates whether this
          scheduled query rule should be stored in the customer's storage. The default is false. Relevant
          only for rules of the kind LogAlert.
@@ -676,7 +669,7 @@ class ScheduledQueryRuleResource(_serialization.Model):  # pylint: disable=too-m
         :keyword rule_resolve_configuration: Defines the configuration for resolving fired alerts.
          Relevant only for rules of the kind LogAlert.
         :paramtype rule_resolve_configuration:
-         ~$(python-base-namespace).v2022_08_01_preview.models.RuleResolveConfiguration
+         ~azure.mgmt.monitor.v2022_08_01_preview.models.RuleResolveConfiguration
         """
         super().__init__(**kwargs)
         self.id = None
@@ -716,8 +709,7 @@ class ScheduledQueryRuleResourceCollection(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: The values for the scheduled query rule resources.
-    :vartype value:
-     list[~$(python-base-namespace).v2022_08_01_preview.models.ScheduledQueryRuleResource]
+    :vartype value: list[~azure.mgmt.monitor.v2022_08_01_preview.models.ScheduledQueryRuleResource]
     :ivar next_link: Provides the link to retrieve the next set of elements.
     :vartype next_link: str
     """
@@ -735,7 +727,7 @@ class ScheduledQueryRuleResourceCollection(_serialization.Model):
         """
         :keyword value: The values for the scheduled query rule resources.
         :paramtype value:
-         list[~$(python-base-namespace).v2022_08_01_preview.models.ScheduledQueryRuleResource]
+         list[~azure.mgmt.monitor.v2022_08_01_preview.models.ScheduledQueryRuleResource]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -748,7 +740,7 @@ class ScheduledQueryRuleResourcePatch(_serialization.Model):  # pylint: disable=
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar identity: The identity of the resource.
-    :vartype identity: ~$(python-base-namespace).v2022_08_01_preview.models.Identity
+    :vartype identity: ~azure.mgmt.monitor.v2022_08_01_preview.models.Identity
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar created_with_api_version: The api-version used when creating this alert rule.
@@ -762,14 +754,14 @@ class ScheduledQueryRuleResourcePatch(_serialization.Model):  # pylint: disable=
     :ivar severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
      severest. Relevant and required only for rules of the kind LogAlert. Known values are: 0, 1, 2,
      3, and 4.
-    :vartype severity: int or ~$(python-base-namespace).v2022_08_01_preview.models.AlertSeverity
+    :vartype severity: int or ~azure.mgmt.monitor.v2022_08_01_preview.models.AlertSeverity
     :ivar enabled: The flag which indicates whether this scheduled query rule is enabled. Value
      should be true or false.
     :vartype enabled: bool
     :ivar public_network_access: This determines if traffic is allowed over public network. By
      default it is enabled. Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
     :vartype public_network_access: str or
-     ~$(python-base-namespace).v2022_08_01_preview.models.PublicNetworkAccess
+     ~azure.mgmt.monitor.v2022_08_01_preview.models.PublicNetworkAccess
     :ivar scopes: The list of resource id's that this scheduled query rule is scoped to.
     :vartype scopes: list[str]
     :ivar evaluation_frequency: How often the scheduled query rule is evaluated represented in ISO
@@ -788,13 +780,12 @@ class ScheduledQueryRuleResourcePatch(_serialization.Model):  # pylint: disable=
      kind LogAlert.
     :vartype target_resource_types: list[str]
     :ivar criteria: The rule criteria that defines the conditions of the scheduled query rule.
-    :vartype criteria:
-     ~$(python-base-namespace).v2022_08_01_preview.models.ScheduledQueryRuleCriteria
+    :vartype criteria: ~azure.mgmt.monitor.v2022_08_01_preview.models.ScheduledQueryRuleCriteria
     :ivar mute_actions_duration: Mute actions for the chosen period of time (in ISO 8601 duration
      format) after the alert is fired. Relevant only for rules of the kind LogAlert.
     :vartype mute_actions_duration: ~datetime.timedelta
     :ivar actions: Actions to invoke when the alert fires.
-    :vartype actions: ~$(python-base-namespace).v2022_08_01_preview.models.Actions
+    :vartype actions: ~azure.mgmt.monitor.v2022_08_01_preview.models.Actions
     :ivar is_workspace_alerts_storage_configured: The flag which indicates whether this scheduled
      query rule has been configured to be stored in the customer's storage. The default is false.
     :vartype is_workspace_alerts_storage_configured: bool
@@ -811,7 +802,7 @@ class ScheduledQueryRuleResourcePatch(_serialization.Model):  # pylint: disable=
     :ivar rule_resolve_configuration: Defines the configuration for resolving fired alerts.
      Relevant only for rules of the kind LogAlert.
     :vartype rule_resolve_configuration:
-     ~$(python-base-namespace).v2022_08_01_preview.models.RuleResolveConfiguration
+     ~azure.mgmt.monitor.v2022_08_01_preview.models.RuleResolveConfiguration
     """
 
     _validation = {
@@ -880,7 +871,7 @@ class ScheduledQueryRuleResourcePatch(_serialization.Model):  # pylint: disable=
     ) -> None:
         """
         :keyword identity: The identity of the resource.
-        :paramtype identity: ~$(python-base-namespace).v2022_08_01_preview.models.Identity
+        :paramtype identity: ~azure.mgmt.monitor.v2022_08_01_preview.models.Identity
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword description: The description of the scheduled query rule.
@@ -890,14 +881,14 @@ class ScheduledQueryRuleResourcePatch(_serialization.Model):  # pylint: disable=
         :keyword severity: Severity of the alert. Should be an integer between [0-4]. Value of 0 is
          severest. Relevant and required only for rules of the kind LogAlert. Known values are: 0, 1, 2,
          3, and 4.
-        :paramtype severity: int or ~$(python-base-namespace).v2022_08_01_preview.models.AlertSeverity
+        :paramtype severity: int or ~azure.mgmt.monitor.v2022_08_01_preview.models.AlertSeverity
         :keyword enabled: The flag which indicates whether this scheduled query rule is enabled. Value
          should be true or false.
         :paramtype enabled: bool
         :keyword public_network_access: This determines if traffic is allowed over public network. By
          default it is enabled. Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
         :paramtype public_network_access: str or
-         ~$(python-base-namespace).v2022_08_01_preview.models.PublicNetworkAccess
+         ~azure.mgmt.monitor.v2022_08_01_preview.models.PublicNetworkAccess
         :keyword scopes: The list of resource id's that this scheduled query rule is scoped to.
         :paramtype scopes: list[str]
         :keyword evaluation_frequency: How often the scheduled query rule is evaluated represented in
@@ -916,13 +907,12 @@ class ScheduledQueryRuleResourcePatch(_serialization.Model):  # pylint: disable=
          kind LogAlert.
         :paramtype target_resource_types: list[str]
         :keyword criteria: The rule criteria that defines the conditions of the scheduled query rule.
-        :paramtype criteria:
-         ~$(python-base-namespace).v2022_08_01_preview.models.ScheduledQueryRuleCriteria
+        :paramtype criteria: ~azure.mgmt.monitor.v2022_08_01_preview.models.ScheduledQueryRuleCriteria
         :keyword mute_actions_duration: Mute actions for the chosen period of time (in ISO 8601
          duration format) after the alert is fired. Relevant only for rules of the kind LogAlert.
         :paramtype mute_actions_duration: ~datetime.timedelta
         :keyword actions: Actions to invoke when the alert fires.
-        :paramtype actions: ~$(python-base-namespace).v2022_08_01_preview.models.Actions
+        :paramtype actions: ~azure.mgmt.monitor.v2022_08_01_preview.models.Actions
         :keyword check_workspace_alerts_storage_configured: The flag which indicates whether this
          scheduled query rule should be stored in the customer's storage. The default is false. Relevant
          only for rules of the kind LogAlert.
@@ -936,7 +926,7 @@ class ScheduledQueryRuleResourcePatch(_serialization.Model):  # pylint: disable=
         :keyword rule_resolve_configuration: Defines the configuration for resolving fired alerts.
          Relevant only for rules of the kind LogAlert.
         :paramtype rule_resolve_configuration:
-         ~$(python-base-namespace).v2022_08_01_preview.models.RuleResolveConfiguration
+         ~azure.mgmt.monitor.v2022_08_01_preview.models.RuleResolveConfiguration
         """
         super().__init__(**kwargs)
         self.identity = identity
@@ -970,8 +960,7 @@ class SystemData(_serialization.Model):
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Known values are:
      "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: str or
-     ~$(python-base-namespace).v2022_08_01_preview.models.CreatedByType
+    :vartype created_by_type: str or ~azure.mgmt.monitor.v2022_08_01_preview.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
@@ -979,7 +968,7 @@ class SystemData(_serialization.Model):
     :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or
-     ~$(python-base-namespace).v2022_08_01_preview.models.CreatedByType
+     ~azure.mgmt.monitor.v2022_08_01_preview.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
@@ -1009,8 +998,7 @@ class SystemData(_serialization.Model):
         :paramtype created_by: str
         :keyword created_by_type: The type of identity that created the resource. Known values are:
          "User", "Application", "ManagedIdentity", and "Key".
-        :paramtype created_by_type: str or
-         ~$(python-base-namespace).v2022_08_01_preview.models.CreatedByType
+        :paramtype created_by_type: str or ~azure.mgmt.monitor.v2022_08_01_preview.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
@@ -1018,7 +1006,7 @@ class SystemData(_serialization.Model):
         :keyword last_modified_by_type: The type of identity that last modified the resource. Known
          values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or
-         ~$(python-base-namespace).v2022_08_01_preview.models.CreatedByType
+         ~azure.mgmt.monitor.v2022_08_01_preview.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """

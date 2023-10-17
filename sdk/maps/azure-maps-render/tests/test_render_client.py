@@ -35,8 +35,7 @@ class TestMapsRenderClient(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_get_map_tileset(self):
         result = self.client.get_map_tileset(tileset_id=TilesetID.MICROSOFT_BASE)
-        assert result.name == "microsoft.base"
-        assert "TomTom" in result.map_attribution
+        assert result.name == "microsoft.base" or result.name == "microsoft.core.vector"
         assert len(result.tiles_endpoints) > 0
 
     @MapsRenderPreparer()

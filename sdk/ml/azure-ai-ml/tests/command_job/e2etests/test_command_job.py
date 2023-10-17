@@ -9,7 +9,7 @@ from test_utilities.utils import sleep_if_live, wait_until_done
 
 from azure.ai.ml import Input, MLClient, command, load_environment, load_job
 from azure.ai.ml._azure_environments import _get_base_url_from_metadata, _resource_to_scopes
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ListViewType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml.constants._common import COMMON_RUNTIME_ENV_VAR, LOCAL_COMPUTE_TARGET, TID_FMT, AssetTypes
 from azure.ai.ml.entities import AmlTokenConfiguration, QueueSettings
@@ -35,6 +35,7 @@ TEST_PARAMS = {"a_param": "1", "another_param": "2"}
     "mock_code_hash",
     "mock_asset_name",
     "enable_environment_id_arm_expansion",
+    "mock_anon_component_version",
 )
 @pytest.mark.training_experiences_test
 class TestCommandJob(AzureRecordedTestCase):
@@ -185,7 +186,6 @@ class TestCommandJob(AzureRecordedTestCase):
     @pytest.mark.skip("https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659")
     @pytest.mark.e2etest
     def test_command_job_builder(self, data_with_2_versions: str, client: MLClient) -> None:
-
         inputs = {
             "uri": Input(
                 type=AssetTypes.URI_FILE, path="azureml://datastores/workspaceblobstore/paths/python/data.csv"
@@ -487,6 +487,19 @@ class TestCommandJob(AzureRecordedTestCase):
         assert job.outputs.test2.version == "2"
         assert job.outputs.test3.name == "test3_output"
         assert job.outputs.test3.version == "3"
+
+    @pytest.mark.e2etest
+    def test_ray_command_job(self, randstr: Callable[[], str], client: MLClient) -> None:
+        job = client.jobs.create_or_update(
+            load_job(
+                source="./tests/test_configs/command_job/command_job_dist_ray.yml",
+                params_override=[{"name": randstr("job_name")}],
+            )
+        )
+
+        job_status = wait_until_done(client=client, job=job)
+
+        assert job_status == JobStatus.COMPLETED
 
 
 def check_tid_in_url(client: MLClient, job: Job) -> None:

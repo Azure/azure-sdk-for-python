@@ -28,8 +28,11 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: webpubsub
+    TestProxy: true
     Artifacts:
     - name: azure-mgmt-webpubsub
       safeName: azuremgmtwebpubsub
     - name: azure-messaging-webpubsubservice
       safeName: azuremessagingwebpubsubservice
+    - name: azure-messaging-webpubsubclient
+      safeName: azuremessagingwebpubsubclient

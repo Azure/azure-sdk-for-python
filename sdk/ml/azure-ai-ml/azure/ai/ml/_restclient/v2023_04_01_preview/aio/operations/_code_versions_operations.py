@@ -19,7 +19,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._code_versions_operations import build_create_or_get_pending_upload_request, build_create_or_update_request, build_delete_request, build_get_request, build_list_request
+from ...operations._code_versions_operations import build_create_or_get_start_pending_upload_request, build_create_or_update_request, build_delete_request, build_get_request, build_list_request
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -377,7 +377,7 @@ class CodeVersionsOperations:
 
 
     @distributed_trace_async
-    async def create_or_get_pending_upload(
+    async def create_or_get_start_pending_upload(
         self,
         resource_group_name: str,
         workspace_name: str,
@@ -416,7 +416,7 @@ class CodeVersionsOperations:
 
         _json = self._serialize.body(body, 'PendingUploadRequestDto')
 
-        request = build_create_or_get_pending_upload_request(
+        request = build_create_or_get_start_pending_upload_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
@@ -425,7 +425,7 @@ class CodeVersionsOperations:
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.create_or_get_pending_upload.metadata['url'],
+            template_url=self.create_or_get_start_pending_upload.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -449,5 +449,5 @@ class CodeVersionsOperations:
 
         return deserialized
 
-    create_or_get_pending_upload.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/codes/{name}/versions/pendingUpload/{version}"}  # type: ignore
+    create_or_get_start_pending_upload.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/codes/{name}/versions/{version}/startPendingUpload"}  # type: ignore
 

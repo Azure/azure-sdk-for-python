@@ -35,6 +35,7 @@ pip install azure-keyvault-keys azure-identity
 | [list_operations.py][list_operations_sample] ([async version][list_operations_async_sample]) | basic list operations for keys |
 | [backup_restore_operations.py][backup_operations_sample] ([async version][backup_operations_async_sample]) | back up and recover keys |
 | [recover_purge_operations.py][recover_purge_sample] ([async version][recover_purge_async_sample]) | recover and purge keys |
+| [key_rotation.py][key_rotation_sample] ([async version][key_rotation_async_sample]) | create/update key rotation policies and rotate keys on-demand |
 | [send_request.py][send_request_sample] | use the `send_request` client method |
 
 

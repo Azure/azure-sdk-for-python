@@ -8,7 +8,6 @@ from typing import Dict, Iterable, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
-from azure.ai.ml._utils._experimental import experimental
 
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -50,12 +49,11 @@ class RegistryOperations:
         self._init_kwargs = kwargs
 
     @monitor_with_activity(logger, "Registry.List", ActivityType.PUBLICAPI)
-    @experimental
     def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[Registry]:
         """List all registries that the user has access to in the current resource group or subscription.
 
-        :param scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
-        :type scope: str, optional
+        :keyword scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
+        :paramtype scope: str
         :return: An iterator like instance of Registry objects
         :rtype: ~azure.core.paging.ItemPaged[Registry]
         """
@@ -69,7 +67,6 @@ class RegistryOperations:
         )
 
     @monitor_with_activity(logger, "Registry.Get", ActivityType.PUBLICAPI)
-    @experimental
     def get(self, name: Optional[str] = None) -> Registry:
         """Get a registry by name.
 
@@ -98,8 +95,14 @@ class RegistryOperations:
             )
         return registry_name
 
-    def _get_polling(self, name):
-        """Return the polling with custom poll interval."""
+    def _get_polling(self, name: str) -> AzureMLPolling:
+        """Return the polling with custom poll interval.
+
+        :param name: The registry name
+        :type name: str
+        :return: A poller with custom poll interval.
+        :rtype: AzureMLPolling
+        """
         path_format_arguments = {
             "registryName": name,
             "resourceGroupName": self._resource_group_name,
@@ -110,7 +113,6 @@ class RegistryOperations:
         )
 
     @monitor_with_activity(logger, "Registry.BeginCreate", ActivityType.PUBLICAPI)
-    @experimental
     def begin_create(
         self,
         registry: Registry,
@@ -143,12 +145,11 @@ class RegistryOperations:
         return poller
 
     @monitor_with_activity(logger, "Registry.BeginDelete", ActivityType.PUBLICAPI)
-    @experimental
     def begin_delete(self, *, name: str, **kwargs: Dict) -> LROPoller[None]:
         """Delete a registry if it exists. Returns nothing on a successful operation.
 
-        :param name: Name of the registry
-        :type name: str
+        :keyword name: Name of the registry
+        :paramtype name: str
         :return: A poller to track the operation status.
         :rtype: LROPoller
         """

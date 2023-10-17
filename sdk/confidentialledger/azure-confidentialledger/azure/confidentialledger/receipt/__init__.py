@@ -5,5 +5,6 @@
 # --------------------------------------------------------------------------
 
 from ._receipt_verification import verify_receipt
+from ._claims_digest_computation import compute_claims_digest
 
-__all__ = ["verify_receipt"]
+__all__ = ["verify_receipt", "compute_claims_digest"]

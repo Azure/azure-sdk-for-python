@@ -124,16 +124,16 @@ from ._text_analytics_client_enums import AnalyzeTextLROResultsKind
 from ._text_analytics_client_enums import AnalyzeTextLROTaskKind
 from ._text_analytics_client_enums import AnalyzeTextTaskKind
 from ._text_analytics_client_enums import AnalyzeTextTaskResultsKind
-from ._text_analytics_client_enums import Association
-from ._text_analytics_client_enums import Certainty
-from ._text_analytics_client_enums import Conditionality
 from ._text_analytics_client_enums import DocumentSentimentValue
+from ._text_analytics_client_enums import EntityAssociation
+from ._text_analytics_client_enums import EntityCertainty
+from ._text_analytics_client_enums import EntityConditionality
 from ._text_analytics_client_enums import ErrorCode
 from ._text_analytics_client_enums import HealthcareEntityCategory
+from ._text_analytics_client_enums import HealthcareEntityRelation
 from ._text_analytics_client_enums import InnerErrorCode
-from ._text_analytics_client_enums import PiiCategory
 from ._text_analytics_client_enums import PiiDomain
-from ._text_analytics_client_enums import RelationType
+from ._text_analytics_client_enums import PiiEntityCategory
 from ._text_analytics_client_enums import SentenceSentimentValue
 from ._text_analytics_client_enums import State
 from ._text_analytics_client_enums import StringIndexType
@@ -260,16 +260,16 @@ __all__ = [
     'AnalyzeTextLROTaskKind',
     'AnalyzeTextTaskKind',
     'AnalyzeTextTaskResultsKind',
-    'Association',
-    'Certainty',
-    'Conditionality',
     'DocumentSentimentValue',
+    'EntityAssociation',
+    'EntityCertainty',
+    'EntityConditionality',
     'ErrorCode',
     'HealthcareEntityCategory',
+    'HealthcareEntityRelation',
     'InnerErrorCode',
-    'PiiCategory',
     'PiiDomain',
-    'RelationType',
+    'PiiEntityCategory',
     'SentenceSentimentValue',
     'State',
     'StringIndexType',

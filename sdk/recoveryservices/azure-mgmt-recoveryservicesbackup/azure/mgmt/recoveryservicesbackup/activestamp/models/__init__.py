@@ -63,7 +63,7 @@ from ._models_py3 import AzureVmWorkloadSAPHanaDBInstanceProtectedItem
 from ._models_py3 import AzureVmWorkloadSAPHanaDatabaseProtectableItem
 from ._models_py3 import AzureVmWorkloadSAPHanaDatabaseProtectedItem
 from ._models_py3 import AzureVmWorkloadSAPHanaDatabaseWorkloadItem
-from ._models_py3 import AzureVmWorkloadSAPHanaHSR
+from ._models_py3 import AzureVmWorkloadSAPHanaHSRProtectableItem
 from ._models_py3 import AzureVmWorkloadSAPHanaSystemProtectableItem
 from ._models_py3 import AzureVmWorkloadSAPHanaSystemWorkloadItem
 from ._models_py3 import AzureVmWorkloadSQLAvailabilityGroupProtectableItem
@@ -370,6 +370,7 @@ from ._recovery_services_backup_client_enums import TieringMode
 from ._recovery_services_backup_client_enums import Type
 from ._recovery_services_backup_client_enums import UsagesUnit
 from ._recovery_services_backup_client_enums import ValidationStatus
+from ._recovery_services_backup_client_enums import VaultSubResourceType
 from ._recovery_services_backup_client_enums import WeekOfMonth
 from ._recovery_services_backup_client_enums import WorkloadItemType
 from ._recovery_services_backup_client_enums import WorkloadType
@@ -436,7 +437,7 @@ __all__ = [
     "AzureVmWorkloadSAPHanaDatabaseProtectableItem",
     "AzureVmWorkloadSAPHanaDatabaseProtectedItem",
     "AzureVmWorkloadSAPHanaDatabaseWorkloadItem",
-    "AzureVmWorkloadSAPHanaHSR",
+    "AzureVmWorkloadSAPHanaHSRProtectableItem",
     "AzureVmWorkloadSAPHanaSystemProtectableItem",
     "AzureVmWorkloadSAPHanaSystemWorkloadItem",
     "AzureVmWorkloadSQLAvailabilityGroupProtectableItem",
@@ -742,6 +743,7 @@ __all__ = [
     "Type",
     "UsagesUnit",
     "ValidationStatus",
+    "VaultSubResourceType",
     "WeekOfMonth",
     "WorkloadItemType",
     "WorkloadType",

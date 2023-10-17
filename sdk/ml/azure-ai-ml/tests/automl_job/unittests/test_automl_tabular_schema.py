@@ -9,33 +9,33 @@ import yaml
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml import load_job
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import AutoNCrossValidations
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import Classification as RestClassification
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import ClassificationPrimaryMetrics
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import AutoNCrossValidations
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import Classification as RestClassification
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import ClassificationPrimaryMetrics
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
     ClassificationTrainingSettings as RestClassificationTrainingSettings,
 )
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import ColumnTransformer as RestColumnTransformer
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import CustomNCrossValidations
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import Forecasting as RestForecasting
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import ForecastingPrimaryMetrics
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import ColumnTransformer as RestColumnTransformer
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import CustomNCrossValidations
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import Forecasting as RestForecasting
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import ForecastingPrimaryMetrics
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
     ForecastingSettings as RestForecastingSettings,
 )
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
     ForecastingTrainingSettings as RestForecastingTrainingSettings,
 )
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import JobBase, LogVerbosity, MLTableJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import Regression as RestRegression
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import RegressionPrimaryMetrics
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import JobBase, LogVerbosity, MLTableJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import Regression as RestRegression
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import RegressionPrimaryMetrics
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
     RegressionTrainingSettings as RestRegressionTrainingSettings,
 )
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
     TableVerticalFeaturizationSettings as RestTableFeaturizationSettings,
 )
-from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
     TableVerticalLimitSettings as RestTableVerticalLimitSettings,
 )
 from azure.ai.ml._schema.automl.table_vertical.regression import AutoMLRegressionSchema
@@ -166,7 +166,7 @@ def expected_validation_data_size() -> int:
 
 @pytest.fixture
 def expected_forecasting_settings(mock_workspace_scope: OperationScope) -> RestForecastingSettings:
-    from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+    from azure.ai.ml._restclient.v2023_04_01_preview.models import (
         CustomForecastHorizon,
         CustomTargetLags,
         CustomTargetRollingWindowSize,

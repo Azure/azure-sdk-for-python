@@ -25,22 +25,22 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AzureQuotaExtensionAPIConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
-    """Configuration for AzureQuotaExtensionAPI.
+class QuotaMgmtClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+    """Configuration for QuotaMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2021-03-15-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-02-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, credential: "TokenCredential", **kwargs: Any) -> None:
-        super(AzureQuotaExtensionAPIConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2021-03-15-preview")  # type: Literal["2021-03-15-preview"]
+        super(QuotaMgmtClientConfiguration, self).__init__(**kwargs)
+        api_version: Literal["2023-02-01"] = kwargs.pop("api_version", "2023-02-01")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
@@ -51,10 +51,7 @@ class AzureQuotaExtensionAPIConfiguration(Configuration):  # pylint: disable=too
         kwargs.setdefault("sdk_moniker", "mgmt-quota/{}".format(VERSION))
         self._configure(**kwargs)
 
-    def _configure(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)

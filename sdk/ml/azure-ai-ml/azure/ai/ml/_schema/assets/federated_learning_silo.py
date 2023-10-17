@@ -8,6 +8,7 @@ from azure.ai.ml._schema.core.resource import YamlFileSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._schema.job.input_output_fields_provider import InputsField
 
+
 # Inherits from YamlFileSchema instead of something for specific because
 # this does not represent a server-side resource.
 @experimental

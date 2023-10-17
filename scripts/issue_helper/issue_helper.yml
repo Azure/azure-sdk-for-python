@@ -13,7 +13,7 @@ pr:
     - '*'
 
 schedules:
-  - cron: "0 16 * * *"
+  - cron: "0 1-9 * * *"
     displayName: SDK Issue Statistics
     branches:
       include:

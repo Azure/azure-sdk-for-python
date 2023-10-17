@@ -17,7 +17,6 @@ from azure.core.tracing.decorator import distributed_trace
 from ._operations import AdministrationOperations as AdministrationOperationsGenerated, JSON
 from ._operations import TestRunOperations as TestRunOperationsGenerated
 
-PollingReturnType = TypeVar("PollingReturnType")
 logger = logging.getLogger(__name__)
 
 

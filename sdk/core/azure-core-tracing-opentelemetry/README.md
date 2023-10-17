@@ -18,15 +18,22 @@ with azure-core tracing. This includes (not exhaustive list), azure-storage-blob
 ## Key concepts
 
 * You don't need to pass any context, SDK will get it for you
-* These lines are the only ones you need to enable tracing
+* There are two ways to enable the tracing plugin in code:
 
-  ``` python
-    from azure.core.settings import settings
-    from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
-    settings.tracing_implementation = OpenTelemetrySpan
+  ```python
+  from azure.core.settings import settings
+  from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
+  settings.tracing_implementation = OpenTelemetrySpan
   ```
-* Alternatively, if you have the latest version of `azure-core` installed, you can also set the following environment variable to
-  enable tracing with OpenTelemetry:
+
+  or
+
+  ```python
+  from azure.core.settings import settings
+  settings.tracing_implementation = "opentelemetry"
+  ```
+
+* Alternatively, if you have the latest version of `azure-core` installed, you can also set the following environment variable to enable tracing with OpenTelemetry:
 
   ```bash
   AZURE_SDK_TRACING_IMPLEMENTATION=opentelemetry
@@ -42,9 +49,8 @@ using Azure Monitor exporter, but you can use any exporter (Zipkin, etc.).
 
 # Declare OpenTelemetry as enabled tracing plugin for Azure SDKs
 from azure.core.settings import settings
-from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 
-settings.tracing_implementation = OpenTelemetrySpan
+settings.tracing_implementation = "opentelemetry"
 
 # In the below example, we use a simple console exporter, uncomment these lines to use
 # the OpenTelemetry exporter for Azure Monitor.
@@ -79,7 +85,12 @@ with tracer.start_as_current_span(name="MyApplication"):
     client.create_container('my_container')  # Call will be traced
 ```
 
-The Azure Monitor OpenTelemetry Exporter can be found in the [package](https://pypi.org/project/azure-monitor-opentelemetry-exporter/) `opentelemetry-azure-monitor-exporter`
+The Azure Monitor OpenTelemetry Exporter can be found in the [`azure-monitor-opentelemetry-exporter`](https://pypi.org/project/azure-monitor-opentelemetry-exporter/) package.
+
+
+## HTTP instrumentation
+
+With the Azure Core OpenTelemetry Tracing plugin enabled, HTTP requests made by Azure SDK clients are typically instrumented via the [`DistributedTracingPolicy`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/azure/core/pipeline/policies/_distributed_tracing.py) automatically. Since Azure Core handles HTTP instrumentation for Azure service calls, automatic HTTP instrumentation from other libraries such as `opentelemetry-requests-instrumentation` are suppressed to avoid duplicate spans from being created.
 
 
 ## Troubleshooting
@@ -93,6 +104,7 @@ More documentation on OpenTelemetry configuration can be found on the [OpenTelem
 
 
 ## Contributing
+
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
 
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.

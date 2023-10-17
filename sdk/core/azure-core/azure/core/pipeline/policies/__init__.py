@@ -47,6 +47,7 @@ from ._base_async import AsyncHTTPPolicy
 from ._authentication_async import AsyncBearerTokenCredentialPolicy
 from ._redirect_async import AsyncRedirectPolicy
 from ._retry_async import AsyncRetryPolicy
+from ._sensitive_header_cleanup_policy import SensitiveHeaderCleanupPolicy
 
 __all__ = [
     "HTTPPolicy",
@@ -71,4 +72,5 @@ __all__ = [
     "AsyncBearerTokenCredentialPolicy",
     "AsyncRedirectPolicy",
     "AsyncRetryPolicy",
+    "SensitiveHeaderCleanupPolicy",
 ]

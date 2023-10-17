@@ -29,12 +29,11 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.server_azure_ad_only_authentications.begin_delete(
+    client.server_azure_ad_only_authentications.begin_delete(
         resource_group_name="sqlcrudtest-4799",
         server_name="sqlcrudtest-6440",
         authentication_name="Default",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2020-11-01-preview/examples/AzureADOnlyAuthDelete.json

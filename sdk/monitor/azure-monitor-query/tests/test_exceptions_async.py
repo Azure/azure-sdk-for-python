@@ -11,14 +11,15 @@ from azure.identity.aio import ClientSecretCredential
 from azure.core.exceptions import HttpResponseError
 from azure.monitor.query import LogsBatchQuery, LogsQueryError,LogsQueryResult, LogsQueryPartialResult
 from azure.monitor.query.aio import LogsQueryClient
-from devtools_testutils import AzureRecordedTestCase
+
+from base_testcase import AzureMonitorQueryLogsTestCase
 
 
-class TestQueryExceptionsAsync(AzureRecordedTestCase):
+class TestQueryExceptionsAsync(AzureMonitorQueryLogsTestCase):
 
     @pytest.mark.asyncio
     async def test_logs_single_query_fatal_exception(self, recorded_test):
-        client = self.create_client_from_credential(
+        client = self.get_client(
             LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             with pytest.raises(HttpResponseError):
@@ -26,7 +27,7 @@ class TestQueryExceptionsAsync(AzureRecordedTestCase):
 
     @pytest.mark.asyncio
     async def test_logs_single_query_partial_exception_not_allowed(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(
+        client = self.get_client(
             LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             query = """let Weight = 92233720368547758;
@@ -40,7 +41,7 @@ class TestQueryExceptionsAsync(AzureRecordedTestCase):
 
     @pytest.mark.asyncio
     async def test_logs_resource_query_fatal_exception(self, recorded_test):
-        client = self.create_client_from_credential(
+        client = self.get_client(
             LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             with pytest.raises(HttpResponseError):
@@ -48,7 +49,7 @@ class TestQueryExceptionsAsync(AzureRecordedTestCase):
 
     @pytest.mark.asyncio
     async def test_logs_resource_query_partial_exception(self, recorded_test, monitor_info):
-        client = self.create_client_from_credential(
+        client = self.get_client(
             LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             query = """let Weight = 92233720368547758;
@@ -67,7 +68,7 @@ class TestQueryExceptionsAsync(AzureRecordedTestCase):
             client_secret = 'bad_secret',
             tenant_id = monitor_info['tenant_id']
         )
-        client = LogsQueryClient(credential)
+        client = self.get_client(LogsQueryClient, credential)
         async with client:
             requests = [
                 LogsBatchQuery(
@@ -95,7 +96,7 @@ class TestQueryExceptionsAsync(AzureRecordedTestCase):
     @pytest.mark.live_test_only("Issues recording dynamic 'id' values in requests/responses")
     @pytest.mark.asyncio
     async def test_logs_batch_query_partial_exception_not_allowed(self, monitor_info):
-        client = self.create_client_from_credential(
+        client = self.get_client(
             LogsQueryClient, self.get_credential(LogsQueryClient, is_async=True))
         async with client:
             requests = [

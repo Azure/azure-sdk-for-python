@@ -6,10 +6,10 @@
 
 Main areas include managing AutoML tasks.
 """
-from azure.ai.ml.entities._job.automl import (
-    TrainingSettings,
-)
+from azure.ai.ml.entities._job.automl import TrainingSettings
 from azure.ai.ml.entities._job.automl.image import (
+    LogTrainingMetrics,
+    LogValidationLoss,
     ImageClassificationJob,
     ImageClassificationMultilabelJob,
     ImageClassificationSearchSpace,
@@ -32,7 +32,9 @@ from azure.ai.ml.entities._job.automl.nlp import (
     TextNerJob,
 )
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
-from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
+from azure.ai.ml.entities._job.automl.stack_ensemble_settings import (
+    StackEnsembleSettings,
+)
 from azure.ai.ml.entities._job.automl.tabular import (
     ClassificationJob,
     ColumnTransformer,
@@ -43,7 +45,7 @@ from azure.ai.ml.entities._job.automl.tabular import (
     TabularLimitSettings,
 )
 
-from .._restclient.v2022_10_01_preview.models import (
+from .._restclient.v2023_04_01_preview.models import (
     BlockedTransformers,
     ClassificationModels,
     ClassificationMultilabelPrimaryMetrics,
@@ -103,6 +105,8 @@ __all__ = [
     "NlpLimitSettings",
     "NlpSweepSettings",
     "NlpSearchSpace",
+    "LogTrainingMetrics",
+    "LogValidationLoss",
     "ImageLimitSettings",
     "ImageModelSettingsClassification",
     "ImageModelSettingsObjectDetection",

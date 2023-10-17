@@ -1,9 +1,9 @@
 import pytest
 
 from azure.ai.ml import Input, Output
-from azure.ai.ml._restclient.v2023_02_01_preview.models import AmlToken, JobBase
-from azure.ai.ml._restclient.v2023_02_01_preview.models import SparkJob as RestSparkJob
-from azure.ai.ml._restclient.v2023_02_01_preview.models import SparkJobPythonEntry
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken, JobBase
+from azure.ai.ml._restclient.v2023_04_01_preview.models import SparkJob as RestSparkJob
+from azure.ai.ml._restclient.v2023_04_01_preview.models import SparkJobPythonEntry
 from azure.ai.ml.entities import SparkJob
 from azure.ai.ml.entities._builders.spark_func import spark
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
@@ -38,7 +38,7 @@ class TestSparkJobEntity:
             dynamic_allocation_max_executors=3,
             resources={
                 "instance_type": "Standard_E8S_V3",
-                "runtime_version": "3.1.0",
+                "runtime_version": "3.2.0",
             },
         )
 
@@ -78,7 +78,7 @@ class TestSparkJobEntity:
             executor_instances=2,
             resources={
                 "instance_type": "Standard_E8S_V3",
-                "runtime_version": "3.1.0",
+                "runtime_version": "3.2.0",
             },
         )
         assert node._to_job()._to_rest_object().properties.identity.identity_type == "UserIdentity"
@@ -108,7 +108,7 @@ class TestSparkJobEntity:
             executor_instances=2,
             resources={
                 "instance_type": "Standard_E8S_V3",
-                "runtime_version": "3.1.0",
+                "runtime_version": "3.2.0",
             },
             identity={"type": "managed"},
         )
@@ -133,7 +133,7 @@ class TestSparkJobEntity:
             },
             resources={
                 "instance_type": "Standard_E8S_V3",
-                "runtime_version": "3.1.0",
+                "runtime_version": "3.2.0",
             },
         )
 
@@ -165,7 +165,7 @@ class TestSparkJobEntity:
             node = spark(
                 code="./tests/test_configs/spark_job/basic_spark_job/src",
                 entry={"file": "./main.py"},
-                resources=SparkResourceConfiguration(instance_type="Standard_E128S_V3", runtime_version="3.1.0"),
+                resources=SparkResourceConfiguration(instance_type="Standard_E128S_V3", runtime_version="3.2.0"),
                 driver_cores=1,
                 driver_memory="2g",
                 executor_cores=2,
@@ -177,19 +177,19 @@ class TestSparkJobEntity:
                 == "Instance type must be specified for the list of standard_e4s_v3,standard_e8s_v3,standard_e16s_v3,standard_e32s_v3,standard_e64s_v3"
             )
 
-    def test_resources_33_runtime_version(self):
+    def test_resources_34_runtime_version(self):
         with pytest.raises(ValidationException) as ve:
             node = spark(
                 code="./tests/test_configs/spark_job/basic_spark_job/src",
                 entry={"file": "./main.py"},
-                resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.3.0"),
+                resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.4.0"),
                 driver_cores=1,
                 driver_memory="2g",
                 executor_cores=2,
                 executor_memory="2g",
             )
             node._to_job()._to_rest_object()
-            assert ve.message == "runtime version should be either 3.1 or 3.2"
+            assert ve.message == "runtime version should be either 3.2 or 3.3"
 
     def test_resources_3_runtime_version(self):
         with pytest.raises(ValidationException) as ve:
@@ -203,7 +203,7 @@ class TestSparkJobEntity:
                 executor_memory="2g",
             )
             node._to_job()._to_rest_object()
-            assert ve.message == "runtime version should be either 3.1 or 3.2"
+            assert ve.message == "runtime version should be either 3.2 or 3.3"
 
     def test_resources_runtime_version_with_char(self):
         with pytest.raises(ValueError) as ve:
@@ -225,7 +225,7 @@ class TestSparkJobEntity:
                 code="./tests/test_configs/spark_job/basic_spark_job/src",
                 resources={
                     "instance_type": "Standard_E8S_V3",
-                    "runtime_version": "3.1.0",
+                    "runtime_version": "3.2.0",
                 },
             )
             node._to_job()._to_rest_object()
@@ -234,7 +234,7 @@ class TestSparkJobEntity:
         with pytest.raises(ValidationException):
             node = spark(
                 code="./tests/test_configs/spark_job/basic_spark_job/src",
-                resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.1.0"),
+                resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.2.0"),
             )
             node._to_job()._to_rest_object()
 
@@ -248,7 +248,7 @@ class TestSparkJobEntity:
                         type="uri_file", path="azureml://datastores/workspaceblobstore/paths/python/data.csv"
                     )
                 },
-                resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.1.0"),
+                resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.2.0"),
             )
             node._to_job()._to_rest_object()
 
@@ -263,7 +263,7 @@ class TestSparkJobEntity:
                         path="azureml://datastores/workspaceblobstore/spark_titanic_output/titanic.parquet",
                     )
                 },
-                resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.1.0"),
+                resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.2.0"),
             )
             node._to_job()._to_rest_object()
 
@@ -272,7 +272,7 @@ class TestSparkJobEntity:
             node = spark(
                 code="./tests/test_configs/spark_job/basic_spark_job/src",
                 entry={"file": "./main.py"},
-                resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.1.0"),
+                resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.2.0"),
                 driver_cores=1,
                 driver_memory="2g",
                 executor_cores=2,
@@ -287,7 +287,7 @@ class TestSparkJobEntity:
         node = spark(
             code="./tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
-            resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.1.0"),
+            resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.2.0"),
             driver_cores=1,
             driver_memory="2g",
             executor_cores=2,
@@ -315,7 +315,7 @@ class TestSparkJobEntity:
             node = spark(
                 code="./tests/test_configs/spark_job/basic_spark_job/src",
                 entry={"file": "./main.py"},
-                resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.1.0"),
+                resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.2.0"),
                 driver_cores=1,
                 driver_memory="2g",
                 executor_cores=2,
@@ -331,7 +331,7 @@ class TestSparkJobEntity:
         node = spark(
             code="./tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
-            resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.1.0"),
+            resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.2.0"),
             driver_cores=1,
             driver_memory="2g",
             executor_cores=2,
@@ -349,7 +349,7 @@ class TestSparkJobEntity:
             node = spark(
                 code="./tests/test_configs/spark_job/basic_spark_job/src",
                 entry={"file": "./main.py"},
-                resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.1.0"),
+                resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.2.0"),
                 driver_cores=1,
                 driver_memory="2g",
                 executor_cores=2,
@@ -369,7 +369,7 @@ class TestSparkJobEntity:
         node = spark(
             code="./tests/test_configs/spark_job/basic_spark_job/src",
             entry={"file": "./main.py"},
-            resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.1.0"),
+            resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.2.0"),
             driver_cores=1,
             driver_memory="2g",
             executor_cores=2,
@@ -409,7 +409,7 @@ class TestSparkJobEntity:
             executor_instances=2,
             resources={
                 "instance_type": "Standard_E8S_V3",
-                "runtime_version": "3.1.0",
+                "runtime_version": "3.2.0",
             },
         )
         job_properties = RestSparkJob(
@@ -447,7 +447,7 @@ class TestSparkJobEntity:
             executor_instances=2,
             resources={
                 "instance_type": "Standard_E8S_V3",
-                "runtime_version": "3.1.0",
+                "runtime_version": "3.2.0",
             },
         )
         job_properties = RestSparkJob(
@@ -469,7 +469,6 @@ class TestSparkJobEntity:
         assert spark_job_result.entry is None
 
     def test_spark_job_builder_serialization(self) -> None:
-
         node = spark(
             name="builder-spark-job",
             experiment_name="builder-spark-experiment-name",
@@ -502,7 +501,7 @@ class TestSparkJobEntity:
             args="--input1 ${{inputs.input1}} --output1 ${{outputs.output1}} --my_sample_rate 0.01",
             resources={
                 "instance_type": "Standard_E8S_V3",
-                "runtime_version": "3.1.0",
+                "runtime_version": "3.2.0",
             },
         )
 
@@ -538,7 +537,7 @@ class TestSparkJobEntity:
             args="--input1 ${{inputs.input1}} --output1 ${{outputs.output1}} --my_sample_rate 0.01",
             resources={
                 "instance_type": "Standard_E8S_V3",
-                "runtime_version": "3.1.0",
+                "runtime_version": "3.2.0",
             },
         )
 
@@ -572,7 +571,7 @@ class TestSparkJobEntity:
                 )
             },
             args="--input1 ${{inputs.input1}} --output1 ${{outputs.output1}} --my_sample_rate 0.01",
-            resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.1.0"),
+            resources=SparkResourceConfiguration(instance_type="Standard_E8S_V3", runtime_version="3.2.0"),
         )
 
         assert expected_job._to_dict() == node._to_job()._to_dict()

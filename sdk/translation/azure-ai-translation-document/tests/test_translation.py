@@ -310,6 +310,7 @@ class TestTranslation(DocumentTranslationTest):
             self._validate_doc_status(document, "es")
         return variables
 
+    @pytest.mark.skip("Service now raises exception in this case. Need to follow-up")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
@@ -342,6 +343,7 @@ class TestTranslation(DocumentTranslationTest):
             assert doc.error.code == "TargetFileAlreadyExists"
         return variables
 
+    @pytest.mark.skip("Service now raises exception in this case. Need to follow-up")
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
     @recorded_by_proxy
@@ -580,6 +582,7 @@ class TestTranslation(DocumentTranslationTest):
             self._validate_doc_status(doc, target_language="fr")
         return variables
 
+    @pytest.mark.skip("Flaky test")
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()

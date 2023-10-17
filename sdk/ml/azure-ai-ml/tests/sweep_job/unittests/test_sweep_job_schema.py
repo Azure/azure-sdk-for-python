@@ -6,12 +6,12 @@ import pytest
 import yaml
 
 from azure.ai.ml import load_job
-from azure.ai.ml._restclient.v2023_02_01_preview.models import AmlToken as RestAmlToken
-from azure.ai.ml._restclient.v2023_02_01_preview.models import InputDeliveryMode, JobInputType, JobOutputType
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ManagedIdentity as RestManagedIdentity
-from azure.ai.ml._restclient.v2023_02_01_preview.models import OutputDeliveryMode
-from azure.ai.ml._restclient.v2023_02_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken as RestAmlToken
+from azure.ai.ml._restclient.v2023_04_01_preview.models import InputDeliveryMode, JobInputType, JobOutputType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedIdentity as RestManagedIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import OutputDeliveryMode
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml._schema import SweepJobSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AssetTypes, InputOutputModes
 from azure.ai.ml.entities import (
@@ -338,6 +338,21 @@ class TestSweepJobSchema:
         [
             ("./tests/test_configs/sweep_job/sampling_algorithm_properties/sweep_job_random_seed.yml", "seed", 999),
             ("./tests/test_configs/sweep_job/sampling_algorithm_properties/sweep_job_random_rule.yml", "rule", "sobol"),
+            (
+                "./tests/test_configs/sweep_job/sampling_algorithm_properties/logbase_values/sweep_job_random_logbase_e.yml",
+                "logbase",
+                "e",
+            ),
+            (
+                "./tests/test_configs/sweep_job/sampling_algorithm_properties/logbase_values/sweep_job_random_logbase_number.yml",
+                "logbase",
+                2,
+            ),
+            (
+                "./tests/test_configs/sweep_job/sampling_algorithm_properties/logbase_values/sweep_job_random_logbase_float.yml",
+                "logbase",
+                2.5,
+            ),
         ],
     )
     def test_sampling_algorithm_object_properties(self, yaml_path: str, property_name: str, expected_value: Any):

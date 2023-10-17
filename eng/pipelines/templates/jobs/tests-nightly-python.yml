@@ -22,7 +22,7 @@ jobs:
       - script: |
           python -m pip freeze
           python -m pip --version
-          python -m pip install setuptools==67.6.0 wheel==0.37.0 tox==3.24.3 tox-monorepo==0.1.2 packaging==21.0 requests
+          python -m pip install setuptools==58.3.0 wheel==0.37.0 tox==4.5.0 packaging==23.1 requests
           python -m pip install $(Build.SourcesDirectory)/tools/azure-sdk-tools[build]
         displayName: Install Dependencies
 
@@ -31,7 +31,7 @@ jobs:
           runProxy: false
 
       - script: |
-          python ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results.xml" --toxenv="whl" --filter-type="None"
+          python ./scripts/devops_tasks/dispatch_tox.py "$(BuildTargetingString)" --junitxml="junit/test_results.xml" --toxenv="whl" --filter-type="None"
         displayName: 'Setup - Run Filtered Tests For Python $(PythonVersion)'
         env:
           YARL_NO_EXTENSIONS: 1
@@ -67,7 +67,7 @@ jobs:
           sudo apt-get install build-essential -y
           python -m pip freeze
           python -m pip --version
-          python -m pip install setuptools==67.6.0 wheel==0.37.0 tox==3.24.3 tox-monorepo==0.1.2 packaging==21.0 requests
+          python -m pip install setuptools==58.3.0 wheel==0.37.0 tox==4.5.0 packaging==23.1 requests
           python -m pip install $(Build.SourcesDirectory)/tools/azure-sdk-tools[build]
         displayName: Install Dependencies
 
@@ -78,7 +78,7 @@ jobs:
       - script: |
           find /usr/lib -name "libffi.so*"
           ln -s /usr/lib/x86_64-linux-gnu/libffi.so.7 /usr/lib/x86_64-linux-gnu/libffi.so.6
-          python ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results.xml" --toxenv="whl" --filter-type="None"
+          python ./scripts/devops_tasks/dispatch_tox.py "$(BuildTargetingString)" --junitxml="junit/test_results.xml" --toxenv="whl" --filter-type="None"
         displayName: 'Setup - Run Filtered Tests For Python $(PythonVersion)'
         env:
           YARL_NO_EXTENSIONS: 1
@@ -131,10 +131,10 @@ jobs:
           curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
           python3 get-pip.py
           python3 -m pip install setuptools==67.6.0 wheel
-          python3 -m pip install tox tox-monorepo packaging twine codecov beautifulsoup4
+          python3 -m pip install tox packaging twine beautifulsoup4
           python3 --version
           cd $(Build.SourcesDirectory)
-          python3 ./scripts/devops_tasks/setup_execute_tests.py "$(BuildTargetingString)" --junitxml="junit/test_results_38.xml" --toxenv="whl" --filter-type="None"
+          python3 ./scripts/devops_tasks/dispatch_tox.py "$(BuildTargetingString)" --junitxml="junit/test_results_38.xml" --toxenv="whl" --filter-type="None"
         displayName: 'Setup - Run Filtered Tests "Nightly" using Python Edge'
         env:
           YARL_NO_EXTENSIONS: 1

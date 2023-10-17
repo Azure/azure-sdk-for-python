@@ -1,14 +1,65 @@
 # Release History
 
-## 12.16.0 (Unreleased)
+## 12.19.0b1 (Unreleased)
 
 ### Features Added
-
-### Breaking Changes
+- Added `audience` as an optional keyword that can be specified on APIs that have a `credential` parameter. This
+keyword only has an effect when the credential provided is of type `TokenCredential`.
 
 ### Bugs Fixed
+- Deprecated `BlobProperties` as a valid input type to the `blob` parameter on the following APIs:
+BlobServiceClient's `get_blob_client`, ContainerClient's `delete_blob`, `download_blob`, and `get_blob_client`.
+This deprecation change also applies to the `name` parameter on ContainerClient's `upload_blob` API. This change
+applies to both sync and async packages but does not apply to the batch equivalent of any of the listed APIs. If a
+`BlobProperties` is provided, a deprecation warning is raised.
 
-### Other Changes
+## 12.18.3 (2023-10-10)
+
+### Bugs Fixed
+- Fixed an issue when an invalid type was provided for `credential` during client construction, the
+`__str__` of the object would be present in the exception message and therefore potentially logged.
+
+## 12.18.2 (2023-09-25)
+
+### Bugs Fixed
+- Fixed an issue where `user_agent` was being ignored on `upload_blob` or `download_blob` if client was configured
+for encryption.
+
+## 12.18.1 (2023-09-13)
+
+### Bugs Fixed
+- Fixed breaking `KeyError: 'sdk_moniker'` in `create_configuration`.
+NOTE: This is not an exported method and therefore should not be imported/called directly.
+
+## 12.18.0 (2023-09-12)
+
+### Features Added
+- Stable release of features from 12.18.0b1
+
+## 12.18.0b1 (2023-08-08)
+
+### Features Added
+- Added support for service versions 2023-05-03 and 2023-08-03.
+- Added `version_id` as a client constructor parameter to `BlobClient`. This change makes `BlobClient`s version-aware, such that
+all APIs that accept `version_id` will operate on the version ID provided during client construction by default.
+- Added optional keyword `version_id` to `get_blob_client` APIs which, if provided, will result in a version-aware `BlobClient` in which
+all APIs that accept `version_id` will operate on the version ID provided to the `get_blob_client` API call by default.
+
+## 12.17.0 (2023-07-11)
+
+### Features Added
+- Stable release of features from 12.17.0b1
+
+## 12.17.0b1 (2023-05-30)
+
+### Features Added
+- Added support for service version 2023-01-03.
+- Content length limit increased from 4 MiB to 100 MiB for `append_block` and `append_block_from_url` APIs and their async equivalents.
+
+## 12.16.0 (2023-04-12)
+
+### Features Added
+- Stable release of features from 12.16.0b1
 
 ## 12.16.0b1 (2023-03-28)
 

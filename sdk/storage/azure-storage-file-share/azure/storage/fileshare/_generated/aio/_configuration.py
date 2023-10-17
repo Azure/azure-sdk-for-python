@@ -40,7 +40,7 @@ class AzureFileStorageConfiguration(Configuration):  # pylint: disable=too-many-
      URI. Default value is None.
     :type allow_source_trailing_dot: bool
     :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2022-11-02". Note that overriding this default value may result in unsupported behavior.
+     is "2023-01-03". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
     :keyword file_range_write_from_url: Only update is supported: - Update: Writes the bytes
      downloaded from the source url into the specified range. Default value is "update". Note that
@@ -57,7 +57,7 @@ class AzureFileStorageConfiguration(Configuration):  # pylint: disable=too-many-
         **kwargs: Any
     ) -> None:
         super(AzureFileStorageConfiguration, self).__init__(**kwargs)
-        version: Literal["2022-11-02"] = kwargs.pop("version", "2022-11-02")
+        version: Literal["2023-01-03"] = kwargs.pop("version", "2023-01-03")
         file_range_write_from_url: Literal["update"] = kwargs.pop("file_range_write_from_url", "update")
 
         if url is None:

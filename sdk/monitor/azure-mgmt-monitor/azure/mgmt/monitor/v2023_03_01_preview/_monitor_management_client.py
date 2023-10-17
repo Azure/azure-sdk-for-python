@@ -27,7 +27,7 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
 
     :ivar tenant_action_groups: TenantActionGroupsOperations operations
     :vartype tenant_action_groups:
-     $(python-base-namespace).v2023_03_01_preview.operations.TenantActionGroupsOperations
+     azure.mgmt.monitor.v2023_03_01_preview.operations.TenantActionGroupsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param base_url: Service URL. Default value is "https://management.azure.com".

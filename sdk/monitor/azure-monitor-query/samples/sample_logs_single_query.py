@@ -10,29 +10,28 @@ USAGE:
     1) LOGS_WORKSPACE_ID - The first (primary) workspace ID.
 
 This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
-For more information on DefaultAzureCredential, see https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
+For more information on DefaultAzureCredential, see https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 
 **Note** - Although this example uses pandas to print the response, it's optional and
 isn't a required package for querying. Alternatively, native Python can be used as well.
 """
-import os
-import pandas as pd
+# [START send_logs_query]
 from datetime import timedelta
-from azure.monitor.query import LogsQueryClient, LogsQueryStatus
+import os
+
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
+from azure.monitor.query import LogsQueryClient, LogsQueryStatus
+import pandas as pd
 
-# [START client_auth_with_token_cred]
-credential  = DefaultAzureCredential()
 
+credential = DefaultAzureCredential()
 client = LogsQueryClient(credential)
-# [END client_auth_with_token_cred]
 
-# [START send_logs_query]
-query= """AppRequests | take 5"""
+query = "AppRequests | take 5"
 
 try:
-    response = client.query_workspace(os.environ['LOGS_WORKSPACE_ID'], query, timespan=timedelta(days=1))
+    response = client.query_workspace(os.environ["LOGS_WORKSPACE_ID"], query, timespan=timedelta(days=1))
     if response.status == LogsQueryStatus.PARTIAL:
         error = response.partial_error
         data = response.partial_data
@@ -44,7 +43,7 @@ try:
         print(df)
 except HttpResponseError as err:
     print("something fatal happened")
-    print (err)
+    print(err)
 
 # [END send_logs_query]
 """

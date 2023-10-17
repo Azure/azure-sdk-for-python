@@ -14,7 +14,6 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
 )
 from azure.ai.ml._restclient.v2022_10_01_preview.models import Registry as RestRegistry
 from azure.ai.ml._restclient.v2022_10_01_preview.models import RegistryProperties
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
@@ -29,7 +28,6 @@ REPLICATION_LOCATIONS = "replication_locations"
 INTELLECTUAL_PROPERTY = "intellectual_property"
 
 
-@experimental
 class Registry(Resource):
     def __init__(
         self,
@@ -60,8 +58,8 @@ class Registry(Resource):
         :type public_network_access: str
         :param discovery_url: Backend service base url for the registry.
         :type discovery_url: str
-        :param intellectual_property_publisher: Intellectual property publisher.
-        :type intellectual_property_publisher: str
+        :param intellectual_property: **Experimental** Intellectual property publisher.
+        :type intellectual_property: ~azure.ai.ml.entities.IntellectualProperty
         :param managed_resource_group: Managed resource group created for the registry.
         :type managed_resource_group: str
         :param mlflow_registry_uri: Ml flow tracking uri for the registry.
@@ -92,8 +90,8 @@ class Registry(Resource):
     ) -> None:
         """Dump the registry spec into a file in yaml format.
 
-        :param path: Path to a local file as the target, new file will be created, raises exception if the file exists.
-        :type path: str
+        :param dest: Path to a local file as the target, new file will be created, raises exception if the file exists.
+        :type dest: str
         """
         yaml_serialized = self._to_dict()
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False)
@@ -150,7 +148,7 @@ class Registry(Resource):
 
         # Convert from api name region_details to user-shown name "replication locations"
         replication_locations = []
-        if real_registry.region_details:
+        if real_registry and real_registry.region_details:
             replication_locations = [
                 RegistryRegionDetails._from_rest_object(details)
                 for details in real_registry.region_details  # pylint: disable=protected-access
@@ -200,6 +198,7 @@ class Registry(Resource):
         """Build current parameterized schedule instance to a registry object before submission.
 
         :return: Rest registry.
+        :rtype: RestRegistry
         """
         identity = RestManagedServiceIdentity(type=RestManagedServiceIdentityType.SYSTEM_ASSIGNED)
         replication_locations = []

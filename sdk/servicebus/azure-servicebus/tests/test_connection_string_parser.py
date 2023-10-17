@@ -11,9 +11,9 @@ from azure.servicebus import (
     parse_connection_string,
 )
 
-from devtools_testutils import AzureMgmtTestCase
+from devtools_testutils import AzureMgmtRecordedTestCase
 
-class ServiceBusConnectionStringParserTests(AzureMgmtTestCase):
+class ServiceBusConnectionStringParserTests(AzureMgmtRecordedTestCase):
     def test_sb_conn_str_parse_cs(self, **kwargs):
         conn_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessKeyName=test;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='
         parse_result = parse_connection_string(conn_str)

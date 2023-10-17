@@ -7,7 +7,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import sys
 from typing import Any, Callable, Dict, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
@@ -29,10 +28,6 @@ from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._reports_operations import build_get_latency_scorecards_request, build_get_timeseries_request
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -103,7 +98,7 @@ class ReportsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-11-01"))
         cls: ClsType[_models.LatencyScorecard] = kwargs.pop("cls", None)
 
         request = build_get_latency_scorecards_request(
@@ -122,8 +117,9 @@ class ReportsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -199,7 +195,7 @@ class ReportsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-11-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-11-01"))
         cls: ClsType[_models.Timeseries] = kwargs.pop("cls", None)
 
         request = build_get_timeseries_request(
@@ -221,8 +217,9 @@ class ReportsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response

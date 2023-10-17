@@ -2,6 +2,12 @@
 # Licensed under the MIT License.
 # cSpell:disable
 
+# Environment variables
+
+_APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL = "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"
+_APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED = \
+    "APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED"
+
 # Network
 
 _REDIRECT_STATUS_CODES = (
@@ -28,17 +34,25 @@ _THROTTLE_STATUS_CODES = (
 
 _REACHED_INGESTION_STATUS_CODES = (200, 206, 402, 408, 429, 439, 500)
 
+# Envelope constants
+
+_METRIC_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Metric"
+_EXCEPTION_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Exception"
+_MESSAGE_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Message"
+_REQUEST_ENVELOPE_NAME = "Microsoft.ApplicationInsights.Request"
+_REMOTE_DEPENDENCY_ENVELOPE_NAME = "Microsoft.ApplicationInsights.RemoteDependency"
+
 # Statsbeat
 
 # (OpenTelemetry metric name, Statsbeat metric name)
 _ATTACH_METRIC_NAME = ("attach", "Attach")
 _FEATURE_METRIC_NAME = ("feature", "Feature")
-_REQ_EXCEPTION_NAME = ("statsbeat_exception_count", "Exception Count")
-_REQ_DURATION_NAME = ("statsbeat_duration", "Request Duration")
-_REQ_FAILURE_NAME = ("statsbeat_failure_count", "Request Failure Count")
-_REQ_RETRY_NAME = ("statsbeat_retry_count", "Retry Count")
-_REQ_SUCCESS_NAME = ("statsbeat_success_count", "Request Success Count")
-_REQ_THROTTLE_NAME = ("statsbeat_throttle_count", "Throttle Count")
+_REQ_EXCEPTION_NAME = ("statsbeat_exception_count", "Exception_Count")
+_REQ_DURATION_NAME = ("statsbeat_duration", "Request_Duration")
+_REQ_FAILURE_NAME = ("statsbeat_failure_count", "Request_Failure_Count")
+_REQ_RETRY_NAME = ("statsbeat_retry_count", "Retry_Count")
+_REQ_SUCCESS_NAME = ("statsbeat_success_count", "Request_Success_Count")
+_REQ_THROTTLE_NAME = ("statsbeat_throttle_count", "Throttle_Count")
 
 _STATSBEAT_METRIC_NAME_MAPPINGS = dict(
     [

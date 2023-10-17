@@ -137,7 +137,6 @@ class RouterScrubber(RecordingProcessor):
 
     def process_response(self, response):
         if _is_text_payload_internal(response) and 'body' in response:
-            import six
             try:
                 if isinstance(response['body'], dict) \
                         and 'string' in response['body']:
@@ -146,7 +145,7 @@ class RouterScrubber(RecordingProcessor):
                     if body == b"":
                         return response
 
-                    body_is_string = isinstance(body, six.string_types)
+                    body_is_string = isinstance(body, str)
                     if body_is_string and body and not body.isspace():
                         body = json.loads(body)
 

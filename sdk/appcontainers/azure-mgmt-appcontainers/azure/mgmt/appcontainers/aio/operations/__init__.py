@@ -20,8 +20,12 @@ from ._container_apps_diagnostics_operations import ContainerAppsDiagnosticsOper
 from ._managed_environment_diagnostics_operations import ManagedEnvironmentDiagnosticsOperations
 from ._managed_environments_diagnostics_operations import ManagedEnvironmentsDiagnosticsOperations
 from ._operations import Operations
+from ._jobs_operations import JobsOperations
+from ._jobs_executions_operations import JobsExecutionsOperations
+from ._container_apps_api_client_operations import ContainerAppsAPIClientOperationsMixin
 from ._managed_environments_operations import ManagedEnvironmentsOperations
 from ._certificates_operations import CertificatesOperations
+from ._managed_certificates_operations import ManagedCertificatesOperations
 from ._namespaces_operations import NamespacesOperations
 from ._dapr_components_operations import DaprComponentsOperations
 from ._managed_environments_storages_operations import ManagedEnvironmentsStoragesOperations
@@ -46,8 +50,12 @@ __all__ = [
     "ManagedEnvironmentDiagnosticsOperations",
     "ManagedEnvironmentsDiagnosticsOperations",
     "Operations",
+    "JobsOperations",
+    "JobsExecutionsOperations",
+    "ContainerAppsAPIClientOperationsMixin",
     "ManagedEnvironmentsOperations",
     "CertificatesOperations",
+    "ManagedCertificatesOperations",
     "NamespacesOperations",
     "DaprComponentsOperations",
     "ManagedEnvironmentsStoragesOperations",

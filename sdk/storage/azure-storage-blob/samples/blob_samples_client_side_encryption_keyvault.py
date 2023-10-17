@@ -10,7 +10,7 @@
 FILE: blob_samples_client_side_encryption_keyvault.py
 
 DESCRIPTION:
-    This sample contains code demonstrating how to conifgure the storage blob
+    This sample contains code demonstrating how to configure the storage blob
     service for client side encryption, storing and retrieving the key encryption key
     (kek) from within Azure KeyVault. This sample requires a service principal be set
     configured with access to KeyVault, and that the vault contains a 256-bit base64-

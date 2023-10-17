@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=no-self-use
 
 from io import SEEK_SET, UnsupportedOperation
 from typing import TypeVar, TYPE_CHECKING
@@ -217,8 +216,8 @@ def upload_page_blob(
         if length is None or length < 0:
             raise ValueError("A content length must be specified for a Page Blob.")
         if length % 512 != 0:
-            raise ValueError("Invalid page blob size: {0}. "
-                             "The size must be aligned to a 512-byte boundary.".format(length))
+            raise ValueError(f"Invalid page blob size: {length}. "
+                             "The size must be aligned to a 512-byte boundary.")
         tier = None
         if kwargs.get('premium_page_blob_tier'):
             premium_page_blob_tier = kwargs.pop('premium_page_blob_tier')
@@ -326,9 +325,9 @@ def upload_append_blob(  # pylint: disable=unused-argument
                 try:
                     # attempt to rewind the body to the initial position
                     stream.seek(0, SEEK_SET)
-                except UnsupportedOperation:
+                except UnsupportedOperation as exc:
                     # if body is not seekable, then retry would not work
-                    raise error
+                    raise error from exc
             client.create(
                 content_length=0,
                 blob_http_headers=blob_headers,

@@ -7,6 +7,8 @@
 #--------------------------------------------------------------------------
 import unittest
 
+import pytest
+
 import azure.mgmt.documentdb
 from msrestazure.azure_exceptions import CloudError
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
@@ -20,6 +22,7 @@ class MgmtDocDBTest(AzureMgmtTestCase):
             azure.mgmt.documentdb.DocumentDB
         )
 
+    @pytest.mark.live_test_only("Can't use recordings until tests use the test proxy")
     @ResourceGroupPreparer()
     def test_accounts_create(self, resource_group, location):
         account_name = self.get_resource_name('pydocdbtst')
@@ -41,6 +44,7 @@ class MgmtDocDBTest(AzureMgmtTestCase):
         # Rest API issue
         # self.assertEqual(account.name, account_name)
 
+    @pytest.mark.live_test_only("Can't use recordings until tests use the test proxy")
     @ResourceGroupPreparer()
     def test_accounts_features(self, resource_group, location):
         account_name = self.get_resource_name('pydocdbtest')
@@ -114,6 +118,7 @@ class MgmtDocDBTest(AzureMgmtTestCase):
         )
         async_regenerate.wait()
 
+    @pytest.mark.live_test_only("Can't use recordings until tests use the test proxy")
     @ResourceGroupPreparer()
     def test_accounts_delete(self, resource_group, location):
         account_name = self.get_resource_name('pydocumentdbtst')

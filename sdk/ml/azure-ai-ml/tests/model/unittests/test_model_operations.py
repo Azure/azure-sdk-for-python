@@ -20,12 +20,14 @@ from azure.ai.ml.operations import DatastoreOperations, ModelOperations
 
 @pytest.fixture
 def mock_datastore_operation(
-    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01: Mock
+    mock_workspace_scope: OperationScope,
+    mock_operation_config: OperationConfig,
+    mock_aml_services_2023_04_01_preview: Mock,
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        serviceclient_2022_10_01=mock_aml_services_2022_10_01,
+        serviceclient_2023_04_01_preview=mock_aml_services_2023_04_01_preview,
     )
 
 
@@ -107,6 +109,7 @@ version: 3"""
                 artifact_type=ErrorTarget.MODEL,
                 show_progress=True,
                 ignore_file=None,
+                blob_uri=None,
             )
         mock_model_operation._model_versions_operation.create_or_update.assert_called_once()
         assert "version='3'" in str(mock_model_operation._model_versions_operation.create_or_update.call_args)
@@ -117,7 +120,6 @@ version: 3"""
         mock_workspace_scope: OperationScope,
         tmp_path: Path,
     ) -> None:
-
         model_name = f"model_random_string"
         p = tmp_path / "model_full.yml"
         model_path = tmp_path / "model.pkl"
@@ -266,6 +268,7 @@ path: ./model.pkl"""
                 artifact_type=ErrorTarget.MODEL,
                 show_progress=True,
                 ignore_file=None,
+                blob_uri=None,
             )
 
     # def test_promote_model_from_workspace(

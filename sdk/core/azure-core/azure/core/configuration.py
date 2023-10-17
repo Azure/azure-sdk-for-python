@@ -23,10 +23,23 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Union, Optional
+from __future__ import annotations
+from typing import Union, Optional, Any, Generic, TypeVar, TYPE_CHECKING
+
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
+
+if TYPE_CHECKING:
+    from .pipeline.policies import HTTPPolicy, AsyncHTTPPolicy, SansIOHTTPPolicy
+
+    AnyPolicy = Union[
+        HTTPPolicy[HTTPRequestType, HTTPResponseType],
+        AsyncHTTPPolicy[HTTPRequestType, HTTPResponseType],
+        SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType],
+    ]
 
 
-class Configuration:
+class Configuration(Generic[HTTPRequestType, HTTPResponseType]):  # pylint: disable=too-many-instance-attributes
     """Provides the home for all of the configurable policies in the pipeline.
 
     A new Configuration object provides no default policies and does not specify in what
@@ -46,6 +59,7 @@ class Configuration:
      User-Agent header.
     :ivar authentication_policy: Provides configuration parameters for adding a bearer token Authorization
      header to requests.
+    :ivar request_id_policy: Provides configuration parameters for adding a request id to requests.
     :keyword polling_interval: Polling interval while doing LRO operations, if Retry-After is not set.
 
     .. admonition:: Example:
@@ -57,36 +71,39 @@ class Configuration:
             :caption: Creates the service configuration and adds policies.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         # Headers (sent with every request)
-        self.headers_policy = None
+        self.headers_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
 
         # Proxy settings (Currently used to configure transport, could be pipeline policy instead)
-        self.proxy_policy = None
+        self.proxy_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
 
         # Redirect configuration
-        self.redirect_policy = None
+        self.redirect_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
 
         # Retry configuration
-        self.retry_policy = None
+        self.retry_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
 
         # Custom hook configuration
-        self.custom_hook_policy = None
+        self.custom_hook_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
 
         # Logger configuration
-        self.logging_policy = None
+        self.logging_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
 
         # Http logger configuration
-        self.http_logging_policy = None
+        self.http_logging_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
 
         # User Agent configuration
-        self.user_agent_policy = None
+        self.user_agent_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
 
         # Authentication configuration
-        self.authentication_policy = None
+        self.authentication_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
+
+        # Request ID policy
+        self.request_id_policy: Optional[AnyPolicy[HTTPRequestType, HTTPResponseType]] = None
 
         # Polling interval if no retry-after in polling calls results
-        self.polling_interval = kwargs.get("polling_interval", 30)
+        self.polling_interval: float = kwargs.get("polling_interval", 30)
 
 
 class ConnectionConfiguration:
@@ -122,7 +139,7 @@ class ConnectionConfiguration:
         connection_verify: Union[bool, str] = True,
         connection_cert: Optional[str] = None,
         connection_data_block_size: int = 4096,
-        **kwargs
+        **kwargs: Any,
     ) -> None:
         self.timeout = connection_timeout
         self.read_timeout = read_timeout

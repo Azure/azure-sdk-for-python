@@ -99,6 +99,7 @@ class HttpHeaders(object):
     # Our custom DocDB headers
     Continuation = "x-ms-continuation"
     PageSize = "x-ms-max-item-count"
+    ResponseContinuationTokenLimitInKb = "x-ms-documentdb-responsecontinuationtokenlimitinkb"  # cspell:disable-line
 
     # Request sender generated. Simply echoed by backend.
     ActivityId = "x-ms-activity-id"
@@ -185,6 +186,10 @@ class HttpHeaders(object):
     EnableCrossPartitionQuery = "x-ms-documentdb-query-enablecrosspartition"
     PartitionKeyRangeID = "x-ms-documentdb-partitionkeyrangeid"
     PartitionKeyDeletePending = "x-ms-cosmos-is-partition-key-delete-pending"
+    StartEpkString = "x-ms-start-epk"
+    EndEpkString = "x-ms-end-epk"
+    ReadFeedKeyType = "x-ms-read-key-type"
+    SDKSupportedCapabilities = "x-ms-cosmos-sdk-supportedcapabilities"
 
     # Upsert header
     IsUpsert = "x-ms-documentdb-is-upsert"
@@ -295,7 +300,7 @@ class CookieHeaders(object):
 class Versions(object):
     """Constants of versions.
     """
-    CurrentVersion = "2018-12-31"
+    CurrentVersion = "2020-07-15"
     SDKName = "azure-cosmos"
     QueryVersion = "1.0"
 
@@ -437,6 +442,7 @@ class ResourceType(object):
     Offer = "offers"
     Topology = "topology"
     DatabaseAccount = "databaseaccount"
+    PartitionKey = "partitionkey"
 
     @staticmethod
     def IsCollectionChild(resourceType):
@@ -448,4 +454,5 @@ class ResourceType(object):
             ResourceType.UserDefinedFunction,
             ResourceType.Trigger,
             ResourceType.StoredProcedure,
+            ResourceType.PartitionKey,
         )

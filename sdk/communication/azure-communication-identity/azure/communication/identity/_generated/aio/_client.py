@@ -7,18 +7,15 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable
 
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
+from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import CommunicationIdentityClientConfiguration
 from .operations import CommunicationIdentityOperations
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict
 
 
 class CommunicationIdentityClient:  # pylint: disable=client-accepts-api-version-keyword
@@ -39,17 +36,26 @@ class CommunicationIdentityClient:  # pylint: disable=client-accepts-api-version
         self, endpoint: str, **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
-        self._config = CommunicationIdentityClientConfiguration(endpoint=endpoint, **kwargs)
-        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._config = CommunicationIdentityClientConfiguration(
+            endpoint=endpoint, **kwargs
+        )
+        self._client: AsyncPipelineClient = AsyncPipelineClient(
+            base_url=_endpoint, config=self._config, **kwargs
+        )
 
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
+        client_models = {
+            k: v for k, v in _models.__dict__.items() if isinstance(v, type)
+        }
+        self._serialize = Serializer(client_models)
+        self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.communication_identity = CommunicationIdentityOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 
-    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def send_request(
+        self, request: HttpRequest, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -69,10 +75,14 @@ class CommunicationIdentityClient:  # pylint: disable=client-accepts-api-version
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
 
-        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        request_copy.url = self._client.format_url(
+            request_copy.url, **path_format_arguments
+        )
         return self._client.send_request(request_copy, **kwargs)
 
     async def close(self) -> None:
@@ -82,5 +92,5 @@ class CommunicationIdentityClient:  # pylint: disable=client-accepts-api-version
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

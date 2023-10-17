@@ -12,7 +12,6 @@ import re
 import sys
 from math import isnan
 
-import six
 
 try:
     # 3.8 and up
@@ -65,7 +64,7 @@ def flatten(nested_dict, separator="_", root_keys_to_ignore=None, replace_separa
     :return: flattened dictionary
     """
     assert isinstance(nested_dict, dict), "flatten requires a dictionary input"
-    assert isinstance(separator, six.string_types), "separator must be string"
+    assert isinstance(separator, str), "separator must be string"
 
     if root_keys_to_ignore is None:
         root_keys_to_ignore = set()
@@ -136,7 +135,7 @@ def flatten_preserve_lists(
     """
 
     assert isinstance(nested_dict, dict), "flatten requires a dictionary input"
-    assert isinstance(separator, six.string_types), "separator must be a string"
+    assert isinstance(separator, str), "separator must be a string"
 
     if root_keys_to_ignore is None:
         root_keys_to_ignore = set()
@@ -247,7 +246,6 @@ def flatten_preserve_lists(
                 entry = copy.deepcopy(list_prebuilt_flattened_dict[str(global_max_record_start)])
 
                 for index, item in enumerate(object_):
-
                     if debug:
                         print("  list key:", key, " index: " + str(index), "vals: ", item)
 
@@ -314,12 +312,9 @@ def flatten_preserve_lists(
 
 def _unflatten_asserts(flat_dict, separator):
     assert isinstance(flat_dict, dict), "un_flatten requires dictionary input"
-    assert isinstance(separator, six.string_types), "separator must be string"
+    assert isinstance(separator, str), "separator must be string"
     assert all(
-        (
-            not value or not isinstance(value, Iterable) or isinstance(value, six.string_types)
-            for value in flat_dict.values()
-        )
+        (not value or not isinstance(value, Iterable) or isinstance(value, str) for value in flat_dict.values())
     ), "provided dict is not flat"
 
 
@@ -396,7 +391,6 @@ def unflatten_list(flat_dict, separator="_"):
                 and keys[-1] == keys_len - 1
                 and check_if_numbers_are_consecutive(keys)
             ):
-
                 # The dictionary looks like a list so we're going to replace it
                 parent_object[parent_object_key] = []
                 for key_index, key in enumerate(keys):

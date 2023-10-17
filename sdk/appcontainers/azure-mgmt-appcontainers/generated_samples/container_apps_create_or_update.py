@@ -82,10 +82,12 @@ def main():
                                 "name": "Allow work IP B subnet",
                             },
                         ],
+                        "stickySessions": {"affinity": "sticky"},
                         "targetPort": 3000,
                         "traffic": [{"label": "production", "revisionName": "testcontainerApp0-ab1234", "weight": 100}],
                     },
                     "maxInactiveRevisions": 10,
+                    "service": {"type": "redis"},
                 },
                 "environmentId": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/rg/providers/Microsoft.App/managedEnvironments/demokube",
                 "template": {
@@ -126,14 +128,20 @@ def main():
                             }
                         ],
                     },
+                    "serviceBinds": [
+                        {
+                            "name": "redisService",
+                            "serviceId": "/subscriptions/34adfa4f-cedf-4dc0-ba29-b6d1a69ab345/resourceGroups/rg/providers/Microsoft.App/containerApps/redisService",
+                        }
+                    ],
                 },
-                "workloadProfileType": "GeneralPurpose",
+                "workloadProfileName": "My-GP-01",
             },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2022-10-01/examples/ContainerApps_CreateOrUpdate.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/stable/2023-05-01/examples/ContainerApps_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

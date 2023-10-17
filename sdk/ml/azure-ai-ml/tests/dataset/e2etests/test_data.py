@@ -317,3 +317,31 @@ sepal_length,sepal_width,petal_length,petal_width,species
             str(e.value.args[1])
             == "Datastore type AzureFile is not supported for uploads. Supported types are AzureBlob and AzureDataLakeGen2."
         )
+
+    def test_data_auto_delete_setting(self, client: MLClient, tmp_path: Path, randstr: Callable[[], str]) -> None:
+        data_path = tmp_path / "data_with_auto_delete_setting.yaml"
+        tmp_folder = tmp_path / "tmp_folder_with_auto_dete_setting"
+        tmp_folder.mkdir()
+        tmp_file = tmp_folder / "tmp_file_with_auto_delete_setting.csv"
+        tmp_file.write_text("hello world")
+        name = randstr("name")
+        data_path.write_text(
+            f"""
+            name: {name}
+            version: 1
+            description: "this is a test dataset with auto delete setting"
+            path: {tmp_folder}
+            type: uri_folder
+            auto_delete_setting:
+                condition: created_greater_than
+                value: "30d"
+        """
+        )
+
+        data_asset = load_data(source=data_path)
+        client.data.create_or_update(data_asset)
+        internal_data = client.data.get(name=name, version="1")
+
+        assert internal_data.auto_delete_setting is not None
+        assert internal_data.auto_delete_setting.condition == "createdGreaterThan"
+        assert internal_data.auto_delete_setting.value == "30d"

@@ -7,7 +7,12 @@
 import logging
 from typing import Callable, Dict, Optional, TypeVar, cast
 
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 T = TypeVar("T")
 module_logger = logging.getLogger(__name__)
@@ -21,7 +26,6 @@ class OperationConfig(object):
     """
 
     def __init__(self, show_progress: bool, enable_telemetry: bool) -> None:
-
         self._show_progress = show_progress
         self._enable_telemetry = enable_telemetry
 
@@ -51,11 +55,15 @@ class OperationScope(object):
         resource_group_name: str,
         workspace_name: Optional[str],
         registry_name: Optional[str] = None,
+        workspace_id: Optional[str] = None,
+        workspace_location: Optional[str] = None,
     ):
         self._subscription_id = subscription_id
         self._resource_group_name = resource_group_name
         self._workspace_name = workspace_name
         self._registry_name = registry_name
+        self._workspace_id = workspace_id
+        self._workspace_location = workspace_location
 
     @property
     def subscription_id(self) -> str:

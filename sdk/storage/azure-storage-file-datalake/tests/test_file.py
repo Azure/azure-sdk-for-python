@@ -988,6 +988,31 @@ class TestFile(StorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy
+    def test_delete_file_oauth(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        
+        file_name = self._get_file_reference()
+        token_credential = self.generate_oauth_token()
+
+        file_client = DataLakeFileClient(
+            self.dsc.url,
+            self.file_system_name,
+            file_name,
+            credential=token_credential)
+        file_client.create_file()
+
+        # Act
+        response = file_client.delete_file()
+
+        # Assert
+        assert response is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy
     def test_delete_file_with_if_unmodified_since(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -1497,6 +1522,115 @@ class TestFile(StorageRecordedTestCase):
         assert path_response[0]['encryption_context']
         assert path_response[0]['encryption_context'] is not None
         assert path_response[0]['encryption_context'] == 'encryptionContext'
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_upload_file_encryption_context(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key)
+        self.file_system_name = self.get_resource_name('filesystem')
+        data = self.get_random_bytes(200 * 1024)
+        file_name = 'testfile'
+        file_system = self.dsc.get_file_system_client(self.file_system_name)
+        try:
+            file_system.create_file_system()
+        except:
+            pass
+        file_client = file_system.get_file_client(file_name)
+
+        # Act
+        file_client.upload_data(data, overwrite=True, encryption_context='encryptionContext')
+
+        downloaded_data = file_client.download_file().readall()
+        properties = file_client.get_file_properties()
+
+        # Assert
+        assert data == downloaded_data
+        assert properties
+        assert properties['encryption_context'] is not None
+        assert properties['encryption_context'] == 'encryptionContext'
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_dir_and_file_properties_owner_group_permissions(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+        file_client1 = directory_client.get_file_client('filename')
+        file_client1.create_file()
+
+        directory_properties = directory_client.get_directory_properties()
+        file_properties = file_client1.get_file_properties()
+
+        # Assert
+        assert directory_properties['owner'] is not None
+        assert directory_properties['group'] is not None
+        assert directory_properties['permissions'] is not None
+        assert file_properties['owner'] is not None
+        assert file_properties['group'] is not None
+        assert file_properties['permissions'] is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_storage_account_audience_file_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        file_client = self._create_file_and_return_client()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        fc = DataLakeFileClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            file_client.file_system_name + '/',
+            '/' + file_client.path_name,
+            credential=token_credential,
+            audience=f'https://{datalake_storage_account_name}.blob.core.windows.net/'
+        )
+
+        # Assert
+        data = b'Hello world'
+        response1 = fc.get_file_properties()
+        response2 = fc.upload_data(data, overwrite=True)
+        assert response1 is not None
+        assert response2 is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_bad_audience_file_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        file_client = self._create_file_and_return_client()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        fc = DataLakeFileClient(
+            self.account_url(datalake_storage_account_name, 'dfs'),
+            file_client.file_system_name + '/',
+            '/' + file_client.path_name,
+            credential=token_credential,
+            audience=f'https://badaudience.blob.core.windows.net/'
+        )
+
+        # Assert
+        data = b'Hello world'
+        with pytest.raises(ClientAuthenticationError):
+            fc.get_file_properties()
+            fc.upload_data(data, overwrite=True)
 
 
 # ------------------------------------------------------------------------------

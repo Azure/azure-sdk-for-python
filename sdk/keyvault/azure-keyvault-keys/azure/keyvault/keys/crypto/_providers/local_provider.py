@@ -11,10 +11,7 @@ from azure.core.exceptions import AzureError
 from .. import DecryptResult, EncryptResult, SignResult, UnwrapResult, VerifyResult, WrapResult
 from ... import KeyOperation
 
-try:
-    ABC = abc.ABC
-except AttributeError:  # Python 2.7
-    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
+ABC = abc.ABC
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
@@ -44,6 +41,7 @@ class LocalCryptographyProvider(ABC):
     def key_id(self) -> "Optional[str]":
         """The full identifier of the provider's key.
 
+        :returns: The full identifier of the provider's key.
         :rtype: str or None
         """
         return self._key.kid  # type: ignore[attr-defined]

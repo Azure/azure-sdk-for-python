@@ -15,8 +15,8 @@ from .._internal import InteractiveCredential, wrap_exceptions
 class DeviceCodeCredential(InteractiveCredential):
     """Authenticates users through the device code flow.
 
-    When :func:`get_token` is called, this credential acquires a verification URL and code from Azure Active Directory.
-    A user must browse to the URL, enter the code, and authenticate with Azure Active Directory. If the user
+    When :func:`get_token` is called, this credential acquires a verification URL and code from Microsoft Entra ID.
+    A user must browse to the URL, enter the code, and authenticate with Microsoft Entra ID. If the user
     authenticates successfully, the credential receives an access token.
 
     This credential is primarily useful for authenticating a user in an environment without a web browser, such as an
@@ -26,13 +26,13 @@ class DeviceCodeCredential(InteractiveCredential):
     :param str client_id: client ID of the application users will authenticate to. When not specified users will
         authenticate to an Azure development application.
 
-    :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
+    :keyword str authority: Authority of a Microsoft Entra endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
-    :keyword str tenant_id: an Azure Active Directory tenant ID. Defaults to the "organizations" tenant, which can
+    :keyword str tenant_id: a Microsoft Entra tenant ID. Defaults to the "organizations" tenant, which can
         authenticate work or school accounts. **Required for single-tenant applications.**
     :keyword int timeout: seconds to wait for the user to authenticate. Defaults to the validity period of the
-        device code as set by Azure Active Directory, which also prevails when **timeout** is longer.
+        device code as set by Microsoft Entra ID, which also prevails when **timeout** is longer.
     :keyword prompt_callback: A callback enabling control of how authentication
         instructions are presented. Must accept arguments (``verification_uri``, ``user_code``, ``expires_on``):
 
@@ -47,15 +47,34 @@ class DeviceCodeCredential(InteractiveCredential):
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
+    :keyword bool disable_instance_discovery: Determines whether or not instance discovery is performed when attempting
+        to authenticate. Setting this to true will completely disable both instance discovery and authority validation.
+        This functionality is intended for use in scenarios where the metadata endpoint cannot be reached, such as in
+        private clouds or Azure Stack. The process of instance discovery entails retrieving authority metadata from
+        https://login.microsoft.com/ to validate the authority. By setting this to **True**, the validation of the
+        authority is disabled. As a result, it is crucial to ensure that the configured authority host is valid and
+        trustworthy.
+    :keyword bool enable_support_logging: Enables additional support logging in the underlying MSAL library.
+        This logging potentially contains personally identifiable information and is intended to be used only for
+        troubleshooting purposes.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/credential_creation_code_snippets.py
+            :start-after: [START create_device_code_credential]
+            :end-before: [END create_device_code_credential]
+            :language: python
+            :dedent: 4
+            :caption: Create a DeviceCodeCredential.
     """
 
     def __init__(
-            self,
-            client_id: str = DEVELOPER_SIGN_ON_CLIENT_ID,
-            *,
-            timeout: Optional[int] = None,
-            prompt_callback: Optional[Callable[[str, str, datetime], None]] = None,
-            **kwargs: Any
+        self,
+        client_id: str = DEVELOPER_SIGN_ON_CLIENT_ID,
+        *,
+        timeout: Optional[int] = None,
+        prompt_callback: Optional[Callable[[str, str, datetime], None]] = None,
+        **kwargs: Any
     ) -> None:
         self._timeout = timeout
         self._prompt_callback = prompt_callback

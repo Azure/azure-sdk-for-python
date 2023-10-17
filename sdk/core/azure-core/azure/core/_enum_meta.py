@@ -48,13 +48,19 @@ class CaseInsensitiveEnumMeta(EnumMeta):
         return super(CaseInsensitiveEnumMeta, cls).__getitem__(name.upper())  # pylint: disable=no-value-for-parameter
 
     def __getattr__(cls, name: str) -> Enum:
-        """Return the enum member matching `name`
+        """Return the enum member matching `name`.
+
         We use __getattr__ instead of descriptors or inserting into the enum
         class' __dict__ in order to support `name` and `value` being both
         properties for enum members (which live in the class' __dict__) and
         enum members themselves.
+
+        :param str name: The name of the enum member to retrieve.
+        :rtype: ~azure.core.CaseInsensitiveEnumMeta
+        :return: The enum member matching `name`.
+        :raises AttributeError: If `name` is not a valid enum member.
         """
         try:
             return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+        except KeyError as err:
+            raise AttributeError(name) from err

@@ -24,7 +24,7 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.transport import AsyncHttpTransport
 
-from .constants import CONNECTION_TIMEOUT, READ_TIMEOUT, STORAGE_OAUTH_SCOPE
+from .constants import CONNECTION_TIMEOUT, DEFAULT_OAUTH_SCOPE, READ_TIMEOUT, STORAGE_OAUTH_SCOPE
 from .authentication import SharedKeyCredentialPolicy
 from .base_client import create_configuration
 from .policies import (
@@ -70,13 +70,17 @@ class AsyncStorageAccountHostsMixin(object):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
         self._credential_policy = None
         if hasattr(credential, 'get_token'):
-            self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
+            if kwargs.get('audience'):
+                audience = str(kwargs.pop('audience')).rstrip('/') + DEFAULT_OAUTH_SCOPE
+            else:
+                audience = STORAGE_OAUTH_SCOPE
+            self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, audience)
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
         elif isinstance(credential, AzureSasCredential):
             self._credential_policy = AzureSasCredentialPolicy(credential)
         elif credential is not None:
-            raise TypeError(f"Unsupported credential: {credential}")
+            raise TypeError(f"Unsupported credential: {type(credential)}")
         config = kwargs.get('_configuration') or create_configuration(**kwargs)
         if kwargs.get('_pipeline'):
             return config, kwargs['_pipeline']
@@ -85,9 +89,9 @@ class AsyncStorageAccountHostsMixin(object):
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
         if not config.transport:
             try:
-                from azure.core.pipeline.transport import AioHttpTransport
-            except ImportError:
-                raise ImportError("Unable to create async transport. Please check aiohttp is installed.")
+                from azure.core.pipeline.transport import AioHttpTransport  # pylint: disable=non-abstract-transport-import
+            except ImportError as exc:
+                raise ImportError("Unable to create async transport. Please check aiohttp is installed.") from exc
             config.transport = AioHttpTransport(**kwargs)
         policies = [
             QueueMessagePolicy(),
@@ -110,13 +114,12 @@ class AsyncStorageAccountHostsMixin(object):
             policies = policies + kwargs.get("_additional_pipeline_policies")
         return config, AsyncPipeline(config.transport, policies=policies)
 
+    # Given a series of request, do a Storage batch call.
     async def _batch_send(
         self,
         *reqs,  # type: HttpRequest
         **kwargs
     ):
-        """Given a series of request, do a Storage batch call.
-        """
         # Pop it here, so requests doesn't feel bad about additional kwarg
         raise_on_any_failure = kwargs.pop("raise_on_any_failure", True)
         request = self._client._client.post(  # pylint: disable=protected-access

@@ -6,8 +6,8 @@
 
 from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ImageSweepSettings as RestImageSweepSettings
-from azure.ai.ml._restclient.v2023_02_01_preview.models import SamplingAlgorithmType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ImageSweepSettings as RestImageSweepSettings
+from azure.ai.ml._restclient.v2023_04_01_preview.models import SamplingAlgorithmType
 from azure.ai.ml.entities._job.sweep.early_termination_policy import (
     BanditPolicy,
     EarlyTerminationPolicy,
@@ -23,12 +23,12 @@ class ImageSweepSettings(RestTranslatableMixin):
     :param sampling_algorithm: Required. [Required] Type of the hyperparameter sampling
         algorithms. Possible values include: "Grid", "Random", "Bayesian".
     :type sampling_algorithm: Union[str, ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.GRID,
-    ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.BAYESIAN,
-    ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.RANDOM]
+        ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.BAYESIAN,
+        ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.RANDOM]
     :param early_termination: Type of early termination policy.
     :type early_termination: Union[~azure.mgmt.machinelearningservices.models.BanditPolicy,
-    ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
-    ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
+        ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
+        ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
     """
 
     def __init__(
@@ -50,7 +50,6 @@ class ImageSweepSettings(RestTranslatableMixin):
 
     @classmethod
     def _from_rest_object(cls, obj: RestImageSweepSettings) -> "ImageSweepSettings":
-
         return cls(
             sampling_algorithm=obj.sampling_algorithm,
             early_termination=EarlyTerminationPolicy._from_rest_object(obj.early_termination)

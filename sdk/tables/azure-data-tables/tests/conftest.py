@@ -30,13 +30,14 @@ from devtools_testutils import add_general_regex_sanitizer, add_body_key_sanitiz
 
 # fixture needs to be visible from conftest
 
+
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     # sanitizes table/cosmos account names in URLs
     add_general_regex_sanitizer(
         value="fakeendpoint",
         regex="(?<=\\/\\/)[a-z]+(?=(?:|-secondary)\\.(?:table|blob|queue)\\.(?:cosmos|core)\\."
-              "(?:azure|windows)\\.(?:com|net))",
+        "(?:azure|windows)\\.(?:com|net))",
     )
     # sanitizes random UUIDs that are sent in batch request headers and bodies
     add_general_regex_sanitizer(

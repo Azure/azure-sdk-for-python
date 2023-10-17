@@ -5472,7 +5472,7 @@ class PublicIPAddressSku(_serialization.Model):
 
     :ivar name: Specify public IP sku name. Known values are: "Basic" and "Standard".
     :vartype name: str or ~azure.mgmt.compute.v2022_11_01.models.PublicIPAddressSkuName
-    :ivar tier: Specify public IP sku tier. Known values are: "Regional" and "Global".
+    :ivar tier: Specify public IP sku tier. Known values are: "Regional", "Global", and "Global".
     :vartype tier: str or ~azure.mgmt.compute.v2022_11_01.models.PublicIPAddressSkuTier
     """
 
@@ -5491,7 +5491,8 @@ class PublicIPAddressSku(_serialization.Model):
         """
         :keyword name: Specify public IP sku name. Known values are: "Basic" and "Standard".
         :paramtype name: str or ~azure.mgmt.compute.v2022_11_01.models.PublicIPAddressSkuName
-        :keyword tier: Specify public IP sku tier. Known values are: "Regional" and "Global".
+        :keyword tier: Specify public IP sku tier. Known values are: "Regional", "Global", and
+         "Global".
         :paramtype tier: str or ~azure.mgmt.compute.v2022_11_01.models.PublicIPAddressSkuTier
         """
         super().__init__(**kwargs)
@@ -11663,13 +11664,11 @@ class VirtualMachineScaleSetInstanceViewStatusesSummary(_serialization.Model):
         self.statuses_summary = None
 
 
-class VirtualMachineScaleSetIPConfiguration(SubResource):
+class VirtualMachineScaleSetIPConfiguration(_serialization.Model):
     """Describes a virtual machine scale set network profile's IP configuration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id.
-    :vartype id: str
     :ivar name: The IP configuration name. Required.
     :vartype name: str
     :ivar subnet: Specifies the identifier of the subnet.
@@ -11709,7 +11708,6 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
     }
 
     _attribute_map = {
-        "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "subnet": {"key": "properties.subnet", "type": "ApiEntityReference"},
         "primary": {"key": "properties.primary", "type": "bool"},
@@ -11734,7 +11732,6 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
         self,
         *,
         name: str,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         subnet: Optional["_models.ApiEntityReference"] = None,
         primary: Optional[bool] = None,
         public_ip_address_configuration: Optional["_models.VirtualMachineScaleSetPublicIPAddressConfiguration"] = None,
@@ -11746,8 +11743,6 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword id: Resource Id.
-        :paramtype id: str
         :keyword name: The IP configuration name. Required.
         :paramtype name: str
         :keyword subnet: Specifies the identifier of the subnet.
@@ -11783,7 +11778,7 @@ class VirtualMachineScaleSetIPConfiguration(SubResource):
         :paramtype load_balancer_inbound_nat_pools:
          list[~azure.mgmt.compute.v2022_11_01.models.SubResource]
         """
-        super().__init__(id=id, **kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.subnet = subnet
         self.primary = primary
@@ -12022,13 +12017,11 @@ class VirtualMachineScaleSetManagedDiskParameters(_serialization.Model):
         self.security_profile = security_profile
 
 
-class VirtualMachineScaleSetNetworkConfiguration(SubResource):  # pylint: disable=too-many-instance-attributes
+class VirtualMachineScaleSetNetworkConfiguration(_serialization.Model):
     """Describes a virtual machine scale set network profile's network configurations.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Resource Id.
-    :vartype id: str
     :ivar name: The network configuration name. Required.
     :vartype name: str
     :ivar primary: Specifies the primary network interface in case the virtual machine has more
@@ -12062,7 +12055,6 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):  # pylint: disabl
     }
 
     _attribute_map = {
-        "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "primary": {"key": "properties.primary", "type": "bool"},
         "enable_accelerated_networking": {"key": "properties.enableAcceleratedNetworking", "type": "bool"},
@@ -12082,7 +12074,6 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):  # pylint: disabl
         self,
         *,
         name: str,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         primary: Optional[bool] = None,
         enable_accelerated_networking: Optional[bool] = None,
         disable_tcp_state_tracking: Optional[bool] = None,
@@ -12095,8 +12086,6 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):  # pylint: disabl
         **kwargs: Any
     ) -> None:
         """
-        :keyword id: Resource Id.
-        :paramtype id: str
         :keyword name: The network configuration name. Required.
         :paramtype name: str
         :keyword primary: Specifies the primary network interface in case the virtual machine has more
@@ -12124,7 +12113,7 @@ class VirtualMachineScaleSetNetworkConfiguration(SubResource):  # pylint: disabl
          Known values are: "Delete" and "Detach".
         :paramtype delete_option: str or ~azure.mgmt.compute.v2022_11_01.models.DeleteOptions
         """
-        super().__init__(id=id, **kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.primary = primary
         self.enable_accelerated_networking = enable_accelerated_networking

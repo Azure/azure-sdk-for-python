@@ -2,14 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+# pylint: disable=client-method-missing-tracing-decorator
 from typing import Any, Union, Optional, TYPE_CHECKING
 import logging
 from weakref import WeakSet
 from typing_extensions import Literal
+import certifi
 
-import uamqp
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
+from ._transport._pyamqp_transport_async import PyamqpTransportAsync
 from .._base_handler import _parse_conn_str
 from ._base_handler_async import (
     ServiceBusSharedKeyCredential,
@@ -35,7 +37,7 @@ NextAvailableSessionType = Literal[ServiceBusSessionFilter.NEXT_AVAILABLE]
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-keyword
+class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """The ServiceBusClient class defines a high level interface for
     getting ServiceBusSender and ServiceBusReceiver.
 
@@ -73,10 +75,13 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
      the Service Bus service, allowing network requests to be routed through any application gateways or
      other paths needed for the host environment. Default is None.
      The format would be like "sb://<custom_endpoint_hostname>:<custom_endpoint_port>".
-     If port is not specified in the custom_endpoint_address, by default port 443 will be used.
+     If port is not specified in the `custom_endpoint_address`, by default port 443 will be used.
     :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
      authenticate the identity of the connection endpoint.
      Default is None in which case `certifi.where()` will be used.
+    :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
+     False and the Pure Python AMQP library will be used as the underlying transport.
+    :paramtype uamqp_transport: bool
 
     .. admonition:: Example:
 
@@ -102,6 +107,13 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         retry_mode: str = "exponential",
         **kwargs: Any
     ) -> None:
+        uamqp_transport = kwargs.pop("uamqp_transport", False)
+        if uamqp_transport:
+            try:
+                from ._transport._uamqp_transport_async import UamqpTransportAsync
+            except ImportError:
+                raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.3,<2.0.0`.") from None
+        self._amqp_transport = UamqpTransportAsync if uamqp_transport else PyamqpTransportAsync
         # If the user provided http:// or sb://, let's be polite and strip that.
         self.fully_qualified_namespace = strip_protocol_from_uri(
             fully_qualified_namespace.strip()
@@ -112,35 +124,40 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             retry_backoff_factor=retry_backoff_factor,
             retry_backoff_max=retry_backoff_max,
             retry_mode=retry_mode,
+            hostname=self.fully_qualified_namespace,
+            amqp_transport=self._amqp_transport,
             **kwargs
         )
         self._connection = None
         # Optional entity name, can be the name of Queue or Topic.  Intentionally not advertised, typically be needed.
         self._entity_name = kwargs.get("entity_name")
-        self._auth_uri = "sb://{}".format(self.fully_qualified_namespace)
+        self._auth_uri = f"sb://{self.fully_qualified_namespace}"
         if self._entity_name:
-            self._auth_uri = "{}/{}".format(self._auth_uri, self._entity_name)
+            self._auth_uri = f"{self._auth_uri}/{self._entity_name}"
         # Internal flag for switching whether to apply connection sharing, pending fix in uamqp library
         self._connection_sharing = False
-        self._handlers = WeakSet()  # type: WeakSet
-
-        self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
+        self._handlers: WeakSet = WeakSet()
+        self._custom_endpoint_address = kwargs.get('custom_endpoint_address')
         self._connection_verify = kwargs.get("connection_verify")
 
     async def __aenter__(self):
         if self._connection_sharing:
-            await self._create_uamqp_connection()
+            await self._create_connection()
         return self
 
     async def __aexit__(self, *args):
         await self.close()
 
-    async def _create_uamqp_connection(self):
+    async def _create_connection(self):
         auth = await create_authentication(self)
-        self._connection = uamqp.ConnectionAsync(
-            hostname=self.fully_qualified_namespace,
-            sasl=auth,
-            debug=self._config.logging_enable,
+        self._connection = self._amqp_transport.create_connection_async(
+            host=self.fully_qualified_namespace,
+            auth=auth.sasl,
+            network_trace=self._config.logging_enable,
+            custom_endpoint_address=self._custom_endpoint_address,
+            ssl_opts={'ca_certs':self._connection_verify or certifi.where()},
+            transport_type=self._config.transport_type,
+            http_proxy=self._config.http_proxy
         )
 
     @classmethod
@@ -184,6 +201,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         :keyword str connection_verify: Path to the custom CA_BUNDLE file of the SSL certificate which is used to
          authenticate the identity of the connection endpoint.
          Default is None in which case `certifi.where()` will be used.
+        :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
+         False and the Pure Python AMQP library will be used as the underlying transport.
+        :paramtype uamqp_transport: bool
         :rtype: ~azure.servicebus.aio.ServiceBusClient
 
         .. admonition:: Example:
@@ -233,7 +253,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         self._handlers.clear()
 
         if self._connection_sharing and self._connection:
-            await self._connection.destroy_async()
+            await self._connection.close()
 
     def get_queue_sender(self, queue_name: str, **kwargs: Any) -> ServiceBusSender:
         """Get ServiceBusSender for the specific queue.
@@ -242,6 +262,11 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         :keyword str client_identifier: A string-based identifier to uniquely identify the sender instance.
          Service Bus will associate it with some error messages for easier correlation of errors.
          If not specified, a unique id will be generated.
+        :keyword float socket_timeout: The time in seconds that the underlying socket on the connection should
+         wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
+         and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
+         a larger than default value may need to be passed in.
+        :return: A queue sender.
         :rtype: ~azure.servicebus.aio.ServiceBusSender
 
         .. admonition:: Example:
@@ -277,6 +302,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             retry_backoff_max=self._config.retry_backoff_max,
             custom_endpoint_address=self._custom_endpoint_address,
             connection_verify=self._connection_verify,
+            amqp_transport=self._amqp_transport,
             **kwargs
         )
         self._handlers.add(handler)
@@ -316,7 +342,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          the client fails to process the message. The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
         :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
-         receiver will automatically stop receiving. The default value is None, meaning no timeout.
+         receiver will automatically stop receiving. The default value is None, meaning no timeout. If connection
+         errors are occurring due to write timing out, the connection timeout value may need to be adjusted. See
+         the `socket_timeout` optional parameter for more details.
         :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An
          ~azure.servicebus.aio.AutoLockRenewer can be provided such that messages are automatically registered on
          receipt. If the receiver is a session receiver, it will apply to the session instead.
@@ -325,11 +353,19 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          performance but increase the chance that messages will expire while they are cached if they're not
          processed fast enough.
          The default value is 0, meaning messages will be received from the service and processed one at a time.
-         In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
-         (if provided) within its request to the service.
+         In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
+         `max_message_count` (if provided) within its request to the service.
+         **WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
+         the in-memory prefetch buffer until they're received into the application. If the application ends before
+         the messages are received into the application, those messages will be lost and unable to be recovered.
+         Therefore, it's recommended that PEEK_LOCK mode be used with prefetch.
         :keyword str client_identifier: A string-based identifier to uniquely identify the receiver instance.
          Service Bus will associate it with some error messages for easier correlation of errors.
          If not specified, a unique id will be generated.
+        :keyword float socket_timeout: The time in seconds that the underlying socket on the connection should
+         wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
+         and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
+         a larger than default value may need to be passed in.
         :rtype: ~azure.servicebus.aio.ServiceBusReceiver
 
         .. admonition:: Example:
@@ -390,6 +426,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             prefetch_count=prefetch_count,
             custom_endpoint_address=self._custom_endpoint_address,
             connection_verify=self._connection_verify,
+            amqp_transport=self._amqp_transport,
             **kwargs
         )
         self._handlers.add(handler)
@@ -402,6 +439,11 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         :keyword str client_identifier: A string-based identifier to uniquely identify the sender instance.
          Service Bus will associate it with some error messages for easier correlation of errors.
          If not specified, a unique id will be generated.
+        :keyword float socket_timeout: The time in seconds that the underlying socket on the connection should
+         wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
+         and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
+         a larger than default value may need to be passed in.
+        :return: A topic sender.
         :rtype: ~azure.servicebus.aio.ServiceBusSender
 
         .. admonition:: Example:
@@ -436,6 +478,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             retry_backoff_max=self._config.retry_backoff_max,
             custom_endpoint_address=self._custom_endpoint_address,
             connection_verify=self._connection_verify,
+            amqp_transport=self._amqp_transport,
             **kwargs
         )
         self._handlers.add(handler)
@@ -478,7 +521,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          the client fails to process the message. The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
         :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
-         receiver will automatically stop receiving. The default value is None, meaning no timeout.
+         receiver will automatically stop receiving. The default value is None, meaning no timeout. If connection
+         errors are occurring due to write timing out, the connection timeout value may need to be adjusted. See
+         the `socket_timeout` optional parameter for more details.
         :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An
          ~azure.servicebus.aio.AutoLockRenewer can be provided such that messages are automatically registered on
          receipt. If the receiver is a session receiver, it will apply to the session instead.
@@ -487,11 +532,19 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          performance but increase the chance that messages will expire while they are cached if they're not
          processed fast enough.
          The default value is 0, meaning messages will be received from the service and processed one at a time.
-         In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
-         (if provided) within its request to the service.
+         In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
+         `max_message_count` (if provided) within its request to the service.
+         **WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
+         the in-memory prefetch buffer until they're received into the application. If the application ends before
+         the messages are received into the application, those messages will be lost and unable to be recovered.
+         Therefore, it's recommended that PEEK_LOCK mode be used with prefetch.
         :keyword str client_identifier: A string-based identifier to uniquely identify the receiver instance.
          Service Bus will associate it with some error messages for easier correlation of errors.
          If not specified, a unique id will be generated.
+        :keyword float socket_timeout: The time in seconds that the underlying socket on the connection should
+         wait when sending and receiving data before timing out. The default value is 0.2 for TransportType.Amqp
+         and 1 for TransportType.AmqpOverWebsocket. If connection errors are occurring due to write timing out,
+         a larger than default value may need to be passed in.
         :rtype: ~azure.servicebus.aio.ServiceBusReceiver
 
         .. admonition:: Example:
@@ -549,6 +602,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
                 prefetch_count=prefetch_count,
                 custom_endpoint_address=self._custom_endpoint_address,
                 connection_verify=self._connection_verify,
+                amqp_transport=self._amqp_transport,
                 **kwargs
             )
         except ValueError:
@@ -578,6 +632,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
                 prefetch_count=prefetch_count,
                 custom_endpoint_address=self._custom_endpoint_address,
                 connection_verify=self._connection_verify,
+                amqp_transport=self._amqp_transport,
                 **kwargs
             )
         self._handlers.add(handler)

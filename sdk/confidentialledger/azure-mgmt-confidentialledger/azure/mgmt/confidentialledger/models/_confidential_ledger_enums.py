@@ -10,6 +10,13 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class CheckNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason why the given name is not available."""
+
+    INVALID = "Invalid"
+    ALREADY_EXISTS = "AlreadyExists"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -17,6 +24,13 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
+
+
+class LanguageRuntime(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Object representing LanguageRuntime for Manged CCF."""
+
+    CPP = "CPP"
+    JS = "JS"
 
 
 class LedgerRoleName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -45,3 +59,13 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CREATING = "Creating"
     DELETING = "Deleting"
     UPDATING = "Updating"
+
+
+class RunningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Object representing RunningState for Confidential Ledger."""
+
+    ACTIVE = "Active"
+    PAUSED = "Paused"
+    UNKNOWN = "Unknown"
+    PAUSING = "Pausing"
+    RESUMING = "Resuming"

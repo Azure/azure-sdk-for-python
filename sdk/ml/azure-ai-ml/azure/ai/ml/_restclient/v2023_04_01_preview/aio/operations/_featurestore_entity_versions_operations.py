@@ -92,7 +92,7 @@ class FeaturestoreEntityVersionsOperations:
         :type description: str
         :param created_by: createdBy user name.
         :type created_by: str
-        :param stage: stage.
+        :param stage: Specifies the featurestore stage.
         :type stage: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either
@@ -511,7 +511,7 @@ class FeaturestoreEntityVersionsOperations:
             return deserialized
 
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'original-uri'}, **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:

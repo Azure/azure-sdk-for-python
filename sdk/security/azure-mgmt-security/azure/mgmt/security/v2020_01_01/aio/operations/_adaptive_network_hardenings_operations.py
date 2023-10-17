@@ -89,7 +89,7 @@ class AdaptiveNetworkHardeningsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
         cls: ClsType[_models.AdaptiveNetworkHardeningsList] = kwargs.pop("cls", None)
 
         error_map = {
@@ -203,7 +203,7 @@ class AdaptiveNetworkHardeningsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
         cls: ClsType[_models.AdaptiveNetworkHardening] = kwargs.pop("cls", None)
 
         request = build_get_request(
@@ -267,7 +267,7 @@ class AdaptiveNetworkHardeningsOperations:
         adaptive_network_hardening_enforce_action: Literal["enforce"] = kwargs.pop(
             "adaptive_network_hardening_enforce_action", "enforce"
         )
-        api_version: Literal["2020-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -467,7 +467,7 @@ class AdaptiveNetworkHardeningsOperations:
         adaptive_network_hardening_enforce_action: Literal["enforce"] = kwargs.pop(
             "adaptive_network_hardening_enforce_action", "enforce"
         )
-        api_version: Literal["2020-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)

@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from ._virtual_machine_image_templates_operations import VirtualMachineImageTemplatesOperations
+from ._triggers_operations import TriggersOperations
 from ._operations import Operations
 
 from ._patch import __all__ as _patch_all
@@ -15,6 +16,7 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "VirtualMachineImageTemplatesOperations",
+    "TriggersOperations",
     "Operations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

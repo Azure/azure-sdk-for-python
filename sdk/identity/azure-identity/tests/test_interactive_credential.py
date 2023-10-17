@@ -12,6 +12,7 @@ from azure.identity import (
 )
 from azure.identity._internal import InteractiveCredential
 from azure.identity._constants import EnvironmentVariables
+from msal import TokenCache
 import pytest
 from urllib.parse import urlparse
 from unittest.mock import Mock, patch
@@ -76,6 +77,31 @@ def test_authentication_record_argument():
     assert mock_client_application.call_count == 1, "credential didn't create an msal application"
 
 
+def test_enable_support_logging():
+    """The keyword argument for enabling PII in MSAL should be passed."""
+
+    record = AuthenticationRecord("tenant-id", "client-id", "localhost", "object.tenant", "username")
+
+    def validate_app_parameters(authority, client_id, **_):
+        # the 'authority' argument to msal.ClientApplication should be a URL of the form https://authority/tenant
+        assert authority == "https://{}/{}".format(record.authority, record.tenant_id)
+        assert client_id == record.client_id
+        return Mock(get_accounts=Mock(return_value=[]))
+
+    mock_client_application = Mock(wraps=validate_app_parameters)
+
+    credential = MockCredential(
+        authentication_record=record, disable_automatic_authentication=True, enable_support_logging=True
+    )
+    with pytest.raises(AuthenticationRequiredError):
+        with patch("msal.PublicClientApplication", mock_client_application):
+            credential.get_token("scope")
+
+    assert mock_client_application.call_count == 1, "credential didn't create an msal application"
+    _, kwargs = mock_client_application.call_args
+    assert kwargs["enable_pii_log"]
+
+
 def test_tenant_argument_overrides_record():
     """The 'tenant_ic' keyword argument should override a given record's value"""
 
@@ -120,7 +146,7 @@ def test_disable_automatic_authentication():
         with patch("msal.PublicClientApplication", lambda *_, **__: msal_app):
             credential.get_token(scope, claims=expected_claims)
 
-    # the exception should carry the requested scopes and claims, and any error message from AAD
+    # the exception should carry the requested scopes and claims, and any error message from Microsoft Entra ID
     assert ex.value.scopes == (scope,)
     assert ex.value.claims == expected_claims
 
@@ -156,7 +182,7 @@ def test_scopes_round_trip():
 def test_authenticate_default_scopes(authority, expected_scope):
     """when given no scopes, authenticate should default to the ARM scope appropriate for the configured authority"""
 
-    def validate_scopes(*scopes):
+    def validate_scopes(*scopes, **_):
         assert scopes == (expected_scope,)
         return REQUEST_TOKEN_RESULT
 
@@ -202,24 +228,52 @@ def test_get_token_wraps_exceptions():
     assert msal_app.acquire_token_silent_with_error.call_count == 1, "credential didn't attempt silent auth"
 
 
-def test_token_cache():
+def test_token_cache_persistent():
     """the credential should default to an in memory cache, and optionally use a persistent cache"""
 
     class TestCredential(InteractiveCredential):
         def __init__(self, **kwargs):
             super(TestCredential, self).__init__(client_id="...", **kwargs)
 
-        def _request_token(self, *_, **__):
-            pass
+        def _request_token(self, *_, **kwargs):
+            self._get_app(**kwargs)
+            return build_aad_response(
+                access_token="foo",
+                id_token_claims=id_token_claims(
+                    aud="...",
+                    iss="http://localhost/tenant",
+                    sub="subject",
+                    preferred_username="...",
+                    tenant_id="...",
+                    object_id="...",
+                ),
+            )
 
     with patch("azure.identity._internal.msal_credentials._load_persistent_cache") as load_persistent_cache:
-        with patch("azure.identity._internal.msal_credentials.msal") as mock_msal:
-            TestCredential()
+        credential = TestCredential(
+            cache_persistence_options=TokenCachePersistenceOptions(),
+        )
         assert not load_persistent_cache.called
-        assert mock_msal.TokenCache.call_count == 1
 
-        TestCredential(cache_persistence_options=TokenCachePersistenceOptions())
+        credential.get_token("scope")
         assert load_persistent_cache.call_count == 1
+        assert credential._cache is not None
+        assert credential._cae_cache is None
+
+        credential.get_token("scope", enable_cae=True)
+        assert load_persistent_cache.call_count == 2
+        assert credential._cae_cache is not None
+
+        credential2 = TestCredential()
+        assert credential2._cache is None
+        assert credential2._cae_cache is None
+
+        credential2.get_token("scope")
+        assert isinstance(credential2._cache, TokenCache)
+        assert credential2._cae_cache is None
+
+        credential2.get_token("scope", enable_cae=True)
+        assert isinstance(credential2._cae_cache, TokenCache)
 
 
 def test_home_account_id_client_info():
@@ -299,7 +353,10 @@ def test_multitenant_authentication():
             ),
         )
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert "/oauth2/v2.0/token" not in request.url, 'mock "request_token" should prevent sending a token request'
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]
@@ -309,7 +366,7 @@ def test_multitenant_authentication():
         tenant_id=first_tenant,
         request_token=request_token,
         transport=Mock(send=send),
-        additionally_allowed_tenants = ['*']
+        additionally_allowed_tenants=["*"],
     )
     token = credential.get_token("scope")
     assert token.token == first_token
@@ -323,6 +380,7 @@ def test_multitenant_authentication():
     # should still default to the first tenant
     token = credential.get_token("scope")
     assert token.token == first_token
+
 
 def test_multitenant_authentication_not_allowed():
     expected_tenant = "expected-tenant"
@@ -341,7 +399,10 @@ def test_multitenant_authentication_not_allowed():
             ),
         )
 
-    def send(request, **_):
+    def send(request, **kwargs):
+        # ensure the `claims` and `tenant_id` keywords from credential's `get_token` method don't make it to transport
+        assert "claims" not in kwargs
+        assert "tenant_id" not in kwargs
         assert "/oauth2/v2.0/token" not in request.url, 'mock "request_token" should prevent sending a token request'
         parsed = urlparse(request.url)
         tenant = parsed.path.split("/")[1]

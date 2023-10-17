@@ -6,8 +6,9 @@ import asyncio
 import functools
 import logging
 import json
+from unittest.mock import Mock, patch
 
-from azure.core.exceptions import ResourceExistsError
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure_devtools.scenario_tests import RecordingProcessor
 from devtools_testutils import set_bodiless_matcher
@@ -30,6 +31,7 @@ from azure.keyvault.certificates import (
 )
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.keyvault.certificates._client import NO_SAN_OR_SUBJECT
+from azure.keyvault.certificates._shared.client_base import DEFAULT_VERSION
 import pytest
 
 from _shared.test_case_async import KeyVaultTestCase
@@ -37,11 +39,12 @@ from _async_test_case import get_decorator, AsyncCertificatesClientPreparer
 from certs import CERT_CONTENT_PASSWORD_ENCODED, CERT_CONTENT_NOT_PASSWORD_ENCODED
 
 
-all_api_versions = get_decorator(is_async=True)
-logging_enabled = get_decorator(is_async=True, logging_enable=True)
-logging_disabled = get_decorator(is_async=True, logging_enable=False)
-exclude_2016_10_01 = get_decorator(is_async=True, api_versions=[v for v in ApiVersion if v != ApiVersion.V2016_10_01])
-only_2016_10_01 = get_decorator(is_async=True, api_versions=[ApiVersion.V2016_10_01])
+all_api_versions = get_decorator()
+only_latest = get_decorator(api_versions=[DEFAULT_VERSION])
+logging_enabled = get_decorator(logging_enable=True)
+logging_disabled = get_decorator(logging_enable=False)
+exclude_2016_10_01 = get_decorator(api_versions=[v for v in ApiVersion if v != ApiVersion.V2016_10_01])
+only_2016_10_01 = get_decorator(api_versions=[ApiVersion.V2016_10_01])
 LIST_TEST_SIZE = 7
 
 
@@ -749,6 +752,25 @@ class TestCertificateClient(KeyVaultTestCase):
                 pass
 
         assert "The 'include_pending' parameter to `list_deleted_certificates` is only available for API versions v7.0 and up" in str(excinfo.value)
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_version", only_latest)
+    @AsyncCertificatesClientPreparer()
+    @recorded_by_proxy_async
+    async def test_40x_handling(self, client, **kwargs):
+        """Ensure 404 and 409 responses are raised with azure-core exceptions instead of generated KV ones"""
+
+        # Test that 404 is raised correctly by fetching a nonexistent cert
+        with pytest.raises(ResourceNotFoundError):
+            await client.get_certificate("cert-that-does-not-exist")
+
+        # 409 is raised correctly (`create_certificate` shouldn't actually trigger this, but for raising behavior)
+        async def run(*_, **__):
+            return Mock(http_response=Mock(status_code=409))
+        with patch.object(client._client._client._pipeline, "run", run):
+            with pytest.raises(ResourceExistsError):
+                await client.create_certificate("...", CertificatePolicy.get_default())
+        await client.close()
 
 
 @pytest.mark.asyncio

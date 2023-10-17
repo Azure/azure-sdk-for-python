@@ -21,9 +21,10 @@ USAGE:
 
 import os
 
-service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
-index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
-key = os.getenv("AZURE_SEARCH_API_KEY")
+service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
+index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
+key = os.environ["AZURE_SEARCH_API_KEY"]
+
 
 def simple_analyze_text():
     # [START simple_analyze_text]
@@ -39,5 +40,6 @@ def simple_analyze_text():
     print(result.as_dict())
     # [END simple_analyze_text]
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     simple_analyze_text()

@@ -13,6 +13,7 @@ from azure.search.documents.indexes.aio import SearchIndexClient, SearchIndexerC
 
 CREDENTIAL = AzureKeyCredential(key="test_api_key")
 
+
 def await_prepared_test(test_fn):
     """Synchronous wrapper for async test methods. Used to avoid making changes
     upstream to AbstractPreparer (which doesn't await the functions it wraps)
@@ -25,6 +26,7 @@ def await_prepared_test(test_fn):
         return loop.run_until_complete(test_fn(test_class_instance, **kwargs))
 
     return run
+
 
 class TestSearchIndexClient:
     def test_index_init(self):
@@ -50,16 +52,16 @@ class TestSearchIndexClient:
     def test_get_search_client(self):
         credential = AzureKeyCredential(key="old_api_key")
         client = SearchIndexClient("endpoint", credential)
-        search_client = client.get_search_client('index')
+        search_client = client.get_search_client("index")
         assert isinstance(search_client, SearchClient)
 
     def test_index_endpoint_https(self):
         credential = AzureKeyCredential(key="old_api_key")
         client = SearchIndexClient("endpoint", credential)
-        assert client._endpoint.startswith('https')
+        assert client._endpoint.startswith("https")
 
         client = SearchIndexClient("https://endpoint", credential)
-        assert client._endpoint.startswith('https')
+        assert client._endpoint.startswith("https")
 
         with pytest.raises(ValueError):
             client = SearchIndexClient("http://endpoint", credential)
@@ -92,10 +94,10 @@ class TestSearchIndexerClient:
     def test_indexer_endpoint_https(self):
         credential = AzureKeyCredential(key="old_api_key")
         client = SearchIndexerClient("endpoint", credential)
-        assert client._endpoint.startswith('https')
+        assert client._endpoint.startswith("https")
 
         client = SearchIndexerClient("https://endpoint", credential)
-        assert client._endpoint.startswith('https')
+        assert client._endpoint.startswith("https")
 
         with pytest.raises(ValueError):
             client = SearchIndexerClient("http://endpoint", credential)

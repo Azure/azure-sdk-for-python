@@ -5,13 +5,13 @@ import yaml
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml import load_job
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     InputDeliveryMode,
     JobInputType,
     JobOutputType,
     OutputDeliveryMode,
 )
-from azure.ai.ml._restclient.v2023_02_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
 from azure.ai.ml._schema import CommandJobSchema
 from azure.ai.ml._utils.utils import is_valid_uuid, load_yaml
 from azure.ai.ml.constants._common import ANONYMOUS_ENV_NAME, BASE_PATH_CONTEXT_KEY, AssetTypes, InputOutputModes
@@ -41,6 +41,8 @@ class TestCommandJob:
             "./tests/test_configs/command_job/dist_job_1.yml",
             "./tests/test_configs/command_job/dist_job_2.yml",
             "./tests/test_configs/command_job/dist_job_3.yml",
+            "./tests/test_configs/command_job/dist_job_ray_1.yml",
+            "./tests/test_configs/command_job/dist_job_ray_2.yml",
         ]
         context = {BASE_PATH_CONTEXT_KEY: Path(paths[0]).parent}
         schema = CommandJobSchema(context=context)

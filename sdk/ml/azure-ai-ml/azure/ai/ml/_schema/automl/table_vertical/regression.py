@@ -2,13 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument
 
 from typing import Any, Dict
 
 from marshmallow import post_load
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import RegressionPrimaryMetrics, TaskType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import RegressionPrimaryMetrics, TaskType
 from azure.ai.ml._schema.automl.table_vertical.table_vertical import AutoMLTableVerticalSchema
 from azure.ai.ml._schema.automl.training_settings import RegressionTrainingSettingsSchema
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum

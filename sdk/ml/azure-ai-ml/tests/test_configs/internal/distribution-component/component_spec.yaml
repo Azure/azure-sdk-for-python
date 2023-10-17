@@ -22,5 +22,5 @@ launcher:
     python train.py --input-path {inputs.input_path} [--string-parameter {inputs.string_parameter}]
     --output-path {outputs.output_path}
 environment:
-  name: AzureML-Minimal
+  name: azureml://registries/azureml/environments/AzureML-sklearn-1.0-ubuntu20.04-py38-cpu
 

@@ -17,7 +17,6 @@ from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePrivateKey
 from cryptography.hazmat.primitives.serialization import Encoding
 from cryptography.x509 import Certificate, load_pem_x509_certificate
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey, RSAPublicKey
-from six import string_types, raise_from
 
 from ._common import (
     base64url_decode,
@@ -482,8 +481,8 @@ class AttestationToken(object):
             signing_certificate = kwargs.pop("signing_certificate", None)  # type: str
             key = None
             if signing_key or signing_certificate:
-                if isinstance(signing_key, string_types) or isinstance(
-                    signing_certificate, string_types
+                if isinstance(signing_key, str) or isinstance(
+                    signing_certificate, str
                 ):
                     [key, certificate] = validate_signing_keys(
                         signing_key, signing_certificate
@@ -794,12 +793,9 @@ class AttestationToken(object):
                     )
                 return signer
             except InvalidSignature as ex:
-                raise_from(
-                    AttestationTokenValidationException(
+                raise AttestationTokenValidationException(
                         "Could not verify signature of attestation token."
-                    ),
-                    ex,
-                )
+                    ) from ex
         return None
 
     def _validate_static_properties(self, **kwargs):
@@ -948,3 +944,13 @@ class AttestationTokenValidationException(ValueError):
         super(  # pylint: disable=super-with-arguments
             AttestationTokenValidationException, self
         ).__init__(self.message)
+
+class TpmAttestationResult(object):
+    """Represents the Tpm Attestation response data returned from the attestation service
+    as a result of a call to :meth:`azure.security.attestation.AttestationClient.attest_tpm`.
+
+    :ivar bytes data: The result of the operation.
+    """
+
+    def __init__(self, data: bytes):
+        self.data = data

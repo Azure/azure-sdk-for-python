@@ -29,14 +29,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.web_pub_sub_custom_domains.begin_delete(
+    client.web_pub_sub_custom_domains.begin_delete(
         resource_group_name="myResourceGroup",
         resource_name="myWebPubSubService",
         name="example",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/webpubsub/resource-manager/Microsoft.SignalRService/stable/2023-02-01/examples/WebPubSubCustomDomains_Delete.json
+# x-ms-original-file: specification/webpubsub/resource-manager/Microsoft.SignalRService/preview/2023-06-01-preview/examples/WebPubSubCustomDomains_Delete.json
 if __name__ == "__main__":
     main()

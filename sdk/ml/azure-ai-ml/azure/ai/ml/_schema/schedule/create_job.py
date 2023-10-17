@@ -3,24 +3,23 @@
 # ---------------------------------------------------------
 # pylint: disable=protected-access
 import copy
+from typing import Optional
 
 import yaml
-from marshmallow import INCLUDE, ValidationError, post_load, pre_load
+from marshmallow import INCLUDE, ValidationError, fields, post_load, pre_load
 
-from azure.ai.ml._schema import AnonymousEnvironmentSchema, CommandJobSchema
+from azure.ai.ml._schema import CommandJobSchema
 from azure.ai.ml._schema.core.fields import (
     ArmStr,
-    ArmVersionedStr,
     ComputeField,
+    EnvironmentField,
     FileRefField,
     NestedField,
-    RegistryStr,
     StringTransformedEnum,
     UnionField,
 )
 from azure.ai.ml._schema.job import BaseJobSchema
 from azure.ai.ml._schema.job.input_output_fields_provider import InputsField, OutputsField
-from azure.ai.ml._schema.job.parameterized_spark import SparkConfSchema
 from azure.ai.ml._schema.pipeline.settings import PipelineJobSettingsSchema
 from azure.ai.ml._utils.utils import load_file, merge_dict
 from azure.ai.ml.constants import JobType
@@ -30,6 +29,7 @@ _SCHEDULED_JOB_UPDATES_KEY = "scheduled_job_updates"
 
 
 class CreateJobFileRefField(FileRefField):
+    # pylint: disable-next=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     def _serialize(self, value, attr, obj, **kwargs):
         """FileRefField does not support serialize.
 
@@ -66,8 +66,15 @@ class BaseCreateJobSchema(BaseJobSchema):
         required=True,
     )
 
-    def _get_job_instance_for_remote_job(self, id, data, **kwargs):  # pylint: disable=redefined-builtin
-        """Get a job instance to store updates for remote job."""
+    # pylint: disable-next=docstring-missing-param
+    def _get_job_instance_for_remote_job(
+        self, id: Optional[str], data: Optional[dict], **kwargs
+    ) -> "Job":  # pylint: disable=redefined-builtin
+        """Get a job instance to store updates for remote job.
+
+        :return: The remote job
+        :rtype: Job
+        """
         from azure.ai.ml.entities import Job
 
         data = {} if data is None else data
@@ -102,7 +109,6 @@ class BaseCreateJobSchema(BaseJobSchema):
         # Get the raw dict data before load
         raw_data = self.context.get(_SCHEDULED_JOB_UPDATES_KEY, {})  # pylint: disable=no-member
         if isinstance(job, Job):
-
             if job._source_path is None:
                 raise ValidationError("Could not load job for schedule without '_source_path' set.")
             # Load local job again with updated values
@@ -131,23 +137,10 @@ class CommandCreateJobSchema(BaseCreateJobSchema, CommandJobSchema):
         # code and command can not be set during runtime
         exclude = ["code", "command"]
 
-    environment = UnionField(
-        [
-            NestedField(AnonymousEnvironmentSchema),
-            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
-        ],
-    )
+    environment = EnvironmentField()
 
 
 class SparkCreateJobSchema(BaseCreateJobSchema):
     type = StringTransformedEnum(allowed_values=[JobType.SPARK])
-    conf = NestedField(SparkConfSchema, unknown=INCLUDE)
-    environment = UnionField(
-        [
-            NestedField(AnonymousEnvironmentSchema),
-            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
-        ],
-        allow_none=True,
-    )
+    conf = fields.Dict(keys=fields.Str(), values=fields.Raw())
+    environment = EnvironmentField(allow_none=True)

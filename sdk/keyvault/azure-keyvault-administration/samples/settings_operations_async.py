@@ -39,12 +39,13 @@ async def run_sample():
     # First, let's fetch the settings that apply to our Managed HSM
     # Each setting has a name, value, and type (for example, KeyVaultSettingType.BOOLEAN)
     print("\n.. List Key Vault settings")
-    settings = await client.list_settings()
+    settings = client.list_settings()
     boolean_setting = None
     async for setting in settings:
         if setting.setting_type == KeyVaultSettingType.BOOLEAN:
             boolean_setting = setting
         print(f"{setting.name}: {setting.value} (type: {setting.setting_type})")
+    assert boolean_setting
 
     # Now, let's flip the value of a boolean setting
     # The `value` property is a string, but you can get the value of a boolean setting as a bool with `getboolean`

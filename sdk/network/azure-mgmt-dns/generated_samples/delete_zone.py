@@ -29,11 +29,10 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.zones.begin_delete(
+    client.zones.begin_delete(
         resource_group_name="rg1",
         zone_name="zone1",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/dns/resource-manager/Microsoft.Network/stable/2018-05-01/examples/DeleteZone.json

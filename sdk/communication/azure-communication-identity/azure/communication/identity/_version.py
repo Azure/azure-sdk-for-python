@@ -6,4 +6,4 @@
 
 VERSION = "1.4.0b2"
 
-SDK_MONIKER = "communication-identity/{}".format(VERSION)  # type: str
+SDK_MONIKER = f"communication-identity/{VERSION}"  # type: str

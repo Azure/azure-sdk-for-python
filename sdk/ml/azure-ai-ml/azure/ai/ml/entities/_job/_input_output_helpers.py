@@ -6,24 +6,24 @@ import collections.abc
 import re
 from typing import Any, Dict, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import CustomModelJobInput as RestCustomModelJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import CustomModelJobOutput as RestCustomModelJobOutput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import InputDeliveryMode
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobInputType
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobOutputType, LiteralJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import MLFlowModelJobInput as RestMLFlowModelJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import MLFlowModelJobOutput as RestMLFlowModelJobOutput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import MLTableJobInput as RestMLTableJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import MLTableJobOutput as RestMLTableJobOutput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import OutputDeliveryMode
-from azure.ai.ml._restclient.v2023_02_01_preview.models import TritonModelJobInput as RestTritonModelJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import TritonModelJobOutput as RestTritonModelJobOutput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import UriFileJobInput as RestUriFileJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import UriFileJobOutput as RestUriFileJobOutput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import UriFolderJobInput as RestUriFolderJobInput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import CustomModelJobInput as RestCustomModelJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import CustomModelJobOutput as RestCustomModelJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import InputDeliveryMode
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobInputType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobOutputType, LiteralJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MLFlowModelJobInput as RestMLFlowModelJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MLFlowModelJobOutput as RestMLFlowModelJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MLTableJobInput as RestMLTableJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import MLTableJobOutput as RestMLTableJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import OutputDeliveryMode
+from azure.ai.ml._restclient.v2023_04_01_preview.models import TritonModelJobInput as RestTritonModelJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import TritonModelJobOutput as RestTritonModelJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFileJobInput as RestUriFileJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFileJobOutput as RestUriFileJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFolderJobInput as RestUriFolderJobInput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes, InputOutputModes, JobType
 from azure.ai.ml.constants._component import IOConstants
@@ -66,8 +66,12 @@ OUTPUT_MOUNT_MAPPING_TO_REST = {
 
 
 # TODO: Remove this as both rest type and sdk type are snake case now.
-def get_output_type_mapping_from_rest():
-    """Get output type mapping."""
+def get_output_type_mapping_from_rest() -> Dict[str, str]:
+    """Gets the mapping of JobOutputType to AssetType
+
+    :return: Mapping of JobOutputType to AssetType
+    :rtype: Dict[str, str]
+    """
     return {
         JobOutputType.URI_FILE: AssetTypes.URI_FILE,
         JobOutputType.URI_FOLDER: AssetTypes.URI_FOLDER,
@@ -78,8 +82,12 @@ def get_output_type_mapping_from_rest():
     }
 
 
-def get_input_rest_cls_dict():
-    """Get input rest init func dict."""
+def get_input_rest_cls_dict() -> Dict[str, RestJobInput]:
+    """Gets the mapping of AssetType to RestJobInput
+
+    :return: Map of AssetType to RestJobInput
+    :rtype: Dict[str, RestJobInput]
+    """
     return {
         AssetTypes.URI_FILE: RestUriFileJobInput,
         AssetTypes.URI_FOLDER: RestUriFolderJobInput,
@@ -90,9 +98,12 @@ def get_input_rest_cls_dict():
     }
 
 
-def get_output_rest_cls_dict():
-    """Get output rest init cls dict."""
+def get_output_rest_cls_dict() -> Dict[str, RestJobOutput]:
+    """Get output rest init cls dict.
 
+    :return: Map of AssetType to RestJobOutput
+    :rtype: Dict[str, RestJobOutput]
+    """
     return {
         AssetTypes.URI_FILE: RestUriFileJobOutput,
         AssetTypes.URI_FOLDER: RestUriFolderJobOutput,
@@ -156,7 +167,7 @@ def validate_key_contains_allowed_characters(key: str) -> None:
         )
 
 
-def validate_pipeline_input_key_contains_allowed_characters(key: str) -> None:
+def validate_pipeline_input_key_characters(key: str) -> None:
     # Pipeline input allow '.' to support parameter group in key.
     # Note: ([a-zA-Z_]+[a-zA-Z0-9_]*) is a valid single key,
     # so a valid pipeline key is: ^{single_key}([.]{single_key})*$
@@ -183,15 +194,15 @@ def to_rest_dataset_literal_inputs(
     :type inputs: Dict[str, Union[int, str, float, bool, JobInput]]
     :return: A dictionary mapping input name to a ComponentJobInput or PipelineInput
     :rtype: Dict[str, Union[ComponentJobInput, PipelineInput]]
-    :param job_type: When job_type is pipeline, enable dot('.') in parameter keys to support parameter group.
+    :keyword job_type: When job_type is pipeline, enable dot('.') in parameter keys to support parameter group.
         TODO: Remove this after move name validation to Job's customized validate.
-    :type job_type: str
+    :paramtype job_type: str
     """
     rest_inputs = {}
     # Pack up the inputs into REST format
     for input_name, input_value in inputs.items():
         if job_type == JobType.PIPELINE:
-            validate_pipeline_input_key_contains_allowed_characters(input_name)
+            validate_pipeline_input_key_characters(input_name)
         elif job_type:
             # We pass job_type=None for pipeline node, and want skip this check for nodes.
             validate_key_contains_allowed_characters(input_name)

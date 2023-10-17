@@ -18,7 +18,7 @@ class InternalBaseNodeSchema(BaseNodeSchema):
     component = UnionField(
         [
             # for registry type assets
-            RegistryStr(),
+            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
             # inline component or component file reference starting with FILE prefix
@@ -31,7 +31,7 @@ class InternalBaseNodeSchema(BaseNodeSchema):
     )
 
     @post_load
-    def make(self, data, **kwargs):  # pylint: disable=unused-argument, no-self-use
+    def make(self, data, **kwargs):  # pylint: disable=unused-argument
         from ...entities._builders import parse_inputs_outputs
 
         # parse inputs/outputs
@@ -43,7 +43,7 @@ class InternalBaseNodeSchema(BaseNodeSchema):
         return pipeline_node_factory.load_from_dict(data=data)
 
     @pre_dump
-    def resolve_inputs_outputs(self, job, **kwargs):  # pylint: disable=unused-argument, no-self-use
+    def resolve_inputs_outputs(self, job, **kwargs):  # pylint: disable=unused-argument
         return _resolve_inputs_outputs(job)
 
 

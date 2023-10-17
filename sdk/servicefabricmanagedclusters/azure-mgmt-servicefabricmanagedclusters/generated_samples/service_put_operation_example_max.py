@@ -66,6 +66,7 @@ def main():
                         },
                     }
                 ],
+                "serviceDnsName": "myservicednsname.myApp",
                 "serviceKind": "Stateless",
                 "serviceLoadMetrics": [{"defaultLoad": 3, "name": "metric1", "weight": "Low"}],
                 "servicePackageActivationMode": "SharedProcess",
@@ -78,6 +79,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/servicefabricmanagedclusters/resource-manager/Microsoft.ServiceFabric/preview/2022-08-01-preview/examples/ServicePutOperation_example_max.json
+# x-ms-original-file: specification/servicefabricmanagedclusters/resource-manager/Microsoft.ServiceFabric/preview/2023-02-01-preview/examples/ServicePutOperation_example_max.json
 if __name__ == "__main__":
     main()

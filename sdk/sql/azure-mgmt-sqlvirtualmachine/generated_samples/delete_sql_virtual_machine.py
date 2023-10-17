@@ -29,11 +29,10 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.sql_virtual_machines.begin_delete(
+    client.sql_virtual_machines.begin_delete(
         resource_group_name="testrg",
         sql_virtual_machine_name="testvm1",
     ).result()
-    print(response)
 
 
 # x-ms-original-file: specification/sqlvirtualmachine/resource-manager/Microsoft.SqlVirtualMachine/preview/2022-08-01-preview/examples/DeleteSqlVirtualMachine.json

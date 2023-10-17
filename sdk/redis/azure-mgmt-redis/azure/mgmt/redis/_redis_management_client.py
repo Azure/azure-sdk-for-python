@@ -12,10 +12,12 @@ from typing import Any, TYPE_CHECKING
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
-from . import models
+from . import models as _models
 from ._configuration import RedisManagementClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
+    AccessPolicyAssignmentOperations,
+    AccessPolicyOperations,
     AsyncOperationStatusOperations,
     FirewallRulesOperations,
     LinkedServerOperations,
@@ -51,14 +53,17 @@ class RedisManagementClient:  # pylint: disable=client-accepts-api-version-keywo
     :vartype private_link_resources: azure.mgmt.redis.operations.PrivateLinkResourcesOperations
     :ivar async_operation_status: AsyncOperationStatusOperations operations
     :vartype async_operation_status: azure.mgmt.redis.operations.AsyncOperationStatusOperations
+    :ivar access_policy: AccessPolicyOperations operations
+    :vartype access_policy: azure.mgmt.redis.operations.AccessPolicyOperations
+    :ivar access_policy_assignment: AccessPolicyAssignmentOperations operations
+    :vartype access_policy_assignment: azure.mgmt.redis.operations.AccessPolicyAssignmentOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Gets subscription credentials which uniquely identify the Microsoft
-     Azure subscription. The subscription ID forms part of the URI for every service call. Required.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-06-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-08-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -75,9 +80,9 @@ class RedisManagementClient:  # pylint: disable=client-accepts-api-version-keywo
         self._config = RedisManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -93,6 +98,10 @@ class RedisManagementClient:  # pylint: disable=client-accepts-api-version-keywo
             self._client, self._config, self._serialize, self._deserialize
         )
         self.async_operation_status = AsyncOperationStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.access_policy = AccessPolicyOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.access_policy_assignment = AccessPolicyAssignmentOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 
@@ -118,15 +127,12 @@ class RedisManagementClient:  # pylint: disable=client-accepts-api-version-keywo
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> RedisManagementClient
+    def __enter__(self) -> "RedisManagementClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

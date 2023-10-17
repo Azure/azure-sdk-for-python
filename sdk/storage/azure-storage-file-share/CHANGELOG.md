@@ -1,14 +1,48 @@
 # Release History
 
-## 12.12.0 (Unreleased)
+## 12.15.0b1 (Unreleased)
 
 ### Features Added
+- Added `audience` as an optional keyword that can be specified on APIs that have a `credential` parameter. This
+keyword only has an effect when the credential provided is of type `TokenCredential`.
 
-### Breaking Changes
+## 12.14.2 (2023-10-10)
 
 ### Bugs Fixed
+- Fixed an issue when an invalid type was provided for `credential` during client construction, the
+`__str__` of the object would be present in the exception message and therefore potentially logged.
 
-### Other Changes
+## 12.14.1 (2023-09-13)
+
+### Bugs Fixed
+- Fixed breaking `KeyError: 'sdk_moniker'` in `create_configuration`.
+NOTE: This is not an exported method and therefore should not be imported/called directly.
+
+## 12.14.0 (2023-09-12)
+
+### Features Added
+- Stable release of features from 12.14.0b1
+
+## 12.14.0b1 (2023-08-08)
+
+### Features Added
+- Added support for service versions 2023-05-03 and 2023-08-03.
+
+## 12.13.0 (2023-07-11)
+
+### Features Added
+- Stable release of features from 12.13.0b1
+
+## 12.13.0b1 (2023-05-30)
+
+### Features Added
+- Added support for service version 2023-01-03.
+- Added `access_rights` property to `Handle`.
+
+## 12.12.0 (2023-04-12)
+
+### Features Added
+- Stable release of features from 12.12.0b1
 
 ## 12.12.0b1 (2023-03-28)
 

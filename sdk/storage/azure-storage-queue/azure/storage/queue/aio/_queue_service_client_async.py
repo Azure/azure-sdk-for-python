@@ -67,6 +67,9 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.queue.core.windows.net.
 
     .. admonition:: Example:
 
@@ -197,7 +200,6 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
         :type cors: list(~azure.storage.queue.CorsRule)
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :rtype: None
 
         .. admonition:: Example:
 
@@ -216,7 +218,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
             cors=cors
         )
         try:
-            return await self._client.service.set_properties(props, timeout=timeout, **kwargs) # type: ignore
+            await self._client.service.set_properties(props, timeout=timeout, **kwargs) # type: ignore
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -292,6 +294,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
         :type metadata: dict(str, str)
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :return: A QueueClient for the newly created Queue.
         :rtype: ~azure.storage.queue.aio.QueueClient
 
         .. admonition:: Example:

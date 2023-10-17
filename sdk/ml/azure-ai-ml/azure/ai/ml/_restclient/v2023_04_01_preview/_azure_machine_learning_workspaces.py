@@ -15,7 +15,7 @@ from azure.mgmt.core import ARMPipelineClient
 
 from . import models
 from ._configuration import AzureMachineLearningWorkspacesConfiguration
-from .operations import BatchDeploymentsOperations, BatchEndpointsOperations, CodeContainersOperations, CodeVersionsOperations, ComponentContainersOperations, ComponentVersionsOperations, ComputeOperations, DataContainersOperations, DataVersionsOperations, DatastoresOperations, EnvironmentContainersOperations, EnvironmentVersionsOperations, FeaturesetContainersOperations, FeaturesetVersionsOperations, FeaturestoreEntityContainersOperations, FeaturestoreEntityVersionsOperations, JobsOperations, LabelingJobsOperations, ModelContainersOperations, ModelVersionsOperations, OnlineDeploymentsOperations, OnlineEndpointsOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, QuotasOperations, RegistriesOperations, RegistryCodeContainersOperations, RegistryCodeVersionsOperations, RegistryComponentContainersOperations, RegistryComponentVersionsOperations, RegistryEnvironmentContainersOperations, RegistryEnvironmentVersionsOperations, RegistryModelContainersOperations, RegistryModelVersionsOperations, SchedulesOperations, UsagesOperations, VirtualMachineSizesOperations, WorkspaceConnectionsOperations, WorkspaceFeaturesOperations, WorkspacesOperations
+from .operations import BatchDeploymentsOperations, BatchEndpointsOperations, CodeContainersOperations, CodeVersionsOperations, ComponentContainersOperations, ComponentVersionsOperations, ComputeOperations, DataContainersOperations, DataVersionsOperations, DatastoresOperations, EnvironmentContainersOperations, EnvironmentVersionsOperations, FeaturesOperations, FeaturesetContainersOperations, FeaturesetVersionsOperations, FeaturestoreEntityContainersOperations, FeaturestoreEntityVersionsOperations, JobsOperations, LabelingJobsOperations, ManagedNetworkProvisionsOperations, ManagedNetworkSettingsRuleOperations, ModelContainersOperations, ModelVersionsOperations, OnlineDeploymentsOperations, OnlineEndpointsOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, QuotasOperations, RegistriesOperations, RegistryCodeContainersOperations, RegistryCodeVersionsOperations, RegistryComponentContainersOperations, RegistryComponentVersionsOperations, RegistryDataContainersOperations, RegistryDataVersionsOperations, RegistryEnvironmentContainersOperations, RegistryEnvironmentVersionsOperations, RegistryModelContainersOperations, RegistryModelVersionsOperations, SchedulesOperations, UsagesOperations, VirtualMachineSizesOperations, WorkspaceConnectionsOperations, WorkspaceFeaturesOperations, WorkspacesOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -49,6 +49,12 @@ class AzureMachineLearningWorkspaces(object):    # pylint: disable=too-many-inst
     :ivar workspace_connections: WorkspaceConnectionsOperations operations
     :vartype workspace_connections:
      azure.mgmt.machinelearningservices.operations.WorkspaceConnectionsOperations
+    :ivar managed_network_settings_rule: ManagedNetworkSettingsRuleOperations operations
+    :vartype managed_network_settings_rule:
+     azure.mgmt.machinelearningservices.operations.ManagedNetworkSettingsRuleOperations
+    :ivar managed_network_provisions: ManagedNetworkProvisionsOperations operations
+    :vartype managed_network_provisions:
+     azure.mgmt.machinelearningservices.operations.ManagedNetworkProvisionsOperations
     :ivar registries: RegistriesOperations operations
     :vartype registries: azure.mgmt.machinelearningservices.operations.RegistriesOperations
     :ivar workspace_features: WorkspaceFeaturesOperations operations
@@ -66,6 +72,12 @@ class AzureMachineLearningWorkspaces(object):    # pylint: disable=too-many-inst
     :ivar registry_component_versions: RegistryComponentVersionsOperations operations
     :vartype registry_component_versions:
      azure.mgmt.machinelearningservices.operations.RegistryComponentVersionsOperations
+    :ivar registry_data_containers: RegistryDataContainersOperations operations
+    :vartype registry_data_containers:
+     azure.mgmt.machinelearningservices.operations.RegistryDataContainersOperations
+    :ivar registry_data_versions: RegistryDataVersionsOperations operations
+    :vartype registry_data_versions:
+     azure.mgmt.machinelearningservices.operations.RegistryDataVersionsOperations
     :ivar registry_environment_containers: RegistryEnvironmentContainersOperations operations
     :vartype registry_environment_containers:
      azure.mgmt.machinelearningservices.operations.RegistryEnvironmentContainersOperations
@@ -111,6 +123,8 @@ class AzureMachineLearningWorkspaces(object):    # pylint: disable=too-many-inst
     :ivar featureset_containers: FeaturesetContainersOperations operations
     :vartype featureset_containers:
      azure.mgmt.machinelearningservices.operations.FeaturesetContainersOperations
+    :ivar features: FeaturesOperations operations
+    :vartype features: azure.mgmt.machinelearningservices.operations.FeaturesOperations
     :ivar featureset_versions: FeaturesetVersionsOperations operations
     :vartype featureset_versions:
      azure.mgmt.machinelearningservices.operations.FeaturesetVersionsOperations
@@ -174,12 +188,16 @@ class AzureMachineLearningWorkspaces(object):    # pylint: disable=too-many-inst
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.workspace_connections = WorkspaceConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_network_settings_rule = ManagedNetworkSettingsRuleOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_network_provisions = ManagedNetworkProvisionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registries = RegistriesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.workspace_features = WorkspaceFeaturesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registry_code_containers = RegistryCodeContainersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registry_code_versions = RegistryCodeVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registry_component_containers = RegistryComponentContainersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registry_component_versions = RegistryComponentVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.registry_data_containers = RegistryDataContainersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.registry_data_versions = RegistryDataVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registry_environment_containers = RegistryEnvironmentContainersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registry_environment_versions = RegistryEnvironmentVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.registry_model_containers = RegistryModelContainersOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -196,6 +214,7 @@ class AzureMachineLearningWorkspaces(object):    # pylint: disable=too-many-inst
         self.environment_containers = EnvironmentContainersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.environment_versions = EnvironmentVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.featureset_containers = FeaturesetContainersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.features = FeaturesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.featureset_versions = FeaturesetVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.featurestore_entity_containers = FeaturestoreEntityContainersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.featurestore_entity_versions = FeaturestoreEntityVersionsOperations(self._client, self._config, self._serialize, self._deserialize)

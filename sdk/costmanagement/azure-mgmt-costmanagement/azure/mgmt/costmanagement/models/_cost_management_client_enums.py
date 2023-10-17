@@ -106,12 +106,12 @@ class AlertType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class BenefitKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Kind/type of the benefit."""
 
-    #: Benefit is IncludedQuantity.
     INCLUDED_QUANTITY = "IncludedQuantity"
-    #: Benefit is Reservation.
+    """Benefit is IncludedQuantity."""
     RESERVATION = "Reservation"
-    #: Benefit is SavingsPlan.
+    """Benefit is Reservation."""
     SAVINGS_PLAN = "SavingsPlan"
+    """Benefit is SavingsPlan."""
 
 
 class ChartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -134,28 +134,28 @@ class CheckNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class CostDetailsDataFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The data format of the report."""
 
-    #: Csv data format.
     CSV_COST_DETAILS_DATA_FORMAT = "Csv"
+    """Csv data format."""
 
 
 class CostDetailsMetricType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the detailed report. By default ActualCost is provided."""
 
-    #: Actual cost data.
     ACTUAL_COST_COST_DETAILS_METRIC_TYPE = "ActualCost"
-    #: Amortized cost data.
+    """Actual cost data."""
     AMORTIZED_COST_COST_DETAILS_METRIC_TYPE = "AmortizedCost"
+    """Amortized cost data."""
 
 
 class CostDetailsStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the cost details operation."""
 
-    #: Operation is Completed.
     COMPLETED_COST_DETAILS_STATUS_TYPE = "Completed"
-    #: Operation is Completed and no cost data found.
+    """Operation is Completed."""
     NO_DATA_FOUND_COST_DETAILS_STATUS_TYPE = "NoDataFound"
-    #: Operation Failed.
+    """Operation is Completed and no cost data found."""
     FAILED_COST_DETAILS_STATUS_TYPE = "Failed"
+    """Operation Failed."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -223,6 +223,7 @@ class ForecastOperatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operator to use for comparison."""
 
     IN = "In"
+    IN_ENUM = "In"
 
 
 class ForecastTimeframe(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -270,23 +271,23 @@ class GenerateDetailedCostReportMetricType(str, Enum, metaclass=CaseInsensitiveE
 class Grain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Grain which corresponds to value."""
 
-    #: Hourly grain corresponds to value per hour.
     HOURLY = "Hourly"
-    #: Hourly grain corresponds to value per day.
+    """Hourly grain corresponds to value per hour."""
     DAILY = "Daily"
-    #: Hourly grain corresponds to value per month.
+    """Hourly grain corresponds to value per day."""
     MONTHLY = "Monthly"
+    """Hourly grain corresponds to value per month."""
 
 
 class GrainParameter(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """GrainParameter."""
 
-    #: Hourly grain corresponds to value per hour.
     HOURLY = "Hourly"
-    #: Hourly grain corresponds to value per day.
+    """Hourly grain corresponds to value per hour."""
     DAILY = "Daily"
-    #: Hourly grain corresponds to value per month.
+    """Hourly grain corresponds to value per day."""
     MONTHLY = "Monthly"
+    """Hourly grain corresponds to value per month."""
 
 
 class GranularityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -305,12 +306,12 @@ class KpiType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class LookBackPeriod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The number of days used to look back."""
 
-    #: 7 days used to look back.
     LAST7_DAYS = "Last7Days"
-    #: 30 days used to look back.
+    """7 days used to look back."""
     LAST30_DAYS = "Last30Days"
-    #: 60 days used to look back.
+    """30 days used to look back."""
     LAST60_DAYS = "Last60Days"
+    """60 days used to look back."""
 
 
 class MetricType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -334,6 +335,7 @@ class OperatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     IN = "In"
     CONTAINS = "Contains"
+    IN_ENUM = "In"
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -354,16 +356,19 @@ class PivotType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class QueryColumnType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the column in the export."""
+    """The type of the column in the report."""
 
-    TAG = "Tag"
+    TAG_KEY = "TagKey"
+    """The tag associated with the cost data."""
     DIMENSION = "Dimension"
+    """The dimension of cost data."""
 
 
 class QueryOperatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operator to use for comparison."""
 
     IN = "In"
+    IN_ENUM = "In"
 
 
 class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -373,13 +378,6 @@ class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WEEKLY = "Weekly"
     MONTHLY = "Monthly"
     ANNUALLY = "Annually"
-
-
-class ReportConfigColumnType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the column in the report."""
-
-    TAG = "Tag"
-    DIMENSION = "Dimension"
 
 
 class ReportConfigSortingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -449,42 +447,42 @@ class ReservationReportSchema(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ScheduledActionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Kind of the scheduled action."""
 
-    #: Cost analysis data will be emailed.
     EMAIL = "Email"
-    #: Cost anomaly information will be emailed. Available only on subscription scope at daily
-    #: frequency. If no anomaly is detected on the resource, an email won't be sent.
+    """Cost analysis data will be emailed."""
     INSIGHT_ALERT = "InsightAlert"
+    """Cost anomaly information will be emailed. Available only on subscription scope at daily
+    #: frequency. If no anomaly is detected on the resource, an email won't be sent."""
 
 
 class ScheduledActionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of the scheduled action."""
 
-    #: Scheduled action is saved but will not be run.
     DISABLED = "Disabled"
-    #: Scheduled action is saved and will be run.
+    """Scheduled action is saved but will not be run."""
     ENABLED = "Enabled"
-    #: Scheduled action is expired.
+    """Scheduled action is saved and will be run."""
     EXPIRED = "Expired"
+    """Scheduled action is expired."""
 
 
 class ScheduleFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Frequency of the schedule."""
 
-    #: Cost analysis data will be emailed every day.
     DAILY = "Daily"
-    #: Cost analysis data will be emailed every week.
+    """Cost analysis data will be emailed every day."""
     WEEKLY = "Weekly"
-    #: Cost analysis data will be emailed every month.
+    """Cost analysis data will be emailed every week."""
     MONTHLY = "Monthly"
+    """Cost analysis data will be emailed every month."""
 
 
 class Scope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Kind of the recommendation scope."""
 
-    #: Single scope recommendation.
     SINGLE = "Single"
-    #: Shared scope recommendation.
+    """Single scope recommendation."""
     SHARED = "Shared"
+    """Shared scope recommendation."""
 
 
 class StatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -497,10 +495,10 @@ class StatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class Term(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Grain which corresponds to value."""
 
-    #: Benefit term is 1 year.
     P1_Y = "P1Y"
-    #: Benefit term is 3 years.
+    """Benefit term is 1 year."""
     P3_Y = "P3Y"
+    """Benefit term is 3 years."""
 
 
 class TimeframeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

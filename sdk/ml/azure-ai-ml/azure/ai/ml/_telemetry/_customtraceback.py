@@ -9,17 +9,21 @@
 import os
 import sys
 import traceback
+import types
+from typing import Iterable, List, Optional, Type
 
 
 class _CustomStackSummary(traceback.StackSummary):
     """Subclass of StackSummary."""
 
-    def format(self):
+    def format(self) -> List[str]:
         """Format the stack ready for printing.
 
-        Returns a list of strings ready for printing.  Each string in the resulting list corresponds to a single frame
-        from the stack. Each string ends in a newline; the strings may contain internal newlines as well, for those
-        items with source text lines.
+        :return: A list of strings ready for printing.
+          * Each string in the resulting list corresponds to a single frame from the stack.
+          * Each string ends in a newline; the strings may contain internal newlines as well, for those items with
+            source text lines.
+        :rtype: List[str]
         """
         result = []
         for frame in self:
@@ -93,13 +97,14 @@ class _CustomTracebackException(traceback.TracebackException):
         if lookup_lines:
             self._load_lines()
 
-    def format_exception_only(self):
+    def format_exception_only(self) -> Iterable[str]:
         """Format the exception part of the traceback.
 
-        The return value is a generator of strings, each ending in a newline. Normally, the generator emits a single
-        string; however, for SyntaxError exceptions, it emits several lines that (when printed) display detailed
-        information about where the syntax error occurred. The message indicating which exception occurred is always the
-        last string in the output.
+        :return: An iterable of strings, each ending in a newline. Normally, the generator emits a single
+           string; however, for SyntaxError exceptions, it emits several lines that (when printed) display
+           detailed information about where the syntax error occurred. The message indicating which exception occurred
+           is always the last string in the output.
+        :rtype: Iterable[str]
         """
         if self.exc_type is None:
             yield traceback._format_final_exc_line(None, self._str)
@@ -134,17 +139,43 @@ class _CustomTracebackException(traceback.TracebackException):
         yield "{}: {}\n".format(stype, msg)
 
 
-def format_exc(limit=None, chain=True):
-    """Like print_exc() but return a string."""
+def format_exc(limit: Optional[int] = None, chain: bool = True) -> str:
+    """Like print_exc() but return a string.
+
+    :param limit: None to include all frames or the number of frames to include.
+    :type limit: Optional[int]
+    :param chain: Whether to format __cause__ and __context__. Defaults to True
+    :type chain: bool
+    :return: The formatted exception string
+    :rtype: str
+    """
     return "".join(format_exception(*sys.exc_info(), limit=limit, chain=chain))
 
 
-def format_exception(etype, value, tb, limit=None, chain=True):  # pylint: disable=unused-argument
+def format_exception(  # pylint: disable=unused-argument
+    etype: Type[BaseException],
+    value: BaseException,
+    tb: types.TracebackType,
+    limit: Optional[int] = None,
+    chain: bool = True,
+) -> List[str]:
     """Format a stack trace and the exception information.
 
-    The arguments have the same meaning as the corresponding arguments to print_exception().  The return value is a list
-    of strings, each ending in a newline and some containing internal newlines.  When these lines are concatenated and
-    printed, exactly the same text is printed as does print_exception().
+    The arguments have the same meaning as the corresponding arguments to print_exception().
+
+    :param etype: The type of the exception
+    :type etype: Type[BaseException]
+    :param value: The exception
+    :type value: BaseException
+    :param tb: The exception traceback
+    :type tb: types.TracebackType
+    :param limit: None to include all frames or the number of frames to include.
+    :type limit: Optional[int]
+    :param chain: Whether to format __cause__ and __context__. Defaults to True
+    :type chain: bool
+    :return: A list of strings, each ending in a newline and some containing internal newlines.
+      When these lines are concatenated and printed, exactly the same text is printed as does print_exception().
+    :rtype: List[str]
     """
     # format_exception has ignored etype for some time, and code such as cgitb
     # passes in bogus values as a result. For compatibility with such code we

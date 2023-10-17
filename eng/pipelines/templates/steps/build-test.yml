@@ -31,8 +31,12 @@ steps:
     parameters:
       versionSpec: '${{ parameters.PythonVersion }}'
 
-  - script: |
-      python -m pip install pip==20.3.3
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
+      python -m pip freeze
+      python -m pip install pip==23.2.1
+      python -m pip install setuptools==67.6.0
       python -m pip install wheel==0.37.0
       python -m pip install -r eng/ci_tools.txt
       pip --version
@@ -56,7 +60,7 @@ steps:
   - task: PythonScript@0
     displayName: 'Run Tests'
     inputs:
-      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
       arguments: >-
         "$(TargetingString)"
         ${{ parameters.AdditionalTestArgs }}
@@ -88,7 +92,7 @@ steps:
       CustomCondition: '${{ parameters.RunCoverage }}'
 
   - pwsh: |
-      python -m pip install coverage==4.5.4
+      python -m pip install coverage==7.2.5
       python scripts/devops_tasks/create_coverage.py
     displayName: Create Coverage Report
     condition: and(succeeded(), ${{ parameters.RunCoverage }})
@@ -97,7 +101,7 @@ steps:
     displayName: 'Test Samples'
     condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
     inputs:
-      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
       arguments: >-
         "$(TargetingString)"
         --service="${{ parameters.ServiceDirectory }}"

@@ -19,7 +19,10 @@ from azure.ai.ml.constants._common import (
     PROVIDER_RESOURCE_ID_WITH_VERSION,
     REGISTRY_URI_REGEX_FORMAT,
     REGISTRY_VERSION_PATTERN,
-    SINGULARITY_ID_FORMAT,
+    SINGULARITY_FULL_NAME_REGEX_FORMAT,
+    SINGULARITY_ID_REGEX_FORMAT,
+    SINGULARITY_SHORT_NAME_REGEX_FORMAT,
+    NAMED_RESOURCE_ID_FORMAT_WITH_PARENT,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -326,6 +329,20 @@ def is_ARM_id_for_resource(name: Any, resource_type: str = ".*", sub_workspace_r
     return False
 
 
+def is_ARM_id_for_parented_resource(name: str, parent_resource_type: str, child_resource_type: str) -> bool:
+    resource_regex = NAMED_RESOURCE_ID_FORMAT_WITH_PARENT.format(
+        ".*",
+        ".*",
+        AZUREML_RESOURCE_PROVIDER,
+        ".*",
+        parent_resource_type,
+        ".*",
+        child_resource_type,
+        "*",
+    )
+    return re.match(resource_regex, name, re.IGNORECASE) is not None
+
+
 def is_registry_id_for_resource(name: Any) -> bool:
     if isinstance(name, str) and re.match(REGISTRY_URI_REGEX_FORMAT, name, re.IGNORECASE):
         return True
@@ -333,7 +350,19 @@ def is_registry_id_for_resource(name: Any) -> bool:
 
 
 def is_singularity_id_for_resource(name: Any) -> bool:
-    if isinstance(name, str) and re.match(SINGULARITY_ID_FORMAT, name, re.IGNORECASE):
+    if isinstance(name, str) and re.match(SINGULARITY_ID_REGEX_FORMAT, name, re.IGNORECASE):
+        return True
+    return False
+
+
+def is_singularity_full_name_for_resource(name: Any) -> bool:
+    if isinstance(name, str) and (re.match(SINGULARITY_FULL_NAME_REGEX_FORMAT, name, re.IGNORECASE)):
+        return True
+    return False
+
+
+def is_singularity_short_name_for_resource(name: Any) -> bool:
+    if isinstance(name, str) and re.match(SINGULARITY_SHORT_NAME_REGEX_FORMAT, name, re.IGNORECASE):
         return True
     return False
 
@@ -372,10 +401,15 @@ def get_resource_name_from_arm_id(resource_id: str) -> str:
     return AMLNamedArmId(resource_id).asset_name
 
 
-def get_resource_name_from_arm_id_safe(resource_id: str) -> Optional[str]:
+def get_resource_name_from_arm_id_safe(resource_id: str) -> str:
     """Get the resource name from an ARM id.
 
-    return input string if it is not an ARM id.
+    :param resource_id: The resource's ARM ID
+    :type resource_id: str
+    :return:
+      * Resource Name if input string is ARM id
+      * Original input otherwise
+    :rtype: str
     """
     try:
         return get_resource_name_from_arm_id(resource_id)
@@ -399,7 +433,7 @@ def get_arm_id_object_from_id(
     non-AzureML ARM id is passed in, an AzureResourceId will be returned.
 
     :param resource_id: the ARM Id to parse
-    :type arm_id: str
+    :type resource_id: str
     :raises ~azure.ai.ml.exceptions.ValidationException~: Raised if the ARM id is incorrectly formatted.
     :return: The parser for the given ARM Id
     :rtype: Union[AMLVersionedArmId, AMLNamedArmId, AzureResourceId]

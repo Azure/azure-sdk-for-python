@@ -26,16 +26,15 @@ from azure.mgmt.eventgrid import EventGridManagementClient
 def main():
     client = EventGridManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="5b4b650e-28b9-4790-b3ab-ddbd88d727c4",
+        subscription_id="8f6b6269-84f2-4d09-9e31-1127efcd1e40",
     )
 
-    response = client.partner_registrations.begin_delete(
+    client.partner_registrations.begin_delete(
         resource_group_name="examplerg",
         partner_registration_name="examplePartnerRegistrationName1",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/eventgrid/resource-manager/Microsoft.EventGrid/stable/2022-06-15/examples/PartnerRegistrations_Delete.json
+# x-ms-original-file: specification/eventgrid/resource-manager/Microsoft.EventGrid/preview/2023-06-01-preview/examples/PartnerRegistrations_Delete.json
 if __name__ == "__main__":
     main()

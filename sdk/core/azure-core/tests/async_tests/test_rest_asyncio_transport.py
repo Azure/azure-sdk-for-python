@@ -9,10 +9,11 @@ from azure.core.rest._requests_asyncio import RestAsyncioRequestsTransportRespon
 from rest_client_async import AsyncTestRestClient
 
 import pytest
+import pytest_asyncio
 from utils import readonly_checks
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 async def client(port):
     async with AsyncioRequestsTransport() as transport:
         async with AsyncTestRestClient(port, transport=transport) as client:
