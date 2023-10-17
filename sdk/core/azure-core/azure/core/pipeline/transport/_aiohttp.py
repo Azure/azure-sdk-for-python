@@ -25,7 +25,16 @@
 # --------------------------------------------------------------------------
 from __future__ import annotations
 import sys
-from typing import Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload, cast, Union, Type
+from typing import (
+    Any,
+    Optional,
+    AsyncIterator as AsyncIteratorType,
+    TYPE_CHECKING,
+    overload,
+    cast,
+    Union,
+    Type,
+)
 from types import TracebackType
 from collections.abc import AsyncIterator
 
@@ -86,7 +95,12 @@ class AioHttpTransport(AsyncHttpTransport):
     """
 
     def __init__(
-        self, *, session: Optional[aiohttp.ClientSession] = None, loop=None, session_owner: bool = True, **kwargs
+        self,
+        *,
+        session: Optional[aiohttp.ClientSession] = None,
+        loop=None,
+        session_owner: bool = True,
+        **kwargs,
     ):
         if loop and sys.version_info >= (3, 10):
             raise ValueError("Starting with Python 3.10, asyncio doesn’t support loop as a parameter anymore")
@@ -153,6 +167,10 @@ class AioHttpTransport(AsyncHttpTransport):
             if cert:
                 ssl_ctx.load_cert_chain(*cert)
             return ssl_ctx
+        if verify:
+            import ssl
+
+            return ssl.create_default_context()
         return verify
 
     def _get_request_data(self, request):
