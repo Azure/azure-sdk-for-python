@@ -71,7 +71,6 @@ class FeatureSetOperations(_ScopeDependentOperations):
         self._operation = service_client.featureset_versions
         self._container_operation = service_client.featureset_containers
         self._jobs_operation = service_client_for_jobs.jobs
-        self._operation_for_backfill = service_client_for_jobs.featureset_versions
         self._feature_operation = service_client.features
         self._service_client = service_client
         self._datastore_operation = datastore_operations
@@ -230,7 +229,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
             tags=tags,
         )
 
-        return self._operation_for_backfill.begin_backfill(
+        return self._operation.begin_backfill(
             resource_group_name=self._resource_group_name,
             workspace_name=self._workspace_name,
             name=name,
