@@ -104,7 +104,7 @@
 /sdk/keyvault/                                                       @schaabs @mccoyp
 
 # PRLabel: %Load Testing
-/sdk/loadtestservice/azure-developer-loadtesting/                    @msyyc @iscai-msft
+/sdk/loadtesting/azure-developer-loadtesting/                        @msyyc @iscai-msft
 
 # PRLabel: %Monitor
 /sdk/loganalytics/azure-loganalytics/                                @azmonapplicationinsights @pvaneck
@@ -142,7 +142,7 @@
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
 /sdk/datalake/                                                       @ro-joowan
-/sdk/datadatamigration/                                              @vchske
+/sdk/datamigration/                                                  @vchske
 
 # PRLabel: %Device Provisioning
 /sdk/iothub/azure-iot-deviceprovisioning                             @c-ryan-k @digimaun
@@ -160,7 +160,7 @@
 /sdk/modelsrepository/                                               @cartertinney @digimaun
 
 # PRLabel: %Machine Learning Compute
-/sdk/machinelearningcompute/                                         @shutchings
+/sdk/machinelearning/                                                @shutchings
 
 # PRLabel: %Machine Learning
 /sdk/ml/                                                             @paulshealy1 @singankit @diondrapeck @luigiw @kdestin @MilesHolland @needuv @ninghu @YusakuNo1
@@ -281,7 +281,7 @@
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
 
 # PRLabel: %SQL
-/sql/sql/                                                            @jaredmoo
+/sdk/sql/                                                            @jaredmoo
 
 # PRLabel: %Service Bus
 /sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @l0lawrence
