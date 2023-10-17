@@ -29,7 +29,7 @@ stages:
       Clouds: Public, PPE, Int
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'
-        AZURE_TEST_RUN_LIVE: 'true'
+        AZURE_TEST_RUN_LIVE: 'True'
       MatrixConfigs:
         - Name: PhoneNumbers_python_livetest_matrix
           Path: sdk/communication/azure-communication-phonenumbers/phonenumbers-livetest-matrix.json
