@@ -6,7 +6,9 @@ import pytest
 from pytest_mock import MockFixture
 
 from azure.ai.ml import load_workspace
-from azure.ai.ml._restclient.v2023_08_01_preview.models import WorkspaceUpdateParameters
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    ServerlessComputeSettings as RestServerlessComputeSettings,
+)
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import (
     IdentityConfiguration,
@@ -216,7 +218,7 @@ class TestWorkspaceOperation:
             # Will return empty dict if serverless_compute_settings is None
             assert len(settings) == 0
         else:
-            assert ServerlessComputeSettings._from_rest_object(settings) == serverless_compute_settings
+            RestServerlessComputeSettings.deserialize(settings) == serverless_compute_settings._to_rest_object()
 
     @pytest.mark.parametrize(
         "serverless_compute_settings",
