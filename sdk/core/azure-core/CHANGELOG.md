@@ -8,8 +8,6 @@
 
 ### Bugs Fixed
 
-- Fixed issue InteractiveBrowserCredential does not hand over to next credential in chain if no browser is supported.
-
 ### Other Changes
 
 ## 1.29.4 (2023-09-07)
