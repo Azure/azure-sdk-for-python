@@ -22,7 +22,8 @@ USAGE:
 
 
 import asyncio
-import os, sys
+import os
+import sys
 
 
 class QueueHelloWorldSamplesAsync(object):
@@ -30,51 +31,53 @@ class QueueHelloWorldSamplesAsync(object):
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
     async def create_client_with_connection_string_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
+                  "Test: create_client_with_connection_string_async")
+            sys.exit(1)
+
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient
-        if self.connection_string is not None:
-            queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
+        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
-            # Get queue service properties
-            async with queue_service:
-                properties = await queue_service.get_service_properties()
-        else:
-            print("Missing required enviornment variable(s). Please see specific test for more details.")
-            sys.exit(1)
+        # Get queue service properties
+        async with queue_service:
+            properties = await queue_service.get_service_properties()
 
     async def queue_and_messages_example_async(self):
+        if self.connection_string is None:
+            print("Missing required environment variable(s). Please see specific test for more details." + '\n' +
+                  "Test: queue_and_messages_example_async")
+            sys.exit(1)
+
         # Instantiate the QueueClient from a connection string
         from azure.storage.queue.aio import QueueClient
-        if self.connection_string is not None:
-            queue = QueueClient.from_connection_string(conn_str=self.connection_string, queue_name="myqueue")
+        queue = QueueClient.from_connection_string(conn_str=self.connection_string, queue_name="myqueue")
 
-            async with queue:
-                # Create the queue
-                # [START async_create_queue]
-                await queue.create_queue()
-                # [END async_create_queue]
+        async with queue:
+            # Create the queue
+            # [START async_create_queue]
+            await queue.create_queue()
+            # [END async_create_queue]
 
-                try:
-                    # Send messages
-                    await asyncio.gather(
-                        queue.send_message("I'm using queues!"),
-                        queue.send_message("This is my second message")
-                    )
+            try:
+                # Send messages
+                await asyncio.gather(
+                    queue.send_message("I'm using queues!"),
+                    queue.send_message("This is my second message")
+                )
 
-                    # Receive the messages
-                    response = queue.receive_messages(messages_per_page=2)
+                # Receive the messages
+                response = queue.receive_messages(messages_per_page=2)
 
-                    # Print the content of the messages
-                    async for message in response:
-                        print(message.content)
+                # Print the content of the messages
+                async for message in response:
+                    print(message.content)
 
-                finally:
-                    # [START async_delete_queue]
-                    await queue.delete_queue()
-                    # [END async_delete_queue]
-        else:
-            print("Missing required enviornment variable(s). Please see specific test for more details.")
-            sys.exit(1)
+            finally:
+                # [START async_delete_queue]
+                await queue.delete_queue()
+                # [END async_delete_queue]
 
 
 async def main():

@@ -22,7 +22,7 @@ from ._generated import AzureQueueStorage
 from ._generated.models import QueueMessage as GenQueueMessage, SignedIdentifier
 from ._message_encoding import NoDecodePolicy, NoEncodePolicy
 from ._models import AccessPolicy, MessagesPaged, QueueMessage
-from ._queue_client_helpers import _format_url_helper, _from_queue_url_helper, _parse_url
+from ._queue_client_helpers import _format_url, _from_queue_url, _parse_url
 from ._serialize import get_api_version
 from ._shared.base_client import parse_connection_str, StorageAccountHostsMixin
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
@@ -106,7 +106,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :returns: The formatted endpoint URL according to the specified location mode hostname.
         :rtype: str
         """
-        return _format_url_helper(
+        return _format_url(
             queue_name=self.queue_name,
             hostname=hostname,
             scheme=self.scheme,
@@ -137,7 +137,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :returns: A queue client.
         :rtype: ~azure.storage.queue.QueueClient
         """
-        account_url, queue_name = _from_queue_url_helper(queue_url=queue_url)
+        account_url, queue_name = _from_queue_url(queue_url=queue_url)
         return cls(account_url, queue_name=queue_name, credential=credential, **kwargs)
 
     @classmethod

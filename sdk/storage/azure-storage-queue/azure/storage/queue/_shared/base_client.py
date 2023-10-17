@@ -45,6 +45,7 @@ from .policies import (
     StorageRequestHook,
     StorageResponseHook,
 )
+from .parser import _is_credential_sastoken
 from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
 from .response_handlers import PartialBatchErrorException, process_storage_error
 from .shared_access_signature import QueryStringConstants
@@ -212,7 +213,7 @@ class StorageAccountHostsMixin(object):  # pylint: disable=too-many-instance-att
         if sas_token and isinstance(credential, AzureSasCredential):
             raise ValueError(
                 "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
-        if is_credential_sastoken(credential):
+        if _is_credential_sastoken(credential):
             credential = cast(str, credential)
             query_str += credential.lstrip("?")
             credential = None
@@ -454,14 +455,3 @@ def parse_query(query_str: str) -> Tuple[Optional[str], Optional[str]]:
 
     snapshot = parsed_query.get("snapshot") or parsed_query.get("sharesnapshot")
     return snapshot, sas_token
-
-
-def is_credential_sastoken(credential: Any) -> bool:
-    if not credential or not isinstance(credential, str):
-        return False
-
-    sas_values = QueryStringConstants.to_list()
-    parsed_query = parse_qs(credential.lstrip("?"))
-    if parsed_query and all(k in sas_values for k in parsed_query):
-        return True
-    return False

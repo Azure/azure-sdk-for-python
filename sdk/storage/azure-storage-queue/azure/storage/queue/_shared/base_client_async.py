@@ -7,7 +7,6 @@
 
 import logging
 from typing import Any, cast, Dict, Optional, Tuple, TYPE_CHECKING, Union
-from urllib.parse import parse_qs
 
 from azure.core.async_paging import AsyncList
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -35,9 +34,9 @@ from .policies import (
     StorageHosts,
     StorageRequestHook,
 )
+from .parser import _is_credential_sastoken
 from .policies_async import AsyncStorageResponseHook
 from .response_handlers import PartialBatchErrorException, process_storage_error
-from .shared_access_signature import QueryStringConstants
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
@@ -86,7 +85,7 @@ class AsyncStorageAccountHostsMixin(object):
         if sas_token and isinstance(credential, AzureSasCredential):
             raise ValueError(
                 "You cannot use AzureSasCredential when the resource URI also contains a Shared Access Signature.")
-        if is_credential_sastoken(credential):
+        if _is_credential_sastoken(credential):
             query_str += credential.lstrip("?")  # type: ignore [union-attr]
             credential = None
         elif sas_token:
@@ -260,17 +259,6 @@ def parse_connection_str(
         if secondary:
             secondary = secondary.replace(".blob.", ".dfs.")
     return primary, secondary, credential
-
-def is_credential_sastoken(credential: Any) -> bool:
-    if not credential or not isinstance(credential, str):
-        return False
-
-    sas_values = QueryStringConstants.to_list()
-    parsed_query = parse_qs(credential.lstrip("?"))
-    if parsed_query and all(k in sas_values for k in parsed_query):
-        return True
-    return False
-
 
 class AsyncTransportWrapper(AsyncHttpTransport):
     """Wrapper class that ensures that an inner client created

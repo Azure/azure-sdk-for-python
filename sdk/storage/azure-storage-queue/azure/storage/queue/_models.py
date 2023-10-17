@@ -363,7 +363,7 @@ class QueueMessage(DictMixin):
     dequeue_count: Optional[int]
     """Begins with a value of 1 the first time the message is received. This
         value is incremented each time the message is subsequently received."""
-    content: Optional[Any]
+    content: Any
     """The message content. Type is determined by the decode_function set on
         the service. Default is str."""
     pop_receipt: Optional[str]
@@ -375,54 +375,14 @@ class QueueMessage(DictMixin):
     """A UTC date value representing the time the message will next be visible.
         Only returned by receive messages operations. Set to None for peek messages."""
 
-    # @overload
-    # def __init__(
-    #     self,
-    #     *,
-    #     id: str,
-    #     inserted_on: Optional["datetime"] = None,
-    #     expires_on: Optional["datetime"] = None,
-    #     dequeue_count: Optional[int] = None,
-    #     content: Optional[Any] = None,
-    #     pop_receipt: Optional[str] = None,
-    #     next_visible_on: Optional["datetime"] = None
-    # ) -> None:
-    #     ...
-
-    # @overload
-    # def __init__(
-    #     self,
-    #     content: Optional[Any] = None,
-    #     *,
-    #     id: Optional[str],
-    #     inserted_on: Optional["datetime"] = None,
-    #     expires_on: Optional["datetime"] = None,
-    #     dequeue_count: Optional[int] = None,
-    #     pop_receipt: Optional[str] = None,
-    #     next_visible_on: Optional["datetime"] = None
-    # ) -> None:
-    #     ...
-
-    # def __init__(self, *args: Any, **kwargs: Any) -> None:
-    #     self.id = kwargs.pop('id', None)
-    #     self.inserted_on = kwargs.pop('inserted_on', None)
-    #     self.expires_on = kwargs.pop('expires_on', None)
-    #     self.dequeue_count = kwargs.pop('dequeue_count', None)
-    #     if args:
-    #         self.content = args[0]
-    #     else:
-    #         self.content = kwargs.pop('content', None)
-    #     self.pop_receipt = kwargs.pop('pop_receipt', None)
-    #     self.next_visible_on = kwargs.pop('next_visible_on', None)
-
-    def __init__(self, content=None):
-        self.id = None
-        self.inserted_on = None
-        self.expires_on = None
-        self.dequeue_count = None
+    def __init__(self, content: Any = None, **kwargs: Any) -> None:
+        self.id = kwargs.pop('id', None)
+        self.inserted_on = kwargs.pop('inserted_on', None)
+        self.expires_on = kwargs.pop('expires_on', None)
+        self.dequeue_count = kwargs.pop('dequeue_count', None)
         self.content = content
-        self.pop_receipt = None
-        self.next_visible_on = None
+        self.pop_receipt = kwargs.pop('pop_receipt', None)
+        self.next_visible_on = kwargs.pop('next_visible_on', None)
 
     @classmethod
     def _from_generated(cls, generated: Any) -> Self:

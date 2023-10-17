@@ -53,7 +53,7 @@ def _parse_url(
 
     return parsed_url, sas_token
 
-def _format_url_helper(queue_name: Union[bytes, str], hostname: str, scheme: str, query_str: str) -> str:
+def _format_url(queue_name: Union[bytes, str], hostname: str, scheme: str, query_str: str) -> str:
     """Format the endpoint URL according to the current location mode hostname.
 
     :param Union[bytes, str] queue_name: The name of the queue.
@@ -71,7 +71,7 @@ def _format_url_helper(queue_name: Union[bytes, str], hostname: str, scheme: str
         f"{scheme}://{hostname}"
         f"/{quote(queue_name)}{query_str}")
 
-def _from_queue_url_helper(queue_url: str) -> Tuple[str, str]:
+def _from_queue_url(queue_url: str) -> Tuple[str, str]:
     """A client to interact with a specific Queue.
 
     :param str queue_url: The full URI to the queue, including SAS token if used.
