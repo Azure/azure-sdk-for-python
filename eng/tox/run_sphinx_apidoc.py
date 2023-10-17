@@ -32,7 +32,7 @@ def copy_existing_docs(source, target):
         logging.info("Copying {}".format(file))
         shutil.copy(os.path.join(source, file), target)
 
-def sphinx_apidoc(working_directory, namespace):
+def sphinx_apidoc(working_directory: str, namespace: str) -> None:
     working_doc_folder = os.path.join(args.working_directory, "unzipped", "doc")
     command_array = [
             "sphinx-apidoc",
