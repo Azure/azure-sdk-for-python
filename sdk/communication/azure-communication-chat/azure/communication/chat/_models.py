@@ -5,6 +5,7 @@
 # ------------------------------------
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
 
+import datetime
 from ._generated.models import ChatParticipant as ChatParticipantAutorest
 from ._generated.models import ChatAttachment as ChatAttachmentAutorest
 from ._generated.models import ChatMessageType
