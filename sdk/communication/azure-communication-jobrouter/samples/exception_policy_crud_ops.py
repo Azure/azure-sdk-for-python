@@ -32,6 +32,8 @@ class ExceptionPolicySamples(object):
         # [START create_exception_policy]
         from azure.communication.jobrouter import (
             JobRouterAdministrationClient,
+        )
+        from azure.communication.jobrouter.models import (
             WaitTimeExceptionTrigger,
             QueueLengthExceptionTrigger,
             ReclassifyExceptionAction,
@@ -83,7 +85,7 @@ class ExceptionPolicySamples(object):
         # create the exception policy
         # set a unique value to `policy_id`
         exception_policy = router_admin_client.create_exception_policy(
-            exception_policy_id=policy_id,
+            id=policy_id,
             exception_policy=ExceptionPolicy(
                 name="TriggerJobCancellationWhenQueueLenIs10", exception_rules=exception_rule
             ),
@@ -98,6 +100,8 @@ class ExceptionPolicySamples(object):
         # [START update_exception_policy]
         from azure.communication.jobrouter import (
             JobRouterAdministrationClient,
+        )
+        from azure.communication.jobrouter.models import (
             WaitTimeExceptionTrigger,
             ReclassifyExceptionAction,
             ExceptionPolicy,
@@ -126,7 +130,7 @@ class ExceptionPolicySamples(object):
         )
 
         updated_exception_policy: ExceptionPolicy = router_admin_client.update_exception_policy(
-            exception_policy_id=policy_id,
+            id=policy_id,
             exception_rules={
                 # adding new rule
                 "EscalateJobOnWaitTimeExceededTrigger2Min": ExceptionRule(
@@ -163,7 +167,7 @@ class ExceptionPolicySamples(object):
 
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
-        exception_policy = router_admin_client.get_exception_policy(exception_policy_id=policy_id)
+        exception_policy = router_admin_client.get_exception_policy(id=policy_id)
 
         print(f"Successfully fetched exception policy with id: {exception_policy.id}")
         # [END get_exception_policy]
@@ -211,7 +215,7 @@ class ExceptionPolicySamples(object):
 
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
-        router_admin_client.delete_exception_policy(exception_policy_id=policy_id)
+        router_admin_client.delete_exception_policy(id=policy_id)
 
         # [END delete_exception_policy]
 

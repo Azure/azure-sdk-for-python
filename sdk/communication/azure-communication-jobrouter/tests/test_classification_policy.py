@@ -16,6 +16,8 @@ from azure.communication.jobrouter._shared.utils import parse_connection_str
 
 from azure.communication.jobrouter import (
     JobRouterAdministrationClient,
+)
+from azure.communication.jobrouter.models import (
     RoundRobinMode,
     ClassificationPolicy,
     LabelOperator,

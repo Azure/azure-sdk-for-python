@@ -13,6 +13,8 @@ from _shared.utils import get_http_logging_policy
 from azure.communication.jobrouter import (
     JobRouterClient,
     JobRouterAdministrationClient,
+)
+from azure.communication.jobrouter.models import (
     RouterJobStatus,
 )
 

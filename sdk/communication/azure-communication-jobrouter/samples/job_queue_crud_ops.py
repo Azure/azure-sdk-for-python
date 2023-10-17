@@ -30,12 +30,12 @@ class JobQueueSamples(object):
     def setup_distribution_policy(self):
         connection_string = self.endpoint
         distribution_policy_id = self._distribution_policy_id
-
-        from azure.communication.jobrouter import JobRouterAdministrationClient, LongestIdleMode, DistributionPolicy
+        from azure.communication.jobrouter import JobRouterAdministrationClient
+        from azure.communication.jobrouter.models import LongestIdleMode, DistributionPolicy
 
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
         distribution_policy = router_admin_client.create_distribution_policy(
-            distribution_policy_id=distribution_policy_id,
+            id=distribution_policy_id,
             distribution_policy=DistributionPolicy(
                 offer_expires_after_seconds=10 * 60,
                 mode=LongestIdleMode(min_concurrent_offers=1, max_concurrent_offers=1),
@@ -50,6 +50,8 @@ class JobQueueSamples(object):
         # [START create_queue]
         from azure.communication.jobrouter import (
             JobRouterAdministrationClient,
+        )
+        from azure.communication.jobrouter.models import (
             RouterQueue,
         )
 
@@ -58,7 +60,7 @@ class JobQueueSamples(object):
         print("JobRouterAdministrationClient created successfully!")
 
         job_queue: RouterQueue = router_admin_client.create_queue(
-            queue_id=job_queue_id, queue=RouterQueue(distribution_policy_id=distribution_policy_id, name="My job queue")
+            id=job_queue_id, queue=RouterQueue(distribution_policy_id=distribution_policy_id, name="My job queue")
         )
 
         print(f"Job queue successfully created with id: {job_queue.id}")
@@ -71,6 +73,8 @@ class JobQueueSamples(object):
         # [START update_queue]
         from azure.communication.jobrouter import (
             JobRouterAdministrationClient,
+        )
+        from azure.communication.jobrouter.models import (
             RouterQueue,
         )
 
@@ -79,7 +83,7 @@ class JobQueueSamples(object):
         print("JobRouterAdministrationClient created successfully!")
 
         updated_job_queue: RouterQueue = router_admin_client.update_queue(
-            queue_id=job_queue_id, labels={"Additional-Queue-Label": "ChatQueue"}
+            id=job_queue_id, labels={"Additional-Queue-Label": "ChatQueue"}
         )
 
         print(f"Router queue successfully update with labels {updated_job_queue.labels}")
@@ -93,7 +97,7 @@ class JobQueueSamples(object):
 
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
-        job_queue = router_admin_client.get_queue(queue_id=job_queue_id)
+        job_queue = router_admin_client.get_queue(id=job_queue_id)
 
         print(f"Successfully fetched router queue with id: {job_queue.id}")
         # [END get_queue]
@@ -103,11 +107,12 @@ class JobQueueSamples(object):
         job_queue_id = self._job_queue_id
 
         # [START get_queue_statistics]
-        from azure.communication.jobrouter import JobRouterClient, RouterQueueStatistics
+        from azure.communication.jobrouter import JobRouterClient
+        from azure.communication.jobrouter.models import RouterQueueStatistics
 
         router_client: JobRouterClient = JobRouterClient.from_connection_string(conn_str=connection_string)
 
-        job_queue_statistics: RouterQueueStatistics = router_client.get_queue_statistics(queue_id=job_queue_id)
+        job_queue_statistics: RouterQueueStatistics = router_client.get_queue_statistics(id=job_queue_id)
 
         print(f"Successfully fetched queue statistics router queue: {job_queue_statistics}")
         # [END get_queue_statistics]
@@ -155,7 +160,7 @@ class JobQueueSamples(object):
 
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
-        router_admin_client.delete_queue(queue_id=job_queue_id)
+        router_admin_client.delete_queue(id=job_queue_id)
 
         # [END delete_queue]
 

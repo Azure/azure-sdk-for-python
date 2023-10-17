@@ -16,6 +16,8 @@ from azure.core.exceptions import ResourceNotFoundError
 
 from azure.communication.jobrouter import (
     JobRouterAdministrationClient,
+)
+from azure.communication.jobrouter.models import (
     ExceptionPolicy,
     ExceptionRule,
     QueueLengthExceptionTrigger,

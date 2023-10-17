@@ -71,13 +71,13 @@ class JobRouterClient(JobRouterClientGenerated):
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
         :return: Instance of JobRouterClient.
-        :rtype: ~azure.communication.jobrouter.JobRouterClient
+        :rtype: ~azure.communication.jobrouter.aio.JobRouterClient
 
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_authentication.py
-                :start-after: [START auth_from_connection_string]
-                :end-before: [END auth_from_connection_string]
+                :start-after: [START auth_from_connection_string_async]
+                :end-before: [END auth_from_connection_string_async]
                 :language: python
                 :dedent: 8
                 :caption: Authenticating a JobRouterClient from a connection_string
@@ -137,13 +137,13 @@ class JobRouterAdministrationClient(JobRouterAdministrationClientGenerated):
         :param str conn_str:
             A connection string to an Azure Communication Service resource.
         :return: Instance of JobRouterAdministrationClient.
-        :rtype: ~azure.communication.jobrouter.JobRouterAdministrationClient
+        :rtype: ~azure.communication.jobrouter.aio.JobRouterAdministrationClient
 
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/sample_authentication.py
-                :start-after: [START admin_auth_from_connection_string]
-                :end-before: [END admin_auth_from_connection_string]
+                :start-after: [START admin_auth_from_connection_string_async]
+                :end-before: [END admin_auth_from_connection_string_async]
                 :language: python
                 :dedent: 8
                 :caption: Authenticating a JobRouterAdministrationClient from a connection_string
