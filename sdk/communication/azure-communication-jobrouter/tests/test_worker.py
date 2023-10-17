@@ -51,13 +51,13 @@ class TestRouterWorker(RouterRecordedTestCase):
 
             if self._testMethodName in self.queue_ids and any(self.queue_ids[self._testMethodName]):
                 for _id in set(self.queue_ids[self._testMethodName]):
-                    router_admin_client.delete_queue(queue_id=_id)
+                    router_admin_client.delete_queue(id=_id)
 
             if self._testMethodName in self.distribution_policy_ids and any(
                 self.distribution_policy_ids[self._testMethodName]
             ):
                 for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
-                    router_admin_client.delete_distribution_policy(distribution_policy_id=policy_id)
+                    router_admin_client.delete_distribution_policy(id=policy_id)
 
     def get_distribution_policy_id(self):
         return self._testMethodName + "_tst_dp"
@@ -74,7 +74,7 @@ class TestRouterWorker(RouterRecordedTestCase):
         )
 
         distribution_policy = client.create_distribution_policy(
-            distribution_policy_id=distribution_policy_id, distribution_policy=policy
+            id=distribution_policy_id, distribution_policy=policy
         )
 
         # add for cleanup later
@@ -96,7 +96,7 @@ class TestRouterWorker(RouterRecordedTestCase):
             distribution_policy_id=self.get_distribution_policy_id(), name=job_queue_id, labels=worker_labels
         )
 
-        job_queue = client.create_queue(queue_id=job_queue_id, queue=job_queue)
+        job_queue = client.create_queue(id=job_queue_id, queue=job_queue)
 
         # add for cleanup later
         if self._testMethodName in self.queue_ids:
@@ -140,7 +140,6 @@ class TestRouterWorker(RouterRecordedTestCase):
             available_for_offers=False,
         )
 
-    @pytest.mark.skip(reason="Upsert worker not working correctly")
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
     @RouterPreparers.before_test_execute("setup_distribution_policy")
@@ -181,7 +180,7 @@ class TestRouterWorker(RouterRecordedTestCase):
         router_worker.labels["FakeKey"] = "FakeWorkerValue"
         updated_worker_labels = router_worker.labels
 
-        update_router_worker = router_client.update_worker(worker_id=w_identifier, router_worker=router_worker)
+        update_router_worker = router_client.update_worker(w_identifier, router_worker)
 
         assert update_router_worker is not None
         RouterWorkerValidator.validate_worker(
@@ -195,7 +194,6 @@ class TestRouterWorker(RouterRecordedTestCase):
             available_for_offers=False,
         )
 
-    @pytest.mark.skip(reason="Upsert worker not working correctly")
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
     @RouterPreparers.before_test_execute("setup_distribution_policy")

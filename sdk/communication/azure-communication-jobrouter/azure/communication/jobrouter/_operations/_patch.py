@@ -14,6 +14,8 @@ from typing import (
     Dict,
     Union,
     overload,
+    Iterable,
+    Literal
 )
 
 from azure.core import MatchConditions
@@ -24,14 +26,15 @@ from ._operations import (
     JobRouterAdministrationClientOperationsMixin as JobRouterAdministrationClientOperationsMixinGenerated,
 )
 from ._operations import JSON
+from .._datetimeutils import _convert_str_to_datetime
 
 
 class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClientOperationsMixinGenerated):
-    # region DistributionPolicy
+    # region ExceptionPolicy
     @distributed_trace
     def create_exception_policy(
         self,
-        exception_policy_id: str,
+        id: str,
         exception_policy: _models.ExceptionPolicy,
         *,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -41,7 +44,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
     ) -> _models.ExceptionPolicy:
         """Create a new exception policy.
 
-        :param str exception_policy_id: Id of the exception policy.
+        :param str id: Id of the exception policy.
 
         :param exception_policy: An instance of exception policy.
         :type exception_policy: ~azure.communication.jobrouter.ExceptionPolicy
@@ -69,15 +72,15 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
                 :dedent: 8
                 :caption: Using a JobRouterAdministrationClient to create an exception policy
         """
-        if not exception_policy_id:
-            raise ValueError("exception_policy_id cannot be None.")
+        if not id:
+            raise ValueError("id cannot be None.")
 
-        return super().upsert_exception_policy(id=exception_policy_id, resource=exception_policy, **kwargs)
+        return super().upsert_exception_policy(id=id, resource=exception_policy, **kwargs)
 
     @overload
     def update_exception_policy(
         self,
-        exception_policy_id: str,
+        id: str,
         exception_policy: _models.ExceptionPolicy,
         *,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -87,7 +90,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
     ) -> _models.ExceptionPolicy:
         """Update an exception policy.
 
-        :param str exception_policy_id: Id of the exception policy.
+        :param str id: Id of the exception policy.
 
         :param exception_policy: An instance of exception policy. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
@@ -101,7 +104,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
     @overload
     def update_exception_policy(
         self,
-        exception_policy_id: str,
+        id: str,
         *,
         exception_rules: Optional[Dict[str, _models.ExceptionRule]],
         name: Optional[str],
@@ -112,7 +115,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
     ) -> _models.ExceptionPolicy:
         """Update an exception policy.
 
-        :param str exception_policy_id: Id of the exception policy.
+        :param str id: Id of the exception policy.
 
         :keyword exception_rules: (Optional) A dictionary collection of exception rules on the exception
           policy. Key is the Id of each exception rule.
@@ -127,11 +130,11 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
 
     @distributed_trace
     def update_exception_policy(
-        self, exception_policy_id: str, *args: _models.ExceptionPolicy, **kwargs: Any
+        self, id: str, *args: _models.ExceptionPolicy, **kwargs: Any
     ) -> _models.ExceptionPolicy:
         """Update an exception policy.
 
-        :param str exception_policy_id: Id of the exception policy.
+        :param str id: Id of the exception policy.
 
         :param exception_policy: An instance of exception policy. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
@@ -157,8 +160,8 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
                 :dedent: 8
                 :caption: Using a JobRouterAdministrationClient to update an exception policy
         """
-        if not exception_policy_id:
-            raise ValueError("exception_policy_id cannot be None.")
+        if not id:
+            raise ValueError("id cannot be None.")
 
         exception_policy = _models.ExceptionPolicy()
         if len(args) == 1:
@@ -169,7 +172,45 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
             exception_rules=kwargs.pop("exception_rules", exception_policy.exception_rules),
         )
 
-        return super().upsert_exception_policy(id=exception_policy_id, resource=patch, **kwargs)
+        return super().upsert_exception_policy(id=id, resource=patch, **kwargs)
+
+    @distributed_trace
+    def list_exception_policies(
+            self,
+            *,
+            results_per_page: Optional[int] = None,
+            **kwargs: Any
+    ) -> Iterable[_models.ExceptionPolicyItem]:
+        """Retrieves existing exception policies.
+
+        :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
+
+        :return: An iterator like instance of ExceptionPolicyItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.ExceptionPolicyItem]
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/exception_policy_crud_ops.py
+                :start-after: [START list_exception_policies]
+                :end-before: [END list_exception_policies]
+                :language: python
+                :dedent: 8
+                :caption: Using a JobRouterAdministrationClient to list exception policies
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/exception_policy_crud_ops.py
+                :start-after: [START list_exception_policies_batched]
+                :end-before: [END list_exception_policies_batched]
+                :language: python
+                :dedent: 8
+                :caption: Using a JobRouterAdministrationClient to list exception policies in batches
+        """
+        return super().list_exception_policies(
+            maxpagesize = results_per_page,
+            **kwargs
+        )
 
     # endregion ExceptionPolicy
 
@@ -177,11 +218,11 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
 
     @distributed_trace
     def create_distribution_policy(
-        self, distribution_policy_id: str, distribution_policy: _models.DistributionPolicy, **kwargs: Any
+        self, id: str, distribution_policy: _models.DistributionPolicy, **kwargs: Any
     ) -> _models.DistributionPolicy:
         """Create a new distribution policy.
 
-        :param str distribution_policy_id: Id of the distribution policy.
+        :param str id: Id of the distribution policy.
 
         :param distribution_policy: An instance of distribution policy.
         :type distribution_policy: ~azure.communication.jobrouter.DistributionPolicy
@@ -199,18 +240,18 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
                 :dedent: 8
                 :caption: Use a JobRouterAdministrationClient to create a distribution policy
         """
-        if not distribution_policy_id:
-            raise ValueError("distribution_policy_id cannot be None.")
+        if not id:
+            raise ValueError("id cannot be None.")
 
-        return super().upsert_distribution_policy(id=distribution_policy_id, resource=distribution_policy, **kwargs)
+        return super().upsert_distribution_policy(id=id, resource=distribution_policy, **kwargs)
 
     @overload
     def update_distribution_policy(
-        self, distribution_policy_id: str, distribution_policy: _models.DistributionPolicy, **kwargs: Any
+        self, id: str, distribution_policy: _models.DistributionPolicy, **kwargs: Any
     ) -> _models.DistributionPolicy:
         """Update a distribution policy.
 
-        :param str distribution_policy_id: Id of the distribution policy.
+        :param str id: Id of the distribution policy.
 
         :param distribution_policy: An instance of distribution policy. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
@@ -224,7 +265,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
     @overload
     def update_distribution_policy(
         self,
-        distribution_policy_id: str,
+        id: str,
         *,
         name: Optional[str],
         offer_expires_after_seconds: Optional[float],
@@ -233,7 +274,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
     ) -> _models.DistributionPolicy:
         """Update a distribution policy.
 
-        :param str distribution_policy_id: Id of the distribution policy.
+        :param str id: Id of the distribution policy.
 
         :keyword Optional[float] offer_expires_after_seconds: The expiry time of any offers created under this policy
           will be governed by the offer time to live.
@@ -251,11 +292,11 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
 
     @distributed_trace
     def update_distribution_policy(
-        self, distribution_policy_id: str, *args: _models.DistributionPolicy, **kwargs: Any
+        self, id: str, *args: _models.DistributionPolicy, **kwargs: Any
     ) -> _models.DistributionPolicy:
         """Update a distribution policy.
 
-        :param str distribution_policy_id: Id of the distribution policy.
+        :param str id: Id of the distribution policy.
 
         :param distribution_policy: An instance of distribution policy. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
@@ -283,8 +324,8 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
                 :dedent: 8
                 :caption: Use a JobRouterAdministrationClient to update a distribution policy
         """
-        if not distribution_policy_id:
-            raise ValueError("distribution_policy_id cannot be None.")
+        if not id:
+            raise ValueError("id cannot be None.")
 
         distribution_policy = _models.DistributionPolicy()
         if len(args) == 1:
@@ -298,17 +339,55 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
             mode=kwargs.pop("mode", distribution_policy.mode),
         )
 
-        return super().upsert_distribution_policy(id=distribution_policy_id, resource=patch, **kwargs)
+        return super().upsert_distribution_policy(id=id, resource=patch, **kwargs)
+
+    @distributed_trace
+    def list_distribution_policies(
+            self,
+            *,
+            results_per_page: Optional[int] = None,
+            **kwargs: Any
+    ) -> Iterable[_models.DistributionPolicyItem]:
+        """Retrieves existing distribution policies.
+
+        :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
+
+        :return: An iterator like instance of DistributionPolicyItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.DistributionPolicyItem]
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/distribution_policy_crud_ops.py
+                :start-after: [START list_distribution_policies]
+                :end-before: [END list_distribution_policies]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterAdministrationClient to list distribution policies
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/distribution_policy_crud_ops.py
+                :start-after: [START list_distribution_policies_batched]
+                :end-before: [END list_distribution_policies_batched]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterAdministrationClient to list distribution policies in batches
+        """
+        return super().list_distribution_policies(
+            maxpagesize = results_per_page,
+            **kwargs
+        )
 
     # endregion DistributionPolicy
 
     # region Queue
 
     @distributed_trace
-    def create_queue(self, queue_id: str, queue: _models.RouterQueue, **kwargs: Any) -> _models.RouterQueue:
+    def create_queue(self, id: str, queue: _models.RouterQueue, **kwargs: Any) -> _models.RouterQueue:
         """Create a job queue
 
-        :param str queue_id: Id of the queue.
+        :param str id: Id of the queue.
 
         :param queue: An instance of JobQueue.
         :type queue: ~azure.communication.jobrouter.RouterQueue
@@ -326,16 +405,16 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
                 :dedent: 8
                 :caption: Use a JobRouterAdministrationClient to create a queue
         """
-        if not queue_id:
-            raise ValueError("queue_id cannot be None.")
+        if not id:
+            raise ValueError("id cannot be None.")
 
-        return super().upsert_queue(id=queue_id, resource=queue, **kwargs)
+        return super().upsert_queue(id=id, resource=queue, **kwargs)
 
     @overload
-    def update_queue(self, queue_id: str, queue: _models.RouterQueue, **kwargs: Any) -> _models.RouterQueue:
+    def update_queue(self, id: str, queue: _models.RouterQueue, **kwargs: Any) -> _models.RouterQueue:
         """Update a job queue
 
-        :param str queue_id: Id of the queue.
+        :param str id: Id of the queue.
 
         :param queue: An instance of JobQueue. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
@@ -349,7 +428,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
     @overload
     def update_queue(
         self,
-        queue_id: str,
+        id: str,
         *,
         distribution_policy_id: Optional[str],
         name: Optional[str],
@@ -359,7 +438,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
     ) -> _models.RouterQueue:
         """Update a job queue
 
-        :param str queue_id: Id of the queue.
+        :param str id: Id of the queue.
 
         :keyword Optional[str] distribution_policy_id: The ID of the distribution policy that will determine
           how a job is distributed to workers.
@@ -379,10 +458,10 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         """
 
     @distributed_trace
-    def update_queue(self, queue_id: str, *args: _models.RouterQueue, **kwargs: Any) -> _models.RouterQueue:
+    def update_queue(self, id: str, *args: _models.RouterQueue, **kwargs: Any) -> _models.RouterQueue:
         """Update a job queue
 
-        :param str queue_id: Id of the queue.
+        :param str id: Id of the queue.
 
         :param queue: An instance of JobQueue. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
@@ -413,8 +492,8 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
                 :dedent: 8
                 :caption: Use a JobRouterAdministrationClient to update a queue
         """
-        if not queue_id:
-            raise ValueError("queue_id cannot be None.")
+        if not id:
+            raise ValueError("id cannot be None.")
 
         queue = _models.RouterQueue()
         if len(args) == 1:
@@ -427,7 +506,45 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
             exception_policy_id=kwargs.pop("exception_policy_id", queue.exception_policy_id),
         )
 
-        return super().upsert_queue(id=queue_id, resource=patch, **kwargs)
+        return super().upsert_queue(id=id, resource=patch, **kwargs)
+
+    @distributed_trace
+    def list_queues(
+            self,
+            *,
+            results_per_page: Optional[int] = None,
+            **kwargs: Any
+    ) -> Iterable[_models.RouterQueueItem]:
+        """Retrieves existing queues.
+
+        :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
+
+        :return: An iterator like instance of RouterQueueItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.RouterQueueItem]
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/job_queue_crud_ops.py
+                :start-after: [START list_queues]
+                :end-before: [END list_queues]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterAdministrationClient to list queues
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/job_queue_crud_ops.py
+                :start-after: [START list_queues_batched]
+                :end-before: [END list_queues_batched]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterAdministrationClient to list queues in batches
+        """
+        return super().list_queues(
+            maxpagesize = results_per_page,
+            **kwargs
+        )
 
     # endregion Queue
 
@@ -435,11 +552,11 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
 
     @distributed_trace
     def create_classification_policy(
-        self, classification_policy_id: str, classification_policy: _models.ClassificationPolicy, **kwargs: Any
+        self, id: str, classification_policy: _models.ClassificationPolicy, **kwargs: Any
     ) -> _models.ClassificationPolicy:
         """Create a classification policy
 
-        :param str classification_policy_id: Id of the classification policy.
+        :param str id: Id of the classification policy.
 
         :param classification_policy: An instance of Classification policy.
         :type classification_policy: ~azure.communication.jobrouter.ClassificationPolicy
@@ -457,20 +574,20 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
                 :dedent: 8
                 :caption: Use a JobRouterAdministrationClient to create a classification policy
         """
-        if not classification_policy_id:
-            raise ValueError("classification_policy_id cannot be None.")
+        if not id:
+            raise ValueError("id cannot be None.")
 
         return super().upsert_classification_policy(
-            id=classification_policy_id, resource=classification_policy, **kwargs
+            id=id, resource=classification_policy, **kwargs
         )
 
     @overload
     def update_classification_policy(
-        self, classification_policy_id: str, classification_policy: _models.ClassificationPolicy, **kwargs: Any
+        self, id: str, classification_policy: _models.ClassificationPolicy, **kwargs: Any
     ) -> _models.ClassificationPolicy:
         """Update a classification policy
 
-        :param str classification_policy_id: Id of the classification policy.
+        :param str id: Id of the classification policy.
 
         :param classification_policy: An instance of Classification policy. This is a positional-only
          parameter. Please provide either this or individual keyword parameters.
@@ -484,7 +601,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
     @overload
     def update_classification_policy(
         self,
-        classification_policy_id: str,
+        id: str,
         *,
         name: Optional[str],
         fallback_queue_id: Optional[str],
@@ -522,7 +639,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
     ) -> _models.ClassificationPolicy:
         """Update a classification policy
 
-        :param str classification_policy_id: Id of the classification policy.
+        :param str id: Id of the classification policy.
 
         :keyword Optional[str] name: Friendly name of this policy.
 
@@ -556,11 +673,11 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
 
     @distributed_trace
     def update_classification_policy(
-        self, classification_policy_id: str, *args: _models.ClassificationPolicy, **kwargs: Any
+        self, id: str, *args: _models.ClassificationPolicy, **kwargs: Any
     ) -> _models.ClassificationPolicy:
         """Update a classification policy
 
-        :param str classification_policy_id: Id of the classification policy.
+        :param str id: Id of the classification policy.
 
         :param classification_policy: An instance of Classification policy. This is a positional-only
          parameter. Please provide either this or individual keyword parameters.
@@ -604,8 +721,8 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
                 :dedent: 8
                 :caption: Use a JobRouterAdministrationClient to update a classification policy
         """
-        if not classification_policy_id:
-            raise ValueError("classification_policy_id cannot be None.")
+        if not id:
+            raise ValueError("id cannot be None.")
 
         classification_policy = _models.ClassificationPolicy()
         if len(args) == 1:
@@ -619,7 +736,44 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
             worker_selectors=kwargs.pop("worker_selectors", classification_policy.worker_selectors),
         )
 
-        return super().upsert_classification_policy(id=classification_policy_id, resource=patch, **kwargs)
+        return super().upsert_classification_policy(id=id, resource=patch, **kwargs)
+
+    @distributed_trace
+    def list_classification_policies(
+            self,
+            *,
+            results_per_page: Optional[int] = None,
+            **kwargs: Any
+    ) -> Iterable[_models.ClassificationPolicyItem]:
+        """Retrieves existing classification policies.
+
+        :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
+
+        :return: An iterator like instance of ClassificationPolicyItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.ClassificationPolicyItem]
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/classification_policy_crud_ops.py
+                :start-after: [START list_classification_policies]
+                :end-before: [END list_classification_policies]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterAdministrationClient to list classification policies
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/classification_policy_crud_ops.py
+                :start-after: [START list_classification_policies_batched]
+                :end-before: [END list_classification_policies_batched]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterAdministrationClient to list classification policies in batches
+        """
+        return super().list_classification_policies(
+            maxpagesize = results_per_page,
+            **kwargs)
 
     # endregion ClassificationPolicy
 
@@ -792,15 +946,133 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
         return super().upsert_worker(worker_id=worker_id, resource=patch, **kwargs)
 
+    @distributed_trace
+    def list_workers(
+            self,
+            *,
+            state: Optional[Union[str, _models.RouterWorkerState, Literal["all"]]] = "all",
+            channel_id: Optional[str] = None,
+            queue_id: Optional[str] = None,
+            has_capacity: Optional[bool] = None,
+            results_per_page: Optional[int] = None,
+            **kwargs: Any
+    ) -> Iterable[_models.RouterWorkerItem]:
+        """Retrieves existing workers.
+
+        :keyword state: If specified, select workers by worker status. Default value is "all".
+          Accepted value(s): active, draining, inactive, all
+        :paramtype state: Optional[Union[str, ~azure.communication.jobrouter.RouterWorkerState, Literal["all"]]]
+
+        :keyword channel_id: If specified, select workers who have a channel configuration
+           with this channel. Default value is None.
+        :paramtype channel_id: Optional[str]
+
+        :keyword queue_id: If specified, select workers who are assigned to this queue.
+           Default value is None.
+        :paramtype queue_id: Optional[str]
+
+        :keyword has_capacity: If set to true, select only workers who have capacity for the
+           channel specified by ``channelId`` or for any channel
+        :paramtype has_capacity: Optional[bool]
+
+        :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
+
+        :return: An iterator like instance of RouterWorkerItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.RouterWorkerItem]
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_worker_crud_ops.py
+                :start-after: [START list_workers]
+                :end-before: [END list_workers]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to retrieve workers
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_worker_crud_ops.py
+                :start-after: [START list_workers_batched]
+                :end-before: [END list_workers_batched]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to retrieve workers in batches
+        """
+        return super().list_workers(
+            maxpagesize = results_per_page,
+            state = state,
+            channel_id = channel_id,
+            queue_id = queue_id,
+            has_capacity = has_capacity,
+            **kwargs
+        )
+
     # endregion Worker
+
+    # region Offer
+
+    @distributed_trace
+    def decline_job_offer(
+            self,
+            worker_id: str,
+            offer_id: str,
+            *,
+            retry_offer_at: Optional[datetime] = None,
+            **kwargs: Any
+    ) -> None:
+        """Declines an offer to work on a job.
+
+        :param worker_id: Id of the worker.
+        :type worker_id: str
+        :param offer_id: Id of the offer.
+        :type offer_id: str
+
+        :keyword retry_offer_at: If the retry_offer_at is not provided, then this job will not be re-offered to the
+          worker who declined this job unless the worker is de-registered and re-registered.  If a retry_offer_at is
+          provided, then the job will be re-matched to eligible workers after the reoffer time. The worker that declined
+          the job will also be eligible for the job at that time.
+        :paramtype retry_offer_at: Optional[~datetime.datetime]
+
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops.py
+                :start-after: [START decline_job_offer]
+                :end-before: [END decline_job_offer]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to decline a job offer
+        """
+        if not worker_id:
+            raise ValueError("worker_id cannot be None.")
+
+        if not offer_id:
+            raise ValueError("offer_id cannot be None.")
+
+        decline_job_offer_request = _models.DeclineJobOfferRequest(
+            retry_offer_at = retry_offer_at
+        )
+
+        super().decline_job_offer(
+            worker_id = worker_id,
+            offer_id = offer_id,
+            decline_job_offer_request = decline_job_offer_request,
+            **kwargs
+        )
+
+    # endregion Offer
 
     # region Job
 
     @distributed_trace
-    def create_job(self, job_id: str, router_job: _models.RouterJob, **kwargs: Any) -> _models.RouterJob:
+    def create_job(self, id: str, router_job: _models.RouterJob, **kwargs: Any) -> _models.RouterJob:
         """Create a job.
 
-        :param str job_id: Id of the job.
+        :param str id: Id of the job.
 
         :param router_job: An instance of RouterJob.
         :type router_job: ~azure.communication.jobrouter.RouterJob
@@ -818,16 +1090,16 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
                 :dedent: 8
                 :caption: Use a JobRouterClient to create a job
         """
-        if not job_id:
-            raise ValueError("job_id cannot be None.")
+        if not id:
+            raise ValueError("id cannot be None.")
 
-        return super().upsert_job(id=job_id, resource=router_job, **kwargs)
+        return super().upsert_job(id=id, resource=router_job, **kwargs)
 
     @overload
-    def update_job(self, job_id: str, router_job: _models.RouterJob, **kwargs: Any) -> _models.RouterJob:
+    def update_job(self, id: str, router_job: _models.RouterJob, **kwargs: Any) -> _models.RouterJob:
         """Update a job.
 
-        :param str job_id: Id of the job.
+        :param str id: Id of the job.
 
         :param router_job: An instance of RouterJob.  This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
@@ -841,7 +1113,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
     @overload
     def update_job(
         self,
-        job_id: str,
+        id: str,
         *,
         channel_reference: Optional[str],
         channel_id: Optional[str],
@@ -858,7 +1130,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
     ) -> _models.RouterJob:
         """Update a job.
 
-        :param str job_id: Id of the job.
+        :param str id: Id of the job.
 
         :keyword channel_reference: Reference to an external parent context, eg. call ID.
         :paramtype channel_reference: Optional[str]
@@ -903,10 +1175,10 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         """
 
     @distributed_trace
-    def update_job(self, job_id: str, *args: _models.RouterJob, **kwargs: Any) -> _models.RouterJob:
+    def update_job(self, id: str, *args: _models.RouterJob, **kwargs: Any) -> _models.RouterJob:
         """Update a job.
 
-        :param str job_id: Id of the job.
+        :param str id: Id of the job.
 
         :param router_job: An instance of RouterJob.  This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
@@ -962,8 +1234,8 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
                 :dedent: 8
                 :caption: Use a JobRouterClient to update a job
         """
-        if not job_id:
-            raise ValueError("job_id cannot be None.")
+        if not id:
+            raise ValueError("id cannot be None.")
 
         router_job = _models.RouterJob()
         if len(args) == 1:
@@ -983,12 +1255,100 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
             matching_mode=kwargs.pop("matching_mode", router_job.matching_mode),
         )
 
-        return super().upsert_job(id=job_id, resource=patch, **kwargs)
+        return super().upsert_job(id=id, resource=patch, **kwargs)
+
+    @distributed_trace
+    def list_jobs(
+            self,
+            *,
+            status: Optional[Union[str, _models.RouterJobStatus, Literal["all", "active"]]] = "all",
+            channel_id: Optional[str] = None,
+            queue_id: Optional[str] = None,
+            classification_policy_id: Optional[str] = None,
+            scheduled_before: Optional[Union[str, datetime]] = None,
+            scheduled_after: Optional[Union[str, datetime]] = None,
+            results_per_page: Optional[int] = None,
+            **kwargs: Any
+    ) -> Iterable[_models.RouterJobItem]:
+        """Retrieves list of jobs based on filter parameters.
+
+        :keyword status: If specified, filter jobs by status. Default value is "all".
+            Accepted value(s): pendingClassification, queued, assigned, completed, closed, cancelled,
+            classificationFailed, active, all
+        :paramtype status: Optional[Union[str, ~azure.communication.jobrouter.RouterJobStatus, Literal["all","active"]]]
+
+        :keyword channel_id: If specified, filter jobs by channel. Default value is None.
+        :paramtype channel_id: Optional[str]
+
+        :keyword queue_id: If specified, filter jobs by queue. Default value is None.
+        :paramtype queue_id: Optional[str]
+
+        :keyword classification_policy_id: If specified, filter jobs by classificationPolicy. Default value is None.
+        :paramtype classification_policy_id: Optional[str]
+
+        :keyword scheduled_before: If specified, filter on jobs that was scheduled before or
+         at given timestamp. Range: (-Inf, scheduledBefore]. Default value is None.
+        :paramtype scheduled_before: Optional[Union[str, ~datetime.datetime]]
+
+        :keyword scheduled_after: If specified, filter on jobs that was scheduled at or
+         after given value. Range: [scheduledAfter, +Inf). Default value is None.
+        :paramtype scheduled_after: Optional[Union[str, ~datetime.datetime]]
+
+
+        :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
+
+        :return: An iterator like instance of RouterJobItem
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.jobrouter.RouterJobItem]
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops.py
+                :start-after: [START list_jobs]
+                :end-before: [END list_jobs]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to retrieve jobs
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops.py
+                :start-after: [START list_jobs_batched]
+                :end-before: [END list_jobs_batched]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to retrieve jobs in batches
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops.py
+                :start-after: [START list_scheduled_jobs]
+                :end-before: [END list_scheduled_jobs]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to retrieve scheduled jobs
+        """
+        if scheduled_before is not None and isinstance(scheduled_before, str):
+            scheduled_before = _convert_str_to_datetime(scheduled_before)
+
+        if scheduled_after is not None and isinstance(scheduled_after, str):
+            scheduled_after = _convert_str_to_datetime(scheduled_after)
+
+        return super().list_jobs(
+            maxpagesize = results_per_page,
+            status = status,
+            channel_id = channel_id,
+            queue_id = queue_id,
+            classification_policy_id = classification_policy_id,
+            scheduled_before = scheduled_before,
+            scheduled_after = scheduled_after,
+            **kwargs
+        )
 
     @distributed_trace
     def close_job(
         self,
-        job_id: str,
+        id: str,
         assignment_id: str,
         *,
         disposition_code: Optional[str] = None,
@@ -998,7 +1358,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
     ) -> None:
         """Closes a completed job.
 
-        :param str job_id: Id of the job.
+        :param str id: Id of the job.
 
         :param str assignment_id: The assignment within which the job is to be closed.
 
@@ -1028,8 +1388,8 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
                 :dedent: 8
                 :caption: Use a JobRouterClient to close a job
         """
-        if not job_id:
-            raise ValueError("job_id cannot be None.")
+        if not id:
+            raise ValueError("id cannot be None.")
 
         if not assignment_id:
             raise ValueError("assignment_id cannot be None.")
@@ -1038,13 +1398,13 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
             assignment_id=assignment_id, disposition_code=disposition_code, close_at=close_at, note=note
         )
 
-        super().close_job(id=job_id, close_job_request=close_job_request, **kwargs)
+        super().close_job(id=id, close_job_request=close_job_request, **kwargs)
 
     @distributed_trace
-    def complete_job(self, job_id: str, assignment_id: str, *, note: Optional[str] = None, **kwargs: Any) -> None:
+    def complete_job(self, id: str, assignment_id: str, *, note: Optional[str] = None, **kwargs: Any) -> None:
         """Completes an assigned job.
 
-        :param str job_id: Id of the job.
+        :param str id: Id of the job.
 
         :param str assignment_id: The assignment within the job to complete.
 
@@ -1065,15 +1425,145 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
                 :dedent: 8
                 :caption: Use a JobRouterClient to complete a job
         """
-        if not job_id:
-            raise ValueError("job_id cannot be None.")
+        if not id:
+            raise ValueError("id cannot be None.")
 
         if not assignment_id:
             raise ValueError("assignment_id cannot be None.")
 
         complete_job_request = _models.CompleteJobRequest(assignment_id=assignment_id, note=note)
 
-        super().complete_job(id=job_id, complete_job_request=complete_job_request, **kwargs)
+        super().complete_job(id=id, complete_job_request=complete_job_request, **kwargs)
+
+    @distributed_trace
+    def cancel_job(
+            self,
+            id: str,
+            *,
+            disposition_code: Optional[str] = None,
+            note: Optional[str] = None,
+            **kwargs: Any
+    ) -> None:
+        """Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
+
+        :param str id: Id of the job.
+
+        :keyword note: A note that will be appended to the jobs' Notes collection with the
+         current timestamp. Default value is None.
+        :paramtype note: Optional[str]
+
+        :keyword disposition_code: Indicates the outcome of the job, populate this field with your own
+         custom values.
+         If not provided, default value of "Cancelled" is set. Default value is None.
+        :paramtype disposition_code: Optional[str]
+
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops.py
+                :start-after: [START cancel_job]
+                :end-before: [END cancel_job]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to cancel a job
+        """
+
+        if not id:
+            raise ValueError("id cannot be None.")
+
+        cancel_job_request = _models.CancelJobRequest(
+            note = note,
+            disposition_code = disposition_code
+        )
+
+        super().cancel_job(
+            id = id,
+            cancel_job_request = cancel_job_request,
+            **kwargs
+        )
+
+    @distributed_trace
+    def reclassify_job(
+            self,
+            id: str,
+            **kwargs: Any
+    ) -> None:
+        """Reclassify a job.
+
+        :param str id: Id of the job.
+
+        :return: None
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops.py
+                :start-after: [START reclassify_job]
+                :end-before: [END reclassify_job]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to re-classify a job
+        """
+        if not id:
+            raise ValueError("identifier cannot be None.")
+
+        super().reclassify_job(
+            id = id,
+            reclassify_job_request = {},
+            **kwargs
+        )
+
+    @distributed_trace
+    def unassign_job(
+            self,
+            id: str,
+            assignment_id: str,
+            *,
+            suspend_matching: Optional[bool] = None,
+            **kwargs: Any
+    ) -> _models.UnassignJobResult:
+        """Unassign a job.
+
+        :param str id: Id of the job.
+        :param str assignment_id: Id of the assignment.
+
+        :keyword suspend_matching: If set to true, then the job is not queued for
+         re-matching with a worker.
+        :paramtype suspend_matching: Optional[bool]
+
+        :return: Instance of UnassignJobResult
+        :rtype: ~azure.communication.jobrouter.UnassignJobResult
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops.py
+                :start-after: [START unassign_job]
+                :end-before: [END unassign_job]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to unassign a job
+        """
+        if not id:
+            raise ValueError("id cannot be None.")
+
+        if not assignment_id:
+            raise ValueError("assignment_id cannot be None.")
+
+        unassign_job_request = _models.UnassignJobRequest(
+            suspend_matching = suspend_matching
+        )
+
+        return super().unassign_job(
+            id = id,
+            assignment_id = assignment_id,
+            unassign_job_request = unassign_job_request,
+            **kwargs
+        )
 
     # endregion Job
 

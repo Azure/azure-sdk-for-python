@@ -43,7 +43,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 self.distribution_policy_ids[self._testMethodName]
             ):
                 for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
-                    router_client.delete_distribution_policy(distribution_policy_id=policy_id)
+                    router_client.delete_distribution_policy(id=policy_id)
 
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
@@ -59,7 +59,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
             )
 
             distribution_policy_response = router_client.create_distribution_policy(
-                distribution_policy_id=dp_identifier, distribution_policy=policy
+                id=dp_identifier, distribution_policy=policy
             )
 
             # add for cleanup
@@ -90,7 +90,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
             )
 
             distribution_policy_response = router_client.create_distribution_policy(
-                distribution_policy_id=dp_identifier, distribution_policy=policy
+                id=dp_identifier, distribution_policy=policy
             )
 
             # add for cleanup
@@ -139,7 +139,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
             )
 
             distribution_policy_response = router_client.create_distribution_policy(
-                distribution_policy_id=dp_identifier, distribution_policy=policy
+                id=dp_identifier, distribution_policy=policy
             )
 
             # add for cleanup
@@ -186,7 +186,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
             )
 
             distribution_policy_response = router_client.create_distribution_policy(
-                distribution_policy_id=dp_identifier, distribution_policy=policy
+                id=dp_identifier, distribution_policy=policy
             )
 
             # add for cleanup
@@ -201,7 +201,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 mode=mode,
             )
 
-            queried_distribution_policy = router_client.get_distribution_policy(distribution_policy_id=dp_identifier)
+            queried_distribution_policy = router_client.get_distribution_policy(id=dp_identifier)
             DistributionPolicyValidator.validate_distribution_policy(
                 distribution_policy=queried_distribution_policy,
                 identifier=dp_identifier,
@@ -224,7 +224,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
             )
 
             distribution_policy_response = router_client.create_distribution_policy(
-                distribution_policy_id=dp_identifier, distribution_policy=policy
+                id=dp_identifier, distribution_policy=policy
             )
 
             assert distribution_policy_response is not None
@@ -236,9 +236,9 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 mode=mode,
             )
 
-            router_client.delete_distribution_policy(distribution_policy_id=dp_identifier)
+            router_client.delete_distribution_policy(id=dp_identifier)
             with pytest.raises(ResourceNotFoundError) as nfe:
-                router_client.get_distribution_policy(distribution_policy_id=dp_identifier)
+                router_client.get_distribution_policy(id=dp_identifier)
             assert nfe.value.reason == "Not Found"
             assert nfe.value.status_code == 404
 
@@ -259,7 +259,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
             )
 
             distribution_policy_response = router_client.create_distribution_policy(
-                distribution_policy_id=identifier, distribution_policy=policy
+                id=identifier, distribution_policy=policy
             )
 
             # add for cleanup

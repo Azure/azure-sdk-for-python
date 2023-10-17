@@ -52,14 +52,13 @@ queue_selectors = [
         condition=StaticRouterRule(value=True),
         queue_selectors=[RouterQueueSelector(key="test_key", label_operator=LabelOperator.EQUAL, value="test_value")],
     ),
-    # ## TODO: Bugfix required
-    # RuleEngineQueueSelectorAttachment(
-    #     rule = StaticRouterRule(value = [
-    #         RouterQueueSelector(
-    #             key = "test_key", label_operator = LabelOperator.EQUAL, value = "test_value"
-    #         )]
-    #     )
-    # ),
+    RuleEngineQueueSelectorAttachment(
+        rule = StaticRouterRule(value = [
+            RouterQueueSelector(
+                key = "test_key", label_operator = LabelOperator.EQUAL, value = "test_value"
+            )]
+        )
+    ),
     PassThroughQueueSelectorAttachment(key="testKey", label_operator=LabelOperator.EQUAL),
     WeightedAllocationQueueSelectorAttachment(
         allocations=[
@@ -104,18 +103,17 @@ worker_selectors = [
             )
         ],
     ),
-    # ## TODO: Bugfix required
-    # RuleEngineWorkerSelectorAttachment(
-    #     rule = StaticRouterRule(value = [
-    #         RouterWorkerSelector(
-    #             key = "test_key",
-    #             label_operator = LabelOperator.EQUAL,
-    #             value = "test_value",
-    #             expires_after_seconds = 10.0,
-    #             expedite = False
-    #         )]
-    #     )
-    # ),
+    RuleEngineWorkerSelectorAttachment(
+        rule = StaticRouterRule(value = [
+            RouterWorkerSelector(
+                key = "test_key",
+                label_operator = LabelOperator.EQUAL,
+                value = "test_value",
+                expires_after_seconds = 10.0,
+                expedite = False
+            )]
+        )
+    ),
     PassThroughWorkerSelectorAttachment(key="testKey", label_operator=LabelOperator.EQUAL),
     WeightedAllocationWorkerSelectorAttachment(
         allocations=[
@@ -147,17 +145,17 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
                     self.classification_policy_ids[self._testMethodName]
                 ):
                     for policy_id in set(self.classification_policy_ids[self._testMethodName]):
-                        await router_client.delete_classification_policy(classification_policy_id=policy_id)
+                        await router_client.delete_classification_policy(id=policy_id)
 
                 if self._testMethodName in self.queue_ids and any(self.queue_ids[self._testMethodName]):
                     for policy_id in set(self.queue_ids[self._testMethodName]):
-                        await router_client.delete_queue(queue_id=policy_id)
+                        await router_client.delete_queue(id=policy_id)
 
                 if self._testMethodName in self.distribution_policy_ids and any(
                     self.distribution_policy_ids[self._testMethodName]
                 ):
                     for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
-                        await router_client.delete_distribution_policy(distribution_policy_id=policy_id)
+                        await router_client.delete_distribution_policy(id=policy_id)
 
     def get_distribution_policy_id(self):
         return self._testMethodName + "_tst_dp_async"
@@ -175,7 +173,7 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
             )
 
             distribution_policy = await client.create_distribution_policy(
-                distribution_policy_id=distribution_policy_id, distribution_policy=policy
+                id=distribution_policy_id, distribution_policy=policy
             )
 
             # add for cleanup later
@@ -199,7 +197,7 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
                 name=job_queue_id, labels=queue_labels, distribution_policy_id=self.get_distribution_policy_id()
             )
 
-            job_queue = await client.create_queue(queue_id=job_queue_id, queue=job_queue)
+            job_queue = await client.create_queue(id=job_queue_id, queue=job_queue)
 
             # add for cleanup later
             if self._testMethodName in self.queue_ids:
@@ -227,7 +225,7 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
                 )
 
                 classification_policy = await router_client.create_classification_policy(
-                    classification_policy_id=cp_identifier, classification_policy=classification_policy
+                    id=cp_identifier, classification_policy=classification_policy
                 )
 
                 # add for cleanup
@@ -264,7 +262,7 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
                 )
 
                 classification_policy = await router_client.create_classification_policy(
-                    classification_policy_id=cp_identifier, classification_policy=classification_policy
+                    id=cp_identifier, classification_policy=classification_policy
                 )
 
                 # add for cleanup
@@ -317,7 +315,7 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
                 )
 
                 classification_policy = await router_client.create_classification_policy(
-                    classification_policy_id=cp_identifier, classification_policy=classification_policy
+                    id=cp_identifier, classification_policy=classification_policy
                 )
 
                 # add for cleanup
@@ -370,7 +368,7 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
                 )
 
                 classification_policy = await router_client.create_classification_policy(
-                    classification_policy_id=cp_identifier, classification_policy=classification_policy
+                    id=cp_identifier, classification_policy=classification_policy
                 )
 
                 # add for cleanup
@@ -388,7 +386,7 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
                 )
 
                 queried_classification_policy = await router_client.get_classification_policy(
-                    classification_policy_id=cp_identifier
+                    id=cp_identifier
                 )
 
                 ClassificationPolicyValidator.validate_classification_policy(
@@ -424,7 +422,7 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
                     )
 
                     classification_policy = await router_client.create_classification_policy(
-                        classification_policy_id=_identifier, classification_policy=classification_policy
+                        id=_identifier, classification_policy=classification_policy
                     )
 
                     policy_count += 1
@@ -491,7 +489,7 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
                 )
 
                 classification_policy = await router_client.create_classification_policy(
-                    classification_policy_id=cp_identifier,
+                    id=cp_identifier,
                     classification_policy=classification_policy,
                 )
 
@@ -509,10 +507,10 @@ class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
                     worker_selectors=worker_selectors,
                 )
 
-                await router_client.delete_classification_policy(classification_policy_id=cp_identifier)
+                await router_client.delete_classification_policy(id=cp_identifier)
 
                 with pytest.raises(ResourceNotFoundError) as nfe:
-                    await router_client.get_classification_policy(classification_policy_id=cp_identifier)
+                    await router_client.get_classification_policy(id=cp_identifier)
 
                 assert nfe.value.reason == "Not Found"
                 assert nfe.value.status_code == 404

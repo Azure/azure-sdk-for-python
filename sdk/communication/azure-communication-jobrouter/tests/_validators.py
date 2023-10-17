@@ -45,6 +45,7 @@ from azure.communication.jobrouter import (
     StaticRouterRule,
     RouterQueueSelector,
     ExpressionRouterRule,
+    LabelOperator
 )
 
 
@@ -163,8 +164,8 @@ class WorkerSelectorValidator(object):
         expected,  # type: RouterWorkerSelector
         **kwargs,  # type: Any
     ):
+        LabelOperatorValidator.validate_label_operator(actual.label_operator, expected.label_operator)
         assert actual.key == expected.key
-        assert actual.label_operator == expected.label_operator
         assert actual.value == expected.value
         assert actual.expires_at == expected.expires_at
 
@@ -181,8 +182,8 @@ class QueueSelectorValidator(object):
         expected,  # type: QueueSelector
         **kwargs,  # type: Any
     ):
+        LabelOperatorValidator.validate_label_operator(actual.label_operator, expected.label_operator)
         assert actual.key == expected.key
-        assert actual.label_operator == expected.label_operator
         assert actual.value == expected.value
 
 
@@ -257,6 +258,9 @@ class ClassificationPolicyValidator(object):
         for actual, expected in zip(entity.queue_selectors, queue_selectors):
             assert type(actual) == type(expected)
 
+        for actual, expected in zip(entity.queue_selectors, queue_selectors):
+            assert type(actual) == type(expected)
+
             def validate_static_queue_selector_attachment(
                 actual,  # type: StaticQueueSelectorAttachment
                 expected,  # type: StaticQueueSelectorAttachment
@@ -298,7 +302,7 @@ class ClassificationPolicyValidator(object):
             ):
                 assert actual.kind == expected.kind
                 assert actual.key == expected.key
-                assert actual.label_operator == expected.label_operator
+                LabelOperatorValidator.validate_label_operator(actual.label_operator, expected.label_operator)
 
             assert len(entity.queue_selectors) == len(queue_selectors)
 
@@ -366,7 +370,7 @@ class ClassificationPolicyValidator(object):
         ):
             assert actual.kind == expected.kind
             assert actual.key == expected.key
-            assert actual.label_operator == expected.label_operator
+            LabelOperatorValidator.validate_label_operator(actual.label_operator, expected.label_operator)
 
         assert len(entity.worker_selectors) == len(worker_selectors)
 
@@ -411,6 +415,16 @@ class ClassificationPolicyValidator(object):
             ClassificationPolicyValidator.validate_worker_selectors(
                 classification_policy, kwargs.pop("worker_selectors")
             )
+
+
+class LabelOperatorValidator(object):
+    @staticmethod
+    def validate_label_operator(actual, expected, **kwargs):
+        try:
+            assert actual == expected
+        except AssertionError:
+            assert LabelOperator._value2member_map_[actual] == LabelOperator.__getattr__(
+                expected.split('.', 1)[1])
 
 
 class ExceptionPolicyValidator(object):

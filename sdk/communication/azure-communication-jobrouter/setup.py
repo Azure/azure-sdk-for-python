@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 
 
 PACKAGE_NAME = "azure-communication-jobrouter"
-PACKAGE_PPRINT_NAME = "Azure Communication Job Router Service"
+PACKAGE_PPRINT_NAME = "Communication JobRouter"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
@@ -55,6 +55,7 @@ setup(
             "tests",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
+            "azure.communication",
         ]
     ),
     include_package_data=True,

@@ -53,13 +53,13 @@ class TestRouterWorkerAsync(AsyncRouterRecordedTestCase):
 
                     if self._testMethodName in self.queue_ids and any(self.queue_ids[self._testMethodName]):
                         for _id in set(self.queue_ids[self._testMethodName]):
-                            await router_admin_client.delete_queue(queue_id=_id)
+                            await router_admin_client.delete_queue(id=_id)
 
                     if self._testMethodName in self.distribution_policy_ids and any(
                         self.distribution_policy_ids[self._testMethodName]
                     ):
                         for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
-                            await router_admin_client.delete_distribution_policy(distribution_policy_id=policy_id)
+                            await router_admin_client.delete_distribution_policy(id=policy_id)
 
     def get_distribution_policy_id(self):
         return self._testMethodName + "_tst_dp_async"
@@ -77,7 +77,7 @@ class TestRouterWorkerAsync(AsyncRouterRecordedTestCase):
             )
 
             distribution_policy = await client.create_distribution_policy(
-                distribution_policy_id=distribution_policy_id, distribution_policy=policy
+                id=distribution_policy_id, distribution_policy=policy
             )
 
             # add for cleanup later
@@ -101,7 +101,7 @@ class TestRouterWorkerAsync(AsyncRouterRecordedTestCase):
                 name=job_queue_id, labels=worker_labels, distribution_policy_id=self.get_distribution_policy_id()
             )
 
-            job_queue = await client.create_queue(queue_id=job_queue_id, queue=job_queue)
+            job_queue = await client.create_queue(id=job_queue_id, queue=job_queue)
 
             # add for cleanup later
             if self._testMethodName in self.queue_ids:
@@ -146,7 +146,6 @@ class TestRouterWorkerAsync(AsyncRouterRecordedTestCase):
                 available_for_offers=False,
             )
 
-    @pytest.mark.skip(reason="Upsert worker not working correctly")
     @RouterPreparersAsync.router_test_decorator_async
     @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async("setup_distribution_policy")
@@ -188,9 +187,7 @@ class TestRouterWorkerAsync(AsyncRouterRecordedTestCase):
             router_worker.labels["FakeKey"] = "FakeWorkerValue"
             updated_worker_labels = router_worker.labels
 
-            update_router_worker = await router_client.update_worker(
-                worker_id=w_identifier, router_worker=router_worker
-            )
+            update_router_worker = await router_client.update_worker(w_identifier, router_worker)
 
             assert update_router_worker is not None
             RouterWorkerValidator.validate_worker(
@@ -204,7 +201,6 @@ class TestRouterWorkerAsync(AsyncRouterRecordedTestCase):
                 available_for_offers=False,
             )
 
-    @pytest.mark.skip(reason="Upsert worker not working correctly")
     @RouterPreparersAsync.router_test_decorator_async
     @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async("setup_distribution_policy")

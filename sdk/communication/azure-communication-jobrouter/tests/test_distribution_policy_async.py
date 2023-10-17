@@ -40,7 +40,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                     self.distribution_policy_ids[self._testMethodName]
                 ):
                     for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
-                        await router_client.delete_distribution_policy(distribution_policy_id=policy_id)
+                        await router_client.delete_distribution_policy(id=policy_id)
 
     @RouterPreparersAsync.router_test_decorator_async
     @recorded_by_proxy_async
@@ -56,7 +56,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                 )
 
                 distribution_policy_response = await router_client.create_distribution_policy(
-                    distribution_policy_id=dp_identifier, distribution_policy=policy
+                    id=dp_identifier, distribution_policy=policy
                 )
 
                 self.distribution_policy_ids[self._testMethodName] = [dp_identifier]
@@ -86,7 +86,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                 )
 
                 distribution_policy_response = await router_client.create_distribution_policy(
-                    distribution_policy_id=dp_identifier, distribution_policy=policy
+                    id=dp_identifier, distribution_policy=policy
                 )
 
                 self.distribution_policy_ids[self._testMethodName] = [dp_identifier]
@@ -134,7 +134,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                 )
 
                 distribution_policy_response = await router_client.create_distribution_policy(
-                    distribution_policy_id=dp_identifier, distribution_policy=policy
+                    id=dp_identifier, distribution_policy=policy
                 )
 
                 self.distribution_policy_ids[self._testMethodName] = [dp_identifier]
@@ -180,7 +180,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                 )
 
                 distribution_policy_response = await router_client.create_distribution_policy(
-                    distribution_policy_id=dp_identifier, distribution_policy=policy
+                    id=dp_identifier, distribution_policy=policy
                 )
 
                 self.distribution_policy_ids[self._testMethodName] = [dp_identifier]
@@ -195,7 +195,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                 )
 
                 queried_distribution_policy = await router_client.get_distribution_policy(
-                    distribution_policy_id=dp_identifier
+                    id=dp_identifier
                 )
                 DistributionPolicyValidator.validate_distribution_policy(
                     distribution_policy=queried_distribution_policy,
@@ -219,7 +219,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                 )
 
                 distribution_policy_response = await router_client.create_distribution_policy(
-                    distribution_policy_id=dp_identifier, distribution_policy=policy
+                    id=dp_identifier, distribution_policy=policy
                 )
 
                 assert distribution_policy_response is not None
@@ -231,9 +231,9 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                     mode=mode,
                 )
 
-                await router_client.delete_distribution_policy(distribution_policy_id=dp_identifier)
+                await router_client.delete_distribution_policy(id=dp_identifier)
                 with pytest.raises(ResourceNotFoundError) as nfe:
-                    await router_client.get_distribution_policy(distribution_policy_id=dp_identifier)
+                    await router_client.get_distribution_policy(id=dp_identifier)
                 assert nfe.value.reason == "Not Found"
                 assert nfe.value.status_code == 404
 
@@ -254,7 +254,7 @@ class TestDistributionPolicyAsync(AsyncRouterRecordedTestCase):
                 )
 
                 distribution_policy_response = await router_client.create_distribution_policy(
-                    distribution_policy_id=identifier, distribution_policy=policy
+                    id=identifier, distribution_policy=policy
                 )
 
                 # add for cleanup

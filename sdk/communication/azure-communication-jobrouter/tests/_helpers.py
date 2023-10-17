@@ -7,7 +7,7 @@
 from typing import TYPE_CHECKING
 from datetime import datetime
 from dateutil.parser import parse
-from msrest.serialization import TZ_UTC
+from azure.core.serialization import TZ_UTC
 
 try:
     from typing import TypedDict

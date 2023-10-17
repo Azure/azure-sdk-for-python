@@ -64,17 +64,17 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
                         self.classification_policy_ids[self._testMethodName]
                     ):
                         for policy_id in set(self.classification_policy_ids[self._testMethodName]):
-                            await router_admin_client.delete_classification_policy(classification_policy_id=policy_id)
+                            await router_admin_client.delete_classification_policy(id=policy_id)
 
                     if self._testMethodName in self.queue_ids and any(self.queue_ids[self._testMethodName]):
                         for policy_id in set(self.queue_ids[self._testMethodName]):
-                            await router_admin_client.delete_queue(queue_id=policy_id)
+                            await router_admin_client.delete_queue(id=policy_id)
 
                     if self._testMethodName in self.distribution_policy_ids and any(
                         self.distribution_policy_ids[self._testMethodName]
                     ):
                         for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
-                            await router_admin_client.delete_distribution_policy(distribution_policy_id=policy_id)
+                            await router_admin_client.delete_distribution_policy(id=policy_id)
 
     def get_distribution_policy_id(self, **kwargs):
         return self._testMethodName + "_tst_dp_async"
@@ -92,7 +92,7 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
             )
 
             distribution_policy = await client.create_distribution_policy(
-                distribution_policy_id=distribution_policy_id, distribution_policy=policy
+                id=distribution_policy_id, distribution_policy=policy
             )
 
             # add for cleanup later
@@ -114,7 +114,7 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
 
             job_queue: RouterQueue = RouterQueue(name="test", distribution_policy_id=self.get_distribution_policy_id())
 
-            job_queue = await client.create_queue(queue_id=job_queue_id, queue=job_queue)
+            job_queue = await client.create_queue(id=job_queue_id, queue=job_queue)
 
             # add for cleanup later
             if self._testMethodName in self.queue_ids:
@@ -149,7 +149,7 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
         router_client: JobRouterClient = self.create_client()
 
         async with router_client:
-            router_job = await router_client.get_job(job_id=identifier)
+            router_job = await router_client.get_job(id=identifier)
             assert router_job.status == RouterJobStatus.QUEUED
 
     async def validate_worker_has_offer(
@@ -195,7 +195,7 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
                 priority=1,
             )
 
-            router_job: RouterJob = await router_client.create_job(job_id=job_identifier, router_job=router_job)
+            router_job: RouterJob = await router_client.create_job(id=job_identifier, router_job=router_job)
 
             # add for cleanup
             self.job_ids[self._testMethodName] = [job_identifier]
@@ -234,7 +234,7 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
 
             # unassign job
             unassign_job_result: UnassignJobResult = await router_client.unassign_job(
-                job_id=router_job.id, assignment_id=assignment_id
+                id=router_job.id, assignment_id=assignment_id
             )
 
             # accept unassigned job
@@ -263,13 +263,13 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
             assignment_id = accept_job_offer_result.assignment_id
 
             # complete job
-            await router_client.complete_job(job_id=job_identifier, assignment_id=assignment_id)
+            await router_client.complete_job(id=job_identifier, assignment_id=assignment_id)
 
             # close job
-            await router_client.close_job(job_id=job_identifier, assignment_id=assignment_id)
+            await router_client.close_job(id=job_identifier, assignment_id=assignment_id)
 
             # validate post closure job details
-            queried_job: RouterJob = await router_client.get_job(job_id=job_identifier)
+            queried_job: RouterJob = await router_client.get_job(id=job_identifier)
 
             job_assignment: RouterJobAssignment = queried_job.assignments[assignment_id]
             assert job_assignment.assigned_at is not None
