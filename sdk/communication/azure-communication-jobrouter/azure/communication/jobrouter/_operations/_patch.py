@@ -6,6 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import sys
 import datetime
 from typing import (
     List,
@@ -15,12 +16,10 @@ from typing import (
     Union,
     overload,
     Iterable,
-    Literal
 )
-
 from azure.core import MatchConditions
-from .. import models as _models
 from azure.core.tracing.decorator import distributed_trace
+from .. import models as _models
 from ._operations import (
     JobRouterClientOperationsMixin as JobRouterClientOperationsMixinGenerated,
     JobRouterAdministrationClientOperationsMixin as JobRouterAdministrationClientOperationsMixinGenerated,
@@ -28,8 +27,14 @@ from ._operations import (
 from ._operations import JSON
 from .._datetimeutils import _convert_str_to_datetime
 
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
-class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClientOperationsMixinGenerated):
+
+
+class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClientOperationsMixinGenerated):  # pylint:disable=too-many-lines,line-too-long,name-too-long
     # region ExceptionPolicy
     @distributed_trace
     def create_exception_policy(
@@ -75,7 +80,14 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         if not id:
             raise ValueError("id cannot be None.")
 
-        return super().upsert_exception_policy(id=id, resource=exception_policy, **kwargs)
+        return super().upsert_exception_policy(
+            id = id,
+            resource = exception_policy,
+            if_unmodified_since = if_unmodified_since,
+            etag = etag,
+            match_condition = match_condition,
+            **kwargs
+        )
 
     @overload
     def update_exception_policy(
@@ -95,6 +107,15 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :param exception_policy: An instance of exception policy. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
         :type exception_policy: ~azure.communication.jobrouter.ExceptionPolicy
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of ExceptionPolicy
         :rtype: ~azure.communication.jobrouter.ExceptionPolicy
@@ -123,6 +144,15 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
 
         :keyword Optional[str] name: The name of this policy.
 
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+
         :return: Instance of ExceptionPolicy
         :rtype: ~azure.communication.jobrouter.ExceptionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -145,6 +175,15 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :paramtype exception_rules: Optional[Dict[str, ~azure.communication.jobrouter.ExceptionRule]]
 
         :keyword Optional[str] name: The name of this policy.
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of ExceptionPolicy
         :rtype: ~azure.communication.jobrouter.ExceptionPolicy
@@ -172,7 +211,18 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
             exception_rules=kwargs.pop("exception_rules", exception_policy.exception_rules),
         )
 
-        return super().upsert_exception_policy(id=id, resource=patch, **kwargs)
+        if_unmodified_since = kwargs.pop('if_unmodified_since', None)
+        etag = kwargs.pop('etag', None)
+        match_condition = kwargs.pop('match_condition', None)
+
+        return super().upsert_exception_policy(
+            id=id,
+            resource=patch,
+            if_unmodified_since = if_unmodified_since,
+            etag = etag,
+            match_condition = match_condition,
+            **kwargs
+        )
 
     @distributed_trace
     def list_exception_policies(
@@ -218,7 +268,14 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
 
     @distributed_trace
     def create_distribution_policy(
-        self, id: str, distribution_policy: _models.DistributionPolicy, **kwargs: Any
+        self,
+        id: str,
+        distribution_policy: _models.DistributionPolicy,
+        *,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> _models.DistributionPolicy:
         """Create a new distribution policy.
 
@@ -226,6 +283,15 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
 
         :param distribution_policy: An instance of distribution policy.
         :type distribution_policy: ~azure.communication.jobrouter.DistributionPolicy
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of DistributionPolicy
         :rtype: ~azure.communication.jobrouter.DistributionPolicy
@@ -243,11 +309,25 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         if not id:
             raise ValueError("id cannot be None.")
 
-        return super().upsert_distribution_policy(id=id, resource=distribution_policy, **kwargs)
+        return super().upsert_distribution_policy(
+            id=id,
+            resource=distribution_policy,
+            if_unmodified_since = if_unmodified_since,
+            etag = etag,
+            match_condition = match_condition,
+            **kwargs
+        )
 
     @overload
     def update_distribution_policy(
-        self, id: str, distribution_policy: _models.DistributionPolicy, **kwargs: Any
+        self,
+        id: str,
+        distribution_policy: _models.DistributionPolicy,
+        *,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> _models.DistributionPolicy:
         """Update a distribution policy.
 
@@ -256,6 +336,15 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :param distribution_policy: An instance of distribution policy. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
         :type distribution_policy: ~azure.communication.jobrouter.DistributionPolicy
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of DistributionPolicy
         :rtype: ~azure.communication.jobrouter.DistributionPolicy
@@ -270,6 +359,9 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         name: Optional[str],
         offer_expires_after_seconds: Optional[float],
         mode: Optional[Union[_models.BestWorkerMode, _models.LongestIdleMode, _models.RoundRobinMode]],
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> _models.DistributionPolicy:
         """Update a distribution policy.
@@ -284,6 +376,15 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
             ~azure.communication.jobrouter.LongestIdleMode, ~azure.communication.jobrouter.RoundRobinMode]]
 
         :keyword Optional[str] name: The name of this policy.
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of DistributionPolicy
         :rtype: ~azure.communication.jobrouter.DistributionPolicy
@@ -310,6 +411,15 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
             ~azure.communication.jobrouter.LongestIdleMode, ~azure.communication.jobrouter.RoundRobinMode]]
 
         :keyword Optional[str] name: The name of this policy.
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of DistributionPolicy
         :rtype: ~azure.communication.jobrouter.DistributionPolicy
@@ -339,7 +449,18 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
             mode=kwargs.pop("mode", distribution_policy.mode),
         )
 
-        return super().upsert_distribution_policy(id=id, resource=patch, **kwargs)
+        if_unmodified_since = kwargs.pop('if_unmodified_since', None)
+        etag = kwargs.pop('etag', None)
+        match_condition = kwargs.pop('match_condition', None)
+
+        return super().upsert_distribution_policy(
+            id=id,
+            resource=patch,
+            if_unmodified_since = if_unmodified_since,
+            etag = etag,
+            match_condition = match_condition,
+            **kwargs
+        )
 
     @distributed_trace
     def list_distribution_policies(
@@ -384,13 +505,31 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
     # region Queue
 
     @distributed_trace
-    def create_queue(self, id: str, queue: _models.RouterQueue, **kwargs: Any) -> _models.RouterQueue:
+    def create_queue(
+        self,
+        id: str,
+        queue: _models.RouterQueue,
+        *,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.RouterQueue:
         """Create a job queue
 
         :param str id: Id of the queue.
 
         :param queue: An instance of JobQueue.
         :type queue: ~azure.communication.jobrouter.RouterQueue
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterQueue
         :rtype: ~azure.communication.jobrouter.RouterQueue
@@ -408,10 +547,26 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         if not id:
             raise ValueError("id cannot be None.")
 
-        return super().upsert_queue(id=id, resource=queue, **kwargs)
+        return super().upsert_queue(
+            id=id,
+            resource=queue,
+            if_unmodified_since = if_unmodified_since,
+            etag = etag,
+            match_condition = match_condition,
+            **kwargs
+        )
 
     @overload
-    def update_queue(self, id: str, queue: _models.RouterQueue, **kwargs: Any) -> _models.RouterQueue:
+    def update_queue(
+        self,
+        id: str,
+        queue: _models.RouterQueue,
+        *,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.RouterQueue:
         """Update a job queue
 
         :param str id: Id of the queue.
@@ -419,6 +574,15 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :param queue: An instance of JobQueue. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
         :type queue: ~azure.communication.jobrouter.RouterQueue
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterQueue
         :rtype: ~azure.communication.jobrouter.RouterQueue
@@ -434,6 +598,9 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         name: Optional[str],
         labels: Optional[Dict[str, Union[int, float, str, bool]]],
         exception_policy_id: Optional[str],
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> _models.RouterQueue:
         """Update a job queue
@@ -451,6 +618,15 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
 
         :keyword Optional[str] exception_policy_id: The ID of the exception policy that determines various
           job escalation rules.
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterQueue
         :rtype: ~azure.communication.jobrouter.RouterQueue
@@ -479,6 +655,15 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :keyword Optional[str] exception_policy_id: The ID of the exception policy that determines various
           job escalation rules.
 
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+
         :return: Instance of RouterQueue
         :rtype: ~azure.communication.jobrouter.RouterQueue
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -506,7 +691,18 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
             exception_policy_id=kwargs.pop("exception_policy_id", queue.exception_policy_id),
         )
 
-        return super().upsert_queue(id=id, resource=patch, **kwargs)
+        if_unmodified_since = kwargs.pop('if_unmodified_since', None)
+        etag = kwargs.pop('etag', None)
+        match_condition = kwargs.pop('match_condition', None)
+
+        return super().upsert_queue(
+            id=id,
+            resource=patch,
+            if_unmodified_since = if_unmodified_since,
+            etag = etag,
+            match_condition = match_condition,
+            **kwargs
+        )
 
     @distributed_trace
     def list_queues(
@@ -552,7 +748,14 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
 
     @distributed_trace
     def create_classification_policy(
-        self, id: str, classification_policy: _models.ClassificationPolicy, **kwargs: Any
+        self,
+        id: str,
+        classification_policy: _models.ClassificationPolicy,
+        *,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> _models.ClassificationPolicy:
         """Create a classification policy
 
@@ -560,6 +763,15 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
 
         :param classification_policy: An instance of Classification policy.
         :type classification_policy: ~azure.communication.jobrouter.ClassificationPolicy
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of ClassificationPolicy
         :rtype: ~azure.communication.jobrouter.ClassificationPolicy
@@ -578,12 +790,24 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
             raise ValueError("id cannot be None.")
 
         return super().upsert_classification_policy(
-            id=id, resource=classification_policy, **kwargs
+            id=id,
+            resource=classification_policy,
+            if_unmodified_since = if_unmodified_since,
+            etag = etag,
+            match_condition = match_condition,
+            **kwargs
         )
 
     @overload
     def update_classification_policy(
-        self, id: str, classification_policy: _models.ClassificationPolicy, **kwargs: Any
+        self,
+        id: str,
+        classification_policy: _models.ClassificationPolicy,
+        *,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
     ) -> _models.ClassificationPolicy:
         """Update a classification policy
 
@@ -592,6 +816,15 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :param classification_policy: An instance of Classification policy. This is a positional-only
          parameter. Please provide either this or individual keyword parameters.
         :type classification_policy: ~azure.communication.jobrouter.ClassificationPolicy
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of ClassificationPolicy
         :rtype: ~azure.communication.jobrouter.ClassificationPolicy
@@ -635,6 +868,9 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
                 ]
             ]
         ],  # pylint: disable=line-too-long
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> _models.ClassificationPolicy:
         """Update a classification policy
@@ -665,6 +901,15 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
           ~azure.communication.jobrouter.RuleEngineWorkerSelectorAttachment,
           ~azure.communication.jobrouter.PassThroughWorkerSelectorAttachment,
           ~azure.communication.jobrouter.WeightedAllocationWorkerSelectorAttachment]]]
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of ClassificationPolicy
         :rtype: ~azure.communication.jobrouter.ClassificationPolicy
@@ -708,6 +953,15 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
           ~azure.communication.jobrouter.PassThroughWorkerSelectorAttachment,
           ~azure.communication.jobrouter.WeightedAllocationWorkerSelectorAttachment]]]
 
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+
         :return: Instance of ClassificationPolicy
         :rtype: ~azure.communication.jobrouter.ClassificationPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
@@ -736,7 +990,18 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
             worker_selectors=kwargs.pop("worker_selectors", classification_policy.worker_selectors),
         )
 
-        return super().upsert_classification_policy(id=id, resource=patch, **kwargs)
+        if_unmodified_since = kwargs.pop('if_unmodified_since', None)
+        etag = kwargs.pop('etag', None)
+        match_condition = kwargs.pop('match_condition', None)
+
+        return super().upsert_classification_policy(
+            id=id,
+            resource=patch,
+            if_unmodified_since = if_unmodified_since,
+            etag = etag,
+            match_condition = match_condition,
+            **kwargs
+        )
 
     @distributed_trace
     def list_classification_policies(
@@ -782,13 +1047,31 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
     # region Worker
 
     @distributed_trace
-    def create_worker(self, worker_id: str, router_worker: _models.RouterWorker, **kwargs: Any) -> _models.RouterWorker:
+    def create_worker(
+        self,
+        worker_id: str,
+        router_worker: _models.RouterWorker,
+        *,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.RouterWorker:
         """Create a new worker.
 
         :param str worker_id: Id of the worker.
 
         :param router_worker: An instance of RouterWorker.
         :type router_worker: ~azure.communication.jobrouter.RouterWorker
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterWorker
         :rtype: ~azure.communication.jobrouter.RouterWorker
@@ -806,10 +1089,26 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         if not worker_id:
             raise ValueError("worker_id cannot be None.")
 
-        return super().upsert_worker(worker_id=worker_id, resource=router_worker, **kwargs)
+        return super().upsert_worker(
+            worker_id=worker_id,
+            resource=router_worker,
+            if_unmodified_since = if_unmodified_since,
+            etag = etag,
+            match_condition = match_condition,
+            **kwargs
+        )
 
     @overload
-    def update_worker(self, worker_id: str, router_worker: _models.RouterWorker, **kwargs: Any) -> _models.RouterWorker:
+    def update_worker(
+        self,
+        worker_id: str,
+        router_worker: _models.RouterWorker,
+        *,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.RouterWorker:
         """Update a router worker.
 
         :param str worker_id: Id of the worker.
@@ -817,6 +1116,15 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :param router_worker: An instance of RouterWorker. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
         :type router_worker: ~azure.communication.jobrouter.RouterWorker
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterWorker
         :rtype: ~azure.communication.jobrouter.RouterWorker
@@ -834,6 +1142,9 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         tags: Optional[Dict[str, Union[int, float, str, bool]]],
         channel_configurations: Optional[Dict[str, _models.ChannelConfiguration]],
         available_for_offers: Optional[bool],
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> _models.RouterWorker:
         """Update a router worker.
@@ -860,6 +1171,15 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
         :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
         :paramtype available_for_offers: Optional[bool]
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterWorker
         :rtype: ~azure.communication.jobrouter.RouterWorker
@@ -896,6 +1216,15 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
         :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
         :paramtype available_for_offers: Optional[bool]
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterWorker
         :rtype: ~azure.communication.jobrouter.RouterWorker
@@ -944,7 +1273,18 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
             available_for_offers=kwargs.pop("available_for_offers", router_worker.available_for_offers),
         )
 
-        return super().upsert_worker(worker_id=worker_id, resource=patch, **kwargs)
+        if_unmodified_since = kwargs.pop('if_unmodified_since', None)
+        etag = kwargs.pop('etag', None)
+        match_condition = kwargs.pop('match_condition', None)
+
+        return super().upsert_worker(
+            worker_id=worker_id,
+            resource=patch,
+            if_unmodified_since = if_unmodified_since,
+            etag = etag,
+            match_condition = match_condition,
+            **kwargs
+        )
 
     @distributed_trace
     def list_workers(
@@ -1013,7 +1353,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
     # region Offer
 
     @distributed_trace
-    def decline_job_offer(
+    def decline_job_offer(  # pylint: disable=arguments-differ,arguments-renamed
             self,
             worker_id: str,
             offer_id: str,
@@ -1069,13 +1409,31 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
     # region Job
 
     @distributed_trace
-    def create_job(self, id: str, router_job: _models.RouterJob, **kwargs: Any) -> _models.RouterJob:
+    def create_job(
+        self,
+        id: str,
+        router_job: _models.RouterJob,
+        *,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.RouterJob:
         """Create a job.
 
         :param str id: Id of the job.
 
         :param router_job: An instance of RouterJob.
         :type router_job: ~azure.communication.jobrouter.RouterJob
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterJob
         :rtype: ~azure.communication.jobrouter.RouterJob
@@ -1093,10 +1451,26 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         if not id:
             raise ValueError("id cannot be None.")
 
-        return super().upsert_job(id=id, resource=router_job, **kwargs)
+        return super().upsert_job(
+            id=id,
+            resource=router_job,
+            if_unmodified_since = if_unmodified_since,
+            etag = etag,
+            match_condition = match_condition,
+            **kwargs
+        )
 
     @overload
-    def update_job(self, id: str, router_job: _models.RouterJob, **kwargs: Any) -> _models.RouterJob:
+    def update_job(
+        self,
+        id: str,
+        router_job: _models.RouterJob,
+        *,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.RouterJob:
         """Update a job.
 
         :param str id: Id of the job.
@@ -1104,6 +1478,15 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :param router_job: An instance of RouterJob.  This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
         :type router_job: ~azure.communication.jobrouter.RouterJob
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterJob
         :rtype: ~azure.communication.jobrouter.RouterJob
@@ -1126,6 +1509,9 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         tags: Optional[Dict[str, Union[int, float, str, bool, None]]],
         notes: Optional[Dict[datetime.datetime, str]],
         matching_mode: Optional[_models.JobMatchingMode],
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> _models.RouterJob:
         """Update a job.
@@ -1168,6 +1554,14 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :keyword matching_mode: If set, determines how a job will be matched
         :paramtype matching_mode: Optional[~azure.communication.jobrouter.JobMatchingMode]
 
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterJob
         :rtype: ~azure.communication.jobrouter.RouterJob
@@ -1220,6 +1614,14 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :keyword matching_mode: If set, determines how a job will be matched
         :paramtype matching_mode: Optional[~azure.communication.jobrouter.JobMatchingMode]
 
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterJob
         :rtype: ~azure.communication.jobrouter.RouterJob
@@ -1255,7 +1657,18 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
             matching_mode=kwargs.pop("matching_mode", router_job.matching_mode),
         )
 
-        return super().upsert_job(id=id, resource=patch, **kwargs)
+        if_unmodified_since = kwargs.pop('if_unmodified_since', None)
+        etag = kwargs.pop('etag', None)
+        match_condition = kwargs.pop('match_condition', None)
+
+        return super().upsert_job(
+            id=id,
+            resource=patch,
+            if_unmodified_since = if_unmodified_since,
+            etag = etag,
+            match_condition = match_condition,
+            **kwargs
+        )
 
     @distributed_trace
     def list_jobs(
@@ -1346,7 +1759,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         )
 
     @distributed_trace
-    def close_job(
+    def close_job(  # pylint: disable=arguments-differ,arguments-renamed
         self,
         id: str,
         assignment_id: str,
@@ -1401,7 +1814,14 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         super().close_job(id=id, close_job_request=close_job_request, **kwargs)
 
     @distributed_trace
-    def complete_job(self, id: str, assignment_id: str, *, note: Optional[str] = None, **kwargs: Any) -> None:
+    def complete_job(  # pylint: disable=arguments-differ,arguments-renamed
+        self,
+        id: str,
+        assignment_id: str,
+        *,
+        note: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """Completes an assigned job.
 
         :param str id: Id of the job.
@@ -1436,13 +1856,13 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         super().complete_job(id=id, complete_job_request=complete_job_request, **kwargs)
 
     @distributed_trace
-    def cancel_job(
-            self,
-            id: str,
-            *,
-            disposition_code: Optional[str] = None,
-            note: Optional[str] = None,
-            **kwargs: Any
+    def cancel_job(  # pylint: disable=arguments-differ,arguments-renamed
+        self,
+        id: str,
+        *,
+        disposition_code: Optional[str] = None,
+        note: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         """Submits request to cancel an existing job by Id while supplying free-form cancellation reason.
 
@@ -1486,10 +1906,10 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         )
 
     @distributed_trace
-    def reclassify_job(
-            self,
-            id: str,
-            **kwargs: Any
+    def reclassify_job(  # pylint: disable=arguments-differ,arguments-renamed
+        self,
+        id: str,
+        **kwargs: Any
     ) -> None:
         """Reclassify a job.
 
@@ -1518,13 +1938,13 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         )
 
     @distributed_trace
-    def unassign_job(
-            self,
-            id: str,
-            assignment_id: str,
-            *,
-            suspend_matching: Optional[bool] = None,
-            **kwargs: Any
+    def unassign_job(  # pylint: disable=arguments-differ,arguments-renamed
+        self,
+        id: str,
+        assignment_id: str,
+        *,
+        suspend_matching: Optional[bool] = None,
+        **kwargs: Any
     ) -> _models.UnassignJobResult:
         """Unassign a job.
 

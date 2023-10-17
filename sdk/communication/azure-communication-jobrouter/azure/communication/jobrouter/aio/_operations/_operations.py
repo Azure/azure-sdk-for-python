@@ -2317,7 +2317,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
             _content = reclassify_job_request
         else:
             if reclassify_job_request is not None:
-                _content = json.dumps(reclassify_job_request, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+                _content = json.dumps(reclassify_job_request, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore # pylint: disable=line-too-long
             else:
                 _content = None
 
@@ -3368,7 +3368,7 @@ class JobRouterClientOperationsMixin(JobRouterClientMixinABC):
             _content = decline_job_offer_request
         else:
             if decline_job_offer_request is not None:
-                _content = json.dumps(decline_job_offer_request, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+                _content = json.dumps(decline_job_offer_request, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore # pylint: disable=line-too-long
             else:
                 _content = None
 
