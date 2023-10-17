@@ -7,7 +7,8 @@
 #### Breaking Changes
 
 #### Bugs Fixed
-* Small fix to the `offer_throughput` option in the async client's `create_database_if_not_exists` method. See [PR 32076](https://github.com/Azure/azure-sdk-for-python/pull/32076).
+* Small fix to the `offer_throughput` option in the async client's `create_database_if_not_exists` method, which was previously misspelled as `offerThroughput`.
+See [PR 32076](https://github.com/Azure/azure-sdk-for-python/pull/32076).
 
 #### Other Changes
 * Marked the outdated `diagnostics.py` file for deprecation since we now recommend the use of our `CosmosHttpLoggingPolicy` for diagnostics.
