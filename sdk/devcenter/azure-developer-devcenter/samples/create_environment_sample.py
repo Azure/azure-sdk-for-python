@@ -31,6 +31,7 @@ from azure.developer.devcenter import DevCenterClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
+
 def main():
     logging.basicConfig(level=logging.DEBUG)
     LOG = logging.getLogger()
@@ -47,19 +48,27 @@ def main():
     client = DevCenterClient(endpoint, credential=DefaultAzureCredential())
 
     # Fetch control plane resource dependencies
-    target_project_name = list(client.dev_center.list_projects(top=1))[0]['name']
-    target_catalog_name = list(client.deployment_environments.list_catalogs(target_project_name, top=1))[0]['name']
-    target_environment_definition_name = list(client.deployment_environments.list_environment_definitions_by_catalog(target_project_name, target_catalog_name, top=1))[0]['name']
-    target_environment_type_name = list(client.deployment_environments.list_environment_types(target_project_name, top=1))[0]['name']
+    target_project_name = list(client.dev_center.list_projects(top=1))[0]["name"]
+    target_catalog_name = list(client.deployment_environments.list_catalogs(target_project_name, top=1))[0]["name"]
+    target_environment_definition_name = list(
+        client.deployment_environments.list_environment_definitions_by_catalog(
+            target_project_name, target_catalog_name, top=1
+        )
+    )[0]["name"]
+    target_environment_type_name = list(
+        client.deployment_environments.list_environment_types(target_project_name, top=1)
+    )[0]["name"]
 
     # Stand up a new environment
     environment = {
         "catalogName": target_catalog_name,
         "environmentDefinitionName": target_environment_definition_name,
-        "environmentType": target_environment_type_name
+        "environmentType": target_environment_type_name,
     }
-    
-    create_response = client.deployment_environments.begin_create_or_update_environment(target_project_name, "DevTestEnv", environment)
+
+    create_response = client.deployment_environments.begin_create_or_update_environment(
+        target_project_name, "DevTestEnv", environment
+    )
     environment_result = create_response.result()
 
     LOG.info(f"Provisioned environment with status {environment_result['provisioningState']}.")
