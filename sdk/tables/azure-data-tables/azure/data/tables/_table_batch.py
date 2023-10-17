@@ -15,7 +15,7 @@ from ._generated.operations._operations import (
     build_table_insert_entity_request,
     build_table_merge_entity_request,
     build_table_update_entity_request,
-    build_table_delete_entity_request
+    build_table_delete_entity_request,
 )
 
 if TYPE_CHECKING:
@@ -120,10 +120,7 @@ class TableBatchOperations(object):
         self._verify_partition_key(entity)
         entity = _add_entity_properties(entity)
         request = build_table_insert_entity_request(
-            table=self.table_name,
-            json=entity,
-            version=self._config.version,
-            **kwargs
+            table=self.table_name, json=entity, version=self._config.version, **kwargs
         )
         request.url = self._base_url + request.url
         self.requests.append(request)
@@ -163,8 +160,7 @@ class TableBatchOperations(object):
             except (AttributeError, TypeError):
                 pass
         match_condition = _get_match_condition(
-            etag=etag,
-            match_condition=match_condition or MatchConditions.Unconditionally
+            etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
         if mode == UpdateMode.REPLACE:
             request = build_table_update_entity_request(
@@ -225,8 +221,7 @@ class TableBatchOperations(object):
             except (AttributeError, TypeError):
                 pass
         match_condition = _get_match_condition(
-            etag=etag,
-            match_condition=match_condition or MatchConditions.Unconditionally
+            etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
         request = build_table_delete_entity_request(
             table=self.table_name,
