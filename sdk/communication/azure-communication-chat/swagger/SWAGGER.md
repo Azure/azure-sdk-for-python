@@ -30,6 +30,7 @@ no-async: false
 add-credential: false
 title: Azure Communication Chat Service
 disable-async-iterators: true
+security: Anonymous
 ```
 
 ### Rename CommunicationError to ChatError

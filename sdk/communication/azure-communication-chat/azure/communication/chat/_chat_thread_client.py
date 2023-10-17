@@ -99,7 +99,6 @@ class ChatThreadClient(object): # pylint: disable=client-accepts-api-version-key
         self._credential = credential
 
         self._client = AzureCommunicationChatService(
-            credential=self._credential,
             endpoint=self._endpoint,
             authentication_policy=BearerTokenCredentialPolicy(self._credential),
             sdk_moniker=SDK_MONIKER,
