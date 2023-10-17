@@ -30,6 +30,9 @@ from .sanitizers import add_remove_header_sanitizer, set_custom_default_matcher
 
 load_dotenv(find_dotenv())
 
+# Raise urllib3's exposed logging level so that we don't see tons of warnings while polling the proxy's availability
+logging.getLogger("urllib3.connectionpool").setLevel(logging.ERROR)
+
 _LOGGER = logging.getLogger()
 
 CONTAINER_STARTUP_TIMEOUT = 60
