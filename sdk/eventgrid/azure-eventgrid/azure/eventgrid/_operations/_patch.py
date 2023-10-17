@@ -285,9 +285,9 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
     event = kwargs.pop("event")
     binary_mode = kwargs.pop("binary_mode", True)
 
-    # Content of the request is the data
+    # Content of the request is the data, if already in binary - no work needed
     if isinstance(event.data, bytes):
-        _content = json.dumps(base64.b64encode(event.data), cls=AzureJSONEncoder, exclude_readonly=True)
+        _content = base64.b64encode(event.data)
     else:
         _content = json.dumps(event.data, cls=AzureJSONEncoder, exclude_readonly=True).encode("utf-8")
 
