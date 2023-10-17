@@ -124,7 +124,7 @@ class RouterJob(RouterJobGenerated):
 
         :keyword requested_worker_selectors: A collection of manually specified label selectors, which
          a worker must satisfy in order to process this job.
-        :paramtype requested_worker_selectors: Optional[List[~azure.communication.jobrouter.RouterWorkerSelector]]
+        :paramtype requested_worker_selectors:Optional[List[~azure.communication.jobrouter.models.RouterWorkerSelector]]
 
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
@@ -137,7 +137,7 @@ class RouterJob(RouterJobGenerated):
         :paramtype notes: Optional[Dict[~datetime.datetime, str]]
 
         :keyword matching_mode: If set, determines how a job will be matched
-        :paramtype matching_mode: Optional[~azure.communication.jobrouter.JobMatchingMode]
+        :paramtype matching_mode: Optional[~azure.communication.jobrouter.models.JobMatchingMode]
         """
 
     def __init__(self, *args: Any, **kwargs: Any):

@@ -54,7 +54,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :param str id: Id of the exception policy.
 
         :param exception_policy: An instance of exception policy.
-        :type exception_policy: ~azure.communication.jobrouter.ExceptionPolicy
+        :type exception_policy: ~azure.communication.jobrouter.models.ExceptionPolicy
 
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
@@ -66,7 +66,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of ExceptionPolicy
-        :rtype: ~azure.communication.jobrouter.ExceptionPolicy
+        :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
 
@@ -108,7 +108,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
 
         :param exception_policy: An instance of exception policy. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
-        :type exception_policy: ~azure.communication.jobrouter.ExceptionPolicy
+        :type exception_policy: ~azure.communication.jobrouter.models.ExceptionPolicy
 
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
@@ -120,7 +120,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of ExceptionPolicy
-        :rtype: ~azure.communication.jobrouter.ExceptionPolicy
+        :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
 
@@ -142,7 +142,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
 
         :keyword exception_rules: (Optional) A dictionary collection of exception rules on the exception
           policy. Key is the Id of each exception rule.
-        :paramtype exception_rules: Optional[Dict[str, ~azure.communication.jobrouter.ExceptionRule]]
+        :paramtype exception_rules: Optional[Dict[str, ~azure.communication.jobrouter.models.ExceptionRule]]
 
         :keyword Optional[str] name: The name of this policy.
 
@@ -156,7 +156,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of ExceptionPolicy
-        :rtype: ~azure.communication.jobrouter.ExceptionPolicy
+        :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
 
@@ -170,11 +170,11 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
 
         :param exception_policy: An instance of exception policy. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
-        :type exception_policy: ~azure.communication.jobrouter.ExceptionPolicy
+        :type exception_policy: ~azure.communication.jobrouter.models.ExceptionPolicy
 
         :keyword exception_rules: (Optional) A dictionary collection of exception rules on the exception
           policy. Key is the Id of each exception rule.
-        :paramtype exception_rules: Optional[Dict[str, ~azure.communication.jobrouter.ExceptionRule]]
+        :paramtype exception_rules: Optional[Dict[str, ~azure.communication.jobrouter.models.ExceptionRule]]
 
         :keyword Optional[str] name: The name of this policy.
 
@@ -188,7 +188,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of ExceptionPolicy
-        :rtype: ~azure.communication.jobrouter.ExceptionPolicy
+        :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
 
@@ -238,7 +238,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
 
         :return: An iterator like instance of ExceptionPolicyItem
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.ExceptionPolicyItem]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.models.ExceptionPolicyItem]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -284,7 +284,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :param str id: Id of the distribution policy.
 
         :param distribution_policy: An instance of distribution policy.
-        :type distribution_policy: ~azure.communication.jobrouter.DistributionPolicy
+        :type distribution_policy: ~azure.communication.jobrouter.models.DistributionPolicy
 
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
@@ -296,7 +296,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of DistributionPolicy
-        :rtype: ~azure.communication.jobrouter.DistributionPolicy
+        :rtype: ~azure.communication.jobrouter.models.DistributionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -337,7 +337,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
 
         :param distribution_policy: An instance of distribution policy. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
-        :type distribution_policy: ~azure.communication.jobrouter.DistributionPolicy
+        :type distribution_policy: ~azure.communication.jobrouter.models.DistributionPolicy
 
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
@@ -349,7 +349,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of DistributionPolicy
-        :rtype: ~azure.communication.jobrouter.DistributionPolicy
+        :rtype: ~azure.communication.jobrouter.models.DistributionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
 
@@ -374,8 +374,9 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
           will be governed by the offer time to live.
 
         :keyword mode: Specified distribution mode
-        :paramtype mode: Optional[Union[~azure.communication.jobrouter.BestWorkerMode,
-            ~azure.communication.jobrouter.LongestIdleMode, ~azure.communication.jobrouter.RoundRobinMode]]
+        :paramtype mode: Optional[Union[~azure.communication.jobrouter.models.BestWorkerMode,
+            ~azure.communication.jobrouter.models.LongestIdleMode,
+            ~azure.communication.jobrouter.models.RoundRobinMode]]
 
         :keyword Optional[str] name: The name of this policy.
 
@@ -389,7 +390,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of DistributionPolicy
-        :rtype: ~azure.communication.jobrouter.DistributionPolicy
+        :rtype: ~azure.communication.jobrouter.models.DistributionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
 
@@ -403,14 +404,15 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
 
         :param distribution_policy: An instance of distribution policy. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
-        :type distribution_policy: ~azure.communication.jobrouter.DistributionPolicy
+        :type distribution_policy: ~azure.communication.jobrouter.models.DistributionPolicy
 
         :keyword Optional[float] offer_expires_after_seconds: The expiry time of any offers created under this policy
           will be governed by the offer time to live.
 
         :keyword mode: Specified distribution mode
-        :paramtype mode: Optional[Union[~azure.communication.jobrouter.BestWorkerMode,
-            ~azure.communication.jobrouter.LongestIdleMode, ~azure.communication.jobrouter.RoundRobinMode]]
+        :paramtype mode: Optional[Union[~azure.communication.jobrouter.models.BestWorkerMode,
+            ~azure.communication.jobrouter.models.LongestIdleMode,
+            ~azure.communication.jobrouter.models.RoundRobinMode]]
 
         :keyword Optional[str] name: The name of this policy.
 
@@ -424,7 +426,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of DistributionPolicy
-        :rtype: ~azure.communication.jobrouter.DistributionPolicy
+        :rtype: ~azure.communication.jobrouter.models.DistributionPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -476,7 +478,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
 
         :return: An iterator like instance of DistributionPolicyItem
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.DistributionPolicyItem]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.models.DistributionPolicyItem]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -522,7 +524,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :param str id: Id of the queue.
 
         :param queue: An instance of JobQueue.
-        :type queue: ~azure.communication.jobrouter.RouterQueue
+        :type queue: ~azure.communication.jobrouter.models.RouterQueue
 
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
@@ -534,7 +536,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterQueue
-        :rtype: ~azure.communication.jobrouter.RouterQueue
+        :rtype: ~azure.communication.jobrouter.models.RouterQueue
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -575,7 +577,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
 
         :param queue: An instance of JobQueue. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
-        :type queue: ~azure.communication.jobrouter.RouterQueue
+        :type queue: ~azure.communication.jobrouter.models.RouterQueue
 
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
@@ -587,7 +589,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterQueue
-        :rtype: ~azure.communication.jobrouter.RouterQueue
+        :rtype: ~azure.communication.jobrouter.models.RouterQueue
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
 
@@ -631,7 +633,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterQueue
-        :rtype: ~azure.communication.jobrouter.RouterQueue
+        :rtype: ~azure.communication.jobrouter.models.RouterQueue
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
 
@@ -643,7 +645,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
 
         :param queue: An instance of JobQueue. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
-        :type queue: ~azure.communication.jobrouter.RouterQueue
+        :type queue: ~azure.communication.jobrouter.models.RouterQueue
 
         :keyword Optional[str] distribution_policy_id: The ID of the distribution policy that will determine
           how a job is distributed to workers.
@@ -667,7 +669,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterQueue
-        :rtype: ~azure.communication.jobrouter.RouterQueue
+        :rtype: ~azure.communication.jobrouter.models.RouterQueue
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -718,7 +720,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
 
         :return: An iterator like instance of RouterQueueItem
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.RouterQueueItem]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.models.RouterQueueItem]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -765,7 +767,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :param str id: Id of the classification policy.
 
         :param classification_policy: An instance of Classification policy.
-        :type classification_policy: ~azure.communication.jobrouter.ClassificationPolicy
+        :type classification_policy: ~azure.communication.jobrouter.models.ClassificationPolicy
 
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
@@ -777,7 +779,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of ClassificationPolicy
-        :rtype: ~azure.communication.jobrouter.ClassificationPolicy
+        :rtype: ~azure.communication.jobrouter.models.ClassificationPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -818,7 +820,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
 
         :param classification_policy: An instance of Classification policy. This is a positional-only
          parameter. Please provide either this or individual keyword parameters.
-        :type classification_policy: ~azure.communication.jobrouter.ClassificationPolicy
+        :type classification_policy: ~azure.communication.jobrouter.models.ClassificationPolicy
 
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
@@ -830,7 +832,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of ClassificationPolicy
-        :rtype: ~azure.communication.jobrouter.ClassificationPolicy
+        :rtype: ~azure.communication.jobrouter.models.ClassificationPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
 
@@ -886,24 +888,25 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :paramtype fallback_queue_id: Optional[str]
 
         :keyword queue_selectors: The queue selectors to resolve a queue for a given job.
-        :paramtype queue_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticQueueSelectorAttachment,
-          ~azure.communication.jobrouter.ConditionalQueueSelectorAttachment,
-          ~azure.communication.jobrouter.RuleEngineQueueSelectorAttachment,
-          ~azure.communication.jobrouter.PassThroughQueueSelectorAttachment,
-          ~azure.communication.jobrouter.WeightedAllocationQueueSelectorAttachment]]]
+        :paramtype queue_selectors: Optional[List[Union[
+          ~azure.communication.jobrouter.models.StaticQueueSelectorAttachment,
+          ~azure.communication.jobrouter.models.ConditionalQueueSelectorAttachment,
+          ~azure.communication.jobrouter.models.RuleEngineQueueSelectorAttachment,
+          ~azure.communication.jobrouter.models.PassThroughQueueSelectorAttachment,
+          ~azure.communication.jobrouter.models.WeightedAllocationQueueSelectorAttachment]]]
 
         :keyword prioritization_rule: The rule to determine a priority score for a given job.
-        :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.StaticRouterRule,
-          ~azure.communication.jobrouter.ExpressionRouterRule,
-          ~azure.communication.jobrouter.FunctionRouterRule,
-          ~azure.communication.jobrouter.WebhookRouterRule]]
+        :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.models.StaticRouterRule,
+          ~azure.communication.jobrouter.models.ExpressionRouterRule,
+          ~azure.communication.jobrouter.models.FunctionRouterRule,
+          ~azure.communication.jobrouter.models.WebhookRouterRule]]
 
         :keyword worker_selectors: The worker label selectors to attach to a given job.
-        :paramtype worker_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticWorkerSelectorAttachment,
-          ~azure.communication.jobrouter.ConditionalWorkerSelectorAttachment,
-          ~azure.communication.jobrouter.RuleEngineWorkerSelectorAttachment,
-          ~azure.communication.jobrouter.PassThroughWorkerSelectorAttachment,
-          ~azure.communication.jobrouter.WeightedAllocationWorkerSelectorAttachment]]]
+        :paramtype worker_selectors: Optional[List[Union[~azure.communication.jobrouter.models.StaticWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.models.ConditionalWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.models.RuleEngineWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.models.PassThroughWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.models.WeightedAllocationWorkerSelectorAttachment]]]
 
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
@@ -915,7 +918,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of ClassificationPolicy
-        :rtype: ~azure.communication.jobrouter.ClassificationPolicy
+        :rtype: ~azure.communication.jobrouter.models.ClassificationPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
 
@@ -929,7 +932,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
 
         :param classification_policy: An instance of Classification policy. This is a positional-only
          parameter. Please provide either this or individual keyword parameters.
-        :type classification_policy: ~azure.communication.jobrouter.ClassificationPolicy
+        :type classification_policy: ~azure.communication.jobrouter.models.ClassificationPolicy
 
         :keyword Optional[str] name: Friendly name of this policy.
 
@@ -937,24 +940,26 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :paramtype fallback_queue_id: Optional[str]
 
         :keyword queue_selectors: The queue selectors to resolve a queue for a given job.
-        :paramtype queue_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticQueueSelectorAttachment,
-          ~azure.communication.jobrouter.ConditionalQueueSelectorAttachment,
-          ~azure.communication.jobrouter.RuleEngineQueueSelectorAttachment,
-          ~azure.communication.jobrouter.PassThroughQueueSelectorAttachment,
-          ~azure.communication.jobrouter.WeightedAllocationQueueSelectorAttachment]]]
+        :paramtype queue_selectors: Optional[List[Union[
+          ~azure.communication.jobrouter.models.StaticQueueSelectorAttachment,
+          ~azure.communication.jobrouter.models.ConditionalQueueSelectorAttachment,
+          ~azure.communication.jobrouter.models.RuleEngineQueueSelectorAttachment,
+          ~azure.communication.jobrouter.models.PassThroughQueueSelectorAttachment,
+          ~azure.communication.jobrouter.models.WeightedAllocationQueueSelectorAttachment]]]
 
         :keyword prioritization_rule: The rule to determine a priority score for a given job.
-        :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.StaticRouterRule,
-          ~azure.communication.jobrouter.ExpressionRouterRule,
-          ~azure.communication.jobrouter.FunctionRouterRule,
-          ~azure.communication.jobrouter.WebhookRouterRule]]
+        :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.models.StaticRouterRule,
+          ~azure.communication.jobrouter.models.ExpressionRouterRule,
+          ~azure.communication.jobrouter.models.FunctionRouterRule,
+          ~azure.communication.jobrouter.models.WebhookRouterRule]]
 
         :keyword worker_selectors: The worker label selectors to attach to a given job.
-        :paramtype worker_selectors: Optional[List[Union[~azure.communication.jobrouter.StaticWorkerSelectorAttachment,
-          ~azure.communication.jobrouter.ConditionalWorkerSelectorAttachment,
-          ~azure.communication.jobrouter.RuleEngineWorkerSelectorAttachment,
-          ~azure.communication.jobrouter.PassThroughWorkerSelectorAttachment,
-          ~azure.communication.jobrouter.WeightedAllocationWorkerSelectorAttachment]]]
+        :paramtype worker_selectors: Optional[List[Union[
+          ~azure.communication.jobrouter.models.StaticWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.models.ConditionalWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.models.RuleEngineWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.models.PassThroughWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.models.WeightedAllocationWorkerSelectorAttachment]]]
 
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
@@ -966,7 +971,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of ClassificationPolicy
-        :rtype: ~azure.communication.jobrouter.ClassificationPolicy
+        :rtype: ~azure.communication.jobrouter.models.ClassificationPolicy
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1018,7 +1023,7 @@ class JobRouterAdministrationClientOperationsMixin(JobRouterAdministrationClient
         :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
 
         :return: An iterator like instance of ClassificationPolicyItem
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.ClassificationPolicyItem]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.models.ClassificationPolicyItem]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1066,7 +1071,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :param str worker_id: Id of the worker.
 
         :param router_worker: An instance of RouterWorker.
-        :type router_worker: ~azure.communication.jobrouter.RouterWorker
+        :type router_worker: ~azure.communication.jobrouter.models.RouterWorker
 
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
@@ -1078,7 +1083,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterWorker
-        :rtype: ~azure.communication.jobrouter.RouterWorker
+        :rtype: ~azure.communication.jobrouter.models.RouterWorker
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1119,7 +1124,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
         :param router_worker: An instance of RouterWorker. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
-        :type router_worker: ~azure.communication.jobrouter.RouterWorker
+        :type router_worker: ~azure.communication.jobrouter.models.RouterWorker
 
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
@@ -1131,7 +1136,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterWorker
-        :rtype: ~azure.communication.jobrouter.RouterWorker
+        :rtype: ~azure.communication.jobrouter.models.RouterWorker
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
 
@@ -1171,7 +1176,8 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
         :keyword channel_configurations: The channel(s) this worker can handle and their impact on the
          workers capacity.
-        :paramtype channel_configurations: Optional[Dict[str, ~azure.communication.jobrouter.ChannelConfiguration]]
+        :paramtype channel_configurations: Optional[Dict[str,
+          ~azure.communication.jobrouter.models.ChannelConfiguration]]
 
         :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
         :paramtype available_for_offers: Optional[bool]
@@ -1186,7 +1192,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterWorker
-        :rtype: ~azure.communication.jobrouter.RouterWorker
+        :rtype: ~azure.communication.jobrouter.models.RouterWorker
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
 
@@ -1198,7 +1204,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
         :param router_worker: An instance of RouterWorker. This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
-        :type router_worker: ~azure.communication.jobrouter.RouterWorker
+        :type router_worker: ~azure.communication.jobrouter.models.RouterWorker
 
         :keyword queue_assignments: The queue(s) that this worker can receive work from.
         :paramtype queue_assignments: Optional[Dict[str, Union[~collections.abc.MutableMapping[str, Any], None]]]
@@ -1216,7 +1222,8 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
         :keyword channel_configurations: The channel(s) this worker can handle and their impact on the
          workers capacity.
-        :paramtype channel_configurations: Optional[Dict[str, ~azure.communication.jobrouter.ChannelConfiguration]]
+        :paramtype channel_configurations: Optional[Dict[
+          str, ~azure.communication.jobrouter.models.ChannelConfiguration]]
 
         :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
         :paramtype available_for_offers: Optional[bool]
@@ -1231,7 +1238,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterWorker
-        :rtype: ~azure.communication.jobrouter.RouterWorker
+        :rtype: ~azure.communication.jobrouter.models.RouterWorker
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1305,7 +1312,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
         :keyword state: If specified, select workers by worker status. Default value is "all".
           Accepted value(s): active, draining, inactive, all
-        :paramtype state: Optional[Union[str, ~azure.communication.jobrouter.RouterWorkerState, Literal["all"]]]
+        :paramtype state: Optional[Union[str, ~azure.communication.jobrouter.models.RouterWorkerState, Literal["all"]]]
 
         :keyword channel_id: If specified, select workers who have a channel configuration
            with this channel. Default value is None.
@@ -1322,7 +1329,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
 
         :return: An iterator like instance of RouterWorkerItem
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.RouterWorkerItem]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.models.RouterWorkerItem]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1428,7 +1435,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :param str id: Id of the job.
 
         :param router_job: An instance of RouterJob.
-        :type router_job: ~azure.communication.jobrouter.RouterJob
+        :type router_job: ~azure.communication.jobrouter.models.RouterJob
 
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
@@ -1440,7 +1447,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterJob
-        :rtype: ~azure.communication.jobrouter.RouterJob
+        :rtype: ~azure.communication.jobrouter.models.RouterJob
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1481,7 +1488,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
         :param router_job: An instance of RouterJob.  This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
-        :type router_job: ~azure.communication.jobrouter.RouterJob
+        :type router_job: ~azure.communication.jobrouter.models.RouterJob
 
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
@@ -1493,7 +1500,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterJob
-        :rtype: ~azure.communication.jobrouter.RouterJob
+        :rtype: ~azure.communication.jobrouter.models.RouterJob
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
 
@@ -1543,7 +1550,8 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
         :keyword requested_worker_selectors: A collection of manually specified label selectors, which
          a worker must satisfy in order to process this job.
-        :paramtype requested_worker_selectors: Optional[List[~azure.communication.jobrouter.RouterWorkerSelector]]
+        :paramtype requested_worker_selectors: Optional[List[
+          ~azure.communication.jobrouter.models.RouterWorkerSelector]]
 
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
@@ -1556,7 +1564,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :paramtype notes: Optional[Dict[~datetime.datetime, str]]
 
         :keyword matching_mode: If set, determines how a job will be matched
-        :paramtype matching_mode: Optional[~azure.communication.jobrouter.JobMatchingMode]
+        :paramtype matching_mode: Optional[~azure.communication.jobrouter.models.JobMatchingMode]
 
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
@@ -1568,7 +1576,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterJob
-        :rtype: ~azure.communication.jobrouter.RouterJob
+        :rtype: ~azure.communication.jobrouter.models.RouterJob
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
 
@@ -1580,7 +1588,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
         :param router_job: An instance of RouterJob.  This is a positional-only parameter.
           Please provide either this or individual keyword parameters.
-        :type router_job: ~azure.communication.jobrouter.RouterJob
+        :type router_job: ~azure.communication.jobrouter.models.RouterJob
 
         :keyword channel_reference: Reference to an external parent context, eg. call ID.
         :paramtype channel_reference: Optional[str]
@@ -1603,7 +1611,8 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
         :keyword requested_worker_selectors: A collection of manually specified label selectors, which
          a worker must satisfy in order to process this job.
-        :paramtype requested_worker_selectors: Optional[List[~azure.communication.jobrouter.RouterWorkerSelector]]
+        :paramtype requested_worker_selectors: Optional[List[
+          ~azure.communication.jobrouter.models.RouterWorkerSelector]]
 
         :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
          engines to make decisions.
@@ -1616,7 +1625,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :paramtype notes: Optional[Dict[~datetime.datetime, str]]
 
         :keyword matching_mode: If set, determines how a job will be matched
-        :paramtype matching_mode: Optional[~azure.communication.jobrouter.JobMatchingMode]
+        :paramtype matching_mode: Optional[~azure.communication.jobrouter.models.JobMatchingMode]
 
         :keyword if_unmodified_since: The request should only proceed if the entity was not modified
          after this time. Default value is None.
@@ -1628,7 +1637,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :paramtype match_condition: ~azure.core.MatchConditions
 
         :return: Instance of RouterJob
-        :rtype: ~azure.communication.jobrouter.RouterJob
+        :rtype: ~azure.communication.jobrouter.models.RouterJob
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1692,7 +1701,8 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :keyword status: If specified, filter jobs by status. Default value is "all".
             Accepted value(s): pendingClassification, queued, assigned, completed, closed, cancelled,
             classificationFailed, active, all
-        :paramtype status: Optional[Union[str, ~azure.communication.jobrouter.RouterJobStatus, Literal["all","active"]]]
+        :paramtype status: Optional[Union[
+          str, ~azure.communication.jobrouter.models.RouterJobStatus, Literal["all","active"]]]
 
         :keyword channel_id: If specified, filter jobs by channel. Default value is None.
         :paramtype channel_id: Optional[str]
@@ -1715,7 +1725,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :keyword Optional[int] results_per_page: The maximum number of results to be returned per page.
 
         :return: An iterator like instance of RouterJobItem
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.RouterJobItem]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.jobrouter.models.RouterJobItem]
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:
@@ -1960,7 +1970,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         :paramtype suspend_matching: Optional[bool]
 
         :return: Instance of UnassignJobResult
-        :rtype: ~azure.communication.jobrouter.UnassignJobResult
+        :rtype: ~azure.communication.jobrouter.models.UnassignJobResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         .. admonition:: Example:

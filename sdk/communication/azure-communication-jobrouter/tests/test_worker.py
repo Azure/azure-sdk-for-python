@@ -13,10 +13,11 @@ from _validators import RouterWorkerValidator
 from _decorators import RouterPreparers
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
-
 from azure.communication.jobrouter import (
     JobRouterClient,
     JobRouterAdministrationClient,
+)
+from azure.communication.jobrouter.models import (
     RoundRobinMode,
     RouterWorker,
     ChannelConfiguration,

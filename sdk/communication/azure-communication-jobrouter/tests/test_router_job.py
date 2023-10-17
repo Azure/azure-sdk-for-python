@@ -20,6 +20,8 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.communication.jobrouter import (
     JobRouterClient,
     JobRouterAdministrationClient,
+)
+from azure.communication.jobrouter.models import (
     RoundRobinMode,
     RouterWorker,
     ChannelConfiguration,

@@ -32,6 +32,8 @@ class DistributionPolicySamples(object):
         # [START create_distribution_policy]
         from azure.communication.jobrouter import (
             JobRouterAdministrationClient,
+        )
+        from azure.communication.jobrouter.models import (
             DistributionPolicy,
             LongestIdleMode,
         )
@@ -41,7 +43,7 @@ class DistributionPolicySamples(object):
         print("JobRouterAdministrationClient created successfully!")
 
         distribution_policy: DistributionPolicy = router_admin_client.create_distribution_policy(
-            distribution_policy_id=policy_id,
+            id=policy_id,
             distribution_policy=DistributionPolicy(
                 offer_expires_after_seconds=1 * 60,
                 mode=LongestIdleMode(min_concurrent_offers=1, max_concurrent_offers=1),
@@ -58,6 +60,8 @@ class DistributionPolicySamples(object):
         # [START update_distribution_policy]
         from azure.communication.jobrouter import (
             JobRouterAdministrationClient,
+        )
+        from azure.communication.jobrouter.models import (
             DistributionPolicy,
             RoundRobinMode,
         )
@@ -67,7 +71,7 @@ class DistributionPolicySamples(object):
         print("JobRouterAdministrationClient created successfully!")
 
         updated_distribution_policy: DistributionPolicy = router_admin_client.update_distribution_policy(
-            distribution_policy_id=policy_id, mode=RoundRobinMode(min_concurrent_offers=1, max_concurrent_offers=1)
+            id=policy_id, mode=RoundRobinMode(min_concurrent_offers=1, max_concurrent_offers=1)
         )
 
         print(f"Distribution policy successfully update with new distribution mode")
@@ -81,7 +85,7 @@ class DistributionPolicySamples(object):
 
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
-        distribution_policy = router_admin_client.get_distribution_policy(distribution_policy_id=policy_id)
+        distribution_policy = router_admin_client.get_distribution_policy(id=policy_id)
 
         print(f"Successfully fetched distribution policy with id: {distribution_policy.id}")
         # [END get_distribution_policy]
@@ -129,7 +133,7 @@ class DistributionPolicySamples(object):
 
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
-        router_admin_client.delete_distribution_policy(distribution_policy_id=policy_id)
+        router_admin_client.delete_distribution_policy(id=policy_id)
 
         # [END delete_distribution_policy]
 
