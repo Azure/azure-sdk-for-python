@@ -11,7 +11,7 @@ from azure.communication.jobrouter.aio import (
     JobRouterClient,
     JobRouterAdministrationClient,
 )
-from azure.communication.jobrouter import (
+from azure.communication.jobrouter.models import (
     RouterJobStatus,
 )
 from devtools_testutils import AzureRecordedTestCase

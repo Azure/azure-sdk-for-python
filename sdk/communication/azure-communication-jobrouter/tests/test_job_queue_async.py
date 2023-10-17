@@ -18,7 +18,7 @@ from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
 
 from azure.communication.jobrouter.aio import JobRouterAdministrationClient
-from azure.communication.jobrouter import (
+from azure.communication.jobrouter.models import (
     RoundRobinMode,
     DistributionPolicy,
     RouterQueue,

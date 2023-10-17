@@ -12,7 +12,7 @@ from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union,
 
 from router_test_constants import SANITIZED, FAKE_FUNCTION_URI, FAKE_ENDPOINT, FAKE_CONNECTION_STRING
 from azure.core.serialization import _datetime_as_isostr  # pylint:disable=protected-access
-from azure.communication.jobrouter import (
+from azure.communication.jobrouter.models import (
     BestWorkerMode,
     LongestIdleMode,
     RoundRobinMode,
