@@ -60,7 +60,7 @@ steps:
   - task: PythonScript@0
     displayName: 'Run Tests'
     inputs:
-      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
       arguments: >-
         "$(TargetingString)"
         ${{ parameters.AdditionalTestArgs }}
@@ -101,7 +101,7 @@ steps:
     displayName: 'Test Samples'
     condition: and(succeeded(), eq(variables['TestSamples'], 'true'))
     inputs:
-      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
       arguments: >-
         "$(TargetingString)"
         --service="${{ parameters.ServiceDirectory }}"

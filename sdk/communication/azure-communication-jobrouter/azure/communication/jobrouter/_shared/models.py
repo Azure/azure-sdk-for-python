@@ -272,9 +272,7 @@ class MicrosoftBotIdentifier:
         self.raw_id = kwargs.get("raw_id")
         self.properties = MicrosoftBotProperties(
             bot_id=bot_id,
-            is_resource_account_configured=kwargs.get(
-                "is_resource_account_configured", True
-            ),
+            is_resource_account_configured=kwargs.get("is_resource_account_configured", True),
             cloud=kwargs.get("cloud") or CommunicationCloudEnvironment.PUBLIC,
         )
         if self.raw_id is None:
@@ -317,9 +315,7 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: d
     :rtype: CommunicationIdentifier
     """
     if raw_id.startswith(PHONE_NUMBER_PREFIX):
-        return PhoneNumberIdentifier(
-            value=raw_id[len(PHONE_NUMBER_PREFIX) :], raw_id=raw_id
-        )  # type: ignore
+        return PhoneNumberIdentifier(value=raw_id[len(PHONE_NUMBER_PREFIX) :], raw_id=raw_id)  # type: ignore
 
     segments = raw_id.split(":", maxsplit=2)
     if len(segments) != 3:
@@ -335,9 +331,7 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: d
     prefix = f"{segments[0]}:{segments[1]}:"
     suffix = segments[2]
     if prefix == TEAMS_USER_ANONYMOUS_PREFIX:
-        return MicrosoftTeamsUserIdentifier(
-            user_id=suffix, is_anonymous=True, raw_id=raw_id
-        )  # type: ignore
+        return MicrosoftTeamsUserIdentifier(user_id=suffix, is_anonymous=True, raw_id=raw_id)  # type: ignore
     if prefix == TEAMS_USER_PUBLIC_CLOUD_PREFIX:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,

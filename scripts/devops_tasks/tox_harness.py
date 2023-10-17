@@ -19,7 +19,7 @@ from ci_tools.variables import in_ci
 from ci_tools.environment_exclusions import filter_tox_environment_string
 from ci_tools.ci_interactions import output_ci_warning
 from ci_tools.functions import build_whl_for_req, cleanup_directory
-from pkg_resources import parse_requirements, RequirementParseError
+from pkg_resources import parse_requirements
 import logging
 
 logging.getLogger().setLevel(logging.INFO)
@@ -255,7 +255,7 @@ def execute_tox_serial(tox_command_tuples):
     return return_code
 
 
-def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, options_array: List[str] = []) -> None:
+def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace) -> None:
     """
     Primary entry point for tox invocations during CI runs.
 
@@ -266,6 +266,7 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
         When invoking of "tox run -e whl -c ../../../eng/tox/tox.ini -- --suppress-no-test-exit-code", "--suppress-no-test-exit-code" the "--" will be
         passed directly to the pytest invocation.
     """
+    options_array: List[str] = []
     if parsed_args.wheel_dir:
         os.environ["PREBUILT_WHEEL_DIR"] = parsed_args.wheel_dir
 
