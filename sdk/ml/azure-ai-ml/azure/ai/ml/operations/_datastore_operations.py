@@ -17,6 +17,7 @@ from azure.ai.ml._restclient.v2022_10_01.models import (
     DatastoreSecrets,
     NoneDatastoreCredentials,
 )
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient2023_04_01_preview
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ComputeInstanceDataMount
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 
@@ -42,11 +43,13 @@ class DatastoreOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         serviceclient_2022_10_01: ServiceClient2022_10_01,
+        serviceclient_2023_04_01_preview: ServiceClient2023_04_01_preview,
         **kwargs: Dict,
     ):
         super(DatastoreOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation = serviceclient_2022_10_01.datastores
+        self._compute_operation = serviceclient_2023_04_01_preview.compute
         self._credential = serviceclient_2022_10_01._config.credential
         self._init_kwargs = kwargs
 
