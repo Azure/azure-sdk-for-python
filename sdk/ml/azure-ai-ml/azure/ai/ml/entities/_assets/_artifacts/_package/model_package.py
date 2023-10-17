@@ -8,7 +8,6 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import PackageRequest as DataPlanePackageRequest
 from azure.ai.ml._restclient.v2023_08_01_preview.models import CodeConfiguration
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ModelPackageInput as RestModelPackageInput
 from azure.ai.ml._restclient.v2023_08_01_preview.models import PackageInputPathId as RestPackageInputPathId
