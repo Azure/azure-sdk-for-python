@@ -148,7 +148,7 @@ class RouterJob(RouterJobGenerated):
             for k in [key for key in notes.keys()]:
                 v: str = notes[k]
                 if isinstance(k, str):
-                    datetime_as_dt: datetime = _convert_str_to_datetime(k)    # pylint:disable=protected-access
+                    datetime_as_dt: datetime.datetime = _convert_str_to_datetime(k)    # pylint:disable=protected-access
                     notes.pop(k)
                     datetime_as_str: str = _datetime_as_isostr(datetime_as_dt)    # pylint:disable=protected-access
                     notes[datetime_as_str] = v

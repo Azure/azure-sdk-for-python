@@ -1027,7 +1027,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
             worker_id: str,
             offer_id: str,
             *,
-            retry_offer_at: Optional[datetime] = None,
+            retry_offer_at: Optional[datetime.datetime] = None,
             **kwargs: Any
     ) -> None:
         """Declines an offer to work on a job.
@@ -1133,7 +1133,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         requested_worker_selectors: Optional[List[_models.RouterWorkerSelector]],
         labels: Optional[Dict[str, Union[int, float, str, bool, None]]],
         tags: Optional[Dict[str, Union[int, float, str, bool, None]]],
-        notes: Optional[Dict[datetime, str]],
+        notes: Optional[Dict[datetime.datetime, str]],
         matching_mode: Optional[_models.JobMatchingMode],
         **kwargs: Any
     ) -> _models.RouterJob:
@@ -1274,8 +1274,8 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
             channel_id: Optional[str] = None,
             queue_id: Optional[str] = None,
             classification_policy_id: Optional[str] = None,
-            scheduled_before: Optional[Union[str, datetime]] = None,
-            scheduled_after: Optional[Union[str, datetime]] = None,
+            scheduled_before: Optional[Union[str, datetime.datetime]] = None,
+            scheduled_after: Optional[Union[str, datetime.datetime]] = None,
             results_per_page: Optional[int] = None,
             **kwargs: Any
     ) -> AsyncIterable[_models.RouterJobItem]:
@@ -1361,7 +1361,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
         assignment_id: str,
         *,
         disposition_code: Optional[str] = None,
-        close_at: Optional[datetime] = None,
+        close_at: Optional[datetime.datetime] = None,
         note: Optional[str] = None,
         **kwargs: Any
     ) -> None:
