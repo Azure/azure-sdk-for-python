@@ -6,10 +6,7 @@
 
 import sys
 from datetime import datetime, timezone
-from typing import Any, Optional
-from urllib.parse import parse_qs
-
-from .shared_access_signature import QueryStringConstants
+from typing import Optional
 
 EPOCH_AS_FILETIME = 116444736000000000  # January 1, 1970 as MS filetime
 HUNDREDS_OF_NANOSECONDS = 10000000
@@ -62,13 +59,3 @@ def _filetime_to_datetime(filetime: str) -> Optional[datetime]:
 
     # Try RFC 1123 as backup
     return _rfc_1123_to_datetime(filetime)
-
-def _is_credential_sastoken(credential: Any) -> bool:
-    if not credential or not isinstance(credential, str):
-        return False
-
-    sas_values = QueryStringConstants.to_list()
-    parsed_query = parse_qs(credential.lstrip("?"))
-    if parsed_query and all(k in sas_values for k in parsed_query):
-        return True
-    return False
