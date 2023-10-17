@@ -14,7 +14,7 @@
       "windows-2022": {
         "OSVmImage": "MMS2022",
         "Pool": "azsdk-pool-mms-win-2022-general",
-        "AZURE_TEST_AGENT": "WINDOWS_2019_PYTHON36",
+        "AZURE_TEST_AGENT": "WINDOWS_2019_PYTHON39",
         "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "false"
       },
       "macos-11": {
@@ -24,7 +24,7 @@
         "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "false"
       }
     },
-    "PythonVersion": ["pypy3.7", "3.7", "3.8", "3.10", "3.11"],
+    "PythonVersion": ["pypy3.9", "3.7", "3.8", "3.10", "3.11"],
     "CoverageArg": "--disablecov",
     "TestSamples": "false"
   },
