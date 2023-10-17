@@ -10,7 +10,7 @@
                     "version": "5.1.2"
                 }
             },
-            "developmentDependency" : false
+            "developmentDependency" : true
         }
     ]
 }
