@@ -14,7 +14,7 @@ from azure.core.credentials import AzureKeyCredential
 
 from eventgrid_preparer import EventGridPreparer
 
-
+# TODO: Once functionality is added to service -- test parameterizing binary_mode
 class TestEGClientExceptions(AzureRecordedTestCase):
     def create_eg_client(self, endpoint, key):
         client = EventGridClient(
