@@ -313,6 +313,7 @@ class ComponentTranslatableMixin:
         :rtype: Output
         """
         pipeline_job_dict = pipeline_job_dict or {}
+        output_type = None
         if not pipeline_job_dict or output is None:
             try:
                 if isinstance(output, Output):
