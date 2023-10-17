@@ -50,7 +50,7 @@ class TestEGClientExceptions():
         assert request.headers.get("ce-source") == "source"
         assert request.headers.get("ce-subject") == "MySubject"
         assert request.headers.get("ce-type") == "Contoso.Items.ItemReceived"
-        assert request.headers.get("ce-extension1") == "value1"
+        assert request.headers.get("ce-extension").get("extension1") == "value1"
 
     def test_binary_request_format_with_extensions_and_datacontenttype(self):
         event = CloudEvent(
@@ -68,7 +68,7 @@ class TestEGClientExceptions():
         assert request.headers.get("ce-source") == "source"
         assert request.headers.get("ce-subject") == "MySubject"
         assert request.headers.get("ce-type") == "Contoso.Items.ItemReceived"
-        assert request.headers.get("ce-extension1") == "value1"
+        assert request.headers.get("ce-extension").get("extension1") == "value1"
 
     def test_complex_binary_request_format(self):
         test_class = MyTestClass("test")
@@ -87,5 +87,5 @@ class TestEGClientExceptions():
         assert request.headers.get("ce-source") == "source"
         assert request.headers.get("ce-subject") == "MySubject"
         assert request.headers.get("ce-type") == "Contoso.Items.ItemReceived"
-        assert request.headers.get("ce-extension1") == "value1"
+        assert request.headers.get("ce-extension").get("extension1") == "value1"
         
