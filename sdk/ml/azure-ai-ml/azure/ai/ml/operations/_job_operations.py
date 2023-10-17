@@ -27,7 +27,7 @@ from azure.ai.ml._restclient.dataset_dataplane import AzureMachineLearningWorksp
 from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataplane
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningWorkspaces as ServiceClient102023
+from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningWorkspaces as AMLServiceClient
 from azure.ai.ml._restclient.v2023_10_01.models import JobBase
 from azure.ai.ml._restclient.v2023_10_01.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2023_10_01.models import ListViewType, UserIdentity
@@ -152,7 +152,7 @@ class JobOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: ServiceClient102023,
+        service_client: AMLServiceClient,
         all_operations: OperationsContainer,
         credential: TokenCredential,
         **kwargs: Any,
