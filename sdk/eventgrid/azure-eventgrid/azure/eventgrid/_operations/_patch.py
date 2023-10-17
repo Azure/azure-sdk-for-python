@@ -286,7 +286,10 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
     binary_mode = kwargs.pop("binary_mode", True)
 
     # Content of the request is the data
-    _content = json.dumps(base64.b64encode(event.data), cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+    if isinstance(event.data, bytes):
+        _content = json.dumps(base64.b64encode(event.data), cls=AzureJSONEncoder, exclude_readonly=True)
+    else:
+        _content = json.dumps(event.data, cls=AzureJSONEncoder, exclude_readonly=True).encode("utf-8")
 
     # content_type must be CloudEvent DataContentType when in binary mode
     default_content_type = kwargs.pop('content_type', _headers.pop('content-type', "application/cloudevents+json; charset=utf-8"))
