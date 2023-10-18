@@ -59,30 +59,53 @@ def get_api_version(kwargs: Dict[str, Any], default: str) -> str:
     return api_version or default
 
 
-class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
-    def __init__(  # pylint: disable=too-many-statements
+class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
+    """Base class for TableClient
+
+    :ivar str account_name: The name of the Tables account.
+    :ivar str scheme: The scheme component in the full URL to the Tables account.
+    :ivar str url: The storage endpoint.
+    :ivar str api_version: The service API version.
+    """
+
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential, too-many-statements
         self,
-        account_url: str,
-        credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = None,
+        endpoint: str,
+        *,
+        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]] = None,
         **kwargs: Any,
     ) -> None:
+        """Create TablesBaseClient from a Credential.
+
+        :param str endpoint: A URL to an Azure Tables account.
+        :keyword credential:
+            The credentials with which to authenticate. This is optional if the
+            account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
+            AzureSasCredential (azure-core), or a TokenCredential implementation from azure-identity.
+        :paramtype credential:
+            ~azure.core.credentials.AzureNamedKeyCredential or
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials.TokenCredential or None
+        :keyword api_version: Specifies the version of the operation to use for this request. Default value
+            is "2019-02-02".
+        :paramtype api_version: str or None
+        """
         try:
-            if not account_url.lower().startswith("http"):
-                account_url = "https://" + account_url
+            if not endpoint.lower().startswith("http"):
+                endpoint = "https://" + endpoint
         except AttributeError as exc:
             raise ValueError("Account URL must be a string.") from exc
-        parsed_url = urlparse(account_url.rstrip("/"))
+        parsed_url = urlparse(endpoint.rstrip("/"))
         if not parsed_url.netloc:
-            raise ValueError(f"Invalid URL: {account_url}")
+            raise ValueError(f"Invalid URL: {endpoint}")
 
         _, sas_token = parse_query(parsed_url.query)
         if not sas_token and not credential:
             raise ValueError("You need to provide either an AzureSasCredential or AzureNamedKeyCredential")
         self._query_str, credential = format_query_string(sas_token, credential)
-        self._location_mode: str = kwargs.get("location_mode", LocationMode.PRIMARY)
-        self.scheme: str = parsed_url.scheme
+        self._location_mode = kwargs.get("location_mode", LocationMode.PRIMARY)
+        self.scheme = parsed_url.scheme
         self._cosmos_endpoint = _is_cosmos_endpoint(parsed_url)
-        self.account_name: Optional[str] = None
         if ".core." in parsed_url.netloc or ".cosmos." in parsed_url.netloc:
             account = parsed_url.netloc.split(".table.core.")
             if "cosmos" in parsed_url.netloc:
@@ -98,12 +121,12 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
                 account = parsed_url.netloc.split(".table.core.")
                 self.account_name = account[0] if len(account) > 1 else None
 
-        secondary_hostname: str = ""
-        self.credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = credential
+        secondary_hostname = None
+        self.credential = credential
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
-        if isinstance(self.credential, AzureNamedKeyCredential):
-            self.account_name = self.credential.named_key.name
+        if hasattr(self.credential, "named_key"):
+            self.account_name = self.credential.named_key.name  # type: ignore
             endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
             secondary_hostname = f"{self.account_name}-secondary.table.{endpoint_suffix}"
 
@@ -126,35 +149,12 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         if self._cosmos_endpoint:
             self._policies.insert(0, CosmosPatchTransformPolicy())
 
-        self._api_version = get_api_version(kwargs, "2019-02-02")
+        self._policies = self._configure_policies(hosts=self._hosts, **kwargs)
+        if self._cosmos_endpoint:
+            self._policies.insert(0, CosmosPatchTransformPolicy())
 
-    def _format_url(self, hostname):
-        """Format the endpoint URL according to the current location
-        mode hostname.
-
-        :param str hostname: The current location mode hostname.
-        :returns: The full URL to the Tables account.
-        :rtype: str
-        """
-        return f"{self.scheme}://{hostname}{self._query_str}"
-
-    def _configure_policies(self, **kwargs):
-        credential_policy = _configure_credential(self.credential)
-        return [
-            RequestIdPolicy(**kwargs),
-            StorageHeadersPolicy(**kwargs),
-            UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
-            ProxyPolicy(**kwargs),
-            credential_policy,
-            ContentDecodePolicy(response_encoding="utf-8"),
-            RedirectPolicy(**kwargs),
-            StorageHosts(**kwargs),
-            TablesRetryPolicy(**kwargs),
-            CustomHookPolicy(**kwargs),
-            NetworkTraceLoggingPolicy(**kwargs),
-            DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
-        ]
+        self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), **kwargs)
+        self._client._config.version = get_api_version(kwargs, self._client._config.version)  # type: ignore[assignment] # Incompatible assignment when assigning a str value to a Literal type variable
 
     @property
     def url(self) -> str:
@@ -220,44 +220,7 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         :return: The Storage API version.
         :type: str
         """
-        return self._api_version
-
-
-class TablesBaseClient(AccountHostsMixin):
-    """Base class for TableClient
-
-    :ivar str account_name: The name of the Tables account.
-    :ivar str scheme: The scheme component in the full URL to the Tables account.
-    :ivar str url: The storage endpoint.
-    :ivar str api_version: The service API version.
-    """
-
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self,
-        endpoint: str,
-        *,
-        credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]] = None,
-        **kwargs: Any,
-    ) -> None:
-        """Create TablesBaseClient from a Credential.
-
-        :param str endpoint: A URL to an Azure Tables account.
-        :keyword credential:
-            The credentials with which to authenticate. This is optional if the
-            account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
-            AzureSasCredential (azure-core), or a TokenCredential implementation from azure-identity.
-        :paramtype credential:
-            ~azure.core.credentials.AzureNamedKeyCredential or
-            ~azure.core.credentials.AzureSasCredential or
-            ~azure.core.credentials.TokenCredential or None
-        :keyword api_version: Specifies the version of the operation to use for this request. Default value
-            is "2019-02-02".
-        :paramtype api_version: str or None
-        """
-        super(TablesBaseClient, self).__init__(endpoint, credential=credential, **kwargs)
-        self._client = AzureTable(
-            self.url, policies=kwargs.pop("policies", self._policies), version=self._api_version, **kwargs
-        )
+        return self._client._config.version
 
     def __enter__(self) -> Self:
         self._client.__enter__()
@@ -265,6 +228,34 @@ class TablesBaseClient(AccountHostsMixin):
 
     def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)
+
+    def _format_url(self, hostname):
+        """Format the endpoint URL according to the current location
+        mode hostname.
+
+        :param str hostname: The current location mode hostname.
+        :returns: The full URL to the Tables account.
+        :rtype: str
+        """
+        return f"{self.scheme}://{hostname}{self._query_str}"
+
+    def _configure_policies(self, **kwargs):
+        credential_policy = _configure_credential(self.credential)
+        return [
+            RequestIdPolicy(**kwargs),
+            StorageHeadersPolicy(**kwargs),
+            UserAgentPolicy(sdk_moniker=SDK_MONIKER, **kwargs),
+            ProxyPolicy(**kwargs),
+            credential_policy,
+            ContentDecodePolicy(response_encoding="utf-8"),
+            RedirectPolicy(**kwargs),
+            StorageHosts(**kwargs),
+            TablesRetryPolicy(**kwargs),
+            CustomHookPolicy(**kwargs),
+            NetworkTraceLoggingPolicy(**kwargs),
+            DistributedTracingPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs),
+        ]
 
     def _batch_send(self, table_name: str, *reqs: HttpRequest, **kwargs) -> List[Mapping[str, Any]]:
         # pylint:disable=docstring-should-be-keyword
