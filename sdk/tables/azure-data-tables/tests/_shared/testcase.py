@@ -101,9 +101,8 @@ class TableTestCase(object):
     def generate_fake_token_credential(self):
         return FakeTokenCredential()
 
-    def set_datetime_variable(self, variables, name, dt):
-        dt_string = variables.setdefault(name, dt.isoformat())
-        return datetime.strptime(dt_string, "%Y-%m-%dT%H:%M:%S.%f")
+    def get_datetime(self):
+        return datetime(year=2022, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc)
     
     def set_uuid_variable(self, variables, name, uuid_param):
         uuid_string = variables.setdefault(name, str(uuid_param))

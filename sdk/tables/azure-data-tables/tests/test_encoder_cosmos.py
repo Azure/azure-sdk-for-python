@@ -16,7 +16,6 @@ from math import isnan
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import RequestsTransport
 from azure.data.tables import TableClient, EdmType, EntityProperty, UpdateMode
-from azure.data.tables._base_client import _DEV_CONN_STRING
 from azure.data.tables._common_conversion import _encode_base64, _to_utc_datetime
 from azure.data.tables._serialize import _add_entity_properties
 
@@ -202,7 +201,6 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_encoder_create_entity_complex_keys(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.utcnow())
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable02")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -216,7 +214,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
         client.create_table()
         try:
             test_entity = {
-                "PartitionKey": recorded_timestamp,
+                "PartitionKey": self.get_datetime(),
                 "RowKey": recorded_uuid,
             }
             expected_entity = {
@@ -261,7 +259,6 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_encoder_create_entity_type_conversion(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.utcnow())
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable03")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -280,7 +277,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data1": 12345,
                 "Data2": False,
                 "Data3": b"testdata",
-                "Data4": recorded_timestamp,
+                "Data4": self.get_datetime(),
                 "Data5": recorded_uuid,
                 "Data6": "Foobar",
                 "Data7": 3.14,
@@ -453,7 +450,6 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_encoder_create_entity_raw(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.utcnow())
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable05")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -466,7 +462,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
         )
         client.create_table()
         try:
-            dt = recorded_timestamp
+            dt = self.get_datetime()
             guid = recorded_uuid
             test_entity = {
                 "PartitionKey": "PK",
@@ -879,7 +875,6 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_encoder_upsert_entity_complex_keys(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.utcnow())
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable08")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -893,7 +888,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
         client.create_table()
         try:
             test_entity = {
-                "PartitionKey": recorded_timestamp,
+                "PartitionKey": self.get_datetime(),
                 "RowKey": recorded_uuid,
                 "Data": True,
             }
@@ -997,7 +992,6 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_encoder_upsert_entity_type_conversion(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.utcnow())
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable09")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -1016,7 +1010,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data1": 12345,
                 "Data2": False,
                 "Data3": b"testdata",
-                "Data4": recorded_timestamp,
+                "Data4": self.get_datetime(),
                 "Data5": recorded_uuid,
                 "Data6": "Foobar",
                 "Data7": 3.14,
@@ -1237,7 +1231,6 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_encoder_upsert_entity_raw(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.utcnow())
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable11")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -1250,7 +1243,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
         )
         client.create_table()
         try:
-            dt = recorded_timestamp
+            dt = self.get_datetime()
             guid = recorded_uuid
             test_entity = {
                 "PartitionKey": "PK",
@@ -1876,7 +1869,6 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_encoder_update_entity_complex_keys(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.utcnow())
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable14")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -1890,7 +1882,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
         client.create_table()
         try:
             test_entity = {
-                "PartitionKey": recorded_timestamp,
+                "PartitionKey": self.get_datetime(),
                 "RowKey": recorded_uuid,
                 "Data": True,
             }
@@ -2000,7 +1992,6 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_encoder_update_entity_type_conversion(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.utcnow())
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable15")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -2019,7 +2010,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 "Data1": 12345,
                 "Data2": False,
                 "Data3": b"testdata",
-                "Data4": recorded_timestamp,
+                "Data4": self.get_datetime(),
                 "Data5": recorded_uuid,
                 "Data6": "Foobar",
                 "Data7": 3.14,
@@ -2249,7 +2240,6 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_encoder_update_entity_raw(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.utcnow())
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable17")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -2262,7 +2252,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
         )
         client.create_table()
         try:
-            dt = recorded_timestamp
+            dt = self.get_datetime()
             guid = recorded_uuid
             test_entity = {
                 "PartitionKey": "PK",
@@ -2852,7 +2842,6 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_encoder_delete_entity_complex_keys(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.utcnow())
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable20")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -2865,9 +2854,9 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
         )
 
         with pytest.raises(TypeError):
-            client.delete_entity("foo", recorded_timestamp)
+            client.delete_entity("foo", self.get_datetime())
         with pytest.raises(TypeError):
-            client.delete_entity({"PartitionKey": "foo", "RowKey": recorded_timestamp})
+            client.delete_entity({"PartitionKey": "foo", "RowKey": self.get_datetime()})
         with pytest.raises(TypeError):
             client.delete_entity("foo", recorded_uuid)
         with pytest.raises(TypeError):
@@ -3010,7 +2999,6 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_encoder_get_entity_complex_keys(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.utcnow())
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable24")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -3023,7 +3011,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
         )
 
         with pytest.raises(TypeError):
-            client.get_entity("foo", recorded_timestamp)
+            client.get_entity("foo", self.get_datetime())
         with pytest.raises(TypeError):
             client.get_entity("foo", recorded_uuid)
         with pytest.raises(TypeError):
