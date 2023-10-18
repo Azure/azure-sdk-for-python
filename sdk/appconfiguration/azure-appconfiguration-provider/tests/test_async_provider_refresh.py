@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import time
 import unittest
-from unittest.mock import AsyncMock
+from unittest import mock
 from azure.appconfiguration.provider import SettingSelector, SentinelKey
 from azure.appconfiguration.provider.aio import load
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -19,7 +19,7 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
-        mock_callback = AsyncMock()
+        mock_callback = mock.AsyncMock()
         async with await self.create_aad_client(
             appconfiguration_endpoint_string,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
@@ -71,7 +71,7 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     async def test_empty_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
-        mock_callback = AsyncMock()
+        mock_callback = mock.AsyncMock()
         async with await self.create_aad_client(
             appconfiguration_endpoint_string,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
