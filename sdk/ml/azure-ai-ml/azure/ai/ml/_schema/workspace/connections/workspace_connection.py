@@ -17,7 +17,7 @@ from azure.ai.ml._schema.workspace.connections.credentials import (
     ServicePrincipalConfigurationSchema,
     UsernamePasswordConfigurationSchema,
     AccessKeyConfigurationSchema,
-    ApiKeyConfigurationSchema
+    ApiKeyConfigurationSchema,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
 
@@ -43,7 +43,7 @@ class WorkspaceConnectionSchema(ResourceSchema):
         casing_transform=camel_to_snake,
         required=True,
     )
-    
+
     target = fields.Str(required=False, allow_none=True)
     endpoint = fields.Str(required=False, allow_none=True)
     api_base = fields.Str(required=False, allow_none=True)
@@ -63,8 +63,6 @@ class WorkspaceConnectionSchema(ResourceSchema):
     api_type = fields.Str(required=False, allow_none=True)
     api_version = fields.Str(required=False, allow_none=True)
     kind = fields.Str(required=False, allow_none=True)
-
-    
 
     @post_load
     def make(self, data, **kwargs):

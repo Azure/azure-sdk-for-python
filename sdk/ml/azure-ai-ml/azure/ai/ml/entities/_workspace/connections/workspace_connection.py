@@ -91,7 +91,7 @@ class WorkspaceConnection(Resource):
         self,
         *,
         target: Optional[str] = None,
-        #tags: Optional[Dict[str, str]] = None,
+        # tags: Optional[Dict[str, str]] = None,
         # TODO : Check if this is okay since it shadows builtin-type type
         type: str,  # pylint: disable=redefined-builtin
         credentials: Union[
@@ -101,7 +101,7 @@ class WorkspaceConnection(Resource):
             ManagedIdentityConfiguration,
             ServicePrincipalConfiguration,
             AccessKeyConfiguration,
-            ApiKeyConfiguration
+            ApiKeyConfiguration,
         ],
         api_version: Optional[str] = None,
         api_type: Optional[str] = None,
@@ -110,7 +110,7 @@ class WorkspaceConnection(Resource):
         kind: Optional[str] = None,
         **kwargs,
     ):
-        super().__init__( **kwargs)
+        super().__init__(**kwargs)
 
         self.type = type
 
@@ -129,12 +129,11 @@ class WorkspaceConnection(Resource):
                 target=ErrorTarget.FEATURE_SET,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        
+
         self._credentials = credentials
         self._api_version = api_version
         self._api_type = api_type
         self._kind = kind
-
 
     @property
     def type(self) -> str:
@@ -164,7 +163,7 @@ class WorkspaceConnection(Resource):
         :rtype: str
         """
         return self._target
-    
+
     @property
     def endpoint(self) -> str:
         """Endpoint url for the workspace connection.
@@ -173,7 +172,6 @@ class WorkspaceConnection(Resource):
         :rtype: str
         """
         return self._target
-    
 
     @property
     def api_base(self) -> str:
@@ -194,7 +192,7 @@ class WorkspaceConnection(Resource):
         ManagedIdentityConfiguration,
         ServicePrincipalConfiguration,
         AccessKeyConfiguration,
-        ApiKeyConfiguration
+        ApiKeyConfiguration,
     ]:
         """Credentials for workspace connection.
 
@@ -207,7 +205,7 @@ class WorkspaceConnection(Resource):
         ]
         """
         return self._credentials
-    
+
     @property
     def api_version(self) -> str:
         """The API version of the workspace connection.
@@ -225,7 +223,7 @@ class WorkspaceConnection(Resource):
         :rtype: str
         """
         return self._api_type
-    
+
     @property
     def kind(self) -> str:
         """The kind of the workspace connection.
@@ -234,7 +232,6 @@ class WorkspaceConnection(Resource):
         :rtype: str
         """
         return self._kind
-
 
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the workspace connection spec into a file in yaml format.
@@ -347,7 +344,7 @@ class WorkspaceConnection(Resource):
 
         tags = {}
         if self.tags is not None:
-            for k,v in self.tags.items():
+            for k, v in self.tags.items():
                 tags[k] = v
         if self._api_version is not None:
             tags[API_VERSION_KEY] = self._api_version
@@ -355,8 +352,6 @@ class WorkspaceConnection(Resource):
             tags[API_TYPE_KEY] = self._api_type
         if self._kind is not None:
             tags[KIND_KEY] = self._kind
-
-
 
         properties = workspace_connection_properties_class(
             target=self.target,
