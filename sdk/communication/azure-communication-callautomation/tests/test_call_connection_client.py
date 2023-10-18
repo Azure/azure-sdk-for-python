@@ -156,6 +156,7 @@ class TestCallConnectionClient(unittest.TestCase):
 
         response = call_connection.add_participant(
             target_participant=user,
+            voip_headers={"foo": "bar"},
             source_display_name="baz",
             invitation_timeout=10,
             operation_context="operationContext")
@@ -164,6 +165,7 @@ class TestCallConnectionClient(unittest.TestCase):
 
         response = call_connection.add_participant(
             user,
+            voip_headers={"foo": "bar"},
             source_display_name="baz"
         )
         self.assertEqual(self.communication_user_id, response.participant.identifier.raw_id)
