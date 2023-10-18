@@ -53,6 +53,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -67,7 +68,6 @@ setup(
     python_requires=">=3.8",
     install_requires=[
         "requests>=2.18.4",
-        "six>=1.11.0",
         "typing-extensions>=4.6.0",
     ],
     extras_require={
