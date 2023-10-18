@@ -29,10 +29,10 @@ class AutoMLImage(AutoMLVertical, ABC):
         **kwargs,
     ) -> None:
         """Base class for all AutoML Image jobs.
-        You should not instantiate this class directly. 
+        You should not instantiate this class directly.
         Instead you should create classes for specific AutoML Image tasks.
 
-        :param task_type: Required. Type of task to run. 
+        :param task_type: Required. Type of task to run.
         Possible values include: "ImageClassification", "ImageClassificationMultilabel",
                                   "ImageObjectDetection", "ImageInstanceSegmentation"
         :type task_type: str
@@ -69,7 +69,7 @@ class AutoMLImage(AutoMLVertical, ABC):
     @log_verbosity.setter
     def log_verbosity(self, value: Union[str, LogVerbosity]):
         """Sets the verbosity of the logger.
-        value: The value to set the log verbosity to.
+        :param value: The value to set the log verbosity to.
         Possible values include: "NotSet", "Debug", "Info", "Warning", "Error", "Critical".
         :type value: Union[str, ~azure.ai.ml._restclient.v2023_04_01_preview.models.LogVerbosity]
         """
@@ -136,13 +136,13 @@ class AutoMLImage(AutoMLVertical, ABC):
         validation_data_size: Optional[float] = None,
     ) -> None:
         """Data settings for all AutoML Image jobs.
-        :param training_data: Required. Training data.
+        :keyword training_data: Required. Training data.
         :type training_data: ~azure.ai.ml.entities.Input
-        :param target_column_name: Required. Target column name.
+        :keyword target_column_name: Required. Target column name.
         :type target_column_name: str
-        :param validation_data: Optional. Validation data.
+        :keyword validation_data: Optional. Validation data.
         :type validation_data: Optional[~azure.ai.ml.entities.Input]
-        :param validation_data_size: Optional. The fraction of training dataset that needs to be set aside for
+        :keyword validation_data_size: Optional. The fraction of training dataset that needs to be set aside for
         validation purpose. Values between (0.0 , 1.0). Applied when validation dataset is not provided.
         :type validation_data_size: Optional[float]
         :return: None
@@ -160,11 +160,11 @@ class AutoMLImage(AutoMLVertical, ABC):
         timeout_minutes: Optional[int] = None,
     ) -> None:
         """Limit settings for all AutoML Image Jobs.
-        :param max_concurrent_trials: Maximum number of trials to run concurrently.
+        :keyword max_concurrent_trials: Maximum number of trials to run concurrently.
         :type max_concurrent_trials: Optional[int]
-        :param max_trials: Maximum number of trials to run.
+        :keyword max_trials: Maximum number of trials to run.
         :type max_trials: Optional[int]
-        :param timeout_minutes: AutoML job timeout.
+        :keyword timeout_minutes: AutoML job timeout.
         :type timeout_minutes: ~datetime.timedelta
         :return: None
         """
@@ -185,12 +185,12 @@ class AutoMLImage(AutoMLVertical, ABC):
     ) -> None:
         """Sweep settings for all AutoML Image jobs.
 
-        :param sampling_algorithm: Required. [Required] Type of the hyperparameter sampling
+        :keyword sampling_algorithm: Required. [Required] Type of the hyperparameter sampling
             algorithms. Possible values include: "Grid", "Random", "Bayesian".
         :type sampling_algorithm: Union[str, ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.RANDOM,
             ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.GRID,
             ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.BAYESIAN]
-        :param early_termination: Type of early termination policy.
+        :keyword early_termination: Type of early termination policy.
         :type early_termination: Union[
             ~azure.mgmt.machinelearningservices.models.BanditPolicy,
             ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
@@ -204,7 +204,7 @@ class AutoMLImage(AutoMLVertical, ABC):
 
         self._sweep.early_termination = early_termination or self._sweep.early_termination
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: any) -> bool:
         """Compares two AutoMLImage objects for equality.
         :param other: The other AutoMLImage object to compare to.
         :type other: ~azure.ai.ml.automl.AutoMLImage
@@ -223,7 +223,7 @@ class AutoMLImage(AutoMLVertical, ABC):
             and self._sweep == other._sweep
         )
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: any) -> bool:
         """Compares two AutoMLImage objects for inequality.
         :param other: The other AutoMLImage object to compare to.
         "type other: ~azure.ai.ml.automl.AutoMLImage

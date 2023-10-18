@@ -40,7 +40,7 @@ class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
         :type primary_metric: Optional[str, azure.ai.ml.automl.InstanceSegmentationPrimaryMetrics]
         :param kwargs: Job-specific arguments
         :type kwargs: Dict[str, Any]
-        
+
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/ml_samples_automl_image.py

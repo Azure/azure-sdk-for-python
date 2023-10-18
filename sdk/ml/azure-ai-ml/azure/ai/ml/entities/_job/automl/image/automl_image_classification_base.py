@@ -62,7 +62,8 @@ class AutoMLImageClassificationBase(AutoMLImage):
         """Setting Image training parameters for AutoML Image Classification and Image Classification Multilabel tasks.
         :param value: Training parameters for AutoML Image Classification and Image Classification Multilabel tasks.
         :type value: Union[Dict, ~azure.ai.ml.automl.ImageModelSettingsClassification]
-        :raises ~azure.ml.exceptions.ValidationException if value is not a dictionary or ImageModelSettingsClassification.
+        :raises ~azure.ml.exceptions.ValidationException if value is not a dictionary or
+         ImageModelSettingsClassification.
         :return: None
         """
         if value is None:

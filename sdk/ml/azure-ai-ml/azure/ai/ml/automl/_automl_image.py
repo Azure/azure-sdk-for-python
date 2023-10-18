@@ -101,7 +101,7 @@ def image_classification(
 
     :return: Image classification job object that can be submitted to an Azure ML compute for execution.
     :rtype: azure.ai.ml.automl.ImageClassificationJob
-    
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/ml_samples_automl_image.py
@@ -163,7 +163,7 @@ def image_classification_multilabel(
 
     :return: Image multi-label classification job object that can be submitted to an Azure ML compute for execution.
     :rtype: azure.ai.ml.automl.ImageClassificationMultilabelJob
-    
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/ml_samples_automl_image.py
@@ -224,7 +224,7 @@ def image_object_detection(
 
     :return: Image object detection job object that can be submitted to an Azure ML compute for execution.
     :rtype: azure.ai.ml.automl.ImageObjectDetectionJob
-    
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/ml_samples_automl_image.py

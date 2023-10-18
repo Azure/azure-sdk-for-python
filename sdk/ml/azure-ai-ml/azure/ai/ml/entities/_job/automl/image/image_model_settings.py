@@ -646,7 +646,7 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
             :end-before: [END automl.image_object_detection_model_settings]
             :language: python
             :dedent: 8
-            :caption: Defining the automl image object detecttion or instance segmentation model settings.
+            :caption: Defining the automl image object detection or instance segmentation model settings.
     """
 
     def __init__(
