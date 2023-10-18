@@ -167,10 +167,6 @@ class AioHttpTransport(AsyncHttpTransport):
             if cert:
                 ssl_ctx.load_cert_chain(*cert)
             return ssl_ctx
-        if verify:
-            import ssl
-
-            return ssl.create_default_context()
         return verify
 
     def _get_request_data(self, request):
@@ -264,10 +260,13 @@ class AioHttpTransport(AsyncHttpTransport):
                     break
 
         response: Optional[Union[AsyncHttpResponse, RestAsyncHttpResponse]] = None
-        config["ssl"] = self._build_ssl_config(
+        ssl = self._build_ssl_config(
             cert=config.pop("connection_cert", self.connection_config.cert),
             verify=config.pop("connection_verify", self.connection_config.verify),
         )
+        # Is ssl=True, we just use default ssl context from aiohttp
+        if ssl is not True:
+            config["ssl"] = ssl
         # If we know for sure there is not body, disable "auto content type"
         # Otherwise, aiohttp will send "application/octet-stream" even for empty POST request
         # and that break services like storage signature
