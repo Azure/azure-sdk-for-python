@@ -13,7 +13,7 @@ class DeprecatedEnumMeta(CaseInsensitiveEnumMeta):
     def __getattribute__(cls, item):
         if item == "MICROSOFT_BOT":
             warnings.warn("MICROSOFT_BOT is deprecated and should not be used.", DeprecationWarning)
-        return EnumMeta.__getattribute__(cls, item)
+        return CaseInsensitiveEnumMeta.__getattribute__(cls, item)
 
 class CommunicationIdentifierKind(str, Enum, metaclass=DeprecatedEnumMeta):
     """Communication Identifier Kind.
