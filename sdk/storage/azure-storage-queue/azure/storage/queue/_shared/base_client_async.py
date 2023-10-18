@@ -40,7 +40,7 @@ from .response_handlers import PartialBatchErrorException, process_storage_error
 from .shared_access_signature import QueryStringConstants
 
 if TYPE_CHECKING:
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse  # pylint: disable=C4756
 _LOGGER = logging.getLogger(__name__)
 
 _SERVICE_PARAMS = {
