@@ -159,7 +159,7 @@ class SearchClient(HeadersMixin):
         query_answer_count: Optional[int] = None,
         query_answer_threshold: Optional[float] = None,
         query_caption: Optional[Union[str, QueryCaptionType]] = None,
-        query_caption_highlight: Optional[bool] = None,
+        query_caption_highlight_enabled: Optional[bool] = None,
         semantic_configuration_name: Optional[str] = None,
         select: Optional[List[str]] = None,
         skip: Optional[int] = None,
@@ -229,7 +229,7 @@ class SearchClient(HeadersMixin):
          query returns captions extracted from key passages in the highest ranked documents.
          Defaults to 'None'. Possible values include: "none", "extractive".
         :paramtype query_caption: str or ~azure.search.documents.models.QueryCaptionType
-        :keyword bool query_caption_highlight: This parameter is only valid if the query type is 'semantic' when
+        :keyword bool query_caption_highlight_enabled: This parameter is only valid if the query type is 'semantic' when
          query caption is set to 'extractive'. Determines whether highlighting is enabled.
          Defaults to 'true'.
         :keyword semantic_configuration_name: The name of the semantic configuration that will be used when
@@ -304,8 +304,8 @@ class SearchClient(HeadersMixin):
         answers = answers if not query_answer_threshold else "{}|threshold-{}".format(answers, query_answer_threshold)
         captions = (
             query_caption
-            if not query_caption_highlight
-            else "{}|highlight-{}".format(query_caption, query_caption_highlight)
+            if not query_caption_highlight_enabled
+            else "{}|highlight-{}".format(query_caption, query_caption_highlight_enabled)
         )
         semantic_configuration = semantic_configuration_name
 
