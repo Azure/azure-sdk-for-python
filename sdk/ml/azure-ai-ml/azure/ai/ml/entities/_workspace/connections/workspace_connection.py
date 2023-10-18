@@ -26,7 +26,13 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
 from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, dump_yaml_to_file
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.constants._common import (
+    BASE_PATH_CONTEXT_KEY,
+    PARAMS_OVERRIDE_KEY,
+    API_VERSION_KEY,
+    API_TYPE_KEY,
+    KIND_KEY,
+)
 from azure.ai.ml.entities._credentials import (
     AccessKeyConfiguration,
     ApiKeyConfiguration,
@@ -39,6 +45,7 @@ from azure.ai.ml.entities._credentials import (
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 
 @experimental
@@ -49,7 +56,14 @@ class WorkspaceConnection(Resource):
     :param name: Name of the workspace connection.
     :type name: str
     :param target: The URL or ARM resource ID of the external resource.
+        Exactly one of this, endpoint, or api_base must be set.
     :type target: str
+    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :type tags: dict
+    :param type: The category of external resource for this connection.
+    :type type: The type of workspace connection, possible values are: "git", "python_feed", "container_registry",
+        "feature_store", "s3", "snowflake", "azure_sql_db", "azure_synapse_analytics", "azure_my_sql_db",
+        "azure_postgres_db", "azure_open_ai", "cognitive_search", "cognitive_service"
     :param credentials: The credentials for authenticating to the external resource.
     :type credentials: Union[
         ~azure.ai.ml.entities.PatTokenConfiguration, ~azure.ai.ml.entities.SasTokenConfiguration,
@@ -57,16 +71,27 @@ class WorkspaceConnection(Resource):
         ~azure.ai.ml.entities.ServicePrincipalConfiguration, ~azure.ai.ml.entities.AccessKeyConfiguration,
         ~azure.ai.ml.entities.ApiKeyConfiguration
         ]
-    :param type: The category of external resource for this connection.
-    :type type: The type of workspace connection, possible values are: "git", "python_feed", "container_registry",
-        "feature_store", "s3", "snowflake", "azure_sql_db", "azure_synapse_analytics", "azure_my_sql_db",
-        "azure_postgres_db", "azure_open_ai", "cognitive_search", "cognitive_service"
+    :param api_version: The api version that this connection was created for. Only applies to certain connection types.
+    :type api_version: str
+    :param api_type: The api type that this connection was created for. Only applies to certain connection types.
+    :type api_type: str
+    :param kind: ???
+    :type kind: str
+    :param endpoint: Alternate name for the target for certain connection types.
+        Should not be used in conjunction with target or api_base.
+    :type endpoint: str
+    :param api_base: Alternate name for the target for certain connection types.
+        Should not be used in conjunction with target or endpoint.
+    :type api_base: str
+    :param kind: The kind of the connection. Only needed for connections of type "cognitive_service".
+    :type kind: str
     """
 
     def __init__(
         self,
         *,
-        target: str,
+        target: Optional[str] = None,
+        #tags: Optional[Dict[str, str]] = None,
         # TODO : Check if this is okay since it shadows builtin-type type
         type: str,  # pylint: disable=redefined-builtin
         credentials: Union[
@@ -76,15 +101,40 @@ class WorkspaceConnection(Resource):
             ManagedIdentityConfiguration,
             ServicePrincipalConfiguration,
             AccessKeyConfiguration,
+            ApiKeyConfiguration
         ],
-        metadata: Optional[Dict[str, Any]] = None,
+        api_version: Optional[str] = None,
+        api_type: Optional[str] = None,
+        endpoint: Optional[str] = None,
+        api_base: Optional[str] = None,
+        kind: Optional[str] = None,
         **kwargs,
     ):
+        super().__init__( **kwargs)
+
         self.type = type
+
+        # Due to legacy reasons, we're required to surface target by 3 names, and ensure that it's set.
         self._target = target
+        if endpoint is not None:
+            self._target = endpoint
+        if api_base is not None:
+            self._target = api_base
+        if self._target is None:
+            msg = f"One of target, endpoint, or api_base must be set."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                error_type=ValidationErrorType.INVALID_VALUE,
+                target=ErrorTarget.FEATURE_SET,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+        
         self._credentials = credentials
-        self._metadata = json.loads(json.dumps(metadata))
-        super().__init__(**kwargs)
+        self._api_version = api_version
+        self._api_type = api_type
+        self._kind = kind
+
 
     @property
     def type(self) -> str:
@@ -114,6 +164,25 @@ class WorkspaceConnection(Resource):
         :rtype: str
         """
         return self._target
+    
+    @property
+    def endpoint(self) -> str:
+        """Endpoint url for the workspace connection.
+
+        :return: Endpoint of the workspace connection.
+        :rtype: str
+        """
+        return self._target
+    
+
+    @property
+    def api_base(self) -> str:
+        """Base API url for the workspace connection.
+
+        :return: API base of the workspace connection.
+        :rtype: str
+        """
+        return self._target
 
     @property
     def credentials(
@@ -125,29 +194,47 @@ class WorkspaceConnection(Resource):
         ManagedIdentityConfiguration,
         ServicePrincipalConfiguration,
         AccessKeyConfiguration,
+        ApiKeyConfiguration
     ]:
         """Credentials for workspace connection.
 
         :return: Credentials for workspace connection.
         :rtype: Union[
-            PatTokenCredentialsConfiguration,
-            SasTokenCredentialsConfiguration,
-            UsernamePasswordCredentialsConfiguration,
-            ManagedIdentityConfiguration,
-            ServicePrincipalCredentialsConfiguration,
-            AccessKeyCredentialsConfiguration,
+            ~azure.ai.ml.entities.PatTokenConfiguration, ~azure.ai.ml.entities.SasTokenConfiguration,
+            ~azure.ai.ml.entities.UsernamePasswordConfiguration, ~azure.ai.ml.entities.ManagedIdentityConfiguration
+            ~azure.ai.ml.entities.ServicePrincipalConfiguration, ~azure.ai.ml.entities.AccessKeyConfiguration,
+            ~azure.ai.ml.entities.ApiKeyConfiguration
         ]
         """
         return self._credentials
+    
+    @property
+    def api_version(self) -> str:
+        """The API version of the workspace connection.
+
+        :return: the API version of the workspace connection.
+        :rtype: str
+        """
+        return self._api_version
 
     @property
-    def metadata(self) -> Dict[str, Any]:
-        """Metadata for workspace connection.
+    def api_type(self) -> str:
+        """The API type of the workspace connection.
 
-        :return: Metadata for workspace connection.
-        :rtype: Dict[str, Any]
+        :return: the API type of the workspace connection.
+        :rtype: str
         """
-        return self._metadata
+        return self._api_type
+    
+    @property
+    def kind(self) -> str:
+        """The kind of the workspace connection.
+
+        :return: The kind of the workspace connection.
+        :rtype: str
+        """
+        return self._kind
+
 
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the workspace connection spec into a file in yaml format.
@@ -211,6 +298,14 @@ class WorkspaceConnection(Resource):
         if properties.auth_type == ConnectionAuthType.API_KEY:
             credentials = ApiKeyConfiguration._from_workspace_connection_rest_object(properties.credentials)
 
+        # although we use the 'tags' name in the client object, the WS connection REST object
+        # actually shoves them into the 'metadata' field. We do a conversion here because we still want
+        # to surface them as 'tags' to users like other objects.
+        tags = properties.metadata if hasattr(properties, "metadata") else None
+        api_version = tags.pop(API_VERSION_KEY, None) if tags is not None else None
+        api_type = tags.pop(API_TYPE_KEY, None) if tags is not None else None
+        kind = tags.pop(KIND_KEY, None) if tags is not None else None
+
         workspace_connection = WorkspaceConnection(
             id=rest_obj.id,
             name=rest_obj.name,
@@ -218,7 +313,10 @@ class WorkspaceConnection(Resource):
             creation_context=SystemData._from_rest_object(rest_obj.system_data) if rest_obj.system_data else None,
             type=camel_to_snake(properties.category),
             credentials=credentials,
-            metadata=properties.metadata if hasattr(properties, "metadata") else None,
+            tags=tags,
+            api_version=api_version,
+            api_type=api_type,
+            kind=kind,
         )
 
         return workspace_connection
@@ -247,10 +345,23 @@ class WorkspaceConnection(Resource):
         elif auth_type is None:
             workspace_connection_properties_class = NoneAuthTypeWorkspaceConnectionProperties
 
+        tags = {}
+        if self.tags is not None:
+            for k,v in self.tags.items():
+                tags[k] = v
+        if self._api_version is not None:
+            tags[API_VERSION_KEY] = self._api_version
+        if self._api_type is not None:
+            tags[API_TYPE_KEY] = self._api_type
+        if self._kind is not None:
+            tags[KIND_KEY] = self._kind
+
+
+
         properties = workspace_connection_properties_class(
             target=self.target,
             credentials=self.credentials._to_workspace_connection_rest_object(),
-            metadata=self.metadata,
+            metadata=tags,
             # auth_type=auth_type,
             category=_snake_to_camel(self.type),
         )

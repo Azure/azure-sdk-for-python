@@ -1,10 +1,11 @@
 name: test_ws_conn_open_ai
 type: azure_open_ai
 target: dummy
-metadata:
-  ApiType: dummy
-  ApiVersion: dummy
+api_type: dummy1
+api_version: dummy2
 credentials:
   type: username_password
-  username: dummy
-  password: dummy
+  username: dummy3
+  password: dummy4
+tags:
+  hello: world

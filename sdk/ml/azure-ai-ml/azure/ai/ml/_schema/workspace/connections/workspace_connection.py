@@ -7,8 +7,8 @@
 from marshmallow import fields, post_load
 
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionCategory
-from azure.ai.ml._schema.core.fields import ArmStr, NestedField, StringTransformedEnum, UnionField
-from azure.ai.ml._schema.core.schema import PathAwareSchema
+from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
+from azure.ai.ml._schema.core.resource import ResourceSchema
 from azure.ai.ml._schema.job import CreationContextSchema
 from azure.ai.ml._schema.workspace.connections.credentials import (
     ManagedIdentityConfigurationSchema,
@@ -17,14 +17,13 @@ from azure.ai.ml._schema.workspace.connections.credentials import (
     ServicePrincipalConfigurationSchema,
     UsernamePasswordConfigurationSchema,
     AccessKeyConfigurationSchema,
+    ApiKeyConfigurationSchema
 )
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.constants._common import AzureMLResourceType
 
 
-class WorkspaceConnectionSchema(PathAwareSchema):
-    name = fields.Str()
-    id = ArmStr(azureml_type=AzureMLResourceType.WORKSPACE_CONNECTION, dump_only=True)
+class WorkspaceConnectionSchema(ResourceSchema):
+    # Inherits name, id, tags, and description fields from ResourceSchema
     creation_context = NestedField(CreationContextSchema, dump_only=True)
     type = StringTransformedEnum(
         allowed_values=[
@@ -44,7 +43,11 @@ class WorkspaceConnectionSchema(PathAwareSchema):
         casing_transform=camel_to_snake,
         required=True,
     )
-    target = fields.Str()
+    
+    target = fields.Str(required=False, allow_none=True)
+    endpoint = fields.Str(required=False, allow_none=True)
+    api_base = fields.Str(required=False, allow_none=True)
+
     credentials = UnionField(
         [
             NestedField(PatTokenConfigurationSchema),
@@ -53,9 +56,15 @@ class WorkspaceConnectionSchema(PathAwareSchema):
             NestedField(ManagedIdentityConfigurationSchema),
             NestedField(ServicePrincipalConfigurationSchema),
             NestedField(AccessKeyConfigurationSchema),
+            NestedField(ApiKeyConfigurationSchema),
         ]
     )
-    metadata = fields.Dict(required=False, allow_none=True)
+
+    api_type = fields.Str(required=False, allow_none=True)
+    api_version = fields.Str(required=False, allow_none=True)
+    kind = fields.Str(required=False, allow_none=True)
+
+    
 
     @post_load
     def make(self, data, **kwargs):
