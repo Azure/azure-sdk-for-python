@@ -759,37 +759,63 @@ def _internal_resourcetype(resource_type: str) -> str:
         return "colls"
     return resource_type
 
+
 def _populate_batch_headers(current_headers):
     current_headers.update({http_constants.HttpHeaders.IsBatchRequest: True})
     current_headers.update({http_constants.HttpHeaders.IsBatchAtomic: True})
     current_headers.update({http_constants.HttpHeaders.ShouldBatchContinueOnError: False})
 
-def _merge_headers(headers):
-    if len(headers) == 1:
-        return headers[0]
-    else:
-        initial_headers = headers.pop()
-        partition_key_range_ids = [initial_headers.get(http_constants.HttpHeaders.PartitionKeyRangeID)]
-        activity_ids = [initial_headers.get(http_constants.HttpHeaders.ActivityId)]
-        for current_header in headers:
-            initial_headers.update({http_constants.HttpHeaders.RequestCharge: str(
-                float(initial_headers.get(http_constants.HttpHeaders.RequestCharge)) + float(
-                    current_header.get(http_constants.HttpHeaders.RequestCharge)))})
-            initial_headers.update({http_constants.HttpHeaders.RequestDurationMs: str(
-                float(initial_headers.get(http_constants.HttpHeaders.RequestDurationMs)) + float(
-                    current_header.get(http_constants.HttpHeaders.RequestDurationMs)))})
-            initial_headers.update({http_constants.HttpHeaders.ItemCount:
-                                        initial_headers.get(http_constants.HttpHeaders.ItemCount, '0') +
-                                        current_header.get(http_constants.HttpHeaders.ItemCount, '0')})
-            initial_headers.update({http_constants.HttpHeaders.ContentLength:
-                                        initial_headers.get(http_constants.HttpHeaders.ContentLength, '0') +
-                                        current_header.get(http_constants.HttpHeaders.ContentLength, '0')})
-            initial_headers.update({http_constants.HttpHeaders.ThrottleRetryCount:
-                                        int(initial_headers.get(http_constants.HttpHeaders.ThrottleRetryCount, 0)) +
-                                        int(current_header.get(http_constants.HttpHeaders.ThrottleRetryCount, 0))})
-            partition_key_range_ids.append(current_header.get(http_constants.HttpHeaders.PartitionKeyRangeID))
-            activity_ids.append(current_header.get(http_constants.HttpHeaders.ActivityId))
-        initial_headers.update({http_constants.HttpHeaders.PartitionKeyRangeID: partition_key_range_ids})
-        initial_headers.update({http_constants.HttpHeaders.PhysicalPartitionID: partition_key_range_ids})
-        initial_headers.update({http_constants.HttpHeaders.ActivityId: activity_ids})
-        return initial_headers
+
+def _format_batch_operations(operations):
+    final_operations = []
+    for i in range(len(operations)):
+        batch_operation = operations[i]
+        try:
+            operation_type = batch_operation[0]
+            args = batch_operation[1]
+        except IndexError:
+            raise IndexError("Operation {} in batch is missing a field.".format(str(i)))
+        try:
+            kwargs = batch_operation[2]
+        except IndexError:
+            kwargs = {}
+
+        if len(args) == 1:
+            if operation_type == "create":
+                operation = {"operationType": "Create",
+                             "resourceBody": args[0]}
+            elif operation_type == "upsert":
+                operation = {"operationType": "Upsert",
+                             "resourceBody": args[0]}
+            elif operation_type == "read":
+                operation = {"operationType": "Read",
+                             "id": args[0]}
+            elif operation_type == "delete":
+                operation = {"operationType": "Delete",
+                             "id": args[0]}
+        elif len(args) == 2:
+            if operation_type == "replace":
+                operation = {"operationType": "Replace",
+                             "id": args[0],
+                             "resourceBody": args[1]}
+            elif operation_type == "patch":
+                operation = {"operationType": "Patch",
+                             "id": args[0],
+                             "resourceBody": {"operations": args[1]}}
+                filter_predicate = kwargs.pop("filter_predicate", None)
+                if filter_predicate is not None:
+                    operation["resourceBody"]["condition"] = filter_predicate
+        else:
+            raise AttributeError("Operation type or args passed in not recognized for operation with" +
+                                 " index {}.".format(str(i)))
+
+        if_match_etag = kwargs.pop("if_match_etag", None)
+        if_none_match_etag = kwargs.pop("if_none_match_etag", None)
+        if if_match_etag is not None:
+            operation["ifMatch"] = if_match_etag
+        elif if_none_match_etag is not None:
+            operation["ifNoneMatch"] = if_match_etag
+
+        final_operations.append(operation)
+
+

@@ -200,26 +200,18 @@ async def execute_item_batch(database):
     await container.create_item(get_sales_order("replace_item"))
 
     # We create our batch operations
-    create_item_operation = {"operationType": "Create",
-                             "resourceBody": get_sales_order("create_item")}
-    upsert_item_operation = {"operationType": "Upsert",
-                             "resourceBody": get_sales_order("upsert_item")}
-    read_item_operation = {"operationType": "Read",
-                           "id": "read_item"}
-    delete_item_operation = {"operationType": "Delete",
-                             "id": "delete_item"}
-    replace_item_operation = {"operationType": "Replace",
-                              "id": "replace_item",
-                              "resourceBody": {"id": "replace_item", "message": "item was replaced"}}
-    replace_item_if_match_operation = {"operationType": "Replace",
-                                       "id": "replace_item",
-                                       "resourceBody": {"id": "replace_item", "message": "item replaced again"},
-                                       "ifMatch": container.client_connection.last_response_headers.get("etag")}
-    replace_item_if_none_match_operation = \
-        {"operationType": "Replace",
-         "id": "replace_item",
-         "resourceBody": {"id": "replace_item", "message": "item replaced again"},
-         "ifNoneMatch": container.client_connection.last_response_headers.get("etag")}
+    create_item_operation = ("create", (get_sales_order("create_item"),))
+    upsert_item_operation = ("upsert", (get_sales_order("upsert_item"),))
+    read_item_operation = ("read", ("read_item",))
+    delete_item_operation = ("delete", ("delete_item",))
+    replace_item_operation = ("replace", ("replace_item", {"id": "replace_item", "message": "item was replaced"}))
+    replace_item_if_match_operation = ("replace",
+                                       ("replace_item", {"id": "replace_item", "message": "item was replaced"}),
+                                       {"if_match_etag": container.client_connection.last_response_headers.get("etag")})
+    replace_item_if_none_match_operation = ("replace",
+                                            ("replace_item", {"id": "replace_item", "message": "item was replaced"}),
+                                            {"if_none_match_etag":
+                                                 container.client_connection.last_response_headers.get("etag")})
 
     # Put our operations into a list
     batch_operations = [

@@ -584,80 +584,43 @@ def integrated_cache_snippet():
 ```
 For more information on Integrated Cache, see [Azure Cosmos DB integrated cache - Overview][cosmos_integrated_cache].
 
-### Using Transactional Batch requests
+### Using Transactional Batch
 Transactional batch requests allow you to send several operations to be executed at once within the same partition key.
 If all operations succeed in the order they're described within the transactional batch operation, the transaction will be committed.
 However, if any operation fails, the entire transaction is rolled back.
 
 Transactional batches have a limit of 100 operations per batch, and a total size limit of 1.2Mb for the
 batch operations being passed in.
-```python
-batch_operations = [{"operationType": "Create", "resourceBody": {"id": "create_item", "pk": "mypk"}}]
-batch_results = container.execute_item_batch(batch_operations=batch_operations, partition_key="mypk")
-```
 
-Available Transactional Batch operation types are:
-- Create
+Transactional Batch operations look very similar to the singular operations apis, and are tuples containing
+(`operation_type_string`, `args_tuple`, `kwargs_dictionary`):
 ```python
-create_item_operation = {"operationType": "Create",
-                         "resourceBody": {"id": "create_item"}}
+batch_operations = [
+        ("create", (item_body,), kwargs),
+        ("replace", (item_id, item_body), kwargs),
+        ("read", (item_id,), kwargs),
+        ("upsert", (item_body,), kwargs),
+        ("patch", (item_id, operations), kwargs),
+        ("delete", (item_id,), kwargs),
+    ]
+batch_results = container.execute_item_batch(batch_operations=batch_operations, partition_key=partition_key)
 ```
-- Upsert
+In this case, the kwargs for each operation can include `filter_predicate` in the case of using conditional patching, or
+the use of the `if_match_etag`/`if_none_match_etag` if you'd like to pass an etag filter for one single operation:
 ```python
-upsert_item_operation = {"operationType": "Upsert",
-                         "resourceBody": {"id": "upsert_item"}}
-```
-- Read
-```python
-read_item_operation = {"operationType": "Read",
-                       "id": "read_item"}
-```
-- Replace
-```python
-replace_item_operation = {"operationType": "Replace",
-                          "id": "replace_item",
-                          "resourceBody": {"id": "replace_item", "message": "item was replaced"}}
-```
-- Patch
-```python
-patch_item_operation = {"operationType": "Patch",
-                        "id": "patch_item",
-                        "resourceBody": {"operations": [
-                            {"op": "add", "path": "/favorite_color", "value": "red"},
-                            {"op": "remove", "path": "/ttl"},
-                            {"op": "replace", "path": "/tax_amount", "value": 14},
-                            {"op": "set", "path": "/items/0/discount", "value": 20.0512},
-                            {"op": "incr", "path": "/total_due", "value": 5},
-                            {"op": "move", "from": "/freight", "path": "/service_addition"}]}}
-```
-- Delete
-```python
-delete_item_operation = {"operationType": "Delete",
-                         "id": "delete_item"}
-```
-You can also optionally add the `ifMatch` and `ifNoneMatch` fields to the operations above if you'd like to utilize ETags within your bulk operations:
-```python
-replace_operation_with_etag = {"operationType": "Replace",
-                               "id": "replace_item",
-                               "resourceBody": {"id": "replace_item", "message": "item was replaced"},
-                               "ifMatch": "some-etag"}
-```
-And for conditional patching you can just add the `condition` field to your operation's resource body:
-```python
-patch_item_operation = {"operationType": "Patch",
-                        "id": "patch_item",
-                        "resourceBody": 
-                            {"operations": [
-                                {"op": "add", "path": "/favorite_color", "value": "red"},
-                                {"op": "remove", "path": "/ttl"}],
-                             "condition": "from c where c.number = 5"}}
+batch_operations = [
+        ("replace", (item_id, item_body), {"if_match_etag": etag}),
+        ("patch", (item_id, operations), {"filter_predicate": filter_predicate}),
+    ]
 ```
 
 We also have some samples showing these transactional batch operations in action with both the [sync][sample_document_mgmt]
 and [async][sample_document_mgmt_async] clients.
 
-The responses for transactional batch requests will be either an `BatchOperationError` or an `BatchOperationResult` object, each containing your operation
-mapped to its response, as well as an additional error message if your operation failed. These objects can be seen in our [models][cosmos_models] file.
+The response for a transactional batch request will be a dictionary with keys `is_error` and `results`, where `is_error`
+will let you know if your batch succeeded, and results will be a list of either `BatchOperationError` or `BatchOperationResult` objects,
+each containing your operation mapped to its response, as well as an additional error message if your operation failed.
+These objects can be seen in our [models][cosmos_models] file.
 
 For more information on Transactional Batch, see [Azure Cosmos DB Transactional Batch][cosmos_transactional_batch].
 

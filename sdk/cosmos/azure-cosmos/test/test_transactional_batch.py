@@ -62,7 +62,7 @@ class TestTransactionalBatch:
         container = self.test_database.create_container_if_not_exists(id="invalid_batch_size" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/company"))
 
-        # Empty batch
+        # empty batch
         try:
             container.execute_item_batch(batch_operations=[], partition_key="Microsoft")
             pytest.fail("Operation should have failed.")
@@ -70,11 +70,10 @@ class TestTransactionalBatch:
             assert e.status_code == StatusCodes.BAD_REQUEST
             assert "Batch request has no operations." in e.message
 
-        # Batch with > 100 items
+        # batch with > 100 items
         batch = []
         for i in range(101):
-            batch.append({"operationType": "Create",
-                          "resourceBody": {"id": "item" + str(i)}, "company": "Microsoft"})
+            batch.append(("create", ({"id": "item" + str(i), "company": "Microsoft"},)))
         try:
             container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
             pytest.fail("Operation should have failed.")
@@ -82,14 +81,13 @@ class TestTransactionalBatch:
             assert e.status_code == StatusCodes.BAD_REQUEST
             assert "Batch request has more operations than what is supported." in e.message
 
-        # Batch too large
+        # batch too large
         item_id = str(uuid.uuid4())
         massive_item = {"id": item_id, "company": "Microsoft"}
         while len(str(massive_item)) < 2500000:
             for i in range(100):
                 massive_item.update({str(uuid.uuid4()): str(uuid.uuid4())})
-        batch = [{"operationType": "Create",
-                  "resourceBody": massive_item}]
+        batch = [("create", (massive_item,))]
         try:
             container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
             pytest.fail("test should have failed")
@@ -103,18 +101,17 @@ class TestTransactionalBatch:
                                                                       partition_key=PartitionKey(path="/company"))
         batch = []
         for i in range(100):
-            batch.append({"operationType": "Create",
-                          "resourceBody": {"id": "item" + str(i), "company": "Microsoft"}})
+            batch.append(("create", ({"id": "item" + str(i), "company": "Microsoft"},)))
+
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert batch_response.get("is_error") is False
         assert len(batch_response.get("results")) == 100
 
-        # Create the same item twice
+        # create the same item twice
         item_id = str(uuid.uuid4())
-        batch = [{"operationType": "Create",
-                  "resourceBody": {"id": item_id, "company": "Microsoft"}},
-                 {"operationType": "Create",
-                  "resourceBody": {"id": item_id, "company": "Microsoft"}}]
+        batch = [("create", ({"id": item_id, "company": "Microsoft"},)),
+                 ("create", ({"id": item_id, "company": "Microsoft"},))]
+
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert batch_response.get("is_error") is True
         operation_results = batch_response.get("results")
@@ -122,11 +119,10 @@ class TestTransactionalBatch:
         assert operation_results[0].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
         assert operation_results[1].operation_response.get("statusCode") == StatusCodes.CONFLICT
 
-        # Create an item without the right partition key.
-        batch = [{"operationType": "Create",
-                  "resourceBody": {"id": str(uuid.uuid4()), "company": "Microsoft"}},
-                 {"operationType": "Create",
-                  "resourceBody": {"id": str(uuid.uuid4()), "company": "Not-Microsoft"}}]
+        # create an item without the right partition key.
+        batch = [("create", ({"id": str(uuid.uuid4()), "company": "Microsoft"},)),
+                 ("create", ({"id": str(uuid.uuid4()), "company": "Not-Microsoft"},))]
+
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert batch_response.get("is_error") is True
         operation_results = batch_response.get("results")
@@ -134,11 +130,10 @@ class TestTransactionalBatch:
         assert operation_results[0].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
         assert operation_results[1].operation_response.get("statusCode") == StatusCodes.BAD_REQUEST
 
-        # Create an item without a partition key
-        batch = [{"operationType": "Create",
-                  "resourceBody": {"id": str(uuid.uuid4()), "company": "Microsoft"}},
-                 {"operationType": "Create",
-                  "resourceBody": {"id": str(uuid.uuid4()), "name": "Simon"}}]
+        # create an item without a partition key
+        batch = [("create", ({"id": str(uuid.uuid4()), "company": "Microsoft"},)),
+                 ("create", ({"id": str(uuid.uuid4()), "name": "Simon"},))]
+
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert batch_response.get("is_error") is True
         operation_results = batch_response.get("results")
@@ -153,8 +148,8 @@ class TestTransactionalBatch:
         batch = []
         for i in range(100):
             container.create_item({"id": "item" + str(i), "company": "Microsoft"})
-            batch.append({"operationType": "Read",
-                          "id": "item" + str(i)})
+            batch.append(("read", ("item" + str(i),)))
+
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert batch_response.get("is_error") is False
         operation_results = batch_response.get("results")
@@ -163,11 +158,10 @@ class TestTransactionalBatch:
             result = result.operation_response
             assert result.get("statusCode") == 200
 
-        # Read non-existent item
-        batch = [{"operationType": "Read",
-                  "id": str(uuid.uuid4())},
-                 {"operationType": "Read",
-                  "id": str(uuid.uuid4())}]
+        # read non-existent item
+        batch = [("read", (str(uuid.uuid4()),)),
+                 ("read", (str(uuid.uuid4()),))]
+
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert batch_response.get("is_error") is True
         operation_results = batch_response.get("results")
@@ -180,11 +174,8 @@ class TestTransactionalBatch:
         container = self.test_database.create_container_if_not_exists(id="batch_replace" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/company"))
         item_id = str(uuid.uuid4())
-        batch = [{"operationType": "Create",
-                  "resourceBody": {"id": item_id, "company": "Microsoft"}},
-                 {"operationType": "Replace",
-                  "id": item_id,
-                  "resourceBody": {"id": item_id, "company": "Microsoft", "message": "item was replaced"}}]
+        batch = [("create", ({"id": item_id, "company": "Microsoft"},)),
+                 ("replace", ("new-item", {"id": "new-item", "company": "Microsoft", "message": "item was replaced"}))]
 
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert batch_response.get("is_error") is False
@@ -192,10 +183,8 @@ class TestTransactionalBatch:
         assert len(operation_results) == 2
         assert operation_results[1].operation_response.get("resourceBody").get("message") == "item was replaced"
 
-        # Replace non-existent
-        batch = [{"operationType": "Replace",
-                  "id": "new-item",
-                  "resourceBody": {"id": "new-item", "company": "Microsoft", "message": "item was replaced"}}]
+        # replace non-existent
+        batch = [("replace", ("new-item", {"id": "new-item", "company": "Microsoft", "message": "item was replaced"}))]
 
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert batch_response.get("is_error")
@@ -203,18 +192,13 @@ class TestTransactionalBatch:
         assert len(operation_results) == 1
         assert operation_results[0].operation_response.get("statusCode") == StatusCodes.NOT_FOUND
 
-        # Replace with wrong etag
+        # replace with wrong etag
         item_id = str(uuid.uuid4())
-        batch = [{"operationType": "Create",
-                  "resourceBody": {"id": item_id, "company": "Microsoft"}},
-                 {"operationType": "Replace",
-                  "id": item_id,
-                  "resourceBody": {"id": item_id, "company": "Microsoft", "message": "item was replaced"},
-                  "ifMatch": "some-tag"},
-                 {"operationType": "Replace",
-                  "id": item_id,
-                  "resourceBody": {"id": item_id, "company": "Microsoft", "message": "item was replaced"},
-                  "ifNoneMatch": "some-tag"}]
+        batch = [("create", {"id": item_id, "company": "Microsoft"}),
+                 ("replace", item_id, ({"id": item_id, "company": "Microsoft", "message": "item was replaced"},),
+                  {"if_match": "some-tag"}),
+                 ("replace", item_id, ({"id": item_id, "company": "Microsoft", "message": "item was replaced"},),
+                  {"if_none_match": "some-tag"})]
 
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert batch_response.get("is_error")
@@ -229,12 +213,10 @@ class TestTransactionalBatch:
         container = self.test_database.create_container_if_not_exists(id="batch_upsert" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/company"))
         item_id = str(uuid.uuid4())
-        batch = [{"operationType": "Upsert",
-                  "resourceBody": {"id": item_id, "company": "Microsoft"}},
-                 {"operationType": "Upsert",
-                  "resourceBody": {"id": item_id, "company": "Microsoft", "message": "item was upsert"}},
-                 {"operationType": "Upsert",
-                  "resourceBody": {"id": str(uuid.uuid4()), "company": "Microsoft"}}]
+        batch = [("upsert", ({"id": item_id, "company": "Microsoft"},)),
+                 ("upsert", ({"id": item_id, "company": "Microsoft", "message": "item was upsert"},)),
+                 ("upsert", ({"id": str(uuid.uuid4()), "company": "Microsoft"},))]
+
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert batch_response.get("is_error") is False
         operation_results = batch_response.get("results")
@@ -246,23 +228,21 @@ class TestTransactionalBatch:
         container = self.test_database.create_container_if_not_exists(id="batch_patch" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/company"))
         item_id = str(uuid.uuid4())
-        batch = [{"operationType": "Upsert",
-                  "resourceBody": {"id": item_id,
-                                   "company": "Microsoft",
-                                   "city": "Seattle",
-                                   "port": 9000,
-                                   "remove_path": True,
-                                   "move_path": "yes",
-                                   "set_path": 1}},
-                 {"operationType": "Patch",
-                  "id": item_id,
-                  "resourceBody": {"operations": [
-                      {"op": "add", "path": "/favorite_color", "value": "red"},
-                      {"op": "remove", "path": "/remove_path"},
-                      {"op": "replace", "path": "/city", "value": "Redmond"},
-                      {"op": "set", "path": "/set_path", "value": 0},
-                      {"op": "incr", "path": "/port", "value": 5},
-                      {"op": "move", "from": "/move_path", "path": "/moved_path"}]}}]
+        batch = [("upsert", ({"id": item_id,
+                              "company": "Microsoft",
+                              "city": "Seattle",
+                              "port": 9000,
+                              "remove_path": True,
+                              "move_path": "yes",
+                              "set_path": 1},)),
+                 ("patch", (item_id, [
+                     {"op": "add", "path": "/favorite_color", "value": "red"},
+                     {"op": "remove", "path": "/remove_path"},
+                     {"op": "replace", "path": "/city", "value": "Redmond"},
+                     {"op": "set", "path": "/set_path", "value": 0},
+                     {"op": "incr", "path": "/port", "value": 5},
+                     {"op": "move", "from": "/move_path", "path": "/moved_path"}]))]
+
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert batch_response.get("is_error") is False
         operation_results = batch_response.get("results")
@@ -275,20 +255,18 @@ class TestTransactionalBatch:
         assert operation_results[1].operation_response.get("resourceBody").get("move_path") is None
         assert operation_results[1].operation_response.get("resourceBody").get("moved_path") == "yes"
 
-        # With conditional patching
+        # with conditional patching
         item_id = str(uuid.uuid4())
-        batch = [{"operationType": "Upsert",
-                  "resourceBody": {"id": item_id,
-                                   "company": "Microsoft",
-                                   "city": "Seattle",
-                                   "port": 9000,
-                                   "remove_path": True,
-                                   "move_path": "yes",
-                                   "set_path": 1}},
-                 {"operationType": "Patch",
-                  "id": item_id,
-                  "resourceBody": {"operations": [{"op": "add", "path": "/favorite_color", "value": "red"}],
-                                   "condition": "from c where c.set_path = 0"}}]
+        batch = [("upsert", ({"id": item_id,
+                              "company": "Microsoft",
+                              "city": "Seattle",
+                              "port": 9000,
+                              "remove_path": True,
+                              "move_path": "yes",
+                              "set_path": 1},)),
+                 ("patch", (item_id, [{"op": "add", "path": "/favorite_color", "value": "red"}]),
+                  {"filter_predicate": "from c where c.set_path = 0"})]
+
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert batch_response.get("is_error")
         operation_results = batch_response.get("results")
@@ -296,19 +274,17 @@ class TestTransactionalBatch:
         assert operation_results[0].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
         assert operation_results[1].operation_response.get("statusCode") == StatusCodes.PRECONDITION_FAILED
 
-        # With correct filter
-        batch = [{"operationType": "Upsert",
-                  "resourceBody": {"id": item_id,
-                                   "company": "Microsoft",
-                                   "city": "Seattle",
-                                   "port": 9000,
-                                   "remove_path": True,
-                                   "move_path": "yes",
-                                   "set_path": 1}},
-                 {"operationType": "Patch",
-                  "id": item_id,
-                  "resourceBody": {"operations": [{"op": "add", "path": "/favorite_color", "value": "red"}],
-                                   "condition": "from c where c.set_path = 1"}}]
+        # with correct filter
+        batch = [("upsert", ({"id": item_id,
+                              "company": "Microsoft",
+                              "city": "Seattle",
+                              "port": 9000,
+                              "remove_path": True,
+                              "move_path": "yes",
+                              "set_path": 1},)),
+                 ("patch", (item_id, [{"op": "add", "path": "/favorite_color", "value": "red"}]),
+                  {"filter_predicate": "from c where c.set_path = 1"})]
+
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert batch_response.get("is_error") is False
         operation_results = batch_response.get("results")
@@ -322,10 +298,8 @@ class TestTransactionalBatch:
         delete_batch = []
         for i in range(10):
             item_id = str(uuid.uuid4())
-            create_batch.append({"operationType": "Create",
-                                 "resourceBody": {"id": item_id, "company": "Microsoft"}})
-            delete_batch.append({"operationType": "Delete",
-                                 "id": item_id})
+            create_batch.append(("create", ({"id": item_id, "company": "Microsoft"},)))
+            delete_batch.append(("delete", (item_id,)))
 
         batch_response = container.execute_item_batch(batch_operations=create_batch, partition_key="Microsoft")
         assert batch_response.get("is_error") is False
@@ -339,11 +313,10 @@ class TestTransactionalBatch:
         assert len(operation_results) == 10
         assert len(list(container.read_all_items())) == 0
 
-        # Delete non-existent item
-        batch = [{"operationType": "Delete",
-                  "id": "new-item"},
-                 {"operationType": "Delete",
-                  "id": "new-item"}]
+        # delete non-existent item
+        batch = [("delete", ("new-item",)),
+                 ("delete", ("new-item",))]
+
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert batch_response.get("is_error") is True
         operation_results = batch_response.get("results")
@@ -354,7 +327,7 @@ class TestTransactionalBatch:
     def test_batch_lsn(self):
         container = self.test_database.create_container_if_not_exists(id="batch_lsn" + str(uuid.uuid4()),
                                                                       partition_key=PartitionKey(path="/company"))
-        # Create test items
+        # create test items
         container.upsert_item({"id": "read_item", "company": "Microsoft"})
         container.upsert_item({"id": "replace_item", "company": "Microsoft", "value": 0})
         container.upsert_item({"id": "patch_item", "company": "Microsoft"})
@@ -363,22 +336,12 @@ class TestTransactionalBatch:
         container.read_item(item="read_item", partition_key="Microsoft")
         lsn = container.client_connection.last_response_headers.get(HttpHeaders.LSN)
 
-        batch = []
-        batch.append({"operationType": "Create",
-                      "resourceBody": {"id": "create_item", "company": "Microsoft"}})
-        batch.append({"operationType": "Replace",
-                      "id": "replace_item",
-                      "resourceBody": {"id": "replace_item", "company": "Microsoft", "value": True}})
-        batch.append({"operationType": "Upsert",
-                      "resourceBody": {"id": "upsert_item", "company": "Microsoft"}})
-        batch.append({"operationType": "Patch",
-                      "id": "patch_item",
-                      "resourceBody": {"operations": [
-                          {"op": "add", "path": "/favorite_color", "value": "red"}]}})
-        batch.append({"operationType": "Read",
-                      "id": "read_item"})
-        batch.append({"operationType": "Delete",
-                      "id": "delete_item"})
+        batch = [("create", ({"id": "create_item", "company": "Microsoft"},)),
+                 ("replace", ("replace_item", {"id": "replace_item", "company": "Microsoft", "value": True})),
+                 ("upsert", ({"id": "upsert_item", "company": "Microsoft"},)),
+                 ("patch", ("patch_item", [{"op": "add", "path": "/favorite_color", "value": "red"}])),
+                 ("read", ("read_item",)),
+                 ("delete", ("delete_item",))]
 
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert batch_response.get("is_error") is False
@@ -391,11 +354,13 @@ class TestTransactionalBatch:
             id="batch_subpartition" + str(uuid.uuid4()),
             partition_key=PartitionKey(path=["/state", "/city", "/zipcode"], kind="MultiHash"))
         item_ids = [str(uuid.uuid4()), str(uuid.uuid4()), str(uuid.uuid4())]
-        container.upsert_item({'id': item_ids[0], 'key': 'value',
+        container.upsert_item({'id': item_ids[0],
+                               'key': 'value',
                                'state': 'WA',
                                'city': 'Redmond',
                                'zipcode': '98052'})
-        container.upsert_item({'id': item_ids[1], 'key': 'value',
+        container.upsert_item({'id': item_ids[1],
+                               'key': 'value',
                                'state': 'WA',
                                'city': 'Redmond',
                                'zipcode': '98052'})
@@ -404,33 +369,24 @@ class TestTransactionalBatch:
                                'state': 'WA',
                                'city': 'Redmond',
                                'zipcode': '98052'})
-        batch = []
-        batch.append({"operationType": "Create",
-                      "resourceBody": get_subpartition_item(str(uuid.uuid4()))})
-        batch.append({"operationType": "Replace",
-                      "id": item_ids[0],
-                      "resourceBody": {"id": item_ids[0],
-                                       'state': 'WA',
-                                       'city': 'Redmond',
-                                       'zipcode': '98052',
-                                       'replaced': True}})
-        batch.append({"operationType": "Upsert",
-                      "resourceBody": get_subpartition_item(str(uuid.uuid4()))})
-        batch.append({"operationType": "Patch",
-                      "id": item_ids[1],
-                      "resourceBody": {"operations": [
-                          {"op": "add", "path": "/favorite_color", "value": "red"}]}})
-        batch.append({"operationType": "Read",
-                      "id": item_ids[2]})
-        batch.append({"operationType": "Delete",
-                      "id": item_ids[2]})
+
+        batch = [("create", (get_subpartition_item(str(uuid.uuid4())),)),
+                 ("replace", (item_ids[0], {"id": item_ids[0],
+                                            'state': 'WA',
+                                            'city': 'Redmond',
+                                            'zipcode': '98052',
+                                            'replaced': True})),
+                 ("upsert", (get_subpartition_item(str(uuid.uuid4())),)),
+                 ("patch", (item_ids[1], [{"op": "add", "path": "/favorite_color", "value": "red"}])),
+                 ("read", (item_ids[2],)),
+                 ("delete", (item_ids[2],))]
 
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key=["WA", "Redmond", "98052"])
         assert batch_response.get("is_error") is False
         operation_results = batch_response.get("results")
         assert len(operation_results) == 6
 
-        # Try to use incomplete key
+        # try to use incomplete key
         try:
             container.execute_item_batch(batch_operations=batch, partition_key=["WA", "Redmond"])
             pytest.fail("Request should have failed.")

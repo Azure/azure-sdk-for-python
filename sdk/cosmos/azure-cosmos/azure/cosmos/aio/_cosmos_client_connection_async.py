@@ -1536,6 +1536,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         path = base.GetPathFromLink(collection_link, "docs")
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
 
+        batch_operations = base._format_batch_operations(batch_operations)
+
         result, self.last_response_headers = await self._Batch(
             batch_operations,
             path,

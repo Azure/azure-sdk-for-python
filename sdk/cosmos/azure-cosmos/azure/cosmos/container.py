@@ -23,7 +23,7 @@
 """
 
 
-from typing import Any, Dict, List, Optional, Union, Iterable, cast, overload  # pylint: disable=unused-import
+from typing import Any, Dict, List, Optional, Union, Iterable, cast, overload, Tuple  # pylint: disable=unused-import
 
 import warnings
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
@@ -649,7 +649,7 @@ class ContainerProxy(object):
     @distributed_trace
     def execute_item_batch(
             self,
-            batch_operations: List[Dict[str, Any]],
+            batch_operations: List[Tuple[Any]],
             partition_key: Union[str, int, float, bool],
             **kwargs) -> Dict[str, Any]:
         """ Executes the transactional batch for the specified partition key.
@@ -665,10 +665,9 @@ class ContainerProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: A dict representing the item after the patch operations went through.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
-            given id does not exist.
-        :rtype: List[Dict[str, Any]]
+        :returns: A dict representing the item after the batch operations went through.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The batch did not execute successfully.
+        :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
