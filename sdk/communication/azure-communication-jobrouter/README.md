@@ -92,7 +92,7 @@ router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_
 Before we can create a Queue, we need a Distribution Policy.
 
 ```python
-from azure.communication.jobrouter import (
+from azure.communication.jobrouter.models import (
     LongestIdleMode,
     DistributionPolicy
 )
@@ -106,7 +106,7 @@ distribution_policy: DistributionPolicy = DistributionPolicy(
 )
 
 distribution_policy: DistributionPolicy = router_admin_client.create_distribution_policy(
-    distribution_policy_id = "distribution-policy-1",
+    id = "distribution-policy-1",
     distribution_policy = distribution_policy
 )
 ```
@@ -114,7 +114,7 @@ distribution_policy: DistributionPolicy = router_admin_client.create_distributio
 Next, we can create the queue.
 
 ```python
-from azure.communication.jobrouter import (
+from azure.communication.jobrouter.models import (
     RouterQueue
 )
 
@@ -123,7 +123,7 @@ queue: RouterQueue = RouterQueue(
 )
 
 queue: RouterQueue = router_admin_client.create_queue(
-    queue_id = "queue-1",
+    id = "queue-1",
     queue = queue
 )
 ```
@@ -131,7 +131,7 @@ queue: RouterQueue = router_admin_client.create_queue(
 ### Job
 Now, we can submit a job directly to that queue, with a worker selector the requires the worker to have the label `Some-Skill` greater than 10.
 ```python
-from azure.communication.jobrouter import (
+from azure.communication.jobrouter.models import (
     RouterJob,
     RouterWorkerSelector,
     LabelOperator
@@ -148,7 +148,7 @@ router_job: RouterJob = RouterJob(
 )
 
 job: RouterJob = router_client.create_job(
-    job_id = "jobId-1",
+    id = "jobId-1",
     router_job = router_job
 )
 ```
@@ -156,7 +156,7 @@ job: RouterJob = router_client.create_job(
 ### Worker
 Now, we register a worker to receive work from that queue, with a label of `Some-Skill` equal to 11.
 ```python
-from azure.communication.jobrouter import (
+from azure.communication.jobrouter.models import (
     RouterWorker,
     ChannelConfiguration
 )
@@ -209,7 +209,7 @@ for event in events:
 
 However, we could also wait a few seconds and then query the worker directly against the JobRouter API to see if an offer was issued to it.
 ```python
-from azure.communication.jobrouter import (
+from azure.communication.jobrouter.models import (
     RouterWorker,
 )
 
@@ -221,7 +221,7 @@ for offer in router_worker.offers:
 ### Accept an offer
 Once a worker receives an offer, it can take two possible actions: accept or decline. We are going to accept the offer.
 ```python
-from azure.communication.jobrouter import (
+from azure.communication.jobrouter.models import (
     RouterJobOffer,
     AcceptJobOfferResult,
     RouterJobStatus
@@ -262,7 +262,7 @@ print(f"Job has been successfully completed.")
 ### Closing a job
 After a job has been completed, the worker can perform wrap up actions to the job before closing the job and finally releasing its capacity to accept more incoming jobs
 ```python
-from azure.communication.jobrouter import (
+from azure.communication.jobrouter.models import (
     RouterJob,
     RouterJobStatus
 )
@@ -282,7 +282,7 @@ print(f"Updated job status: {update_job.job_status == RouterJobStatus.CLOSED}")
 ```python
 import time
 from datetime import datetime, timedelta
-from azure.communication.jobrouter import (
+from azure.communication.jobrouter.models import (
     RouterJob,
     RouterJobStatus
 )
