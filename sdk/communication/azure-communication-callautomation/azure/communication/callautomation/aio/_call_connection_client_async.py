@@ -303,7 +303,7 @@ class CallConnectionClient:
             participant_to_add=serialize_identifier(target_participant),
             source_caller_id_number=serialize_phone_identifier(source_caller_id_number),
             source_display_name=source_display_name,
-            invitation_timeout=invitation_timeout,
+            invitation_timeout_in_seconds=invitation_timeout,
             operation_context=operation_context
         )
 

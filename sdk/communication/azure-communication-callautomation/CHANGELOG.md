@@ -1,5 +1,9 @@
 # Release History
 
+## 1.1.0b2 (2023-10-18)
+### Bugs Fixed
+- Bug fixed with add participant invitation timeout
+
 ## 1.1.0b1 (2023-08-17)
 ### Features Added
 - Play and recognize supports TTS and SSML source prompts.
