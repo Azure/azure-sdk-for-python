@@ -283,27 +283,6 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
         self._client.indexers.reset(name, **kwargs)
 
-    @distributed_trace
-    def reset_documents(
-        self, indexer: Union[str, SearchIndexer], **kwargs: Any
-    ) -> None:
-        """Resets specific documents in the datasource to be selectively re-ingested by the indexer.
-
-        :param indexer: The indexer to reset documents for.
-        :type indexer: str or ~azure.search.documents.indexes.models.SearchIndexer
-        :return: None, or the result of cls(response)
-        :keyword overwrite: If false, keys or ids will be appended to existing ones. If true, only the
-         keys or ids in this payload will be queued to be re-ingested. The default is false.
-        :paramtype overwrite: bool
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        try:
-            name = indexer.name  # type: ignore
-        except AttributeError:
-            name = indexer
-        return self._client.indexers.reset_docs(name, **kwargs)
 
     @distributed_trace
     def get_indexer_status(self, name: str, **kwargs: Any) -> SearchIndexerStatus:
@@ -659,23 +638,6 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
             **kwargs
         )
         return SearchIndexerSkillset._from_generated(result)  # pylint:disable=protected-access
-
-    @distributed_trace
-    def reset_skills(self, skillset: Union[str, SearchIndexerSkillset], **kwargs: Any) -> None:
-        """Reset an existing skillset in a search service.
-
-        :param skillset: The SearchIndexerSkillset to reset
-        :type skillset: str or ~azure.search.documents.indexes.models.SearchIndexerSkillset
-        :return: None, or the result of cls(response)
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
-        try:
-            name = skillset.name  # type: ignore
-        except AttributeError:
-            name = skillset
-        return self._client.skillsets.reset_skills(skillset_name=name, **kwargs)
 
 
 def _validate_skillset(skillset: SearchIndexerSkillset):
