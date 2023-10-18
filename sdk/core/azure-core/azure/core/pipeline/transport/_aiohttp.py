@@ -103,7 +103,9 @@ class AioHttpTransport(AsyncHttpTransport):
         **kwargs,
     ):
         if loop and sys.version_info >= (3, 10):
-            raise ValueError("Starting with Python 3.10, asyncio doesn’t support loop as a parameter anymore")
+            raise ValueError(
+                "Starting with Python 3.10, asyncio doesn’t support loop as a parameter anymore"
+            )
         self._loop = loop
         self._session_owner = session_owner
         self.session = session
@@ -182,9 +184,13 @@ class AioHttpTransport(AsyncHttpTransport):
             for form_file, data in request.files.items():
                 content_type = data[2] if len(data) > 2 else None
                 try:
-                    form_data.add_field(form_file, data[1], filename=data[0], content_type=content_type)
+                    form_data.add_field(
+                        form_file, data[1], filename=data[0], content_type=content_type
+                    )
                 except IndexError as err:
-                    raise ValueError("Invalid formdata formatting: {}".format(data)) from err
+                    raise ValueError(
+                        "Invalid formdata formatting: {}".format(data)
+                    ) from err
             return form_data
         return request.data
 
@@ -207,7 +213,9 @@ class AioHttpTransport(AsyncHttpTransport):
         """
 
     @overload
-    async def send(self, request: RestHttpRequest, **config: Any) -> RestAsyncHttpResponse:
+    async def send(
+        self, request: RestHttpRequest, **config: Any
+    ) -> RestAsyncHttpResponse:
         """Send the `azure.core.rest` request using this HTTP sender.
 
         Will pre-load the body into memory to be available with a sync method.
@@ -275,12 +283,18 @@ class AioHttpTransport(AsyncHttpTransport):
         try:
             stream_response = config.pop("stream", False)
             timeout = config.pop("connection_timeout", self.connection_config.timeout)
-            read_timeout = config.pop("read_timeout", self.connection_config.read_timeout)
-            socket_timeout = aiohttp.ClientTimeout(sock_connect=timeout, sock_read=read_timeout)
+            read_timeout = config.pop(
+                "read_timeout", self.connection_config.read_timeout
+            )
+            socket_timeout = aiohttp.ClientTimeout(
+                sock_connect=timeout, sock_read=read_timeout
+            )
+            headers = request.headers
+            headers.update({"Connection": "keep-alive"})
             result = await self.session.request(  # type: ignore
                 request.method,
                 request.url,
-                headers=request.headers,
+                headers=headers,
                 data=self._get_request_data(request),
                 timeout=socket_timeout,
                 allow_redirects=False,
@@ -384,7 +398,9 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                 if not self._decompressor:
                     import zlib
 
-                    zlib_mode = (16 + zlib.MAX_WBITS) if enc == "gzip" else -zlib.MAX_WBITS
+                    zlib_mode = (
+                        (16 + zlib.MAX_WBITS) if enc == "gzip" else -zlib.MAX_WBITS
+                    )
                     self._decompressor = zlib.decompressobj(wbits=zlib_mode)
                 chunk = self._decompressor.decompress(chunk)
             return chunk
@@ -430,7 +446,9 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         *,
         decompress: bool = True,
     ) -> None:
-        super(AioHttpTransportResponse, self).__init__(request, aiohttp_response, block_size=block_size)
+        super(AioHttpTransportResponse, self).__init__(
+            request, aiohttp_response, block_size=block_size
+        )
         # https://aiohttp.readthedocs.io/en/stable/client_reference.html#aiohttp.ClientResponse
         self.status_code = aiohttp_response.status
         self.headers = CIMultiDict(aiohttp_response.headers)
@@ -530,6 +548,8 @@ class AioHttpTransportResponse(AsyncHttpResponse):
 
         state = self.__dict__.copy()
         # Remove the unpicklable entries.
-        state["internal_response"] = None  # aiohttp response are not pickable (see headers comments)
+        state[
+            "internal_response"
+        ] = None  # aiohttp response are not pickable (see headers comments)
         state["headers"] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
         return state
