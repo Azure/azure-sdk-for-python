@@ -101,7 +101,7 @@ def from_dict_to_rest_io(
     :return: Map from IO name to IO bindings and Map from IO name to IO objects.
     :rtype: Tuple[Dict[str, str], Dict[str, Union[RestJobInput, RestJobOutput]]]
     """
-    io_bindings = {}
+    io_bindings: dict = {}
     rest_io_objects = {}
     DIRTY_MODE_MAPPING = {
         "Mount": InputDeliveryMode.READ_ONLY_MOUNT,
@@ -163,9 +163,7 @@ def from_dict_to_rest_io(
     return io_bindings, rest_io_objects
 
 
-def from_dict_to_rest_distribution(
-    distribution_dict: Dict[str, Union[str, int]]
-) -> Union[PyTorch, Mpi, TensorFlow, Ray]:
+def from_dict_to_rest_distribution(distribution_dict: Dict) -> Union[PyTorch, Mpi, TensorFlow, Ray]:
     target_type = distribution_dict["distribution_type"].lower()
     if target_type == "pytorch":
         return PyTorch(**distribution_dict)

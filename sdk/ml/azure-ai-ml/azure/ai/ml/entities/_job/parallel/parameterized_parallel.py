@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 import logging
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from ..job_resource_configuration import JobResourceConfiguration
 from .parallel_task import ParallelTask
@@ -63,31 +63,34 @@ class ParameterizedParallel:
         self.environment_variables = dict(environment_variables) if environment_variables else {}
 
     @property
-    def task(self) -> ParallelTask:
-        return self._task
+    def task(self) -> Optional[ParallelTask]:
+        res: Optional[ParallelTask] = self._task
+        return res
 
     @task.setter
-    def task(self, value):
+    def task(self, value: Any) -> None:
         if isinstance(value, dict):
             value = ParallelTask(**value)
         self._task = value
 
     @property
-    def resources(self) -> JobResourceConfiguration:
-        return self._resources
+    def resources(self) -> Optional[Union[dict, JobResourceConfiguration]]:
+        res: Optional[Union[dict, JobResourceConfiguration]] = self._resources
+        return res
 
     @resources.setter
-    def resources(self, value):
+    def resources(self, value: Any) -> None:
         if isinstance(value, dict):
             value = JobResourceConfiguration(**value)
         self._resources = value
 
     @property
-    def retry_settings(self) -> RetrySettings:
-        return self._retry_settings
+    def retry_settings(self) -> Optional[RetrySettings]:
+        res: Optional[RetrySettings] = self._retry_settings
+        return res
 
     @retry_settings.setter
-    def retry_settings(self, value):
+    def retry_settings(self, value: Any) -> None:
         if isinstance(value, dict):
             value = RetrySettings(**value)
         self._retry_settings = value

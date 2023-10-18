@@ -20,7 +20,7 @@ def cast_to_specific_search_space(
     class_name: Union["ImageClassificationSearchSpace", "ImageObjectDetectionSearchSpace", "NlpSearchSpace"],
     task_type: str,
 ) -> Union["ImageClassificationSearchSpace", "ImageObjectDetectionSearchSpace", "NlpSearchSpace"]:
-    def validate_searchspace_args(input_dict: dict):
+    def validate_searchspace_args(input_dict: dict) -> None:
         searchspace = class_name()
         for key in input_dict:
             if not hasattr(searchspace, key):
@@ -39,4 +39,7 @@ def cast_to_specific_search_space(
         validate_searchspace_args(input.__dict__)
         specific_search_space = class_name._from_search_space_object(input)  # pylint: disable=protected-access
 
-    return specific_search_space
+    res: Union[
+        "ImageClassificationSearchSpace", "ImageObjectDetectionSearchSpace", "NlpSearchSpace"
+    ] = specific_search_space
+    return res

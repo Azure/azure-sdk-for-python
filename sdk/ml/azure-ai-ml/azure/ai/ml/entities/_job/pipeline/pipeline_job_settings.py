@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Optional
+from typing import Any, Dict, Generator, Optional
 
 from azure.ai.ml.entities._job.pipeline._attr_dict import _AttrDict
 
@@ -35,7 +35,7 @@ class PipelineJobSettings(_AttrDict):
         default_compute: Optional[str] = None,
         continue_on_step_failure: Optional[bool] = None,
         force_rerun: Optional[bool] = None,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         self._init = True
         super().__init__()
@@ -49,7 +49,7 @@ class PipelineJobSettings(_AttrDict):
             setattr(self, k, v)
         self._init = False
 
-    def _get_valid_keys(self):
+    def _get_valid_keys(self) -> Generator[str, Any, None]:
         for k, v in self.__dict__.items():
             if v is None:
                 continue
@@ -58,17 +58,17 @@ class PipelineJobSettings(_AttrDict):
                 continue
             yield k
 
-    def _to_dict(self):
+    def _to_dict(self) -> Dict:
         result = {}
         for k in self._get_valid_keys():
             result[k] = self.__dict__[k]
         result.update(self._get_attrs())
         return result
 
-    def _initializing(self):
+    def _initializing(self) -> bool:
         return self._init
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         for _ in self._get_valid_keys():
             return True
         # _attr_dict will return False if no extra attributes are set

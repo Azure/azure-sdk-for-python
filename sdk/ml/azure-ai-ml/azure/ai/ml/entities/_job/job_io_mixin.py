@@ -14,7 +14,7 @@ class JobIOMixin:
         return self._inputs
 
     @inputs.setter
-    def inputs(self, value: Dict):
+    def inputs(self, value: Dict) -> None:
         self._inputs = {}
         if not value:
             return
@@ -27,7 +27,7 @@ class JobIOMixin:
         return self._outputs
 
     @outputs.setter
-    def outputs(self, value: Dict):
+    def outputs(self, value: Dict) -> None:
         self._outputs = {}
         if not value:
             return
