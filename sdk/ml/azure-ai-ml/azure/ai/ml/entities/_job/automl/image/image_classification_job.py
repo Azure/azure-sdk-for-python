@@ -37,6 +37,15 @@ class ImageClassificationJob(AutoMLImageClassificationBase):
 
         :param primary_metric: The primary metric to use for optimization
         :param kwargs: Job-specific arguments
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_automl_image.py
+                :start-after: [START automl.image_classification_job]
+                :end-before: [END automl.image_classification_job]
+                :language: python
+                :dedent: 8
+                :caption: creating an automl image classification job
         """
         # Extract any super class init settings
         limits = kwargs.pop("limits", None)

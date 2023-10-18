@@ -62,6 +62,13 @@ class ImageLimitSettings(RestTranslatableMixin):
         )
         # Submit the AutoML job.
         image_instance_segmentation_job.submit()
+
+    .. literalinclude:: ../samples/ml_samples_automl_image.py
+            :start-after: [START automl.image_limit_settings]
+            :end-before: [END automl.image_limit_settings]
+            :language: python
+            :dedent: 8
+            :caption: Defining the limit settings for an automl image job.
     """
 
     def __init__(

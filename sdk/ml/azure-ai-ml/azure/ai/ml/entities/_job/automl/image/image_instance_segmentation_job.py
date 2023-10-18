@@ -37,7 +37,18 @@ class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
         """Initialize a new AutoML Image Instance Segmentation job.
 
         :param primary_metric: The primary metric to use for optimization
+        :type primary_metric: Optional[str, azure.ai.ml.automl.InstanceSegmentationPrimaryMetrics]
         :param kwargs: Job-specific arguments
+        :type kwargs: Dict[str, Any]
+        
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/ml_samples_automl_image.py
+                :start-after: [START automl.image_instance_segmentation_job]
+                :end-before: [END automl.image_instance_segmentation_job]
+                :language: python
+                :dedent: 8
+                :caption: creating an automl image instance segmentation job
         """
         # Extract any super class init settings
         limits = kwargs.pop("limits", None)

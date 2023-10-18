@@ -36,6 +36,19 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         search_space: Optional[List[ImageObjectDetectionSearchSpace]] = None,
         **kwargs,
     ) -> None:
+        """ Base class for AutoML Image Object Detection and Image Instance Segmentation tasks.
+        :param task_type: Type of task to run. Possible values include: "ImageObjectDetection",
+        "ImageInstanceSegmentation".
+        :type task_type: str
+        :param limits: The resource limits for the job.
+        :type limits: Optional[~azure.ai.ml.entities._job.automl.image.image_limit_settings.ImageLimitSettings]
+        :param sweep: The sweep settings for the job.
+        :type sweep: Optional[~azure.ai.ml.entities._job.automl.image.image_sweep_settings.ImageSweepSettings]
+        :param training_parameters: The training parameters for the job.
+        :type training_parameters: Optional[~azure.ai.ml.automl.ImageModelSettingsObjectDetection]
+        :param search_space: The search space for the job.
+        :type search_space: Optional[List[~azure.ai.ml.automl.ImageObjectDetectionSearchSpace]]
+        """
         super().__init__(task_type=task_type, limits=limits, sweep=sweep, **kwargs)
 
         self.training_parameters = training_parameters  # Assigning training_parameters through setter method.
