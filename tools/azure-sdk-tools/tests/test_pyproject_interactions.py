@@ -25,12 +25,6 @@ def test_pyproject_parse(target):
     assert config == {"mypy": True, "type_check_samples": True, "verifytypes": True, "pyright": False}
 
 
-def test_pyproject_file_parse():
-    config = get_build_config(pyproject_file)
-
-    assert config == {"mypy": True, "type_check_samples": True, "verifytypes": True, "pyright": False}
-
-
 @pytest.mark.parametrize(
     "check_name, default_value, expected_result",
     [
