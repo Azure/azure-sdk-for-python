@@ -29,7 +29,7 @@ class TestEGClientExceptions():
 
         request = _to_http_request("https://eg-topic.westus2-1.eventgrid.azure.net/api/events", event=event)
 
-        assert request.data == json.dumps(base64.b64encode(event.data), cls=AzureJSONEncoder, exclude_readonly=True)
+        assert request.data == b"this is binary data"
         assert request.headers.get("ce-source") == "source"
         assert request.headers.get("ce-subject") == "MySubject"
         assert request.headers.get("ce-type") == "Contoso.Items.ItemReceived"
@@ -40,13 +40,13 @@ class TestEGClientExceptions():
             type="Contoso.Items.ItemReceived",
             source="source",
             subject="MySubject",
-            data=b'this is binary data',
+            data='this is binary data',
             extensions={"extension1": "value1", "extension2": "value2"}
         )
 
         request = _to_http_request("https://eg-topic.westus2-1.eventgrid.azure.net/api/events", event=event)
 
-        assert request.data == json.dumps(base64.b64encode(event.data), cls=AzureJSONEncoder, exclude_readonly=True)
+        assert request.data == b"this is binary data"
         assert request.headers.get("ce-source") == "source"
         assert request.headers.get("ce-subject") == "MySubject"
         assert request.headers.get("ce-type") == "Contoso.Items.ItemReceived"
@@ -64,13 +64,13 @@ class TestEGClientExceptions():
 
         request = _to_http_request("https://eg-topic.westus2-1.eventgrid.azure.net/api/events", event=event)
 
-        assert request.data == json.dumps(base64.b64encode(event.data), cls=AzureJSONEncoder, exclude_readonly=True)
+        assert request.data == b"this is my data"
         assert request.headers.get("ce-source") == "source"
         assert request.headers.get("ce-subject") == "MySubject"
         assert request.headers.get("ce-type") == "Contoso.Items.ItemReceived"
         assert request.headers.get("ce-extension").get("extension1") == "value1"
 
-    def test_complex_binary_request_format(self):
+    def test_class_binary_request_format_error(self):
         test_class = MyTestClass("test")
         event = CloudEvent(
             type="Contoso.Items.ItemReceived",
@@ -81,11 +81,22 @@ class TestEGClientExceptions():
             extensions={"extension1": "value1", "extension2": "value2"}
         )
 
-        request = _to_http_request("https://eg-topic.westus2-1.eventgrid.azure.net/api/events", event=event)
+        with pytest.raises(TypeError):
+            _to_http_request("https://eg-topic.westus2-1.eventgrid.azure.net/api/events", event=event)
 
-        assert request.data == json.dumps(base64.b64encode(event.data), cls=AzureJSONEncoder, exclude_readonly=True)
-        assert request.headers.get("ce-source") == "source"
-        assert request.headers.get("ce-subject") == "MySubject"
-        assert request.headers.get("ce-type") == "Contoso.Items.ItemReceived"
-        assert request.headers.get("ce-extension").get("extension1") == "value1"
-        
+    def test_xml_binary_request_format(self):
+        from xml.etree import ElementTree as ET
+        xml_string = """<?xml version="1.0" encoding="UTF-8"?>"""
+        tree = ET.fromstring(xml_string)
+        root = ET.getroot(tree)
+        event = CloudEvent(
+            type="Contoso.Items.ItemReceived",
+            source="source",
+            subject="MySubject",
+            data=root,
+            datacontenttype="application/json",
+            extensions={"extension1": "value1", "extension2": "value2"}
+        )
+
+        with pytest.raises(TypeError):
+            _to_http_request("https://eg-topic.westus2-1.eventgrid.azure.net/api/events", event=event)
