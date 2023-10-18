@@ -32,7 +32,7 @@ class DistributionPolicySamplesAsync(object):
         policy_id = self._dp_policy_id
         # [START create_distribution_policy_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
-        from azure.communication.jobrouter import (
+        from azure.communication.jobrouter.models import (
             DistributionPolicy,
             LongestIdleMode,
         )
@@ -43,7 +43,7 @@ class DistributionPolicySamplesAsync(object):
 
         async with router_admin_client:
             distribution_policy: DistributionPolicy = await router_admin_client.create_distribution_policy(
-                distribution_policy_id=policy_id,
+                id=policy_id,
                 distribution_policy=DistributionPolicy(
                     offer_expires_after_seconds=1 * 60,
                     mode=LongestIdleMode(min_concurrent_offers=1, max_concurrent_offers=1),
@@ -59,7 +59,7 @@ class DistributionPolicySamplesAsync(object):
         policy_id = self._dp_policy_id
         # [START update_distribution_policy_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
-        from azure.communication.jobrouter import (
+        from azure.communication.jobrouter.models import (
             DistributionPolicy,
             RoundRobinMode,
         )
@@ -70,7 +70,7 @@ class DistributionPolicySamplesAsync(object):
 
         async with router_admin_client:
             updated_distribution_policy: DistributionPolicy = await router_admin_client.update_distribution_policy(
-                distribution_policy_id=policy_id, mode=RoundRobinMode(min_concurrent_offers=1, max_concurrent_offers=1)
+                id=policy_id, mode=RoundRobinMode(min_concurrent_offers=1, max_concurrent_offers=1)
             )
 
             print(f"Distribution policy successfully update with new distribution mode")
@@ -85,7 +85,7 @@ class DistributionPolicySamplesAsync(object):
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
         async with router_admin_client:
-            distribution_policy = await router_admin_client.get_distribution_policy(distribution_policy_id=policy_id)
+            distribution_policy = await router_admin_client.get_distribution_policy(id=policy_id)
 
             print(f"Successfully fetched distribution policy with id: {distribution_policy.id}")
         # [END get_distribution_policy_async]
@@ -136,7 +136,7 @@ class DistributionPolicySamplesAsync(object):
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
         async with router_admin_client:
-            await router_admin_client.delete_distribution_policy(distribution_policy_id=policy_id)
+            await router_admin_client.delete_distribution_policy(id=policy_id)
 
         # [END delete_distribution_policy_async]
 

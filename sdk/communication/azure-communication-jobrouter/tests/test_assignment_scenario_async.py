@@ -22,7 +22,7 @@ from azure.communication.jobrouter.aio import (
     JobRouterAdministrationClient,
     JobRouterClient,
 )
-from azure.communication.jobrouter import (
+from azure.communication.jobrouter.models import (
     LongestIdleMode,
     ChannelConfiguration,
     RouterJobStatus,

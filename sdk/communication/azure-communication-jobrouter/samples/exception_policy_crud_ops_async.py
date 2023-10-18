@@ -32,7 +32,7 @@ class ExceptionPolicySamplesAsync(object):
         policy_id = self._ep_policy_id
         # [START create_exception_policy_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
-        from azure.communication.jobrouter import (
+        from azure.communication.jobrouter.models import (
             WaitTimeExceptionTrigger,
             QueueLengthExceptionTrigger,
             ReclassifyExceptionAction,
@@ -85,7 +85,7 @@ class ExceptionPolicySamplesAsync(object):
         # set a unique value to `policy_id`
         async with router_admin_client:
             exception_policy = await router_admin_client.create_exception_policy(
-                exception_policy_id=policy_id,
+                id=policy_id,
                 exception_policy=ExceptionPolicy(
                     name="TriggerJobCancellationWhenQueueLenIs10", exception_rules=exception_rule
                 ),
@@ -99,7 +99,7 @@ class ExceptionPolicySamplesAsync(object):
         policy_id = self._ep_policy_id
         # [START update_exception_policy_async]
         from azure.communication.jobrouter.aio import JobRouterAdministrationClient
-        from azure.communication.jobrouter import (
+        from azure.communication.jobrouter.models import (
             WaitTimeExceptionTrigger,
             ReclassifyExceptionAction,
             ExceptionPolicy,
@@ -129,7 +129,7 @@ class ExceptionPolicySamplesAsync(object):
 
         async with router_admin_client:
             updated_exception_policy: ExceptionPolicy = await router_admin_client.update_exception_policy(
-                exception_policy_id=policy_id,
+                id=policy_id,
                 exception_rules={
                     # adding new rule
                     "EscalateJobOnWaitTimeExceededTrigger2Min": ExceptionRule(
@@ -167,7 +167,7 @@ class ExceptionPolicySamplesAsync(object):
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
         async with router_admin_client:
-            exception_policy = await router_admin_client.get_exception_policy(exception_policy_id=policy_id)
+            exception_policy = await router_admin_client.get_exception_policy(id=policy_id)
 
             print(f"Successfully fetched exception policy with id: {exception_policy.id}")
         # [END get_exception_policy_async]
@@ -218,7 +218,7 @@ class ExceptionPolicySamplesAsync(object):
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
         async with router_admin_client:
-            await router_admin_client.delete_exception_policy(exception_policy_id=policy_id)
+            await router_admin_client.delete_exception_policy(id=policy_id)
 
         # [END delete_exception_policy_async]
 
