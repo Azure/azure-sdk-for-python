@@ -9,7 +9,6 @@ try:
 except:
     # otherwise fall back to pypi package tomli
     import tomli as toml
-import tomli_w
 
 from typing import Dict, List, Tuple, Any
 
@@ -118,6 +117,7 @@ def update_build_config(package_path: str, new_build_config: Dict[str, Any]) -> 
         toml_dict = {"tool": {"azure-sdk-build": new_build_config}}
 
     with open(toml_file, "wb") as f:
+        import tomli_w
         tomli_w.dump(toml_dict, f)
 
     return new_build_config
