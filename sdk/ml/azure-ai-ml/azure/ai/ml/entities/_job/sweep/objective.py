@@ -26,7 +26,7 @@ class Objective(RestTranslatableMixin):
             :caption: Assigning an objective to a SweepJob.
     """
 
-    def __init__(self, goal: str, primary_metric: Optional[str] = None) -> None:
+    def __init__(self, goal: Optional[str], primary_metric: Optional[str] = None) -> None:
         """Optimization objective.
 
         :param goal: Defines supported metric goals for hyperparameter tuning. Acceptable values

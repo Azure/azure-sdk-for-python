@@ -306,5 +306,5 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         if has_trial_limits_timeout and not self.limits:
             time_out = self.trial.limits.timeout if self.trial.limits is not None else None
             self.limits = SweepJobLimits(trial_timeout=time_out)
-        elif has_trial_limits_timeout and not self.limits.trial_timeout:
+        elif has_trial_limits_timeout and self.limits is not None and not self.limits.trial_timeout:
             self.limits.trial_timeout = self.trial.limits.timeout if self.trial.limits is not None else None
