@@ -6,7 +6,6 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import base64
-from io import IOBase
 import json
 import sys
 from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
@@ -16,15 +15,15 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.messaging import CloudEvent
 from azure.core.tracing.decorator import distributed_trace
 from ._operations import EventGridClientOperationsMixin as OperationsMixin
+from .._model_base import AzureJSONEncoder
 from ..models._models import CloudEvent as InternalCloudEvent
 from ..models._patch import ReceiveResult, ReceiveDetails
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.utils import case_insensitive_dict
 from .. import models as _models
-from .._model_base import AzureJSONEncoder, _deserialize
+from .._model_base import _deserialize
 from .._serialization import Serializer
-from .._vendor import EventGridClientMixinABC
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
@@ -148,7 +147,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         if isinstance(body, CloudEvent):
             kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
             if self._binary_mode:
-                self._publish_binary_mode(topic_name, body, self._config.api_version, self._binary_mode, **kwargs)
+                self._publish_binary_mode(topic_name, body, self._config.api_version, **kwargs)
             else:
                 internal_body = _cloud_event_to_generated(body)
                 self._publish_cloud_event(topic_name, internal_body, **kwargs)
@@ -286,7 +285,7 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
     binary_mode = kwargs.pop("binary_mode", True)
 
     # Content of the request is the data, if already in binary - no work needed
-    _content = event.data
+    _content = _check_content_type(event.data)
  
     # content_type must be CloudEvent DataContentType when in binary mode
     default_content_type = kwargs.pop('content_type', _headers.pop('content-type', "application/cloudevents+json; charset=utf-8"))
@@ -334,10 +333,27 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
         **kwargs
     )
 
-def _from_http_response():
-    pass
-
-
+def _check_content_type(data: Any) -> None:
+    # Check the content type of the data and convert to bytes if needed
+    if isinstance(data, bytes):
+        return data
+    elif isinstance(data, str):
+        return data.encode("utf-8")
+    else:
+        try:
+            return json.dumps(event, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+        except:
+            raise TypeError("Incorrect type for data. Expected bytes, str, or JSON serializable object to encode.")
+        
+            # elif isinstance(data, dict):
+    #     return json.dumps(data).encode("utf-8")
+    # elif isinstance(data, Iterable): # IO text 
+    #     return IteratorByteStream(data)
+    # else:
+    #     try:
+    #         root = data.getroot()
+    #         return ElementTree.tostring(root, encoding="utf-8")
+    #     except:
 
 __all__: List[str] = [
     "EventGridClientOperationsMixin"
