@@ -204,7 +204,7 @@ class AutoMLImage(AutoMLVertical, ABC):
 
         self._sweep.early_termination = early_termination or self._sweep.early_termination
 
-    def __eq__(self, other: any) -> bool:
+    def __eq__(self, other) -> bool:
         """Compares two AutoMLImage objects for equality.
         :param other: The other AutoMLImage object to compare to.
         :type other: ~azure.ai.ml.automl.AutoMLImage
@@ -223,10 +223,10 @@ class AutoMLImage(AutoMLVertical, ABC):
             and self._sweep == other._sweep
         )
 
-    def __ne__(self, other: any) -> bool:
+    def __ne__(self, other) -> bool:
         """Compares two AutoMLImage objects for inequality.
         :param other: The other AutoMLImage object to compare to.
-        "type other: ~azure.ai.ml.automl.AutoMLImage
+        :type other: ~azure.ai.ml.automl.AutoMLImage
         :return: True if the two AutoMLImage objects are not equal; False otherwise.
         :rtype: bool
         """
