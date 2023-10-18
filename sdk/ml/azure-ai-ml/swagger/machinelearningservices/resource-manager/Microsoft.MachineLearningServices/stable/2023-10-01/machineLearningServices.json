@@ -2498,14 +2498,9 @@
           ],
           "description": "The list of private endpoint connections in the workspace."
         },
-        "serverlessComputeCustomSubnet": {
-          "description": "The resource ID of an existing virtual network subnet in which serverless compute nodes should be deployed",
-          "type": "string",
-          "format": "arm-id"
-        },
-        "serverlessComputeNoPublicIP": {
-          "description": "The flag to signal if serverless compute nodes deployed in custom vNet would have no public IP addresses for a workspace with private endpoint",
-          "type": "boolean"
+        "serverlessComputeSettings": {
+          "description": "Settings for serverless compute created in the workspace",
+          "$ref": "#/definitions/ServerlessComputeSettings"
         },
         "sharedPrivateLinkResources": {
           "type": "array",
@@ -2605,14 +2600,9 @@
           "description": "The user assigned identity resource id that represents the workspace identity.",
           "type": "string"
         },
-        "serverlessComputeCustomSubnet": {
-          "description": "The resource ID of an existing virtual network subnet in which serverless compute nodes should be deployed",
-          "type": "string",
-          "format": "arm-id"
-        },
-        "serverlessComputeNoPublicIP": {
-          "description": "The flag to signal if serverless compute nodes deployed in custom vNet would have no public IP addresses for a workspace with private endpoint",
-          "type": "boolean"
+        "serverlessComputeSettings": {
+          "description": "Settings for serverless compute created in the workspace",
+          "$ref": "#/definitions/ServerlessComputeSettings"
         },
         "publicNetworkAccess": {
           "type": "string",
@@ -6076,6 +6066,20 @@
         "objectId",
         "tenantId"
       ]
+    },
+    "ServerlessComputeSettings": {
+      "type": "object",
+      "properties": {
+        "serverlessComputeCustomSubnet": {
+          "description": "The resource ID of an existing virtual network subnet in which serverless compute nodes should be deployed",
+          "type": "string",
+          "format": "arm-id"
+        },
+        "serverlessComputeNoPublicIP": {
+          "description": "The flag to signal if serverless compute nodes deployed in custom vNet would have no public IP addresses for a workspace with private endpoint",
+          "type": "boolean"
+        }
+      }
     },
     "ServiceManagedResourcesSettings": {
       "type": "object",

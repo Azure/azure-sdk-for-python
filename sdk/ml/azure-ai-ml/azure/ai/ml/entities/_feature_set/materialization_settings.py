@@ -4,8 +4,8 @@
 
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MaterializationSettings as RestMaterializationSettings
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MaterializationStoreType
+from azure.ai.ml._restclient.v2023_10_01.models import MaterializationSettings as RestMaterializationSettings
+from azure.ai.ml._restclient.v2023_10_01.models import MaterializationStoreType
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._feature_set.materialization_compute_resource import MaterializationComputeResource
 from azure.ai.ml.entities._mixins import RestTranslatableMixin

@@ -4,7 +4,7 @@
 
 from typing import Any, Optional
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+from azure.ai.ml._restclient.v2023_10_01.models import (
     FeaturesetVersionBackfillResponse as RestFeaturesetVersionBackfillResponse,
 )
 from azure.ai.ml._utils._experimental import experimental
