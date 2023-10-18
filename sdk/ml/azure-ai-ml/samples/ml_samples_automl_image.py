@@ -15,6 +15,7 @@ USAGE:
 
 """
 
+
 class AutoMLImageSamples(object):
     def automl_image_jobs(self):
         # [START automl.image_classification]
@@ -124,7 +125,7 @@ class AutoMLImageSamples(object):
             training_data=Input(type=AssetTypes.MLTABLE, path="./training-mltable-folder"),
             validation_data=Input(type=AssetTypes.MLTABLE, path="./validation-mltable-folder"),
             tags={"my_custom_tag": "My custom value"},
-            primary_metric=ObjectDetectionPrimaryMetrics.MEAN_AVERAGE_PRECISION
+            primary_metric=ObjectDetectionPrimaryMetrics.MEAN_AVERAGE_PRECISION,
         )
         # [END automl.image_object_detection_job]
 
@@ -139,7 +140,7 @@ class AutoMLImageSamples(object):
             training_data=Input(type=AssetTypes.MLTABLE, path="./training-mltable-folder"),
             validation_data=Input(type=AssetTypes.MLTABLE, path="./validation-mltable-folder"),
             tags={"my_custom_tag": "My custom value"},
-            primary_metric=ObjectDetectionPrimaryMetrics.MEAN_AVERAGE_PRECISION
+            primary_metric=ObjectDetectionPrimaryMetrics.MEAN_AVERAGE_PRECISION,
         )
         # [END automl.image_instance_segmentation_job]
 
@@ -159,7 +160,7 @@ class AutoMLImageSamples(object):
 
         image_classification_search_space = automl.ImageClassificationSearchSpace(
             model_name="vitb16r224",
-            number_of_epochs= Choice([15, 30]),
+            number_of_epochs=Choice([15, 30]),
             weight_decay=Uniform(0.01, 0.1),
         )
         # [END automl.image_classification_search_space]
@@ -169,7 +170,7 @@ class AutoMLImageSamples(object):
         from azure.ai.ml.sweep import Uniform
 
         image_detection_search_space = automl.ImageObjectDetectionSearchSpace(
-            learning_rate=Uniform(0.005,0.05),
+            learning_rate=Uniform(0.005, 0.05),
             model_name="yolov5",
             weight_decay=Uniform(0.01, 0.1),
         )
@@ -197,10 +198,7 @@ class AutoMLImageSamples(object):
         # [START automl.image_object_detection_model_settings]
         from azure.ai.ml import automl
 
-        object_detection_model_settings = automl.ImageModelSettingsObjectDetection(
-            min_size=600,
-            max_size=1333
-        )
+        object_detection_model_settings = automl.ImageModelSettingsObjectDetection(min_size=600, max_size=1333)
         # [END automl.image_object_detection_model_settings]
 
 

@@ -36,7 +36,7 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         search_space: Optional[List[ImageObjectDetectionSearchSpace]] = None,
         **kwargs,
     ) -> None:
-        """ Base class for AutoML Image Object Detection and Image Instance Segmentation tasks.
+        """Base class for AutoML Image Object Detection and Image Instance Segmentation tasks.
         :param task_type: Type of task to run. Possible values include: "ImageObjectDetection",
         "ImageInstanceSegmentation".
         :type task_type: str

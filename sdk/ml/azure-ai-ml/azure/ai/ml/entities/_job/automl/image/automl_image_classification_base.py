@@ -29,7 +29,7 @@ class AutoMLImageClassificationBase(AutoMLImage):
         search_space: Optional[List[ImageClassificationSearchSpace]] = None,
         **kwargs,
     ) -> None:
-        """ Base class for AutoML Image Classification and Image Classification Multilabel tasks.
+        """Base class for AutoML Image Classification and Image Classification Multilabel tasks.
         Please do not instantiate this class directly. Instantiate one of the child classes instead.
         :param task_type: Type of task to run.
         Possible values include: "ImageClassification", "ImageClassificationMultilabel".
