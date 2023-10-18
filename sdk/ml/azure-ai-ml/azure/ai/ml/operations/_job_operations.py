@@ -27,10 +27,10 @@ from azure.ai.ml._restclient.dataset_dataplane import AzureMachineLearningWorksp
 from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspaces as ServiceClientModelDataplane
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningWorkspaces as AMLServiceClient
-from azure.ai.ml._restclient.v2023_10_01.models import JobBase
-from azure.ai.ml._restclient.v2023_10_01.models import JobType as RestJobType
-from azure.ai.ml._restclient.v2023_10_01.models import ListViewType, UserIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as AMLServiceClient
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, UserIdentity
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -176,6 +176,7 @@ class JobOperations(_ScopeDependentOperations):
             self._all_operations, self._operation_scope, self._operation_config
         )  # pylint: disable=line-too-long
 
+        self.pipeline_service_client = kwargs.pop("pipeline_service_client", None)
         self._kwargs = kwargs
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -664,11 +665,25 @@ class JobOperations(_ScopeDependentOperations):
         ):
             self._set_headers_with_user_aml_token(kwargs)
 
-        result = self._service_client_operation.create_or_update(
+        # Upgrade create_or_update api from 2023-04-01-preview to 2023-10-01 for pipeline job.
+        if rest_job_resource.properties.job_type == RestJobType.PIPELINE and self.pipeline_service_client:
+            try:
+                service_client_operation = self.pipeline_service_client.jobs
+                rest_job_resource_json = self._service_client_operation._serialize.body(rest_job_resource, "JobBase")
+                body = service_client_operation._deserialize("JobBase", rest_job_resource_json)
+            except Exception as ex:  # pylint: disable=broad-except
+                module_logger.error("Failed to serialize JobBase for pipeline job: %s", ex)
+                service_client_operation = self._service_client_operation
+                body = rest_job_resource
+        else:
+            service_client_operation = self._service_client_operation
+            body = rest_job_resource
+
+        result = service_client_operation.create_or_update(
             id=rest_job_resource.name,  # type: ignore
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
-            body=rest_job_resource,
+            body=body,
             **kwargs,
         )
 
@@ -698,11 +713,25 @@ class JobOperations(_ScopeDependentOperations):
             if snapshot_id is not None:
                 job_object.properties.properties["ContentSnapshotId"] = snapshot_id
 
-            result = self._service_client_operation.create_or_update(
-                id=rest_job_resource.name,  # type: ignore
+            # Upgrade create_or_update api from 2023-04-01-preview to 2023-10-01 for pipeline job.
+            if job_object.properties.job_type == RestJobType.PIPELINE and self.pipeline_service_client:
+                try:
+                    service_client_operation = self.pipeline_service_client.jobs
+                    job_object_json = self._service_client_operation._serialize.body(job_object, "JobBase")
+                    body = service_client_operation._deserialize("JobBase", job_object_json)
+                except Exception as ex:  # pylint: disable=broad-except
+                    module_logger.error("Failed to serialize JobBase for pipeline job: %s", ex)
+                    service_client_operation = self._service_client_operation
+                    body = job_object
+            else:
+                service_client_operation = self._service_client_operation
+                body = job_object
+
+            result = service_client_operation.create_or_update(
+                id=rest_job_resource.name,  # why not job_object.name?
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._workspace_name,
-                body=job_object,
+                body=body,
                 **kwargs,
             )
         return self._resolve_azureml_id(Job._from_rest_object(result))

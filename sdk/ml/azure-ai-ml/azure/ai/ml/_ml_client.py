@@ -551,11 +551,12 @@ class MLClient:
         self._jobs = JobOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2023,
+            self._service_client_04_2023_preview,
             self._operation_container,
             self._credential,
             _service_client_kwargs=kwargs,
             requests_pipeline=self._requests_pipeline,
+            pipeline_service_client=self._service_client_10_2023,  # Upgrade create_or_update api to 2023-10-01 version for pipeline job
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.JOB, self._jobs)
