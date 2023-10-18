@@ -202,7 +202,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_encoder_create_entity_complex_keys(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.now())
+        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.utcnow())
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable02")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -261,7 +261,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_encoder_create_entity_type_conversion(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.now())
+        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.utcnow())
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable03")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -453,7 +453,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_encoder_create_entity_raw(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.now())
+        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.utcnow())
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable05")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -879,7 +879,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_encoder_upsert_entity_complex_keys(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.now())
+        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.utcnow())
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable08")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -997,7 +997,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_encoder_upsert_entity_type_conversion(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.now())
+        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.utcnow())
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable09")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -1237,7 +1237,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_encoder_upsert_entity_raw(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.now())
+        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.utcnow())
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable11")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -1876,7 +1876,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_encoder_update_entity_complex_keys(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.now())
+        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.utcnow())
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable14")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -2000,7 +2000,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_encoder_update_entity_type_conversion(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.now())
+        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.utcnow())
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable15")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -2249,7 +2249,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_encoder_update_entity_raw(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.now())
+        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.utcnow())
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable17")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -2852,7 +2852,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_encoder_delete_entity_complex_keys(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.now())
+        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.utcnow())
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable20")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
@@ -3010,7 +3010,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
     @recorded_by_proxy
     def test_encoder_get_entity_complex_keys(self, tables_cosmos_account_name, tables_primary_cosmos_account_key, **kwargs):
         recorded_variables = kwargs.pop("variables", {})
-        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.now())
+        recorded_timestamp = self.set_datetime_variable(recorded_variables, "timestamp", datetime.utcnow())
         recorded_uuid = self.set_uuid_variable(recorded_variables, "uuid", uuid.uuid4())
         table_name = self.get_resource_name("uttable24")
         url = self.account_url(tables_cosmos_account_name, "cosmos")
