@@ -123,6 +123,7 @@
     "conda/conda-releaselogs/azure-mgmt.md"
   ],
   "words": [
+    "pyprojects",
     "certifi",
     "cffi",
     "tomlw",

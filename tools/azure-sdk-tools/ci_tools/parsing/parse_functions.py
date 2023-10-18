@@ -45,7 +45,7 @@ class ParsedSetup:
         package_data: Dict[str, Any],
         include_package_data: bool,
         classifiers: List[str],
-        keywords: List[str]
+        keywords: List[str],
     ):
         self.name: str = name
         self.version: str = version
@@ -74,7 +74,7 @@ class ParsedSetup:
             package_data,
             include_package_data,
             classifiers,
-            keywords
+            keywords,
         ) = parse_setup(parse_directory_or_file)
 
         return cls(
@@ -88,14 +88,68 @@ class ParsedSetup:
             package_data,
             include_package_data,
             classifiers,
-            keywords
+            keywords,
         )
 
     def get_build_config(self) -> Dict[str, Any]:
         return get_build_config(self.folder)
 
+
+def update_build_config(package_path: str, new_build_config: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Attempts to update a pyproject.toml's [tools.azure-sdk-tools] section with a new check configuration.
+    
+    This function can only append or override existing check values. It cannot delete them.
+    """
+    if os.path.isfile(package_path):
+        package_path = os.path.dirname(package_path)
+
+    toml_file = os.path.join(package_path, "pyproject.toml")
+
+    if os.path.exists(toml_file):
+        with open(toml_file, "rb") as f:
+            toml_dict = toml.load(f)
+            if "tool" in toml_dict:
+                tool_configs = toml_dict["tool"]
+                if "azure-sdk-build" in tool_configs:
+                    tool_configs["azure-sdk-build"] = new_build_config
+    else:
+        toml_dict = {"tool": {"azure-sdk-build": new_build_config}}
+
+    with open(toml_file, "wb") as f:
+        import tomli_w
+        tomli_w.dump(toml_dict, f)
+
+    return new_build_config
+
+
+def get_config_setting(package_path: str, setting: str, default: Any = True) -> Any:
+    """
+    Attempts to retrieve a specific setting within the [tools.azure-sdk-tools] section of a discovered
+    pyproject.toml. If the input 'setting' does NOT exist, the provided default value will be returned.
+    """
+    # we should always take the override if one is present
+    override_value = os.getenv(f"{os.path.basename(package_path).upper()}_{setting.upper()}", None)
+    if override_value:
+        return override_value
+
+    # if no override, check for the config setting in the pyproject.toml
+    config = get_build_config(package_path)
+
+    if config:
+        if setting.lower() in config:
+            return config[setting.lower()]
+
+    return default
+
+
 def get_build_config(package_path: str) -> Dict[str, Any]:
-    if package_path.lower().endswith("setup.py"):
+    """
+    Attempts to retrieve all values within [tools.azure-sdk-build] section of a pyproject.toml.
+
+    If passed an actual file in package_path arg, the pyproject.toml will be found alongside the targeted file.
+    """
+    if os.path.isfile(package_path):
         package_path = os.path.dirname(package_path)
 
     toml_file = os.path.join(package_path, "pyproject.toml")
@@ -121,7 +175,9 @@ def read_setup_py_content(setup_filename: str) -> str:
         return content
 
 
-def parse_setup(setup_filename: str) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str]]:
+def parse_setup(
+    setup_filename: str,
+) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str]]:
     """
     Used to evaluate a setup.py (or a directory containing a setup.py) and return a tuple containing:
     (
@@ -225,7 +281,7 @@ def parse_setup(setup_filename: str) -> Tuple[str, str, str, List[str], bool, st
         package_data,
         include_package_data,
         classifiers,
-        keywords
+        keywords,
     )
 
 
