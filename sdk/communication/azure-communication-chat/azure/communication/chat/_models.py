@@ -33,7 +33,6 @@ class ChatParticipant:
         identifier: CommunicationIdentifier,
         display_name: Optional[str] = None,
         share_history_time: Optional[datetime.datetime] = None,
-        **kwargs: Any
     ) -> None:
         """
         :keyword identifier: Identifies a participant in Azure Communication services. A
