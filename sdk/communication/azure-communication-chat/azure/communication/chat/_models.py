@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
+from typing import Any, Optional
 
 import datetime
 from ._generated.models import ChatParticipant as ChatParticipantAutorest
