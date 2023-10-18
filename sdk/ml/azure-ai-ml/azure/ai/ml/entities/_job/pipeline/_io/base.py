@@ -7,7 +7,7 @@
 import copy
 import re
 from abc import ABC, abstractmethod
-from typing import List, Optional, TypeVar, Union, overload
+from typing import Any, Dict, List, Optional, TypeVar, Union, cast, overload
 
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes
@@ -18,7 +18,6 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpressionMixin
 from azure.ai.ml.entities._util import resolve_pipeline_parameter
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, UserErrorException, ValidationException
-
 
 T = TypeVar("T")
 
@@ -85,7 +84,13 @@ class InputOutputBase(ABC):
     # TODO: refine this code, always use _data to store builder level settings and use _meta to store definition
     # TODO: when _data missing, return value from _meta
 
-    def __init__(self, meta: Union[Input, Output], data, default_data=None, **kwargs):
+    def __init__(
+        self,
+        meta: Union[Input, Output],
+        data: Optional[Union[int, bool, float, str, Input, Output]],
+        default_data: Optional[Union[int, bool, float, str, Input, Output]] = None,
+        **kwargs: Any,
+    ):
         """Base class of input & output.
 
         :param meta: Metadata of this input/output, eg: type, min, max, etc.
@@ -103,7 +108,7 @@ class InputOutputBase(ABC):
         self._original_data = data
         self._data = self._build_data(data)
         self._default_data = default_data
-        self._type = meta.type if meta is not None else kwargs.pop("type", None)
+        self._type: str = meta.type if meta is not None else kwargs.pop("type", None)
         self._mode = self._get_mode(original_data=data, data=self._data, kwargs=kwargs)
         self._description = (
             self._data.description
@@ -111,7 +116,9 @@ class InputOutputBase(ABC):
             else kwargs.pop("description", None)
         )
         # TODO: remove this
-        self._attribute_map = {}
+        self._attribute_map: Dict = {}
+        self._name: str = ""
+        self._version: str = ""
         super(InputOutputBase, self).__init__(**kwargs)
 
     @abstractmethod
@@ -125,7 +132,7 @@ class InputOutputBase(ABC):
         """
 
     @abstractmethod
-    def _build_default_data(self):
+    def _build_default_data(self) -> None:
         """Build default data when data not configured."""
 
     @property
@@ -138,27 +145,29 @@ class InputOutputBase(ABC):
         return self._type
 
     @type.setter
-    def type(self, type):  # pylint: disable=redefined-builtin
+    def type(self, type: Any) -> None:  # pylint: disable=redefined-builtin
         # For un-configured input/output, we build a default data entry for them.
         self._build_default_data()
         self._type = type
         if isinstance(self._data, (Input, Output)):
             self._data.type = type
-        else:  # when type of self._data is InputOutputBase or its child class
+        elif self._data is not None and not isinstance(
+            self._data, (int, float, str)
+        ):  # when type of self._data is InputOutputBase or its child class
             self._data._type = type
 
     @property
-    def mode(self) -> str:
+    def mode(self) -> Optional[str]:
         return self._mode
 
     @mode.setter
-    def mode(self, mode):
+    def mode(self, mode: Optional[str]) -> None:
         # For un-configured input/output, we build a default data entry for them.
         self._build_default_data()
         self._mode = mode
         if isinstance(self._data, (Input, Output)):
             self._data.mode = mode
-        else:
+        elif self._data is not None and not isinstance(self._data, (int, float, str)):
             self._data._mode = mode
 
     @property
@@ -166,20 +175,21 @@ class InputOutputBase(ABC):
         return self._description
 
     @description.setter
-    def description(self, description):
+    def description(self, description: str) -> None:
         # For un-configured input/output, we build a default data entry for them.
         self._build_default_data()
         self._description = description
         if isinstance(self._data, (Input, Output)):
             self._data.description = description
-        else:
+        elif self._data is not None and not isinstance(self._data, (int, float, str)):
             self._data._description = description
 
     @property
-    def path(self) -> str:
+    def path(self) -> Optional[str]:
         # This property is introduced for static intellisense.
         if hasattr(self._data, "path"):
-            return self._data.path
+            if self._data is not None and not isinstance(self._data, (int, float, str)):
+                return self._data.path
         msg = f"{type(self._data)} does not have path."
         raise ValidationException(
             message=msg,
@@ -189,11 +199,12 @@ class InputOutputBase(ABC):
         )
 
     @path.setter
-    def path(self, path):
+    def path(self, path: str) -> None:
         # For un-configured input/output, we build a default data entry for them.
         self._build_default_data()
         if hasattr(self._data, "path"):
-            self._data.path = path
+            if self._data is not None and not isinstance(self._data, (int, float, str)):
+                self._data.path = path
         else:
             msg = f"{type(self._data)} does not support setting path."
             raise ValidationException(
@@ -214,21 +225,26 @@ class InputOutputBase(ABC):
     # Why did we have this function? It prevents the DictMixin from being applied.
     # Unclear if we explicitly do NOT want the mapping protocol to be applied to this, or it this was just
     # confirmation that it didn't at the time.
-    def keys(self):
+    def keys(self) -> None:
         # This property is introduced to raise catchable Exception in marshmallow mapping validation trial.
         raise TypeError(f"'{type(self).__name__}' object is not a mapping")
 
-    def __str__(self):
+    def __str__(self) -> str:
         try:
             return self._data_binding()
         except AttributeError:
             return super(InputOutputBase, self).__str__()
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return id(self)
 
     @classmethod
-    def _get_mode(cls, original_data, data, kwargs: dict) -> Optional[str]:
+    def _get_mode(
+        cls,
+        original_data: Optional[Union[int, bool, float, str, Input, Output, "PipelineInput"]],
+        data: Optional[Union[int, bool, float, str, Input, Output]],
+        kwargs: dict,
+    ) -> Optional[str]:
         """Get mode of this input/output builder.
 
         :param original_data: Original value of input/output.
@@ -251,7 +267,7 @@ class InputOutputBase(ABC):
         return data.mode if data is not None and hasattr(data, "mode") else kwargs.pop("mode", None)
 
     @property
-    def _is_primitive_type(self):
+    def _is_primitive_type(self) -> bool:
         return self.type in IOConstants.PRIMITIVE_STR_2_TYPE
 
 
@@ -265,7 +281,7 @@ class NodeInput(InputOutputBase):
         *,
         data: Optional[Union[int, bool, float, str, Output, "PipelineInput", Input]] = None,
         owner: Optional[Union["BaseComponent", "PipelineJob"]] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         """Initialize an input of a component.
 
@@ -293,7 +309,7 @@ class NodeInput(InputOutputBase):
         self._owner = owner
         super().__init__(meta=meta, data=data, **kwargs)
 
-    def _build_default_data(self):
+    def _build_default_data(self) -> None:
         """Build default data when input not configured."""
         if self._data is None:
             self._data = Input()
@@ -308,11 +324,11 @@ class NodeInput(InputOutputBase):
         :return: The built data
         :rtype: Union[T, str, Input, "PipelineInput", "NodeOutput"]
         """
-        data: Union[T, str, NodeOutput] = resolve_pipeline_parameter(data)
-        if data is None:
-            return data
+        _data: Union[T, str, NodeOutput] = resolve_pipeline_parameter(data)
+        if _data is None:
+            return _data
         # Unidiomatic typecheck: Checks that data is _exactly_ this type, and not potentially a subtype
-        if type(data) is NodeInput:  # pylint: disable=unidiomatic-typecheck
+        if type(_data) is NodeInput:  # pylint: disable=unidiomatic-typecheck
             msg = "Can not bind input to another component's input."
             raise ValidationException(
                 message=msg,
@@ -320,33 +336,33 @@ class NodeInput(InputOutputBase):
                 target=ErrorTarget.PIPELINE,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        if isinstance(data, (PipelineInput, NodeOutput)):
+        if isinstance(_data, (PipelineInput, NodeOutput)):
             # If value is input or output, it's a data binding, we require it have a owner so we can convert it to
             # a data binding, eg: ${{inputs.xxx}}
-            if isinstance(data, NodeOutput) and data._owner is None:
+            if isinstance(_data, NodeOutput) and _data._owner is None:
                 msg = "Setting input binding {} to output without owner is not allowed."
                 raise ValidationException(
-                    message=msg.format(data),
-                    no_personal_data_message=msg.format("[data]"),
+                    message=msg.format(_data),
+                    no_personal_data_message=msg.format("[_data]"),
                     target=ErrorTarget.PIPELINE,
                     error_category=ErrorCategory.USER_ERROR,
                 )
-            return data
+            return _data
         # for data binding case, set is_singular=False for case like "${{parent.inputs.job_in_folder}}/sample1.csv"
-        if isinstance(data, Input) or is_data_binding_expression(data, is_singular=False):
-            return data
-        if isinstance(data, (Data, Model)):
-            return _data_to_input(data)
+        if isinstance(_data, Input) or is_data_binding_expression(_data, is_singular=False):
+            return _data
+        if isinstance(_data, (Data, Model)):
+            return _data_to_input(_data)
         # self._meta.type could be None when sub pipeline has no annotation
         if isinstance(self._meta, Input) and self._meta.type and not self._meta._is_primitive_type:
-            if isinstance(data, str):
-                return Input(type=self._meta.type, path=data)
+            if isinstance(_data, str):
+                return Input(type=self._meta.type, path=_data)
             msg = "only path input is supported now but get {}: {}."
             raise UserErrorException(
-                message=msg.format(type(data), data),
-                no_personal_data_message=msg.format(type(data), "[data]"),
+                message=msg.format(type(_data), _data),
+                no_personal_data_message=msg.format(type(_data), "[_data]"),
             )
-        return data
+        return _data
 
     def _to_job_input(self) -> Optional[Input]:
         """convert the input to Input, this logic will change if backend contract changes."""
@@ -368,7 +384,7 @@ class NodeInput(InputOutputBase):
 
         return result
 
-    def _data_binding(self):
+    def _data_binding(self) -> str:
         msg = "Input binding {} can only come from a pipeline, currently got {}"
         # call type(self._owner) to avoid circular import
         raise ValidationException(
@@ -378,7 +394,7 @@ class NodeInput(InputOutputBase):
             error_category=ErrorCategory.USER_ERROR,
         )
 
-    def _copy(self, owner):
+    def _copy(self, owner: Any) -> "NodeInput":
         return NodeInput(
             port_name=self._port_name,
             data=self._data,
@@ -386,7 +402,7 @@ class NodeInput(InputOutputBase):
             meta=self._meta,
         )
 
-    def _deepcopy(self):
+    def _deepcopy(self) -> "NodeInput":
         return NodeInput(
             port_name=self._port_name,
             data=copy.copy(self._data),
@@ -418,7 +434,7 @@ class NodeInput(InputOutputBase):
         from azure.ai.ml.entities import Pipeline
         from azure.ai.ml.entities._builders import BaseNode
 
-        def _resolve_data_owner(data) -> Optional["BaseNode"]:
+        def _resolve_data_owner(data: Union[BaseNode, PipelineInput, NodeOutput]) -> Optional["BaseNode"]:
             if isinstance(data, BaseNode) and not isinstance(data, Pipeline):
                 return data
             while isinstance(data, PipelineInput):
@@ -447,7 +463,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         data: Optional[Union[Output, str]] = None,
         owner: Optional[Union["BaseComponent", "PipelineJob"]] = None,
         binding_output: Optional["NodeOutput"] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         """Initialize an Output of a component.
 
@@ -482,8 +498,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         super().__init__(meta=meta, data=data, **kwargs)
         self._port_name = port_name
         self._owner = owner
-        self._name = self._data.name if isinstance(self._data, Output) else None
-        self._version = self._data.version if isinstance(self._data, Output) else None
+        self._name: str = self._data.name if isinstance(self._data, Output) else None
+        self._version: str = self._data.version if isinstance(self._data, Output) else None
 
         self._assert_name_and_version()
 
@@ -509,7 +525,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         return self._name
 
     @name.setter
-    def name(self, name: str):
+    def name(self, name: str) -> None:
         """Assigns the name to NodeOutput/PipelineOutput and builds data according to the name.
 
         :param name: The new name
@@ -537,7 +553,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         return self._version
 
     @version.setter
-    def version(self, version: str):
+    def version(self, version: str) -> None:
         """Assigns the version to NodeOutput/PipelineOutput and builds data according to the version.
 
         :param version: The new version
@@ -558,15 +574,15 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
     @property
     def path(self) -> Optional[str]:
         # For node output path,
-        if hasattr(self._data, "path"):
+        if self._data is not None and hasattr(self._data, "path"):
             return self._data.path
         return None
 
     @path.setter
-    def path(self, path):
+    def path(self, path: Optional[str]) -> None:
         # For un-configured output, we build a default data entry for them.
         self._build_default_data()
-        if hasattr(self._data, "path"):
+        if self._data is not None and hasattr(self._data, "path"):
             self._data.path = path
         else:
             # YAML job will have string output binding and do not support setting path for it.
@@ -578,7 +594,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-    def _assert_name_and_version(self):
+    def _assert_name_and_version(self) -> None:
         if self.name and not (re.match("^[A-Za-z0-9_-]*$", self.name) and len(self.name) <= 255):
             raise UserErrorException(
                 f"The output name {self.name} can only contain alphanumeric characters, dashes and underscores, "
@@ -587,7 +603,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         if self.version and not self.name:
             raise UserErrorException("Output name is required when output version is specified.")
 
-    def _build_default_data(self):
+    def _build_default_data(self) -> None:
         """Build default data when output not configured."""
         if self._data is None:
             # _meta will be None when node._component is not a Component object
@@ -612,7 +628,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        return data
+        res: T = cast(T, data)
+        return res
 
     def _to_job_output(self) -> Output:
         """Convert the output to Output, this logic will change if backend contract changes."""
@@ -640,10 +657,13 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             )
         return result
 
-    def _data_binding(self):
-        return f"${{{{parent.jobs.{self._owner.name}.outputs.{self._port_name}}}}}"
+    def _data_binding(self) -> str:
+        if self._owner is not None:
+            return f"${{{{parent.jobs.{self._owner.name}.outputs.{self._port_name}}}}}"
 
-    def _copy(self, owner):
+        return ""
+
+    def _copy(self, owner: Any) -> "NodeOutput":
         return NodeOutput(
             port_name=self._port_name,
             data=self._data,
@@ -651,7 +671,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             meta=self._meta,
         )
 
-    def _deepcopy(self):
+    def _deepcopy(self) -> "NodeOutput":
         return NodeOutput(
             port_name=self._port_name,
             data=copy.copy(self._data),
@@ -664,7 +684,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
 class PipelineInput(NodeInput, PipelineExpressionMixin):
     """Define one input of a Pipeline."""
 
-    def __init__(self, name: str, meta: Input, group_names: Optional[List[str]] = None, **kwargs):
+    def __init__(self, name: str, meta: Input, group_names: Optional[List[str]] = None, **kwargs: Any):
         """Initialize a PipelineInput.
 
         :param name: The name of the input.
@@ -677,7 +697,7 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
         super(PipelineInput, self).__init__(port_name=name, meta=meta, **kwargs)
         self._group_names = group_names if group_names else []
 
-    def result(self):
+    def result(self) -> Any:
         """Return original value of pipeline input.
 
         :return: The original value of pipeline input
@@ -709,7 +729,7 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
         ...
 
     @overload
-    def _build_data(self, data: T) -> T:
+    def _build_data(self, data: T) -> T:  # type: ignore
         ...
 
     def _build_data(self, data: Union[Model, Data, T]) -> Union[Input, T]:
@@ -762,7 +782,8 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
         # If type is asset type, return data type without default.
         # Else infer type from data and set it as default.
         if data_type and data_type.lower() in AssetTypes.__dict__.values():
-            result = Input(type=data_type, mode=self._data.mode)
+            if not isinstance(self._data, (int, float, str)):
+                result = Input(type=data_type, mode=self._data.mode)
         elif type(self._data) in IOConstants.PRIMITIVE_TYPE_2_STR:
             result = Input(
                 type=IOConstants.PRIMITIVE_TYPE_2_STR[type(self._data)],
@@ -782,7 +803,7 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
 class PipelineOutput(NodeOutput):
     """Define one output of a Pipeline."""
 
-    def _to_job_output(self):
+    def _to_job_output(self) -> Output:
         if isinstance(self._data, Output):
             # For pipeline output with type Output, always pass to backend.
             result = self._data
@@ -797,7 +818,7 @@ class PipelineOutput(NodeOutput):
             result.type = self.type
         return result
 
-    def _data_binding(self):
+    def _data_binding(self) -> str:
         return f"${{{{parent.outputs.{self._port_name}}}}}"
 
     def _to_output(self) -> Output:
@@ -808,4 +829,6 @@ class PipelineOutput(NodeOutput):
         if isinstance(self._meta, Output):
             return self._meta
         # Assign type directly as we didn't have primitive output type for now.
-        return Output(type=self._data.type, mode=self._data.mode)
+        if not isinstance(self._data, (int, float, str)):
+            return Output(type=self._data.type, mode=self._data.mode)
+        return Output()
