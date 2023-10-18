@@ -5,6 +5,8 @@
 # --------------------------------------------------------------------------
 import time
 import unittest
+import pytest
+import sys
 from unittest.mock import Mock
 from azure.appconfiguration.provider import SentinelKey
 from devtools_testutils import recorded_by_proxy
@@ -16,7 +18,12 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
     # method: refresh
     @recorded_by_proxy
     @app_config_decorator_aad
-    def test_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
+    @pytest.mark.skipif(
+        sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock"
+    )
+    def test_refresh(
+        self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url
+    ):
         mock_callback = Mock()
         client = self.create_aad_client(
             appconfiguration_endpoint_string,
@@ -69,7 +76,12 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
     # method: refresh
     @recorded_by_proxy
     @app_config_decorator_aad
-    def test_empty_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
+    @pytest.mark.skipif(
+        sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock"
+    )
+    def test_empty_refresh(
+        self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url
+    ):
         mock_callback = Mock()
         client = self.create_aad_client(
             appconfiguration_endpoint_string,
@@ -85,7 +97,9 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
         setting = client._client.get_configuration_setting(key="refresh_message")
         setting.value = "updated value"
         client._client.set_configuration_setting(setting)
-        static_setting = client._client.get_configuration_setting(key="non_refreshed_message")
+        static_setting = client._client.get_configuration_setting(
+            key="non_refreshed_message"
+        )
         static_setting.value = "updated static"
         client._client.set_configuration_setting(static_setting)
 
