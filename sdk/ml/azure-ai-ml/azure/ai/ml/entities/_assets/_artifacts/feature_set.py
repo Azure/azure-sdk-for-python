@@ -8,7 +8,7 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+from azure.ai.ml._restclient.v2023_10_01.models import (
     FeaturesetContainer,
     FeaturesetContainerProperties,
     FeaturesetVersion,

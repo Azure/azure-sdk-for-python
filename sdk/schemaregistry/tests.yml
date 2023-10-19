@@ -4,6 +4,11 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: schemaregistry
+      MatrixConfigs:
+        - Name: schemaregistry_ci_matrix
+          Path: eng/pipelines/templates/stages/platform-matrix-metricsadvisor_tables.json
+          Selection: sparse
+          GenerateVMJobs: true
       TestTimeoutInMinutes: 300
       BuildTargetingString: azure-schemaregistry*
       EnvVars:

@@ -3,6 +3,7 @@ mypy = true
 type_check_samples = true
 verifytypes = true
 pyright = false
+strict_sphinx = true
 # For test environments or static checks where a check should be run by default, not explicitly disabling will enable the check.
 # pylint is enabled by default, so there is no reason for a pylint = true in every pyproject.toml.
 #
