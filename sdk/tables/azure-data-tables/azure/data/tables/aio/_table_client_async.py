@@ -316,11 +316,9 @@ class TableClient(AsyncTablesBaseClient):
 
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
-        if match_condition and entity and not etag:
-            try:
-                etag = entity.metadata.get("etag", None)
-            except (AttributeError, TypeError):
-                pass
+        if match_condition and not etag:
+            if isinstance(entity, TableEntity):
+                etag = entity.metadata.get("etag")
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
@@ -410,7 +408,7 @@ class TableClient(AsyncTablesBaseClient):
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
             if isinstance(entity, TableEntity):
-                etag = entity.metadata.get("etag", None)
+                etag = entity.metadata.get("etag")
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
@@ -645,7 +643,8 @@ class TableClient(AsyncTablesBaseClient):
             - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'})
             - ('upsert', {'PartitionKey': 'A', 'RowKey': 'B'}, {'mode': UpdateMode.REPLACE})
 
-        :type operations: AsyncIterable[Tuple[str, Entity, Mapping[str, Any]]]
+        :type operations:
+         Union[Iterable[Tuple[str, Entity, Mapping[str, Any]]],AsyncIterable[Tuple[str, Entity, Mapping[str, Any]]]]
         :return: A list of mappings with response metadata for each operation in the transaction.
         :rtype: list[Mapping[str, Any]]
         :raises ~azure.data.tables.TableTransactionError:

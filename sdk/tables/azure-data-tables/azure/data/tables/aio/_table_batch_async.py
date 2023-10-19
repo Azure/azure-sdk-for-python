@@ -237,7 +237,7 @@ class TableBatchOperations(object):
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
             if isinstance(entity, TableEntity):
-                etag = entity.metadata.get("etag", None)
+                etag = entity.metadata.get("etag")
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
@@ -463,7 +463,7 @@ class TableBatchOperations(object):
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
             if isinstance(entity, TableEntity):
-                etag = entity.metadata.get("etag", None)
+                etag = entity.metadata.get("etag")
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )

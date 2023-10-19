@@ -151,14 +151,10 @@ _PYTHON_TO_ENTITY_CONVERSIONS = {
     float: _to_entity_float,
     UUID: _to_entity_guid,
     Enum: _to_entity_str,
+    str: _to_entity_str,
+    bytes: _to_entity_binary,
 }
 
-_PYTHON_TO_ENTITY_CONVERSIONS.update(
-    {
-        str: _to_entity_str,
-        bytes: _to_entity_binary,
-    }
-)
 
 # cspell:ignore Odatatype
 

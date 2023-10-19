@@ -51,24 +51,33 @@ class TableAccessPolicy(GenAccessPolicy):
     """
 
     start: Optional[Union[datetime, str]]  # type: ignore[assignment] # Base class defined the property as "str"
-    """The time at which the shared access signature becomes valid.
-        If omitted, start time for this call is assumed to be the time when the storage service receives the request.
-        Azure will always convert values to UTC. If a date is passed in without timezone info, it is assumed to be UTC.
-    """
     expiry: Optional[Union[datetime, str]]  # type: ignore[assignment] # Base class defined the property as "str"
-    """The time at which the shared access signature becomes invalid.
-        Required unless an id is given referencing a stored access policy which contains this field.
-        This field must be omitted if it has been specified in an associated stored access policy. Azure will always
-        convert values to UTC. If a date is passed in without timezone info, it is assumed to be UTC.
-    """
     permission: Optional[str]  # type: ignore[assignment] # Base class defined the property as "str"
-    """The permissions associated with the shared access signature.
-        The user is restricted to operations allowed by the permissions. Required unless an id is given referencing
-        a stored access policy which contains this field. This field must be omitted if it has been specified in
-        an associated stored access policy.
-    """
 
     def __init__(self, **kwargs) -> None:  # pylint: disable=super-init-not-called
+        """
+        :keyword str permission:
+            The permissions associated with the shared access signature. The
+            user is restricted to operations allowed by the permissions.
+            Required unless an id is given referencing a stored access policy
+            which contains this field. This field must be omitted if it has been
+            specified in an associated stored access policy.
+        :keyword expiry:
+            The time at which the shared access signature becomes invalid.
+            Required unless an id is given referencing a stored access policy
+            which contains this field. This field must be omitted if it has
+            been specified in an associated stored access policy. Azure will always
+            convert values to UTC. If a date is passed in without timezone info, it
+            is assumed to be UTC.
+        :paramtype expiry: ~datetime.datetime or str
+        :keyword start:
+            The time at which the shared access signature becomes valid. If
+            omitted, start time for this call is assumed to be the time when the
+            storage service receives the request. Azure will always convert values
+            to UTC. If a date is passed in without timezone info, it is assumed to
+            be UTC.
+        :paramtype start: ~datetime.datetime or str
+        """
         self.start = kwargs.get("start")
         self.expiry = kwargs.get("expiry")
         self.permission = kwargs.get("permission")
@@ -81,13 +90,16 @@ class TableRetentionPolicy(GeneratedRetentionPolicy):
     """The retention policy which determines how long the associated data should persist."""
 
     enabled: bool
-    """Indicates whether a retention policy is enabled for the storage service. Default value is False."""
     days: Optional[int]
-    """Indicates the number of days that metrics or logging or soft-deleted data should be retained.
-        All data older than this value will be deleted. Must be specified if policy is enabled.
-    """
 
     def __init__(self, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
+        """
+        :keyword bool enabled: Indicates whether a retention policy is enabled
+            for the storage service. Default value is False.
+        :keyword int days: Indicates the number of days that metrics or logging or
+            soft-deleted data should be retained. All data older than this value will
+            be deleted. Must be specified if policy is enabled.
+        """
         self.enabled = kwargs.get("enabled", False)
         self.days = kwargs.get("days")
         if self.enabled and (self.days is None):
@@ -110,17 +122,20 @@ class TableAnalyticsLogging(GeneratedLogging):
     """Azure Analytics Logging settings."""
 
     version: str
-    """The version of Storage Analytics to configure."""
     delete: bool
-    """Indicates whether all delete requests should be logged."""
     read: bool
-    """Indicates whether all read requests should be logged."""
     write: bool
-    """Indicates whether all write requests should be logged."""
     retention_policy: TableRetentionPolicy
-    """The retention policy for the metrics."""
 
     def __init__(self, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
+        """
+        :keyword str version: The version of Storage Analytics to configure. Default value is "1.0".
+        :keyword bool delete: Indicates whether all delete requests should be logged. Default value is False.
+        :keyword bool read: Indicates whether all read requests should be logged. Default value is False.
+        :keyword bool write: Indicates whether all write requests should be logged. Default value is False.
+        :keyword ~azure.data.tables.TableRetentionPolicy retention_policy: The retention policy for the metrics.
+            Default value is a TableRetentionPolicy object with default settings.
+        """
         self.version = kwargs.get("version", "1.0")
         self.delete = kwargs.get("delete", False)
         self.read = kwargs.get("read", False)
@@ -152,15 +167,19 @@ class TableMetrics(GeneratedMetrics):
     """A summary of request statistics grouped by API in hour or minute aggregates."""
 
     version: str
-    """The version of Storage Analytics to configure."""
     enabled: bool
-    """Indicates whether metrics are enabled for the service."""
     include_apis: Optional[bool]
-    """Indicates whether metrics should generate summary statistics for called API operations."""
     retention_policy: TableRetentionPolicy
-    """The retention policy for the metrics."""
 
     def __init__(self, **kwargs: Any) -> None:  # pylint: disable=super-init-not-called
+        """
+        :keyword str version: The version of Storage Analytics to configure. Default value is "1.0".
+        :keyword bool enabled: Indicates whether metrics are enabled for the service. Default value is False.
+        :keyword bool include_apis: Indicates whether metrics should generate summary statistics for called API
+            operations.
+        :keyword ~azure.data.tables.TableRetentionPolicy retention_policy: The retention policy for the metrics.
+            Default value is a TableRetentionPolicy object with default settings.
+        """
         self.version = kwargs.get("version", "1.0")
         self.enabled = kwargs.get("enabled", False)
         self.include_apis = kwargs.get("include_apis")
@@ -187,32 +206,41 @@ class TableMetrics(GeneratedMetrics):
 
 
 class TableCorsRule:
-    """CORS is an HTTP feature that enables a web application running under one domain to access resources in another
-    domain. Web browsers implement a security restriction known as same-origin policy that prevents a web page
-    from calling APIs in a different domain; CORS provides a secure way to allow one domain (the origin domain) to
-    call APIs in another domain.
+    """CORS is an HTTP feature that enables a web application running under one
+    domain to access resources in another domain. Web browsers implement a
+    security restriction known as same-origin policy that prevents a web page
+    from calling APIs in a different domain; CORS provides a secure way to
+    allow one domain (the origin domain) to call APIs in another domain.
     """
 
     allowed_origins: List[str]
-    """A list of origin domains that will be allowed via CORS, or "*" to allow all domains. The list of must contain
-        at least one entry. Limited to 64 origin domains. Each allowed origin can have up to 256 characters.
-    """
     allowed_methods: List[str]
-    """A list of HTTP methods that are allowed to be executed by the origin. The list of must contain at least one
-        entry. For Azure Storage, permitted methods are DELETE, GET, HEAD, MERGE, POST, OPTIONS or PUT.
-    """
     allowed_headers: List[str]
-    """Defaults to an empty list. A list of headers allowed to be part of the cross-origin request. Limited to 64
-        defined headers and 2 prefixed headers. Each header can be up to 256 characters.
-    """
     exposed_headers: List[str]
-    """Defaults to an empty list. A list of response headers to expose to CORS clients. Limited to 64 defined headers
-        and two prefixed headers. Each header can be up to 256 characters.
-    """
     max_age_in_seconds: int
-    """The number of seconds that the client/browser should cache a pre-flight response."""
 
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
+        """
+        :param list[str] allowed_origins:
+            A list of origin domains that will be allowed via CORS, or "*" to allow
+            all domains. The list of must contain at least one entry. Limited to 64
+            origin domains. Each allowed origin can have up to 256 characters.
+        :param list[str] allowed_methods:
+            A list of HTTP methods that are allowed to be executed by the origin.
+            The list of must contain at least one entry. For Azure Storage,
+            permitted methods are DELETE, GET, HEAD, MERGE, POST, OPTIONS or PUT.
+        :keyword int max_age_in_seconds:
+            The number of seconds that the client/browser should cache a
+            pre-flight response. Default value is 0.
+        :keyword list[str] exposed_headers:
+            Defaults to an empty list. A list of response headers to expose to CORS
+            clients. Limited to 64 defined headers and two prefixed headers. Each
+            header can be up to 256 characters.
+        :keyword list[str] allowed_headers:
+            Defaults to an empty list. A list of headers allowed to be part of
+            the cross-origin request. Limited to 64 defined headers and 2 prefixed
+            headers. Each header can be up to 256 characters.
+        """
         self.allowed_origins = allowed_origins
         self.allowed_methods = allowed_methods
         self.allowed_headers = kwargs.get("allowed_headers", [])
@@ -255,18 +283,14 @@ class TablePropertiesPaged(PageIterator):
     """The maximum number of results retrieved per API call."""
     filter: Optional[str]
     """The filter to apply to results."""
+    continuation_token: Optional[str]
+    """The continuation token needed by get_next()."""
 
     def __init__(self, command: Callable, **kwargs: Any) -> None:
-        """
-        :param callable command: Function to retrieve the next page of items.
-        :keyword int results_per_page: The maximum number of results retrieved per API call.
-        :keyword str filter: The filter to apply to results.
-        :keyword str continuation_token: An opaque continuation token.
-        """
         super(TablePropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
-            continuation_token=kwargs.get("continuation_token") or "",
+            continuation_token=kwargs.get("continuation_token"),
         )
         self._command = command
         self._headers = None
@@ -304,16 +328,10 @@ class TableEntityPropertiesPaged(PageIterator):
     """The filter to apply to results."""
     select: Optional[str]
     """The select filter to apply to results."""
+    continuation_token: Optional[str]
+    """The continuation token needed by get_next()."""
 
     def __init__(self, command: Callable, table: str, **kwargs: Any) -> None:
-        """
-        :param callable command: Function to retrieve the next page of items.
-        :param str table: The name of the table.
-        :keyword int results_per_page: The maximum number of results retrieved per API call.
-        :keyword str filter: The filter to apply to results.
-        :keyword str select: The select filter to apply to results.
-        :keyword Optional[str] continuation_token: An opaque continuation token.
-        """
         super(TableEntityPropertiesPaged, self).__init__(
             self._get_next_cb,
             self._extract_data_cb,
@@ -369,6 +387,18 @@ class TableSasPermissions:
     """Delete entities."""
 
     def __init__(self, **kwargs: Any) -> None:
+        """
+        :keyword str _str: Specify permissions in the string with the first letter of the word.
+            Default value is an empty string.
+        :keyword bool read: Get entities and query entities.
+            If not set, will use the permission in _str or defaults to False if not found.
+        :keyword bool add: Add entities. Add and Update permissions are required for upsert operations.
+            If not set, will use the permission in _str or defaults to False if not found.
+        :keyword bool update: Update entities. Add and Update permissions are required for upsert operations.
+            If not set, will use the permission in _str or defaults to False if not found.
+        :keyword bool delete: Delete entities.
+            If not set, will use the permission in _str or defaults to False if not found.
+        """
         self._str = kwargs.pop("_str", "") or ""
         self.read = kwargs.pop("read", False) or ("r" in self._str)
         self.add = kwargs.pop("add", False) or ("a" in self._str)
@@ -460,9 +490,11 @@ class TableItem:
     """
 
     name: str
-    """The name of the table."""
 
     def __init__(self, name: str) -> None:
+        """
+        :param str name: Name of the Table
+        """
         self.name = name
 
     @classmethod
@@ -521,13 +553,19 @@ class ResourceTypes(object):
     """Specifies the resource types that are accessible with the account SAS."""
 
     service: bool
-    """Access to service-level APIs (e.g., Get/Set Service Properties, Get Service Stats, List Tables)"""
     object: bool
-    """Access to object-level APIs for tables (e.g. Get/Create/Query Entity etc.)"""
     container: bool
-    """Access to container-level APIs for tables (e.g. Create Tables etc.)"""
 
     def __init__(self, **kwargs: Any) -> None:
+        """
+        :keyword bool service:
+            Access to service-level APIs (e.g., Get/Set Service Properties, Get Service Stats, List Tables).
+            Default value is False.
+        :keyword bool object:
+            Access to object-level APIs for tables (e.g. Get/Create/Query Entity etc.). Default value is False.
+        :keyword bool container:
+            Access to container-level APIs for tables (e.g. Create Tables etc.). Default value is False.
+        """
         self.service = kwargs.get("service", False)
         self.object = kwargs.get("object", False)
         self.container = kwargs.get("container", False)
@@ -562,29 +600,38 @@ class AccountSasPermissions(object):
     """:class:`~AccountSasPermissions` class to be used with generate_account_sas."""
 
     read: bool
-    """Valid for all signed resources types (Service, Container, and Object).
-        Permits read permissions to the specified resource type.
-    """
     write: bool
-    """Valid for all signed resources types (Service, Container, and Object).
-        Permits write permissions to the specified resource type.
-    """
     delete: bool
-    """Valid for Container and Object resource types, except for queue messages."""
     list: bool
-    """Valid for Service and Container resource types only."""
     add: bool
-    """Valid for the following Object resource types only: queue messages, and append blobs."""
     create: bool
-    """Valid for the following Object resource types only: blobs and files.
-        Users can create new blobs or files, but may not overwrite existing blobs or files.
-    """
     update: bool
-    """Valid for the following Object resource types only: queue messages."""
     process: bool
-    """Valid for the following Object resource type only: queue messages."""
 
     def __init__(self, **kwargs: Any) -> None:
+        """
+        :keyword bool read:
+            Valid for all signed resources types (Service, Container, and Object).
+            Permits read permissions to the specified resource type. Default value is False.
+        :keyword bool write:
+            Valid for all signed resources types (Service, Container, and Object).
+            Permits write permissions to the specified resource type. Default value is False.
+        :keyword bool delete:
+            Valid for Container and Object resource types, except for queue messages. Default value is False.
+        :keyword bool list:
+            Valid for Service and Container resource types only. Default value is False.
+        :keyword bool add:
+            Valid for the following Object resource types only: queue messages, and append blobs.
+            Default value is False.
+        :keyword bool create:
+            Valid for the following Object resource types only: blobs and files.
+            Users can create new blobs or files, but may not overwrite existing blobs or files.
+            Default value is False.
+        :keyword bool update:
+            Valid for the following Object resource types only: queue messages. Default value is False.
+        :keyword bool process:
+            Valid for the following Object resource type only: queue messages. Default value is False.
+        """
         self.read = kwargs.pop("read", False)
         self.write = kwargs.pop("write", False)
         self.delete = kwargs.pop("delete", False)

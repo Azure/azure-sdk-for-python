@@ -309,11 +309,9 @@ class TableClient(TablesBaseClient):
 
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
-        if match_condition and entity and not etag:
-            try:
-                etag = entity.metadata.get("etag", None)
-            except (AttributeError, TypeError):
-                pass
+        if match_condition and not etag:
+            if isinstance(entity, TableEntity):
+                etag = entity.metadata.get("etag")
         match_condition = _get_match_condition(
             etag=etag,
             match_condition=match_condition or MatchConditions.Unconditionally,
@@ -401,7 +399,7 @@ class TableClient(TablesBaseClient):
         etag = kwargs.pop("etag", None)
         if match_condition and not etag:
             if isinstance(entity, TableEntity):
-                etag = entity.metadata.get("etag", None)
+                etag = entity.metadata.get("etag")
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )

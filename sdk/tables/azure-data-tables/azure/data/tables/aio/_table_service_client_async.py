@@ -161,7 +161,7 @@ class TableServiceClient(AsyncTablesBaseClient):
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=[c._to_generated() for c in cors] if cors is not None else cors,  # pylint:disable=protected-access
+            cors=[c._to_generated() for c in cors] if cors else None,  # pylint:disable=protected-access
         )
         try:
             await self._client.service.set_properties(props, **kwargs)

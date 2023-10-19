@@ -127,7 +127,8 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
             self._policies.insert(0, CosmosPatchTransformPolicy())
 
         self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), **kwargs)
-        self._client._config.version = get_api_version(kwargs, self._client._config.version)  # type: ignore[assignment] # Incompatible assignment when assigning a str value to a Literal type variable
+        # Incompatible assignment when assigning a str value to a Literal type variable
+        self._client._config.version = get_api_version(kwargs, self._client._config.version)  # type: ignore[assignment]
 
     @property
     def url(self) -> str:
@@ -193,7 +194,7 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
         :return: The Storage API version.
         :type: str
         """
-        return self._client._config.version
+        return self._client._config.version  # pylint: disable=protected-access
 
     async def __aenter__(self) -> Self:
         await self._client.__aenter__()
