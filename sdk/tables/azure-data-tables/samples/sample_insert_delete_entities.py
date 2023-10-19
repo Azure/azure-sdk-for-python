@@ -21,11 +21,28 @@ USAGE:
     2) TABLES_STORAGE_ACCOUNT_NAME - the name of the storage account
     3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
-
+import sys
 from datetime import datetime
 import os
-from uuid import uuid4
+from uuid import uuid4, UUID
 from dotenv import find_dotenv, load_dotenv
+
+if sys.version_info >= (3, 8):
+    from typing import TypedDict  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import TypedDict
+
+
+class EntityType(TypedDict, total=False):
+    PartitionKey: str
+    RowKey: str
+    text: str
+    color: str
+    price: float
+    last_updated: datetime
+    product_id: UUID
+    inventory_count: int
+    barcode: bytes
 
 
 class InsertDeleteEntity(object):
@@ -38,7 +55,7 @@ class InsertDeleteEntity(object):
         self.connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
         self.table_name = "SampleInsertDelete"
 
-        self.entity = {
+        self.entity: EntityType = {
             "PartitionKey": "color",
             "RowKey": "brand",
             "text": "Marker",
@@ -85,9 +102,7 @@ class InsertDeleteEntity(object):
                 print("Entity already exists!")
 
             # [START delete_entity]
-            table_client.delete_entity(
-                row_key=str(self.entity["RowKey"]), partition_key=str(self.entity["PartitionKey"])
-            )
+            table_client.delete_entity(row_key=self.entity["RowKey"], partition_key=self.entity["PartitionKey"])
             print("Successfully deleted!")
             # [END delete_entity]
 

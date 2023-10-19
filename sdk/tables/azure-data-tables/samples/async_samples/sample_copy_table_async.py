@@ -22,7 +22,7 @@ USAGE:
     4) STORAGE_ACCOUNT_NAME - the blob storage account name
     5) STORAGE_ACCOUNT_KEY - the blob storage account key
 """
-
+import sys
 import asyncio
 import copy
 import json
@@ -33,6 +33,23 @@ from azure.data.tables.aio import TableServiceClient
 from datetime import datetime
 from dotenv import find_dotenv, load_dotenv
 from uuid import uuid4, UUID
+
+if sys.version_info >= (3, 8):
+    from typing import TypedDict  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import TypedDict
+
+
+class EntityType(TypedDict, total=False):
+    PartitionKey: str
+    RowKey: str
+    text: str
+    color: str
+    price: float
+    last_updated: datetime
+    product_id: UUID
+    inventory_count: int
+    barcode: bytes
 
 
 class CopyTableSamples(object):
@@ -48,7 +65,7 @@ class CopyTableSamples(object):
         self.blob_account_key = os.getenv("STORAGE_ACCOUNT_KEY")
         self.blob_connection_string = f"DefDefaultEndpointsProtocol=https;AccountName={self.blob_account_name};AccountKey={self.blob_account_key};EndpointSuffix=core.windows.net"
         self.blob_service_client = BlobServiceClient.from_connection_string(self.blob_connection_string)
-        self.entity = {
+        self.entity: EntityType = {
             "PartitionKey": "color",
             "text": "Marker",
             "color": "Purple",
@@ -119,9 +136,9 @@ class CopyTableSamples(object):
         self.container_client = await self.blob_service_client.create_container(self.copy_to_table_table_name)
         entity = copy.deepcopy(self.entity)
         # Convert type datetime, bytes, UUID values to string as they're not JSON serializable
-        entity["last_updated"] = cast(datetime, entity["last_updated"]).isoformat()
-        entity["product_id"] = UUID(str(entity["product_id"])).hex
-        entity["barcode"] = cast(bytes, entity["barcode"]).decode("utf-8")
+        entity["last_updated"] = entity["last_updated"].isoformat()
+        entity["product_id"] = entity["product_id"].hex
+        entity["barcode"] = entity["barcode"].decode("utf-8")
         for i in range(10):
             entity["RowKey"] = str(i)
             blob_name = f"{entity['PartitionKey']}{entity['RowKey']}"

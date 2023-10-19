@@ -20,16 +20,33 @@ USAGE:
     2) TABLES_STORAGE_ACCOUNT_NAME - the Tables storage account name
     3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the Tables storage account access key
 """
-
+import sys
 import asyncio
 import os
 from datetime import datetime
 from dotenv import find_dotenv, load_dotenv
-from uuid import uuid4
+from uuid import uuid4, UUID
 from azure.data.tables.aio import TableClient
 from azure.data.tables._models import UpdateMode
 from azure.core import MatchConditions
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError
+
+if sys.version_info >= (3, 8):
+    from typing import TypedDict  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import TypedDict
+
+
+class EntityType(TypedDict, total=False):
+    PartitionKey: str
+    RowKey: str
+    text: str
+    color: str
+    price: float
+    last_updated: datetime
+    product_id: UUID
+    inventory_count: int
+    barcode: bytes
 
 
 class ConditionalUpdateSamples(object):
@@ -41,7 +58,7 @@ class ConditionalUpdateSamples(object):
         self.endpoint = f"{self.account_name}.table.{self.endpoint_suffix}"
         self.connection_string = f"DefaultEndpointsProtocol=https;AccountName={self.account_name};AccountKey={self.access_key};EndpointSuffix={self.endpoint_suffix}"
         self.table_name_prefix = "SampleConditionalUpdate"
-        self.entity1 = {
+        self.entity1: EntityType = {
             "PartitionKey": "color",
             "RowKey": "brand",
             "text": "Marker",
@@ -50,7 +67,7 @@ class ConditionalUpdateSamples(object):
             "last_updated": datetime.today(),
             "product_id": uuid4(),
         }
-        self.entity2 = {
+        self.entity2: EntityType = {
             "PartitionKey": "color",
             "RowKey": "brand",
             "color": "Red",
@@ -79,7 +96,7 @@ class ConditionalUpdateSamples(object):
             except ResourceModifiedError:
                 print("This entity has been altered and may no longer be in the expected state.")
             entity2 = await table_client.get_entity(
-                partition_key=str(self.entity1["PartitionKey"]), row_key=str(self.entity1["RowKey"])
+                partition_key=self.entity1["PartitionKey"], row_key=self.entity1["RowKey"]
             )
             print("Entity after merge:")
             print(entity2)
@@ -96,7 +113,7 @@ class ConditionalUpdateSamples(object):
             except ResourceModifiedError:
                 print("This entity has been altered and may no longer be in the expected state.")
             entity3 = await table_client.get_entity(
-                partition_key=str(self.entity1["PartitionKey"]), row_key=str(self.entity1["RowKey"])
+                partition_key=self.entity1["PartitionKey"], row_key=self.entity1["RowKey"]
             )
             print("Entity after replace:")
             print(entity3)
@@ -117,7 +134,7 @@ class ConditionalUpdateSamples(object):
                 await table_client.create_entity(entity=self.entity2)
             except ResourceExistsError:
                 entity = await table_client.get_entity(
-                    partition_key=str(self.entity2["PartitionKey"]), row_key=str(self.entity2["RowKey"])
+                    partition_key=self.entity2["PartitionKey"], row_key=self.entity2["RowKey"]
                 )
                 if target_field not in entity:
                     await table_client.update_entity(

@@ -20,12 +20,28 @@ USAGE:
     2) TABLES_STORAGE_ACCOUNT_NAME - the name of the storage account
     3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
-
-
+import sys
 from datetime import datetime
 from dotenv import find_dotenv, load_dotenv
 import os
-from uuid import uuid4
+from uuid import uuid4, UUID
+
+if sys.version_info >= (3, 8):
+    from typing import TypedDict  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import TypedDict
+
+
+class EntityType(TypedDict, total=False):
+    PartitionKey: str
+    RowKey: str
+    text: str
+    color: str
+    price: float
+    last_updated: datetime
+    product_id: UUID
+    inventory_count: int
+    barcode: bytes
 
 
 class TableEntitySamples(object):
@@ -46,7 +62,7 @@ class TableEntitySamples(object):
             # Create the Table
             table.create_table()
 
-            my_entity = {
+            my_entity: EntityType = {
                 "PartitionKey": "color",
                 "RowKey": "brand",
                 "text": "Marker",
@@ -65,9 +81,7 @@ class TableEntitySamples(object):
 
                 # [START get_entity]
                 # Get Entity by partition and row key
-                got_entity = table.get_entity(
-                    partition_key=str(my_entity["PartitionKey"]), row_key=str(my_entity["RowKey"])
-                )
+                got_entity = table.get_entity(partition_key=my_entity["PartitionKey"], row_key=my_entity["RowKey"])
                 print(f"Received entity: {got_entity}")
                 # [END get_entity]
 
