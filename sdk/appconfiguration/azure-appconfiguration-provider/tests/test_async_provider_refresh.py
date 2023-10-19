@@ -5,6 +5,8 @@
 # --------------------------------------------------------------------------
 import time
 import unittest
+import pytest
+import sys
 from unittest import mock
 from azure.appconfiguration.provider import SettingSelector, SentinelKey
 from azure.appconfiguration.provider.aio import load
@@ -18,6 +20,7 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
     # method: refresh
     @app_config_decorator_async
     @recorded_by_proxy_async
+    @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
     async def test_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         mock_callback = mock.AsyncMock()
         async with await self.create_aad_client(
@@ -70,6 +73,7 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
     # method: refresh
     @app_config_decorator_async
     @recorded_by_proxy_async
+    @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
     async def test_empty_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         mock_callback = mock.AsyncMock()
         async with await self.create_aad_client(

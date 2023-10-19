@@ -5,8 +5,6 @@
 # --------------------------------------------------------------------------
 import time
 import unittest
-import pytest
-import sys
 from unittest.mock import Mock
 from azure.appconfiguration.provider import SentinelKey
 from devtools_testutils import recorded_by_proxy
@@ -18,7 +16,6 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
     # method: refresh
     @recorded_by_proxy
     @app_config_decorator_aad
-    @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
     def test_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         mock_callback = Mock()
         client = self.create_aad_client(
@@ -72,7 +69,6 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
     # method: refresh
     @recorded_by_proxy
     @app_config_decorator_aad
-    @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
     def test_empty_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         mock_callback = Mock()
         client = self.create_aad_client(
