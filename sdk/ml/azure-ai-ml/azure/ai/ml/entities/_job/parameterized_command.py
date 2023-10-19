@@ -89,19 +89,14 @@ class ParameterizedCommand:
         self.code = code
         self.environment_variables = dict(environment_variables) if environment_variables else {}
         self.environment = environment
-        self.distribution: Union[
-            MpiDistribution,
-            TensorFlowDistribution,
-            PyTorchDistribution,
-            RayDistribution,
-        ] = distribution
+        self.distribution = distribution
         self.resources = resources
         self.queue_settings = queue_settings
 
     @property
     def distribution(
         self,
-    ) -> Union[MpiDistribution, TensorFlowDistribution, PyTorchDistribution, RayDistribution]:
+    ) -> Optional[Union[dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution, RayDistribution,]]:
         """The configuration for the distributed command component or job.
 
         :return: The distribution configuration.
@@ -131,7 +126,7 @@ class ParameterizedCommand:
         self._distribution = value
 
     @property
-    def resources(self) -> JobResourceConfiguration:
+    def resources(self) -> Optional[Union[dict, JobResourceConfiguration]]:
         """The compute resource configuration for the command component or job.
 
         :return: The compute resource configuration for the command component or job.
