@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import sys
-from unittest.mock import MagicMock, PropertyMock
+from unittest.mock import AsyncMock, PropertyMock
 
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
@@ -370,7 +370,7 @@ async def test_default_ssl_context():
 
         async def request(self, method: str, url: str, **kwargs):
             assert "ssl" not in kwargs
-            mock_response = MagicMock(spec=aiohttp.ClientResponse)
+            mock_response = AsyncMock(spec=aiohttp.ClientResponse)
             type(mock_response).status = PropertyMock(return_value=200)
             return mock_response
 
