@@ -152,11 +152,6 @@ class SearchField(_serialization.Model):
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop",
      "whitespace".
     :paramtype index_analyzer_name: str or ~azure.search.documents.indexes.models.LexicalAnalyzerName
-    :keyword normalizer_name: The name of the normalizer to use for the field. This option can be used
-     only with fields with filterable, sortable, or facetable enabled. Once the normalizer is
-     chosen, it cannot be changed for the field. Must be null for complex fields. Possible values
-     include: "asciifolding", "elision", "lowercase", "standard", "uppercase".
-    :paramtype normalizer_name: str or ~azure.search.documents.indexes.models.LexicalNormalizerName
     :keyword synonym_map_names: A list of the names of synonym maps to associate with this field. This
      option can be used only with searchable fields. Currently only one synonym map per field is
      supported. Assigning a synonym map to a field ensures that query terms targeting that field are
@@ -188,7 +183,6 @@ class SearchField(_serialization.Model):
         "analyzer_name": {"key": "analyzerName", "type": "str"},
         "search_analyzer_name": {"key": "searchAnalyzerName", "type": "str"},
         "index_analyzer_name": {"key": "indexAnalyzerName", "type": "str"},
-        "normalizer_name": {"key": "normalizerName", "type": "str"},
         "synonym_map_names": {"key": "synonymMapNames", "type": "[str]"},
         "fields": {"key": "fields", "type": "[SearchField]"},
         "vector_search_dimensions": {"key": "vectorSearchDimensions", "type": "int"},
@@ -244,10 +238,6 @@ class SearchField(_serialization.Model):
         # pylint:disable=protected-access
         fields = [SearchField._from_generated(x) for x in search_field.fields] if search_field.fields else None
         hidden = not search_field.retrievable if search_field.retrievable is not None else None
-        try:
-            normalizer = search_field.normalizer_name
-        except AttributeError:
-            normalizer = None
         return cls(
             name=search_field.name,
             type=search_field.type,
@@ -260,7 +250,6 @@ class SearchField(_serialization.Model):
             analyzer_name=search_field.analyzer,
             search_analyzer_name=search_field.search_analyzer,
             index_analyzer_name=search_field.index_analyzer,
-            normalizer_name=normalizer,
             synonym_map_names=search_field.synonym_maps,
             fields=fields,
             vector_search_dimensions=search_field.dimensions,
@@ -666,7 +655,6 @@ def pack_search_field(search_field: SearchField) -> _SearchField:
         analyzer_name = search_field.get("analyzer_name")
         search_analyzer_name = search_field.get("search_analyzer_name")
         index_analyzer_name = search_field.get("index_analyzer_name")
-        normalizer = search_field.get("normalizer")
         synonym_map_names = search_field.get("synonym_map_names")
         fields = search_field.get("fields")
         fields = [pack_search_field(x) for x in fields] if fields else None
@@ -684,7 +672,6 @@ def pack_search_field(search_field: SearchField) -> _SearchField:
             analyzer=analyzer_name,
             search_analyzer=search_analyzer_name,
             index_analyzer=index_analyzer_name,
-            normalizer=normalizer,
             synonym_maps=synonym_map_names,
             fields=fields,
             vector_search_dimensions=vector_search_dimensions,
