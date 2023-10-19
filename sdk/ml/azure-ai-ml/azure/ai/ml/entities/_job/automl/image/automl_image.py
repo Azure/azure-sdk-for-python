@@ -203,7 +203,7 @@ class AutoMLImage(AutoMLVertical, ABC):
             ~azure.mgmt.machinelearningservices.models.BanditPolicy,
             ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
             ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
-        : return: None
+        :return: None
         """
         if self._sweep:
             self._sweep.sampling_algorithm = sampling_algorithm
