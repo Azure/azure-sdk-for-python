@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+* Added a public type `EntityMetadata`, it is used in `TableEntity`'s metadata.
 
 ## 12.4.4 (2023-09-14)
 

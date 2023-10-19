@@ -3,10 +3,22 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import sys
+import datetime
 from enum import Enum
-from typing import Any, Dict, Union, NamedTuple
+from typing import Any, Union, NamedTuple
 
 from azure.core import CaseInsensitiveEnumMeta
+
+if sys.version_info >= (3, 8):
+    from typing import TypedDict  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import TypedDict
+
+
+class EntityMetadata(TypedDict, total=False):
+    etag: str
+    timestamp: datetime.datetime
 
 
 class TableEntity(dict):
@@ -15,14 +27,14 @@ class TableEntity(dict):
 
     """
 
-    _metadata = {}  # type: Dict[str, Any]
+    _metadata: EntityMetadata = {}
 
     @property
-    def metadata(self) -> Dict[str, Any]:
-        """Resets metadata to be a part of the entity.
+    def metadata(self) -> EntityMetadata:
+        """Includes the metadata with etag and timestamp.
 
-        :return Dict of entity metadata
-        :rtype: dict[str, Any]
+        :return: TypedDict of entity metadata
+        :rtype: EntityMetadata
         """
         return self._metadata
 
