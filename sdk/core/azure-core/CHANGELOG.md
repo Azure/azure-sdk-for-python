@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed an issue with `multipart/form-data` in the async transport where `data` was not getting encoded into the request body. #32473
+
 ### Other Changes
 
 - Use ssl context from aiohttp by default.
