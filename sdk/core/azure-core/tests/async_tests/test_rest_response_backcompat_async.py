@@ -10,7 +10,7 @@ from azure.core.pipeline.transport import HttpRequest as PipelineTransportHttpRe
 from azure.core.rest import HttpRequest as RestHttpRequest
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import AioHttpTransport, AsyncioRequestsTransport, TrioRequestsTransport
-from rest_client_async import AsyncTestRestClient
+from rest_client_async import AsyncMockRestClient
 
 TRANSPORTS = [AioHttpTransport, AsyncioRequestsTransport]
 
@@ -362,8 +362,8 @@ async def test_response_parts(port, transport):
     # there's no support for trio + multipart rn
     old_request = _create_multiapart_request(PipelineTransportHttpRequest)
     new_request = _create_multiapart_request(RestHttpRequest)
-    old_response = await AsyncTestRestClient(port, transport=transport()).send_request(old_request, stream=True)
-    new_response = await AsyncTestRestClient(port, transport=transport()).send_request(new_request, stream=True)
+    old_response = await AsyncMockRestClient(port, transport=transport()).send_request(old_request, stream=True)
+    new_response = await AsyncMockRestClient(port, transport=transport()).send_request(new_request, stream=True)
     if hasattr(old_response, "load_body"):
         # only aiohttp has this attr
         await old_response.load_body()

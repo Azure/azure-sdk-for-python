@@ -983,6 +983,7 @@ class MockAiohttpContent:
         raise aiohttp.client_exceptions.ClientResponseError(request_info, None)
 
 
+@pytest.mark.asyncio
 async def test_aiohttp_errors():
     request = HttpRequest("GET", "http://example.org")
     response = AioHttpTransportResponse(request, MockAiohttpResponse())
