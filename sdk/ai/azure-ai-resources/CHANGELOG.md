@@ -1,4 +1,4 @@
-## 0.1.0b3 (2022-05-24)
+## 0.1.0b1 (unreleased)
 
 ### Features Added
 
