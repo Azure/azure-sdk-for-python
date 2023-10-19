@@ -10,6 +10,8 @@ import logging
 import platform
 import traceback
 
+from azureml.telemetry import INSTRUMENTATION_KEY
+
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 from opencensus.ext.azure.common import utils
 from opencensus.ext.azure.common.protocol import (
@@ -22,9 +24,6 @@ from azure.ai.ml._user_agent import USER_AGENT
 
 
 AML_INTERNAL_LOGGER_NAMESPACE = "azure.ai.ml._telemetry"
-
-# vienna-sdk-unitedstates
-INSTRUMENTATION_KEY = "71b954a8-6b7d-43f5-986c-3d3a6605d803"
 
 test_subscriptions = [
     "b17253fa-f327-42d6-9686-f3e553e24763",
