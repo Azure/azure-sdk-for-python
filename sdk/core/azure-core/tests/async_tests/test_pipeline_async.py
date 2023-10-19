@@ -340,6 +340,7 @@ def test_no_cleanup_policy_when_redirect_policy_is_empty():
         if isinstance(policy, SensitiveHeaderCleanupPolicy):
             assert False
 
+
 @pytest.mark.asyncio
 async def test_default_ssl_context():
     class MockAiohttpSession(aiohttp.ClientSession):
