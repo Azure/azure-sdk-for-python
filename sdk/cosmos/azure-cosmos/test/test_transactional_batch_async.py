@@ -177,8 +177,7 @@ class TestTransactionalBatchAsync:
         await self._set_up()
         container = await self.test_database.create_container_if_not_exists(id="batch_replace" + str(uuid.uuid4()),
                                                                             partition_key=PartitionKey(path="/company"))
-        item_id = str(uuid.uuid4())
-        batch = [("create", ({"id": item_id, "company": "Microsoft"},)),
+        batch = [("create", ({"id": "new-item", "company": "Microsoft"},)),
                  ("replace", ("new-item", {"id": "new-item", "company": "Microsoft", "message": "item was replaced"}))]
 
         batch_response = await container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")

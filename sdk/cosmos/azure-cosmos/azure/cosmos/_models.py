@@ -38,7 +38,7 @@ class BatchOperationError:
     def __init__(self, **kwargs: Any) -> None:
         self.operation = kwargs.get("operation", None)
         self.operation_response = kwargs.get("operation_response", None)
-        self.error: str
+        self.error = kwargs.get("error", None)
         self.kind: Literal["BatchOperationError"] = "BatchOperationError"
 
     def __repr__(self) -> str:
