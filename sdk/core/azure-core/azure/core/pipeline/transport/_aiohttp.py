@@ -289,12 +289,10 @@ class AioHttpTransport(AsyncHttpTransport):
             socket_timeout = aiohttp.ClientTimeout(
                 sock_connect=timeout, sock_read=read_timeout
             )
-            headers = request.headers
-            headers.update({"Connection": "keep-alive"})
             result = await self.session.request(  # type: ignore
                 request.method,
                 request.url,
-                headers=headers,
+                headers=request.headers,
                 data=self._get_request_data(request),
                 timeout=socket_timeout,
                 allow_redirects=False,
