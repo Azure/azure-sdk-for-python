@@ -4,10 +4,9 @@
 
 # pylint: disable=protected-access
 
-import json
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, Optional, Union
+from typing import IO, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     AccessKeyAuthTypeWorkspaceConnectionProperties,
@@ -45,7 +44,6 @@ from azure.ai.ml.entities._credentials import (
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 
 @experimental
@@ -82,7 +80,6 @@ class WorkspaceConnection(Resource):
         self,
         *,
         target: str,
-        # tags: Optional[Dict[str, str]] = None,
         # TODO : Check if this is okay since it shadows builtin-type type
         type: str,  # pylint: disable=redefined-builtin
         credentials: Union[
