@@ -44,9 +44,7 @@ class WorkspaceConnectionSchema(ResourceSchema):
         required=True,
     )
 
-    target = fields.Str(required=False, allow_none=True)
-    endpoint = fields.Str(required=False, allow_none=True)
-    api_base = fields.Str(required=False, allow_none=True)
+    target = fields.Str()
 
     credentials = UnionField(
         [

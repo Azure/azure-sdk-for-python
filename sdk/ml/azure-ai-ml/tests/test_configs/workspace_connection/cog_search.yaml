@@ -1,6 +1,6 @@
 name: test_ws_conn_cog_search
 type: cognitive_search
-api_base: a_base
+target: a_base
 api_version: dummy
 credentials:
   type: ApiKey

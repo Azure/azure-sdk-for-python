@@ -56,7 +56,6 @@ class WorkspaceConnection(Resource):
     :param name: Name of the workspace connection.
     :type name: str
     :param target: The URL or ARM resource ID of the external resource.
-        Exactly one of this, endpoint, or api_base must be set.
     :type target: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
     :type tags: dict
@@ -75,14 +74,6 @@ class WorkspaceConnection(Resource):
     :type api_version: str
     :param api_type: The api type that this connection was created for. Only applies to certain connection types.
     :type api_type: str
-    :param kind: ???
-    :type kind: str
-    :param endpoint: Alternate name for the target for certain connection types.
-        Should not be used in conjunction with target or api_base.
-    :type endpoint: str
-    :param api_base: Alternate name for the target for certain connection types.
-        Should not be used in conjunction with target or endpoint.
-    :type api_base: str
     :param kind: The kind of the connection. Only needed for connections of type "cognitive_service".
     :type kind: str
     """
@@ -90,7 +81,7 @@ class WorkspaceConnection(Resource):
     def __init__(
         self,
         *,
-        target: Optional[str] = None,
+        target: str,
         # tags: Optional[Dict[str, str]] = None,
         # TODO : Check if this is okay since it shadows builtin-type type
         type: str,  # pylint: disable=redefined-builtin
@@ -105,30 +96,13 @@ class WorkspaceConnection(Resource):
         ],
         api_version: Optional[str] = None,
         api_type: Optional[str] = None,
-        endpoint: Optional[str] = None,
-        api_base: Optional[str] = None,
         kind: Optional[str] = None,
         **kwargs,
     ):
         super().__init__(**kwargs)
 
         self.type = type
-
-        # Due to legacy reasons, we're required to surface target by 3 names, and ensure that it's set.
         self._target = target
-        if endpoint is not None:
-            self._target = endpoint
-        if api_base is not None:
-            self._target = api_base
-        if self._target is None:
-            msg = f"One of target, endpoint, or api_base must be set."
-            raise ValidationException(
-                message=msg,
-                no_personal_data_message=msg,
-                error_type=ValidationErrorType.INVALID_VALUE,
-                target=ErrorTarget.FEATURE_SET,
-                error_category=ErrorCategory.USER_ERROR,
-            )
 
         self._credentials = credentials
         self._api_version = api_version
@@ -160,24 +134,6 @@ class WorkspaceConnection(Resource):
         """Target url for the workspace connection.
 
         :return: Target of the workspace connection.
-        :rtype: str
-        """
-        return self._target
-
-    @property
-    def endpoint(self) -> str:
-        """Endpoint url for the workspace connection.
-
-        :return: Endpoint of the workspace connection.
-        :rtype: str
-        """
-        return self._target
-
-    @property
-    def api_base(self) -> str:
-        """Base API url for the workspace connection.
-
-        :return: API base of the workspace connection.
         :rtype: str
         """
         return self._target

@@ -1,6 +1,6 @@
 name: test_ws_conn_cog_service
 type: cognitive_service
-endpoint: my_endpoint
+target: my_endpoint
 kind: some_kind
 tags:
   one: two
