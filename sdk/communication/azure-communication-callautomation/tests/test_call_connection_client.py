@@ -217,7 +217,7 @@ class TestCallConnectionClient(unittest.TestCase):
             kwargs.pop("stream", None)
             if kwargs:
                 raise ValueError(f"Received unexpected kwargs in transport: {kwargs}")
-            return mock_response(status_code=202, json_payload={
+            return mock_response(status_code=200, json_payload={
                 "operationContext": self.operation_context})
 
         call_connection = CallConnectionClient(
