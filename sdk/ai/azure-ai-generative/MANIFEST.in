@@ -1,0 +1,3 @@
+include azure/ai/generative/operations/component-configs/*
+include azure/ai/generative/index/_utils/encodings/*
+recursive-include azure/ai/generative/synthetic/templates *.txt
