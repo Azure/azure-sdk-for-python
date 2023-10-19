@@ -66,11 +66,11 @@ class DefaultRetryPolicy(object):
         return False
 
     def ShouldRetry(self, exception):
-        """Returns true if should retry based on the passed-in exception.
+        """Returns true if the request should retry based on the passed-in exception.
 
-        :param (exceptions.CosmosHttpResponseError instance) exception:
-        :rtype: boolean
-
+        :param exceptions.CosmosHttpResponseError exception:
+        :returns: a boolean stating whether the request should be retried
+        :rtype: bool
         """
         if (self.current_retry_attempt_count < self._max_retry_attempt_count) and self.needsRetry(
             exception.status_code

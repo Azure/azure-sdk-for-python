@@ -2567,3 +2567,24 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         assert props2['version_id'] == v2_props['version_id']
         assert props3['version_id'] == v3_props['version_id']
         assert props4['version_id'] == v4_props['version_id']
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_storage_account_audience_container_client(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        cc = ContainerClient(self.account_url(storage_account_name, "blob"), 'testcont', storage_account_key)
+        await cc.exists()
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        cc = ContainerClient(
+            self.account_url(storage_account_name, "blob"), 'testcont', credential=token_credential,
+            audience=f'https://{storage_account_name}.blob.core.windows.net'
+        )
+
+        # Assert
+        response = await cc.exists()
+        assert response is not None

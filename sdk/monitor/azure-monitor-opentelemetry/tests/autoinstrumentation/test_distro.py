@@ -31,6 +31,24 @@ class TestDistro(TestCase):
             azure_core_mock.tracing_implementation, OpenTelemetrySpan
         )
 
+    @patch.dict("os.environ", {"OTEL_PYTHON_DISABLED_INSTRUMENTATIONS": " flask,azure_sdk , urllib3"})
+    @patch("azure.monitor.opentelemetry._autoinstrumentation.distro._is_attach_enabled", return_value=True)
+    @patch("azure.monitor.opentelemetry._autoinstrumentation.distro.settings")
+    @patch(
+        "azure.monitor.opentelemetry._autoinstrumentation.distro.AzureDiagnosticLogging"
+    )
+    def test_configure_disable_azure_core(self, mock_diagnostics, azure_core_mock, attach_mock):
+        distro = AzureMonitorDistro()
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            distro.configure()
+        mock_diagnostics.info.assert_called_once_with(
+            "Azure Monitor OpenTelemetry Distro configured successfully.",
+            _ATTACH_SUCCESS_DISTRO
+        )
+        self.assertNotEqual(
+            azure_core_mock.tracing_implementation, OpenTelemetrySpan
+        )
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro._is_attach_enabled", return_value=False)
     @patch("azure.monitor.opentelemetry._autoinstrumentation.distro.settings")
     @patch(

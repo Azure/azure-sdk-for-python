@@ -133,6 +133,8 @@ def _convert_log_to_envelope(log_data: LogData) -> TelemetryItem:
     elif exc_type is not None or exc_message is not None:
         envelope.name = _EXCEPTION_ENVELOPE_NAME
         has_full_stack = stack_trace is not None
+        if not exc_type:
+            exc_type = "Exception"
         if not exc_message:
             exc_message = "Exception"
         exc_details = TelemetryExceptionDetails(
