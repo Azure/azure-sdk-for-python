@@ -247,7 +247,7 @@ class CallConnectionClient:
          by CreateCall/AnswerCall for this operation.
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
-        :paramtype operation_callback_url: str
+        :paramtype operation_callback_url: str or None
         :keyword transferee: Transferee is the participant who is transferred away.
         :paramtype transferee: ~azure.communication.callautomation.CommunicationIdentifier or None
         :keyword sip_headers: Custom context for PSTN
@@ -368,7 +368,7 @@ class CallConnectionClient:
          by CreateCall/AnswerCall for this operation.
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
-        :paramtype operation_callback_url: str
+        :paramtype operation_callback_url: str or None
         :return: RemoveParticipantResult
         :rtype: ~azure.communication.callautomation.RemoveParticipantResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -417,7 +417,7 @@ class CallConnectionClient:
          by CreateCall/AnswerCall for this operation.
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
-        :paramtype operation_callback_url: str
+        :paramtype operation_callback_url: str or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -463,7 +463,7 @@ class CallConnectionClient:
          by CreateCall/AnswerCall for this operation.
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
-        :paramtype operation_callback_url: str
+        :paramtype operation_callback_url: str or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -542,7 +542,7 @@ class CallConnectionClient:
          by CreateCall/AnswerCall for this operation.
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
-        :paramtype operation_callback_url: str
+        :paramtype operation_callback_url: str or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -659,7 +659,7 @@ class CallConnectionClient:
          by CreateCall/AnswerCall for this operation.
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
-        :paramtype operation_callback_url: str
+        :paramtype operation_callback_url: str or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -697,7 +697,7 @@ class CallConnectionClient:
          by CreateCall/AnswerCall for this operation.
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
-        :paramtype operation_callback_url: str
+        :paramtype operation_callback_url: str or None
         :return: SendDtmfTonesResult
         :rtype: ~azure.communication.callautomation.SendDtmfTonesResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -765,7 +765,7 @@ class CallConnectionClient:
          by CreateCall/AnswerCall for this operation.
          This setup is per-action. If this is not set, the default callback URL set by
          CreateCall/AnswerCall will be used.
-        :paramtype operation_callback_url: str
+        :paramtype operation_callback_url: str or None
         :return: CancelAddParticipantResult
         :rtype: ~azure.communication.callautomation.CancelAddParticipantResult
         :raises ~azure.core.exceptions.HttpResponseError:
