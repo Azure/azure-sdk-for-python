@@ -18,6 +18,9 @@ from azure.ai.ml.operations._feature_store_operations import FeatureStoreOperati
 from azure.core.polling import LROPoller
 
 MOCK_MATERIALIZATION_STORE_TARGET = "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/test_storage/blobServices/default/containers/offlinestore"
+MOCK_MATERIALIZATION_STORE_TARGET_INCOMPLETE = (
+    "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.Storage/storageAccounts/test_storage"
+)
 
 
 @pytest.fixture
@@ -218,6 +221,24 @@ class TestFeatureStoreOperation:
         mock_feature_store_operation.begin_update(fs, update_dependent_resources=True)
         mock_feature_store_operation._operation.begin_update.assert_called()
 
+        with pytest.raises(ValidationError):
+            mock_feature_store_operation.begin_update(
+                feature_store=FeatureStore(
+                    name="name",
+                    offline_store=MaterializationStore(
+                        type=ONLINE_MATERIALIZATION_STORE_TYPE, target=MOCK_MATERIALIZATION_STORE_TARGET
+                    ),
+                )
+            )
+        with pytest.raises(ValidationError):
+            mock_feature_store_operation.begin_update(
+                feature_store=FeatureStore(
+                    name="name",
+                    offline_store=MaterializationStore(
+                        type=OFFLINE_MATERIALIZATION_STORE_TYPE, target=MOCK_MATERIALIZATION_STORE_TARGET_INCOMPLETE
+                    ),
+                )
+            )
         with pytest.raises(ValidationError):
             mock_feature_store_operation.begin_update(
                 feature_store=FeatureStore(
