@@ -68,18 +68,18 @@ class SampleGetEntityMetadata(object):
             "inventory_count": 42,
             "barcode": b"135aefg8oj0ld58",  # cspell:disable-line
         }
-    
+
     async def get_entity_metadata(self):
         async with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
             # Prepare a table and add an entity into it
             await table_client.create_table()
             await table_client.create_entity(entity=self.entity)
-            
+
             entity = await table_client.get_entity(self.entity["PartitionKey"], self.entity["RowKey"])
             print("Entity metadata:")
             print(f"etag: {entity.metadata['etag']}")
             print(f"timestamp: {entity.metadata['timestamp']}")
-            
+
             # Cleanup
             await table_client.delete_table()
 
@@ -90,4 +90,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())       
+    asyncio.run(main())

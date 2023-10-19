@@ -67,21 +67,22 @@ class SampleGetEntityMetadata(object):
             "inventory_count": 42,
             "barcode": b"135aefg8oj0ld58",  # cspell:disable-line
         }
-    
+
     def get_entity_metadata(self):
         with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
             # Prepare a table and add an entity into it
             table_client.create_table()
             table_client.create_entity(entity=self.entity)
-            
+
             entity = table_client.get_entity(self.entity["PartitionKey"], self.entity["RowKey"])
             print("Entity metadata:")
             print(f"etag: {entity.metadata['etag']}")
             print(f"timestamp: {entity.metadata['timestamp']}")
-            
+
             # Cleanup
             table_client.delete_table()
-         
+
+
 if __name__ == "__main__":
     sample = SampleGetEntityMetadata()
-    sample.get_entity_metadata()          
+    sample.get_entity_metadata()
