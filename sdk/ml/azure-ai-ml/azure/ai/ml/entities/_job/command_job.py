@@ -123,10 +123,11 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             compute = None
             if resources is None:
                 resources = JobResourceConfiguration()
-            if resources.properties is None:
-                resources.properties = {}
-            # This is the format of the October Api response. We need to match it exactly
-            resources.properties[LOCAL_COMPUTE_PROPERTY] = {LOCAL_COMPUTE_PROPERTY: True}
+            if not isinstance(resources, Dict):
+                if resources.properties is None:
+                    resources.properties = {}
+                # This is the format of the October Api response. We need to match it exactly
+                resources.properties[LOCAL_COMPUTE_PROPERTY] = {LOCAL_COMPUTE_PROPERTY: True}
 
         properties = RestCommandJob(
             display_name=self.display_name,
@@ -139,11 +140,13 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             inputs=to_rest_dataset_literal_inputs(self.inputs, job_type=self.type),
             outputs=to_rest_data_outputs(self.outputs),
             environment_id=self.environment,
-            distribution=self.distribution._to_rest_object() if self.distribution else None,
+            distribution=self.distribution._to_rest_object()
+            if self.distribution and not isinstance(self.distribution, Dict)
+            else None,
             tags=self.tags,
             identity=self.identity._to_job_rest_object() if self.identity else None,
             environment_variables=self.environment_variables,
-            resources=resources._to_rest_object() if resources else None,
+            resources=resources._to_rest_object() if resources and not isinstance(resources, Dict) else None,
             limits=self.limits._to_rest_object() if self.limits else None,
             services=JobServiceBase._to_rest_job_services(self.services),
             queue_settings=self.queue_settings._to_rest_object() if self.queue_settings else None,
@@ -191,6 +194,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         # Handle special case of local job
         if (
             command_job.resources is not None
+            and not isinstance(command_job.resources, Dict)
             and command_job.resources.properties is not None
             and command_job.resources.properties.get(LOCAL_COMPUTE_PROPERTY, None)
         ):

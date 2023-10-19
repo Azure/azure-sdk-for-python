@@ -186,7 +186,7 @@ def validate_pipeline_input_key_characters(key: str) -> None:
 def to_rest_dataset_literal_inputs(
     inputs: Optional[Dict],
     *,
-    job_type: str,
+    job_type: Optional[str],
 ) -> Dict[str, RestJobInput]:
     """Turns dataset and literal inputs into dictionary of REST JobInput.
 

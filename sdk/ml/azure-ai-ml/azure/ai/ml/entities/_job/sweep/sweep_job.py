@@ -202,11 +202,15 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
         if self.trial is not None:
             trial_component = TrialComponent(
                 code_id=self.trial.code,
-                distribution=self.trial.distribution._to_rest_object() if self.trial.distribution else None,
+                distribution=self.trial.distribution._to_rest_object()
+                if self.trial.distribution and not isinstance(self.trial.distribution, Dict)
+                else None,
                 environment_id=self.trial.environment,
                 command=self.trial.command,
                 environment_variables=self.trial.environment_variables,
-                resources=self.trial.resources._to_rest_object() if self.trial.resources else None,
+                resources=self.trial.resources._to_rest_object()
+                if self.trial.resources and not isinstance(self.trial.resources, Dict)
+                else None,
             )
 
         sweep_job = RestSweepJob(
