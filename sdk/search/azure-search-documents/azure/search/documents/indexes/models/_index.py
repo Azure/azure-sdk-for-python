@@ -211,7 +211,6 @@ class SearchField(_serialization.Model):
         self.analyzer_name = kwargs.get("analyzer_name", None)
         self.search_analyzer_name = kwargs.get("search_analyzer_name", None)
         self.index_analyzer_name = kwargs.get("index_analyzer_name", None)
-        self.normalizer_name = kwargs.get("normalizer_name", None)
         self.synonym_map_names = kwargs.get("synonym_map_names", None)
         self.fields = kwargs.get("fields", None)
         self.vector_search_dimensions = kwargs.get("vector_search_dimensions", None)
@@ -232,7 +231,6 @@ class SearchField(_serialization.Model):
             analyzer=self.analyzer_name,
             search_analyzer=self.search_analyzer_name,
             index_analyzer=self.index_analyzer_name,
-            normalizer=self.normalizer_name,
             synonym_maps=self.synonym_map_names,
             fields=fields,
             dimensions=self.vector_search_dimensions,
