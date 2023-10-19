@@ -164,7 +164,7 @@ class AioHttpTransport(AsyncHttpTransport):
         :return: The request data
         """
         if request.files:
-            form_data = aiohttp.FormData(request.data or {})
+            form_data = aiohttp.FormData()
             for form_file, data in request.files.items():
                 content_type = data[2] if len(data) > 2 else None
                 try:
