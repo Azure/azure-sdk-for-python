@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from enum import Enum, EnumMeta
+from enum import Enum
 from typing import Mapping, Optional, Union, Any
 import warnings
 from typing_extensions import TypedDict, Protocol
