@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import sys
+from unittest.mock import MagicMock, PropertyMock
 
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
@@ -42,6 +43,7 @@ from azure.core.pipeline.transport import (
     AsyncioRequestsTransport,
     TrioRequestsTransport,
     AioHttpTransport,
+    HttpRequest,
 )
 
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
@@ -337,3 +339,18 @@ def test_no_cleanup_policy_when_redirect_policy_is_empty():
     for policy in policies:
         if isinstance(policy, SensitiveHeaderCleanupPolicy):
             assert False
+
+@pytest.mark.asyncio
+async def test_default_ssl_context():
+    class MockAiohttpSession(aiohttp.ClientSession):
+        async def request(self, method: str, url: str, **kwargs):
+            assert "ssl" not in kwargs
+            mock_response = MagicMock(spec=aiohttp.ClientResponse)
+            type(mock_response).status = PropertyMock(return_value=200)
+            return mock_response
+
+    transport = AioHttpTransport(session=MockAiohttpSession(), session_owner=False)
+    pipeline = AsyncPipeline(transport=transport)
+
+    req = HttpRequest("GET", "https://bing.com")
+    await pipeline.run(req)
