@@ -29,7 +29,7 @@ from azure.core.pipeline.policies import (
 )
 
 from ._generated import AzureTable
-from ._common_conversion import _is_cosmos_endpoint
+from ._common_conversion import _is_cosmos_endpoint, _get_account
 from ._shared_access_signature import QueryStringConstants
 from ._constants import (
     DEFAULT_COSMOS_ENDPOINT_SUFFIX,
@@ -106,27 +106,14 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
         self._location_mode = kwargs.get("location_mode", LocationMode.PRIMARY)
         self.scheme = parsed_url.scheme
         self._cosmos_endpoint = _is_cosmos_endpoint(parsed_url)
-        if ".core." in parsed_url.netloc or ".cosmos." in parsed_url.netloc:
-            account = parsed_url.netloc.split(".table.core.")
-            if "cosmos" in parsed_url.netloc:
-                account = parsed_url.netloc.split(".table.cosmos.")
-            self.account_name = account[0] if len(account) > 1 else None
-        else:
-            path_account_name = parsed_url.path.split("/")
-            if len(path_account_name) > 1:
-                self.account_name = path_account_name[1]
-                account = [self.account_name, parsed_url.netloc]
-            else:
-                # If format doesn't fit Azurite, default to standard parsing
-                account = parsed_url.netloc.split(".table.core.")
-                self.account_name = account[0] if len(account) > 1 else None
+        account, self.account_name = _get_account(parsed_url)
 
         secondary_hostname = None
         self.credential = credential
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
-        if hasattr(self.credential, "named_key"):
-            self.account_name = self.credential.named_key.name  # type: ignore
+        if isinstance(self.credential, AzureNamedKeyCredential):
+            self.account_name = self.credential.named_key.name
             endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
             secondary_hostname = f"{self.account_name}-secondary.table.{endpoint_suffix}"
 

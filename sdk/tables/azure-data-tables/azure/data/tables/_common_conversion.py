@@ -65,3 +65,21 @@ def _is_cosmos_endpoint(url):
 def _transform_patch_to_cosmos_post(request):
     request.method = "POST"
     request.headers["X-HTTP-Method"] = "MERGE"
+
+
+def _get_account(parsed_url):
+    if ".core." in parsed_url.netloc or ".cosmos." in parsed_url.netloc:
+        account = parsed_url.netloc.split(".table.core.")
+        if "cosmos" in parsed_url.netloc:
+            account = parsed_url.netloc.split(".table.cosmos.")
+        account_name = account[0] if len(account) > 1 else None
+    else:
+        path_account_name = parsed_url.path.split("/")
+        if len(path_account_name) > 1:
+            account_name = path_account_name[1]
+            account = [account_name, parsed_url.netloc]
+        else:
+            # If format doesn't fit Azurite, default to standard parsing
+            account = parsed_url.netloc.split(".table.core.")
+            account_name = account[0] if len(account) > 1 else None
+    return account, account_name
