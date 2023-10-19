@@ -18,14 +18,12 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
-from azure.core.rest import HttpRequest
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _format_url_section
 
 T = TypeVar("T")
 ClsType = Optional[
@@ -46,7 +44,7 @@ def build_communication_identity_create_request(
         "content_type", _headers.pop("Content-Type", None)
     )
     api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-01")
+        "api_version", _params.pop("api-version", "2023-10-01")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -75,7 +73,7 @@ def build_communication_identity_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-01")
+        "api_version", _params.pop("api-version", "2023-10-01")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -85,7 +83,7 @@ def build_communication_identity_delete_request(
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -105,7 +103,7 @@ def build_communication_identity_revoke_access_tokens_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-01")
+        "api_version", _params.pop("api-version", "2023-10-01")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -115,7 +113,7 @@ def build_communication_identity_revoke_access_tokens_request(  # pylint: disabl
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -138,7 +136,7 @@ def build_communication_identity_exchange_teams_user_access_token_request(  # py
         "content_type", _headers.pop("Content-Type", None)
     )
     api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-01")
+        "api_version", _params.pop("api-version", "2023-10-01")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -170,7 +168,7 @@ def build_communication_identity_issue_access_token_request(  # pylint: disable=
         "content_type", _headers.pop("Content-Type", None)
     )
     api_version: str = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-01")
+        "api_version", _params.pop("api-version", "2023-10-01")
     )
     accept = _headers.pop("Accept", "application/json")
 
@@ -180,7 +178,7 @@ def build_communication_identity_issue_access_token_request(  # pylint: disable=
         "id": _SERIALIZER.url("id", id, "str"),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -314,7 +312,7 @@ class CommunicationIdentityOperations:
             else:
                 _json = None
 
-        request = build_communication_identity_create_request(
+        _request = build_communication_identity_create_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -327,18 +325,20 @@ class CommunicationIdentityOperations:
                 "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
             ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = (
             self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(
                 status_code=response.status_code, response=response, error_map=error_map
             )
@@ -352,9 +352,9 @@ class CommunicationIdentityOperations:
         )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace
     def delete(
@@ -383,7 +383,7 @@ class CommunicationIdentityOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_communication_identity_delete_request(
+        _request = build_communication_identity_delete_request(
             id=id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -394,18 +394,20 @@ class CommunicationIdentityOperations:
                 "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
             ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = (
             self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(
                 status_code=response.status_code, response=response, error_map=error_map
             )
@@ -415,7 +417,7 @@ class CommunicationIdentityOperations:
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def revoke_access_tokens(
@@ -444,7 +446,7 @@ class CommunicationIdentityOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_communication_identity_revoke_access_tokens_request(
+        _request = build_communication_identity_revoke_access_tokens_request(
             id=id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -455,18 +457,20 @@ class CommunicationIdentityOperations:
                 "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
             ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = (
             self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(
                 status_code=response.status_code, response=response, error_map=error_map
             )
@@ -476,7 +480,7 @@ class CommunicationIdentityOperations:
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def exchange_teams_user_access_token(
@@ -566,31 +570,35 @@ class CommunicationIdentityOperations:
         else:
             _json = self._serialize.body(body, "TeamsUserExchangeTokenRequest")
 
-        request = build_communication_identity_exchange_teams_user_access_token_request(
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
+        _request = (
+            build_communication_identity_exchange_teams_user_access_token_request(
+                content_type=content_type,
+                api_version=self._config.api_version,
+                json=_json,
+                content=_content,
+                headers=_headers,
+                params=_params,
+            )
         )
         path_format_arguments = {
             "endpoint": self._serialize.url(
                 "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
             ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = (
             self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(
                 status_code=response.status_code, response=response, error_map=error_map
             )
@@ -604,9 +612,9 @@ class CommunicationIdentityOperations:
         )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     def issue_access_token(
@@ -707,7 +715,7 @@ class CommunicationIdentityOperations:
                 body, "CommunicationIdentityAccessTokenRequest"
             )
 
-        request = build_communication_identity_issue_access_token_request(
+        _request = build_communication_identity_issue_access_token_request(
             id=id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -721,18 +729,20 @@ class CommunicationIdentityOperations:
                 "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
             ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = (
             self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
+            if _stream:
+                response.read()  # Load the body in memory and close the socket
             map_error(
                 status_code=response.status_code, response=response, error_map=error_map
             )
@@ -746,6 +756,6 @@ class CommunicationIdentityOperations:
         )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore

@@ -10,6 +10,7 @@ from copy import deepcopy
 from typing import Any
 
 from azure.core import PipelineClient
+from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from . import models as _models
@@ -27,7 +28,7 @@ class CommunicationIdentityClient:  # pylint: disable=client-accepts-api-version
     :param endpoint: The communication resource, for example
      https://my-resource.communication.azure.com. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2022-10-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2023-10-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -39,8 +40,27 @@ class CommunicationIdentityClient:  # pylint: disable=client-accepts-api-version
         self._config = CommunicationIdentityClientConfiguration(
             endpoint=endpoint, **kwargs
         )
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs)
+                if self._config.redirect_policy
+                else None,
+                self._config.http_logging_policy,
+            ]
         self._client: PipelineClient = PipelineClient(
-            base_url=_endpoint, config=self._config, **kwargs
+            base_url=_endpoint, policies=_policies, **kwargs
         )
 
         client_models = {
@@ -81,7 +101,7 @@ class CommunicationIdentityClient:  # pylint: disable=client-accepts-api-version
         request_copy.url = self._client.format_url(
             request_copy.url, **path_format_arguments
         )
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, **kwargs)  # type: ignore
 
     def close(self) -> None:
         self._client.close()
