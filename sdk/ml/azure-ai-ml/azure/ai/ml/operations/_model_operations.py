@@ -7,6 +7,7 @@
 from contextlib import contextmanager
 from os import PathLike, path
 from typing import Dict, Iterable, Optional, Union
+import re
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
@@ -721,11 +722,20 @@ class ModelOperations(_ScopeDependentOperations):
                     else package_request.base_environment_source.resource_id
                 )
 
-            if self._registry_name:
-                # create ARM id for the target environment
-                if package_request.target_environment_name:
-                    package_request.target_environment_id = f"azureml://locations/{self._operation_scope._workspace_location}/workspaces/{self._operation_scope._workspace_id}/environments/{package_request.target_environment_name}"
+            # create ARM id for the target environment
+            if self._operation_scope._workspace_location and self._operation_scope._workspace_id:
+                package_request.target_environment_id = f"azureml://locations/{self._operation_scope._workspace_location}/workspaces/{self._operation_scope._workspace_id}/environments/{package_request.target_environment_id}"
+            else:
+                ws = self._all_operations.all_operations.get('workspaces')
+                ws_details = ws.get(self._workspace_name)
+                workspace_location, workspace_id = (
+                    ws_details.location,
+                    ws_details._workspace_id,
+                )
+                package_request.target_environment_id = f"azureml://locations/{workspace_location}/workspaces/{workspace_id}/environments/{package_request.target_environment_id}"
 
+            if package_request.environment_version is not None:
+                package_request.target_environment_id = package_request.target_environment_id + f"/versions/{package_request.environment_version}"
             package_request = package_request._to_rest_object()
 
         if self._registry_reference:
@@ -749,15 +759,16 @@ class ModelOperations(_ScopeDependentOperations):
         )
         if is_deployment_flow:  # No need to go through the schema, as this is for deployment notification only
             return package_out
-        if hasattr(package_out, "target_environment_name"):
-            environment_name = package_out.target_environment_name
+        if hasattr(package_out, "target_environment_id"):
+            environment_id = package_out.target_environment_id
         else:
-            environment_name = package_out.additional_properties["targetEnvironmentName"]
+            environment_id = package_out.additional_properties["targetEnvironmentId"]
 
-        if hasattr(package_out, "target_environment_version"):
-            environment_version = package_out.target_environment_version
-        else:
-            environment_version = package_out.additional_properties["targetEnvironmentVersion"]
+        pattern = r"/subscriptions/([\w-]+)/resourceGroups/([\w-]+)/providers/([\w.]+)/workspaces/([\w-]+)/environments/([\w.-]+)/versions/(\d+)"
+        parse_id = re.search(pattern, environment_id)
+
+        environment_name = parse_id.group(5)
+        environment_version = parse_id.group(6)
 
         module_logger.info("\nPackage Created")
         if package_out is not None and package_out.__class__.__name__ == "PackageResponse":

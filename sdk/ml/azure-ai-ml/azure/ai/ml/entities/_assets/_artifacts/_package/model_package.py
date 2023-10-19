@@ -7,6 +7,7 @@
 from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, List, Optional, Union
+import re
 
 from azure.ai.ml._restclient.v2023_08_01_preview.models import CodeConfiguration
 from azure.ai.ml._restclient.v2023_08_01_preview.models import ModelPackageInput as RestModelPackageInput
@@ -220,23 +221,31 @@ class ModelPackage(Resource, PackageRequest):
     def __init__(
         self,
         *,
-        target_environment_name: str = None,
-        target_environment_id: str = None,
+        target_environment: Union[str, Dict[str,str]],
         inferencing_server: Union[AzureMLOnlineInferencingServer, AzureMLBatchInferencingServer],
         base_environment_source: BaseEnvironment = None,
-        target_environment_version: Optional[str] = None,
         environment_variables: Optional[Dict[str, str]] = None,
         inputs: Optional[List[ModelPackageInput]] = None,
         model_configuration: Optional[ModelConfiguration] = None,
         tags: Optional[Dict[str, str]] = None,
+        **kwargs,
     ):
-        if target_environment_name is None:
-            target_environment_name = "dummy_name"
+        if isinstance(target_environment, dict):
+            target_environment = target_environment["name"]
+            env_version = None
+        else:
+            parse_id = re.match(r'azureml:(\w+):(\d+)$', target_environment)
+
+            if parse_id:
+                target_environment = parse_id.group(1)
+                env_version = parse_id.group(2)
+            else:
+                target_environment = target_environment
+                env_version = None
+                
         super().__init__(
-            name=target_environment_name,
-            target_environment_name=target_environment_name,
-            target_environment_version=target_environment_version,
-            target_environment_id=target_environment_id,
+            name=target_environment,
+            target_environment_id=target_environment,
             base_environment_source=base_environment_source,
             inferencing_server=inferencing_server,
             model_configuration=model_configuration,
@@ -244,6 +253,7 @@ class ModelPackage(Resource, PackageRequest):
             tags=tags,
             environment_variables=environment_variables,
         )
+        self.environment_version = env_version
 
     @classmethod
     def _load(
