@@ -818,4 +818,5 @@ def _format_batch_operations(operations):
 
         final_operations.append(operation)
 
+    return final_operations
 
