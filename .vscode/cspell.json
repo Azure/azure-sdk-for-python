@@ -55,6 +55,7 @@
     "sdk/core/azure-core-tracing-opencensus/**",
     "sdk/core/azure-core-tracing-opentelemetry/**",
     "sdk/core/azure-servicemanagement-legacy/**",
+    "sdk/core/corehttp/**",
     "sdk/digitaltwins/azure-digitaltwins-core/**",
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
@@ -99,7 +100,7 @@
     "sdk/translation/azure-ai-translation-text/tests/test_transliteration.py",
     "sdk/translation/azure-ai-translation-text/tests/test_break_sentence_async.py",
     "sdk/translation/azure-ai-translation-text/tests/test_translation_async.py",
-    "sdk/translation/azure-ai-translation-text/tests/test_transliteration_async.py",    
+    "sdk/translation/azure-ai-translation-text/tests/test_transliteration_async.py",
     "sdk/translation/test-resources.json",
     "eng/**/*.json",
     "eng/*.txt",
@@ -502,7 +503,7 @@
       "words": [
         "wammsa"
       ]
-    },    
+    },
     {
       "filename": "sdk/tables/azure-data-tables/tests/**/*.py",
       "words": [
