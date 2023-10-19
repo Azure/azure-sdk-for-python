@@ -41,6 +41,7 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
             :dedent: 8
             :caption: creating an automl image classification multilabel job
     """
+
     _DEFAULT_PRIMARY_METRIC = ClassificationMultilabelPrimaryMetrics.IOU
 
     def __init__(

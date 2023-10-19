@@ -35,6 +35,7 @@ class AutoMLImage(AutoMLVertical, ABC):
     :keyword kwargs: Additional keyword arguments for AutoMLImage.
     :paramtype kwargs: Dict[str, Any]
     """
+
     def __init__(
         self,
         *,

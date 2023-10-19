@@ -36,6 +36,7 @@ class AutoMLImageClassificationBase(AutoMLImage):
     :keyword kwargs: Other Keyword arguments for AutoMLImageClassificationBase class.
     :paramtype kwargs: Dict[str, Any]
     """
+
     def __init__(
         self,
         *,

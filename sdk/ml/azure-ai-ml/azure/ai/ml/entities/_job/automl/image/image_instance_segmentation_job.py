@@ -40,6 +40,7 @@ class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
             :dedent: 8
             :caption: creating an automl image instance segmentation job
     """
+
     _DEFAULT_PRIMARY_METRIC = InstanceSegmentationPrimaryMetrics.MEAN_AVERAGE_PRECISION
 
     def __init__(

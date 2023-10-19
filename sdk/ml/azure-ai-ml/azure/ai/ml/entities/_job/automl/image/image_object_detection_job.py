@@ -38,6 +38,7 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
             :dedent: 8
             :caption: creating an automl image object detection job
     """
+
     _DEFAULT_PRIMARY_METRIC = ObjectDetectionPrimaryMetrics.MEAN_AVERAGE_PRECISION
 
     def __init__(

@@ -39,6 +39,7 @@ class ImageClassificationJob(AutoMLImageClassificationBase):
             :dedent: 8
             :caption: creating an automl image classification job
     """
+
     _DEFAULT_PRIMARY_METRIC = ClassificationPrimaryMetrics.ACCURACY
 
     def __init__(
