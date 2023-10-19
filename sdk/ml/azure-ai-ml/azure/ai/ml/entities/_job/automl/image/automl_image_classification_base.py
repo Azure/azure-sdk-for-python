@@ -19,6 +19,23 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 
 class AutoMLImageClassificationBase(AutoMLImage):
+    """Base class for AutoML Image Classification and Image Classification Multilabel tasks.
+    Please do not instantiate this class directly. Instantiate one of the child classes instead.
+
+    :keyword task_type: Type of task to run.
+    Possible values include: "ImageClassification", "ImageClassificationMultilabel".
+    :paramtype task_type: str
+    :keyword limits: Limits for Automl image classification jobs. Defaults to None.
+    :paramtype limits: Optional[~azure.ai.ml.automl.ImageLimitSettings]
+    :keyword sweep: Sweep settings for Automl image classification jobs. Defaults to None.
+    :paramtype sweep: Optional[~azure.ai.ml.automl.ImageSweepSettings]
+    :keyword training_parameters: Training parameters for Automl image classification jobs. Defaults to None.
+    :paramtype training_parameters: Optional[~azure.ai.ml.automl.ImageModelSettingsClassification]
+    :keyword search_space: Search space for Automl image classification jobs. Defaults to None.
+    :paramtype search_space: Optional[List[~azure.ai.ml.automl.ImageClassificationSearchSpace]]
+    :keyword kwargs: Other Keyword arguments for AutoMLImageClassificationBase class.
+    :paramtype kwargs: Dict[str, Any]
+    """
     def __init__(
         self,
         *,
@@ -29,22 +46,6 @@ class AutoMLImageClassificationBase(AutoMLImage):
         search_space: Optional[List[ImageClassificationSearchSpace]] = None,
         **kwargs,
     ) -> None:
-        """Base class for AutoML Image Classification and Image Classification Multilabel tasks.
-        Please do not instantiate this class directly. Instantiate one of the child classes instead.
-        :param task_type: Type of task to run.
-        Possible values include: "ImageClassification", "ImageClassificationMultilabel".
-        :type task_type: str
-        :param limits: Limits for Automl image classification jobs. Defaults to None.
-        :type limits: Optional[~azure.ai.ml.automl.ImageLimitSettings]
-        :param sweep: Sweep settings for Automl image classification jobs. Defaults to None.
-        :type sweep: Optional[~azure.ai.ml.automl.ImageSweepSettings]
-        :param training_parameters: Training parameters for Automl image classification jobs. Defaults to None.
-        :type training_parameters: Optional[~azure.ai.ml.automl.ImageModelSettingsClassification]
-        :param search_space: Search space for Automl image classification jobs. Defaults to None.
-        :type search_space: Optional[List[~azure.ai.ml.automl.ImageClassificationSearchSpace]]
-        :param kwargs: Other Keyword arguments for AutoMLImageClassificationBase class.
-        :type kwargs: Dict[str, Any]
-        """
         super().__init__(task_type=task_type, limits=limits, sweep=sweep, **kwargs)
         self.training_parameters = training_parameters  # Assigning training_parameters through setter method.
         self._search_space = search_space
@@ -60,6 +61,7 @@ class AutoMLImageClassificationBase(AutoMLImage):
     @training_parameters.setter
     def training_parameters(self, value: Union[Dict, ImageModelSettingsClassification]) -> None:
         """Setting Image training parameters for AutoML Image Classification and Image Classification Multilabel tasks.
+
         :param value: Training parameters for AutoML Image Classification and Image Classification Multilabel tasks.
         :type value: Union[Dict, ~azure.ai.ml.automl.ImageModelSettingsClassification]
         :raises ~azure.ml.exceptions.ValidationException if value is not a dictionary or
@@ -98,6 +100,7 @@ class AutoMLImageClassificationBase(AutoMLImage):
     @search_space.setter
     def search_space(self, value: Union[List[Dict], List[SearchSpace]]) -> None:
         """Setting Image search space for AutoML Image Classification and Image Classification Multilabel tasks.
+
         :param value: Search space for AutoML Image Classification and Image Classification Multilabel tasks.
         :type value: Union[List[Dict], List[~azure.ai.ml.automl.ImageClassificationSearchSpace]]
         :raises ~azure.ml.exceptions.ValidationException if value is not a list of dictionaries or

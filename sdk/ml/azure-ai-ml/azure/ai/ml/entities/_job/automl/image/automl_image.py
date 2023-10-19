@@ -20,6 +20,21 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 
 class AutoMLImage(AutoMLVertical, ABC):
+    """Base class for all AutoML Image jobs.
+    You should not instantiate this class directly.
+    Instead you should create classes for specific AutoML Image tasks.
+
+    :keyword task_type: Required. Type of task to run.
+    Possible values include: "ImageClassification", "ImageClassificationMultilabel",
+                                  "ImageObjectDetection", "ImageInstanceSegmentation"
+    :paramtype task_type: str
+    :keyword limits: Limit settings for all AutoML Image jobs. Defaults to None.
+    :paramtype limits: Optional[~azure.ai.ml.automl.ImageLimitSettings]
+    :keyword sweep: Sweep settings for all AutoML Image jobs. Defaults to None.
+    :paramtype sweep: Optional[~azure.ai.ml.automl.ImageSweepSettings]
+    :keyword kwargs: Additional keyword arguments for AutoMLImage.
+    :paramtype kwargs: Dict[str, Any]
+    """
     def __init__(
         self,
         *,
@@ -28,21 +43,6 @@ class AutoMLImage(AutoMLVertical, ABC):
         sweep: Optional[ImageSweepSettings] = None,
         **kwargs,
     ) -> None:
-        """Base class for all AutoML Image jobs.
-        You should not instantiate this class directly.
-        Instead you should create classes for specific AutoML Image tasks.
-
-        :param task_type: Required. Type of task to run.
-        Possible values include: "ImageClassification", "ImageClassificationMultilabel",
-                                  "ImageObjectDetection", "ImageInstanceSegmentation"
-        :type task_type: str
-        :param limits: Limit settings for all AutoML Image jobs. Defaults to None.
-        :type limits: Optional[~azure.ai.ml.automl.ImageLimitSettings]
-        :param sweep: Sweep settings for all AutoML Image jobs. Defaults to None.
-        :type sweep: Optional[~azure.ai.ml.automl.ImageSweepSettings]
-        :param kwargs: Additional keyword arguments for AutoMLImage.
-        :type kwargs: Dict[str, Any]
-        """
         self.log_verbosity = kwargs.pop("log_verbosity", LogVerbosity.INFO)
         self.target_column_name = kwargs.pop("target_column_name", None)
         self.validation_data_size = kwargs.pop("validation_data_size", None)
@@ -61,6 +61,7 @@ class AutoMLImage(AutoMLVertical, ABC):
     @property
     def log_verbosity(self) -> LogVerbosity:
         """Returns the verbosity of the logger.
+
         :return: The log verbosity.
         :rtype: ~azure.ai.ml._restclient.v2023_04_01_preview.models.LogVerbosity
         """
@@ -69,6 +70,7 @@ class AutoMLImage(AutoMLVertical, ABC):
     @log_verbosity.setter
     def log_verbosity(self, value: Union[str, LogVerbosity]):
         """Sets the verbosity of the logger.
+
         :param value: The value to set the log verbosity to.
         Possible values include: "NotSet", "Debug", "Info", "Warning", "Error", "Critical".
         :type value: Union[str, ~azure.ai.ml._restclient.v2023_04_01_preview.models.LogVerbosity]
@@ -78,6 +80,7 @@ class AutoMLImage(AutoMLVertical, ABC):
     @property
     def limits(self) -> ImageLimitSettings:
         """Returns the limit settings for all AutoML Image jobs.
+
         :return: The limit settings.
         :rtype: ~azure.ai.ml.automl.ImageLimitSettings
         """
@@ -101,6 +104,7 @@ class AutoMLImage(AutoMLVertical, ABC):
     @property
     def sweep(self) -> ImageSweepSettings:
         """Returns the sweep settings for all AutoML Image jobs.
+
         :return: The sweep settings.
         :rtype: ~azure.ai.ml.automl.ImageSweepSettings
         """
@@ -109,6 +113,7 @@ class AutoMLImage(AutoMLVertical, ABC):
     @sweep.setter
     def sweep(self, value: Union[Dict, ImageSweepSettings]) -> None:
         """Sets the sweep settings for all AutoML Image jobs.
+
         :param value: The value to set the sweep settings to.
         :type value: Union[Dict, ~azure.ai.ml.automl.ImageSweepSettings]
         :raises ~azure.ai.ml.exceptions.ValidationException: If value is not a dictionary.
@@ -136,6 +141,7 @@ class AutoMLImage(AutoMLVertical, ABC):
         validation_data_size: Optional[float] = None,
     ) -> None:
         """Data settings for all AutoML Image jobs.
+
         :keyword training_data: Required. Training data.
         :type training_data: ~azure.ai.ml.entities.Input
         :keyword target_column_name: Required. Target column name.
@@ -160,9 +166,10 @@ class AutoMLImage(AutoMLVertical, ABC):
         timeout_minutes: Optional[int] = None,
     ) -> None:
         """Limit settings for all AutoML Image Jobs.
+
         :keyword max_concurrent_trials: Maximum number of trials to run concurrently.
-        :type max_concurrent_trials: Optional[int]
-        :keyword max_trials: Maximum number of trials to run.
+        :type max_concurrent_trials: Optional[int]. Defaults to None.
+        :keyword max_trials: Maximum number of trials to run. Defaults to None.
         :type max_trials: Optional[int]
         :keyword timeout_minutes: AutoML job timeout.
         :type timeout_minutes: ~datetime.timedelta
@@ -185,7 +192,7 @@ class AutoMLImage(AutoMLVertical, ABC):
     ) -> None:
         """Sweep settings for all AutoML Image jobs.
 
-        :keyword sampling_algorithm: Required. [Required] Type of the hyperparameter sampling
+        :keyword sampling_algorithm: Required. Type of the hyperparameter sampling
             algorithms. Possible values include: "Grid", "Random", "Bayesian".
         :type sampling_algorithm: Union[str, ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.RANDOM,
             ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.GRID,
@@ -206,6 +213,7 @@ class AutoMLImage(AutoMLVertical, ABC):
 
     def __eq__(self, other) -> bool:
         """Compares two AutoMLImage objects for equality.
+
         :param other: The other AutoMLImage object to compare to.
         :type other: ~azure.ai.ml.automl.AutoMLImage
         :return: True if the two AutoMLImage objects are equal; False otherwise.
@@ -225,6 +233,7 @@ class AutoMLImage(AutoMLVertical, ABC):
 
     def __ne__(self, other) -> bool:
         """Compares two AutoMLImage objects for inequality.
+
         :param other: The other AutoMLImage object to compare to.
         :type other: ~azure.ai.ml.automl.AutoMLImage
         :return: True if the two AutoMLImage objects are not equal; False otherwise.

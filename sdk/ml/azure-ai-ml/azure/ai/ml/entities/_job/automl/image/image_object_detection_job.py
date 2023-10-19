@@ -22,8 +22,22 @@ from azure.ai.ml.entities._util import load_from_dict
 
 
 class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
-    """Configuration for AutoML Image Object Detection job."""
+    """Configuration for AutoML Image Object Detection job.
 
+    :keyword primary_metric: The primary metric to use for optimization
+    :paramtype primary_metric: Optional[str, azure.ai.ml.ObjectDetectionPrimaryMetrics]
+    :keyword kwargs: Job-specific arguments
+    :paramtype kwargs: Dict[str, Any]
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_image.py
+            :start-after: [START automl.automl_image_job.image_object_detection_job]
+            :end-before: [END automl.automl_image_job.image_object_detection_job]
+            :language: python
+            :dedent: 8
+            :caption: creating an automl image object detection job
+    """
     _DEFAULT_PRIMARY_METRIC = ObjectDetectionPrimaryMetrics.MEAN_AVERAGE_PRECISION
 
     def __init__(
@@ -32,22 +46,7 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
         primary_metric: Optional[Union[str, ObjectDetectionPrimaryMetrics]] = None,
         **kwargs,
     ) -> None:
-        """Initialize a new AutoML Image Object Detection job.
 
-        :param primary_metric: The primary metric to use for optimization
-        :type primary_metric: Optional[str, azure.ai.ml.ObjectDetectionPrimaryMetrics]
-        :param kwargs: Job-specific arguments
-        :type kwargs: Dict[str, Any]
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/ml_samples_automl_image.py
-                :start-after: [START automl.image_object_detection_job]
-                :end-before: [END automl.image_object_detection_job]
-                :language: python
-                :dedent: 8
-                :caption: creating an automl image object detection job
-        """
         # Extract any super class init settings
         limits = kwargs.pop("limits", None)
         sweep = kwargs.pop("sweep", None)

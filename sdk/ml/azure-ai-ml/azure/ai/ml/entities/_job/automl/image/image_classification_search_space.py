@@ -112,8 +112,8 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/ml_samples_automl_image.py
-            :start-after: [START automl.image_classification_search_space]
-            :end-before: [END automl.image_classification_search_space]
+            :start-after: [START automl.automl_image_job.image_classification_search_space]
+            :end-before: [END automl.automl_image_job.image_classification_search_space]
             :language: python
             :dedent: 8
             :caption: Defining an automl image classification search space

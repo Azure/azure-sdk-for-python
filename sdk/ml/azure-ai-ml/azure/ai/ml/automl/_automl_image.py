@@ -72,8 +72,8 @@ def image_classification(
 ) -> ImageClassificationJob:
     """Creates an object for AutoML Image multi-class Classification job.
 
-    :keyword training_data:  The training data to be used within the experiment.
-    :paramtype training_data: Input
+    :keyword training_data: The training data to be used within the experiment.
+    :paramtype training_data: azure.ai.ml.entities.Input
     :keyword target_column_name: The name of the label column.
             This parameter is applicable to ``training_data`` and ``validation_data`` parameters.
     :paramtype target_column_name: str
@@ -85,10 +85,10 @@ def image_classification(
             Acceptable values: accuracy, AUC_weighted, norm_macro_recall, average_precision_score_weighted,
             and precision_score_weighted
             Defaults to accuracy.
-    :type primary_metric: Union[str, azure.ai.ml.automl.ClassificationPrimaryMetrics]
+    :paramtype primary_metric: Union[str, azure.ai.ml.automl.ClassificationPrimaryMetrics]
     :keyword validation_data: The validation data to be used within the experiment.
-    :paramtype validation_data: Input
-    :keyword validation_data_size:  What fraction of the data to hold out for validation when user validation data
+    :paramtype validation_data: Optional[azure.ai.ml.entities.Input]
+    :keyword validation_data_size: What fraction of the data to hold out for validation when user validation data 
             is not specified. This should be between 0.0 and 1.0 non-inclusive.
 
             Specify ``validation_data`` to provide validation data, otherwise set ``validation_data_size``
@@ -134,8 +134,8 @@ def image_classification_multilabel(
 ) -> ImageClassificationMultilabelJob:
     """Creates an object for AutoML Image multi-label Classification job.
 
-    :keyword training_data:  The training data to be used within the experiment.
-    :paramtype training_data: Input
+    :keyword training_data: The training data to be used within the experiment.
+    :paramtype training_data: azure.ai.ml.entities.Input
     :keyword target_column_name: The name of the label column.
             This parameter is applicable to ``training_data`` and ``validation_data`` parameters.
     :paramtype target_column_name: str
@@ -147,10 +147,10 @@ def image_classification_multilabel(
             Acceptable values: accuracy, AUC_weighted, norm_macro_recall, average_precision_score_weighted,
             precision_score_weighted, and Iou
             Defaults to Iou.
-    :type primary_metric: Union[str, azure.ai.ml.automl.ClassificationMultilabelPrimaryMetrics]
+    :paramtype primary_metric: Union[str, azure.ai.ml.automl.ClassificationMultilabelPrimaryMetrics]
     :keyword validation_data: The validation data to be used within the experiment.
-    :paramtype validation_data: Input
-    :keyword validation_data_size:  What fraction of the data to hold out for validation when user validation data
+    :paramtype validation_data: Optional[azure.ai.ml.entities.Input]
+    :keyword validation_data_size: What fraction of the data to hold out for validation when user validation data
             is not specified. This should be between 0.0 and 1.0 non-inclusive.
 
             Specify ``validation_data`` to provide validation data, otherwise set ``validation_data_size``
@@ -196,8 +196,8 @@ def image_object_detection(
 ) -> ImageObjectDetectionJob:
     """Creates an object for AutoML Image Object Detection job.
 
-    :keyword training_data:  The training data to be used within the experiment.
-    :paramtype training_data: Input
+    :keyword training_data: The training data to be used within the experiment.
+    :paramtype training_data: azure.ai.ml.entities.Input
     :keyword target_column_name: The name of the label column.
             This parameter is applicable to ``training_data`` and ``validation_data`` parameters.
     :paramtype target_column_name: str
@@ -210,8 +210,8 @@ def image_object_detection(
             Defaults to MeanAveragePrecision.
     :type primary_metric: Union[str, azure.ai.ml.automl.ObjectDetectionPrimaryMetrics]
     :keyword validation_data: The validation data to be used within the experiment.
-    :paramtype validation_data: Input
-    :keyword validation_data_size:  What fraction of the data to hold out for validation when user validation data
+    :paramtype validation_data: Optional[azure.ai.ml.entities.Input]
+    :keyword validation_data_size: What fraction of the data to hold out for validation when user validation data
             is not specified. This should be between 0.0 and 1.0 non-inclusive.
 
             Specify ``validation_data`` to provide validation data, otherwise set ``validation_data_size``
@@ -257,8 +257,8 @@ def image_instance_segmentation(
 ) -> ImageInstanceSegmentationJob:
     """Creates an object for AutoML Image Instance Segmentation job.
 
-    :keyword training_data:  The training data to be used within the experiment.
-    :paramtype training_data: Input
+    :keyword training_data: The training data to be used within the experiment.
+    :paramtype training_data: azure.ai.ml.entities.Input
     :keyword target_column_name: The name of the label column.
             This parameter is applicable to ``training_data`` and ``validation_data`` parameters.
     :paramtype target_column_name: str
@@ -271,8 +271,8 @@ def image_instance_segmentation(
             Defaults to MeanAveragePrecision.
     :type primary_metric: Union[str, azure.ai.ml.automl.InstanceSegmentationPrimaryMetrics]
     :keyword validation_data: The validation data to be used within the experiment.
-    :paramtype validation_data: Input
-    :keyword validation_data_size:  What fraction of the data to hold out for validation when user validation data
+    :paramtype validation_data: Optional[azure.ai.ml.entities.Input]
+    :keyword validation_data_size: What fraction of the data to hold out for validation when user validation data
             is not specified. This should be between 0.0 and 1.0 non-inclusive.
 
             Specify ``validation_data`` to provide validation data, otherwise set ``validation_data_size``

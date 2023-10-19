@@ -18,6 +18,7 @@ USAGE:
 
 class AutoMLImageSamples(object):
     def automl_image_jobs(self):
+
         # [START automl.image_classification]
         from azure.ai.ml import automl, Input
         from azure.ai.ml.constants import AssetTypes
@@ -69,7 +70,7 @@ class AutoMLImageSamples(object):
         # [START automl.image_instance_segmentation]
         from azure.ai.ml import automl, Input
         from azure.ai.ml.constants import AssetTypes
-        from azure.ai.ml.automl import ObjectDetectionPrimaryMetrics
+        from azure.ai.ml.automl import InstanceSegmentationPrimaryMetrics
 
         image_instance_segmentation_job = automl.image_instance_segmentation(
             experiment_name="my_experiment",
@@ -77,7 +78,7 @@ class AutoMLImageSamples(object):
             training_data=Input(type=AssetTypes.MLTABLE, path="./training-mltable-folder"),
             validation_data=Input(type=AssetTypes.MLTABLE, path="./validation-mltable-folder"),
             target_column_name="label",
-            primary_metric=ObjectDetectionPrimaryMetrics.MEAN_AVERAGE_PRECISION,
+            primary_metric=InstanceSegmentationPrimaryMetrics.MEAN_AVERAGE_PRECISION,
             tags={"my_custom_tag": "My custom value"},
         )
         # [END automl.image_instance_segmentation]
@@ -98,7 +99,7 @@ class AutoMLImageSamples(object):
         )
         # [END automl.automl_image_job.image_classification_job]
 
-        # [START automl.image_classification_multilabel_job]
+        # [START automl.automl_image_job.image_classification_multilabel_job]
         from azure.ai.ml import automl, Input
         from azure.ai.ml.constants import AssetTypes
         from azure.ai.ml.automl import ClassificationMultilabelPrimaryMetrics
@@ -112,9 +113,9 @@ class AutoMLImageSamples(object):
             primary_metric=ClassificationMultilabelPrimaryMetrics.IOU,
             tags={"my_custom_tag": "My custom value"},
         )
-        # [END automl.image_classification_multilabel_job]
+        # [END automl.automl_image_job.image_classification_multilabel_job]
 
-        # [START automl.image_object_detection_job]
+        # [START automl.automl_image_job.image_object_detection_job]
         from azure.ai.ml import automl, Input
         from azure.ai.ml.constants import AssetTypes
         from azure.ai.ml.automl import ObjectDetectionPrimaryMetrics
@@ -127,9 +128,9 @@ class AutoMLImageSamples(object):
             tags={"my_custom_tag": "My custom value"},
             primary_metric=ObjectDetectionPrimaryMetrics.MEAN_AVERAGE_PRECISION,
         )
-        # [END automl.image_object_detection_job]
+        # [END automl.automl_image_job.image_object_detection_job]
 
-        # [START automl.image_instance_segmentation_job]
+        # [START automl.automl_image_job.image_instance_segmentation_job]
         from azure.ai.ml import automl, Input
         from azure.ai.ml.constants import AssetTypes
         from azure.ai.ml.automl import ObjectDetectionPrimaryMetrics
@@ -142,9 +143,9 @@ class AutoMLImageSamples(object):
             tags={"my_custom_tag": "My custom value"},
             primary_metric=ObjectDetectionPrimaryMetrics.MEAN_AVERAGE_PRECISION,
         )
-        # [END automl.image_instance_segmentation_job]
+        # [END automl.automl_image_job.image_instance_segmentation_job]
 
-        # [START automl.image_sweep_settings]
+        # [START automl.automl_image_job.image_sweep_settings]
         from azure.ai.ml import automl
         from azure.ai.ml.sweep import BanditPolicy
 
@@ -152,9 +153,9 @@ class AutoMLImageSamples(object):
             sampling_algorithm="Grid",
             early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.05, delay_evaluation=6),
         )
-        # [END automl.image_sweep_settings]
+        # [END automl.automl_image_job.image_sweep_settings]
 
-        # [START automl.image_classification_search_space]
+        # [START automl.automl_image_job.image_classification_search_space]
         from azure.ai.ml import automl
         from azure.ai.ml.sweep import Uniform, Choice
 
@@ -163,9 +164,9 @@ class AutoMLImageSamples(object):
             number_of_epochs=Choice([15, 30]),
             weight_decay=Uniform(0.01, 0.1),
         )
-        # [END automl.image_classification_search_space]
+        # [END automl.automl_image_job.image_classification_search_space]
 
-        # [START automl.image_object_detection_search_space]
+        # [START automl.automl_image_job.image_object_detection_search_space]
         from azure.ai.ml import automl
         from azure.ai.ml.sweep import Uniform
 
@@ -174,32 +175,46 @@ class AutoMLImageSamples(object):
             model_name="yolov5",
             weight_decay=Uniform(0.01, 0.1),
         )
-        # [END automl.image_object_detection_search_space]
+        # [END automl.automl_image_job.image_object_detection_search_space]
 
-        # [START automl.image_limit_settings]
-        from azure.ai.ml import automl
+        # [START automl.automl_image_job.image_limit_settings]
+        from azure.ai.ml import automl, Input
+        from azure.ai.ml.constants import AssetTypes
 
-        image_limit_settings = automl.ImageLimitSettings(
-            max_concurrent_trials=2, max_trials=4, max_nodes=4, timeout_minutes=120
+        # Create the AutoML job with the related factory-function.
+        image_job = automl.image_instance_segmentation(
+            experiment_name="my_experiment",
+            compute="my_compute",
+            training_data=Input(type=AssetTypes.MLTABLE, path="./training-mltable-folder"),
+            validation_data=Input(type=AssetTypes.MLTABLE, path="./validation-mltable-folder"),
+            target_column_name="label",
+            primary_metric="MeanAveragePrecision",
+            tags={"my_custom_tag": "custom value"},
         )
-        # [END automl.image_limit_settings]
+        # Set the limits for the AutoML job.
+        image_job.set_limits(
+            max_trials=10,
+            max_concurrent_trials=2,
+        )
+        # Submit the AutoML job.
+        image_job.submit()
+        # [END automl.automl_image_job.image_limit_settings]
 
-        # [START automl.image_classification_model_settings]
+        # [START automl.automl_image_job.image_classification_model_settings]
         from azure.ai.ml import automl
-        from azure.ai.ml.constants import NlpLearningRateScheduler
 
         image_classification_model_settings = automl.ImageModelSettingsClassification(
             checkpoint_frequency=5,
             early_stopping=False,
             gradient_accumulation_step=2,
         )
-        # [END automl.image_classification_model_settings]
+        # [END automl.automl_image_job.image_classification_model_settings]
 
-        # [START automl.image_object_detection_model_settings]
+        # [START automl.automl_image_job.image_object_detection_model_settings]
         from azure.ai.ml import automl
 
         object_detection_model_settings = automl.ImageModelSettingsObjectDetection(min_size=600, max_size=1333)
-        # [END automl.image_object_detection_model_settings]
+        # [END automl.automl_image_job.image_object_detection_model_settings]
 
 
 if __name__ == "__main__":

@@ -317,8 +317,8 @@ class ImageModelSettingsClassification(ImageModelDistributionSettings):
     :type weighted_loss: int
 
     .. literalinclude:: ../samples/ml_samples_automl_image.py
-            :start-after: [START automl.image_classification_model_settings]
-            :end-before: [END automl.image_classification_model_settings]
+            :start-after: [START automl.automl_image_job.image_classification_model_settings]
+            :end-before: [END automl.automl_image_job.image_classification_model_settings]
             :language: python
             :dedent: 8
             :caption: Defining the automl image classification model settings.
@@ -642,8 +642,8 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
      ~azure.mgmt.machinelearningservices.models.LogValidationLoss
 
     .. literalinclude:: ../samples/ml_samples_automl_image.py
-            :start-after: [START automl.image_object_detection_model_settings]
-            :end-before: [END automl.image_object_detection_model_settings]
+            :start-after: [START automl.automl_image_job.image_object_detection_model_settings]
+            :end-before: [END automl.automl_image_job.image_object_detection_model_settings]
             :language: python
             :dedent: 8
             :caption: Defining the automl image object detection or instance segmentation model settings.
