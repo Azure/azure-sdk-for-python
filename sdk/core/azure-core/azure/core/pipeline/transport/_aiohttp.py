@@ -264,7 +264,7 @@ class AioHttpTransport(AsyncHttpTransport):
             cert=config.pop("connection_cert", self.connection_config.cert),
             verify=config.pop("connection_verify", self.connection_config.verify),
         )
-        # Is ssl=True, we just use default ssl context from aiohttp
+        # If ssl=True, we just use default ssl context from aiohttp
         if ssl is not True:
             config["ssl"] = ssl
         # If we know for sure there is not body, disable "auto content type"
