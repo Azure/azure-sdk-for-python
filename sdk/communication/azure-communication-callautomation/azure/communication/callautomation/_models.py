@@ -220,8 +220,8 @@ class TextSource:
 
     def __init__(
             self,
-            text: str,
             *,
+            text: str,
             source_locale: Optional[str] = None,
             voice_kind: Optional[Union[str, 'VoiceKind']] = None,
             voice_name: Optional[str] = None,
@@ -267,8 +267,8 @@ class SsmlSource:
 
     def __init__(
         self,
-        ssml_text: str,
         *,
+        ssml_text: str,
         play_source_cache_id: Optional[str] = None,
         custom_voice_endpoint_id: Optional[str] = None
     ):
@@ -557,9 +557,9 @@ class RecognitionChoice:
 
     def __init__(
             self,
+            *,
             label: str,
             phrases: List[str],
-            *,
             tone: Optional[Union[str, 'DtmfTone']] = None
     ):
         self.label = label
