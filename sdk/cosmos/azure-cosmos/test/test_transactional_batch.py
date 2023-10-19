@@ -183,7 +183,7 @@ class TestTransactionalBatch:
         assert operation_results[1].operation_response.get("resourceBody").get("message") == "item was replaced"
 
         # replace non-existent
-        batch = [("replace", ("new-item", {"id": "new-item", "company": "Microsoft", "message": "item was replaced"}))]
+        batch = [("replace", ("no-item", {"id": "no-item", "company": "Microsoft", "message": "item was replaced"}))]
 
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert batch_response.get("is_error")
