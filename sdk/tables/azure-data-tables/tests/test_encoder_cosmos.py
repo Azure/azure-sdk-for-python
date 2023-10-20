@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import sys
 import pytest
 import json
 import uuid
@@ -21,7 +22,7 @@ from azure.data.tables._serialize import _add_entity_properties
 
 from _shared.testcase import TableTestCase
 
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, is_live
 from preparers import cosmos_decorator
 
 
@@ -711,28 +712,6 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             )
             assert list(resp.keys()) == ['date', 'etag', 'version']
 
-            test_entity = {"PartitionKey": "PK", "RowKey": EnumIntOptions.ONE, "Data": EnumIntOptions.TWO}
-            # TODO: This is a bit weird
-            expected_entity = {
-                "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
-                "RowKey": "1",
-                "RowKey@odata.type": "Edm.String",
-                "Data": "2",
-                "Data@odata.type": "Edm.String",
-            }
-            response_entity = {"PartitionKey": "PK", "RowKey": "1", "Data": "2"}
-            # TODO: This changes between Python 3.10 and 3.11
-            _check_backcompat(test_entity, expected_entity)
-            resp = client.create_entity(
-                test_entity,
-                verify_payload=json.dumps(expected_entity),
-                verify_url=f"/{table_name}",
-                verify_headers={"Content-Type":"application/json;odata=nometadata"},
-                verify_response=(lambda: client.get_entity("PK", "1"), response_entity)
-            )
-            assert list(resp.keys()) == ['date', 'etag', 'version']
-
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.ONE, "Data": EnumStrOptions.TWO}
             # TODO: This looks like it was always broken
             expected_entity = {
@@ -752,6 +731,49 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 verify_headers={"Content-Type": "application/json;odata=nometadata"},
                 verify_response=(lambda: client.get_entity("PK", "EnumStrOptions.ONE"), response_entity)
             )
+            assert list(resp.keys()) == ['date', 'etag', 'version']
+            
+            if not is_live() and sys.version_info < (3, 11):
+                pytest.skip("The recording works in python3.11 and later.")
+            test_entity = {"PartitionKey": "PK", "RowKey": EnumIntOptions.ONE, "Data": EnumIntOptions.TWO}
+            # TODO: This is a bit weird
+            # TODO: This changes between Python 3.10 and 3.11
+            if sys.version_info >= (3, 11):
+                expected_entity = {
+                    "PartitionKey": "PK",
+                    "PartitionKey@odata.type": "Edm.String",
+                    "RowKey": "1",
+                    "RowKey@odata.type": "Edm.String",
+                    "Data": "2",
+                    "Data@odata.type": "Edm.String",
+                }
+                response_entity = {"PartitionKey": "PK", "RowKey": "1", "Data": "2"}
+                _check_backcompat(test_entity, expected_entity)
+                resp = client.create_entity(
+                    test_entity,
+                    verify_payload=json.dumps(expected_entity),
+                    verify_url=f"/{table_name}",
+                    verify_headers={"Content-Type":"application/json;odata=nometadata"},
+                    verify_response=(lambda: client.get_entity("PK", "1"), response_entity)
+                )
+            else:
+                expected_entity = {
+                    "PartitionKey": "PK",
+                    "PartitionKey@odata.type": "Edm.String",
+                    "RowKey": "EnumIntOptions.ONE",
+                    "RowKey@odata.type": "Edm.String",
+                    "Data": "EnumIntOptions.TWO",
+                    "Data@odata.type": "Edm.String",
+                }
+                response_entity = {"PartitionKey": "PK", "RowKey": "EnumIntOptions.ONE", "Data": "EnumIntOptions.TWO"}
+                _check_backcompat(test_entity, expected_entity)
+                resp = client.create_entity(
+                    test_entity,
+                    verify_payload=json.dumps(expected_entity),
+                    verify_url=f"/{table_name}",
+                    verify_headers={"Content-Type":"application/json;odata=nometadata"},
+                    verify_response=(lambda: client.get_entity("PK", "EnumIntOptions.ONE"), response_entity)
+                )
             assert list(resp.keys()) == ['date', 'etag', 'version']
         finally:
             client.delete_table()
@@ -1652,45 +1674,6 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             )
             assert list(resp.keys()) == ['date', 'etag', 'version']
 
-            test_entity = {"PartitionKey": "PK", "RowKey": EnumIntOptions.ONE, "Data": EnumIntOptions.TWO}
-            # TODO: This is a bit weird
-            expected_entity = {
-                "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
-                "RowKey": "1",
-                "RowKey@odata.type": "Edm.String",
-                "Data": "2",
-                "Data@odata.type": "Edm.String",
-            }
-            response_entity = {"PartitionKey": "PK", "RowKey": "1", "Data": "2"}
-            _check_backcompat(test_entity, expected_entity)
-            verification = json.dumps(expected_entity)
-            # TODO: This changes between Python 3.10 and 3.11
-            resp = client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='1')",
-                verify_headers={
-                    "Content-Type":"application/json",
-                    "Accept":"application/json",
-                },
-                verify_response=(lambda: client.get_entity("PK", "1"), response_entity)
-            )
-            assert list(resp.keys()) == ['date', 'etag', 'version']
-            resp = client.upsert_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='1')",
-                verify_headers={
-                    "Content-Type":"application/json",
-                    "Accept":"application/json",
-                },
-                verify_response=(lambda: client.get_entity("PK", "1"), response_entity)
-            )
-            assert list(resp.keys()) == ['date', 'etag', 'version']
-
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.ONE, "Data": EnumStrOptions.TWO}
             # TODO: This looks like it was always broken
             expected_entity = {
@@ -1727,6 +1710,83 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 },
                 verify_response=(lambda: client.get_entity("PK", "EnumStrOptions.ONE"), response_entity)
             )
+            assert list(resp.keys()) == ['date', 'etag', 'version']
+
+            if not is_live() and sys.version_info < (3, 11):
+                pytest.skip("The recording works in python3.11 and later.")
+            test_entity = {"PartitionKey": "PK", "RowKey": EnumIntOptions.ONE, "Data": EnumIntOptions.TWO}
+            # TODO: This is a bit weird
+            # TODO: This changes between Python 3.10 and 3.11
+            if sys.version_info >= (3, 11):
+                expected_entity = {
+                    "PartitionKey": "PK",
+                    "PartitionKey@odata.type": "Edm.String",
+                    "RowKey": "1",
+                    "RowKey@odata.type": "Edm.String",
+                    "Data": "2",
+                    "Data@odata.type": "Edm.String",
+                }
+                response_entity = {"PartitionKey": "PK", "RowKey": "1", "Data": "2"}
+                _check_backcompat(test_entity, expected_entity)
+                verification = json.dumps(expected_entity)
+                resp = client.upsert_entity(
+                    test_entity,
+                    mode=UpdateMode.MERGE,
+                    verify_payload=verification,
+                    verify_url=f"/{table_name}(PartitionKey='PK',RowKey='1')",
+                    verify_headers={
+                        "Content-Type":"application/json",
+                        "Accept":"application/json",
+                    },
+                    verify_response=(lambda: client.get_entity("PK", "1"), response_entity)
+                )
+                assert list(resp.keys()) == ['date', 'etag', 'version']
+                resp = client.upsert_entity(
+                    test_entity,
+                    mode=UpdateMode.REPLACE,
+                    verify_payload=verification,
+                    verify_url=f"/{table_name}(PartitionKey='PK',RowKey='1')",
+                    verify_headers={
+                        "Content-Type":"application/json",
+                        "Accept":"application/json",
+                    },
+                    verify_response=(lambda: client.get_entity("PK", "1"), response_entity)
+                )
+            else:
+                expected_entity = {
+                    "PartitionKey": "PK",
+                    "PartitionKey@odata.type": "Edm.String",
+                    "RowKey": "EnumIntOptions.ONE",
+                    "RowKey@odata.type": "Edm.String",
+                    "Data": "EnumIntOptions.TWO",
+                    "Data@odata.type": "Edm.String",
+                }
+                response_entity = {"PartitionKey": "PK", "RowKey": "EnumIntOptions.ONE", "Data": "EnumIntOptions.TWO"}
+                _check_backcompat(test_entity, expected_entity)
+                verification = json.dumps(expected_entity)
+                resp = client.upsert_entity(
+                    test_entity,
+                    mode=UpdateMode.MERGE,
+                    verify_payload=verification,
+                    verify_url=f"/{table_name}(PartitionKey='PK',RowKey='EnumIntOptions.ONE')",
+                    verify_headers={
+                        "Content-Type":"application/json",
+                        "Accept":"application/json",
+                    },
+                    verify_response=(lambda: client.get_entity("PK", "EnumIntOptions.ONE"), response_entity)
+                )
+                assert list(resp.keys()) == ['date', 'etag', 'version']
+                resp = client.upsert_entity(
+                    test_entity,
+                    mode=UpdateMode.REPLACE,
+                    verify_payload=verification,
+                    verify_url=f"/{table_name}(PartitionKey='PK',RowKey='EnumIntOptions.ONE')",
+                    verify_headers={
+                        "Content-Type":"application/json",
+                        "Accept":"application/json",
+                    },
+                    verify_response=(lambda: client.get_entity("PK", "EnumIntOptions.ONE"), response_entity)
+                )
             assert list(resp.keys()) == ['date', 'etag', 'version']
         finally:
             client.delete_table()
@@ -2685,48 +2745,6 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             )
             assert list(resp.keys()) == ['date', 'etag', 'version']
 
-            test_entity = {"PartitionKey": "PK", "RowKey": EnumIntOptions.ONE, "Data": EnumIntOptions.TWO}
-            # TODO: This is a bit weird
-            expected_entity = {
-                "PartitionKey": "PK",
-                "PartitionKey@odata.type": "Edm.String",
-                "RowKey": "1",
-                "RowKey@odata.type": "Edm.String",
-                "Data": "2",
-                "Data@odata.type": "Edm.String",
-            }
-            response_entity = {"PartitionKey": "PK", "RowKey": "1", "Data": "2"}
-            _check_backcompat(test_entity, expected_entity)
-            client.upsert_entity({"PartitionKey": "PK", "RowKey": "1"})
-            verification = json.dumps(expected_entity)
-            # TODO: This changes between Python 3.10 and 3.11
-            resp = client.update_entity(
-                test_entity,
-                mode=UpdateMode.MERGE,
-                verify_payload=verification,
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='1')",
-                verify_headers={
-                    "Content-Type":"application/json",
-                    "Accept":"application/json",
-                    "If-Match": "*"
-                },
-                verify_response=(lambda: client.get_entity("PK", "1"), response_entity)
-            )
-            assert list(resp.keys()) == ['date', 'etag', 'version']
-            resp = client.update_entity(
-                test_entity,
-                mode=UpdateMode.REPLACE,
-                verify_payload=verification,
-                verify_url=f"/{table_name}(PartitionKey='PK',RowKey='1')",
-                verify_headers={
-                    "Content-Type":"application/json",
-                    "Accept":"application/json",
-                    "If-Match": "*"
-                },
-                verify_response=(lambda: client.get_entity("PK", "1"), response_entity)
-            )
-            assert list(resp.keys()) == ['date', 'etag', 'version']
-
             test_entity = {"PartitionKey": "PK", "RowKey": EnumStrOptions.ONE, "Data": EnumStrOptions.TWO}
             # TODO: This looks like it was always broken
             expected_entity = {
@@ -2766,6 +2784,91 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
                 },
                 verify_response=(lambda: client.get_entity("PK", "EnumStrOptions.ONE"), response_entity)
             )
+            assert list(resp.keys()) == ['date', 'etag', 'version']
+            
+            if not is_live() and sys.version_info < (3, 11):
+                pytest.skip("The recording works in python3.11 and later.")
+            test_entity = {"PartitionKey": "PK", "RowKey": EnumIntOptions.ONE, "Data": EnumIntOptions.TWO}
+            # TODO: This is a bit weird
+            # TODO: This changes between Python 3.10 and 3.11
+            if sys.version_info >= (3, 11):
+                expected_entity = {
+                    "PartitionKey": "PK",
+                    "PartitionKey@odata.type": "Edm.String",
+                    "RowKey": "1",
+                    "RowKey@odata.type": "Edm.String",
+                    "Data": "2",
+                    "Data@odata.type": "Edm.String",
+                }
+                response_entity = {"PartitionKey": "PK", "RowKey": "1", "Data": "2"}
+                _check_backcompat(test_entity, expected_entity)
+                client.upsert_entity({"PartitionKey": "PK", "RowKey": "1"})
+                verification = json.dumps(expected_entity)
+                
+                resp = client.update_entity(
+                    test_entity,
+                    mode=UpdateMode.MERGE,
+                    verify_payload=verification,
+                    verify_url=f"/{table_name}(PartitionKey='PK',RowKey='1')",
+                    verify_headers={
+                        "Content-Type":"application/json",
+                        "Accept":"application/json",
+                        "If-Match": "*"
+                    },
+                    verify_response=(lambda: client.get_entity("PK", "1"), response_entity)
+                )
+                assert list(resp.keys()) == ['date', 'etag', 'version']
+                resp = client.update_entity(
+                    test_entity,
+                    mode=UpdateMode.REPLACE,
+                    verify_payload=verification,
+                    verify_url=f"/{table_name}(PartitionKey='PK',RowKey='1')",
+                    verify_headers={
+                        "Content-Type":"application/json",
+                        "Accept":"application/json",
+                        "If-Match": "*"
+                    },
+                    verify_response=(lambda: client.get_entity("PK", "1"), response_entity)
+                )
+            else:
+                expected_entity = {
+                    "PartitionKey": "PK",
+                    "PartitionKey@odata.type": "Edm.String",
+                    "RowKey": "EnumIntOptions.ONE",
+                    "RowKey@odata.type": "Edm.String",
+                    "Data": "EnumIntOptions.TWO",
+                    "Data@odata.type": "Edm.String",
+                }
+                response_entity = {"PartitionKey": "PK", "RowKey": "EnumIntOptions.ONE", "Data": "EnumIntOptions.TWO"}
+                _check_backcompat(test_entity, expected_entity)
+                client.upsert_entity({"PartitionKey": "PK", "RowKey": "EnumIntOptions.ONE"})
+                verification = json.dumps(expected_entity)
+                
+                resp = client.update_entity(
+                    test_entity,
+                    mode=UpdateMode.MERGE,
+                    verify_payload=verification,
+                    verify_url=f"/{table_name}(PartitionKey='PK',RowKey='EnumIntOptions.ONE')",
+                    verify_headers={
+                        "Content-Type":"application/json",
+                        "Accept":"application/json",
+                        "If-Match": "*"
+                    },
+                    verify_response=(lambda: client.get_entity("PK", "EnumIntOptions.ONE"), response_entity)
+                )
+                assert list(resp.keys()) == ['date', 'etag', 'version']
+                resp = client.update_entity(
+                    test_entity,
+                    mode=UpdateMode.REPLACE,
+                    verify_payload=verification,
+                    verify_url=f"/{table_name}(PartitionKey='PK',RowKey='EnumIntOptions.ONE')",
+                    verify_headers={
+                        "Content-Type":"application/json",
+                        "Accept":"application/json",
+                        "If-Match": "*"
+                    },
+                    verify_response=(lambda: client.get_entity("PK", "EnumIntOptions.ONE"), response_entity)
+                )
             assert list(resp.keys()) == ['date', 'etag', 'version']
         finally:
             client.delete_table()
