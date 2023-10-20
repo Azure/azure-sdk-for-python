@@ -224,7 +224,7 @@ class TestCallMediaClient(unittest.TestCase):
     def test_recognize_choices(self):
         mock_recognize = Mock()
         self.call_media_operations.recognize = mock_recognize
-        test_choice = RecognitionChoice("choice1", ["pass", "fail"])
+        test_choice = RecognitionChoice(label="choice1", phrases=["pass", "fail"])
         test_input_type = RecognizeInputType.CHOICES
         test_choices = [test_choice]
         test_interrupt_prompt = True
