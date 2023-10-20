@@ -62,6 +62,30 @@ class SearchIndexerSkillset(_serialization.Model):
     :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     """
 
+    _validation = {
+        "name": {"required": True},
+        "skills": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "skills": {"key": "skills", "type": "[SearchIndexerSkill]"},
+        "cognitive_services_account": {
+            "key": "cognitiveServices",
+            "type": "CognitiveServicesAccount",
+        },
+        "knowledge_store": {
+            "key": "knowledgeStore",
+            "type": "SearchIndexerKnowledgeStore",
+        },
+        "e_tag": {"key": "@odata\\.etag", "type": "str"},
+        "encryption_key": {
+            "key": "encryptionKey",
+            "type": "SearchResourceEncryptionKey",
+        },
+    }
+
     def __init__(
         self,
         *,
