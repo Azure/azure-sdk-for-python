@@ -34,6 +34,7 @@ from ._models import ContinuousDtmfRecognitionStopped
 from ._models import ContinuousDtmfRecognitionToneFailed
 from ._models import ContinuousDtmfRecognitionToneReceived
 from ._models import CreateCallRequest
+from ._models import CustomContext
 from ._models import DtmfOptions
 from ._models import DtmfResult
 from ._models import FileSource
@@ -122,6 +123,7 @@ __all__ = [
     "ContinuousDtmfRecognitionToneFailed",
     "ContinuousDtmfRecognitionToneReceived",
     "CreateCallRequest",
+    "CustomContext",
     "DtmfOptions",
     "DtmfResult",
     "FileSource",

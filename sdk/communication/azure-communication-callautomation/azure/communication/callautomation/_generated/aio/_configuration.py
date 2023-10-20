@@ -8,16 +8,13 @@
 
 from typing import Any
 
-from azure.core.configuration import Configuration
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
 VERSION = "unknown"
 
 
-class AzureCommunicationCallAutomationServiceConfiguration(  # pylint: disable=too-many-instance-attributes,name-too-long
-    Configuration
-):
+class AzureCommunicationCallAutomationServiceConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
     """Configuration for AzureCommunicationCallAutomationService.
 
     Note that all parameters used to create this instance are saved as instance
@@ -33,7 +30,6 @@ class AzureCommunicationCallAutomationServiceConfiguration(  # pylint: disable=t
     """
 
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
-        super(AzureCommunicationCallAutomationServiceConfiguration, self).__init__(**kwargs)
         api_version: str = kwargs.pop("api_version", "2023-10-15")
 
         if endpoint is None:
@@ -45,6 +41,7 @@ class AzureCommunicationCallAutomationServiceConfiguration(  # pylint: disable=t
         self.credential = credential
         self.api_version = api_version
         kwargs.setdefault("sdk_moniker", "communication-callautomation/{}".format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:
