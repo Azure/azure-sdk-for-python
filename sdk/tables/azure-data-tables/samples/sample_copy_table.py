@@ -23,10 +23,8 @@ USAGE:
     5) STORAGE_ACCOUNT_KEY - the blob storage account key
 """
 import sys
-import copy
 import json
 import os
-from typing import cast
 from azure.storage.blob import BlobServiceClient
 from azure.data.tables import TableServiceClient
 from datetime import datetime
@@ -51,6 +49,18 @@ class EntityType(TypedDict, total=False):
     barcode: bytes
 
 
+class EntityTypeJSONSerializable(TypedDict, total=False):
+    PartitionKey: str
+    RowKey: str
+    text: str
+    color: str
+    price: float
+    last_updated: str
+    product_id: str
+    inventory_count: int
+    barcode: str
+
+
 class CopyTableSamples(object):
     def __init__(self):
         load_dotenv(find_dotenv())
@@ -64,7 +74,7 @@ class CopyTableSamples(object):
         self.blob_account_key = os.getenv("STORAGE_ACCOUNT_KEY")
         self.blob_connection_string = f"DefDefaultEndpointsProtocol=https;AccountName={self.blob_account_name};AccountKey={self.blob_account_key};EndpointSuffix=core.windows.net"
         self.blob_service_client = BlobServiceClient.from_connection_string(self.blob_connection_string)
-        self.entity = {
+        self.entity: EntityType = {
             "PartitionKey": "color",
             "text": "Marker",
             "color": "Purple",
@@ -133,16 +143,22 @@ class CopyTableSamples(object):
 
     def _setup_blob(self):
         self.container_client = self.blob_service_client.create_container(self.copy_to_table_table_name)
-        entity = copy.deepcopy(self.entity)
         # Convert type datetime, bytes, UUID values to string as they're not JSON serializable
-        entity["last_updated"] = entity["last_updated"].isoformat()
-        entity["product_id"] = entity["product_id"].hex
-        entity["barcode"] = entity["barcode"].decode("utf-8")
+        entity_serializable: EntityTypeJSONSerializable = {
+            "PartitionKey": self.entity["PartitionKey"],
+            "text": self.entity["text"],
+            "color": self.entity["color"],
+            "price": self.entity["price"],
+            "last_updated": self.entity["last_updated"].isoformat(),
+            "product_id": self.entity["product_id"].hex,
+            "inventory_count": 42,
+            "barcode": self.entity["barcode"].decode("utf-8"),
+        }
         for i in range(10):
-            entity["RowKey"] = str(i)
-            blob_name = f"{entity['PartitionKey']}{entity['RowKey']}"
+            entity_serializable["RowKey"] = str(i)
+            blob_name = f"{entity_serializable['PartitionKey']}{entity_serializable['RowKey']}"
             blob_client = self.blob_service_client.get_blob_client(self.copy_to_table_table_name, blob_name)
-            blob_client.upload_blob(json.dumps(entity))
+            blob_client.upload_blob(json.dumps(entity_serializable))
 
     def _tear_down(self):
         self.table_client.delete_table()
