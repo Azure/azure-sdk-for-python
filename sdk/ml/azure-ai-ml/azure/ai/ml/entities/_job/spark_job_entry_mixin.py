@@ -24,7 +24,7 @@ class SparkJobEntryMixin:
         self.entry = kwargs.get("entry", None)
 
     @property
-    def entry(self) -> Optional[SparkJobEntry]:
+    def entry(self) -> Optional[Union[Dict[str, str], SparkJobEntry]]:
         return self._entry
 
     @entry.setter
