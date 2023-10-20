@@ -19,7 +19,7 @@ else:
 
 
 class TestProxyIntegration:
-    # These tests are checking spinup of the proxy, not automatic redirect.
+    # These tests are checking spin-up of the proxy, not automatic redirect.
     # Therefore we are not using recorded_by_proxy decorator or recorded_test fixture
     def test_tool_spinup_http(self):
         result = http_client.request("GET", PROXY_CHECK_URL)

@@ -66,6 +66,7 @@ steps:
     condition: succeededOrFailed()
 
   - script: |
+      pip install twine==4.0.2
       twine check $(Build.ArtifactStagingDirectory)/**/*.whl
       twine check $(Build.ArtifactStagingDirectory)/**/*.tar.gz
     displayName: 'Verify Readme'

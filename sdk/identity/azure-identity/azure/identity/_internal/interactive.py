@@ -72,7 +72,7 @@ def _build_auth_record(response):
         # tenant which issued the token, not necessarily user's home tenant
         tenant_id = id_token.get("tid") or issuer.path.strip("/")
 
-        # AAD returns "preferred_username", ADFS returns "upn"
+        # Microsoft Entra ID returns "preferred_username", ADFS returns "upn"
         username = id_token.get("preferred_username") or id_token["upn"]
 
         return AuthenticationRecord(
@@ -220,7 +220,7 @@ class InteractiveCredential(MsalCredential, ABC):
                 if result and "access_token" in result and "expires_in" in result:
                     return AccessToken(result["access_token"], now + int(result["expires_in"]))
 
-        # if we get this far, result is either None or the content of an AAD error response
+        # if we get this far, result is either None or the content of a Microsoft Entra ID error response
         if result:
             response = self._client.get_error_response(result)
             raise AuthenticationRequiredError(scopes, claims=claims, response=response)

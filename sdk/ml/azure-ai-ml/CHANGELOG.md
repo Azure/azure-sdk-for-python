@@ -1,17 +1,34 @@
 # Release History
 
-## 1.11.0 (unreleased)
+## 1.12.0 (unreleased)
+
+### Features Added
+
+### Bugs Fixed
+
+### Breaking Changes
+
+### Other Changes
+
+## 1.11.1 (2023-10-13)
+
+### Bugs Fixed
+ - pydash dependency version was upgraded to >=6.0.0 to patch [security vulnerability in versions below 6.0.0](https://github.com/advisories/GHSA-8mjr-6c96-39w8)
+
+## 1.11.0 (2023-10-04)
 
 ### Features Added
 - Now, when you specify `delete_dependent_resources` as True when deleting a workspace, the log analytics resource
   associated with the workspace application insights resource will also be deleted.
 
-### Bugs Fixed
-
 ### Breaking Changes
  - [Python 3.7 reached end-of-life on June 27th 2023](https://devguide.python.org/versions/). Consequently, 3.7 will be deprecated in azure-ai-ml starting in October 2023 and azure-ai-ml will end support for 3.7 in February 2024.
 
-### Other Changes
+## 1.10.1 (2023-09-17)
+
+### Bugs Fixed
+- Feature sets can now be registers after being dumped and reloaded.
+- SDK feature store create/update can now assign materialization identities to cross RG offline stores and online stores.
 
 ## 1.10.0 (2023-09-07)
 
