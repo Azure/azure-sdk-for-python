@@ -263,34 +263,34 @@ def SimpleField(**kw):
     # type: (**Any) -> SearchField
     """Configure a simple field for an Azure Search Index
 
-    :ivar name: Required. The name of the field, which must be unique within the fields collection
+    :keyword name: Required. The name of the field, which must be unique within the fields collection
      of the index or parent field.
-    :vartype name: str
-    :ivar type: Required. The data type of the field. Possible values include: SearchFieldDataType.String,
+    :paramtype name: str
+    :keyword type: Required. The data type of the field. Possible values include: SearchFieldDataType.String,
      SearchFieldDataType.Int32, SearchFieldDataType.Int64, SearchFieldDataType.Double, SearchFieldDataType.Boolean,
      SearchFieldDataType.DateTimeOffset, SearchFieldDataType.GeographyPoint, SearchFieldDataType.ComplexType,
      from `azure.search.documents.SearchFieldDataType`.
-     :vartype type: str
-    :ivar key: A value indicating whether the field uniquely identifies documents in the index.
+     :paramtype type: str
+    :keyword key: A value indicating whether the field uniquely identifies documents in the index.
      Exactly one top-level field in each index must be chosen as the key field and it must be of
      type SearchFieldDataType.String. Key fields can be used to look up documents directly and
      update or delete specific documents. Default is False
-    :vartype key: bool
-    :ivar hidden: A value indicating whether the field can be returned in a search result.
+    :paramtype key: bool
+    :keyword hidden: A value indicating whether the field can be returned in a search result.
      You can enable this option if you want to use a field (for example, margin) as a filter,
      sorting, or scoring mechanism but do not want the field to be visible to the end user. This
      property must be False for key fields. This property can be changed on existing fields.
      Enabling this property does not cause any increase in index storage requirements. Default is
      False.
-    :vartype hidden: bool
-    :ivar filterable: A value indicating whether to enable the field to be referenced in $filter
+    :paramtype hidden: bool
+    :keyword filterable: A value indicating whether to enable the field to be referenced in $filter
      queries. filterable differs from searchable in how strings are handled. Fields of type
      SearchFieldDataType.String or Collection(SearchFieldDataType.String) that are filterable do
      not undergo word-breaking, so comparisons are for exact matches only. For example, if you
      set such a field f to "sunny day", $filter=f eq 'sunny' will find no matches, but
      $filter=f eq 'sunny day' will. This property must be null for complex fields. Default is False
-    :vartype filterable: bool
-    :ivar sortable: A value indicating whether to enable the field to be referenced in $orderby
+    :paramtype filterable: bool
+    :keyword sortable: A value indicating whether to enable the field to be referenced in $orderby
      expressions. By default Azure Cognitive Search sorts results by score, but in many experiences
      users will want to sort by fields in the documents. A simple field can be sortable only if it
      is single-valued (it has a single value in the scope of the parent document). Simple collection
@@ -298,13 +298,13 @@ def SimpleField(**kw):
      collections are also multi-valued, and therefore cannot be sortable. This is true whether it's
      an immediate parent field, or an ancestor field, that's the complex collection. The default is
      False.
-    :vartype sortable: bool
-    :ivar facetable: A value indicating whether to enable the field to be referenced in facet
+    :paramtype sortable: bool
+    :keyword facetable: A value indicating whether to enable the field to be referenced in facet
      queries. Typically used in a presentation of search results that includes hit count by category
      (for example, search for digital cameras and see hits by brand, by megapixels, by price, and so
      on). Fields of type SearchFieldDataType.GeographyPoint or
      Collection(SearchFieldDataType.GeographyPoint) cannot be facetable. Default is False.
-    :vartype facetable: bool
+    :paramtype facetable: bool
     """
     result = {"name": kw.get("name"), "type": kw.get("type")}  # type: Dict[str, Any]
     result["key"] = kw.get("key", False)
@@ -320,24 +320,24 @@ def SearchableField(**kw):
     # type: (**Any) -> SearchField
     """Configure a searchable text field for an Azure Search Index
 
-    :ivar name: Required. The name of the field, which must be unique within the fields collection
+    :keyword name: Required. The name of the field, which must be unique within the fields collection
      of the index or parent field.
-    :vartype name: str
-    :ivar collection: Whether this search field is a collection (default False)
-    :vartype collection: bool
-    :ivar key: A value indicating whether the field uniquely identifies documents in the index.
+    :paramtype name: str
+    :keyword collection: Whether this search field is a collection (default False)
+    :paramtype collection: bool
+    :keyword key: A value indicating whether the field uniquely identifies documents in the index.
      Exactly one top-level field in each index must be chosen as the key field and it must be of
      type SearchFieldDataType.String. Key fields can be used to look up documents directly and update or delete
      specific documents. Default is False
-    :vartype key: bool
-    :ivar hidden: A value indicating whether the field can be returned in a search result.
+    :paramtype key: bool
+    :keyword hidden: A value indicating whether the field can be returned in a search result.
      You can enable this option if you want to use a field (for example, margin) as a filter,
      sorting, or scoring mechanism but do not want the field to be visible to the end user. This
      property must be False for key fields. This property can be changed on existing fields.
      Enabling this property does not cause any increase in index storage requirements. Default is
      False.
-    :vartype hidden: bool
-    :ivar searchable: A value indicating whether the field is full-text searchable. This means it
+    :paramtype hidden: bool
+    :keyword searchable: A value indicating whether the field is full-text searchable. This means it
      will undergo analysis such as word-breaking during indexing. If you set a searchable field to a
      value like "sunny day", internally it will be split into the individual tokens "sunny" and
      "day". This enables full-text searches for these terms. Note: searchable fields
@@ -345,23 +345,23 @@ def SearchableField(**kw):
      tokenized version of the field value for full-text searches. If you want to save space in your
      index and you don't need a field to be included in searches, set searchable to false. Default
      is True.
-    :vartype searchable: bool
-    :ivar filterable: A value indicating whether to enable the field to be referenced in $filter
+    :paramtype searchable: bool
+    :keyword filterable: A value indicating whether to enable the field to be referenced in $filter
      queries. filterable differs from searchable in how strings are handled. Fields that are
      filterable do not undergo word-breaking, so comparisons are for exact matches only. For example,
      if you set such a field f to "sunny day", $filter=f eq 'sunny' will find no matches, but
      $filter=f eq 'sunny day' will. Default is False.
-    :vartype filterable: bool
-    :ivar sortable: A value indicating whether to enable the field to be referenced in $orderby
+    :paramtype filterable: bool
+    :keyword sortable: A value indicating whether to enable the field to be referenced in $orderby
      expressions. By default Azure Cognitive Search sorts results by score, but in many experiences
      users will want to sort by fields in the documents.  The default is False.
-    :vartype sortable: bool
-    :ivar facetable: A value indicating whether to enable the field to be referenced in facet
+    :paramtype sortable: bool
+    :keyword facetable: A value indicating whether to enable the field to be referenced in facet
      queries. Typically used in a presentation of search results that includes hit count by category
      (for example, search for digital cameras and see hits by brand, by megapixels, by price, and so
      on). Default is False.
-    :vartype facetable: bool
-    :ivar analyzer_name: The name of the analyzer to use for the field. This option can't be set together
+    :paramtype facetable: bool
+    :keyword analyzer_name: The name of the analyzer to use for the field. This option can't be set together
      with either searchAnalyzer or indexAnalyzer. Once the analyzer is chosen, it cannot be changed
      for the field. Possible values include: 'ar.microsoft', 'ar.lucene', 'hy.lucene',
      'bn.microsoft', 'eu.lucene', 'bg.microsoft', 'bg.lucene', 'ca.microsoft', 'ca.lucene', 'zh-
@@ -380,8 +380,8 @@ def SearchableField(**kw):
      'th.microsoft', 'th.lucene', 'tr.microsoft', 'tr.lucene', 'uk.microsoft', 'ur.microsoft',
      'vi.microsoft', 'standard.lucene', 'standardasciifolding.lucene', 'keyword', 'pattern',
      'simple', 'stop', 'whitespace'.
-    :vartype analyzer_name: str or ~azure.search.documents.indexes.models.AnalyzerName
-    :ivar search_analyzer_name: The name of the analyzer used at search time for the field. It must be
+    :paramtype analyzer_name: str or ~azure.search.documents.indexes.models.AnalyzerName
+    :keyword search_analyzer_name: The name of the analyzer used at search time for the field. It must be
      set together with indexAnalyzer and it cannot be set together with the analyzer option. This
      property cannot be set to the name of a language analyzer; use the analyzer property instead
      if you need a language analyzer. This analyzer can be updated on an existing field. Possible
@@ -403,8 +403,8 @@ def SearchableField(**kw):
      'th.lucene', 'tr.microsoft', 'tr.lucene', 'uk.microsoft', 'ur.microsoft', 'vi.microsoft',
      'standard.lucene', 'standardasciifolding.lucene', 'keyword', 'pattern', 'simple', 'stop',
      'whitespace'.
-    :vartype search_analyzer_name: str or ~azure.search.documents.indexes.models.AnalyzerName
-    :ivar index_analyzer_name: The name of the analyzer used at indexing time for the field.
+    :paramtype search_analyzer_name: str or ~azure.search.documents.indexes.models.AnalyzerName
+    :keyword index_analyzer_name: The name of the analyzer used at indexing time for the field.
      It must be set together with searchAnalyzer and it cannot be set together with the analyzer
      option.  This property cannot be set to the name of a language analyzer; use the analyzer
      property instead if you need a language analyzer. Once the analyzer is chosen, it cannot be
@@ -426,12 +426,12 @@ def SearchableField(**kw):
      'th.lucene', 'tr.microsoft', 'tr.lucene', 'uk.microsoft', 'ur.microsoft', 'vi.microsoft',
      'standard.lucene', 'standardasciifolding.lucene', 'keyword', 'pattern', 'simple', 'stop',
      'whitespace'.
-    :vartype index_analyzer_name: str or ~azure.search.documents.indexes.models.AnalyzerName
-    :ivar synonym_map_names: A list of the names of synonym maps to associate with this field. Currently
+    :paramtype index_analyzer_name: str or ~azure.search.documents.indexes.models.AnalyzerName
+    :keyword synonym_map_names: A list of the names of synonym maps to associate with this field. Currently
      only one synonym map per field is supported. Assigning a synonym map to a field ensures that
      query terms targeting that field are expanded at query-time using the rules in the synonym map.
      This attribute can be changed on existing fields.
-    :vartype synonym_map_names: list[str]
+    :paramtype synonym_map_names: list[str]
 
     """
     typ = Collection(String) if kw.get("collection", False) else String
@@ -458,14 +458,14 @@ def ComplexField(**kw):
     """Configure a Complex or Complex collection field for an Azure Search
     Index
 
-    :ivar name: Required. The name of the field, which must be unique within the fields collection
+    :keyword name: Required. The name of the field, which must be unique within the fields collection
      of the index or parent field.
-    :vartype name: str
-    :ivar collection: Whether this complex field is a collection (default False)
-    :vartype collection: bool
-    :vartype type: str or ~search_service_client.models.DataType
-    :ivar fields: A list of sub-fields
-    :vartype fields: list[~search_service_client.models.Field]
+    :paramtype name: str
+    :keyword collection: Whether this complex field is a collection (default False)
+    :paramtype collection: bool
+    :paramtype type: str or ~search_service_client.models.DataType
+    :keyword fields: A list of sub-fields
+    :paramtype fields: list[~search_service_client.models.Field]
 
     """
     typ = Collection(ComplexType) if kw.get("collection", False) else ComplexType
