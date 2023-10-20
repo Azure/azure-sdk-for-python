@@ -397,7 +397,7 @@ class CallConnectionClient:
     @distributed_trace_async
     async def play_media(
         self,
-        play_source: Union[MediaSources, List[MediaSources]],
+        play_source: Union[MediaSources],
         play_to: Union[Literal["all"], List['CommunicationIdentifier']] = 'all',
         *,
         loop: bool = False,
@@ -410,10 +410,7 @@ class CallConnectionClient:
         :param play_source: A PlaySource representing the source to play.
         :type play_source: ~azure.communication.callautomation.FileSource or
          ~azure.communication.callautomation.TextSource or
-         ~azure.communication.callautomation.SsmlSource or
-         list[~azure.communication.callautomation.FileSource or
-          ~azure.communication.callautomation.TextSource or
-          ~azure.communication.callautomation.SsmlSource]
+         ~azure.communication.callautomation.SsmlSource
         :param play_to: The targets to play media to. Default value is 'all', to play media
          to all participants in the call.
         :type play_to: list[~azure.communication.callautomation.CommunicationIdentifier]
@@ -432,6 +429,7 @@ class CallConnectionClient:
         """
         play_source_single: Optional[MediaSources] = None
         if isinstance(play_source, list):
+            warnings.warn("Currently only single play source per request is supported.")
             if play_source:  # Check if the list is not empty
                 play_source_single = play_source[0]
         else:
@@ -451,7 +449,7 @@ class CallConnectionClient:
     @distributed_trace_async
     async def play_media_to_all(
         self,
-        play_source: Union['FileSource', List['FileSource']],
+        play_source: Union['FileSource'],
         *,
         loop: bool = False,
         operation_context: Optional[str] = None,
@@ -461,8 +459,7 @@ class CallConnectionClient:
         """Play media to all participants in the call.
 
         :param play_source: A PlaySource representing the source to play.
-        :type play_source: ~azure.communication.callautomation.FileSource or
-         list[~azure.communication.callautomation.FileSource]
+        :type play_source: ~azure.communication.callautomation.FileSource
         :keyword loop: if the media should be repeated until cancelled.
         :paramtype loop: bool
         :keyword operation_context: Value that can be used to track this call and its associated events.
@@ -495,7 +492,7 @@ class CallConnectionClient:
         target_participant: 'CommunicationIdentifier',
         *,
         initial_silence_timeout: Optional[int] = None,
-        play_prompt: Optional[Union[MediaSources, List[MediaSources]]] = None,
+        play_prompt: Optional[Union[MediaSources]] = None,
         interrupt_call_media_operation: bool = False,
         operation_context: Optional[str] = None,
         interrupt_prompt: bool = False,
@@ -520,10 +517,7 @@ class CallConnectionClient:
         :keyword play_prompt: The source of the audio to be played for recognition.
         :paramtype play_prompt: ~azure.communication.callautomation.FileSource or
          ~azure.communication.callautomation.TextSource or
-         ~azure.communication.callautomation.SsmlSource or
-         list[~azure.communication.callautomation.FileSource or
-          ~azure.communication.callautomation.TextSource or
-          ~azure.communication.callautomation.SsmlSource]
+         ~azure.communication.callautomation.SsmlSource
         :keyword interrupt_call_media_operation:
          If set recognize can barge into other existing queued-up/currently-processing requests.
         :paramtype interrupt_call_media_operation: bool
@@ -564,6 +558,7 @@ class CallConnectionClient:
         )
         play_source_single: Optional[MediaSources] = None
         if isinstance(play_prompt, list):
+            warnings.warn("Currently only single play source per request is supported.")
             if play_prompt:  # Check if the list is not empty
                 play_source_single = play_prompt[0]
         else:
