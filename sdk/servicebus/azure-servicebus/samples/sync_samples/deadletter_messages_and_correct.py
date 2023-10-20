@@ -47,7 +47,7 @@ def exceed_max_delivery(servicebus_client):
             received_msgs = receiver.receive_messages()
 
     with dlq_receiver:
-        received_msgs = dlq_receiver.receive_messages()
+        received_msgs = dlq_receiver.receive_messages(max_message_count=10)
         for msg in received_msgs:
             print("Deadletter message:")
             print(msg)
