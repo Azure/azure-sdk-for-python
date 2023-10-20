@@ -1,4 +1,4 @@
-## 0.1.0b1 (unreleased)
+## 1.0.0b1 (unreleased)
 
 ### Features Added
 

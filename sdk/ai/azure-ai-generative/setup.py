@@ -59,6 +59,7 @@ setup(
             "tests",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
+            "azure.ai",
             "samples",
         ]
     ),
@@ -66,13 +67,11 @@ setup(
     install_requires=[
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
         "azure-ai-ml",
-        "azure-identity",
         "azureml-telemetry",
         "mlflow<3",
         "azure-mgmt-authorization",
         "opencensus-ext-azure<2.0.0",
         "opencensus-ext-logging",
-        "azure-mgmt-authorization",
     ],
     extras_require={
         "cognitive_search": [
@@ -118,11 +117,6 @@ setup(
         "qa_generation": [
             "openai>=0.27.8,<1"
         ],
-        "tests": [
-            "pytest",
-            "pytest-xdist",
-            "azure-cli>=2.30.0"
-        ]
     },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
