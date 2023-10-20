@@ -316,7 +316,9 @@ class ImageModelSettingsClassification(ImageModelDistributionSettings):
      0 or 1 or 2.
     :type weighted_loss: int
 
-    .. literalinclude:: ../samples/ml_samples_automl_image.py
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_image.py
             :start-after: [START automl.automl_image_job.image_classification_model_settings]
             :end-before: [END automl.automl_image_job.image_classification_model_settings]
             :language: python

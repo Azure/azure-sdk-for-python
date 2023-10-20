@@ -147,6 +147,7 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
     :param validation_metric_type: Metric computation method to use for validation metrics. Must
         be 'none', 'coco', 'voc', or 'coco_voc'.
     :type validation_metric_type: str or ~azure.ai.ml.entities.SweepDistribution
+
     .. admonition:: Example:
 
         .. literalinclude:: ../samples/ml_samples_automl_image.py

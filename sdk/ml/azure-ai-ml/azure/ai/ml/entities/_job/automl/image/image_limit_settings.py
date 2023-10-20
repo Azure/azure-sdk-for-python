@@ -38,12 +38,14 @@ class ImageLimitSettings(RestTranslatableMixin):
         It's a good practice to match max_concurrent_trials count with the number of nodes in the cluster.
         For example, if you have a cluster with 4 nodes, set max_concurrent_trials to 4.
 
-    .. literalinclude:: ../samples/ml_samples_automl_image.py
-            :start-after: [START automl.automl_image_job.image_limit_settings]
-            :end-before: [END automl.automl_image_job.image_limit_settings]
-            :language: python
-            :dedent: 8
-            :caption: Defining the limit settings for an automl image job.
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_image.py
+                :start-after: [START automl.automl_image_job.image_limit_settings]
+                :end-before: [END automl.automl_image_job.image_limit_settings]
+                :language: python
+                :dedent: 8
+                :caption: Defining the limit settings for an automl image job.
     """
 
     def __init__(

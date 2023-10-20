@@ -29,13 +29,14 @@ class ImageSweepSettings(RestTranslatableMixin):
     :paramtype early_termination: Union[~azure.mgmt.machinelearningservices.models.BanditPolicy,
         ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
         ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
+    .. admonition:: Example:
 
-    .. literalinclude:: ../samples/ml_samples_automl_image.py
-        :start-after: [START automl.automl_image_job.image_sweep_settings]
-        :end-before: [END automl.automl_image_job.image_sweep_settings]
-        :language: python
-        :dedent: 8
-        :caption: Defining the sweep settings for an automl image job.
+        .. literalinclude:: ../samples/ml_samples_automl_image.py
+            :start-after: [START automl.automl_image_job.image_sweep_settings]
+            :end-before: [END automl.automl_image_job.image_sweep_settings]
+            :language: python
+            :dedent: 8
+            :caption: Defining the sweep settings for an automl image job.
     """
 
     def __init__(
