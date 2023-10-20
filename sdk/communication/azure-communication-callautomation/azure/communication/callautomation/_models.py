@@ -187,8 +187,8 @@ class FileSource:
 class TextSource:
     """TextSource to be played in actions such as Play media.
 
-    :param text: Text for the cognitive service to be played.
-    :type text: str
+    :keyword text: Text for the cognitive service to be played. Required.
+    :paramtype text: str
     :keyword source_locale: Source language locale to be played. Refer to available locales here:
         https://docs.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts
     :paramtype source_locale: str
@@ -250,8 +250,8 @@ class TextSource:
 class SsmlSource:
     """SsmlSource to be played in actions such as Play media.
 
-    :param ssml_text: Ssml string for the cognitive service to be played.
-    :type ssml_text: str
+    :keyword ssml_text: Ssml string for the cognitive service to be played. Required.
+    :paramtype ssml_text: str
     :keyword play_source_cache_id: Cached source id of the play media, if it exists.
     :paramtype play_source_cache_id: str
     :keyword custom_voice_endpoint_id: Endpoint id where the custom voice model is deployed.
@@ -538,10 +538,10 @@ class RecognitionChoice:
     """
     An IVR choice for the recognize operation.
 
-    :param label: Identifier for a given choice.
-    :type label: str
-    :param phrases: List of phrases to recognize.
-    :type phrases: list[str]
+    :keyword label: Identifier for a given choice. Required.
+    :paramtype label: str
+    :keyword phrases: List of phrases to recognize. Required.
+    :paramtype phrases: list[str]
     :keyword tone: Known values are: "zero", "one", "two", "three", "four", "five", "six", "seven",
      "eight", "nine", "a", "b", "c", "d", "pound", and "asterisk".
     :paramtype tone: str or ~azure.communication.callautomation.DtmfTone
