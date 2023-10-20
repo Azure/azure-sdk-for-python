@@ -7,7 +7,6 @@
 
 import logging
 from typing import Any, cast, Dict, Optional, Tuple, TYPE_CHECKING, Union
-from urllib.parse import parse_qs
 
 from azure.core.async_paging import AsyncList
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
