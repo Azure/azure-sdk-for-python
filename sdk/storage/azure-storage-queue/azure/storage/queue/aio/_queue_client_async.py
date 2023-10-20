@@ -514,12 +514,14 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
                 timeout=timeout,
                 **kwargs
             )
-            queue_message = QueueMessage(content=content)
-            queue_message.id = enqueued[0].message_id
-            queue_message.inserted_on = enqueued[0].insertion_time
-            queue_message.expires_on = enqueued[0].expiration_time
-            queue_message.pop_receipt = enqueued[0].pop_receipt
-            queue_message.next_visible_on = enqueued[0].time_next_visible
+            queue_message = QueueMessage(
+                content=content,
+                id=enqueued[0].message_id,
+                inserted_on=enqueued[0].insertion_time,
+                expires_on=enqueued[0].expiration_time,
+                pop_receipt = enqueued[0].pop_receipt,
+                next_visible_on = enqueued[0].time_next_visible
+            )
             return queue_message
         except HttpResponseError as error:
             process_storage_error(error)
@@ -797,13 +799,14 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
                 queue_message_id=message_id,
                 **kwargs
             ))
-            new_message = QueueMessage(content=message_text)
-            new_message.id = message_id
-            new_message.inserted_on = inserted_on
-            new_message.expires_on = expires_on
-            new_message.dequeue_count = dequeue_count
-            new_message.pop_receipt = response["popreceipt"]
-            new_message.next_visible_on = response["time_next_visible"]
+            new_message = QueueMessage(
+                content=message_text,
+                id=message_id,
+                inserted_on=inserted_on,
+                expires_on=expires_on,
+                pop_receipt = response['popreceipt'],
+                next_visible_on = response['time_next_visible']
+            )
             return new_message
         except HttpResponseError as error:
             process_storage_error(error)
