@@ -8,7 +8,8 @@
 """
 Example to demonstrate utilizing SAS (Shared Access Signature) tokens to authenticate with Event Hubs
 """
-
+from types import TracebackType
+from typing import Optional, Type
 import asyncio
 import os
 import time
@@ -37,27 +38,31 @@ class CustomizedSASCredential(object):
         """
         :param str token: The token string
         :param float expiry: The epoch timestamp
-
         """
         self.token = token
         self.expiry = expiry
         self.token_type = b"servicebus.windows.net:sastoken"
-
-    async def get_token(self, *scopes, **kwargs):
+ 
+    async def get_token(self, *scopes, **kwargs) -> AccessToken:
         """
         This method is automatically called when token is about to expire.
         """
         return AccessToken(self.token, self.expiry)
-
+ 
     async def close(self):
         pass
-
+ 
     async def __aenter__(self):
         """Return `self` upon entering the runtime context."""
         return self
-
-    async def __aexit__(self, exc_type, exc_value, traceback):
-        return None
+ 
+    async def __aexit__(
+        self,
+        exc_type: Optional[Type[BaseException]] = None,
+        exc_value: Optional[BaseException] = None,
+        traceback: Optional[TracebackType] = None,
+    ) -> None:
+        pass
 
 # Target namespace and hub must also be specified.  Consumer group is set to default unless required otherwise.
 FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
