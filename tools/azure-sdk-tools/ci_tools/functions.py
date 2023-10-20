@@ -394,6 +394,33 @@ def build_and_install_dev_reqs(file: str, pkg_root: str) -> None:
     shutil.rmtree(os.path.join(pkg_root, ".tmp_whl_dir"))
 
 
+def replace_dev_reqs(file, pkg_root):
+    adjusted_req_lines = []
+
+    with open(file, "r") as f:
+        for line in f:
+            args = [part.strip() for part in line.split() if part and not part.strip() == "-e"]
+            amended_line = " ".join(args)
+
+            if amended_line.endswith("]"):
+                trim_amount = amended_line[::-1].index("[") + 1
+                amended_line = amended_line[0 : (len(amended_line) - trim_amount)]
+
+            adjusted_req_lines.append(amended_line)
+
+    req_file_name = os.path.basename(file)
+    logging.info("Old {0}:{1}".format(req_file_name, adjusted_req_lines))
+
+    adjusted_req_lines = list(map(lambda x: build_whl_for_req(x, pkg_root), adjusted_req_lines))
+    logging.info("New {0}:{1}".format(req_file_name, adjusted_req_lines))
+
+    with open(file, "w") as f:
+        # note that we directly use '\n' here instead of os.linesep due to how f.write() actually handles this stuff internally
+        # If a file is opened in text mode (the default), during write python will accidentally double replace due to "\r" being
+        # replaced with "\r\n" on Windows. Result: "\r\n\n". Extra line breaks!
+        f.write("\n".join(adjusted_req_lines))
+
+
 def build_whl_for_req(req: str, package_path: str) -> str:
     """Builds a whl from the dev_requirements file.
 

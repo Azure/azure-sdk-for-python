@@ -1,0 +1,7 @@
+../azure-storage-blob
+-e ../azure-mgmt-eventgrid
+../../identity/azure-identity
+tests/testserver_tests/coretestserver
+-e tests/testserver_tests/coretestserver
+-e ../../../tools/azure-devtools
+../../../tools/azure-devtools
