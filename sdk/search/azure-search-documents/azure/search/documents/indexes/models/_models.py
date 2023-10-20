@@ -29,7 +29,7 @@ from .._generated.models import (
 DELIMITER = "|"
 
 
-class SearchIndexerSkillset(_SearchIndexerSkillset):
+class SearchIndexerSkillset(_serialization.Model):
     """A list of skills.
 
     All required parameters must be populated in order to send to Azure.

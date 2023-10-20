@@ -399,7 +399,6 @@ __all__ = (
     "VectorSearchAlgorithmKind",
     "VectorSearchAlgorithmMetric",
     "VectorSearchProfile",
-    "VectorSearch",
     "VisualFeature",
     "WebApiSkill",
     "WordDelimiterTokenFilter",
