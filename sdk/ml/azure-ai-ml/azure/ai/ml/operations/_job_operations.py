@@ -29,9 +29,11 @@ from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as
 from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as AMLServiceClient
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2023_10_01.models import JobBase as JobBase_10_01
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, UserIdentity
+from azure.ai.ml._restclient.v2023_10_01.models import JobBase as JobBase_2310
+from azure.ai.ml._restclient.v2023_10_01.models import JobType as RestJobType_2310
+from azure.ai.ml._restclient.v2023_10_01.models import ListViewType as ListViewType_2310, UserIdentity as UserIdentity_2310
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -681,7 +683,10 @@ class JobOperations(_ScopeDependentOperations):
             # in case of local run, the first create/update call to MFE returns the
             # request for submitting to ES. Once we request to ES and start the run, we
             # need to put the same body to MFE to append user tags etc.
-            job_object = self._get_job(rest_job_resource.name)
+            if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
+                job_object = self._get_pipeline_job(rest_job_resource.name)
+            else:
+                job_object = self._get_job(rest_job_resource.name)
             if result.properties.tags is not None:
                 for tag_name, tag_value in rest_job_resource.properties.tags.items():
                     job_object.properties.tags[tag_name] = tag_value
@@ -699,43 +704,25 @@ class JobOperations(_ScopeDependentOperations):
         return self._resolve_azureml_id(Job._from_rest_object(result))
 
     def create_or_update_with_different_version_api(self, rest_job_resource, **kwargs):
-        # Upgrade create_or_update api from 2023-04-01-preview to 2023-10-01 for pipeline job.
-        # Convert rest_job_resource(JobBase) of 2023-04-01-preview to rest_job_resource(JobBase) of 2023-10-01
+        service_client_operation = self._service_client_operation
+        # Upgrade api from 2023-04-01-preview to 2023-10-01 for pipeline job
         if rest_job_resource.properties.job_type == RestJobType.PIPELINE and self.pipeline_service_client:
-            try:
-                service_client_operation = self.pipeline_service_client.jobs
-                rest_job_resource_json = self._service_client_operation._serialize.body(rest_job_resource, "JobBase")
-                body = service_client_operation._deserialize("JobBase", rest_job_resource_json)
-            except Exception as ex:  # pylint: disable=broad-except
-                module_logger.error("Failed to serialize JobBase for pipeline job: %s", ex)
-                service_client_operation = self._service_client_operation
-                body = rest_job_resource
-        else:
-            service_client_operation = self._service_client_operation
-            body = rest_job_resource
+            service_client_operation = self.pipeline_service_client.jobs
 
         result = service_client_operation.create_or_update(
-            id=rest_job_resource.name,  # type: ignore
+            id=rest_job_resource.name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,
-            body=body,
+            body=rest_job_resource,
             **kwargs,
         )
-
-        # Convert result(JobBase) of 2023-10-01 to result(JobBase) of 2023-04-01-preview
-        if rest_job_resource.properties.job_type == RestJobType.PIPELINE and self.pipeline_service_client \
-                and isinstance(result, JobBase_10_01):
-            try:
-                service_client_operation = self.pipeline_service_client.jobs
-                result_json = service_client_operation._serialize.body(result, "JobBase")
-                result = self._service_client_operation._deserialize("JobBase", result_json)
-            except Exception as ex:  # pylint: disable=broad-except
-                module_logger.error("Failed to serialize JobBase for pipeline job: %s", ex)
 
         return result
 
     def _archive_or_restore(self, name: str, is_archived: bool):
         job_object = self._get_job(name)
+        if job_object.properties.job_type == RestJobType.PIPELINE:
+            job_object = self._get_pipeline_job(name)
         if _is_pipeline_child_job(job_object):
             raise PipelineChildJobError(job_id=job_object.id)
         job_object.properties.is_archived = is_archived
@@ -1016,6 +1003,17 @@ class JobOperations(_ScopeDependentOperations):
 
     def _get_job(self, name: str) -> JobBase:
         return self._service_client_operation.get(
+            id=name,
+            resource_group_name=self._operation_scope.resource_group_name,
+            workspace_name=self._workspace_name,
+            **self._kwargs,
+        )
+
+    # Upgrade api from 2023-04-01-preview to 2023-10-01 for pipeline job
+    # We can remove this function once `_get_job` function has also been upgraded to 2023-10-01 api
+    def _get_pipeline_job(self, name: str) -> JobBase_2310:
+        service_client_operation = self.pipeline_service_client.jobs if self.pipeline_service_client else self._service_client_operation
+        return service_client_operation.get(
             id=name,
             resource_group_name=self._operation_scope.resource_group_name,
             workspace_name=self._workspace_name,

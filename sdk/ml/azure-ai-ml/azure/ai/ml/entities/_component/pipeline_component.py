@@ -462,6 +462,30 @@ class PipelineComponent(Component):
             rest_component_jobs[job_name] = rest_node_dict
         return rest_component_jobs
 
+    def _build_rest_component_jobs_2310(self) -> Dict[str, dict]:
+        """Build pipeline component jobs to rest.
+
+        :return: A map of job name to rest objects
+        :rtype: Dict[str, dict]
+        """
+        # Build the jobs to dict
+        rest_component_jobs = {}
+        for job_name, job in self.jobs.items():
+            if isinstance(job, (BaseNode, ControlFlowNode)):
+                rest_node_dict = job._to_rest_object()
+            elif isinstance(job, AutoMLJob):
+                rest_node_dict = json.loads(json.dumps(job._to_dict(inside_pipeline=True)))
+            else:
+                msg = f"Non supported job type in Pipeline jobs: {type(job)}"
+                raise ValidationException(
+                    message=msg,
+                    no_personal_data_message=msg,
+                    target=ErrorTarget.PIPELINE,
+                    error_category=ErrorCategory.USER_ERROR,
+                )
+            rest_component_jobs[job_name] = rest_node_dict
+        return rest_component_jobs
+
     def _to_rest_object(self) -> ComponentVersion:
         """Check ignored keys and return rest object.
 

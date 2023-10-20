@@ -12,6 +12,8 @@ from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2023_04_01_preview.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2023_10_01.models import JobBase as JobBase_2310
+from azure.ai.ml._restclient.v2023_10_01.models import PipelineJob as RestPipelineJob_2310
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_job import PipelineJobSchema
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
@@ -47,7 +49,9 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
     from_rest_inputs_to_dataset_literal,
     to_rest_data_outputs,
+    to_rest_data_outputs_2310,
     to_rest_dataset_literal_inputs,
+    to_rest_dataset_literal_inputs_2310,
 )
 from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import Job
@@ -485,7 +489,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
             properties=self.properties,
         )
 
-    def _to_rest_object(self) -> JobBase:
+    def _to_rest_object(self) -> JobBase_2310:
         """Build current parameterized pipeline instance to a pipeline job object before submission.
 
         :return: Rest pipeline job.
@@ -511,7 +515,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         if isinstance(self.component, PipelineComponent):
             source = self.component._source
             # Build the jobs to dict
-            rest_component_jobs = self.component._build_rest_component_jobs()
+            rest_component_jobs = self.component._build_rest_component_jobs_2310()
         else:
             source = ComponentSource.REMOTE_WORKSPACE_JOB
             rest_component_jobs = {}
@@ -528,7 +532,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         # MFE not support pass None or empty input value. Remove the empty inputs in pipeline job.
         built_inputs = {k: v for k, v in built_inputs.items() if v is not None and v != ""}
 
-        pipeline_job = RestPipelineJob(
+        pipeline_job = RestPipelineJob_2310(
             compute_id=rest_compute,
             component_id=component_id,
             display_name=self.display_name,
@@ -537,19 +541,19 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
             properties=self.properties,
             experiment_name=self.experiment_name,
             jobs=rest_component_jobs,
-            inputs=to_rest_dataset_literal_inputs(built_inputs, job_type=self.type),
-            outputs=to_rest_data_outputs(built_outputs),
+            inputs=to_rest_dataset_literal_inputs_2310(built_inputs, job_type=self.type),
+            outputs=to_rest_data_outputs_2310(built_outputs),
             settings=settings_dict,
             services={k: v._to_rest_object() for k, v in self.services.items()} if self.services else None,
-            identity=self.identity._to_job_rest_object() if self.identity else None,
+            identity=self.identity._to_job_rest_object_2310() if self.identity else None,
         )
 
-        rest_job = JobBase(properties=pipeline_job)
+        rest_job = JobBase_2310(properties=pipeline_job)
         rest_job.name = self.name
         return rest_job
 
     @classmethod
-    def _load_from_rest(cls, obj: JobBase) -> "PipelineJob":
+    def _load_from_rest(cls, obj: Union[JobBase, JobBase_2310]) -> "PipelineJob":
         """Build a pipeline instance from rest pipeline object.
 
         :param obj: The REST Pipeline Object
@@ -557,7 +561,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         :return: pipeline job.
         :rtype: PipelineJob
         """
-        properties: RestPipelineJob = obj.properties
+        properties: RestPipelineJob_2310 = obj.properties
         # Workaround for BatchEndpoint as these fields are not filled in
         # Unpack the inputs
         from_rest_inputs = from_rest_inputs_to_dataset_literal(properties.inputs) or {}
@@ -593,11 +597,11 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
             properties=properties.properties,
             experiment_name=properties.experiment_name,
             status=properties.status,
-            creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
-            services=JobServiceBase._from_rest_job_services(properties.services) if properties.services else None,
+            creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,  # Temporarily not modified to 2310 version
+            services=JobServiceBase._from_rest_job_services(properties.services) if properties.services else None,  # Temporarily not modified to 2310 version
             compute=get_resource_name_from_arm_id_safe(properties.compute_id),
             settings=settings_sdk,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(properties.identity)
+            identity=_BaseJobIdentityConfiguration._from_rest_object_2310(properties.identity)
             if properties.identity
             else None,
         )
