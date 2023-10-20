@@ -667,9 +667,8 @@ class JobOperations(_ScopeDependentOperations):
         ):
             self._set_headers_with_user_aml_token(kwargs)
 
-        if (rest_job_resource.properties.job_type == RestJobType.SWEEP):
+        if rest_job_resource.properties.job_type == RestJobType.SWEEP:
             self._operation_2023_02_preview = self._service_client_08_2023_preview
-        
         result = self._operation_2023_02_preview.create_or_update(
             id=rest_job_resource.name,  # type: ignore
             resource_group_name=self._operation_scope.resource_group_name,
