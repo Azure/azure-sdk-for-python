@@ -3,6 +3,7 @@
 ## 1.12.0 (unreleased)
 
 ### Features Added
+- Workspace Connections replaced metadata with tags, and surfaced api_version, api_type, and kind for certain connection types.
 
 ### Bugs Fixed
 
