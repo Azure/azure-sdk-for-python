@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -105,8 +105,13 @@ class AddParticipantRequest(_serialization.Model):
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar override_callback_uri: The callback URI to override the main callback URI.
-    :vartype override_callback_uri: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
+    :ivar custom_context: Used by customer to send custom context to targets.
+    :vartype custom_context: ~azure.communication.callautomation.models.CustomContext
     """
 
     _validation = {
@@ -120,7 +125,8 @@ class AddParticipantRequest(_serialization.Model):
         "participant_to_add": {"key": "participantToAdd", "type": "CommunicationIdentifierModel"},
         "invitation_timeout_in_seconds": {"key": "invitationTimeoutInSeconds", "type": "int"},
         "operation_context": {"key": "operationContext", "type": "str"},
-        "override_callback_uri": {"key": "overrideCallbackUri", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
+        "custom_context": {"key": "customContext", "type": "CustomContext"},
     }
 
     def __init__(
@@ -131,7 +137,8 @@ class AddParticipantRequest(_serialization.Model):
         source_display_name: Optional[str] = None,
         invitation_timeout_in_seconds: Optional[int] = None,
         operation_context: Optional[str] = None,
-        override_callback_uri: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
+        custom_context: Optional["_models.CustomContext"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -155,8 +162,13 @@ class AddParticipantRequest(_serialization.Model):
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword override_callback_uri: The callback URI to override the main callback URI.
-        :paramtype override_callback_uri: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
+        :keyword custom_context: Used by customer to send custom context to targets.
+        :paramtype custom_context: ~azure.communication.callautomation.models.CustomContext
         """
         super().__init__(**kwargs)
         self.source_caller_id_number = source_caller_id_number
@@ -164,7 +176,8 @@ class AddParticipantRequest(_serialization.Model):
         self.participant_to_add = participant_to_add
         self.invitation_timeout_in_seconds = invitation_timeout_in_seconds
         self.operation_context = operation_context
-        self.override_callback_uri = override_callback_uri
+        self.operation_callback_uri = operation_callback_uri
+        self.custom_context = custom_context
 
 
 class AddParticipantResponse(_serialization.Model):
@@ -818,8 +831,11 @@ class CancelAddParticipantRequest(_serialization.Model):
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar override_callback_uri: The callback URI to override the main callback URI.
-    :vartype override_callback_uri: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
     """
 
     _validation = {
@@ -829,7 +845,7 @@ class CancelAddParticipantRequest(_serialization.Model):
     _attribute_map = {
         "invitation_id": {"key": "invitationId", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
-        "override_callback_uri": {"key": "overrideCallbackUri", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
     }
 
     def __init__(
@@ -837,7 +853,7 @@ class CancelAddParticipantRequest(_serialization.Model):
         *,
         invitation_id: str,
         operation_context: Optional[str] = None,
-        override_callback_uri: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -846,13 +862,16 @@ class CancelAddParticipantRequest(_serialization.Model):
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword override_callback_uri: The callback URI to override the main callback URI.
-        :paramtype override_callback_uri: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
         """
         super().__init__(**kwargs)
         self.invitation_id = invitation_id
         self.operation_context = operation_context
-        self.override_callback_uri = override_callback_uri
+        self.operation_callback_uri = operation_callback_uri
 
 
 class CancelAddParticipantResponse(_serialization.Model):
@@ -896,8 +915,6 @@ class CancelAddParticipantSucceeded(_serialization.Model):
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar participant: Participant that has been cancelled.
-    :vartype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar invitation_id: Invitation ID used to cancel the request.
     :vartype invitation_id: str
     """
@@ -907,7 +924,6 @@ class CancelAddParticipantSucceeded(_serialization.Model):
         "server_call_id": {"key": "serverCallId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
         "operation_context": {"key": "operationContext", "type": "str"},
-        "participant": {"key": "participant", "type": "CommunicationIdentifierModel"},
         "invitation_id": {"key": "invitationId", "type": "str"},
     }
 
@@ -918,7 +934,6 @@ class CancelAddParticipantSucceeded(_serialization.Model):
         server_call_id: Optional[str] = None,
         correlation_id: Optional[str] = None,
         operation_context: Optional[str] = None,
-        participant: Optional["_models.CommunicationIdentifierModel"] = None,
         invitation_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -933,8 +948,6 @@ class CancelAddParticipantSucceeded(_serialization.Model):
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword participant: Participant that has been cancelled.
-        :paramtype participant: ~azure.communication.callautomation.models.CommunicationIdentifierModel
         :keyword invitation_id: Invitation ID used to cancel the request.
         :paramtype invitation_id: str
         """
@@ -943,7 +956,6 @@ class CancelAddParticipantSucceeded(_serialization.Model):
         self.server_call_id = server_call_id
         self.correlation_id = correlation_id
         self.operation_context = operation_context
-        self.participant = participant
         self.invitation_id = invitation_id
 
 
@@ -1237,8 +1249,11 @@ class ContinuousDtmfRecognitionRequest(_serialization.Model):
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar operation_context: The value to identify context of the operation.
     :vartype operation_context: str
-    :ivar override_callback_uri: The callback URI to override the main callback URI.
-    :vartype override_callback_uri: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
     """
 
     _validation = {
@@ -1248,7 +1263,7 @@ class ContinuousDtmfRecognitionRequest(_serialization.Model):
     _attribute_map = {
         "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
         "operation_context": {"key": "operationContext", "type": "str"},
-        "override_callback_uri": {"key": "overrideCallbackUri", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
     }
 
     def __init__(
@@ -1256,7 +1271,7 @@ class ContinuousDtmfRecognitionRequest(_serialization.Model):
         *,
         target_participant: "_models.CommunicationIdentifierModel",
         operation_context: Optional[str] = None,
-        override_callback_uri: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1265,13 +1280,16 @@ class ContinuousDtmfRecognitionRequest(_serialization.Model):
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
-        :keyword override_callback_uri: The callback URI to override the main callback URI.
-        :paramtype override_callback_uri: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
         """
         super().__init__(**kwargs)
         self.target_participant = target_participant
         self.operation_context = operation_context
-        self.override_callback_uri = override_callback_uri
+        self.operation_callback_uri = operation_callback_uri
 
 
 class ContinuousDtmfRecognitionStopped(_serialization.Model):
@@ -1529,6 +1547,38 @@ class CreateCallRequest(_serialization.Model):
         self.operation_context = operation_context
         self.callback_uri = callback_uri
         self.cognitive_services_endpoint = cognitive_services_endpoint
+
+
+class CustomContext(_serialization.Model):
+    """The custom context which will be sent to the target.
+
+    :ivar voip_headers: Custom context VoiP headers.
+    :vartype voip_headers: dict[str, str]
+    :ivar sip_headers: Custom context SIP headers.
+    :vartype sip_headers: dict[str, str]
+    """
+
+    _attribute_map = {
+        "voip_headers": {"key": "voipHeaders", "type": "{str}"},
+        "sip_headers": {"key": "sipHeaders", "type": "{str}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        voip_headers: Optional[Dict[str, str]] = None,
+        sip_headers: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword voip_headers: Custom context VoiP headers.
+        :paramtype voip_headers: dict[str, str]
+        :keyword sip_headers: Custom context SIP headers.
+        :paramtype sip_headers: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.voip_headers = voip_headers
+        self.sip_headers = sip_headers
 
 
 class DtmfOptions(_serialization.Model):
@@ -2052,8 +2102,11 @@ class PlayRequest(_serialization.Model):
     :vartype play_options: ~azure.communication.callautomation.models.PlayOptions
     :ivar operation_context: The value to identify context of the operation.
     :vartype operation_context: str
-    :ivar override_callback_uri: The callback URI to override the main callback URI.
-    :vartype override_callback_uri: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
     """
 
     _validation = {
@@ -2065,7 +2118,7 @@ class PlayRequest(_serialization.Model):
         "play_to": {"key": "playTo", "type": "[CommunicationIdentifierModel]"},
         "play_options": {"key": "playOptions", "type": "PlayOptions"},
         "operation_context": {"key": "operationContext", "type": "str"},
-        "override_callback_uri": {"key": "overrideCallbackUri", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
     }
 
     def __init__(
@@ -2075,7 +2128,7 @@ class PlayRequest(_serialization.Model):
         play_to: Optional[List["_models.CommunicationIdentifierModel"]] = None,
         play_options: Optional["_models.PlayOptions"] = None,
         operation_context: Optional[str] = None,
-        override_callback_uri: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2089,15 +2142,18 @@ class PlayRequest(_serialization.Model):
         :paramtype play_options: ~azure.communication.callautomation.models.PlayOptions
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
-        :keyword override_callback_uri: The callback URI to override the main callback URI.
-        :paramtype override_callback_uri: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
         """
         super().__init__(**kwargs)
         self.play_sources = play_sources
         self.play_to = play_to
         self.play_options = play_options
         self.operation_context = operation_context
-        self.override_callback_uri = override_callback_uri
+        self.operation_callback_uri = operation_callback_uri
 
 
 class PlaySource(_serialization.Model):
@@ -2457,8 +2513,11 @@ class RecognizeRequest(_serialization.Model):
     :vartype recognize_options: ~azure.communication.callautomation.models.RecognizeOptions
     :ivar operation_context: The value to identify context of the operation.
     :vartype operation_context: str
-    :ivar override_callback_uri: The callback URI to override the main callback URI.
-    :vartype override_callback_uri: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
     """
 
     _validation = {
@@ -2472,7 +2531,7 @@ class RecognizeRequest(_serialization.Model):
         "interrupt_call_media_operation": {"key": "interruptCallMediaOperation", "type": "bool"},
         "recognize_options": {"key": "recognizeOptions", "type": "RecognizeOptions"},
         "operation_context": {"key": "operationContext", "type": "str"},
-        "override_callback_uri": {"key": "overrideCallbackUri", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
     }
 
     def __init__(
@@ -2483,7 +2542,7 @@ class RecognizeRequest(_serialization.Model):
         play_prompt: Optional["_models.PlaySource"] = None,
         interrupt_call_media_operation: Optional[bool] = None,
         operation_context: Optional[str] = None,
-        override_callback_uri: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2500,8 +2559,11 @@ class RecognizeRequest(_serialization.Model):
         :paramtype recognize_options: ~azure.communication.callautomation.models.RecognizeOptions
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
-        :keyword override_callback_uri: The callback URI to override the main callback URI.
-        :paramtype override_callback_uri: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
         """
         super().__init__(**kwargs)
         self.recognize_input_type = recognize_input_type
@@ -2509,7 +2571,7 @@ class RecognizeRequest(_serialization.Model):
         self.interrupt_call_media_operation = interrupt_call_media_operation
         self.recognize_options = recognize_options
         self.operation_context = operation_context
-        self.override_callback_uri = override_callback_uri
+        self.operation_callback_uri = operation_callback_uri
 
 
 class RecordingStateChanged(_serialization.Model):
@@ -2756,8 +2818,11 @@ class RemoveParticipantRequest(_serialization.Model):
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar override_callback_uri: The callback URI to override the main callback URI.
-    :vartype override_callback_uri: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
     """
 
     _validation = {
@@ -2767,7 +2832,7 @@ class RemoveParticipantRequest(_serialization.Model):
     _attribute_map = {
         "participant_to_remove": {"key": "participantToRemove", "type": "CommunicationIdentifierModel"},
         "operation_context": {"key": "operationContext", "type": "str"},
-        "override_callback_uri": {"key": "overrideCallbackUri", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
     }
 
     def __init__(
@@ -2775,7 +2840,7 @@ class RemoveParticipantRequest(_serialization.Model):
         *,
         participant_to_remove: "_models.CommunicationIdentifierModel",
         operation_context: Optional[str] = None,
-        override_callback_uri: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2785,13 +2850,16 @@ class RemoveParticipantRequest(_serialization.Model):
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword override_callback_uri: The callback URI to override the main callback URI.
-        :paramtype override_callback_uri: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
         """
         super().__init__(**kwargs)
         self.participant_to_remove = participant_to_remove
         self.operation_context = operation_context
-        self.override_callback_uri = override_callback_uri
+        self.operation_callback_uri = operation_callback_uri
 
 
 class RemoveParticipantResponse(_serialization.Model):
@@ -3043,8 +3111,11 @@ class SendDtmfTonesRequest(_serialization.Model):
      ~azure.communication.callautomation.models.CommunicationIdentifierModel
     :ivar operation_context: The value to identify context of the operation.
     :vartype operation_context: str
-    :ivar override_callback_uri: The callback URI to override the main callback URI.
-    :vartype override_callback_uri: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
     """
 
     _validation = {
@@ -3056,7 +3127,7 @@ class SendDtmfTonesRequest(_serialization.Model):
         "tones": {"key": "tones", "type": "[str]"},
         "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
         "operation_context": {"key": "operationContext", "type": "str"},
-        "override_callback_uri": {"key": "overrideCallbackUri", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
     }
 
     def __init__(
@@ -3065,7 +3136,7 @@ class SendDtmfTonesRequest(_serialization.Model):
         tones: List[Union[str, "_models.DtmfTone"]],
         target_participant: "_models.CommunicationIdentifierModel",
         operation_context: Optional[str] = None,
-        override_callback_uri: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3076,14 +3147,17 @@ class SendDtmfTonesRequest(_serialization.Model):
          ~azure.communication.callautomation.models.CommunicationIdentifierModel
         :keyword operation_context: The value to identify context of the operation.
         :paramtype operation_context: str
-        :keyword override_callback_uri: The callback URI to override the main callback URI.
-        :paramtype override_callback_uri: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
         """
         super().__init__(**kwargs)
         self.tones = tones
         self.target_participant = target_participant
         self.operation_context = operation_context
-        self.override_callback_uri = override_callback_uri
+        self.operation_callback_uri = operation_callback_uri
 
 
 class SendDtmfTonesResult(_serialization.Model):
@@ -3432,10 +3506,15 @@ class TransferToParticipantRequest(_serialization.Model):
     :ivar operation_context: Used by customers when calling mid-call actions to correlate the
      request to the response event.
     :vartype operation_context: str
-    :ivar transferee: Transferee is the participant who is transferring the call.
+    :ivar transferee: Transferee is the participant who is transferred away.
     :vartype transferee: ~azure.communication.callautomation.models.CommunicationIdentifierModel
-    :ivar override_callback_uri: The callback URI to override the main callback URI.
-    :vartype override_callback_uri: str
+    :ivar operation_callback_uri: Set a callback URI that overrides the default callback URI set by
+     CreateCall/AnswerCall for this operation.
+     This setup is per-action. If this is not set, the default callback URI set by
+     CreateCall/AnswerCall will be used.
+    :vartype operation_callback_uri: str
+    :ivar custom_context: Used by customer to send custom context to targets.
+    :vartype custom_context: ~azure.communication.callautomation.models.CustomContext
     """
 
     _validation = {
@@ -3446,7 +3525,8 @@ class TransferToParticipantRequest(_serialization.Model):
         "target_participant": {"key": "targetParticipant", "type": "CommunicationIdentifierModel"},
         "operation_context": {"key": "operationContext", "type": "str"},
         "transferee": {"key": "transferee", "type": "CommunicationIdentifierModel"},
-        "override_callback_uri": {"key": "overrideCallbackUri", "type": "str"},
+        "operation_callback_uri": {"key": "operationCallbackUri", "type": "str"},
+        "custom_context": {"key": "customContext", "type": "CustomContext"},
     }
 
     def __init__(
@@ -3455,7 +3535,8 @@ class TransferToParticipantRequest(_serialization.Model):
         target_participant: "_models.CommunicationIdentifierModel",
         operation_context: Optional[str] = None,
         transferee: Optional["_models.CommunicationIdentifierModel"] = None,
-        override_callback_uri: Optional[str] = None,
+        operation_callback_uri: Optional[str] = None,
+        custom_context: Optional["_models.CustomContext"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3466,13 +3547,19 @@ class TransferToParticipantRequest(_serialization.Model):
         :keyword operation_context: Used by customers when calling mid-call actions to correlate the
          request to the response event.
         :paramtype operation_context: str
-        :keyword transferee: Transferee is the participant who is transferring the call.
+        :keyword transferee: Transferee is the participant who is transferred away.
         :paramtype transferee: ~azure.communication.callautomation.models.CommunicationIdentifierModel
-        :keyword override_callback_uri: The callback URI to override the main callback URI.
-        :paramtype override_callback_uri: str
+        :keyword operation_callback_uri: Set a callback URI that overrides the default callback URI set
+         by CreateCall/AnswerCall for this operation.
+         This setup is per-action. If this is not set, the default callback URI set by
+         CreateCall/AnswerCall will be used.
+        :paramtype operation_callback_uri: str
+        :keyword custom_context: Used by customer to send custom context to targets.
+        :paramtype custom_context: ~azure.communication.callautomation.models.CustomContext
         """
         super().__init__(**kwargs)
         self.target_participant = target_participant
         self.operation_context = operation_context
         self.transferee = transferee
-        self.override_callback_uri = override_callback_uri
+        self.operation_callback_uri = operation_callback_uri
+        self.custom_context = custom_context
