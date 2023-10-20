@@ -11,7 +11,6 @@ from azure.core import CaseInsensitiveEnumMeta
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 from ._generated.models import (
-    TableResponseProperties,
     TableServiceStats as GenTableServiceStats,
     TableServiceProperties as GenTableServiceProperties,
     AccessPolicy as GenAccessPolicy,
@@ -313,7 +312,7 @@ class TablePropertiesPaged(PageIterator):
 
     def _extract_data_cb(self, get_next_return):
         self._location_mode, self._response, self._headers = get_next_return
-        props_list = [TableItem._from_generated(t) for t in self._response.value]  # pylint: disable=protected-access
+        props_list = [TableItem(t.table_name) for t in self._response.value]  # pylint: disable=protected-access
         return self._headers[NEXT_TABLE_NAME] or None, props_list
 
 
@@ -496,10 +495,6 @@ class TableItem:
         :param str name: Name of the Table
         """
         self.name = name
-
-    @classmethod
-    def _from_generated(cls, generated: TableResponseProperties) -> "TableItem":
-        return cls(generated.table_name)  # type: ignore[arg-type] # table_name in generated model is not required.
 
     def __repr__(self) -> str:
         return f"TableItem(name={self.name})"[1024:]
