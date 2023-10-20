@@ -40,7 +40,7 @@ setup(
     author="Microsoft Corporation",
     author_email="azuresdkengsysadmins@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python",
-    keywords="azure, azuresdk"
+    keywords="azure, azuresdk",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
