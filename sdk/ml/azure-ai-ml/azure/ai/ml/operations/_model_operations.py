@@ -34,7 +34,10 @@ from azure.ai.ml._scope_dependent_operations import (
     _ScopeDependentOperations,
 )
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
+from azure.ai.ml._utils._arm_id_utils import (
+    is_ARM_id_for_resource,
+    AMLVersionedArmId,
+)
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _get_latest,
@@ -766,11 +769,9 @@ class ModelOperations(_ScopeDependentOperations):
         else:
             environment_id = package_out.additional_properties["targetEnvironmentId"]
 
-        pattern = r"/subscriptions/([\w-]+)/resourceGroups/([\w-]+)/providers/([\w.]+)/workspaces/([\w-]+)/environments/([\w.-]+)/versions/(\d+)"
-        parse_id = re.search(pattern, environment_id)
-
-        environment_name = parse_id.group(5)
-        environment_version = parse_id.group(6)
+        parsed_id = AMLVersionedArmId(environment_id)
+        environment_name = parsed_id.asset_name
+        environment_version = parsed_id.asset_version
 
         module_logger.info("\nPackage Created")
         if package_out is not None and package_out.__class__.__name__ == "PackageResponse":
