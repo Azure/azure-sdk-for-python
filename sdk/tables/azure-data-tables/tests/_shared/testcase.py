@@ -103,7 +103,7 @@ class TableTestCase(object):
 
     def get_datetime(self):
         return datetime(year=2022, month=4, day=1, hour=9, minute=30, second=45, tzinfo=timezone.utc)
-    
+
     def set_uuid_variable(self, variables, name, uuid_param):
         uuid_string = variables.setdefault(name, str(uuid_param))
         return uuid.UUID(uuid_string)
