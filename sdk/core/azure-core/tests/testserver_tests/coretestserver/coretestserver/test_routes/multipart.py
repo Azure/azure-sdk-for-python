@@ -26,7 +26,7 @@ def basic():
     assert_with_message("content type", multipart_header_start, request.content_type[: len(multipart_header_start)])
     if request.files:
         # aiohttp
-        assert_with_message("content length", 258, request.content_length)
+        assert_with_message("content length", 228, request.content_length)
         assert_with_message("num files", 1, len(request.files))
         assert_with_message("has file named fileContent", True, bool(request.files.get("fileContent")))
         file_content = request.files["fileContent"]
@@ -38,7 +38,7 @@ def basic():
         )
         assert_with_message(
             "content disposition",
-            'form-data; name="fileContent"; filename="fileContent"; filename*=utf-8\'\'fileContent',
+            'form-data; name="fileContent"; filename="fileContent"',
             file_content.headers["Content-Disposition"],
         )
     elif request.form:
@@ -52,9 +52,30 @@ def basic():
 
 @multipart_api.route("/data-and-files", methods=["POST"])
 def data_and_files():
-    assert_with_message("content type", multipart_header_start, request.content_type[: len(multipart_header_start)])
-    assert_with_message("message", "Hello, world!", request.form["message"])
-    assert_with_message("message", "<file content>", request.form["fileContent"])
+    if request.files:
+        # aiohttp
+        assert_with_message("content type", multipart_header_start, request.content_type[: len(multipart_header_start)])
+        assert_with_message("has file named fileContent", True, bool(request.files.get("fileContent")))
+        assert_with_message("message", "Hello, world!", request.form["message"])
+        file_content = request.files["fileContent"]
+        assert_with_message("file content type", "application/octet-stream", file_content.content_type)
+        assert_with_message("file content length", 14, file_content.content_length)
+        assert_with_message("filename", "fileContent", file_content.filename)
+        assert_with_message(
+            "has content disposition header", True, bool(file_content.headers.get("Content-Disposition"))
+        )
+        assert_with_message(
+            "content disposition",
+            'form-data; name="fileContent"; filename="fileContent"',
+            file_content.headers["Content-Disposition"],
+        )
+    elif request.form:
+        # requests
+        assert_with_message("content type", multipart_header_start, request.content_type[: len(multipart_header_start)])
+        assert_with_message("message", "Hello, world!", request.form["message"])
+        assert_with_message("message", "<file content>", request.form["fileContent"])
+    else:
+        return Response(status=400)
     return Response(status=200)
 
 
