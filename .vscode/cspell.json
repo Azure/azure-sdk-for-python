@@ -1563,7 +1563,9 @@
         "mros",
         "deserializers",
         "ctxt",
-        "wday"
+        "wday",
+        "JSONify",
+        "Nify"
       ]
     },
     {
