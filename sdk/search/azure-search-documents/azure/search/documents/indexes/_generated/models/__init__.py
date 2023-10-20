@@ -29,7 +29,7 @@ from ._models_py3 import CustomEntityAlias
 from ._models_py3 import CustomEntityLookupSkill
 from ._models_py3 import CustomNormalizer
 from ._models_py3 import CustomVectorizer
-from ._models_py3 import CustomVectorizerParameters
+from ._models_py3 import CustomWebApiParameters
 from ._models_py3 import DataChangeDetectionPolicy
 from ._models_py3 import DataDeletionDetectionPolicy
 from ._models_py3 import DataSourceCredentials
@@ -252,7 +252,7 @@ __all__ = [
     "CustomEntityLookupSkill",
     "CustomNormalizer",
     "CustomVectorizer",
-    "CustomVectorizerParameters",
+    "CustomWebApiParameters",
     "DataChangeDetectionPolicy",
     "DataDeletionDetectionPolicy",
     "DataSourceCredentials",
