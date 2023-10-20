@@ -19,7 +19,12 @@ module_logger = logging.getLogger(__name__)
 
 
 class ModelPackageSchema(PathAwareSchema):
-    target_environment = UnionField(union_fields=[fields.Dict(keys=StringTransformedEnum(allowed_values=['name']), values=fields.Str()),fields.Str(required=True)])
+    target_environment = UnionField(
+        union_fields=[
+            fields.Dict(keys=StringTransformedEnum(allowed_values=["name"]), values=fields.Str()),
+            fields.Str(required=True),
+        ]
+    )  # pylint: disable=line-too-long
     base_environment_source = NestedField(BaseEnvironmentSourceSchema)
     inferencing_server = NestedField(InferenceServerSchema)
     model_configuration = NestedField(ModelConfigurationSchema)

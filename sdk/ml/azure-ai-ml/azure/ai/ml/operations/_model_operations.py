@@ -726,7 +726,7 @@ class ModelOperations(_ScopeDependentOperations):
             if self._operation_scope._workspace_location and self._operation_scope._workspace_id:
                 package_request.target_environment_id = f"azureml://locations/{self._operation_scope._workspace_location}/workspaces/{self._operation_scope._workspace_id}/environments/{package_request.target_environment_id}"
             else:
-                ws = self._all_operations.all_operations.get('workspaces')
+                ws = self._all_operations.all_operations.get("workspaces")
                 ws_details = ws.get(self._workspace_name)
                 workspace_location, workspace_id = (
                     ws_details.location,
@@ -735,7 +735,9 @@ class ModelOperations(_ScopeDependentOperations):
                 package_request.target_environment_id = f"azureml://locations/{workspace_location}/workspaces/{workspace_id}/environments/{package_request.target_environment_id}"
 
             if package_request.environment_version is not None:
-                package_request.target_environment_id = package_request.target_environment_id + f"/versions/{package_request.environment_version}"
+                package_request.target_environment_id = (
+                    package_request.target_environment_id + f"/versions/{package_request.environment_version}"
+                )
             package_request = package_request._to_rest_object()
 
         if self._registry_reference:

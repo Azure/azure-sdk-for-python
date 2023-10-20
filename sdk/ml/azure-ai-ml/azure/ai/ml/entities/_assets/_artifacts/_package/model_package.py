@@ -221,7 +221,7 @@ class ModelPackage(Resource, PackageRequest):
     def __init__(
         self,
         *,
-        target_environment: Union[str, Dict[str,str]],
+        target_environment: Union[str, Dict[str, str]],
         inferencing_server: Union[AzureMLOnlineInferencingServer, AzureMLBatchInferencingServer],
         base_environment_source: BaseEnvironment = None,
         environment_variables: Optional[Dict[str, str]] = None,
@@ -234,15 +234,14 @@ class ModelPackage(Resource, PackageRequest):
             target_environment = target_environment["name"]
             env_version = None
         else:
-            parse_id = re.match(r'azureml:(\w+):(\d+)$', target_environment)
+            parse_id = re.match(r"azureml:(\w+):(\d+)$", target_environment)
 
             if parse_id:
                 target_environment = parse_id.group(1)
                 env_version = parse_id.group(2)
             else:
-                target_environment = target_environment
                 env_version = None
-                
+
         super().__init__(
             name=target_environment,
             target_environment_id=target_environment,
