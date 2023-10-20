@@ -208,7 +208,7 @@ def image_object_detection(
 
             Acceptable values: MeanAveragePrecision
             Defaults to MeanAveragePrecision.
-    :type primary_metric: Union[str, azure.ai.ml.automl.ObjectDetectionPrimaryMetrics]
+    :paramtype primary_metric: Union[str, azure.ai.ml.automl.ObjectDetectionPrimaryMetrics]
     :keyword validation_data: The validation data to be used within the experiment.
     :paramtype validation_data: Optional[azure.ai.ml.entities.Input]
     :keyword validation_data_size: What fraction of the data to hold out for validation when user validation data
@@ -269,7 +269,7 @@ def image_instance_segmentation(
 
             Acceptable values: MeanAveragePrecision
             Defaults to MeanAveragePrecision.
-    :type primary_metric: Union[str, azure.ai.ml.automl.InstanceSegmentationPrimaryMetrics]
+    :paramtype primary_metric: Union[str, azure.ai.ml.automl.InstanceSegmentationPrimaryMetrics]
     :keyword validation_data: The validation data to be used within the experiment.
     :paramtype validation_data: Optional[azure.ai.ml.entities.Input]
     :keyword validation_data_size: What fraction of the data to hold out for validation when user validation data
