@@ -83,6 +83,12 @@ OUTPUT_MOUNT_MAPPING_FROM_REST = {
     OutputDeliveryMode.DIRECT: InputOutputModes.DIRECT,
 }
 
+OUTPUT_MOUNT_MAPPING_FROM_REST_2310 = {
+    OutputDeliveryMode_2310.READ_WRITE_MOUNT: InputOutputModes.RW_MOUNT,
+    OutputDeliveryMode_2310.UPLOAD: InputOutputModes.UPLOAD,
+    OutputDeliveryMode.DIRECT: InputOutputModes.DIRECT,
+}
+
 OUTPUT_MOUNT_MAPPING_TO_REST = {
     InputOutputModes.MOUNT: OutputDeliveryMode.READ_WRITE_MOUNT,
     InputOutputModes.UPLOAD: OutputDeliveryMode.UPLOAD,
@@ -112,6 +118,22 @@ def get_output_type_mapping_from_rest() -> Dict[str, str]:
         JobOutputType.MLFLOW_MODEL: AssetTypes.MLFLOW_MODEL,
         JobOutputType.CUSTOM_MODEL: AssetTypes.CUSTOM_MODEL,
         JobOutputType.TRITON_MODEL: AssetTypes.TRITON_MODEL,
+    }
+
+
+def get_output_type_mapping_from_rest_2310() -> Dict[str, str]:
+    """Gets the mapping of JobOutputType to AssetType
+
+    :return: Mapping of JobOutputType to AssetType
+    :rtype: Dict[str, str]
+    """
+    return {
+        JobOutputType_2310.URI_FILE: AssetTypes.URI_FILE,
+        JobOutputType_2310.URI_FOLDER: AssetTypes.URI_FOLDER,
+        JobOutputType_2310.MLTABLE: AssetTypes.MLTABLE,
+        JobOutputType_2310.MLFLOW_MODEL: AssetTypes.MLFLOW_MODEL,
+        JobOutputType_2310.CUSTOM_MODEL: AssetTypes.CUSTOM_MODEL,
+        JobOutputType_2310.TRITON_MODEL: AssetTypes.TRITON_MODEL,
     }
 
 
@@ -431,6 +453,57 @@ def from_rest_inputs_to_dataset_literal(
     return from_rest_inputs
 
 
+def from_rest_inputs_to_dataset_literal_2310(
+    inputs: Dict[str, RestJobInput_2310]
+) -> Dict[str, Union[int, str, float, bool, Input]]:
+    """Turns REST dataset and literal inputs into the SDK format.
+
+    :param inputs: Dictionary mapping input name to ComponentJobInput or PipelineInput
+    :type inputs: Dict[str, Union[ComponentJobInput, PipelineInput]]
+    :return: A dictionary mapping input name to a literal value or JobInput
+    :rtype: Dict[str, Union[int, str, float, bool, JobInput]]
+    """
+    if inputs is None:
+        return {}
+    from_rest_inputs = {}
+    # Unpack the inputs
+    for input_name, input_value in inputs.items():
+        # TODO:Brandon Clarify with PMs if user should be able to define null input objects
+        if input_value is None:
+            continue
+
+        # TODO: Remove this as both rest type and sdk type are snake case now.
+        type_transfer_dict = get_output_type_mapping_from_rest_2310()
+        # deal with invalid input type submitted by feb api
+        # todo: backend help convert node level input/output type
+        normalize_job_input_output_type(input_value)  # Temporarily not modified to 2310 version
+
+        if input_value.job_input_type in type_transfer_dict:
+            if input_value.uri:
+                path = input_value.uri
+
+                input_data = Input(
+                    type=type_transfer_dict[input_value.job_input_type],
+                    path=path,
+                    mode=INPUT_MOUNT_MAPPING_FROM_REST[input_value.mode] if input_value.mode else None,
+                )
+        elif input_value.job_input_type in (JobInputType_2310.LITERAL, JobInputType_2310.LITERAL):
+            # otherwise, the input is a literal, so just unpack the InputData value field
+            input_data = input_value.value
+        else:
+            msg = f"Job input type {input_value.job_input_type} is not supported as job input."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.JOB,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
+
+        from_rest_inputs[input_name] = input_data
+    return from_rest_inputs
+
+
 def to_rest_data_outputs(outputs: Dict[str, Output]) -> Dict[str, RestJobOutput]:
     """Turns job outputs into REST format.
 
@@ -535,6 +608,46 @@ def from_rest_data_outputs(outputs: Dict[str, RestJobOutput]) -> Dict[str, Outpu
                 type=output_type_mapping[output_value.job_output_type],
                 path=output_value.uri,
                 mode=OUTPUT_MOUNT_MAPPING_FROM_REST[output_value.mode] if output_value.mode else None,
+                description=output_value.description,
+                name=output_value.asset_name,
+                version=output_value.asset_version,
+            )
+        else:
+            msg = "unsupported JobOutput type: {}".format(output_value.job_output_type)
+            raise JobException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.JOB,
+                error_category=ErrorCategory.SYSTEM_ERROR,
+            )
+
+    return from_rest_outputs
+
+
+def from_rest_data_outputs_2310(outputs: Dict[str, RestJobOutput_2310]) -> Dict[str, Output]:
+    """Turns REST outputs into the SDK format.
+
+    :param outputs: Dictionary of dataset and literal inputs to job
+    :type outputs: Dict[str, RestJobOutput]
+    :return: A dictionary mapping input name to a InputOutputEntry
+    :rtype: Dict[str, JobOutput]
+    """
+    output_type_mapping = get_output_type_mapping_from_rest_2310()
+    from_rest_outputs = {}
+    if outputs is None:
+        return {}
+    for output_name, output_value in outputs.items():
+        if output_value is None:
+            continue
+        # deal with invalid output type submitted by feb api
+        # todo: backend help convert node level input/output type
+        normalize_job_input_output_type(output_value)  # Temporarily not modified to 2310 version
+
+        if output_value.job_output_type in output_type_mapping:
+            from_rest_outputs[output_name] = Output(
+                type=output_type_mapping[output_value.job_output_type],
+                path=output_value.uri,
+                mode=OUTPUT_MOUNT_MAPPING_FROM_REST_2310[output_value.mode] if output_value.mode else None,
                 description=output_value.description,
                 name=output_value.asset_name,
                 version=output_value.asset_version,

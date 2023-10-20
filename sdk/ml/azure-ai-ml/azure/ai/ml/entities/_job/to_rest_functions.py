@@ -6,8 +6,10 @@
 
 from functools import singledispatch
 from pathlib import Path
+from typing import Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase as JobBaseData
+from azure.ai.ml._restclient.v2023_10_01.models import JobBase as JobBaseData_2310
 from azure.ai.ml.constants._common import DEFAULT_EXPERIMENT_NAME
 from azure.ai.ml.entities._builders.command import Command
 from azure.ai.ml.entities._builders.pipeline import Pipeline
@@ -19,7 +21,7 @@ from .import_job import ImportJob
 from .job import Job
 
 
-def generate_defaults(job: Job, rest_job: JobBaseData) -> None:
+def generate_defaults(job: Job, rest_job: Union[JobBaseData, JobBaseData_2310]) -> None:
     # Default name to a generated user friendly name.
     if not job.name:
         rest_job.name = generate_job_name()

@@ -472,7 +472,7 @@ class PipelineComponent(Component):
         rest_component_jobs = {}
         for job_name, job in self.jobs.items():
             if isinstance(job, (BaseNode, ControlFlowNode)):
-                rest_node_dict = job._to_rest_object()
+                rest_node_dict = job._to_rest_object()  # Temporarily not modified to 2310 version
             elif isinstance(job, AutoMLJob):
                 rest_node_dict = json.loads(json.dumps(job._to_dict(inside_pipeline=True)))
             else:

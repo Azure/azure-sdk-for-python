@@ -47,7 +47,9 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._inputs_outputs.group_input import GroupInput
 from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
+    from_rest_data_outputs_2310,
     from_rest_inputs_to_dataset_literal,
+    from_rest_inputs_to_dataset_literal_2310,
     to_rest_data_outputs,
     to_rest_data_outputs_2310,
     to_rest_dataset_literal_inputs,
@@ -544,6 +546,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
             inputs=to_rest_dataset_literal_inputs_2310(built_inputs, job_type=self.type),
             outputs=to_rest_data_outputs_2310(built_outputs),
             settings=settings_dict,
+            # Temporarily not modified to 2310 version
             services={k: v._to_rest_object() for k, v in self.services.items()} if self.services else None,
             identity=self.identity._to_job_rest_object_2310() if self.identity else None,
         )
@@ -564,8 +567,8 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         properties: RestPipelineJob_2310 = obj.properties
         # Workaround for BatchEndpoint as these fields are not filled in
         # Unpack the inputs
-        from_rest_inputs = from_rest_inputs_to_dataset_literal(properties.inputs) or {}
-        from_rest_outputs = from_rest_data_outputs(properties.outputs) or {}
+        from_rest_inputs = from_rest_inputs_to_dataset_literal_2310(properties.inputs) or {}
+        from_rest_outputs = from_rest_data_outputs_2310(properties.outputs) or {}
         # Unpack the component jobs
         sub_nodes = PipelineComponent._resolve_sub_nodes(properties.jobs) if properties.jobs else {}
         # backend may still store Camel settings, eg: DefaultDatastore, translate them to snake when load back
@@ -575,7 +578,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         if getattr(properties, "component_id", None):
             component = properties.component_id
         else:
-            component = PipelineComponent._load_from_rest_pipeline_job(
+            component = PipelineComponent._load_from_rest_pipeline_job(  # Temporarily not modified to 2310 version
                 {
                     "inputs": from_rest_inputs,
                     "outputs": from_rest_outputs,
