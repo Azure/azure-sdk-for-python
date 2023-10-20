@@ -668,7 +668,7 @@ class TableClient(AsyncTablesBaseClient):
             **kwargs,
         )
         try:
-            if hasattr(operations, "__iter__"):
+            if isinstance(operations, Iterable):
                 for operation in operations:
                     batched_requests.add_operation(operation)
             else:
