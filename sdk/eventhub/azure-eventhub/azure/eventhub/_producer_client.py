@@ -799,6 +799,7 @@ class EventHubProducerClient(
             - `last_enqueued_sequence_number` (int)
             - `last_enqueued_offset` (str)
             - `last_enqueued_time_utc` (UTC datetime.datetime)
+            - `last_enqueued_replication_segment` (int)
             - `is_empty` (bool)
 
         :param partition_id: The target partition ID.

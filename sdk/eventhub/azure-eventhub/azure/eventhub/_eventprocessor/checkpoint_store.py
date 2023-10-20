@@ -83,6 +83,8 @@ class CheckpointStore(object):
                 - `partition_id` (str): The partition ID which the checkpoint is created for.
                 - `sequence_number` (int): The sequence number of the :class:`EventData<azure.eventhub.EventData>`
                   the new checkpoint will be associated with.
+                - `replication_segment` (int): The replication segment of the
+                  :class:`EventData<azure.eventhub.EventData>` the new checkpoint will be associated with.
                 - `offset` (str): The offset of the :class:`EventData<azure.eventhub.EventData>`
                   the new checkpoint will be associated with.
 
@@ -113,5 +115,7 @@ class CheckpointStore(object):
                 - `consumer_group` (str): The name of the consumer group the checkpoints are associated with.
                 - `partition_id` (str): The partition ID which the checkpoint is created for.
                 - `sequence_number` (int): The sequence number of the :class:`EventData<azure.eventhub.EventData>`.
+                - `replication_segment` (int): The replication segment of the
+                  :class:`EventData<azure.eventhub.EventData>` the new checkpoint will be associated with.
                 - `offset` (str): The offset of the :class:`EventData<azure.eventhub.EventData>`.
         """

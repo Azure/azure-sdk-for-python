@@ -283,6 +283,8 @@ class BlobCheckpointStore(CheckpointStore):
                 - `partition_id` (str): The partition ID which the checkpoint is created for.
                 - `sequence_number` (int): The sequence number of the :class:`EventData<azure.eventhub.EventData>`
                   the new checkpoint will be associated with.
+                - `replication_segment` (int): The replication segment of the
+                  :class:`EventData<azure.eventhub.EventData>` the new checkpoint will be associated with.
                 - `offset` (str): The offset of the :class:`EventData<azure.eventhub.EventData>`
                   the new checkpoint will be associated with.
 
@@ -291,6 +293,7 @@ class BlobCheckpointStore(CheckpointStore):
         metadata = {
             "offset": str(checkpoint["offset"]),
             "sequencenumber": str(checkpoint["sequence_number"]),
+            "replicationsegment": str(checkpoint["replication_segment"]),
         }
         blob_name = "{}/{}/{}/checkpoint/{}".format(
             checkpoint["fully_qualified_namespace"],
@@ -328,6 +331,8 @@ class BlobCheckpointStore(CheckpointStore):
                 - `consumer_group` (str): The name of the consumer group the checkpoints are associated with.
                 - `partition_id` (str): The partition ID which the checkpoint is created for.
                 - `sequence_number` (int): The sequence number of the :class:`EventData<azure.eventhub.EventData>`.
+                - `replication_segment` (int): The replication segment of the
+                  :class:`EventData<azure.eventhub.EventData>` the new checkpoint will be associated with.
                 - `offset` (str): The offset of the :class:`EventData<azure.eventhub.EventData>`.
         :rtype: iterable[dict[str,any]]
         """
@@ -347,6 +352,7 @@ class BlobCheckpointStore(CheckpointStore):
                 "partition_id": b.name.split("/")[-1],
                 "offset": str(metadata["offset"]),
                 "sequence_number": int(metadata["sequencenumber"]),
+                "replication_segment": int(metadata["replication_segment"]),
             }
             result.append(checkpoint)
         return result

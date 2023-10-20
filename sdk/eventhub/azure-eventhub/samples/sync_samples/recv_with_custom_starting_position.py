@@ -66,12 +66,11 @@ if __name__ == '__main__':
     )
 
     partition_0_prop = consumer_client.get_partition_properties("0")
-    partition_0_last_enqueued_sequence_number = partition_0_prop["last_enqueued_sequence_number"]
+    partition_0_last_enqueued_sequence_number = (partition_0_prop["last_enqueued_sequence_number"], "-1")
 
     # client will receive messages from the position of the third from last event on partition 0.
-    starting_position = {
-        "0": partition_0_last_enqueued_sequence_number - 3,
-    }
+    from datetime import datetime as dt
+    starting_position = dt.now()
 
     try:
         with consumer_client:

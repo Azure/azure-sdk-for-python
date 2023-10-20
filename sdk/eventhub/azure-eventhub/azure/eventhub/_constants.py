@@ -12,6 +12,7 @@ PROP_OFFSET = b"x-opt-offset"
 PROP_PARTITION_KEY = b"x-opt-partition-key"
 PROP_TIMESTAMP = b"x-opt-enqueued-time"
 PROP_LAST_ENQUEUED_SEQUENCE_NUMBER = b"last_enqueued_sequence_number"
+PROP_LAST_ENQUEUED_SEQUENCE_NUMBER_EPOCH = b"last_enqueued_sequence_number_epoch"
 PROP_LAST_ENQUEUED_OFFSET = b"last_enqueued_offset"
 PROP_LAST_ENQUEUED_TIME_UTC = b"last_enqueued_time_utc"
 PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC = b"runtime_info_retrieval_time_utc"
@@ -33,6 +34,7 @@ PROP_REPLY_TO_GROUP_ID = b"reply-to-group-id"
 EPOCH_SYMBOL = b"com.microsoft:epoch"
 TIMEOUT_SYMBOL = b"com.microsoft:timeout"
 RECEIVER_RUNTIME_METRIC_SYMBOL = b"com.microsoft:enable-receiver-runtime-metric"
+GEOREPLICATION_SYMBOL = b"com.microsoft:georeplication"
 
 MAX_MESSAGE_LENGTH_BYTES = 1024 * 1024
 MAX_USER_AGENT_LENGTH = 512

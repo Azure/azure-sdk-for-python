@@ -51,6 +51,7 @@ class PartitionContext(object):
             - `offset` (str)
             - `enqueued_time` (UTC datetime.datetime)
             - `retrieval_time` (UTC datetime.datetime)
+            - `replication_segment` (int)
 
         :rtype: Dict[str, Any] or None
         """
@@ -75,6 +76,7 @@ class PartitionContext(object):
                     "partition_id": self.partition_id,
                     "offset": checkpoint_event.offset,
                     "sequence_number": checkpoint_event.sequence_number,
+                    "replication_segment": checkpoint_event.replication_segment
                 }
                 try:
                     self._checkpoint_store.update_checkpoint(checkpoint, **kwargs)

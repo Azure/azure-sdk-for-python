@@ -17,6 +17,7 @@ from ._constants import (
     EPOCH_SYMBOL,
     TIMEOUT_SYMBOL,
     RECEIVER_RUNTIME_METRIC_SYMBOL,
+    GEOREPLICATION_SYMBOL,
 )
 
 if TYPE_CHECKING:
@@ -146,9 +147,9 @@ class EventHubConsumer(
             event_position_selector(self._offset, self._offset_inclusive),
         )
         desired_capabilities = (
-            [RECEIVER_RUNTIME_METRIC_SYMBOL]
+            [RECEIVER_RUNTIME_METRIC_SYMBOL, GEOREPLICATION_SYMBOL]
             if self._track_last_enqueued_event_properties
-            else None
+            else [GEOREPLICATION_SYMBOL]
         )
 
         self._handler = self._amqp_transport.create_receive_client(

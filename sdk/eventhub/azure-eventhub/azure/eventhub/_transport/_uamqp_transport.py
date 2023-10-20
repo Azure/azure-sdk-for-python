@@ -339,11 +339,18 @@ if uamqp_installed:
             target = kwargs.pop("target")
             retry_policy = kwargs.pop("retry_policy")
             network_trace = kwargs.pop("network_trace")
+            # TODO: potentially add below to deal with new georeplication in sender
+            #symbol_array = kwargs.pop("desired_capabilities")
+            #desired_capabilities = None
+            #if symbol_array:
+            #    symbol_array = [types.AMQPSymbol(symbol) for symbol in symbol_array]
+            #    desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array))
 
             return SendClient(
                 target,
                 debug=network_trace,
                 error_policy=retry_policy,
+            #    desired_capabilities=desired_capabilities,
                 **kwargs
             )
 

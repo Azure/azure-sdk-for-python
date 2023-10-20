@@ -29,6 +29,7 @@ from ._constants import (
     MAX_USER_AGENT_LENGTH,
     USER_AGENT_PREFIX,
     PROP_LAST_ENQUEUED_SEQUENCE_NUMBER,
+    PROP_LAST_ENQUEUED_SEQUENCE_NUMBER_EPOCH,
     PROP_LAST_ENQUEUED_TIME_UTC,
     PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC,
     PROP_LAST_ENQUEUED_OFFSET,
@@ -152,7 +153,7 @@ def set_event_partition_key(
         raw_message.header.durable = True
 
 
-def event_position_selector(value, inclusive=False):
+def event_position_selector(value, inclusive=False):    # TODO: update to use seq number
     # type: (Union[int, str, datetime.datetime], bool) -> bytes
     """Creates a selector expression of the offset.
 
@@ -172,6 +173,10 @@ def event_position_selector(value, inclusive=False):
     elif isinstance(value, int):
         return (
             f"amqp.annotation.x-opt-sequence-number {operator} '{value}'"
+        ).encode("utf-8")
+    elif isinstance(value, tuple):  # TODO: figure out best way to represent replication segment to user
+        return (
+            f"amqp.annotation.x-opt-sequence-number {operator} '{value[1]}:{value[0]}'"
         ).encode("utf-8")
     return (f"amqp.annotation.x-opt-offset {operator} '{value}'").encode(
         "utf-8"
@@ -193,6 +198,9 @@ def get_last_enqueued_event_properties(event_data):
     if event_data._message.delivery_annotations:
         sequence_number = event_data._message.delivery_annotations.get(
             PROP_LAST_ENQUEUED_SEQUENCE_NUMBER, None
+        )
+        replication_segment = event_data._message.delivery_annotations.get(
+            PROP_LAST_ENQUEUED_SEQUENCE_NUMBER_EPOCH, -1
         )
         enqueued_time_stamp = event_data._message.delivery_annotations.get(
             PROP_LAST_ENQUEUED_TIME_UTC, None
@@ -216,6 +224,7 @@ def get_last_enqueued_event_properties(event_data):
             "offset": offset,
             "enqueued_time": enqueued_time_stamp,
             "retrieval_time": retrieval_time_stamp,
+            "replication_segment": replication_segment
         }
         return event_data._last_enqueued_event_properties
     return None

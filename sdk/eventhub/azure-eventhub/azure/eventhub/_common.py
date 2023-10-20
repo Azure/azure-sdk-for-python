@@ -307,7 +307,22 @@ class EventData(object):
 
         :rtype: int or None
         """
-        return self._raw_amqp_message.annotations.get(PROP_SEQ_NUMBER, None)
+        try:
+            return int(self._raw_amqp_message.annotations.get(PROP_SEQ_NUMBER, None).split(":")[1])
+        except AttributeError:  # if not in "replication segment: sequence number" format
+            return self._raw_amqp_message.annotations.get(PROP_SEQ_NUMBER, None)
+
+    @property
+    def replication_segment(self) -> Optional[int]: # TODO: remove optional?
+        """The replication segment associated with the event. Used with the sequence number if using a
+         a geo-replication enabled Event Hub.
+
+        :rtype: int or None
+        """
+        try:
+            return self._raw_amqp_message.annotations.get(PROP_SEQ_NUMBER, None).split(":")[2]
+        except AttributeError:  # if replication segment not in included in sequence number
+            return -1
 
     @property
     def offset(self) -> Optional[str]:

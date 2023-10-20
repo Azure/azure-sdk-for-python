@@ -29,12 +29,13 @@ from ._tracing import (
     is_tracing_enabled,
     TraceAttributes
 )
-from ._constants import TIMEOUT_SYMBOL
+from ._constants import TIMEOUT_SYMBOL, GEOREPLICATION_SYMBOL
 from .amqp import AmqpAnnotatedMessage
 
 _LOGGER = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
+    from ._transport._base import AmqpTransport
     try:
         from uamqp import SendClient as uamqp_SendClient
         from uamqp.constants import MessageSendResult as uamqp_MessageSendResult
@@ -91,7 +92,7 @@ class EventHubProducer(
         self, client: "EventHubProducerClient", target: str, **kwargs: Any
     ) -> None:
 
-        self._amqp_transport = kwargs.pop("amqp_transport")
+        self._amqp_transport: "AmqpTransport" = kwargs.pop("amqp_transport")
         partition = kwargs.get("partition", None)
         send_timeout = kwargs.get("send_timeout", 60)
         keep_alive = kwargs.get("keep_alive", None)
@@ -134,6 +135,9 @@ class EventHubProducer(
     def _create_handler(
         self, auth: Union[uamqp_JWTTokenAuth, JWTTokenAuth]
     ) -> None:
+
+        desired_capabilities = [GEOREPLICATION_SYMBOL]
+
         self._handler = self._amqp_transport.create_send_client(
             config=self._client._config,  # pylint:disable=protected-access
             target=self._target,
@@ -148,6 +152,7 @@ class EventHubProducer(
                 self._client._config.user_agent,  # pylint: disable=protected-access
                 amqp_transport=self._amqp_transport,
             ),
+            desired_capabilities=desired_capabilities,
             msg_timeout=self._timeout * self._amqp_transport.TIMEOUT_FACTOR,
         )
 
