@@ -4,6 +4,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import sys
 import pytest
 import pytest_asyncio
 from azure.core.pipeline.transport import HttpRequest as PipelineTransportHttpRequest
@@ -136,7 +137,10 @@ async def test_response_block_size_trio(get_old_response_trio, get_new_response_
     new_response = await get_new_response_trio()
     _test_response_block_size(old_response, new_response)
 
-
+@pytest.mark.skipif(
+    hasattr(sys, "pypy_version_info"),
+    reason="Aiohttp 3.8.6 triggers https://github.com/aio-libs/aiohttp/issues/4581 on pypy for some reason",
+)
 @pytest.mark.asyncio
 @pytest.mark.parametrize("transport", TRANSPORTS)
 async def test_response_body(get_old_response, get_new_response, transport):
@@ -259,6 +263,10 @@ def _test_response_headers(old_response, new_response):
     assert old_response.headers == new_response.headers == {"Hello": "world!"}
 
 
+@pytest.mark.skipif(
+    hasattr(sys, "pypy_version_info"),
+    reason="Aiohttp 3.8.6 triggers https://github.com/aio-libs/aiohttp/issues/4581 on pypy for some reason",
+)
 @pytest.mark.asyncio
 @pytest.mark.parametrize("transport", TRANSPORTS)
 async def test_response_headers(get_old_response, get_new_response, transport):
