@@ -24,7 +24,6 @@
 #
 # --------------------------------------------------------------------------
 import sys
-from unittest.mock import AsyncMock, PropertyMock
 
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
@@ -58,6 +57,12 @@ import trio
 
 import pytest
 from utils import HTTP_REQUESTS
+
+
+try:
+    from unittest.mock import AsyncMock, PropertyMock
+except ImportError:
+    pass
 
 
 @pytest.mark.asyncio
@@ -353,6 +358,7 @@ def test_no_cleanup_policy_when_redirect_policy_is_empty():
             assert False
 
 
+@pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
 @pytest.mark.asyncio
 async def test_default_ssl_context():
     class MockAiohttpSession:
