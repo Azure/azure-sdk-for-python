@@ -68,5 +68,8 @@ setup(
     install_requires=[
         'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
+        "azure-core<2.0.0,>=1.28.0",
+        "azure-identity~=1.1",
+        "azure-mgmt-core>=1.3.2,<2.0.0",
     ],
 )
