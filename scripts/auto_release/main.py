@@ -325,6 +325,7 @@ class CodegenTestPR:
 
     def get_changelog(self) -> str:
         content = self.get_autorest_result()
+        self.has_breaking_change = content["packages"][0]["hasBreakingChange"]
         return content["packages"][0]["changelog"]["content"]
 
     def get_last_release_version(self) -> str:
@@ -572,6 +573,9 @@ class CodegenTestPR:
                 '[Management-SDK-Release-Cycle](https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/761/Management-SDK-Release-Cycle) ' \
                 'to release it before target date'
             api.issues.create_comment(issue_number=issue_number, body=body)
+
+            if self.tag_is_stable and self.has_breaking_change:
+                api.issues.add_labels(issue_number=issue_number, labels=["BreakingChange"])
 
     def issue_comment(self):
         self.zero_version_policy()
