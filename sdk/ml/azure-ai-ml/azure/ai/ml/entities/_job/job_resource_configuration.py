@@ -46,7 +46,8 @@ class BaseProperty(dict):
         return False
 
     def as_dict(self) -> Dict[str, Any]:
-        return self._to_dict(self)
+        res: dict = self._to_dict(self)
+        return res
 
     @classmethod
     def _to_dict(cls, obj: Any) -> Any:
@@ -80,7 +81,8 @@ class Properties(BaseProperty):
                 key = self._KEY_MAPPING[key.lower()]
             result[key] = value
         # recursively convert Ordered Dict to dictionary
-        return convert_ordered_dict_to_dict(result)
+        res: dict = convert_ordered_dict_to_dict(result)
+        return res
 
 
 class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
@@ -118,16 +120,16 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
     """
 
     def __init__(
-        self,
+        self,  # pylint: disable=unused-argument
         *,
         locations: Optional[List[str]] = None,
         instance_count: Optional[int] = None,
         instance_type: Optional[str] = None,
-        properties: Optional[Dict[str, Any]] = None,
+        properties: Optional[Properties] = None,
         docker_args: Optional[str] = None,
         shm_size: Optional[str] = None,
         max_instance_count: Optional[int] = None,
-        **kwargs  # pylint: disable=unused-argument
+        **kwargs: Any
     ) -> None:
         self.locations = locations
         self.instance_count = instance_count
@@ -139,7 +141,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         self.properties = properties
 
     @property
-    def properties(self) -> Properties:
+    def properties(self) -> Optional[Properties]:
         """The properties of the job.
 
         :rtype: ~azure.ai.ml.entities._job.job_resource_configuration.Properties
@@ -147,7 +149,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         return self._properties
 
     @properties.setter
-    def properties(self, properties: Dict[str, Any]):
+    def properties(self, properties: Dict[str, Any]) -> None:
         """Sets the properties of the job.
 
         :param properties: A dictionary of properties for the job.
@@ -167,7 +169,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
             instance_count=self.instance_count,
             instance_type=self.instance_type,
             max_instance_count=self.max_instance_count,
-            properties=self.properties.as_dict(),
+            properties=self.properties.as_dict() if self.properties is not None else None,
             docker_args=self.docker_args,
             shm_size=self.shm_size,
         )
