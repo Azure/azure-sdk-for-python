@@ -375,7 +375,7 @@ class QueueMessage(DictMixin):
     """A UTC date value representing the time the message will next be visible.
         Only returned by receive messages operations. Set to None for peek messages."""
 
-    def __init__(self, content: Any = None, **kwargs: Any) -> None:
+    def __init__(self, content: Optional[Any] = None, **kwargs: Any) -> None:
         self.id = kwargs.pop('id', None)
         self.inserted_on = kwargs.pop('inserted_on', None)
         self.expires_on = kwargs.pop('expires_on', None)

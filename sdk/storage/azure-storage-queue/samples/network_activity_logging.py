@@ -60,9 +60,9 @@ queues = service_client.list_queues(logging_enable=True)
 for queue in queues:
     print('Queue: {}'.format(queue.name))
     queue_client = service_client.get_queue_client(queue.name)
-messages = queue_client.peek_messages(max_messages=20, logging_enable=True)
-for message in messages:
-    try:
-        print('  Message: {!r}'.format(base64.b64decode(message.content)))
-    except binascii.Error:
-        print('  Message: {}'.format(message.content))
+    messages = queue_client.peek_messages(max_messages=20, logging_enable=True)
+    for message in messages:
+        try:
+            print('  Message: {!r}'.format(base64.b64decode(message.content)))
+        except binascii.Error:
+            print('  Message: {}'.format(message.content))

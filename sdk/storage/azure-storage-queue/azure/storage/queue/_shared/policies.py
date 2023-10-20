@@ -581,7 +581,8 @@ class ExponentialRetry(StorageRetryPolicy):
         increment_base: int = 3,
         retry_total: int = 3,
         retry_to_secondary: bool = False,
-        random_jitter_range: int = 3, **kwargs
+        random_jitter_range: int = 3,
+        **kwargs: Any
     ) -> None:
         """
         Constructs an Exponential retry object. The initial_backoff is used for

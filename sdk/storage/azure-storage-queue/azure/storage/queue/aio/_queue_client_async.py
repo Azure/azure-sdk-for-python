@@ -105,8 +105,8 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(QueueClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
 
-        self.message_encode_policy = kwargs.get('message_encode_policy', None) or NoEncodePolicy()
-        self.message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
+        self._message_encode_policy = kwargs.get('message_encode_policy', None) or NoEncodePolicy()
+        self._message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
         self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment] # pylint: disable=protected-access
         self._loop = loop
@@ -487,7 +487,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
                 kwargs)
 
         try:
-            self.message_encode_policy.configure(
+            self._message_encode_policy.configure(
                 require_encryption=self.require_encryption,
                 key_encryption_key=self.key_encryption_key,
                 resolver=self.key_resolver_function,
@@ -499,11 +499,11 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
                 Consider updating your encryption information/implementation. \
                 Retrying without encryption_version."
             )
-            self.message_encode_policy.configure(
+            self._message_encode_policy.configure(
                 require_encryption=self.require_encryption,
                 key_encryption_key=self.key_encryption_key,
                 resolver=self.key_resolver_function)
-        encoded_content = self.message_encode_policy(content)
+        encoded_content = self._message_encode_policy(content)
         new_message = GenQueueMessage(message_text=encoded_content)
 
         try:
@@ -575,7 +575,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
                 self.encryption_version,
                 kwargs)
 
-        self.message_decode_policy.configure(
+        self._message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             resolver=self.key_resolver_function
@@ -585,7 +585,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
                 number_of_messages=1,
                 visibilitytimeout=visibility_timeout,
                 timeout=timeout,
-                cls=self.message_decode_policy,
+                cls=self._message_decode_policy,
                 **kwargs
             )
             wrapped_message = QueueMessage._from_generated(  # pylint: disable=protected-access
@@ -658,7 +658,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
                 self.encryption_version,
                 kwargs)
 
-        self.message_decode_policy.configure(
+        self._message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             resolver=self.key_resolver_function
@@ -668,7 +668,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
                 self._client.messages.dequeue,
                 visibilitytimeout=visibility_timeout,
                 timeout=timeout,
-                cls=self.message_decode_policy,
+                cls=self._message_decode_policy,
                 **kwargs
             )
             if max_messages is not None and messages_per_page is not None:
@@ -765,7 +765,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
             raise ValueError("pop_receipt must be present")
         if message_text is not None:
             try:
-                self.message_encode_policy.configure(
+                self._message_encode_policy.configure(
                     self.require_encryption,
                     self.key_encryption_key,
                     self.key_resolver_function,
@@ -778,12 +778,12 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
                     Consider updating your encryption information/implementation. \
                     Retrying without encryption_version."
                 )
-                self.message_encode_policy.configure(
+                self._message_encode_policy.configure(
                     self.require_encryption,
                     self.key_encryption_key,
                     self.key_resolver_function
                 )
-            encoded_message_text = self.message_encode_policy(message_text)
+            encoded_message_text = self._message_encode_policy(message_text)
             updated = GenQueueMessage(message_text=encoded_message_text)
         else:
             updated = None
@@ -863,14 +863,14 @@ class QueueClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, Stora
                 self.encryption_version,
                 kwargs)
 
-        self.message_decode_policy.configure(
+        self._message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
             resolver=self.key_resolver_function
         )
         try:
             messages = await self._client.messages.peek(
-                number_of_messages=max_messages, timeout=timeout, cls=self.message_decode_policy, **kwargs
+                number_of_messages=max_messages, timeout=timeout, cls=self._message_decode_policy, **kwargs
             )
             wrapped_messages = []
             for peeked in messages:

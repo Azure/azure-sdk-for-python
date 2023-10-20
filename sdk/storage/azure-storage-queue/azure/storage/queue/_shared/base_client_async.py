@@ -37,7 +37,7 @@ from .policies import (
 )
 from .policies_async import AsyncStorageResponseHook
 from .response_handlers import PartialBatchErrorException, process_storage_error
-from .shared_access_signature import QueryStringConstants
+from .._shared_access_signature import _is_credential_sastoken
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpRequest, HttpResponse  # pylint: disable=C4756
@@ -260,16 +260,6 @@ def parse_connection_str(
         if secondary:
             secondary = secondary.replace(".blob.", ".dfs.")
     return primary, secondary, credential
-
-def _is_credential_sastoken(credential: Any) -> bool:
-    if not credential or not isinstance(credential, str):
-        return False
-
-    sas_values = QueryStringConstants.to_list()
-    parsed_query = parse_qs(credential.lstrip("?"))
-    if parsed_query and all(k in sas_values for k in parsed_query):
-        return True
-    return False
 
 class AsyncTransportWrapper(AsyncHttpTransport):
     """Wrapper class that ensures that an inner client created

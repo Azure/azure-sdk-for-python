@@ -29,10 +29,6 @@ import sys
 class QueueServiceSamplesAsync(object):
 
     connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
-    if connection_string is None:
-        print("Missing required environment variable: connection_string" + '\n' +
-              "Please ensure your environment variable for 'AZURE_STORAGE_CONNECTION_STRING' is set and try again.")
-        sys.exit(1)
 
     async def queue_service_properties_async(self):
         if self.connection_string is None:
