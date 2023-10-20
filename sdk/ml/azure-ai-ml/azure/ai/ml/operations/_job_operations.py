@@ -28,6 +28,7 @@ from azure.ai.ml._restclient.model_dataplane import AzureMachineLearningWorkspac
 from azure.ai.ml._restclient.runhistory import AzureMachineLearningWorkspaces as ServiceClientRunHistory
 from azure.ai.ml._restclient.runhistory.models import Run
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
+from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningServices as ServiceClient082023Preview
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, UserIdentity
@@ -179,6 +180,8 @@ class JobOperations(_ScopeDependentOperations):
         self._kwargs = kwargs
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
+        self._08_2023_preview_service_client: ServiceClient082023Preview = kwargs.pop("service_client_08_2023_preview")
+        self._service_client_08_2023_preview = self._08_2023_preview_service_client.jobs
 
     @property
     def _component_operations(self) -> ComponentOperations:
@@ -664,6 +667,9 @@ class JobOperations(_ScopeDependentOperations):
         ):
             self._set_headers_with_user_aml_token(kwargs)
 
+        if (rest_job_resource.properties.job_type == RestJobType.SWEEP):
+            self._operation_2023_02_preview = self._service_client_08_2023_preview
+        
         result = self._operation_2023_02_preview.create_or_update(
             id=rest_job_resource.name,  # type: ignore
             resource_group_name=self._operation_scope.resource_group_name,
