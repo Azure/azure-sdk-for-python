@@ -59,6 +59,7 @@ setup(
             "tests",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
+            "azure.ai",
             "samples",
         ]
     ),
@@ -66,7 +67,6 @@ setup(
     install_requires=[
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
         "azure-ai-ml",
-        "azure-identity",
         "mlflow<3",
         "azure-mgmt-authorization"
     ],
