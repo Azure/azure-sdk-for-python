@@ -7,11 +7,13 @@ import time
 import unittest
 import pytest
 import sys
-from unittest import mock
-from azure.appconfiguration.provider import SettingSelector, SentinelKey
-from azure.appconfiguration.provider.aio import load
+try:
+    # Python 3.7 does not support AsyncMock
+    from unittest.mock import AsyncMock
+except ImportError:
+    pass
+from azure.appconfiguration.provider import SentinelKey
 from devtools_testutils.aio import recorded_by_proxy_async
-from azure.appconfiguration.aio import AzureAppConfigurationClient
 from async_preparers import app_config_decorator_async
 from asynctestcase import AppConfigTestCase
 
@@ -22,7 +24,7 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
     @recorded_by_proxy_async
     @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
     async def test_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
-        mock_callback = mock.AsyncMock()
+        mock_callback = AsyncMock()
         async with await self.create_aad_client(
             appconfiguration_endpoint_string,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
@@ -75,7 +77,7 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
     @recorded_by_proxy_async
     @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
     async def test_empty_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
-        mock_callback = mock.AsyncMock()
+        mock_callback = AsyncMock()
         async with await self.create_aad_client(
             appconfiguration_endpoint_string,
             keyvault_secret_url=appconfiguration_keyvault_secret_url,
