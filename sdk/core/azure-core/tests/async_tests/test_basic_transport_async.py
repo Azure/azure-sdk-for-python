@@ -973,13 +973,13 @@ class MockAiohttpResponse:
         self.content = MockAiohttpContent()
 
     def read(self):
-        request_info = aiohttp.RequestInfo("http://example.org", "GET", {})
+        request_info = aiohttp.RequestInfo("http://example.org", "GET", {}, "http://example.org")
         raise aiohttp.client_exceptions.ClientResponseError(request_info, None)
 
 
 class MockAiohttpContent:
     async def read(self, block_size):
-        request_info = aiohttp.RequestInfo("http://example.org", "GET", {})
+        request_info = aiohttp.RequestInfo("http://example.org", "GET", {}, "http://example.org")
         raise aiohttp.client_exceptions.ClientResponseError(request_info, None)
 
 
