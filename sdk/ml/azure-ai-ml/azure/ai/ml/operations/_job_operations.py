@@ -706,6 +706,10 @@ class JobOperations(_ScopeDependentOperations):
                 service_client_operation = self.pipeline_service_client.jobs
                 rest_job_resource_json = self._service_client_operation._serialize.body(rest_job_resource, "JobBase")
                 body = service_client_operation._deserialize("JobBase", rest_job_resource_json)
+                body.id = rest_job_resource.id
+                body.name = rest_job_resource.name
+                body.type = rest_job_resource.type
+                body.system_data = rest_job_resource.system_data
             except Exception as ex:  # pylint: disable=broad-except
                 module_logger.error("Failed to serialize JobBase for pipeline job: %s", ex)
                 service_client_operation = self._service_client_operation
@@ -728,7 +732,12 @@ class JobOperations(_ScopeDependentOperations):
             try:
                 service_client_operation = self.pipeline_service_client.jobs
                 result_json = service_client_operation._serialize.body(result, "JobBase")
-                result = self._service_client_operation._deserialize("JobBase", result_json)
+                tmp_result = self._service_client_operation._deserialize("JobBase", result_json)
+                tmp_result.id = result.id
+                tmp_result.name = result.name
+                tmp_result.type = result.type
+                tmp_result.system_data = result.system_data
+                result = tmp_result
             except Exception as ex:  # pylint: disable=broad-except
                 module_logger.error("Failed to serialize JobBase for pipeline job: %s", ex)
 
