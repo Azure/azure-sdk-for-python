@@ -146,7 +146,7 @@ def example_create_servicebus_receiver_sync():
         )
     # [END create_subscription_deadletter_receiver_from_sb_client_sync]
 
-    queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name)
+    queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name, max_wait_time=5)
     return queue_receiver
 
 
