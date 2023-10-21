@@ -7,7 +7,6 @@
 from contextlib import contextmanager
 from os import PathLike, path
 from typing import Dict, Iterable, Optional, Union
-import re
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
