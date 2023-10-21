@@ -158,7 +158,6 @@ class DatabaseProxy(object):
         offer_throughput=None,  # type: Optional[Union[int, ThroughputProperties]]
         unique_key_policy=None,  # type: Optional[Dict[str, Any]]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
-        **kwargs  # type: Any
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a new container with the given ID (name).
