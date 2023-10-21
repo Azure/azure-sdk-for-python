@@ -153,6 +153,12 @@ class DatabaseProxy(object):
         self,
         id: str,  # pylint: disable=redefined-builtin
         partition_key: PartitionKey,
+        indexing_policy=None,  # type: Optional[Dict[str, Any]]
+        default_ttl=None,  # type: Optional[int]
+        offer_throughput=None,  # type: Optional[Union[int, ThroughputProperties]]
+        unique_key_policy=None,  # type: Optional[Dict[str, Any]]
+        conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
+        **kwargs  # type: Any
         **kwargs: Any
     ) -> ContainerProxy:
         """Create a new container with the given ID (name).
@@ -205,7 +211,6 @@ class DatabaseProxy(object):
         definition: Dict[str, Any] = dict(id=id)
         if partition_key is not None:
             definition["partitionKey"] = partition_key
-        indexing_policy = kwargs.pop('indexing_policy', None)
         if indexing_policy is not None:
             if indexing_policy.get("indexingMode") is IndexingMode.Lazy:
                 warnings.warn(
@@ -213,13 +218,10 @@ class DatabaseProxy(object):
                     DeprecationWarning
                 )
             definition["indexingPolicy"] = indexing_policy
-        default_ttl = kwargs.pop('default_ttl', None)
         if default_ttl is not None:
             definition["defaultTtl"] = default_ttl
-        unique_key_policy = kwargs.pop('unique_key_policy', None)
         if unique_key_policy is not None:
             definition["uniqueKeyPolicy"] = unique_key_policy
-        conflict_resolution_policy = kwargs.pop('conflict_resolution_policy', None)
         if conflict_resolution_policy is not None:
             definition["conflictResolutionPolicy"] = conflict_resolution_policy
         analytical_storage_ttl = kwargs.pop("analytical_storage_ttl", None)
@@ -228,7 +230,6 @@ class DatabaseProxy(object):
 
         request_options = _build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
-        offer_throughput = kwargs.pop('offer_throughput', None)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
         data = await self.client_connection.CreateContainer(
