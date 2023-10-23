@@ -84,7 +84,7 @@ class TestEGClientExceptions():
 
     def test_xml_binary_request_format(self):
         from xml.etree import ElementTree as ET
-        xml_string = """<?xml version="1.0" encoding="UTF-8"?>"""
+        xml_string = """<?xml version="1.0" encoding="UTF-8"?><Data><test>test</test></Data>"""
         tree = ET.fromstring(xml_string)
         root = ET.getroot(tree)
         event = CloudEvent(
