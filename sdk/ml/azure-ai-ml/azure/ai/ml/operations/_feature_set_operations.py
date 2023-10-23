@@ -162,7 +162,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
 
         if not is_url(featureset_copy.path):
             with open(os.path.join(featureset_copy.path, ".amlignore"), mode="w", encoding="utf-8") as f:
-                f.write(".*")
+                f.write(".*\n*.amltmp\n*.amltemp")
 
         featureset_copy, _ = _check_and_upload_path(
             artifact=featureset_copy, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.FEATURE_SET
