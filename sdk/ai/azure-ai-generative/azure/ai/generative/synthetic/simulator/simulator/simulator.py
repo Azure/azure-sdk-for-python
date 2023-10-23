@@ -117,7 +117,7 @@ class Simulator:
                 session=session,
                 turn_limit=max_conversation_turns,
                 api_call_delay_sec=api_call_delay_sec,
-                meta_data=parameters["metadata"],
+                template_paramaters=parameters,
             )
         formatted_conversation = {
             "conversation_id": conversation_id,
