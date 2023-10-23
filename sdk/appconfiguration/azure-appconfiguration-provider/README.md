@@ -82,13 +82,19 @@ import os
 
 connection_string = os.environ.get("APPCONFIGURATION_CONNECTION_STRING")
 
+def my_callback_on_success():
+    # Do something on success
+    ...
+
 def my_callback_on_fail(error):
-    print("Refresh failed!")
+    # Do something on fail
+    ...
 
 config = load(
     connection_string=connection_string,
     refresh_on=[SentinelKey("Sentinel")],
     refresh_interval=60,
+    on_refresh_success=my_callback_on_success,
     on_refresh_error=my_callback_on_fail,
     **kwargs,
 )

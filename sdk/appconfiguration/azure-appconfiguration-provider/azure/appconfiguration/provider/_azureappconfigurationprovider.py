@@ -439,8 +439,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                         updated_sentinel_keys[(key, label)] = updated_sentinel.etag
                 # Need to only update once, no matter how many sentinels are updated
                 if need_refresh:
-                    self._load_all(**kwargs)
-                    self._refresh_on = updated_sentinel_keys
+                    self._load_all(sentinel_keys = updated_sentinel_keys, **kwargs)
                     if self._on_refresh_success:
                         self._on_refresh_success()
                 # Even if we don't need to refresh, we should reset the timer
@@ -466,6 +465,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
 
     def _load_all(self, **kwargs):
         configuration_settings = {}
+        sentinel_keys = kwargs.pop("sentinel_keys", self._refresh_on)
         for select in self._selects:
             configurations = self._client.list_configuration_settings(
                 key_filter=select.key_filter, label_filter=select.label_filter, **kwargs
@@ -485,7 +485,8 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 # so they stay up-to-date.
                 # Sentinel keys will have unprocessed key names, so we need to use the original key.
                 if (config.key, config.label) in self._refresh_on:
-                    self._refresh_on[(config.key, config.label)] = config.etag
+                    sentinel_keys[(config.key, config.label)] = config.etag
+        self._refresh_on = sentinel_keys
         self._dict = configuration_settings
 
     def _process_key_name(self, config):
