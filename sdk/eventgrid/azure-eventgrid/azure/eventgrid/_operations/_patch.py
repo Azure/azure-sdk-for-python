@@ -344,16 +344,7 @@ def _check_content_type(data: Any) -> None:
             return json.dumps(event, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
         except:
             raise TypeError("Incorrect type for data. Expected bytes, str, or JSON serializable object to encode.")
-        
-            # elif isinstance(data, dict):
-    #     return json.dumps(data).encode("utf-8")
-    # elif isinstance(data, Iterable): # IO text 
-    #     return IteratorByteStream(data)
-    # else:
-    #     try:
-    #         root = data.getroot()
-    #         return ElementTree.tostring(root, encoding="utf-8")
-    #     except:
+
 
 __all__: List[str] = [
     "EventGridClientOperationsMixin"
