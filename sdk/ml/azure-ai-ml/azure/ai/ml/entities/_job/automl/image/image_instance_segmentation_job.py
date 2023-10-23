@@ -26,7 +26,7 @@ from azure.ai.ml.entities._util import load_from_dict
 class ImageInstanceSegmentationJob(AutoMLImageObjectDetectionBase):
     """Configuration for AutoML Image Instance Segmentation job.
 
-    :keyword primary_metric: The primary metric to use for optimization
+    :keyword primary_metric: The primary metric to use for optimization.
     :paramtype primary_metric: Optional[str, azure.ai.ml.automl.InstanceSegmentationPrimaryMetrics]
     :keyword kwargs: Job-specific arguments
     :paramtype kwargs: Dict[str, Any]
