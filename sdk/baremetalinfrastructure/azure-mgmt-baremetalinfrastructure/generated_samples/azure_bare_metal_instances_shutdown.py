@@ -14,7 +14,7 @@ from azure.mgmt.baremetalinfrastructure import BareMetalInfrastructureClient
     pip install azure-identity
     pip install azure-mgmt-baremetalinfrastructure
 # USAGE
-    python list_all_management_operations_supported_by_the_azure_bare_metal_rp.py
+    python azure_bare_metal_instances_shutdown.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,14 +26,16 @@ from azure.mgmt.baremetalinfrastructure import BareMetalInfrastructureClient
 def main():
     client = BareMetalInfrastructureClient(
         credential=DefaultAzureCredential(),
-        subscription_id="SUBSCRIPTION_ID",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.operations.list()
-    for item in response:
-        print(item)
+    response = client.azure_bare_metal_instances.begin_shutdown(
+        resource_group_name="myResourceGroup",
+        azure_bare_metal_instance_name="myABMInstance",
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/baremetalinfrastructure/resource-manager/Microsoft.BareMetalInfrastructure/stable/2021-08-09/examples/AzureBareMetalOperations_List.json
+# x-ms-original-file: specification/baremetalinfrastructure/resource-manager/Microsoft.BareMetalInfrastructure/preview/2023-08-04-preview/examples/AzureBareMetalInstances_Shutdown.json
 if __name__ == "__main__":
     main()
