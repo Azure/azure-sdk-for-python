@@ -62,8 +62,6 @@ setup(
         'azure.openai': ['py.typed'],
     },
     install_requires=[
-        "azure-core<2.0.0,>=1.26.0",
-        "openai<1.0.0,>=0.27.6",
         "azure-identity<2.0.0,>=1.12.0"
     ],
     python_requires=">=3.7",

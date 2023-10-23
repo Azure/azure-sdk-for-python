@@ -6,20 +6,24 @@
 # --------------------------------------------------------------------------
 import os
 import pytest
-import requests
-import aiohttp
-import yarl
 import functools
 import openai
 from devtools_testutils.sanitizers import add_header_regex_sanitizer, add_oauth_response_sanitizer
 from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
 
+
+# Indicates we want to test against openai>=1.0.0
+OPENAI_TEST_MODE = "v1"
 
 # for pytest.parametrize
 ALL = ["azure", "azuread", "openai"]
 AZURE = "azure"
 OPENAI = "openai"
 AZURE_AD = "azuread"
+WHISPER_AZURE = "whisper_azure"
+WHISPER_AZURE_AD = "whisper_azuread"
+WHISPER_ALL = ["whisper_azure", "whisper_azuread", "openai"]
 
 # Environment variable keys
 ENV_AZURE_OPENAI_ENDPOINT = "AZURE_OPENAI_ENDPOINT"
@@ -89,42 +93,115 @@ def azure_openai_creds():
     }
 
 
-def configure_api_type(api_type, whisper=False, **kwargs):
+# openai>=1.0.0 ----------------------------------------------------------------------------------------------------
+
+@pytest.fixture
+def client(api_type):
     if api_type == "azure":
-        if whisper:
-            openai.api_base = os.getenv(ENV_AZURE_OPENAI_WHISPER_ENDPOINT).rstrip("/")
-            openai.api_key = os.getenv(ENV_AZURE_OPENAI_WHISPER_KEY)
-        else:
-            openai.api_base = os.getenv(ENV_AZURE_OPENAI_ENDPOINT).rstrip("/")
-            openai.api_key = os.getenv(ENV_AZURE_OPENAI_KEY)
-        openai.api_type = "azure"
-        openai.api_version = ENV_AZURE_OPENAI_API_VERSION
+        client = openai.AzureOpenAI(
+            endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
+            api_key=os.getenv(ENV_AZURE_OPENAI_KEY),
+            api_version=ENV_AZURE_OPENAI_API_VERSION,
+        )
     elif api_type == "azuread":
-        if whisper:
-            openai.api_base = os.getenv(ENV_AZURE_OPENAI_WHISPER_ENDPOINT).rstrip("/")
-        else:
-            openai.api_base = os.getenv(ENV_AZURE_OPENAI_ENDPOINT).rstrip("/")
-        credential = DefaultAzureCredential()
-        token = credential.get_token("https://cognitiveservices.azure.com/.default")
-        openai.api_type = "azuread"
-        openai.api_key = token.token
-        openai.api_version = ENV_AZURE_OPENAI_API_VERSION
+        client = openai.AzureOpenAI(
+            endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
+            azure_bearer_token=DefaultAzureCredential(),
+            api_version=ENV_AZURE_OPENAI_API_VERSION,
+        )
     elif api_type == "openai":
-        openai.api_base = "https://api.openai.com/v1"
-        openai.api_type = "openai"
-        openai.api_key = os.getenv(ENV_OPENAI_KEY)
-        openai.api_version = None
+        client = openai.OpenAI(
+            api_key=os.getenv(ENV_OPENAI_KEY)
+        )
+    elif api_type == "whisper_azure":
+        client = openai.AzureOpenAI(
+            endpoint=os.getenv(ENV_AZURE_OPENAI_WHISPER_ENDPOINT),
+            api_key=os.getenv(ENV_AZURE_OPENAI_WHISPER_KEY),
+            api_version=ENV_AZURE_OPENAI_API_VERSION,
+        )
+    elif api_type == "whisper_azuread":
+        client = openai.AzureOpenAI(
+            endpoint=os.getenv(ENV_AZURE_OPENAI_WHISPER_ENDPOINT),
+            azure_bearer_token=DefaultAzureCredential(),
+            api_version=ENV_AZURE_OPENAI_API_VERSION,
+        )
+
+    return client
+
+
+@pytest.fixture
+def client_async(api_type):
+    if api_type == "azure":
+        client = openai.AsyncAzureOpenAI(
+            endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
+            api_key=os.getenv(ENV_AZURE_OPENAI_KEY),
+            api_version=ENV_AZURE_OPENAI_API_VERSION,
+        )
+    elif api_type == "azuread":
+        client = openai.AsyncAzureOpenAI(
+            endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
+            azure_bearer_token=AsyncDefaultAzureCredential(),
+            api_version=ENV_AZURE_OPENAI_API_VERSION,
+        )
+    elif api_type == "openai":
+        client = openai.AsyncOpenAI(
+            api_key=os.getenv(ENV_OPENAI_KEY)
+        )
+    elif api_type == "whisper_azure":
+        client = openai.AsyncAzureOpenAI(
+            endpoint=os.getenv(ENV_AZURE_OPENAI_WHISPER_ENDPOINT),
+            api_key=os.getenv(ENV_AZURE_OPENAI_WHISPER_KEY),
+            api_version=ENV_AZURE_OPENAI_API_VERSION,
+        )
+    elif api_type == "whisper_azuread":
+        client = openai.AsyncAzureOpenAI(
+            endpoint=os.getenv(ENV_AZURE_OPENAI_WHISPER_ENDPOINT),
+            azure_bearer_token=AsyncDefaultAzureCredential(),
+            api_version=ENV_AZURE_OPENAI_API_VERSION,
+        )
+
+    return client
+
+
+def build_kwargs(args, api_type):
+    test_feature = args[0].qualified_test_name
+    if test_feature.startswith("test_audio"):
+        if api_type in ["whisper_azure", "whisper_azuread"]:
+            return {"model": ENV_AZURE_OPENAI_AUDIO_NAME}
+        elif api_type == "openai":
+            return {"model": ENV_OPENAI_AUDIO_MODEL}
+    if test_feature.startswith("test_chat_completions"):
+        if api_type in ["azure", "azuread"]:
+            return {"model": ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME}
+        elif api_type == "openai":
+            return {"model": ENV_OPENAI_CHAT_COMPLETIONS_MODEL}
+    if test_feature.startswith("test_completions"):
+        if api_type in ["azure", "azuread"]:
+            return {"model": ENV_AZURE_OPENAI_COMPLETIONS_NAME}
+        elif api_type == "openai":
+            return {"model": ENV_OPENAI_COMPLETIONS_MODEL}
+    if test_feature.startswith("test_embeddings"):
+        if api_type in ["azure", "azuread"]:
+            return {"model": ENV_AZURE_OPENAI_EMBEDDINGS_NAME}
+        elif api_type == "openai":
+            return {"model": ENV_OPENAI_EMBEDDINGS_MODEL}
+    if test_feature.startswith("test_dall_e"):
+        return {}
+    raise ValueError(f"Test feature: {test_feature} needs to have its kwargs configured.")
 
 
 def configure_async(f):
     @functools.wraps(f)
     async def wrapper(*args, **kwargs):
+        if os.getenv("OPENAI_TEST_MODE") != OPENAI_TEST_MODE:
+            pytest.skip(f"Skipping - tests set to run against {OPENAI_TEST_MODE}.")
         api_type = kwargs.pop("api_type")
-        whisper = args[0].qualified_test_name.startswith("test_audio")
-        configure_api_type(api_type, whisper=whisper, **kwargs)
+        client_async = kwargs.pop("client_async")
+        azure_openai_creds = kwargs.pop("azure_openai_creds")
+        kwargs = build_kwargs(args, api_type)
         try:
-            return await f(*args, api_type=api_type, **kwargs)
-        except openai.error.RateLimitError:
+            return await f(*args, client_async=client_async, azure_openai_creds=azure_openai_creds, api_type=api_type, **kwargs)
+        except openai.RateLimitError:
             pytest.skip(f"{str(f).split(' ')[1]}[{api_type}]: Skipping - Rate limit reached.")
 
     return wrapper
@@ -133,42 +210,15 @@ def configure_async(f):
 def configure(f):
     @functools.wraps(f)
     def wrapper(*args, **kwargs):
+        if os.getenv("OPENAI_TEST_MODE") != OPENAI_TEST_MODE:
+            pytest.skip(f"Skipping - tests set to run against {OPENAI_TEST_MODE}.")
         api_type = kwargs.pop("api_type")
-        whisper = args[0].qualified_test_name.startswith("test_audio")
-        configure_api_type(api_type, whisper=whisper, **kwargs)
+        client = kwargs.pop("client")
+        azure_openai_creds = kwargs.pop("azure_openai_creds")
+        kwargs = build_kwargs(args, api_type)
         try:
-            return f(*args, api_type=api_type, **kwargs)
-        except openai.error.RateLimitError:
+            return f(*args, client=client, azure_openai_creds=azure_openai_creds, api_type=api_type, **kwargs)
+        except openai.RateLimitError:
             pytest.skip(f"{str(f).split(' ')[1]}[{api_type}]: Skipping - Rate limit reached.")
 
     return wrapper
-
-
-def setup_adapter(deployment_id):
-
-    class CustomAdapter(requests.adapters.HTTPAdapter):
-
-        def send(self, request, **kwargs):
-            request.url = f"{openai.api_base}/openai/deployments/{deployment_id}/extensions/chat/completions?api-version={openai.api_version}"
-            return super().send(request, **kwargs)
-
-    session = requests.Session()
-
-    session.mount(
-        prefix=f"{openai.api_base}/openai/deployments/{deployment_id}",
-        adapter=CustomAdapter()
-    )
-
-    openai.requestssession = session
-
-
-def setup_adapter_async(deployment_id):
-
-    class CustomAdapterAsync(aiohttp.ClientRequest):
-
-        async def send(self, conn) -> aiohttp.ClientResponse:
-            self.url = yarl.URL(f"{openai.api_base}/openai/deployments/{deployment_id}/extensions/chat/completions?api-version={openai.api_version}")
-            return await super().send(conn)
-    
-    session = aiohttp.ClientSession(request_class=CustomAdapterAsync)
-    openai.aiosession.set(session)
