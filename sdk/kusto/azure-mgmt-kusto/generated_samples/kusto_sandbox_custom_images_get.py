@@ -14,7 +14,7 @@ from azure.mgmt.kusto import KustoManagementClient
     pip install azure-identity
     pip install azure-mgmt-kusto
 # USAGE
-    python kusto_database_readonly_update.py
+    python kusto_sandbox_custom_images_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,15 +29,14 @@ def main():
         subscription_id="12345678-1234-1234-1234-123456789098",
     )
 
-    response = client.databases.begin_create_or_update(
+    response = client.sandbox_custom_images.get(
         resource_group_name="kustorptest",
         cluster_name="kustoCluster",
-        database_name="kustoReadOnlyDatabase",
-        parameters={"kind": "ReadOnlyFollowing", "location": "westus", "properties": {"hotCachePeriod": "P1D"}},
-    ).result()
+        sandbox_custom_image_name="customImage8",
+    )
     print(response)
 
 
-# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2023-08-15/examples/KustoDatabaseReadonlyUpdate.json
+# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2023-08-15/examples/KustoSandboxCustomImagesGet.json
 if __name__ == "__main__":
     main()
