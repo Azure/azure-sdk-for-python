@@ -55,6 +55,7 @@
     "sdk/core/azure-core-tracing-opencensus/**",
     "sdk/core/azure-core-tracing-opentelemetry/**",
     "sdk/core/azure-servicemanagement-legacy/**",
+    "sdk/core/corehttp/**",
     "sdk/digitaltwins/azure-digitaltwins-core/**",
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
@@ -124,6 +125,11 @@
     "conda/conda-releaselogs/azure-mgmt.md"
   ],
   "words": [
+    "pyprojects",
+    "certifi",
+    "cffi",
+    "tomlw",
+    "xdist",
     "pyprojecttoml",
     "tomli",
     "sdkrel",
@@ -205,6 +211,7 @@
     "ekus",
     "encryptor",
     "engsys",
+    "entra",
     "envname",
     "evals",
     "fileno",
@@ -497,7 +504,7 @@
       "words": [
         "wammsa"
       ]
-    },    
+    },
     {
       "filename": "sdk/tables/azure-data-tables/tests/**/*.py",
       "words": [
@@ -832,7 +839,8 @@
     {
       "filename": "sdk/keyvault/**",
       "words": [
-        "eddsa"
+        "eddsa",
+        "Thawte"
       ]
     },
     {
