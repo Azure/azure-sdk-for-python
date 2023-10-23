@@ -163,6 +163,7 @@ from ._models_py3 import CouchbaseTableDataset
 from ._models_py3 import CreateDataFlowDebugSessionRequest
 from ._models_py3 import CreateDataFlowDebugSessionResponse
 from ._models_py3 import CreateRunResponse
+from ._models_py3 import Credential
 from ._models_py3 import CredentialReference
 from ._models_py3 import CustomActivity
 from ._models_py3 import CustomActivityReferenceObject
@@ -398,6 +399,7 @@ from ._models_py3 import MagentoLinkedService
 from ._models_py3 import MagentoObjectDataset
 from ._models_py3 import MagentoSource
 from ._models_py3 import ManagedIdentity
+from ._models_py3 import ManagedIdentityCredential
 from ._models_py3 import ManagedIntegrationRuntime
 from ._models_py3 import ManagedVirtualNetworkReference
 from ._models_py3 import ManagedVirtualNetworkSettings
@@ -597,6 +599,7 @@ from ._models_py3 import SelfHostedIntegrationRuntime
 from ._models_py3 import ServiceNowLinkedService
 from ._models_py3 import ServiceNowObjectDataset
 from ._models_py3 import ServiceNowSource
+from ._models_py3 import ServicePrincipalCredential
 from ._models_py3 import SetVariableActivity
 from ._models_py3 import SftpLocation
 from ._models_py3 import SftpReadSettings
@@ -1029,6 +1032,7 @@ __all__ = [
     "CreateDataFlowDebugSessionRequest",
     "CreateDataFlowDebugSessionResponse",
     "CreateRunResponse",
+    "Credential",
     "CredentialReference",
     "CustomActivity",
     "CustomActivityReferenceObject",
@@ -1264,6 +1268,7 @@ __all__ = [
     "MagentoObjectDataset",
     "MagentoSource",
     "ManagedIdentity",
+    "ManagedIdentityCredential",
     "ManagedIntegrationRuntime",
     "ManagedVirtualNetworkReference",
     "ManagedVirtualNetworkSettings",
@@ -1463,6 +1468,7 @@ __all__ = [
     "ServiceNowLinkedService",
     "ServiceNowObjectDataset",
     "ServiceNowSource",
+    "ServicePrincipalCredential",
     "SetVariableActivity",
     "SftpLocation",
     "SftpReadSettings",
