@@ -810,6 +810,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 content=message_text,
                 id=message_id,
                 inserted_on=inserted_on,
+                dequeue_count=dequeue_count,
                 expires_on=expires_on,
                 pop_receipt = response['popreceipt'],
                 next_visible_on = response['time_next_visible']
