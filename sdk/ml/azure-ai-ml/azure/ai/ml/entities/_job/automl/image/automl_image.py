@@ -26,7 +26,7 @@ class AutoMLImage(AutoMLVertical, ABC):
 
     :keyword task_type: Required. Type of task to run.
     Possible values include: "ImageClassification", "ImageClassificationMultilabel",
-                                  "ImageObjectDetection", "ImageInstanceSegmentation"
+                              "ImageObjectDetection", "ImageInstanceSegmentation"
     :paramtype task_type: str
     :keyword limits: Limit settings for all AutoML Image jobs. Defaults to None.
     :paramtype limits: Optional[~azure.ai.ml.automl.ImageLimitSettings]
