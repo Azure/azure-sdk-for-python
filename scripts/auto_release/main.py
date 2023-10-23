@@ -139,6 +139,7 @@ class CodegenTestPR:
         self.container_name = ''
         self.private_package_link = []  # List[str]
         self.tag_is_stable = False
+        self.has_breaking_change = False
         self.has_test = False
         self.check_package_size_result = []  # List[str]
 
@@ -325,7 +326,9 @@ class CodegenTestPR:
 
     def get_changelog(self) -> str:
         content = self.get_autorest_result()
-        self.has_breaking_change = content["packages"][0]["hasBreakingChange"]
+        if self.tag_is_stable:
+            self.has_breaking_change = content["packages"][0]["changelog"]["hasBreakingChange"]
+            log(f"has_breaking_change is {self.has_breaking_change}")
         return content["packages"][0]["changelog"]["content"]
 
     def get_last_release_version(self) -> str:
@@ -574,7 +577,7 @@ class CodegenTestPR:
                 'to release it before target date'
             api.issues.create_comment(issue_number=issue_number, body=body)
 
-            if self.tag_is_stable and self.has_breaking_change:
+            if self.has_breaking_change:
                 api.issues.add_labels(issue_number=issue_number, labels=["BreakingChange"])
 
     def issue_comment(self):
