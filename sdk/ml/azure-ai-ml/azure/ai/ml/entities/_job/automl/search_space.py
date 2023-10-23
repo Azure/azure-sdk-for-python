@@ -3,9 +3,12 @@
 # ---------------------------------------------------------
 
 
+from typing import Any
+
+
 class SearchSpace:
     """SearchSpace class for AutoML verticals."""
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         for k, v in kwargs.items():
             self.__setattr__(k, v)
