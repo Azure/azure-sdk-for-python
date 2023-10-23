@@ -29,7 +29,7 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
 
     :param primary_metric: The primary metric to use for optimization.
     :type primary_metric: Optional[str, ~azure.ai.ml.automl.ClassificationMultilabelPrimaryMetrics]
-    :param kwargs: Job-specific arguments
+    :param kwargs: Job-specific arguments.
     :type kwargs: Dict[str, Any]
 
     .. admonition:: Example:
