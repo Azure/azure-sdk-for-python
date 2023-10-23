@@ -56,7 +56,7 @@
     "sdk/core/azure-core-tracing-opentelemetry/**",
     "sdk/core/azure-servicemanagement-legacy/**",
     "sdk/core/corehttp/**",
-	"sdk/cosmos/azure-cosmos/azure/cosmos/_execution_context/document_producer",
+	"sdk/cosmos/azure-cosmos/azure/cosmos/_execution_context/document_producer.py",
 	"sdk/cosmos/azure-cosmos/azure/cosmos/_execution_context/multi_execution_aggregator.py",
     "sdk/digitaltwins/azure-digitaltwins-core/**",
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
