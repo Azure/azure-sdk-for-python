@@ -4,7 +4,6 @@ include *.md
 include azure/__init__.py
 include azure/ai/__init__.py
 include azure/ai/generative/py.typed
-include azure/ai/generative/operations/component-configs/*
 include azure/ai/generative/index/_utils/encodings/*
 recursive-include azure/ai/generative/synthetic/templates *.txt
 recursive-include azure/ai/generative/synthetic/simulator/templates *.md

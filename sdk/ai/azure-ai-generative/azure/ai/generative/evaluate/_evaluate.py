@@ -21,8 +21,10 @@ from azure.ai.generative.evaluate._metric_handler import MetricHandler
 from azure.ai.generative.evaluate._utils import _is_flow, load_jsonl, _get_artifact_dir_path
 from azure.ai.generative.evaluate._mlflow_log_collector import RedirectUserOutputStreams
 
+from ._utils import _write_properties_to_run_history
 
 LOGGER = logging.getLogger(__name__)
+
 
 def _get_handler_class(
         asset,
@@ -75,41 +77,45 @@ def _log_metrics(run_id, metrics):
 
 def evaluate(
         evaluation_name=None,
-        asset=None,
-        asset_type=None,
+        target=None,
         data=None,
-        truth_data=None,
-        prediction_data=None,
         task_type=None,
-        metrics_config=None,
-        params=None,
-        metrics=None,
+        sweep_args=None,
+        metrics_list=None,
+        model_config=None,
+        data_mapping=None,
         **kwargs
 ):
     results_list = []
+    metrics_config = {}
     if "tracking_uri" in kwargs:
         mlflow.set_tracking_uri(kwargs.get("tracking_uri"))
 
-    if params:
+    if model_config:
+        metrics_config.update({"openai_params": model_config})
+
+    if data_mapping:
+        metrics_config.update(data_mapping)
+
+    if sweep_args:
         import itertools
-        keys, values = zip(*params.items())
+        keys, values = zip(*sweep_args.items())
         params_permutations_dicts = [dict(zip(keys, v)) for v in itertools.product(*values)]
 
         with mlflow.start_run(run_name=evaluation_name) as run:
-            log_param_and_tag("_azureml.evaluation_run", True)
+            log_property_and_tag("_azureml.evaluation_run", "azure-ai-generative")
             for index, params_permutations_dict in enumerate(params_permutations_dicts):
                 evaluation_name_variant = f"{evaluation_name}_{index}" if evaluation_name else f"{run.info.run_name}_{index}"
 
                 evaluation_results = _evaluate(
                     evaluation_name=evaluation_name_variant,
-                    asset=asset,
+                    target=target,
                     data=data,
-                    truth_data=truth_data,
-                    prediction_data=prediction_data,
                     task_type=task_type,
-                    metrics_config=metrics_config,
+                    model_config=model_config,
+                    data_mapping=data_mapping,
                     params_dict=params_permutations_dict,
-                    metrics=metrics,
+                    metrics=metrics_list,
                     **kwargs
                 )
             results_list.append(evaluation_results)
@@ -117,13 +123,12 @@ def evaluate(
     else:
         evaluation_result = _evaluate(
             evaluation_name=evaluation_name,
-            asset=asset,
+            target=target,
             data=data,
-            truth_data=truth_data,
-            prediction_data=prediction_data,
             task_type=task_type,
-            metrics_config=metrics_config,
-            metrics=metrics,
+            model_config=model_config,
+            data_mapping=data_mapping,
+            metrics=metrics_list,
             **kwargs
         )
 
@@ -132,14 +137,14 @@ def evaluate(
 
 def _evaluate(
         evaluation_name=None,
-        asset=None,
-        asset_type=None,
+        target=None,
         data=None,
         truth_data=None,
         prediction_data=None,
         task_type=None,
-        metrics_config=None,
         metrics=None,
+        data_mapping=None,
+        model_config=None,
         **kwargs
 ):
     try:
@@ -151,23 +156,36 @@ def _evaluate(
         test_data = data
         _data_is_file = False
 
-    if asset is None and prediction_data is None:
-        raise Exception("asset and prediction data cannot be null")
+    if "y_pred" in data_mapping:
+        prediction_data = data_mapping.get("y_pred")
+
+    if "y_test" in data_mapping:
+        truth_data = data_mapping.get("y_test")
+
+    if target is None and prediction_data is None:
+        raise Exception("target and prediction data cannot be null")
 
     if task_type not in [constants.Tasks.QUESTION_ANSWERING, constants.Tasks.CHAT_COMPLETION]:
         raise Exception(f"task type {task_type} is not supported")
 
-    with mlflow.start_run(nested=True if mlflow.active_run() else False, run_name=evaluation_name) as run,\
-        RedirectUserOutputStreams(logger=LOGGER) as _:
-        
-        log_param_and_tag("_azureml.evaluation_run", True)        
+    metrics_config = {}
+    if model_config:
+        metrics_config.update({"openai_params": model_config})
+
+    if data_mapping:
+        metrics_config.update(data_mapping)
+
+    with mlflow.start_run(nested=True if mlflow.active_run() else False, run_name=evaluation_name) as run, \
+            RedirectUserOutputStreams(logger=LOGGER) as _:
+
+        log_property_and_tag("_azureml.evaluation_run", "azure-ai-generative")
         # Log input is a preview feature behind an allowlist. Uncomment this line once the feature is broadly available.
         # log_input(data=data, data_is_file=_data_is_file)
 
-        asset_handler_class = _get_handler_class(asset)
+        asset_handler_class = _get_handler_class(target)
 
         asset_handler = asset_handler_class(
-            asset=asset,
+            asset=target,
             prediction_data=prediction_data,
             ground_truth=truth_data,
             test_data=test_data,
@@ -211,7 +229,7 @@ def _evaluate(
 
         with tempfile.TemporaryDirectory() as tmpdir:
             for param_name, param_value in kwargs.get("params_dict", {}).items():
-            
+
                 try:
                     mlflow.log_param(param_name, param_value)
                 except MlflowException as ex:
@@ -220,8 +238,9 @@ def _evaluate(
                     # But since we control how params are logged, this is prob fine for now.
 
                     if ex.error_code == ErrorCode.Name(INVALID_PARAMETER_VALUE):
-                        LOGGER.warning(f"Parameter {param_name} value is too long to log. Truncating and logging it as an artifact.")
-                        
+                        LOGGER.warning(
+                            f"Parameter {param_name} value is too long to log. Truncating and logging it as an artifact.")
+
                         # Truncate the value to 500 bytes and log it.
                         truncated_value = param_value.encode('utf-8')[:500].decode('utf-8', 'ignore')
                         mlflow.log_param(param_name, truncated_value)
@@ -237,20 +256,22 @@ def _evaluate(
             eval_artifact_df = _get_instance_table().to_json(orient="records", lines=True, force_ascii=False)
             tmp_path = os.path.join(tmpdir, "eval_results.jsonl")
 
-            with open(tmp_path, "w") as f:
+            with open(tmp_path, "w", encoding="utf-8") as f:
                 f.write(eval_artifact_df)
 
             mlflow.log_artifact(tmp_path)
-            log_param_and_tag("_azureml.evaluate_artifacts", json.dumps([{"path": "eval_results.jsonl", "type": "table"}]))
+            log_property_and_tag("_azureml.evaluate_artifacts",
+                              json.dumps([{"path": "eval_results.jsonl", "type": "table"}]))
             mlflow.log_param("task_type", task_type)
             log_param_and_tag("_azureml.evaluate_metric_mapping", json.dumps(metrics_handler._metrics_mapping_to_log))
 
     return metrics
 
+
 def log_input(data, data_is_file):
     try:
-    # Mlflow service supports only uri_folder, hence this is need to create a dir to log input data.
-    # once support is extended, we can revisit this logic
+        # Mlflow service supports only uri_folder, hence this is need to create a dir to log input data.
+        # once support is extended, we can revisit this logic
         with tempfile.TemporaryDirectory() as tempdir:
             if data_is_file:
                 file_name = os.path.basename(data)
@@ -271,6 +292,11 @@ def log_input(data, data_is_file):
         LOGGER.error("Error logging data as dataset, continuing without it")
         LOGGER.exception(ex, stack_info=True)
 
+
 def log_param_and_tag(key, value):
     mlflow.log_param(key, value)
+    mlflow.set_tag(key, value)
+
+def log_property_and_tag(key, value, logger=LOGGER):
+    _write_properties_to_run_history({key: value}, logger)
     mlflow.set_tag(key, value)

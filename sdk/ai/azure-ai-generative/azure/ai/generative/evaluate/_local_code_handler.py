@@ -26,10 +26,8 @@ class LocalCodeHandler(BaseHandler):
         # TODO: Check if this is the right place for this logic
         prediction_data = []
         test_data = self.get_test_data_as_jsonl()
-        try:
-            prediction_data = self.asset(test_data)
-        except Exception as ex:
-            for d in test_data:
-                prediction_data.append(self.asset(**d))
 
+        for d in test_data:
+            prediction_data.append(self.asset(**d))
+        
         return prediction_data

@@ -78,5 +78,29 @@ def _get_artifact_dir_path(path):
     return f"azureml://datastores/{datastore}/paths/{file_path}"
 
 
+def _write_properties_to_run_history(properties: dict, logger) -> None:
+    import mlflow
+    from mlflow.tracking import MlflowClient
+    from mlflow.utils.rest_utils import http_request
 
-
+    # get mlflow run
+    run = mlflow.active_run()
+    if run is None:
+        run = mlflow.start_run()
+    # get auth from client
+    client = MlflowClient()
+    try:
+        cred = client._tracking_client.store.get_host_creds()  # pylint: disable=protected-access
+        # update host to run history and request PATCH API
+        cred.host = cred.host.replace("mlflow/v2.0", "mlflow/v1.0").replace("mlflow/v1.0", "history/v1.0")
+        response = http_request(
+            host_creds=cred,
+            endpoint=f"/experimentids/{run.info.experiment_id}/runs/{run.info.run_id}",
+            method="PATCH",
+            json={"runId": run.info.run_id, "properties": properties},
+        )
+        if response.status_code != 200:
+            logger.error("Fail writing properties '%s' to run history: %s", properties, response.text)
+            response.raise_for_status()
+    except AttributeError as e:
+        logger.error("Fail writing properties '%s' to run history: %s", properties, e)
