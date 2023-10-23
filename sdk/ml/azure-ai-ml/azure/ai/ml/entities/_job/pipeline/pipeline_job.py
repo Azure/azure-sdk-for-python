@@ -556,7 +556,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         return rest_job
 
     @classmethod
-    def _load_from_rest(cls, obj: Union[JobBase, JobBase_2310]) -> "PipelineJob":
+    def _load_from_rest(cls, obj: JobBase_2310) -> "PipelineJob":
         """Build a pipeline instance from rest pipeline object.
 
         :param obj: The REST Pipeline Object
@@ -600,8 +600,10 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
             properties=properties.properties,
             experiment_name=properties.experiment_name,
             status=properties.status,
-            creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,  # Temporarily not modified to 2310 version
-            services=JobServiceBase._from_rest_job_services(properties.services) if properties.services else None,  # Temporarily not modified to 2310 version
+            creation_context=SystemData._from_rest_object(obj.system_data)
+            if obj.system_data
+            else None,  # Temporarily not modified to 2310 version
+            services=JobServiceBase._from_rest_job_services_2310(properties.services) if properties.services else None,
             compute=get_resource_name_from_arm_id_safe(properties.compute_id),
             settings=settings_sdk,
             identity=_BaseJobIdentityConfiguration._from_rest_object_2310(properties.identity)
