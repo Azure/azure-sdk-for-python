@@ -10,9 +10,9 @@ import time
 import functools
 import collections
 from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
-from typing_extensions import TypeAlias
 from datetime import timedelta
 from urllib.parse import urlparse
+from typing_extensions import TypeAlias
 
 from azure.core.credentials import (
     AccessToken,
