@@ -14,7 +14,7 @@ from azure.mgmt.datadog import MicrosoftDatadogClient
     pip install azure-identity
     pip install azure-mgmt-datadog
 # USAGE
-    python monitors_refresh_set_password_link.py
+    python refresh_set_password_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -36,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/datadog/resource-manager/Microsoft.Datadog/stable/2022-06-01/examples/RefreshSetPassword_Get.json
+# x-ms-original-file: specification/datadog/resource-manager/Microsoft.Datadog/stable/2023-01-01/examples/RefreshSetPassword_Get.json
 if __name__ == "__main__":
     main()
