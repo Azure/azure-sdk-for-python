@@ -164,6 +164,7 @@ from ._models_py3 import CreateDataFlowDebugSessionRequest
 from ._models_py3 import CreateDataFlowDebugSessionResponse
 from ._models_py3 import CreateRunResponse
 from ._models_py3 import Credential
+from ._models_py3 import CredentialListResponse
 from ._models_py3 import CredentialReference
 from ._models_py3 import CustomActivity
 from ._models_py3 import CustomActivityReferenceObject
@@ -400,6 +401,7 @@ from ._models_py3 import MagentoObjectDataset
 from ._models_py3 import MagentoSource
 from ._models_py3 import ManagedIdentity
 from ._models_py3 import ManagedIdentityCredential
+from ._models_py3 import ManagedIdentityCredentialResource
 from ._models_py3 import ManagedIntegrationRuntime
 from ._models_py3 import ManagedVirtualNetworkReference
 from ._models_py3 import ManagedVirtualNetworkSettings
@@ -1033,6 +1035,7 @@ __all__ = [
     "CreateDataFlowDebugSessionResponse",
     "CreateRunResponse",
     "Credential",
+    "CredentialListResponse",
     "CredentialReference",
     "CustomActivity",
     "CustomActivityReferenceObject",
@@ -1269,6 +1272,7 @@ __all__ = [
     "MagentoSource",
     "ManagedIdentity",
     "ManagedIdentityCredential",
+    "ManagedIdentityCredentialResource",
     "ManagedIntegrationRuntime",
     "ManagedVirtualNetworkReference",
     "ManagedVirtualNetworkSettings",

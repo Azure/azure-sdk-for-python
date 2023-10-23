@@ -17486,6 +17486,44 @@ class Credential(_serialization.Model):
         self.annotations = annotations
 
 
+class CredentialListResponse(_serialization.Model):
+    """A list of credential resources.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: List of credentials. Required.
+    :vartype value: list[~azure.synapse.artifacts.models.ManagedIdentityCredentialResource]
+    :ivar next_link: The link to the next page of results, if any remaining results exist.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ManagedIdentityCredentialResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: List["_models.ManagedIdentityCredentialResource"],
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of credentials. Required.
+        :paramtype value: list[~azure.synapse.artifacts.models.ManagedIdentityCredentialResource]
+        :keyword next_link: The link to the next page of results, if any remaining results exist.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
 class CredentialReference(_serialization.Model):
     """Credential reference type.
 
@@ -35923,6 +35961,52 @@ class ManagedIdentityCredential(Credential):
         )
         self.type: str = "ManagedIdentity"
         self.resource_id = resource_id
+
+
+class ManagedIdentityCredentialResource(SubResource):
+    """Credential resource type.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    :ivar properties: Managed Identity Credential properties. Required.
+    :vartype properties: ~azure.synapse.artifacts.models.ManagedIdentityCredential
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "properties": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "properties": {"key": "properties", "type": "ManagedIdentityCredential"},
+    }
+
+    def __init__(self, *, properties: "_models.ManagedIdentityCredential", **kwargs: Any) -> None:
+        """
+        :keyword properties: Managed Identity Credential properties. Required.
+        :paramtype properties: ~azure.synapse.artifacts.models.ManagedIdentityCredential
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
 
 
 class ManagedIntegrationRuntime(IntegrationRuntime):

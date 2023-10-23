@@ -10,6 +10,7 @@ input-file:
   - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/preview/2021-06-01-preview/entityTypes/SparkConfiguration.json
   - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/artifacts.json
   - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/bigDataPools.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/credential.json
   - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/dataflows.json
   - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/datasets.json
   - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/gitintegration.json
