@@ -20,7 +20,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class ImageSweepSettings(RestTranslatableMixin):
     """Sweep settings for all AutoML Image Verticals.
 
-    :keyword sampling_algorithm: Required. [Required] Type of the hyperparameter sampling
+    :keyword sampling_algorithm: Required. Type of the hyperparameter sampling.
         algorithms. Possible values include: "Grid", "Random", "Bayesian".
     :paramtype sampling_algorithm: Union[str, ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.GRID,
         ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.BAYESIAN,
