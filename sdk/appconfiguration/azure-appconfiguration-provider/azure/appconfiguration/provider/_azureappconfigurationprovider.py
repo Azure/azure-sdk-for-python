@@ -439,7 +439,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                         updated_sentinel_keys[(key, label)] = updated_sentinel.etag
                 # Need to only update once, no matter how many sentinels are updated
                 if need_refresh:
-                    self._load_all(sentinel_keys = updated_sentinel_keys, **kwargs)
+                    self._load_all(sentinel_keys=updated_sentinel_keys, **kwargs)
                     if self._on_refresh_success:
                         self._on_refresh_success()
                 # Even if we don't need to refresh, we should reset the timer
