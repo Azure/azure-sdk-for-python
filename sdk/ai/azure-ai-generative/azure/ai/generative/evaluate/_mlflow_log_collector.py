@@ -54,5 +54,6 @@ class RedirectUserOutputStreams(object):
             mlflow.log_artifact(self.user_log_path, "user_logs")
 
             self.user_log_fp.close()
-            os.remove(self.user_log_path)
+            # Commenting this out due to a bug where file is help by another process causing delete to fail
+            # os.remove(self.user_log_path)
             self.logger.debug("User scope execution complete.")

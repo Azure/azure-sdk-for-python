@@ -26,9 +26,6 @@ class BaseHandler(metaclass=abc.ABCMeta):
 
         self._test_data = test_data_df
 
-        if self._prediction_data is None:
-            self._prediction_data = prediction_data
-
         self.params_dict = kwargs.pop("params_dict", None)
 
     @property
