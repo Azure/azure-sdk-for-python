@@ -30,7 +30,8 @@ from azure.ai.ml._restclient.v2023_10_01.models import InputDeliveryMode as Inpu
 from azure.ai.ml._restclient.v2023_10_01.models import JobInput as RestJobInput_2310
 from azure.ai.ml._restclient.v2023_10_01.models import JobInputType as JobInputType_2310
 from azure.ai.ml._restclient.v2023_10_01.models import JobOutput as RestJobOutput_2310
-from azure.ai.ml._restclient.v2023_10_01.models import JobOutputType as JobOutputType_2310, LiteralJobInput as LiteralJobInput_2310
+from azure.ai.ml._restclient.v2023_10_01.models import JobOutputType as JobOutputType_2310
+from azure.ai.ml._restclient.v2023_10_01.models import LiteralJobInput as LiteralJobInput_2310
 from azure.ai.ml._restclient.v2023_10_01.models import MLFlowModelJobInput as RestMLFlowModelJobInput_2310
 from azure.ai.ml._restclient.v2023_10_01.models import MLFlowModelJobOutput as RestMLFlowModelJobOutput_2310
 from azure.ai.ml._restclient.v2023_10_01.models import MLTableJobInput as RestMLTableJobInput_2310
@@ -648,9 +649,9 @@ def from_rest_data_outputs_2310(outputs: Dict[str, RestJobOutput_2310]) -> Dict[
                 type=output_type_mapping[output_value.job_output_type],
                 path=output_value.uri,
                 mode=OUTPUT_MOUNT_MAPPING_FROM_REST_2310[output_value.mode] if output_value.mode else None,
-                description=getattr(output_value, 'description', None),
-                name=getattr(output_value, 'asset_name', None),
-                version=getattr(output_value, 'asset_version', None),
+                description=getattr(output_value, "description", None),
+                name=getattr(output_value, "asset_name", None),
+                version=getattr(output_value, "asset_version", None),
             )
         else:
             msg = "unsupported JobOutput type: {}".format(output_value.job_output_type)
