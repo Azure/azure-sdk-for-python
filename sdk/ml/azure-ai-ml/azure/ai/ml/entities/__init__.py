@@ -129,6 +129,11 @@ from ._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigger
 from ._system_data import SystemData
 from ._validation import ValidationResult
 from ._workspace.connections.workspace_connection import WorkspaceConnection
+from ._workspace.connections.workspace_connection_subtypes import (
+    OpenAIWorkspaceConnection,
+    CognitiveSearchWorkspaceConnection,
+    CognitiveServiceWorkspaceConnection,
+)
 from ._workspace.customer_managed_key import CustomerManagedKey
 from ._workspace.diagnose import (
     DiagnoseRequestProperties,
@@ -280,6 +285,9 @@ __all__ = [
     "Workspace",
     "WorkspaceKeys",
     "WorkspaceConnection",
+    "OpenAIWorkspaceConnection",
+    "CognitiveSearchWorkspaceConnection",
+    "CognitiveServiceWorkspaceConnection",
     "DiagnoseRequestProperties",
     "DiagnoseResult",
     "DiagnoseResponseResult",

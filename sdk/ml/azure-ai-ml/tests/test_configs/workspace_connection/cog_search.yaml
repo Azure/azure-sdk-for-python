@@ -3,5 +3,5 @@ type: cognitive_search
 target: a_base
 api_version: dummy
 credentials:
-  type: ApiKey
+  type: api_key
   key: some_key

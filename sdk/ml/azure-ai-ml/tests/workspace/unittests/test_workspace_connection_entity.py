@@ -6,7 +6,7 @@ from test_utilities.utils import verify_entity_load_and_dump
 from azure.ai.ml import load_workspace_connection
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthType, ConnectionCategory
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.entities import WorkspaceConnection
+from azure.ai.ml.entities import WorkspaceConnection, OpenAIWorkspaceConnection
 from azure.ai.ml.entities._credentials import PatTokenConfiguration
 
 
@@ -140,14 +140,15 @@ class TestWorkspaceConnectionEntity:
         ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/open_ai.yaml")
 
         assert ws_connection.type == camel_to_snake(ConnectionCategory.AZURE_OPEN_AI)
-        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
-        assert ws_connection.credentials.username == "dummy3"
-        assert ws_connection.credentials.password == "dummy4"
+        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
+        assert ws_connection.credentials.key == "12344"
         assert ws_connection.name == "test_ws_conn_open_ai"
         assert ws_connection.target == "dummy"
         assert ws_connection.tags["hello"] == "world"
-        assert ws_connection.api_type == "dummy1"
-        assert ws_connection.api_version == "dummy2"
+        assert ws_connection.tags["ApiVersion"] == "some_version"
+        assert ws_connection.tags["ApiType"] == "some_type"
+        assert ws_connection.api_version == "some_version"
+        assert ws_connection.api_type == "some_type"
 
         ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/cog_search.yaml")
 
@@ -156,31 +157,29 @@ class TestWorkspaceConnectionEntity:
         assert ws_connection.credentials.key == "some_key"
         assert ws_connection.name == "test_ws_conn_cog_search"
         assert ws_connection.target == "a_base"
-        assert ws_connection.tags == {}
+        assert ws_connection.tags["ApiVersion"] == "dummy"
         assert ws_connection.api_version == "dummy"
 
         ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/cog_service.yaml")
 
         assert ws_connection.type == camel_to_snake(ConnectionCategory.COGNITIVE_SERVICE)
-        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
-        assert ws_connection.credentials.username == "dummy"
-        assert ws_connection.credentials.password == "dummy"
+        assert ws_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
+        assert ws_connection.credentials.key == "2222"
         assert ws_connection.name == "test_ws_conn_cog_service"
         assert ws_connection.target == "my_endpoint"
-        assert ws_connection.tags == {"one": "two"}
+        assert ws_connection.tags["one"] == "two"
+        assert ws_connection.tags["ApiVersion"] == "dummy"
         assert ws_connection.kind == "some_kind"
         assert ws_connection.api_version == "dummy"
 
     def test_ws_conn_rest_conversion(self):
         ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/open_ai.yaml")
         rest_conn = ws_connection._to_rest_object()
-        new_ws_conn = WorkspaceConnection._from_rest_object(rest_obj=rest_conn)
-
+        new_ws_conn = OpenAIWorkspaceConnection._from_rest_object(rest_obj=rest_conn)
         assert ws_connection.type == new_ws_conn.type
         assert ws_connection.credentials.type == new_ws_conn.credentials.type
-        assert ws_connection.credentials.username == new_ws_conn.credentials.username
-        assert ws_connection.credentials.password == new_ws_conn.credentials.password
+        assert ws_connection.credentials.key == new_ws_conn.credentials.key
         assert ws_connection.target == new_ws_conn.target
         assert ws_connection.tags["hello"] == new_ws_conn.tags["hello"]
-        assert ws_connection.api_type == new_ws_conn.api_type
         assert ws_connection.api_version == new_ws_conn.api_version
+        assert ws_connection.api_type == new_ws_conn.api_type

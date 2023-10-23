@@ -36,9 +36,6 @@ class WorkspaceConnectionSchema(ResourceSchema):
             ConnectionCategory.AZURE_SYNAPSE_ANALYTICS,
             ConnectionCategory.AZURE_MY_SQL_DB,
             ConnectionCategory.AZURE_POSTGRES_DB,
-            ConnectionCategory.AZURE_OPEN_AI,
-            ConnectionCategory.COGNITIVE_SERVICE,
-            ConnectionCategory.COGNITIVE_SEARCH,
         ],
         casing_transform=camel_to_snake,
         required=True,
@@ -57,10 +54,6 @@ class WorkspaceConnectionSchema(ResourceSchema):
             NestedField(ApiKeyConfigurationSchema),
         ]
     )
-
-    api_type = fields.Str(required=False, allow_none=True)
-    api_version = fields.Str(required=False, allow_none=True)
-    kind = fields.Str(required=False, allow_none=True)
 
     @post_load
     def make(self, data, **kwargs):

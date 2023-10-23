@@ -1,11 +1,10 @@
 name: test_ws_conn_open_ai
 type: azure_open_ai
 target: dummy
-api_type: dummy1
-api_version: dummy2
+api_version: some_version
+api_type: some_type
 credentials:
-  type: username_password
-  username: dummy3
-  password: dummy4
+  type: api_key
+  key: "12344"
 tags:
   hello: world

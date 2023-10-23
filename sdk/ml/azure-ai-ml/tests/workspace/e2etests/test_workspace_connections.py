@@ -302,12 +302,12 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         wps_connection = client.connections.create_or_update(workspace_connection=wps_connection)
 
         assert wps_connection.name == wps_connection_name
-        assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
+        assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
         assert wps_connection.type == camel_to_snake(ConnectionCategory.AZURE_OPEN_AI)
         assert wps_connection.tags is not None
         assert wps_connection.tags["hello"] == "world"
-        assert wps_connection.api_type == "dummy1"
-        assert wps_connection.api_version == "dummy2"
+        assert wps_connection.api_type == "some_type"
+        assert wps_connection.api_version == "some_version"
 
         client.connections.delete(name=wps_connection_name)
 
@@ -362,7 +362,7 @@ class TestWorkspaceConnections(AzureRecordedTestCase):
         wps_connection = client.connections.create_or_update(workspace_connection=wps_connection)
 
         assert wps_connection.name == wps_connection_name
-        assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
+        assert wps_connection.credentials.type == camel_to_snake(ConnectionAuthType.API_KEY)
         assert wps_connection.type == camel_to_snake(ConnectionCategory.COGNITIVE_SERVICE)
         assert wps_connection.tags is not None
         assert wps_connection.api_version == "dummy"
