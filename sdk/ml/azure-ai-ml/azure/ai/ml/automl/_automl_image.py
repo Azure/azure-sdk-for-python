@@ -171,7 +171,7 @@ def image_classification_multilabel(
                 :end-before: [END automl.image_classification_multilabel]
                 :language: python
                 :dedent: 8
-                :caption: creating an automl image classification multilabel job
+                :caption: creating an automl image multilabel classification job
     """
     return _create_image_job(
         job_cls=ImageClassificationMultilabelJob,
