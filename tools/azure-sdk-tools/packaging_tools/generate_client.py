@@ -44,8 +44,9 @@ def generate_typespec(folder: Path) -> None:
 
     if not tsp_location_path.exists():
         raise ValueError(
-            "Didn't find a tsp_location.yaml in local directory. Please provide a valid "
-            "tsp-location.yaml file, for more information on how to create one, see: "
+            "Didn't find a tsp_location.yaml in local directory. Please make sure a valid "
+            "tsp-location.yaml file exists before running this command, for more information "
+            "on how to create one, see: "
             "https://github.com/Azure/azure-sdk-tools/tree/main/tools/tsp-client/README.md"
         )
 
