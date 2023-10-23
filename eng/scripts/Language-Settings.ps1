@@ -641,19 +641,26 @@ function Get-python-EmitterAdditionalOptions([string]$projectDirectory) {
   return "--option @azure-tools/typespec-python.emitter-output-dir=$projectDirectory/"
 }
 
+function Get-python-DirectoriesForGeneration () {
+  Get-ChildItem "$RepoRoot/sdk" -Directory
+    | Get-ChildItem -Directory
+    | Where-Object { $_ -notmatch "-mgmt-" }
+    | Where-Object { (Test-Path "$_/tsp-location.yaml") -or (Test-Path "$_/swagger/README.md") }
+}
+
 function Update-python-GeneratedSdks([string]$PackageDirectoriesFile) {
   $packageDirectories = Get-Content $PackageDirectoriesFile | ConvertFrom-Json
   
   $directoriesWithErrors = @()
 
   foreach ($directory in $packageDirectories) {
-    Push-Location $RepoRoot
+    Push-Location $RepoRoot/sdk/$directory
     try {
       Write-Host "`n`n======================================================================"
-      Write-Host "Generating projects under directory '$directory'" -ForegroundColor Yellow
+      Write-Host "Generating project under directory 'sdk/$directory'" -ForegroundColor Yellow
       Write-Host "======================================================================`n"
 
-      Invoke-LoggedCommand "python scripts/typespec_refresh_sdk/main.py sdk/$directory" -GroupOutput
+      Invoke-LoggedCommand "tox run -e generate" -GroupOutput
     }
     catch {
       Write-Host "##[error]Error generating project under directory $directory"
