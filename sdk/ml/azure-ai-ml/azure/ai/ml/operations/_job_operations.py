@@ -684,7 +684,7 @@ class JobOperations(_ScopeDependentOperations):
             # request for submitting to ES. Once we request to ES and start the run, we
             # need to put the same body to MFE to append user tags etc.
             if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
-                job_object = self._get_pipeline_job(rest_job_resource.name)
+                job_object = self._get_job_2310(rest_job_resource.name)
             else:
                 job_object = self._get_job(rest_job_resource.name)
             if result.properties.tags is not None:
@@ -722,7 +722,7 @@ class JobOperations(_ScopeDependentOperations):
     def _archive_or_restore(self, name: str, is_archived: bool):
         job_object = self._get_job(name)
         if job_object.properties.job_type == RestJobType.PIPELINE:
-            job_object = self._get_pipeline_job(name)
+            job_object = self._get_job_2310(name)
         if _is_pipeline_child_job(job_object):
             raise PipelineChildJobError(job_id=job_object.id)
         job_object.properties.is_archived = is_archived
@@ -1011,7 +1011,7 @@ class JobOperations(_ScopeDependentOperations):
 
     # Upgrade api from 2023-04-01-preview to 2023-10-01 for pipeline job
     # We can remove this function once `_get_job` function has also been upgraded to 2023-10-01 api
-    def _get_pipeline_job(self, name: str) -> JobBase_2310:
+    def _get_job_2310(self, name: str) -> JobBase_2310:
         service_client_operation = self.pipeline_service_client.jobs if self.pipeline_service_client \
             else self._service_client_operation
         return service_client_operation.get(
