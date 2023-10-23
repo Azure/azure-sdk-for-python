@@ -3,10 +3,17 @@
 # ---------------------------------------------------------
 from typing import Any, Iterable, Optional
 
+from azure.core.tracing.decorator import distributed_trace
+
 from azure.ai.resources._project_scope import OperationScope
 from azure.ai.resources.constants._common import DEFAULT_OPEN_AI_CONNECTION_NAME
 from azure.ai.resources.entities.connection import Connection
 from azure.ai.ml import MLClient
+
+from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, OpsLogger
+
+ops_logger = OpsLogger(__name__)
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class ConnectionOperations:
@@ -19,7 +26,10 @@ class ConnectionOperations:
 
     def __init__(self, ml_client: MLClient, **kwargs: Any):
         self._ml_client = ml_client
+        ops_logger.update_info(kwargs)
 
+    @distributed_trace
+    @monitor_with_activity(logger, "Connection.List", ActivityType.PUBLICAPI)
     def list(self, connection_type: Optional[str] = None) -> Iterable[Connection]:
         """List all connection assets in a project.
 
@@ -34,6 +44,8 @@ class ConnectionOperations:
             for conn in self._ml_client._workspace_connections.list(connection_type=connection_type)
         ]
 
+    @distributed_trace
+    @monitor_with_activity(logger, "Connection.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, **kwargs) -> Connection:
         """Get a connection by name.
 
@@ -58,6 +70,8 @@ class ConnectionOperations:
 
         return connection
 
+    @distributed_trace
+    @monitor_with_activity(logger, "Connection.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, connection: Connection, **kwargs) -> Connection:
         """Create or update a connection.
 
@@ -73,6 +87,8 @@ class ConnectionOperations:
 
         return Connection._from_v2_workspace_connection(response)
 
+    @distributed_trace
+    @monitor_with_activity(logger, "Connection.Delete", ActivityType.PUBLICAPI)
     def delete(self, name: str) -> None:
         """Delete the connection.
 

@@ -3,25 +3,33 @@
 # ---------------------------------------------------------
 
 import ast
+import datetime
 import os
+from pathlib import Path
+import shutil
 import tempfile
 import uuid
-from pathlib import Path
 from typing import Any, List, Union
 
-import mlflow
 import yaml
 
 from azure.ai.ml import MLClient
-from azure.ai.ml.entities import ManagedOnlineDeployment, ManagedOnlineEndpoint, Model
+from azure.ai.ml.entities import ManagedOnlineDeployment, ManagedOnlineEndpoint, Model as AzureMLModel, DataCollector, DeploymentCollection, Environment, BuildContext
 from azure.core.exceptions import ResourceExistsError
+from azure.core.tracing.decorator import distributed_trace
 from azure.mgmt.authorization import AuthorizationManagementClient
 from azure.mgmt.authorization.v2020_10_01_preview.models import RoleAssignmentCreateParameters
 
+from .._utils._scoring_script_utils import create_chat_scoring_script, create_mlmodel_file
 from .._utils._registry_utils import get_registry_model
 from .._utils._deployment_utils import get_default_allowed_instance_type_for_hugging_face
 from ..entities.deployment import Deployment
-from ..entities.models import FoundationModel, LocalModel
+from ..entities.models import Model, PromptflowModel
+
+from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, OpsLogger
+
+ops_logger = OpsLogger(__name__)
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class DeploymentOperations:
@@ -38,10 +46,27 @@ class DeploymentOperations:
             subscription_id=self._ml_client.subscription_id,
             api_version="2020-10-01-preview",
         )
+        ops_logger.update_info(kwargs)
 
+    @distributed_trace
+    @monitor_with_activity(logger, "Deployment.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, deployment: Deployment) -> Any:
         model = deployment.model
         endpoint_name = deployment.endpoint_name if deployment.endpoint_name else deployment.name
+
+        data_collector = None
+        if deployment.data_collector_enabled:
+            data_collector = DataCollector(
+                collections={
+                    "model_inputs": DeploymentCollection(
+                        enabled="true",
+                    ),
+                    "model_outputs": DeploymentCollection(
+                        enabled="true",
+                    )
+                },
+                sampling_rate=1,
+            )
 
         if deployment.managed_identity:
             from azure.ai.ml.entities import IdentityConfiguration, ManagedIdentityConfiguration
@@ -65,40 +90,73 @@ class DeploymentOperations:
         )
         created_endpoint = self._ml_client.begin_create_or_update(v2_endpoint).result()
         model = deployment.model
-        if isinstance(model, LocalModel):
+        v2_deployment = None
+        temp_dir = tempfile.TemporaryDirectory()
+        if isinstance(model, PromptflowModel):
             if not deployment.instance_type:
                 deployment.instance_type = "Standard_DS3_v2"
+            # Create dockerfile
+            with open(f"{model.path}/Dockerfile", "w+") as f:
+                base_image = "mcr.microsoft.com/azureml/promptflow/promptflow-runtime:latest" if not model.base_image else model.base_image
+                f.writelines([f"FROM {base_image}\n", "COPY ./* /\n", "RUN pip install -r requirements.txt\n"])
+            azureml_environment = Environment(
+                build=BuildContext(
+                    path=model.path
+                ),
+                inference_config={
+                    "liveness_route": {"path": "/health", "port": 8080},
+                    "readiness_route": {"path": "/health", "port": 8080},
+                    "scoring_route": {"path": "/score", "port": 8080},
+                },
+                is_anonymous=True,
+            )
+            azureml_model = AzureMLModel(name=f"{deployment.name}-deployment-pf", path=model.path, type="custom_model")
+            deployment_environment_variables = (
+                deployment.environment_variables if deployment.environment_variables else {}
+            )
+            v2_deployment = ManagedOnlineDeployment(
+                name=deployment.name,
+                endpoint_name=endpoint_name,
+                model=azureml_model,
+                environment=azureml_environment,
+                instance_type=deployment.instance_type,
+                instance_count=deployment.instance_count if not deployment.instance_count else 1,
+                environment_variables={
+                    "PROMPTFLOW_RUN_MODE": "serving",
+                    "PRT_CONFIG_OVERRIDE": f"deployment.subscription_id={self._ml_client.subscription_id},deployment.resource_group={self._ml_client.resource_group_name},deployment.workspace_name={self._ml_client.workspace_name},deployment.endpoint_name={endpoint_name},deployment.deployment_name={deployment.name}",
+                    **deployment_environment_variables,
+                },
+                app_insights_enabled=deployment.app_insights_enabled,
+                data_collector=data_collector,
+            )
+        if isinstance(model, Model):
+            if not deployment.instance_type:
+                deployment.instance_type = "Standard_DS3_v2"
+            if model.loader_module and model.chat_module:
+                raise Exception("Only one of loader_module or chat_module for a model can be specified but not both.")
+            azureml_environment = None
+            scoring_script = None
+            azureml_model = None
             if model.conda_file and model.loader_module:
-                with tempfile.TemporaryDirectory() as tmpdir:
-                    mlflow_model_path = f"{tmpdir}/mlflow_model"
-                    mlflow.pyfunc.save_model(
-                        mlflow_model_path,
-                        loader_module=model.loader_module.removesuffix(".py"),
-                        data_path=Path(model.path).resolve().as_posix(),
-                        code_path=[str(path) for path in Path(model.path).glob("**/*")],
-                        conda_env=str(Path(model.path).joinpath(model.conda_file).as_posix()),
-                    )
-
-                    if os.name == "nt":
-                        # we have to hack the MLModel's "data" field since it logs paths according to the underlying OS
-                        # i.e. windows will have "\" in the path instead of "/". This causes issues when the deployment has
-                        # to read from the path since this path is it not a standard posix path.
-                        with open(f"{mlflow_model_path}/MLModel", "r") as f:
-                            d = yaml.safe_load(f)
-                            d["flavors"]["python_function"]["data"] = d["flavors"]["python_function"]["data"].replace(
-                                "\\", "/"
-                            )
-
-                        with open(f"{mlflow_model_path}/MLModel", "w+") as f:
-                            yaml.dump(d, f)
+                create_mlmodel_file(model)
+                azureml_model = AzureMLModel(name=f"{deployment.name}-deployment-model", path=model.path, type="mlflow_model")
+            if model.conda_file and model.chat_module:
+                azureml_model = AzureMLModel(name=f"{deployment.name}-deployment-model", path=model.path, type="custom_model")
+                chat_module = f"{Path(model.path).resolve().name}.{model.chat_module}"
+                create_chat_scoring_script(temp_dir.name, chat_module)
+                azureml_environment = Environment(
+                    image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04",
+                    conda_file=str(Path(model.path) / model.conda_file),
+                    is_anonymous=True,
+                )
+                scoring_script = "score.py"
             else:
                 # validate that path has an mlmodel file and continue
                 if "mlmodel" not in [path.lower() for path in os.listdir(model.path)]:
                     raise Exception(
                         "An MLModel file must be present in model directory if not"
-                        " specifying conda file and loader module for deployment."
+                        " specifying conda_file and one of loader_module or chat_module for deployment."
                     )
-                mlflow_model_path = model.path
 
             # attempt to grant endpoint SAI access to workspace:
             if not endpoint_identity:
@@ -139,7 +197,10 @@ class DeploymentOperations:
             v2_deployment = ManagedOnlineDeployment(
                 name=deployment.name,
                 endpoint_name=endpoint_name,
-                model=Model(name=f"{deployment.name}-deployment-model", path=mlflow_model_path, type="mlflow_model"),
+                model=azureml_model,
+                environment=azureml_environment,
+                code_path=temp_dir.name if scoring_script else None,
+                scoring_script=scoring_script,
                 instance_type=deployment.instance_type,
                 instance_count=1,
                 environment_variables={
@@ -149,33 +210,18 @@ class DeploymentOperations:
                     **uai_env_var,
                     **deployment_environment_variables,
                 },
+                app_insights_enabled=deployment.app_insights_enabled,
+                data_collector=data_collector,
             )
-            create_deployment_poller = self._ml_client.begin_create_or_update(v2_deployment)
-            created_deployment = create_deployment_poller.result()
-
-            created_endpoint.traffic = {deployment.name: 100}
-            update_endpoint_poller = self._ml_client.begin_create_or_update(created_endpoint)
-            updated_endpoint = update_endpoint_poller.result()
-
-            return Deployment(
-                name=created_deployment.name,
-                model=created_deployment.model,
-                endpoint_name=updated_endpoint.name,
-                environment_variables=deployment.environment_variables,
-                instance_type=deployment.instance_type,
-            )
-        if isinstance(model, FoundationModel):
+        if isinstance(model, str) and "registries" in model:
             model_details = get_registry_model(
-                model.registry_name,
                 self._ml_client._credential,
-                model_name=model.name,
-                version=model.version,
-                label="latest" if not model.version else None,
+                id=model,
             )
-            model_id = model_details.id
+            model_id = model
 
             if not deployment.instance_type:
-                if model.registry_name == "HuggingFace":
+                if "registries/HuggingFace" in model_details.id:
                     default_instance_type, allowed_instance_types = get_default_allowed_instance_type_for_hugging_face(
                         model_details, self._ml_client._credential
                     )
@@ -183,13 +229,13 @@ class DeploymentOperations:
                         default_instance_type, deployment, allowed_instance_types=allowed_instance_types
                     )
 
-                if model.registry_name == "azureml":
+                if "registries/azureml" in model_details.id:
                     default_instance_type = model_details.properties["inference-recommended-sku"]
                     min_sku_spec = model_details.properties["inference-min-sku-spec"].split("|")
                     self._check_default_instance_type_and_populate(
                         default_instance_type, deployment, min_sku_spec=min_sku_spec
                     )
-                if model.registry_name == "azureml-meta":
+                if "registries/azureml-meta" in model_details.id:
                     allowed_skus = ast.literal_eval(model_details.tags["inference_compute_allow_list"])
                     # check available quota for each sku in the allowed_sku list
                     # pick the sku that has available quota and is the cheapest
@@ -245,22 +291,34 @@ class DeploymentOperations:
                 model=model_id,
                 instance_type=deployment.instance_type,
                 instance_count=1,
+                app_insights_enabled=deployment.app_insights_enabled,
+                data_collector=data_collector,
             )
 
-            create_deployment_poller = self._ml_client.begin_create_or_update(v2_deployment)
-            created_deployment = create_deployment_poller.result()
+        v2_deployment.tags = deployment.tags
+        v2_deployment.properties = deployment.properties
+        create_deployment_poller = self._ml_client.begin_create_or_update(v2_deployment)
+        shutil.rmtree(temp_dir.name)
+        created_deployment = create_deployment_poller.result()
 
-            created_endpoint.traffic = {deployment.name: 100}
-            update_endpoint_poller = self._ml_client.begin_create_or_update(created_endpoint)
-            updated_endpoint = update_endpoint_poller.result()
+        created_endpoint.traffic = {deployment.name: 100}
+        update_endpoint_poller = self._ml_client.begin_create_or_update(created_endpoint)
+        updated_endpoint = update_endpoint_poller.result()
 
-            return Deployment(
-                name=created_deployment.name,
-                model=created_deployment.model,
-                endpoint_name=updated_endpoint.name,
-                instance_type=deployment.instance_type,
-            )
+        return Deployment(
+            name=created_deployment.name,
+            model=created_deployment.model,
+            endpoint_name=updated_endpoint.name,
+            environment_variables=created_deployment.environment_variables,
+            instance_type=created_deployment.instance_type,
+            instance_count=created_deployment.instance_count,
+            app_insights_enabled=created_deployment.app_insights_enabled,
+            tags=created_deployment.tags,
+            properties=created_deployment.properties,
+        )
 
+    @distributed_trace
+    @monitor_with_activity(logger, "Deployment.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, endpoint_name: str = None) -> Any:
         deployment = self._ml_client.online_deployments.get(
             name=name,
@@ -275,12 +333,16 @@ class DeploymentOperations:
             instance_type=deployment.instance_type,
         )
 
+    @distributed_trace
+    @monitor_with_activity(logger, "Deployment.Delete", ActivityType.PUBLICAPI)
     def delete(self, name: str, endpoint_name: str = None) -> None:
         self._ml_client.online_deployments.delete(
             name=name,
             endpoint_name=endpoint_name if endpoint_name else name,
         ).result()
 
+    @distributed_trace
+    @monitor_with_activity(logger, "Deployment.Invoke", ActivityType.PUBLICAPI)
     def invoke(self, name: str, request_file: Union[str, os.PathLike], endpoint_name: str = None) -> Any:
         return self._ml_client.online_endpoints.invoke(
             endpoint_name=endpoint_name if endpoint_name else name,

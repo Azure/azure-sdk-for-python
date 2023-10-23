@@ -8,7 +8,6 @@ import os
 import tempfile
 from typing import Any, Optional, Union
 
-import dill as pickle
 import yaml
 
 from azure.ai.resources._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient100122
@@ -17,16 +16,6 @@ from azure.ai.resources._utils._open_ai_utils import build_open_ai_protocol
 from azure.ai.resources._utils._str_utils import build_connection_id
 from azure.ai.resources.constants._common import DEFAULT_OPEN_AI_CONNECTION_NAME
 from azure.ai.resources.entities.mlindex import MLIndex as MLIndexAsset
-from azure.ai.resources.index._dataindex.data_index import index_data
-from azure.ai.resources.index._dataindex.entities import (
-    CitationRegex,
-    Data,
-    DataIndex,
-    Embedding,
-    IndexSource,
-    IndexStore,
-)
-from azure.ai.resources.index._embeddings import EmbeddingsContainer
 from azure.ai.resources.operations import ACSOutputConfig, ACSSource, GitSource, IndexDataSource, LocalSource
 from azure.ai.ml import MLClient
 from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
@@ -43,11 +32,17 @@ from .operations import (
     MLIndexOperations,
     PFOperations,
     ProjectOperations,
+    DataOperations,
+    ModelOperations,
 )
 from .operations._ingest_data_to_index import ingest_data_to_index
 
 module_logger = logging.getLogger(__name__)
 
+from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, get_appinsights_log_handler, OpsLogger
+
+ops_logger = OpsLogger(__name__)
+logger = ops_logger.package_logger
 
 @experimental
 class AIClient:
@@ -62,6 +57,25 @@ class AIClient:
     ):
 
         self._add_user_agent(kwargs)
+
+        properties = {
+            "subscription_id": subscription_id,
+            "resource_group_name": resource_group_name,
+        }
+        if team_name:
+            properties.update({"team_name": team_name})
+        if project_name:
+            properties.update({"project_name": project_name})
+
+        user_agent = USER_AGENT
+        enable_telemetry = kwargs.pop("enable_telemetry", True)
+
+        app_insights_handler = get_appinsights_log_handler(
+            user_agent,
+            **{"properties": properties},
+            enable_telemetry=enable_telemetry,
+        )
+        app_insights_handler_kwargs = {"app_insights_handler": app_insights_handler}
 
         self._scope = OperationScope(
             subscription_id=subscription_id,
@@ -91,11 +105,14 @@ class AIClient:
             resource_group_name=resource_group_name,
             service_client=self._service_client_06_2023_preview,
             ml_client=self._ml_client,
+            **app_insights_handler_kwargs,
         )
-        self._connections = ConnectionOperations(self._ml_client)
-        self._mlindexes = MLIndexOperations(self._ml_client)
-        self._ai_resources = AIResourceOperations(self._ml_client)
-        self._deployments = DeploymentOperations(self._ml_client, self._connections)
+        self._connections = ConnectionOperations(self._ml_client, **app_insights_handler_kwargs)
+        self._mlindexes = MLIndexOperations(self._ml_client, **app_insights_handler_kwargs)
+        self._ai_resources = AIResourceOperations(self._ml_client, **app_insights_handler_kwargs)
+        self._deployments = DeploymentOperations(self._ml_client, self._connections, **app_insights_handler_kwargs)
+        self._data = DataOperations(self._ml_client)
+        self._models = ModelOperations(self._ml_client)
         # self._pf = PFOperations(self._ml_client, self._scope)
 
     @classmethod
@@ -162,16 +179,31 @@ class AIClient:
         return self._pf
 
     @property
-    def data(self) -> MLIndexOperations:
-        pass
+    def data(self) -> DataOperations:
+        """A collection of data-related operations.
+
+        :return: Data operations
+        :rtype: DataOperations
+        """
+        return self._data
 
     @property
     def deployments(self) -> DeploymentOperations:
+        """A collection of deployment-related operations.
+
+        :return: Deployment operations
+        :rtype: DeploymentOperations
+        """
         return self._deployments
 
     @property
-    def models(self) -> MLIndexOperations:
-        pass
+    def models(self) -> ModelOperations:
+        """A collection of model-related operations.
+
+        :return: Model operations
+        :rtype: ModelOperations
+        """
+        return self._models
 
     @property
     def subscription_id(self) -> str:
@@ -251,6 +283,16 @@ class AIClient:
         Returns:
             _type_: _description_
         """
+        from azure.ai.resources.index._dataindex.data_index import index_data
+        from azure.ai.resources.index._dataindex.entities import (
+            CitationRegex,
+            Data,
+            DataIndex,
+            Embedding,
+            IndexSource,
+            IndexStore,
+        )
+        from azure.ai.resources.index._embeddings import EmbeddingsContainer
         if isinstance(input_source, ACSSource):
             from azure.ai.resources.index._utils.connections import get_connection_by_id_v2, get_target_from_connection
 

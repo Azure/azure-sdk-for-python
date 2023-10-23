@@ -9,5 +9,7 @@ from .ai_resource import AIResource
 from .connection import Connection
 from .mlindex import MLIndex
 from .project import Project
+from .data import Data
+from .configs import AzureOpenAIModelConfiguration
 
-__all__ = ["Connection", "MLIndex", "Project", "AIResource"]
+__all__ = ["Connection", "MLIndex", "Project", "AIResource", "Data", "AzureOpenAIModelConfiguration"]
