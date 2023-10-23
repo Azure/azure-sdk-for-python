@@ -73,7 +73,7 @@ class AutoMLImage(AutoMLVertical, ABC):
         """Sets the verbosity of the logger.
 
         :param value: The value to set the log verbosity to.
-        Possible values include: "NotSet", "Debug", "Info", "Warning", "Error", "Critical".
+                      Possible values include: "NotSet", "Debug", "Info", "Warning", "Error", "Critical".
         :type value: Union[str, ~azure.ai.ml._restclient.v2023_04_01_preview.models.LogVerbosity]
         """
         self._log_verbosity = None if value is None else LogVerbosity[camel_to_snake(value).upper()]
