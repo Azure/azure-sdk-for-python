@@ -3,18 +3,10 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import sys
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 import pytest
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import StreamClosedError, StreamConsumedError, ResponseNotReadError
-
-
-if hasattr(sys, "pypy_version_info"):
-    pytest.skip(
-        "Aiohttp 3.8.6 triggers https://github.com/aio-libs/aiohttp/issues/4581 on pypy for some reason",
-        allow_module_level=True,
-    )
 
 
 @pytest.mark.asyncio

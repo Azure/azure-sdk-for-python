@@ -71,10 +71,6 @@ def _test_response_attr_parity(old_response, new_response):
             assert hasattr(new_response, attr)
 
 
-@pytest.mark.skipif(
-    hasattr(sys, "pypy_version_info"),
-    reason="Aiohttp 3.8.6 triggers https://github.com/aio-libs/aiohttp/issues/4581 on pypy for some reason",
-)
 @pytest.mark.asyncio
 @pytest.mark.parametrize("transport", TRANSPORTS)
 async def test_response_attr_parity(get_old_response, get_new_response, transport):
@@ -105,10 +101,6 @@ def _test_response_set_attrs(old_response, new_response):
             assert getattr(old_response, attr) == getattr(new_response, attr) == "foo"
 
 
-@pytest.mark.skipif(
-    hasattr(sys, "pypy_version_info"),
-    reason="Aiohttp 3.8.6 triggers https://github.com/aio-libs/aiohttp/issues/4581 on pypy for some reason",
-)
 @pytest.mark.asyncio
 @pytest.mark.parametrize("transport", TRANSPORTS)
 async def test_response_set_attrs(get_old_response, get_new_response, transport):
@@ -131,10 +123,6 @@ def _test_response_block_size(old_response, new_response):
     assert old_response.block_size == new_response.block_size == 500
 
 
-@pytest.mark.skipif(
-    hasattr(sys, "pypy_version_info"),
-    reason="Aiohttp 3.8.6 triggers https://github.com/aio-libs/aiohttp/issues/4581 on pypy for some reason",
-)
 @pytest.mark.asyncio
 @pytest.mark.parametrize("transport", TRANSPORTS)
 async def test_response_block_size(get_old_response, get_new_response, transport):
@@ -150,10 +138,6 @@ async def test_response_block_size_trio(get_old_response_trio, get_new_response_
     _test_response_block_size(old_response, new_response)
 
 
-@pytest.mark.skipif(
-    hasattr(sys, "pypy_version_info"),
-    reason="Aiohttp 3.8.6 triggers https://github.com/aio-libs/aiohttp/issues/4581 on pypy for some reason",
-)
 @pytest.mark.asyncio
 @pytest.mark.parametrize("transport", TRANSPORTS)
 async def test_response_body(get_old_response, get_new_response, transport):
@@ -228,10 +212,6 @@ def _test_response_request(old_response, new_response, port):
     assert old_response.request == new_response.request == "foo"
 
 
-@pytest.mark.skipif(
-    hasattr(sys, "pypy_version_info"),
-    reason="Aiohttp 3.8.6 triggers https://github.com/aio-libs/aiohttp/issues/4581 on pypy for some reason",
-)
 @pytest.mark.asyncio
 @pytest.mark.parametrize("transport", TRANSPORTS)
 async def test_response_request(get_old_response, get_new_response, port, transport):
@@ -254,10 +234,6 @@ def _test_response_status_code(old_response, new_response):
     assert old_response.status_code == new_response.status_code == 202
 
 
-@pytest.mark.skipif(
-    hasattr(sys, "pypy_version_info"),
-    reason="Aiohttp 3.8.6 triggers https://github.com/aio-libs/aiohttp/issues/4581 on pypy for some reason",
-)
 @pytest.mark.asyncio
 @pytest.mark.parametrize("transport", TRANSPORTS)
 async def test_response_status_code(get_old_response, get_new_response, transport):
@@ -284,10 +260,6 @@ def _test_response_headers(old_response, new_response):
     assert old_response.headers == new_response.headers == {"Hello": "world!"}
 
 
-@pytest.mark.skipif(
-    hasattr(sys, "pypy_version_info"),
-    reason="Aiohttp 3.8.6 triggers https://github.com/aio-libs/aiohttp/issues/4581 on pypy for some reason",
-)
 @pytest.mark.asyncio
 @pytest.mark.parametrize("transport", TRANSPORTS)
 async def test_response_headers(get_old_response, get_new_response, transport):
@@ -310,10 +282,6 @@ def _test_response_reason(old_response, new_response):
     assert old_response.reason == new_response.reason == "Not OK"
 
 
-@pytest.mark.skipif(
-    hasattr(sys, "pypy_version_info"),
-    reason="Aiohttp 3.8.6 triggers https://github.com/aio-libs/aiohttp/issues/4581 on pypy for some reason",
-)
 @pytest.mark.asyncio
 @pytest.mark.parametrize("transport", TRANSPORTS)
 async def test_response_reason(get_old_response, get_new_response, transport):

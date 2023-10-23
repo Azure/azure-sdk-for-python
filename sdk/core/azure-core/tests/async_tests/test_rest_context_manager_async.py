@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import sys
 from azure.core.exceptions import ResponseNotReadError
 import pytest
 from azure.core.rest import HttpRequest
@@ -31,10 +30,6 @@ async def test_normal_call(client):
         await _raise_and_get_text(response)
 
 
-@pytest.mark.skipif(
-    hasattr(sys, "pypy_version_info"),
-    reason="Aiohttp 3.8.6 triggers https://github.com/aio-libs/aiohttp/issues/4581 on pypy for some reason",
-)
 @pytest.mark.asyncio
 async def test_stream_call(client):
     async def _raise_and_get_text(response):
