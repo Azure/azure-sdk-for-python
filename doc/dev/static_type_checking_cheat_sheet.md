@@ -430,3 +430,64 @@ def sanitize(log) -> Sanitized:
 
 def print_log(log: Sanitized) -> None: ...
 ```
+
+### **kwargs
+
+- When working with Python and handling keyword arguments, it's essential to ensure type safety while retaining flexibility. One way to achieve this is by using the `Any` type along with the `**kwargs` parameter. This allows you to accept and process any keyword arguments while preserving type hinting and validation.
+
+```python
+from typing import Any, Dict
+
+def process_data(**kwargs: Dict[str, Any]) -> None:
+    # Your code here
+    pass
+
+# Or
+
+def process_data(**kwargs: Any) -> None:
+    # Your code here
+    pass
+```
+
+### Getter and Setter
+
+- Property return type should match with setter value type
+
+```python
+# for example:
+
+@property
+def func(self) -> Optional[SparkJobEntry]:
+    pass
+
+@func.setter
+def func(self, value: Union[Dict[str, str], SparkJobEntry, None]):
+    pass
+
+# After being fixed, it should be:
+
+@property
+def func(self) -> Optional[Union[Dict[str, str], SparkJobEntry]]:
+    pass
+
+@func.setter
+def func(self, value: Optional[Union[Dict[str, str], SparkJobEntry]]):
+    pass
+```
+
+
+### Returning Any from function
+
+- In some cases, mypy would complaint about returning Any from function declared to return "bool" for example
+
+```python
+# for example
+
+def __eq__(self, other: object) -> bool:
+    return self._to_rest_object() == other._to_rest_object()
+
+# After being fixed, it should be:
+def __eq__(self, other: object) -> bool:
+    res: bool = self._to_rest_object() == other._to_rest_object()
+    return res
+```
