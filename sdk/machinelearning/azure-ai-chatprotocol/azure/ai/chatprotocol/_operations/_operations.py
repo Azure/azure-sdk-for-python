@@ -172,7 +172,7 @@ class ChatProtocolClientOperationsMixin(ChatProtocolClientMixinABC):
         else:
             _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_chat_protocol_create_request(
+        _request = build_chat_protocol_create_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -182,11 +182,11 @@ class ChatProtocolClientOperationsMixin(ChatProtocolClientMixinABC):
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -299,7 +299,7 @@ class ChatProtocolClientOperationsMixin(ChatProtocolClientMixinABC):
         else:
             _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_chat_protocol_create_streaming_request(
+        _request = build_chat_protocol_create_streaming_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -309,11 +309,11 @@ class ChatProtocolClientOperationsMixin(ChatProtocolClientMixinABC):
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
