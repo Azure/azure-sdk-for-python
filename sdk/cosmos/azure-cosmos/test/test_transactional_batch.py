@@ -193,11 +193,11 @@ class TestTransactionalBatch:
 
         # replace with wrong etag
         item_id = str(uuid.uuid4())
-        batch = [("create", {"id": item_id, "company": "Microsoft"}),
-                 ("replace", item_id, ({"id": item_id, "company": "Microsoft", "message": "item was replaced"},),
-                  {"if_match": "some-tag"}),
-                 ("replace", item_id, ({"id": item_id, "company": "Microsoft", "message": "item was replaced"},),
-                  {"if_none_match": "some-tag"})]
+        batch = [("create", ({"id": item_id, "company": "Microsoft"},)),
+                 ("replace", (item_id, {"id": item_id, "company": "Microsoft", "message": "item was replaced"}),
+                  {"if_match_etag": "some-tag"}),
+                 ("replace", (item_id, {"id": item_id, "company": "Microsoft", "message": "item was replaced"}),
+                  {"if_none_match_etag": "some-tag"})]
 
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert batch_response.get("is_error")

@@ -814,9 +814,8 @@ def _format_batch_operations(operations):
         if if_match_etag is not None:
             operation["ifMatch"] = if_match_etag
         elif if_none_match_etag is not None:
-            operation["ifNoneMatch"] = if_match_etag
+            operation["ifNoneMatch"] = if_none_match_etag
 
         final_operations.append(operation)
 
     return final_operations
-
