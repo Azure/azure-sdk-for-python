@@ -21,9 +21,9 @@ async def main():
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
 
     async with servicebus_client:
-        receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
+        receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, max_wait_time=5)
         async with receiver:
-            received_msgs = await receiver.receive_messages(max_message_count=10, max_wait_time=5)
+            received_msgs = await receiver.receive_messages(max_message_count=10)
             for msg in received_msgs:
                 print(str(msg))
                 await receiver.complete_message(msg)
