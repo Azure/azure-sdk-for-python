@@ -322,8 +322,8 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
     if event.subject:
         _headers['ce-subject'] = _SERIALIZER.header('ce-subject', event.subject, 'str')
     if event.extensions:
-        # this serialization?
-        _headers['ce-extensions'] = _SERIALIZER.header('ce-extensions', event.extensions, '[object]')
+        for extension, value in event.extensions.items():
+            _headers[f'ce-{extension}'] = _SERIALIZER.header('ce-extensions', value, 'str')
 
     return HttpRequest(
         method="POST",
