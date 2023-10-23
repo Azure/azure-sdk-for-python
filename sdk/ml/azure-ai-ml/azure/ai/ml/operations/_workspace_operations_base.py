@@ -262,10 +262,10 @@ class WorkspaceOperationsBase(ABC):
                 # drop recommended and required rules from the update request since it would result in bad request
                 managed_network.outbound_rules = [
                     rule
-                    for rule in workspace.managed_network.outbound_rules
+                    for rule in managed_network.outbound_rules
                     if rule.category not in (OutboundRuleCategory.REQUIRED, OutboundRuleCategory.RECOMMENDED)
                 ]
-            managed_network = workspace.managed_network._to_rest_object()
+            managed_network = managed_network._to_rest_object()
 
         container_registry = kwargs.get("container_registry", workspace.container_registry)
         # Empty string is for erasing the value of container_registry, None is to be ignored value
