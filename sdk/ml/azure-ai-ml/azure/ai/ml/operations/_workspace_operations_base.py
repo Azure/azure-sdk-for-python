@@ -258,7 +258,14 @@ class WorkspaceOperationsBase(ABC):
         if isinstance(managed_network, str):
             managed_network = ManagedNetwork(isolation_mode=managed_network)._to_rest_object()
         elif isinstance(managed_network, ManagedNetwork):
-            managed_network = workspace.managed_network._to_rest_object()
+            if managed_network.outbound_rules is not None:
+                # drop recommended and required rules from the update request since it would result in bad request
+                managed_network.outbound_rules = [
+                    rule
+                    for rule in managed_network.outbound_rules
+                    if rule.category not in (OutboundRuleCategory.REQUIRED, OutboundRuleCategory.RECOMMENDED)
+                ]
+            managed_network = managed_network._to_rest_object()
 
         container_registry = kwargs.get("container_registry", workspace.container_registry)
         # Empty string is for erasing the value of container_registry, None is to be ignored value
@@ -330,14 +337,6 @@ class WorkspaceOperationsBase(ABC):
                     key_identifier=customer_managed_key_uri,
                 )
             )
-
-        if workspace.managed_network is not None and workspace.managed_network.outbound_rules is not None:
-            # drop recommended and required rules from the update request since it would result in bad request
-            workspace.managed_network.outbound_rules = [
-                rule
-                for rule in workspace.managed_network.outbound_rules
-                if rule.category not in (OutboundRuleCategory.REQUIRED, OutboundRuleCategory.RECOMMENDED)
-            ]
 
         update_role_assignment = (
             kwargs.get("update_workspace_role_assignment", None)
