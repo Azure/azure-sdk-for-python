@@ -259,7 +259,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=CorsRule._to_generated(cors)
+            cors=CorsRule._to_generated(cors) # pylint: disable=protected-access
         )
         try:
             self._client.service.set_properties(props, timeout=timeout, **kwargs)
@@ -423,8 +423,8 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             queue_name = queue
 
         _pipeline = Pipeline(
-            transport=TransportWrapper(self._pipeline._transport), # pylint: disable = protected-access
-            policies=self._pipeline._impl_policies # type: ignore # pylint: disable = protected-access
+            transport=TransportWrapper(self._pipeline._transport), # pylint: disable=protected-access
+            policies=self._pipeline._impl_policies # type: ignore # pylint: disable=protected-access
         )
 
         return QueueClient(
