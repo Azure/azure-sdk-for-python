@@ -17,11 +17,11 @@ from ._generated.operations._operations import (
     build_table_update_entity_request,
     build_table_delete_entity_request,
 )
+from ._generated._configuration import AzureTableConfiguration
+from ._generated.aio._configuration import AzureTableConfiguration as AsyncAzureTableConfiguration
 
-if TYPE_CHECKING:
-    from azure.core.rest import HttpRequest
-    from ._generated._configuration import AzureTableConfiguration
-    from ._generated.aio._configuration import AzureTableConfiguration as AsyncAzureTableConfiguration
+from azure.core.rest import HttpRequest
+
 
 EntityType = Union[TableEntity, Mapping[str, Any]]
 OperationType = Union[TransactionOperation, str]
@@ -39,13 +39,13 @@ class TableBatchOperations(object):
     entities, and its total payload may be no more than 4 MB in size.
 
     :ivar str table_name: The name of the table.
-    :ivar requests: A list of :class:`~azure.core.pipeline.transport.HttpRequest` in a batch.
-    :vartype requests: list[~azure.core.pipeline.transport.HttpRequest]
+    :ivar requests: A list of :class:`~azure.core.rest.HttpRequest` in a batch.
+    :vartype requests: list[~azure.core.rest.HttpRequest]
     """
 
     def __init__(
         self,
-        config: Union["AzureTableConfiguration", "AsyncAzureTableConfiguration"],
+        config: Union[AzureTableConfiguration, AsyncAzureTableConfiguration],
         endpoint: str,
         table_name: str,
         is_cosmos_endpoint: bool = False,
@@ -62,13 +62,13 @@ class TableBatchOperations(object):
         :param is_cosmos_endpoint: True if the client endpoint is for Tables Cosmos. False if not. Default is False.
         :type is_cosmos_endpoint: bool
         """
-        self._config: Union["AzureTableConfiguration", "AsyncAzureTableConfiguration"] = config
+        self._config: Union[AzureTableConfiguration, AsyncAzureTableConfiguration] = config
         self._base_url: str = endpoint
         self._is_cosmos_endpoint: bool = is_cosmos_endpoint
         self.table_name: str = table_name
 
         self._partition_key: Optional[str] = kwargs.pop("partition_key", None)
-        self.requests: List["HttpRequest"] = []
+        self.requests: List[HttpRequest] = []
 
     def __len__(self) -> int:
         return len(self.requests)
@@ -255,9 +255,12 @@ class TableBatchOperations(object):
                 :caption: Creating and adding an entity to a Table
         """
         self._verify_partition_key(entity)
-        entity = _add_entity_properties(entity)
+
+        # TODO: This ordering is backwards. Tracked as part of issue #26318
         partition_key = _prepare_key(entity["PartitionKey"])
         row_key = _prepare_key(entity["RowKey"])
+        entity = _add_entity_properties(entity)
+
         if mode == UpdateMode.REPLACE:
             request = build_table_update_entity_request(
                 table=self.table_name,
