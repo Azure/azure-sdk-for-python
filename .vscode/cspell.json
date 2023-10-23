@@ -100,7 +100,7 @@
     "sdk/translation/azure-ai-translation-text/tests/test_break_sentence_async.py",
     "sdk/translation/azure-ai-translation-text/tests/test_translation_async.py",
     "sdk/translation/azure-ai-translation-text/tests/test_transliteration_async.py",
-    "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_model_base.py",	
+    "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_model_base.py",
     "sdk/translation/test-resources.json",
     "eng/**/*.json",
     "eng/*.txt",
