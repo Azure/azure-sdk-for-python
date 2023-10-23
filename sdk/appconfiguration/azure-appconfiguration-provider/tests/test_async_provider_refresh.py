@@ -7,6 +7,7 @@ import time
 import unittest
 import pytest
 import sys
+
 try:
     # Python 3.7 does not support AsyncMock
     from unittest.mock import AsyncMock
@@ -23,6 +24,7 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
+    @pytest.mark.asyncio
     async def test_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         mock_callback = AsyncMock()
         async with await self.create_aad_client(
@@ -76,6 +78,7 @@ class TestAppConfigurationProvider(AppConfigTestCase, unittest.TestCase):
     @app_config_decorator_async
     @recorded_by_proxy_async
     @pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
+    @pytest.mark.asyncio
     async def test_empty_refresh(self, appconfiguration_endpoint_string, appconfiguration_keyvault_secret_url):
         mock_callback = AsyncMock()
         async with await self.create_aad_client(
