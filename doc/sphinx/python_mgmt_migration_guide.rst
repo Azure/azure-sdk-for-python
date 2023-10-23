@@ -5,7 +5,7 @@ Guide for migrating to the next generation of Azure Python SDK for Management Li
 ---------------------------------------------------------------------------------------
 
 This document is intended for users that are familiar with an older
-version of the Python SDK for managment libraries and wish to migrate
+version of the Python SDK for management libraries and wish to migrate
 their application to the next version of Azure resource management
 libraries
 
