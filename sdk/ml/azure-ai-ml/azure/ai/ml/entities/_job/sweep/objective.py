@@ -35,7 +35,8 @@ class Objective(RestTranslatableMixin):
         :param primary_metric: The name of the metric to optimize.
         :type primary_metric: str
         """
-        self.goal = goal.lower()
+        if goal is not None:
+            self.goal = goal.lower()
         self.primary_metric = primary_metric
 
     def _to_rest_object(self) -> RestObjective:
