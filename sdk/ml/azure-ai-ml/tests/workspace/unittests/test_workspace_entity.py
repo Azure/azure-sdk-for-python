@@ -1,8 +1,9 @@
-from typing import Optional, Tuple
+from typing import Optional
 
 import pytest
 from marshmallow.exceptions import ValidationError
 
+from azure.ai.ml import load_workspace
 from azure.ai.ml.entities import ServerlessComputeSettings, Workspace
 
 
@@ -41,3 +42,34 @@ class TestWorkspaceEntity:
     ) -> None:
         with pytest.raises(ValidationError):
             ServerlessComputeSettings(subnet_name, True)
+
+    @pytest.mark.parametrize(
+        "settings",
+        [
+            ServerlessComputeSettings(
+                "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.Network/virtualNetworks/testwsvnet/subnets/default",
+                True,
+            ),  # Override but using same value
+            ServerlessComputeSettings(
+                "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.Network/virtualNetworks/testwsvnet/subnets/testsubnet",
+                True,
+            ),
+            ServerlessComputeSettings(
+                "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.Network/virtualNetworks/testwsvnet/subnets/default",
+                False,
+            ),
+            ServerlessComputeSettings(
+                "/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/static_resources_cli_v2_e2e_tests_resources/providers/Microsoft.Network/virtualNetworks/testwsvnet/subnets/testsubnet",
+                False,
+            ),
+        ],
+    )
+    def test_workspace_load_override_serverless(self, settings: ServerlessComputeSettings) -> None:
+        params_override = [
+            {"serverless_compute": {"custom_subnet": settings.custom_subnet, "no_public_ip": settings.no_public_ip}}
+        ]
+
+        workspace_override = load_workspace(
+            "./tests/test_configs/workspace/workspace_serverless.yaml", params_override=params_override
+        )
+        assert workspace_override.serverless_compute == settings

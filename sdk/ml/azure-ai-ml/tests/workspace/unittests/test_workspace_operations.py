@@ -9,6 +9,7 @@ from azure.ai.ml import load_workspace
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
 )
+from azure.ai.ml._restclient.v2023_08_01_preview.models import WorkspaceUpdateParameters
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import (
     IdentityConfiguration,
@@ -235,13 +236,12 @@ class TestWorkspaceOperation:
         mocker: MockFixture,
     ) -> None:
         ws = Workspace(name="name", location="test", serverless_compute=serverless_compute_settings)
-        spy = mocker.spy(WorkspaceOperations, "_populate_arm_parameters")
         spy = mocker.spy(mock_workspace_operation_base_aug_2023_preview._operation, "begin_update")
         mock_workspace_operation_base_aug_2023_preview.begin_update(ws)
         if serverless_compute_settings is None:
-            assert spy.call_args[0][2].serverless_compute is None
+            assert spy.call_args[0][2].serverless_compute_settings is None
         else:
             assert (
-                ServerlessComputeSettings._from_rest_object(spy.call_args[0][2].serverless_compute)
+                ServerlessComputeSettings._from_rest_object(spy.call_args[0][2].serverless_compute_settings)
                 == serverless_compute_settings
             )
