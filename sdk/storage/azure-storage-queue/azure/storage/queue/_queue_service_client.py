@@ -259,7 +259,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             logging=analytics_logging,
             hour_metrics=hour_metrics,
             minute_metrics=minute_metrics,
-            cors=CorsRule.to_generated(cors)
+            cors=CorsRule._to_generated(cors)
         )
         try:
             self._client.service.set_properties(props, timeout=timeout, **kwargs)

@@ -195,7 +195,7 @@ class CorsRule(GeneratedCorsRule):
         self.max_age_in_seconds = kwargs.get('max_age_in_seconds', 0)
 
     @staticmethod
-    def to_generated(rules: Optional[List["CorsRule"]]) -> Optional[List[GeneratedCorsRule]]:
+    def _to_generated(rules: Optional[List["CorsRule"]]) -> Optional[List[GeneratedCorsRule]]:
         if rules is None:
             return rules
 
