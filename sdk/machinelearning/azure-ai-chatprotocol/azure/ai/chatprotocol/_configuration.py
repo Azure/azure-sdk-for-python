@@ -6,12 +6,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from typing import Any, TYPE_CHECKING, Union
 
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
 from ._version import VERSION
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials import TokenCredential
 
 
 class ChatProtocolClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
@@ -22,15 +26,16 @@ class ChatProtocolClientConfiguration:  # pylint: disable=too-many-instance-attr
 
     :param endpoint: Required.
     :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2023-10-01-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :param credential: Credential needed for the client to connect to Azure. Is either a
+     AzureKeyCredential type or a TokenCredential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials.TokenCredential
+    :keyword api_version: Api Version. Default value is "2023-10-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
         api_version: str = kwargs.pop("api_version", "2023-10-01-preview")
 
         if endpoint is None:
@@ -45,6 +50,13 @@ class ChatProtocolClientConfiguration:  # pylint: disable=too-many-instance-attr
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
+    def _infer_policy(self, **kwargs):
+        if isinstance(self.credential, AzureKeyCredential):
+            return policies.AzureKeyCredentialPolicy(self.credential, "api-key", **kwargs)
+        if hasattr(self.credential, "get_token"):
+            return policies.BearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+        raise TypeError(f"Unsupported credential: {self.credential}")
+
     def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
@@ -56,4 +68,4 @@ class ChatProtocolClientConfiguration:  # pylint: disable=too-many-instance-attr
         self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AzureKeyCredentialPolicy(self.credential, "api-key", **kwargs)
+            self.authentication_policy = self._infer_policy(**kwargs)

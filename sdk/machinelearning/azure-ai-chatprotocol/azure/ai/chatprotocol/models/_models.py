@@ -33,9 +33,18 @@ class ChatChoice(_model_base.Model):
     :vartype index: int
     :ivar message: The chat message for a given chat completion. Required.
     :vartype message: ~azure.ai.chatprotocol.models.ChatMessage
-    :ivar session_state: Backend-specific information for the tracking of a session.
+    :ivar session_state: Field that allows the chat app to store and retrieve data, the structure
+     of such data is dependant on the backend
+     being used. The client must send back the data in this field unchanged in subsequent requests,
+     until the chat app
+     sends a new one. The data in this field can be used to implement stateful services, such as
+     remembering previous
+     conversations or user preferences.
     :vartype session_state: any
-    :ivar context: Backend-specific context or arguments.
+    :ivar context: Context allows the chat app to receive extra parameters from the client, such as
+     temperature, functions, or
+     customer_info. These parameters are specific to the chat app and not understood by the generic
+     clients.
     :vartype context: dict[str, any]
     :ivar finish_reason: The reason this chat completion completed its generation. Required. Known
      values are: "stop" and "length".
@@ -48,9 +57,18 @@ class ChatChoice(_model_base.Model):
     message: "_models.ChatMessage" = rest_field()
     """The chat message for a given chat completion. Required."""
     session_state: Optional[Any] = rest_field()
-    """Backend-specific information for the tracking of a session."""
+    """Field that allows the chat app to store and retrieve data, the structure of such data is
+     dependant on the backend
+     being used. The client must send back the data in this field unchanged in subsequent requests,
+     until the chat app
+     sends a new one. The data in this field can be used to implement stateful services, such as
+     remembering previous
+     conversations or user preferences."""
     context: Optional[Dict[str, Any]] = rest_field()
-    """Backend-specific context or arguments."""
+    """Context allows the chat app to receive extra parameters from the client, such as temperature,
+     functions, or
+     customer_info. These parameters are specific to the chat app and not understood by the generic
+     clients."""
     finish_reason: Union[str, "_models.FinishReason"] = rest_field()
     """The reason this chat completion completed its generation. Required. Known values are: \"stop\"
      and \"length\"."""
@@ -153,9 +171,18 @@ class ChatCompletionOptions(_model_base.Model):
     :ivar stream: Indicates whether the completion is a streaming or non-streaming completion.
      Required. Default value is False.
     :vartype stream: bool
-    :ivar session_state: Backend-specific information for the tracking of a session.
+    :ivar session_state: Field that allows the chat app to store and retrieve data, the structure
+     of such data is dependant on the backend
+     being used. The client must send back the data in this field unchanged in subsequent requests,
+     until the chat app
+     sends a new one. The data in this field can be used to implement stateful services, such as
+     remembering previous
+     conversations or user preferences.
     :vartype session_state: any
-    :ivar context: Backend-specific context or arguments.
+    :ivar context: Context allows the chat app to receive extra parameters from the client, such as
+     temperature, functions, or
+     customer_info. These parameters are specific to the chat app and not understood by the generic
+     clients.
     :vartype context: dict[str, any]
     """
 
@@ -165,9 +192,18 @@ class ChatCompletionOptions(_model_base.Model):
     """Indicates whether the completion is a streaming or non-streaming completion. Required. Default
      value is False."""
     session_state: Optional[Any] = rest_field()
-    """Backend-specific information for the tracking of a session."""
+    """Field that allows the chat app to store and retrieve data, the structure of such data is
+     dependant on the backend
+     being used. The client must send back the data in this field unchanged in subsequent requests,
+     until the chat app
+     sends a new one. The data in this field can be used to implement stateful services, such as
+     remembering previous
+     conversations or user preferences."""
     context: Optional[Dict[str, Any]] = rest_field()
-    """Backend-specific context or arguments."""
+    """Context allows the chat app to receive extra parameters from the client, such as temperature,
+     functions, or
+     customer_info. These parameters are specific to the chat app and not understood by the generic
+     clients."""
 
     @overload
     def __init__(
@@ -201,7 +237,13 @@ class ChatMessage(_model_base.Model):
     :ivar role: The role associated with the message. Required. Known values are: "user", "system",
      and "assistant".
     :vartype role: str or ~azure.ai.chatprotocol.models.ChatRole
-    :ivar session_state: Backend-specific information for the tracking of a session.
+    :ivar session_state: Field that allows the chat app to store and retrieve data, the structure
+     of such data is dependant on the backend
+     being used. The client must send back the data in this field unchanged in subsequent requests,
+     until the chat app
+     sends a new one. The data in this field can be used to implement stateful services, such as
+     remembering previous
+     conversations or user preferences.
     :vartype session_state: any
     """
 
@@ -211,7 +253,13 @@ class ChatMessage(_model_base.Model):
     """The role associated with the message. Required. Known values are: \"user\", \"system\", and
      \"assistant\"."""
     session_state: Optional[Any] = rest_field()
-    """Backend-specific information for the tracking of a session."""
+    """Field that allows the chat app to store and retrieve data, the structure of such data is
+     dependant on the backend
+     being used. The client must send back the data in this field unchanged in subsequent requests,
+     until the chat app
+     sends a new one. The data in this field can be used to implement stateful services, such as
+     remembering previous
+     conversations or user preferences."""
 
     @overload
     def __init__(
@@ -242,7 +290,13 @@ class ChatMessageDelta(_model_base.Model):
     :ivar role: The role associated with the message. Known values are: "user", "system", and
      "assistant".
     :vartype role: str or ~azure.ai.chatprotocol.models.ChatRole
-    :ivar session_state: Backend-specific information for the tracking of a session.
+    :ivar session_state: Field that allows the chat app to store and retrieve data, the structure
+     of such data is dependant on the backend
+     being used. The client must send back the data in this field unchanged in subsequent requests,
+     until the chat app
+     sends a new one. The data in this field can be used to implement stateful services, such as
+     remembering previous
+     conversations or user preferences.
     :vartype session_state: any
     """
 
@@ -252,7 +306,13 @@ class ChatMessageDelta(_model_base.Model):
     """The role associated with the message. Known values are: \"user\", \"system\", and
      \"assistant\"."""
     session_state: Optional[Any] = rest_field()
-    """Backend-specific information for the tracking of a session."""
+    """Field that allows the chat app to store and retrieve data, the structure of such data is
+     dependant on the backend
+     being used. The client must send back the data in this field unchanged in subsequent requests,
+     until the chat app
+     sends a new one. The data in this field can be used to implement stateful services, such as
+     remembering previous
+     conversations or user preferences."""
 
     @overload
     def __init__(
@@ -285,9 +345,18 @@ class ChoiceDelta(_model_base.Model):
     :vartype index: int
     :ivar delta: The partial message received for this choice. Required.
     :vartype delta: ~azure.ai.chatprotocol.models.ChatMessageDelta
-    :ivar session_state: Backend-specific information for the tracking of a session.
+    :ivar session_state: Field that allows the chat app to store and retrieve data, the structure
+     of such data is dependant on the backend
+     being used. The client must send back the data in this field unchanged in subsequent requests,
+     until the chat app
+     sends a new one. The data in this field can be used to implement stateful services, such as
+     remembering previous
+     conversations or user preferences.
     :vartype session_state: any
-    :ivar context: Backend-specific context or arguments.
+    :ivar context: Context allows the chat app to receive extra parameters from the client, such as
+     temperature, functions, or
+     customer_info. These parameters are specific to the chat app and not understood by the generic
+     clients.
     :vartype context: dict[str, any]
     :ivar finish_reason: The reason this chat completion completed its generation. Known values
      are: "stop" and "length".
@@ -300,9 +369,18 @@ class ChoiceDelta(_model_base.Model):
     delta: "_models.ChatMessageDelta" = rest_field()
     """The partial message received for this choice. Required."""
     session_state: Optional[Any] = rest_field()
-    """Backend-specific information for the tracking of a session."""
+    """Field that allows the chat app to store and retrieve data, the structure of such data is
+     dependant on the backend
+     being used. The client must send back the data in this field unchanged in subsequent requests,
+     until the chat app
+     sends a new one. The data in this field can be used to implement stateful services, such as
+     remembering previous
+     conversations or user preferences."""
     context: Optional[Dict[str, Any]] = rest_field()
-    """Backend-specific context or arguments."""
+    """Context allows the chat app to receive extra parameters from the client, such as temperature,
+     functions, or
+     customer_info. These parameters are specific to the chat app and not understood by the generic
+     clients."""
     finish_reason: Optional[Union[str, "_models.FinishReason"]] = rest_field()
     """The reason this chat completion completed its generation. Known values are: \"stop\" and
      \"length\"."""
@@ -343,9 +421,18 @@ class StreamingChatCompletionOptions(_model_base.Model):
     :ivar stream: Indicates whether the completion is a streaming or non-streaming completion.
      Required. Default value is True.
     :vartype stream: bool
-    :ivar session_state: Backend-specific information for the tracking of a session.
+    :ivar session_state: Field that allows the chat app to store and retrieve data, the structure
+     of such data is dependant on the backend
+     being used. The client must send back the data in this field unchanged in subsequent requests,
+     until the chat app
+     sends a new one. The data in this field can be used to implement stateful services, such as
+     remembering previous
+     conversations or user preferences.
     :vartype session_state: any
-    :ivar context: Backend-specific context or arguments.
+    :ivar context: Context allows the chat app to receive extra parameters from the client, such as
+     temperature, functions, or
+     customer_info. These parameters are specific to the chat app and not understood by the generic
+     clients.
     :vartype context: dict[str, any]
     """
 
@@ -355,9 +442,18 @@ class StreamingChatCompletionOptions(_model_base.Model):
     """Indicates whether the completion is a streaming or non-streaming completion. Required. Default
      value is True."""
     session_state: Optional[Any] = rest_field()
-    """Backend-specific information for the tracking of a session."""
+    """Field that allows the chat app to store and retrieve data, the structure of such data is
+     dependant on the backend
+     being used. The client must send back the data in this field unchanged in subsequent requests,
+     until the chat app
+     sends a new one. The data in this field can be used to implement stateful services, such as
+     remembering previous
+     conversations or user preferences."""
     context: Optional[Dict[str, Any]] = rest_field()
-    """Backend-specific context or arguments."""
+    """Context allows the chat app to receive extra parameters from the client, such as temperature,
+     functions, or
+     customer_info. These parameters are specific to the chat app and not understood by the generic
+     clients."""
 
     @overload
     def __init__(

@@ -40,133 +40,6 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 
 class ChatProtocolClientOperationsMixin(ChatProtocolClientMixinABC):
     @overload
-    async def create(
-        self, body: _models.ChatCompletionOptions, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ChatCompletion:
-        """Creates a new chat completion.
-
-        :param body: Required.
-        :type body: ~azure.ai.chatprotocol.models.ChatCompletionOptions
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: ChatCompletion. The ChatCompletion is compatible with MutableMapping
-        :rtype: ~azure.ai.chatprotocol.models.ChatCompletion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ChatCompletion:
-        """Creates a new chat completion.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: ChatCompletion. The ChatCompletion is compatible with MutableMapping
-        :rtype: ~azure.ai.chatprotocol.models.ChatCompletion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create(
-        self, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ChatCompletion:
-        """Creates a new chat completion.
-
-        :param body: Required.
-        :type body: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: ChatCompletion. The ChatCompletion is compatible with MutableMapping
-        :rtype: ~azure.ai.chatprotocol.models.ChatCompletion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create(
-        self, body: Union[_models.ChatCompletionOptions, JSON, IO], **kwargs: Any
-    ) -> _models.ChatCompletion:
-        """Creates a new chat completion.
-
-        :param body: Is one of the following types: ChatCompletionOptions, JSON, IO Required.
-        :type body: ~azure.ai.chatprotocol.models.ChatCompletionOptions or JSON or IO
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
-        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
-         will have to context manage the returned stream.
-        :return: ChatCompletion. The ChatCompletion is compatible with MutableMapping
-        :rtype: ~azure.ai.chatprotocol.models.ChatCompletion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ChatCompletion] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_chat_protocol_create_request(
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                await response.read()  # Load the body in memory and close the socket
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.ChatCompletion, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
     async def create_streaming(
         self, body: _models.StreamingChatCompletionOptions, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ChatCompletionChunk:
@@ -260,7 +133,6 @@ class ChatProtocolClientOperationsMixin(ChatProtocolClientMixinABC):
 
         _request = build_chat_protocol_create_streaming_request(
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -287,6 +159,132 @@ class ChatProtocolClientOperationsMixin(ChatProtocolClientMixinABC):
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.ChatCompletionChunk, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create(
+        self, body: _models.ChatCompletionOptions, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ChatCompletion:
+        """Creates a new chat completion.
+
+        :param body: Required.
+        :type body: ~azure.ai.chatprotocol.models.ChatCompletionOptions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: ChatCompletion. The ChatCompletion is compatible with MutableMapping
+        :rtype: ~azure.ai.chatprotocol.models.ChatCompletion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ChatCompletion:
+        """Creates a new chat completion.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: ChatCompletion. The ChatCompletion is compatible with MutableMapping
+        :rtype: ~azure.ai.chatprotocol.models.ChatCompletion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create(
+        self, body: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ChatCompletion:
+        """Creates a new chat completion.
+
+        :param body: Required.
+        :type body: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: ChatCompletion. The ChatCompletion is compatible with MutableMapping
+        :rtype: ~azure.ai.chatprotocol.models.ChatCompletion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create(
+        self, body: Union[_models.ChatCompletionOptions, JSON, IO], **kwargs: Any
+    ) -> _models.ChatCompletion:
+        """Creates a new chat completion.
+
+        :param body: Is one of the following types: ChatCompletionOptions, JSON, IO Required.
+        :type body: ~azure.ai.chatprotocol.models.ChatCompletionOptions or JSON or IO
+        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
+         value is None.
+        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: ChatCompletion. The ChatCompletion is compatible with MutableMapping
+        :rtype: ~azure.ai.chatprotocol.models.ChatCompletion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ChatCompletion] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_chat_protocol_create_request(
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                await response.read()  # Load the body in memory and close the socket
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ChatCompletion, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
