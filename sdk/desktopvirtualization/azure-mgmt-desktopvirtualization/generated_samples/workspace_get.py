@@ -36,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/desktopvirtualization/resource-manager/Microsoft.DesktopVirtualization/stable/2022-09-09/examples/Workspace_Get.json
+# x-ms-original-file: specification/desktopvirtualization/resource-manager/Microsoft.DesktopVirtualization/stable/2023-09-05/examples/Workspace_Get.json
 if __name__ == "__main__":
     main()

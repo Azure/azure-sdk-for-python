@@ -1,0 +1,5 @@
+{
+    "send_diagnostics": null,
+    "diagnostics_verbosity": "INFO",
+    "azure.ai.resources.index": true
+}

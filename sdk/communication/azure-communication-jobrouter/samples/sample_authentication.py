@@ -1,4 +1,3 @@
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -32,7 +31,7 @@ class RouterClientAuthenticationSamples(object):
         from azure.communication.jobrouter import JobRouterClient
 
         # set `connection_string` to an existing ACS endpoint
-        router_client = JobRouterClient.from_connection_string(conn_str = connection_string)
+        router_client = JobRouterClient.from_connection_string(conn_str=connection_string)
         print("JobRouterClient created successfully!")
 
         # [END auth_from_connection_string]
@@ -44,13 +43,13 @@ class RouterClientAuthenticationSamples(object):
         from azure.communication.jobrouter import JobRouterAdministrationClient
 
         # set `connection_string` to an existing ACS endpoint
-        router_client = JobRouterAdministrationClient.from_connection_string(conn_str = connection_string)
+        router_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
         print("JobRouterAdministrationClient created successfully!")
 
         # [END admin_auth_from_connection_string]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = RouterClientAuthenticationSamples()
     sample.create_router_client()
     sample.create_router_admin_client()

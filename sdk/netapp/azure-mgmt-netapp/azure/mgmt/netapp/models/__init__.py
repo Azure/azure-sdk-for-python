@@ -9,14 +9,9 @@
 from ._models_py3 import AccountEncryption
 from ._models_py3 import ActiveDirectory
 from ._models_py3 import AuthorizeRequest
-from ._models_py3 import Backup
-from ._models_py3 import BackupPatch
 from ._models_py3 import BackupPoliciesList
 from ._models_py3 import BackupPolicy
 from ._models_py3 import BackupPolicyPatch
-from ._models_py3 import BackupRestoreFiles
-from ._models_py3 import BackupStatus
-from ._models_py3 import BackupsList
 from ._models_py3 import BreakFileLocksRequest
 from ._models_py3 import BreakReplicationRequest
 from ._models_py3 import CapacityPool
@@ -47,12 +42,15 @@ from ._models_py3 import MountTargetProperties
 from ._models_py3 import NetAppAccount
 from ._models_py3 import NetAppAccountList
 from ._models_py3 import NetAppAccountPatch
+from ._models_py3 import NetworkSiblingSet
+from ._models_py3 import NicInfo
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
 from ._models_py3 import PlacementKeyValuePairs
 from ._models_py3 import PoolChangeRequest
 from ._models_py3 import ProxyResource
+from ._models_py3 import QueryNetworkSiblingSetRequest
 from ._models_py3 import QuotaAvailabilityRequest
 from ._models_py3 import ReestablishReplicationRequest
 from ._models_py3 import RegionInfo
@@ -82,9 +80,9 @@ from ._models_py3 import SubvolumePatchRequest
 from ._models_py3 import SubvolumesList
 from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
+from ._models_py3 import UpdateNetworkSiblingSetRequest
 from ._models_py3 import UserAssignedIdentity
 from ._models_py3 import Volume
-from ._models_py3 import VolumeBackupProperties
 from ._models_py3 import VolumeBackups
 from ._models_py3 import VolumeGroup
 from ._models_py3 import VolumeGroupDetails
@@ -108,10 +106,10 @@ from ._models_py3 import WeeklySchedule
 from ._net_app_management_client_enums import ActiveDirectoryStatus
 from ._net_app_management_client_enums import ApplicationType
 from ._net_app_management_client_enums import AvsDataStore
-from ._net_app_management_client_enums import BackupType
 from ._net_app_management_client_enums import CheckNameResourceTypes
 from ._net_app_management_client_enums import CheckQuotaNameResourceTypes
 from ._net_app_management_client_enums import ChownMode
+from ._net_app_management_client_enums import CoolAccessRetrievalPolicy
 from ._net_app_management_client_enums import CreatedByType
 from ._net_app_management_client_enums import EnableSubvolumes
 from ._net_app_management_client_enums import EncryptionKeySource
@@ -125,6 +123,7 @@ from ._net_app_management_client_enums import ManagedServiceIdentityType
 from ._net_app_management_client_enums import MetricAggregationType
 from ._net_app_management_client_enums import MirrorState
 from ._net_app_management_client_enums import NetworkFeatures
+from ._net_app_management_client_enums import NetworkSiblingSetProvisioningState
 from ._net_app_management_client_enums import ProvisioningState
 from ._net_app_management_client_enums import QosType
 from ._net_app_management_client_enums import RegionStorageToNetworkProximity
@@ -144,14 +143,9 @@ __all__ = [
     "AccountEncryption",
     "ActiveDirectory",
     "AuthorizeRequest",
-    "Backup",
-    "BackupPatch",
     "BackupPoliciesList",
     "BackupPolicy",
     "BackupPolicyPatch",
-    "BackupRestoreFiles",
-    "BackupStatus",
-    "BackupsList",
     "BreakFileLocksRequest",
     "BreakReplicationRequest",
     "CapacityPool",
@@ -182,12 +176,15 @@ __all__ = [
     "NetAppAccount",
     "NetAppAccountList",
     "NetAppAccountPatch",
+    "NetworkSiblingSet",
+    "NicInfo",
     "Operation",
     "OperationDisplay",
     "OperationListResult",
     "PlacementKeyValuePairs",
     "PoolChangeRequest",
     "ProxyResource",
+    "QueryNetworkSiblingSetRequest",
     "QuotaAvailabilityRequest",
     "ReestablishReplicationRequest",
     "RegionInfo",
@@ -217,9 +214,9 @@ __all__ = [
     "SubvolumesList",
     "SystemData",
     "TrackedResource",
+    "UpdateNetworkSiblingSetRequest",
     "UserAssignedIdentity",
     "Volume",
-    "VolumeBackupProperties",
     "VolumeBackups",
     "VolumeGroup",
     "VolumeGroupDetails",
@@ -242,10 +239,10 @@ __all__ = [
     "ActiveDirectoryStatus",
     "ApplicationType",
     "AvsDataStore",
-    "BackupType",
     "CheckNameResourceTypes",
     "CheckQuotaNameResourceTypes",
     "ChownMode",
+    "CoolAccessRetrievalPolicy",
     "CreatedByType",
     "EnableSubvolumes",
     "EncryptionKeySource",
@@ -259,6 +256,7 @@ __all__ = [
     "MetricAggregationType",
     "MirrorState",
     "NetworkFeatures",
+    "NetworkSiblingSetProvisioningState",
     "ProvisioningState",
     "QosType",
     "RegionStorageToNetworkProximity",

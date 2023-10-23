@@ -82,7 +82,7 @@ You can pass Azure monitor OpenTelemetry exporter configuration parameters direc
 ...
 configure_azure_monitor(
    connection_string="<your-connection-string>",
-   disable_offline_storage=True, 
+   disable_offline_storage=True,
 )
 ...
 ```
@@ -153,7 +153,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [ot_instrumentation_urllib3_version]: https://github.com/open-telemetry/opentelemetry-python-contrib/blob/main/instrumentation/opentelemetry-instrumentation-urllib3/src/opentelemetry/instrumentation/urllib3/package.py#L16
 [opentelemetry_spec_resource]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/resource/sdk.md#resource-sdk
 [opentelemetry_spec_resource_attributes]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/resource/sdk.md#specifying-resource-information-via-an-environment-variable
-[opentelemetry_spec_service_name]: https://github.com/open-telemetry/opentelemetry-specification/tree/main/specification/resource/semantic_conventions#semantic-attributes-with-sdk-provided-default-value
+[opentelemetry_spec_service_name]: https://github.com/open-telemetry/semantic-conventions/blob/main/docs/resource/README.md#service
 [opentelemetry_spec_view]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#view
 [pip]: https://pypi.org/project/pip/
 [pypi_django]: https://pypi.org/project/Django/

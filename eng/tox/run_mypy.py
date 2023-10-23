@@ -16,6 +16,7 @@ import sys
 from ci_tools.environment_exclusions import (
     is_check_enabled, is_typing_ignored
 )
+from ci_tools.parsing import ParsedSetup
 from ci_tools.variables import in_ci
 from gh_tools.vnext_issue_creator import create_vnext_issue
 
@@ -39,11 +40,12 @@ if __name__ == "__main__":
         "--next",
         default=False,
         help="Next version of mypy is being tested.",
-        required=False 
+        required=False
     )
 
     args = parser.parse_args()
-    package_name = os.path.basename(os.path.abspath(args.target_package))
+    package_dir = os.path.abspath(args.target_package)
+    package_name = os.path.basename(package_dir)
     if not args.next and in_ci():
         if not is_check_enabled(args.target_package, "mypy", True) or is_typing_ignored(package_name):
             logging.info(
@@ -51,6 +53,8 @@ if __name__ == "__main__":
             )
             exit(0)
 
+    pkg_details = ParsedSetup.from_path(package_dir)
+    top_level_module = pkg_details.namespace.split(".")[0]
     commands = [
         sys.executable,
         "-m",
@@ -60,7 +64,7 @@ if __name__ == "__main__":
         "--show-error-codes",
         "--ignore-missing-imports",
     ]
-    src_code = [*commands, os.path.join(args.target_package, "azure")]
+    src_code = [*commands, os.path.join(args.target_package, top_level_module)]
     src_code_error = None
     sample_code_error = None
     try:

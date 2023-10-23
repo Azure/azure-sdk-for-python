@@ -1,6 +1,6 @@
 # Release History
 
-## 1.29.5 (Unreleased)
+## 1.29.6 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,16 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.29.5 (2023-10-19)
+
+### Bugs Fixed
+
+- Fixed an issue with `multipart/form-data` in the async transport where `data` was not getting encoded into the request body. #32473
+
+### Other Changes
+
+- Use ssl context from aiohttp by default.
 
 ## 1.29.4 (2023-09-07)
 
