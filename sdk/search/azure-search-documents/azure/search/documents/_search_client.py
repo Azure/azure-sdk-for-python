@@ -22,7 +22,7 @@ from ._generated.models import (
     ScoringStatistics,
     VectorFilterMode,
     VectorQuery,
-    SemanticErrorHandling,
+    SemanticErrorHandling as SemanticErrorMode,
     SuggestRequest,
 )
 from ._search_documents_error import RequestEntityTooLargeError
@@ -162,7 +162,7 @@ class SearchClient(HeadersMixin):
         session_id: Optional[str] = None,
         vector_queries: Optional[List[VectorQuery]] = None,
         vector_filter_mode: Optional[Union[str, VectorFilterMode]] = None,
-        semantic_error_handling: Optional[Union[str, SemanticErrorHandling]] = None,
+        semantic_error_handling: Optional[Union[str, SemanticErrorMode]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
         **kwargs: Any
     ) -> SearchItemPaged[Dict]:
@@ -252,7 +252,7 @@ class SearchClient(HeadersMixin):
         :keyword semantic_error_handling: Allows the user to choose whether a semantic call should fail
          completely (default / current behavior), or to return partial results. Known values are:
          "partial" and "fail".
-        :paramtype semantic_error_handling: str or ~azure.search.documents.models.SemanticErrorHandling
+        :paramtype semantic_error_handling: str or ~azure.search.documents.models.SemanticErrorMode
         :keyword int semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
          time it takes for semantic enrichment to finish processing before the request fails.
         :keyword vector_queries: The query parameters for vector and hybrid search queries.

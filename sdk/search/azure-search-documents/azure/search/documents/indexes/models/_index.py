@@ -154,9 +154,9 @@ class SearchField(_serialization.Model):
     :vartype index_analyzer: str or ~search_service_client.models.LexicalAnalyzerName
     :ivar dimensions: The dimensionality of the vector field.
     :vartype dimensions: int
-    :ivar vector_search_profile: The name of the vector search profile that specifies the algorithm
+    :ivar vector_search_profile_name: The name of the vector search profile that specifies the algorithm
      to use when searching the vector field.
-    :vartype vector_search_profile: str
+    :vartype vector_search_profile_name: str
     :ivar synonym_maps: A list of the names of synonym maps to associate with this field. This
      option can be used only with searchable fields. Currently only one synonym map per field is
      supported. Assigning a synonym map to a field ensures that query terms targeting that field are
@@ -188,7 +188,7 @@ class SearchField(_serialization.Model):
         "synonym_map_names": {"key": "synonymMapNames", "type": "[str]"},
         "fields": {"key": "fields", "type": "[SearchField]"},
         "vector_search_dimensions": {"key": "vectorSearchDimensions", "type": "int"},
-        "vector_search_profile": {
+        "vector_search_profile_name": {
             "key": "vectorSearchProfile",
             "type": "str",
         },
@@ -210,7 +210,7 @@ class SearchField(_serialization.Model):
         self.synonym_map_names = kwargs.get("synonym_map_names", None)
         self.fields = kwargs.get("fields", None)
         self.vector_search_dimensions = kwargs.get("vector_search_dimensions", None)
-        self.vector_search_profile = kwargs.get("vector_search_profile", None)
+        self.vector_search_profile_name = kwargs.get("vector_search_profile_name", None)
 
     def _to_generated(self) -> _SearchField:
         fields = [pack_search_field(x) for x in self.fields] if self.fields else None
@@ -230,7 +230,7 @@ class SearchField(_serialization.Model):
             synonym_maps=self.synonym_map_names,
             fields=fields,
             dimensions=self.vector_search_dimensions,
-            vector_search_profile=self.vector_search_profile,
+            vector_search_profile=self.vector_search_profile_name,
         )
 
     @classmethod
@@ -255,7 +255,7 @@ class SearchField(_serialization.Model):
             synonym_map_names=search_field.synonym_maps,
             fields=fields,
             vector_search_dimensions=search_field.dimensions,
-            vector_search_profile=search_field.vector_search_profile,
+            vector_search_profile_name=search_field.vector_search_profile,
         )
 
 
@@ -661,7 +661,7 @@ def pack_search_field(search_field: SearchField) -> _SearchField:
         fields = search_field.get("fields")
         fields = [pack_search_field(x) for x in fields] if fields else None
         vector_search_dimensions = search_field.get("vector_search_dimensions")
-        vector_search_profile = search_field.get("vector_search_profile")
+        vector_search_profile_name = search_field.get("vector_search_profile_name")
         return _SearchField(
             name=name,
             type=field_type,
@@ -677,6 +677,6 @@ def pack_search_field(search_field: SearchField) -> _SearchField:
             synonym_maps=synonym_map_names,
             fields=fields,
             vector_search_dimensions=vector_search_dimensions,
-            vector_search_profile=vector_search_profile,
+            vector_search_profile=vector_search_profile_name,
         )
     return search_field._to_generated()  # pylint:disable=protected-access

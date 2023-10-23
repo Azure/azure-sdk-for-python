@@ -33,13 +33,12 @@ from .._generated.models import (
     QueryAnswerType,
     QueryCaptionType,
     QueryType,
-    RawVectorQuery,
+    RawVectorQuery as VectorQuery,
     ScoringStatistics,
     SearchMode,
-    SemanticErrorHandling,
+    SemanticErrorHandling as SemanticErrorMode,
     VectorFilterMode,
-    VectorQuery,
-    VectorQueryKind,
+    VectorQuery as VectorizableQuery,
 )
 from .._utils import odata
 
@@ -54,11 +53,10 @@ __all__ = (
     "QueryAnswerType",
     "QueryCaptionType",
     "QueryType",
-    "RawVectorQuery",
+    "VectorQuery",
     "ScoringStatistics",
     "SearchMode",
-    "SemanticErrorHandling",
+    "SemanticErrorMode",
     "VectorFilterMode",
-    "VectorQuery",
-    "VectorQueryKind",
+    "VectorizableQuery",
 )
