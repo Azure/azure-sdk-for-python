@@ -3,9 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Union, Any, Mapping, Optional, List, Tuple, TYPE_CHECKING
-
-from azure.core import MatchConditions
+from typing import Union, Any, Mapping, Optional, List, Tuple
 
 from ._common_conversion import _transform_patch_to_cosmos_post
 from ._models import UpdateMode, TransactionOperation
@@ -20,6 +18,7 @@ from ._generated.operations._operations import (
 from ._generated._configuration import AzureTableConfiguration
 from ._generated.aio._configuration import AzureTableConfiguration as AsyncAzureTableConfiguration
 
+from azure.core import MatchConditions
 from azure.core.rest import HttpRequest
 
 
