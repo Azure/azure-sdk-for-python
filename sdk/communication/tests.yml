@@ -28,7 +28,11 @@ stages:
         MaxParallel: 2
         ServiceDirectory: communication
         TestResourceDirectories: ${{ parameters.TestResourceDirectories }}
-
+        MatrixConfigs:
+          - Name: communication_ci_matrix
+            Path: eng/pipelines/templates/stages/platform-matrix-metricsadvisor_tables.json
+            Selection: sparse
+            GenerateVMJobs: true
         ${{ if contains(service, 'phonenumbers') }}:
           CloudConfig:
             Public:

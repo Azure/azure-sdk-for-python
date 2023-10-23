@@ -161,7 +161,7 @@ class DatabaseProxy(object):
 
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
-        :type partition_key: ~azure.cosmos.partition_key.PartitionKey
+        :type partition_key: ~azure.cosmos.PartitionKey
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -255,7 +255,7 @@ class DatabaseProxy(object):
 
         :param str id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
-        :type partition_key: ~azure.cosmos.partition_key.PartitionKey
+        :type partition_key: ~azure.cosmos.PartitionKey
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -421,7 +421,7 @@ class DatabaseProxy(object):
             :class:`ContainerProxy` instance of the container to be replaced.
         :type container: Union[str, Dict[str, Any], ~azure.cosmos.aio.ContainerProxy]
         :param partition_key: The partition key to use for the container.
-        :type partition_key: ~azure.cosmos.partition_key.PartitionKey
+        :type partition_key: ~azure.cosmos.PartitionKey
         :keyword dict[str, str] indexing_policy: The indexing policy to apply to the container.
         :keyword int default_ttl: Default time to live (TTL) for items in the container.
             If unspecified, items do not expire.
@@ -676,7 +676,7 @@ class DatabaseProxy(object):
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Dict[str, str], Dict[str, Any]], None]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError:
-            If the replace failed or the user with given ID does not exist.
+            If the replace operation failed or the user with given ID does not exist.
         :returns: A `UserProxy` instance representing the user after replace went through.
         :rtype: ~azure.cosmos.aio.UserProxy
         """

@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import Optional
+from typing import Any, Optional, cast
 
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -12,6 +12,7 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 from ._generated import ContainerRegistry
 from ._generated.models import PostContentSchemaGrantType
+from ._generated.operations._patch import AuthenticationOperations
 from ._helpers import _parse_challenge, _parse_exp_time
 from ._user_agent import USER_AGENT
 
@@ -39,7 +40,7 @@ class ACRExchangeClient(object):
     :paramtype credential_scopes: list[str]
     """
 
-    def __init__(self, endpoint: str, credential: TokenCredential, **kwargs) -> None:
+    def __init__(self, endpoint: str, credential: TokenCredential, **kwargs: Any) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
@@ -52,8 +53,8 @@ class ACRExchangeClient(object):
             **kwargs
         )
         self._credential = credential
-        self._refresh_token = None  # type: Optional[str]
-        self._expiration_time = 0  # type: float
+        self._refresh_token: Optional[str] = None
+        self._expiration_time: float = 0
 
     def get_acr_access_token(  # pylint:disable=client-method-missing-tracing-decorator
         self, challenge: str, **kwargs
@@ -75,7 +76,8 @@ class ACRExchangeClient(object):
     def exchange_aad_token_for_refresh_token(  # pylint:disable=client-method-missing-tracing-decorator
         self, service: str, **kwargs
     ) -> str:
-        refresh_token = self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(  # type: ignore[attr-defined] # pylint: disable=line-too-long
+        auth_operation = cast(AuthenticationOperations, self._client.authentication)
+        refresh_token = auth_operation.exchange_aad_access_token_for_acr_refresh_token(
             grant_type=PostContentSchemaGrantType.ACCESS_TOKEN,
             service=service,
             access_token=self._credential.get_token(*self.credential_scopes).token,
@@ -86,7 +88,8 @@ class ACRExchangeClient(object):
     def exchange_refresh_token_for_access_token(  # pylint:disable=client-method-missing-tracing-decorator
         self, refresh_token: str, service: str, scope: str, **kwargs
     ) -> Optional[str]:
-        access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(  # type: ignore[attr-defined] # pylint: disable=line-too-long
+        auth_operation = cast(AuthenticationOperations, self._client.authentication)
+        access_token = auth_operation.exchange_acr_refresh_token_for_acr_access_token(
             service=service, scope=scope, refresh_token=refresh_token, **kwargs
         )
         return access_token.access_token

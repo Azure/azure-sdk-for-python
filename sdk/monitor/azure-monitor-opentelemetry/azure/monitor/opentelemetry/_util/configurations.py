@@ -103,19 +103,12 @@ def _default_sampling_ratio(configurations):
 
 
 def _default_instrumentation_options(configurations):
-    disabled_instrumentation = environ.get(
-        OTEL_PYTHON_DISABLED_INSTRUMENTATIONS, ""
-    )
-    disabled_instrumentation = disabled_instrumentation.split(",")
-    # to handle users entering "requests , flask" or "requests, flask" with spaces
-    disabled_instrumentation = [
-        x.strip() for x in disabled_instrumentation
-    ]
+    otel_disabled_instrumentations = _get_otel_disabled_instrumentations()
 
     merged_instrumentation_options = {}
     instrumentation_options = configurations.get(INSTRUMENTATION_OPTIONS_ARG, {})
     for lib_name in _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES:
-        disabled_by_env_var = lib_name in disabled_instrumentation
+        disabled_by_env_var = lib_name in otel_disabled_instrumentations
         options = {"enabled": not disabled_by_env_var}
         options.update(instrumentation_options.get(lib_name, {}))
         merged_instrumentation_options[lib_name] = options
@@ -126,6 +119,17 @@ def _default_instrumentation_options(configurations):
 
     configurations[INSTRUMENTATION_OPTIONS_ARG] = merged_instrumentation_options
 
+
+def _get_otel_disabled_instrumentations():
+    disabled_instrumentation = environ.get(
+        OTEL_PYTHON_DISABLED_INSTRUMENTATIONS, ""
+    )
+    disabled_instrumentation = disabled_instrumentation.split(",")
+    # to handle users entering "requests , flask" or "requests, flask" with spaces
+    disabled_instrumentation = [
+        x.strip() for x in disabled_instrumentation
+    ]
+    return disabled_instrumentation
 
 def _is_instrumentation_enabled(configurations, lib_name):
     if INSTRUMENTATION_OPTIONS_ARG not in configurations:
