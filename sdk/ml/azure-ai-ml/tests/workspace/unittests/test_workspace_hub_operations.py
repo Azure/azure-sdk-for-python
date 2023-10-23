@@ -56,7 +56,7 @@ class TestWorkspaceHubOperation:
     ):
         mocker.patch("azure.ai.ml.operations.WorkspaceHubOperations.get", return_value=None)
         mocker.patch(
-            "azure.ai.ml.operations.WorkspaceHubOperations._populate_arm_paramaters", return_value=({}, {}, {})
+            "azure.ai.ml.operations.WorkspaceHubOperations._populate_arm_parameters", return_value=({}, {}, {})
         )
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
         mock_workspace_hub_operation.begin_create(workspace_hub=WorkspaceHub(name="name"))
@@ -87,6 +87,9 @@ class TestWorkspaceHubOperation:
         def outgoing_call(rg, name):
             return WorkspaceHub(name=name)._to_rest_object()
 
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.get_generic_arm_resource_by_arm_id", return_value=None
+        )
         mock_workspace_hub_operation._operation.get.side_effect = outgoing_call
         mock_workspace_hub_operation.begin_delete("randstr", delete_dependent_resources=True)
         mock_workspace_hub_operation._operation.begin_delete.assert_called_once()
@@ -99,6 +102,9 @@ class TestWorkspaceHubOperation:
 
         mock_workspace_hub_operation._operation.get.side_effect = outgoing_call
         mocker.patch("azure.ai.ml.operations._workspace_operations_base.delete_resource_by_arm_id", return_value=None)
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations_base.get_generic_arm_resource_by_arm_id", return_value=None
+        )
         with pytest.raises(Exception):
             mock_workspace_hub_operation.begin_delete("randstr", delete_dependent_resources=True)
 

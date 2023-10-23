@@ -9,8 +9,8 @@ from typing import Any, Callable, Dict, Optional, Tuple
 from marshmallow import Schema
 
 from ..._restclient.v2022_10_01.models import ComponentVersion
-from ..._utils.utils import is_internal_components_enabled
-from ...constants._common import AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX, SOURCE_PATH_CONTEXT_KEY, CommonYamlFields
+from ..._utils.utils import is_internal_component_data
+from ...constants._common import SOURCE_PATH_CONTEXT_KEY
 from ...constants._component import DataTransferTaskType, NodeType
 from ...entities._component.automl_component import AutoMLComponent
 from ...entities._component.command_component import CommandComponent
@@ -104,16 +104,10 @@ class _ComponentFactory:
 
         _type = get_type_from_spec(yaml_spec, valid_keys=self._create_instance_funcs)
         # SparkComponent and InternalSparkComponent share the same type name, but they are different types.
-        if for_load and is_internal_components_enabled():
-            schema_url = yaml_spec[CommonYamlFields.SCHEMA] if CommonYamlFields.SCHEMA in yaml_spec else None
-            if (
-                _type == NodeType.SPARK
-                and schema_url
-                and schema_url.startswith(AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX)
-            ):
-                from azure.ai.ml._internal._schema.node import NodeType as InternalNodeType
+        if for_load and is_internal_component_data(yaml_spec, raise_if_not_enabled=True) and _type == NodeType.SPARK:
+            from azure.ai.ml._internal._schema.node import NodeType as InternalNodeType
 
-                _type = InternalNodeType.SPARK
+            _type = InternalNodeType.SPARK
 
         create_instance_func = self._create_instance_funcs[_type]
         create_schema_func = self._create_schema_funcs[_type]

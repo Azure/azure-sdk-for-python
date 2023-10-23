@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import os
+
 from logging import getLogger
 from typing import Dict, cast
 
@@ -14,6 +16,7 @@ from opentelemetry.instrumentation.instrumentor import (
     BaseInstrumentor,
 )
 from opentelemetry.metrics import set_meter_provider
+from opentelemetry.sdk.environment_variables import OTEL_EXPERIMENTAL_RESOURCE_DETECTORS
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.metrics import MeterProvider
@@ -26,11 +29,12 @@ from pkg_resources import iter_entry_points  # type: ignore
 from azure.core.settings import settings
 from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from azure.monitor.opentelemetry._constants import (
-    DISABLE_AZURE_CORE_TRACING_ARG,
+    _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES,
+    _AZURE_SDK_INSTRUMENTATION_NAME,
     DISABLE_LOGGING_ARG,
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
-    DISABLED_INSTRUMENTATIONS_ARG,
+    LOGGER_NAME_ARG,
     SAMPLING_RATIO_ARG,
 )
 from azure.monitor.opentelemetry._types import ConfigurationValue
@@ -40,34 +44,34 @@ from azure.monitor.opentelemetry.exporter import (  # pylint: disable=import-err
     AzureMonitorMetricExporter,
     AzureMonitorTraceExporter,
 )
-from azure.monitor.opentelemetry.util._configurations import _get_configurations
-
-_logger = getLogger(__name__)
-
-_SUPPORTED_INSTRUMENTED_LIBRARIES = (
-    "django",
-    "fastapi",
-    "flask",
-    "psycopg2",
-    "requests",
-    "urllib",
-    "urllib3",
+from azure.monitor.opentelemetry._util.configurations import (
+    _get_configurations,
+    _is_instrumentation_enabled,
 )
 
 
+_SUPPORTED_RESOURCE_DETECTORS = (
+    "azure_app_service",
+    "azure_vm",
+)
+
+_logger = getLogger(__name__)
+
+
 def configure_azure_monitor(**kwargs) -> None:
-    """
-    This function works as a configuration layer that allows the
+    """This function works as a configuration layer that allows the
     end user to configure OpenTelemetry and Azure monitor components. The
     configuration can be done via arguments passed to this function.
+
     :keyword str connection_string: Connection string for your Application Insights resource.
-    :keyword ManagedIdentityCredential/ClientSecretCredential credential: Token credential, such as
-    ManagedIdentityCredential or ClientSecretCredential, used for Azure Active Directory (AAD) authentication. Defaults
-    to None.
-    :keyword bool disable_offline_storage: Boolean value to determine whether to disable storing failed telemetry
-    records for retry. Defaults to `False`.
+    :keyword credential: Token credential, such as `ManagedIdentityCredential` or `ClientSecretCredential`,
+     used for Azure Active Directory (AAD) authentication. Defaults to `None`.
+    :paramtype credential: ~azure.core.credentials.TokenCredential or None
+    :keyword bool disable_offline_storage: Boolean value to determine whether to disable storing failed
+     telemetry records for retry. Defaults to `False`.
     :keyword str storage_directory: Storage directory in which to store retry files. Defaults to
-    `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
+     `<tempfile.gettempdir()>/Microsoft/AzureMonitor/opentelemetry-python-<your-instrumentation-key>`.
+    :keyword str logger_name: The name of the Python logger that telemetry will be collected.
     :rtype: None
     """
 
@@ -76,6 +80,9 @@ def configure_azure_monitor(**kwargs) -> None:
     disable_tracing = configurations[DISABLE_TRACING_ARG]
     disable_logging = configurations[DISABLE_LOGGING_ARG]
     disable_metrics = configurations[DISABLE_METRICS_ARG]
+
+    # Setup resources
+    _setup_resources()
 
     # Setup tracing pipeline
     if not disable_tracing:
@@ -94,6 +101,13 @@ def configure_azure_monitor(**kwargs) -> None:
     # instanstiated in the other setup steps
     _setup_instrumentations(configurations)
 
+def _setup_resources():
+    detectors = os.environ.get(OTEL_EXPERIMENTAL_RESOURCE_DETECTORS, "")
+    if detectors:
+        detectors = detectors + ","
+    detectors += ",".join(_SUPPORTED_RESOURCE_DETECTORS)
+    os.environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS] = detectors
+
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
     sampling_ratio = configurations[SAMPLING_RATIO_ARG]
@@ -106,8 +120,7 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
         trace_exporter,
     )
     get_tracer_provider().add_span_processor(span_processor)
-    disable_azure_core_tracing = configurations[DISABLE_AZURE_CORE_TRACING_ARG]
-    if not disable_azure_core_tracing:
+    if _is_instrumentation_enabled(configurations, _AZURE_SDK_INSTRUMENTATION_NAME):
         settings.tracing_implementation = OpenTelemetrySpan
 
 
@@ -120,7 +133,8 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
     )
     get_logger_provider().add_log_record_processor(log_record_processor)
     handler = LoggingHandler(logger_provider=get_logger_provider())
-    getLogger().addHandler(handler)
+    logger_name = configurations[LOGGER_NAME_ARG]
+    getLogger(logger_name).addHandler(handler)
 
 
 def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
@@ -133,16 +147,14 @@ def _setup_metrics(configurations: Dict[str, ConfigurationValue]):
 
 
 def _setup_instrumentations(configurations: Dict[str, ConfigurationValue]):
-    disabled_instrumentations = configurations[DISABLED_INSTRUMENTATIONS_ARG]
-
     # use pkg_resources for now until https://github.com/open-telemetry/opentelemetry-python/pull/3168 is merged
     for entry_point in iter_entry_points(
         "opentelemetry_instrumentor"
     ):
         lib_name = entry_point.name
-        if lib_name not in _SUPPORTED_INSTRUMENTED_LIBRARIES:
+        if lib_name not in _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES:
             continue
-        if entry_point.name in disabled_instrumentations:
+        if not _is_instrumentation_enabled(configurations, lib_name):
             _logger.debug(
                 "Instrumentation skipped for library %s", entry_point.name
             )

@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Tuple, Union
 
 from azure.ai.ml.constants._common import AzureDevopsArtifactsType
-from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
+from azure.ai.ml.entities._validation import MutableValidationResult, ValidationResultBuilder
 
 from ..._utils._artifact_utils import ArtifactCache
 from ..._utils._asset_utils import IgnoreFile, get_upload_files_from_folder
@@ -104,7 +104,7 @@ class AdditionalIncludes:
         )
 
     def _validate_additional_include_config(self, additional_include_config):
-        validation_result = _ValidationResultBuilder.success()
+        validation_result = ValidationResultBuilder.success()
         if (
             isinstance(additional_include_config, dict)
             and additional_include_config.get("type") == AzureDevopsArtifactsType.ARTIFACT
@@ -313,7 +313,7 @@ class AdditionalIncludes:
         :return: The validation result.
         :rtype: ~azure.ai.ml.entities._validation.MutableValidationResult
         """
-        validation_result = _ValidationResultBuilder.success()
+        validation_result = ValidationResultBuilder.success()
         include_path = self.base_path / local_path
         # if additional include has not supported characters, resolve will fail and raise OSError
         try:
@@ -356,7 +356,7 @@ class AdditionalIncludes:
         :return: The validation result.
         :rtype: ~azure.ai.ml.entities._validation.MutableValidationResult
         """
-        validation_result = _ValidationResultBuilder.success()
+        validation_result = ValidationResultBuilder.success()
         for additional_include_config in self.origin_configs:
             validation_result.merge_with(self._validate_additional_include_config(additional_include_config))
         return validation_result

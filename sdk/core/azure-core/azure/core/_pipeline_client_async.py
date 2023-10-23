@@ -254,7 +254,8 @@ class AsyncPipelineClient(
                 policies = policies_1
 
         if not transport:
-            from .pipeline.transport import AioHttpTransport  # pylint: disable=no-name-in-module
+            # Use private import for better typing, mypy and pyright don't like PEP562
+            from .pipeline.transport._aiohttp import AioHttpTransport
 
             transport = AioHttpTransport(**kwargs)
 

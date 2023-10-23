@@ -8,7 +8,7 @@ import pytest
 from unittest.mock import MagicMock
 
 from azure.core.credentials import AzureNamedKeyCredential
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.storage.filedatalake import (
     AnalyticsLogging,
     CorsRule,
@@ -452,3 +452,50 @@ class TestDatalakeService(StorageRecordedTestCase):
         dir_client._datalake_client_for_blob_operation.close.assert_called_once()
         file_client._client.__exit__.assert_called_once()
         file_client._datalake_client_for_blob_operation.close.assert_called_once()
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_storage_account_audience_service_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        self.dsc.create_file_system('testfs1')
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        dsc = DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, "blob"),
+            credential=token_credential,
+            audience=f'https://{datalake_storage_account_name}.blob.core.windows.net/'
+        )
+
+        # Assert
+        response1 = dsc.list_file_systems()
+        response2 = dsc.create_file_system('testfs11')
+        assert response1 is not None
+        assert response2 is not None
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_bad_audience_service_client(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        self._setup(datalake_storage_account_name, datalake_storage_account_key)
+        self.dsc.create_file_system('testfs2')
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        dsc = DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, "blob"),
+            credential=token_credential,
+            audience=f'https://badaudience.blob.core.windows.net/'
+        )
+
+        # Assert
+        with pytest.raises(ClientAuthenticationError):
+            dsc.list_file_systems()
+            dsc.create_file_system('testfs22')

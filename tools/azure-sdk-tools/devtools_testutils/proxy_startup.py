@@ -30,6 +30,9 @@ from .sanitizers import add_remove_header_sanitizer, set_custom_default_matcher
 
 load_dotenv(find_dotenv())
 
+# Raise urllib3's exposed logging level so that we don't see tons of warnings while polling the proxy's availability
+logging.getLogger("urllib3.connectionpool").setLevel(logging.ERROR)
+
 _LOGGER = logging.getLogger()
 
 CONTAINER_STARTUP_TIMEOUT = 60
@@ -146,48 +149,58 @@ def check_availability() -> None:
 
 
 def check_certificate_location(repo_root: str) -> None:
-    """Checks for SSL_CERT_DIR and REQUESTS_CA_BUNDLE environment variables.
+    """Checks for a certificate bundle containing the test proxy's self-signed certificate.
 
-    If both variables aren't set, this function configures the certificate bundle and sets these environment variables
-    for the duration of the process.
+    If a certificate bundle either isn't present or doesn't contain the correct test proxy certificate, a bundle is
+    automatically created. SSL_CERT_DIR and REQUESTS_CA_BUNDLE are set to point to this bundle for the session.
     """
-    ssl_cert_dir = "SSL_CERT_DIR"
-    requests_ca_bundle = "REQUESTS_CA_BUNDLE"
 
-    if PROXY_URL.startswith("https") and not (os.environ.get(ssl_cert_dir) and os.environ.get(requests_ca_bundle)):
-        _LOGGER.info(
-            "Missing SSL_CERT_DIR and/or REQUESTS_CA_BUNDLE environment variables. "
-            "Setting these for the current session."
-        )
+    existing_root_pem = certifi.where()
+    local_dev_cert = os.path.abspath(os.path.join(repo_root, 'eng', 'common', 'testproxy', 'dotnet-devcert.crt'))
+    combined_filename = os.path.basename(local_dev_cert).split(".")[0] + ".pem"
+    combined_folder = os.path.join(repo_root, '.certificate')
+    combined_location = os.path.join(combined_folder, combined_filename)
 
-        existing_root_pem = certifi.where()
-        local_dev_cert = os.path.abspath(os.path.join(repo_root, 'eng', 'common', 'testproxy', 'dotnet-devcert.crt'))
-        combined_filename = os.path.basename(local_dev_cert).split(".")[0] + ".pem"
-        combined_folder = os.path.join(repo_root, '.certificate')
-        combined_location = os.path.join(combined_folder, combined_filename)
+    # If no local certificate folder exists, create one
+    if not os.path.exists(combined_folder):
+        _LOGGER.info("Missing a test proxy certificate under azure-sdk-for-python/.certificate. Creating one now.")
+        os.mkdir(combined_folder)
 
-        # If no local certificate folder exists, create one
-        if not os.path.exists(combined_folder):
-            _LOGGER.info("Missing a test proxy certificate under azure-sdk-for-python/.certificate. Creating one now.")
-            os.mkdir(combined_folder)
+    def write_dev_cert_bundle():
+        """Creates a certificate bundle with the test proxy certificate, followed by the user's existing CA bundle."""
+        _LOGGER.info("Writing latest test proxy certificate to local certificate bundle.")
+        # Copy the dev cert's content into the new certificate bundle
+        with open(local_dev_cert, "r") as f:
+            data = f.read()
+        with open(combined_location, "w") as f:
+            f.write(data)
 
-        if not os.path.exists(combined_location):
-            # Copy the dev cert's content into the new certificate bundle
-            with open(local_dev_cert, "r") as f:
-                data = f.read()
-            with open(combined_location, "w") as f:
-                f.write(data)
+        # Copy the existing CA bundle contents into the repository's certificate bundle
+        with open(existing_root_pem, "r") as f:
+            content = f.readlines()
+        with open(combined_location, "a") as f:
+            f.writelines(content)
 
-            # Copy the existing CA bundle contents into the repository's certificate bundle
-            with open(existing_root_pem, "r") as f:
-                content = f.readlines()
-            with open(combined_location, "a") as f:
-                f.writelines(content)
+    # If the certificate bundle isn't set up, set it up. If the bundle is present, make sure that it starts with the
+    # correct certificate from eng/common/testproxy/dotnet-devcert.crt (to account for certificate rotation)
+    if not os.path.exists(combined_location):
+        write_dev_cert_bundle()
+    else:
+        with open(local_dev_cert, "r") as f:
+            repo_cert = f.read()
+        with open(combined_location, "r") as f:
+            # The bundle should start with the test proxy's cert; only read as far in as the cert's length
+            bundle_data = f.read(len(repo_cert))
+        if repo_cert != bundle_data:
+            write_dev_cert_bundle()
 
-        if not os.environ.get(ssl_cert_dir):
-            os.environ[ssl_cert_dir] = combined_folder
-        if not os.environ.get(requests_ca_bundle):
-            os.environ[requests_ca_bundle] = combined_location
+    _LOGGER.info(
+        "Setting SSL_CERT_DIR and REQUESTS_CA_BUNDLE environment variables for the current session.\n"
+        f"SSL_CERT_DIR={combined_folder}\n"
+        f"REQUESTS_CA_BUNDLE={combined_location}"
+    )
+    os.environ["SSL_CERT_DIR"] = combined_folder
+    os.environ["REQUESTS_CA_BUNDLE"] = combined_location
 
 
 def check_proxy_availability() -> None:

@@ -17,7 +17,7 @@ from ..._credentials.azure_powershell import (
     raise_for_error,
     parse_token,
 )
-from ..._internal import resolve_tenant
+from ..._internal import resolve_tenant, validate_tenant_id, validate_scope
 
 
 class AzurePowerShellCredential(AsyncContextManager):
@@ -48,7 +48,8 @@ class AzurePowerShellCredential(AsyncContextManager):
         additionally_allowed_tenants: Optional[List[str]] = None,
         process_timeout: int = 10,
     ) -> None:
-
+        if tenant_id:
+            validate_tenant_id(tenant_id)
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
@@ -82,6 +83,11 @@ class AzurePowerShellCredential(AsyncContextManager):
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
             return _SyncCredential().get_token(*scopes, tenant_id=tenant_id, **kwargs)
+
+        if tenant_id:
+            validate_tenant_id(tenant_id)
+        for scope in scopes:
+            validate_scope(scope)
 
         tenant_id = resolve_tenant(
             default_tenant=self.tenant_id,

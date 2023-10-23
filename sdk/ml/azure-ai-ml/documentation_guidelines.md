@@ -27,19 +27,27 @@ When updating the codebase, please note the following guidelines for creating us
 
     ```markdown
     .. admonition:: Additional Note 
+
        :class: note 
+
        This is a note admonition. 
     
     .. admonition:: Warning 
+
        :class: warning 
+
        This is a warning admonition. 
     
     .. admonition:: Important 
+
        :class: danger 
+
        This is an important admonition. 
     
     .. admonition:: Information 
+
        :class: info 
+
        This is an informational admonition. 
     ```
  

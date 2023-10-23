@@ -97,7 +97,7 @@ Assign needed roles to the cluster managed identity:
 az role assignment create --role "Managed Identity Operator" --assignee $KUBELET_IDENTITY_CLIENT_ID --scope $MANAGED_IDENTITY_ID
 ```
 
-Add role assignments required by AAD Pod Identity:
+Add role assignments required by Microsoft Entra Pod Identity:
 ```sh
 az role assignment create --role "Managed Identity Operator" --assignee $KUBELET_IDENTITY_CLIENT_ID --scope $NODE_RESOURCE_GROUP_SCOPE
 az role assignment create --role "Virtual Machine Contributor" --assignee $KUBELET_IDENTITY_CLIENT_ID --scope $NODE_RESOURCE_GROUP_SCOPE

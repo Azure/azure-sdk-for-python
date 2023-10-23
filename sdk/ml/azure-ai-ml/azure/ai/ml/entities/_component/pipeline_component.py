@@ -17,12 +17,7 @@ from azure.ai.ml._restclient.v2022_10_01.models import ComponentVersion, Compone
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentSchema
 from azure.ai.ml._utils.utils import hash_dict, is_data_binding_expression
-from azure.ai.ml.constants._common import (
-    ARM_ID_PREFIX,
-    ASSET_ARM_ID_REGEX_FORMAT,
-    BASE_PATH_CONTEXT_KEY,
-    COMPONENT_TYPE,
-)
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, ASSET_ARM_ID_REGEX_FORMAT, COMPONENT_TYPE
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.constants._job.pipeline import ValidationErrorCode
 from azure.ai.ml.entities._builders import BaseNode, Command
@@ -441,10 +436,7 @@ class PipelineComponent(Component):
         return init_params_dict
 
     def _to_dict(self) -> Dict:
-        # Replace the name of $schema to schema.
-        component_schema_dict = self._dump_for_validation()
-        component_schema_dict.pop(BASE_PATH_CONTEXT_KEY, None)
-        return {**self._other_parameter, **component_schema_dict}
+        return {**self._other_parameter, **super()._to_dict()}
 
     def _build_rest_component_jobs(self) -> Dict[str, dict]:
         """Build pipeline component jobs to rest.

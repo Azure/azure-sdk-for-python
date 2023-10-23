@@ -34,7 +34,7 @@ from ...entities._inputs_outputs import Input, Output
 from ...entities._mixins import LocalizableMixin, TelemetryMixin, YamlTranslatableMixin
 from ...entities._system_data import SystemData
 from ...entities._util import find_type_in_override
-from ...entities._validation import MutableValidationResult, RemoteValidatableMixin, SchemaValidatableMixin
+from ...entities._validation import MutableValidationResult, PathAwareSchemaValidatableMixin, RemoteValidatableMixin
 from ...exceptions import ErrorCategory, ErrorTarget, ValidationException
 from .._inputs_outputs import GroupInput
 
@@ -52,7 +52,7 @@ class Component(
     RemoteValidatableMixin,
     TelemetryMixin,
     YamlTranslatableMixin,
-    SchemaValidatableMixin,
+    PathAwareSchemaValidatableMixin,
     LocalizableMixin,
 ):
     """Base class for component version, used to define a component. Can't be instantiated directly.
@@ -159,7 +159,7 @@ class Component(
         # validate input/output names before creating component function
         validation_result = self._validate_io_names(self.inputs)
         validation_result.merge_with(self._validate_io_names(self.outputs))
-        validation_result.try_raise(error_target=self._get_validation_error_target())
+        self._try_raise(validation_result)
 
         return _generate_component_function(self)
 
@@ -312,7 +312,7 @@ class Component(
                 )
             else:
                 lower2original_kwargs[lower_key] = name
-        return validation_result.try_raise(error_target=cls._get_validation_error_target(), raise_error=raise_error)
+        return cls._try_raise(validation_result, raise_error=raise_error)
 
     @classmethod
     def _build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
@@ -333,8 +333,12 @@ class Component(
         return ComponentSchema(context=context)
 
     @classmethod
-    def _get_validation_error_target(cls) -> ErrorTarget:
-        return ErrorTarget.COMPONENT
+    def _create_validation_error(cls, message: str, no_personal_data_message: str) -> Exception:
+        return ValidationException(
+            message=message,
+            no_personal_data_message=no_personal_data_message,
+            target=ErrorTarget.COMPONENT,
+        )
 
     @classmethod
     def _is_flow(cls, data) -> bool:
@@ -458,7 +462,9 @@ class Component(
 
         origin_name = rest_component_version.component_spec[CommonYamlFields.NAME]
         rest_component_version.component_spec[CommonYamlFields.NAME] = ANONYMOUS_COMPONENT_NAME
-        init_kwargs = cls._load_with_schema(rest_component_version.component_spec, unknown=INCLUDE)
+        init_kwargs = cls._load_with_schema(
+            rest_component_version.component_spec, context={BASE_PATH_CONTEXT_KEY: Path.cwd()}, unknown=INCLUDE
+        )
         init_kwargs.update(
             {
                 "id": obj.id,

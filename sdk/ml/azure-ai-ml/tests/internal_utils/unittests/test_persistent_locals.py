@@ -132,18 +132,33 @@ class TestPersistentLocalsProfiler:
 @pytest.mark.pipeline_test
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 class TestPersistentLocalsPrivatePreview(TestPersistentLocalsProfiler):
-    @classmethod
-    def install_bytecode_and_reload_func_utils(cls):
-        package = "bytecode"
+    _PACKAGE = "bytecode"
 
+    @classmethod
+    def setup_class(cls):
+        """setup any state specific to the execution of the given class (which
+        usually contains tests).
+        """
         try:
-            importlib.import_module(package)
+            importlib.import_module(cls._PACKAGE)
         except ImportError:
-            pip.main(["install", package])
-            globals()[package] = importlib.import_module(package)
+            pip.main(["install", cls._PACKAGE])
+            globals()[cls._PACKAGE] = importlib.import_module(cls._PACKAGE)
 
             # reload persistent locals function builder after installing bytecode
             reload(_func_utils)
+
+    @classmethod
+    def teardown_class(cls):
+        """teardown any state that was previously setup with a call to
+        setup_class.
+        """
+        if cls._PACKAGE not in globals():
+            return
+
+        del globals()[cls._PACKAGE]
+        pip.main(["uninstall", cls._PACKAGE])
+        reload(_func_utils)
 
     @classmethod
     def instr_to_str(cls, instr, labels):
@@ -169,7 +184,6 @@ class TestPersistentLocalsPrivatePreview(TestPersistentLocalsProfiler):
 
     @classmethod
     def get_persistent_locals_builder(cls):
-        cls.install_bytecode_and_reload_func_utils()
         return _func_utils.PersistentLocalsFunctionBytecodeBuilder()
 
     def test_multiple_return(self):
@@ -196,8 +210,6 @@ class TestPersistentLocalsHistoricalImplementation(TestPersistentLocalsPrivatePr
 
     @classmethod
     def get_persistent_locals_builder(cls):
-        cls.install_bytecode_and_reload_func_utils()
-
         from bytecode import Instr, Label
 
         class HistoricalPersistentLocalsFunctionProfilerBuilder(_func_utils.PersistentLocalsFunctionBytecodeBuilder):

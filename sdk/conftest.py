@@ -74,3 +74,12 @@ def pytest_runtest_makereport(item, call) -> None:
         error = call.excinfo.value
         # set a test_error attribute on the item (available to other fixtures from request.node)
         setattr(item, "test_error", error)
+
+
+@pytest.fixture(autouse=True)
+def reduce_logging_volume(caplog, pytestconfig):
+    # Unless specific log level is requested, raise minimum log level in captured call logs to WARNING
+    # By default, all INFO-level logs from test execution are printed if tests fail, making output hard to read
+    if not (pytestconfig.getoption("log_level") or pytestconfig.getoption("log_cli_level")):
+        caplog.set_level(30)
+    yield

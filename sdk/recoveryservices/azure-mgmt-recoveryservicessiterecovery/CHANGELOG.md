@@ -1,5 +1,38 @@
 # Release History
 
+## 1.1.0 (2023-09-15)
+
+### Features Added
+
+  - Model A2AReplicationDetails has a new parameter churn_option_selected
+  - Model AzureFabricSpecificDetails has a new parameter location_details
+  - Model FabricQueryParameter has a new parameter extended_location_mappings
+  - Model FabricQueryParameter has a new parameter location_details
+  - Model HyperVReplicaAzurePlannedFailoverProviderInput has a new parameter os_upgrade_version
+  - Model HyperVReplicaAzureReplicationDetails has a new parameter all_available_os_upgrade_configurations
+  - Model HyperVReplicaAzureTestFailoverInput has a new parameter os_upgrade_version
+  - Model InMageAzureV2ReplicationDetails has a new parameter all_available_os_upgrade_configurations
+  - Model InMageAzureV2ReplicationDetails has a new parameter os_name
+  - Model InMageAzureV2ReplicationDetails has a new parameter supported_os_versions
+  - Model InMageAzureV2TestFailoverInput has a new parameter os_upgrade_version
+  - Model InMageAzureV2UnplannedFailoverInput has a new parameter os_upgrade_version
+  - Model VMwareCbtEnableMigrationInput has a new parameter confidential_vm_key_vault_id
+  - Model VMwareCbtEnableMigrationInput has a new parameter target_vm_security_profile
+  - Model VMwareCbtMigrateInput has a new parameter os_upgrade_version
+  - Model VMwareCbtMigrationDetails has a new parameter appliance_monitoring_details
+  - Model VMwareCbtMigrationDetails has a new parameter confidential_vm_key_vault_id
+  - Model VMwareCbtMigrationDetails has a new parameter delta_sync_progress_percentage
+  - Model VMwareCbtMigrationDetails has a new parameter delta_sync_retry_count
+  - Model VMwareCbtMigrationDetails has a new parameter gateway_operation_details
+  - Model VMwareCbtMigrationDetails has a new parameter is_check_sum_resync_cycle
+  - Model VMwareCbtMigrationDetails has a new parameter operation_name
+  - Model VMwareCbtMigrationDetails has a new parameter os_name
+  - Model VMwareCbtMigrationDetails has a new parameter supported_os_versions
+  - Model VMwareCbtMigrationDetails has a new parameter target_vm_security_profile
+  - Model VMwareCbtProtectedDiskDetails has a new parameter gateway_operation_details
+  - Model VMwareCbtProtectionContainerMappingDetails has a new parameter excluded_skus
+  - Model VMwareCbtTestMigrateInput has a new parameter os_upgrade_version
+
 ## 1.0.0 (2022-12-15)
 
 ### Features Added

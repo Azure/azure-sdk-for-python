@@ -81,8 +81,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
 
     .. admonition:: Example:
 
-
-        .. literalinclude:: ../../../../../samples/ml_samples_spark_configurations.py
+        .. literalinclude:: ../samples/ml_samples_spark_configurations.py
             :start-after: [START spark_job_configuration]
             :end-before: [END spark_job_configuration]
             :language: python

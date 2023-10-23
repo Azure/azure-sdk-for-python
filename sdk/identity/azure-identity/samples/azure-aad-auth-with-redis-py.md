@@ -1,11 +1,11 @@
-## Azure Cache for Redis: Azure AD with redis client library
+## Azure Cache for Redis: Microsoft Entra ID with redis client library
 
 ### Table of contents
 
 - [Prerequisites](#prerequisites)
 - [Samples guidance](#samples-guidance)
-- [Authenticate with Azure AD - Hello World](#authenticate-with-azure-ad-hello-world)
-- [Authenticate with Azure AD - Handle Re-authentication](#authenticate-with-azure-ad-handle-re-authentication)
+- [Authenticate with Microsoft Entra ID - Hello World](#authenticate-with-azure-ad-hello-world)
+- [Authenticate with Microsoft Entra ID - Handle Re-authentication](#authenticate-with-azure-ad-handle-re-authentication)
 - [Troubleshooting](#troubleshooting)
 
 #### Prerequisites
@@ -17,20 +17,20 @@
 
 #### Samples guidance
 
-[Authenticate with Azure AD - Hello World](#authenticate-with-azure-ad-hello-world)
-This sample is recommended for users getting started to use Azure AD authentication with Azure Cache for Redis.
+[Authenticate with Microsoft Entra ID - Hello World](#authenticate-with-azure-ad-hello-world)
+This sample is recommended for users getting started to use Microsoft Entra authentication with Azure Cache for Redis.
 
-[Authenticate with Azure AD - Handle Re-Authentication](#authenticate-with-azure-ad-handle-re-authentication)
-This sample is recommended to users looking to build long-running applications that would like to handle re-authenticating with Azure AD upon token expiry.
+[Authenticate with Microsoft Entra ID - Handle Re-Authentication](#authenticate-with-azure-ad-handle-re-authentication)
+This sample is recommended to users looking to build long-running applications that would like to handle re-authenticating with Microsoft Entra ID upon token expiry.
 
-#### Authenticate with Azure AD: hello world
+#### Authenticate with Microsoft Entra ID: Hello world
 
-This sample is intended to assist in authenticating with Azure AD via the redis client library. It focuses on displaying the logic required to fetch an Azure AD access token and to use it as password when setting up the redis instance.
+This sample is intended to assist in authenticating with Microsoft Entra ID via the redis client library. It focuses on displaying the logic required to fetch a Microsoft Entra access token and to use it as password when setting up the redis instance.
 
 ##### Migration guidance
 
-When migrating your existing application code, you need to replace the password input with the Azure AD token.
-Integrate the logic in your application code to fetch an Azure AD access token via the azure-identity library as shown below and replace it with the password configuring/retrieving logic in your application code.
+When migrating your existing application code, you need to replace the password input with the Microsoft Entra token.
+Integrate the logic in your application code to fetch a Microsoft Entra access token via the azure-identity library as shown below and replace it with the password configuring/retrieving logic in your application code.
 
 ```python
 import redis
@@ -59,9 +59,9 @@ if __name__ == '__main__':
     hello_world()
 ```
 
-##### Supported Token Credentials for Azure AD Authentication
+##### Supported Token Credentials for Microsoft Entra Authentication
 
-**Note:** The samples in this doc use the azure-identity library's `DefaultAzureCredential` to fetch an Azure AD access token. The other supported `TokenCredential` implementations that can be used from azure-identity are as follows:
+**Note:** The samples in this doc use the azure-identity library's `DefaultAzureCredential` to fetch a Microsoft Entra access token. The other supported `TokenCredential` implementations that can be used from azure-identity are as follows:
 
 - [Client Certificate Credential](https://aka.ms/azsdk/python/identity/certificatecredential)
 - [Client Secret Credential](https://aka.ms/azsdk/python/identity/clientsecretcredential)
@@ -71,14 +71,14 @@ if __name__ == '__main__':
 - [Interactive Browser Credential](https://aka.ms/azsdk/python/identity/interactivebrowsercredential)
 - [Device Code Credential](https://aka.ms/azsdk/python/identity/devicecodecredential)
 
-#### Authenticate with Azure AD: handle re-authentication
+#### Authenticate with Microsoft Entra ID: Handle re-authentication
 
-This sample is intended to assist in authenticating with Azure AD via the redis client library. It focuses on displaying the logic required to fetch an Azure AD access token and to use it as password when setting up the redis instance. It also shows how to recreate and authenticate the redis instance when its connection is broken in error/exception scenarios.
+This sample is intended to assist in authenticating with Microsoft Entra ID via the redis client library. It focuses on displaying the logic required to fetch a Microsoft Entra access token and to use it as password when setting up the redis instance. It also shows how to recreate and authenticate the redis instance when its connection is broken in error/exception scenarios.
 
 ##### Migration guidance
 
-When migrating your existing application code, you need to replace the password input with the Azure AD token.
-Integrate the logic in your application code to fetch an Azure AD access token via the azure-identity library as shown below and replace it with the password configuring/retrieving logic in your application code.
+When migrating your existing application code, you need to replace the password input with the Microsoft Entra token.
+Integrate the logic in your application code to fetch a Microsoft Entra access token via the `azure-identity` library as shown below and replace it with the password configuring/retrieving logic in your application code.
 
 ```python
 import time
@@ -143,7 +143,7 @@ In this error scenario, the username provided and the access token used as passw
 To mitigate this error, navigate to your Azure Cache for Redis resource in the Azure portal. Confirm that:
 
 - In **Data Access Configuration**, you've assigned the required role to your user/service principal identity.
-- In **Advanced settings**, the **AAD access authorization** box is selected. If not, select it and select the **Save** button.
+- In **Advanced settings**, the **Microsoft Entra Authentication** box is selected. If not, select it and select the **Save** button.
 
 ##### Permissions not granted / NOPERM Error
 

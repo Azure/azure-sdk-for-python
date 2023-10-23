@@ -10,7 +10,6 @@ from os.path import dirname, realpath, join
 import inspect
 import json
 import requests
-import wrapt
 
 from devtools_testutils import EnvironmentVariableLoader
 from azure_devtools.scenario_tests.exceptions import AzureTestError
@@ -136,33 +135,35 @@ def _trim_kwargs_from_test_function(fn, kwargs):
 
 
 def search_decorator(*, schema, index_batch):
-    @wrapt.decorator
-    def wrapper(func, _, args, kwargs):
-        # set up hotels search index
-        test = args[0]
-        api_key = kwargs.get("search_service_api_key")
-        endpoint = kwargs.get("search_service_endpoint")
-        service_name = kwargs.get("search_service_name")
-        if test.is_live:
-            _clean_up_indexes(endpoint, api_key)
-            _set_up_index(service_name, endpoint, api_key, schema, index_batch)
-            _clean_up_indexers(endpoint, api_key)
-        index_name = json.loads(_load_schema(schema))["name"] if schema else None
-        index_batch_data = _load_batch(index_batch) if index_batch else None
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            # set up hotels search index
+            test = args[0]
+            api_key = kwargs.get("search_service_api_key")
+            endpoint = kwargs.get("search_service_endpoint")
+            service_name = kwargs.get("search_service_name")
+            if test.is_live:
+                _clean_up_indexes(endpoint, api_key)
+                _set_up_index(service_name, endpoint, api_key, schema, index_batch)
+                _clean_up_indexers(endpoint, api_key)
+            index_name = json.loads(_load_schema(schema))["name"] if schema else None
+            index_batch_data = _load_batch(index_batch) if index_batch else None
 
-        # ensure that the names in the test signatures are in the
-        # bag of kwargs
-        kwargs["endpoint"] = endpoint
-        kwargs["api_key"] = AzureKeyCredential(api_key)
-        kwargs["index_name"] = index_name
-        kwargs["index_batch"] = index_batch_data
+            # ensure that the names in the test signatures are in the
+            # bag of kwargs
+            kwargs["endpoint"] = endpoint
+            kwargs["api_key"] = AzureKeyCredential(api_key)
+            kwargs["index_name"] = index_name
+            kwargs["index_batch"] = index_batch_data
 
-        trimmed_kwargs = {k: v for k, v in kwargs.items()}
-        _trim_kwargs_from_test_function(func, trimmed_kwargs)
+            trimmed_kwargs = {k: v for k, v in kwargs.items()}
+            _trim_kwargs_from_test_function(func, trimmed_kwargs)
 
-        return func(*args, **trimmed_kwargs)
+            return func(*args, **trimmed_kwargs)
 
-    return wrapper
+        return wrapper
+
+    return decorator
 
 
 # FIXME: DELETE EVERYTHING AFTER THIS LINE BEFORE MERGING

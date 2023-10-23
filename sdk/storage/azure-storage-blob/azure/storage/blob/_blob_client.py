@@ -136,6 +136,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         or 4MB.
     :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
         specifies the version of the blob to operate on.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
 
     .. admonition:: Example:
 
@@ -241,6 +244,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             the snapshot in the url.
         :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
             specifies the version of the blob to operate on.
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
         :returns: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
         """
@@ -323,6 +329,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :type credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
         :keyword str version_id: The version id parameter is an opaque DateTime value that, when present,
             specifies the version of the blob to operate on.
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
         :returns: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
 
@@ -1005,7 +1014,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         This operations returns a BlobQueryReader, users need to use readall() or readinto() to get query data.
 
         :param str query_expression:
-            Required. a query statement.
+            Required. a query statement. For more details see
+            https://learn.microsoft.com/azure/storage/blobs/query-acceleration-sql-reference.
         :keyword Callable[~azure.storage.blob.BlobQueryError] on_error:
             A function to be called on any processing errors returned by the service.
         :keyword blob_format:

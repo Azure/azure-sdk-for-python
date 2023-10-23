@@ -131,6 +131,12 @@ class TestFlowComponent:
             # we won't update the flow.dag.yaml for now. user may use `mldesigner compile` if they want to update it
             assert "additional_includes" in flow_dag
 
+    def test_flow_component_load_from_run_with_additional_includes(self):
+        flow_base_dir = "./tests/test_configs/flows"
+        component = load_component(f"{flow_base_dir}/runs/additional_includes_run.yml")
+        with component._build_code() as code:
+            assert Path(code.path, "convert_to_dict.py").is_file()
+
     def test_flow_component_entity(self):
         component: FlowComponent = load_component("./tests/test_configs/flows/basic/flow.dag.yaml")
 
@@ -143,7 +149,9 @@ class TestFlowComponent:
         with pytest.raises(RuntimeError, match="Ports of flow component are not editable."):
             del input_port_dict["text"]
 
-        component.flow = None
+        with pytest.raises(AttributeError):
+            component.flow = None
+
         component.column_mapping = None
         component.variant = None
         component.connections = None

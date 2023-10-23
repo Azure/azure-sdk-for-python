@@ -23,7 +23,7 @@ from ..._credentials.azure_cli import (
     parse_token,
     sanitize_output,
 )
-from ..._internal import _scopes_to_resource, resolve_tenant, within_dac
+from ..._internal import _scopes_to_resource, resolve_tenant, within_dac, validate_tenant_id, validate_scope
 
 
 class AzureCliCredential(AsyncContextManager):
@@ -54,7 +54,8 @@ class AzureCliCredential(AsyncContextManager):
         additionally_allowed_tenants: Optional[List[str]] = None,
         process_timeout: int = 10,
     ) -> None:
-
+        if tenant_id:
+            validate_tenant_id(tenant_id)
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
@@ -87,6 +88,11 @@ class AzureCliCredential(AsyncContextManager):
         # only ProactorEventLoop supports subprocesses on Windows (and it isn't the default loop on Python < 3.8)
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
             return _SyncAzureCliCredential().get_token(*scopes, tenant_id=tenant_id, **kwargs)
+
+        if tenant_id:
+            validate_tenant_id(tenant_id)
+        for scope in scopes:
+            validate_scope(scope)
 
         resource = _scopes_to_resource(*scopes)
         command = COMMAND_LINE.format(resource)
@@ -158,7 +164,7 @@ async def _run_command(command: str, timeout: int) -> str:
     if proc.returncode == 127 or stderr.startswith("'az' is not recognized"):
         raise CredentialUnavailableError(CLI_NOT_FOUND)
 
-    if "az login" in stderr or "az account set" in stderr:
+    if ("az login" in stderr or "az account set" in stderr) and "AADSTS" not in stderr:
         raise CredentialUnavailableError(message=NOT_LOGGED_IN)
 
     message = sanitize_output(stderr) if stderr else "Failed to invoke Azure CLI"

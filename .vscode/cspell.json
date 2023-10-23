@@ -49,11 +49,13 @@
     "sdk/communication/azure-communication-chat/**",
     "sdk/communication/azure-communication-phonenumbers/**",
     "sdk/communication/azure-communication-sms/**",
+    "sdk/communication/azure-communication-callautomation/tests/**",
     "sdk/core/azure/**",
     "sdk/core/azure-common/**",
     "sdk/core/azure-core-tracing-opencensus/**",
     "sdk/core/azure-core-tracing-opentelemetry/**",
     "sdk/core/azure-servicemanagement-legacy/**",
+    "sdk/core/corehttp/**",
     "sdk/digitaltwins/azure-digitaltwins-core/**",
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
@@ -71,6 +73,8 @@
     "sdk/keyvault/azure-keyvault-certificates/tests/certs.py",
     "sdk/keyvault/azure-keyvault-keys/tests/keys.py",
     "sdk/modelsrepository/azure-iot-modelsrepository/**",
+    "sdk/remoterendering/test-resources.json",
+    "sdk/remoterendering/azure-mixedreality-remoterendering/swagger/azure/mixedreality/remoterendering/mr-arr.json",
     "sdk/servicefabric/azure-servicefabric/**",
     "sdk/search/azure-search-documents/**",
     "sdk/storage/azure-storage-blob-changefeed/**",
@@ -94,6 +98,9 @@
     "sdk/translation/azure-ai-translation-text/tests/test_break_sentence.py",
     "sdk/translation/azure-ai-translation-text/tests/test_translation.py",
     "sdk/translation/azure-ai-translation-text/tests/test_transliteration.py",
+    "sdk/translation/azure-ai-translation-text/tests/test_break_sentence_async.py",
+    "sdk/translation/azure-ai-translation-text/tests/test_translation_async.py",
+    "sdk/translation/azure-ai-translation-text/tests/test_transliteration_async.py",
     "sdk/translation/test-resources.json",
     "eng/**/*.json",
     "eng/*.txt",
@@ -106,9 +113,22 @@
     "tools/azure-sdk-tools/setup.py",
     "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_serialization.py",
     "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/_model_base.py",
-    "tools/azure-sdk-tools/tests/test_servicemetadata.py"
+    "tools/azure-sdk-tools/tests/test_servicemetadata.py",
+    "conda/conda-recipes/azure-ai-ml/meta.yaml",
+    "conda/conda-recipes/azure-eventhub/meta.yaml",
+    "conda/conda-recipes/azure-mgmt/meta.yaml",
+    "conda/conda-recipes/azure-security-attestation/meta.yaml",
+    "conda/conda-recipes/msal-extensions/meta.yaml",
+    "conda/conda-recipes/msrest/meta.yaml",
+    "conda/conda-recipes/uamqp/meta.yaml",
+    "conda/conda-releaselogs/azure-mgmt.md"
   ],
   "words": [
+    "pyprojects",
+    "certifi",
+    "cffi",
+    "tomlw",
+    "xdist",
     "pyprojecttoml",
     "tomli",
     "sdkrel",
@@ -190,6 +210,7 @@
     "ekus",
     "encryptor",
     "engsys",
+    "entra",
     "envname",
     "evals",
     "fileno",
@@ -478,6 +499,12 @@
       ]
     },
     {
+      "filename": "sdk/identity/azure-identity/TROUBLESHOOTING.md",
+      "words": [
+        "wammsa"
+      ]
+    },
+    {
       "filename": "sdk/tables/azure-data-tables/tests/**/*.py",
       "words": [
         "tzutc",
@@ -650,7 +677,11 @@
       "words": [
         "cncf",
         "CNCF",
-        "Cncf"
+        "Cncf",
+        "MQTT",
+        "Dicom",
+        "Errored",
+        "Fhir"
       ]
     },
     {
@@ -807,7 +838,8 @@
     {
       "filename": "sdk/keyvault/**",
       "words": [
-        "eddsa"
+        "eddsa",
+        "Thawte"
       ]
     },
     {

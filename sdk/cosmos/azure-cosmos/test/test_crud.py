@@ -43,7 +43,6 @@ from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 import test_config
 import azure.cosmos._base as base
 import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos.diagnostics import RecordDiagnostics
 from azure.cosmos.partition_key import PartitionKey
 from azure.cosmos import _retry_utility
 import requests
@@ -210,16 +209,10 @@ class CRUDTests(unittest.TestCase):
         before_create_collections_count = len(collections)
         collection_id = 'test_collection_crud ' + str(uuid.uuid4())
         collection_indexing_policy = {'indexingMode': 'consistent'}
-        created_recorder = RecordDiagnostics()
         created_collection = created_db.create_container(id=collection_id,
                                                          indexing_policy=collection_indexing_policy,
-                                                         partition_key=PartitionKey(path="/pk", kind="Hash"), 
-                                                         response_hook=created_recorder)
+                                                         partition_key=PartitionKey(path="/pk", kind="Hash"))
         self.assertEqual(collection_id, created_collection.id)
-        assert isinstance(created_recorder.headers, Mapping)
-        assert 'Content-Type' in created_recorder.headers
-        assert isinstance(created_recorder.body, Mapping)
-        assert 'id' in created_recorder.body
 
         created_properties = created_collection.read()
         self.assertEqual('consistent', created_properties['indexingPolicy']['indexingMode'])
@@ -2413,37 +2406,6 @@ class CRUDTests(unittest.TestCase):
 
         created_db.delete_container(created_collection1)
         created_db.delete_container(created_collection2)
-
-    #TODO: fix test
-    @pytest.mark.skip
-    def test_id_unicode_validation(self):
-        # create database
-        created_db = self.databaseForTest
-
-        # unicode chars in Hindi for Id which translates to: "Hindi is the national language of India"
-        collection_id1 = u'हिन्दी भारत की राष्ट्रीय भाषा है' # cspell:disable-line
-
-        # Special chars for Id
-        collection_id2 = "!@$%^&*()-~`'_[]{}|;:,.<>"
-
-        # verify that collections are created with specified IDs
-        created_collection1 = created_db.create_container(
-            id=collection_id1,
-            partition_key=PartitionKey(path='/id', kind='Hash')
-        )
-        created_collection2 = created_db.create_container(
-            id=collection_id2,
-            partition_key=PartitionKey(path='/id', kind='Hash')
-        )
-
-        self.assertEqual(collection_id1, created_collection1.id)
-        self.assertEqual(collection_id2, created_collection2.id)
-        
-        created_collection1_properties = created_collection1.read()
-        created_collection2_properties = created_collection2.read()
-
-        created_db.client_connection.DeleteContainer(created_collection1_properties['_self'])
-        created_db.client_connection.DeleteContainer(created_collection2_properties['_self'])
 
     def test_get_resource_with_dictionary_and_object(self):
         created_db = self.databaseForTest
