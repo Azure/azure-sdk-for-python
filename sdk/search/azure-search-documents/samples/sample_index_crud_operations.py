@@ -20,10 +20,9 @@ USAGE:
 
 
 import os
-from typing import List
 
-service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
-key = os.environ["AZURE_SEARCH_API_KEY"]
+service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
+key = os.getenv("AZURE_SEARCH_API_KEY")
 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.indexes import SearchIndexClient
@@ -56,7 +55,7 @@ def create_index():
         ),
     ]
     cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
-    scoring_profiles: List[ScoringProfile] = []
+    scoring_profiles = []
     index = SearchIndex(name=name, fields=fields, scoring_profiles=scoring_profiles, cors_options=cors_options)
 
     result = client.create_index(index)

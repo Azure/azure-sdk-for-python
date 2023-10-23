@@ -4,9 +4,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-from ci_tools.parsing import get_config_setting
+from ci_tools.functions import get_config_setting
 import os
-from typing import Any
 
 # --------------------------------------------------------------------------------------------------------------------
 # DO NOT add packages to the below lists. They are used to omit packages that will never run type checking.
@@ -35,7 +34,7 @@ IGNORE_PACKAGES = [
 ]
 
 
-def is_check_enabled(package_path: str, check: str, default: Any = True) -> bool:
+def is_check_enabled(package_path: str, check: str, default: bool = True) -> bool:
     """
     Single-use function to evaluate whether or not a given check should run against a package.
 
@@ -50,10 +49,13 @@ def is_check_enabled(package_path: str, check: str, default: Any = True) -> bool
     if package_path == ".":
         package_path = os.getcwd()
 
-    # now pull the new pyproject.toml configuration
-    config = get_config_setting(package_path, check.strip().lower(), default)
+    enabled = default
+    package_name = os.path.basename(package_path)
 
-    return config
+    # now pull the new pyproject.toml configuration
+    config = get_config_setting(package_path, check.strip().lower(), True)
+
+    return config and enabled
 
 
 def filter_tox_environment_string(namespace_argument: str, package_path: str) -> str:

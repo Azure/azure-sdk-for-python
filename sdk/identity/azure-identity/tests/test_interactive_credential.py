@@ -146,7 +146,7 @@ def test_disable_automatic_authentication():
         with patch("msal.PublicClientApplication", lambda *_, **__: msal_app):
             credential.get_token(scope, claims=expected_claims)
 
-    # the exception should carry the requested scopes and claims, and any error message from Microsoft Entra ID
+    # the exception should carry the requested scopes and claims, and any error message from AAD
     assert ex.value.scopes == (scope,)
     assert ex.value.claims == expected_claims
 

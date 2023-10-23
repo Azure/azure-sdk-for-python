@@ -45,11 +45,10 @@ def _get_authorization_header(
 ):
     """Gets the authorization header.
 
-    :param cosmos_client_connection.CosmosClient cosmos_client_connection:
+    :param cosmos_client_connection.CosmosClient cosmos_client:
     :param str verb:
     :param str path:
     :param str resource_id_or_fullname:
-    :param bool is_name_based:
     :param str resource_type:
     :param dict headers:
     :return: The authorization headers.

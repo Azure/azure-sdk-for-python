@@ -29,12 +29,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    client.monitors.begin_delete(
+    response = client.monitors.begin_delete(
         resource_group_name="myResourceGroup",
         monitor_name="myMonitor",
     ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/datadog/resource-manager/Microsoft.Datadog/stable/2023-01-01/examples/Monitors_Delete.json
+# x-ms-original-file: specification/datadog/resource-manager/Microsoft.Datadog/stable/2022-06-01/examples/Monitors_Delete.json
 if __name__ == "__main__":
     main()

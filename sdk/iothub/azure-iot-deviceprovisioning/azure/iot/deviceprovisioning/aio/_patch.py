@@ -169,7 +169,7 @@ class DeviceProvisioningClient(
                 endpoint=base_url, key=key, policy_name=name
             )
         elif credential is not None:
-            raise TypeError(f"Unsupported credential: {type(credential)}")
+            raise TypeError(f"Unsupported credential: {credential}")
 
         transport = kwargs.get("transport", None)
         if not transport:

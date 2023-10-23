@@ -74,15 +74,14 @@ class ScriptsProxy(object):
         )
 
     def query_stored_procedures(self, query, parameters=None, max_item_count=None, **kwargs):
-        # type: (str, Optional[List[Dict[str, Any]]], Optional[int], Any) -> Iterable[Dict[str, Any]]
+        # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
         """Return all stored procedures matching the given `query`.
 
-        :param str query: The Azure Cosmos DB SQL query to execute.
+        :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :type parameters: List[Dict[str, Any]]
-        :param int max_item_count: Max number of items to be returned in the enumeration operation.
+        :param max_item_count: Max number of items to be returned in the enumeration operation.
         :returns: An Iterable of stored procedures (dicts).
-        :rtype: Iterable[Dict[str, Any]]
+        :rtype: Iterable[dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         if max_item_count is not None:
@@ -100,10 +99,9 @@ class ScriptsProxy(object):
         """Get the stored procedure identified by `id`.
 
         :param sproc: The ID (name) or dict representing stored procedure to retrieve.
-        :type sproc: Union[str, Dict[str, Any]]
         :returns: A dict representing the retrieved stored procedure.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given stored procedure couldn't be retrieved.
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
 
@@ -117,10 +115,10 @@ class ScriptsProxy(object):
 
         To replace an existing sproc, use the :func:`Container.scripts.replace_stored_procedure` method.
 
-        :param Dict[str, Any] body: A dict-like object representing the sproc to create.
+        :param body: A dict-like object representing the sproc to create.
         :returns: A dict representing the new stored procedure.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given stored procedure couldn't be created.
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
 
@@ -135,12 +133,11 @@ class ScriptsProxy(object):
         If the stored procedure does not already exist in the container, an exception is raised.
 
         :param sproc: The ID (name) or dict representing stored procedure to be replaced.
-        :type sproc: Union[str, Dict[str, Any]]
-        :param Dict[str, Any] body: A dict-like object representing the sproc to replace.
+        :param body: A dict-like object representing the sproc to replace.
         :returns: A dict representing the stored procedure after replace went through.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace operation failed or the stored
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the stored
             procedure with given id does not exist.
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
 
@@ -158,7 +155,6 @@ class ScriptsProxy(object):
         If the stored procedure does not already exist in the container, an exception is raised.
 
         :param sproc: The ID (name) or dict representing stored procedure to be deleted.
-        :type sproc: Union[str, Dict[str, Any]]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The sproc wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The sproc does not exist in the container.
         :rtype: None
@@ -173,7 +169,7 @@ class ScriptsProxy(object):
         self,
         sproc,  # type: Union[str, Dict[str, Any]]
         partition_key=None,  # type: Optional[str]
-        params=None,  # type: Optional[List[Dict[str, Any]]]
+        params=None,  # type: Optional[List[Any]]
         enable_script_logging=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
@@ -183,16 +179,13 @@ class ScriptsProxy(object):
         If the stored procedure does not already exist in the container, an exception is raised.
 
         :param sproc: The ID (name) or dict representing stored procedure to be executed.
-        :type sproc: Union[str, Dict[str, Any]]
         :param partition_key: Specifies the partition key to indicate which partition the sproc should execute on.
-        :type partition_key: Union[str, int, float, bool]
         :param params: List of parameters to be passed to the stored procedure to be executed.
-        :type params: List[Dict[str, Any]]
         :param bool enable_script_logging: Enables or disables script logging for the current request.
         :returns: Result of the executed stored procedure for the given parameters.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the stored procedure execution failed
-            or if the stored procedure with given id does not exist in the container.
-        :rtype: Dict[str, Any]
+            or if the stored procedure with given id does not exists in the container.
+        :rtype: dict[str, Any]
         """
 
         request_options = build_options(kwargs)
@@ -216,9 +209,9 @@ class ScriptsProxy(object):
         # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
         """List all triggers in the container.
 
-        :param int max_item_count: Max number of items to be returned in the enumeration operation.
+        :param max_item_count: Max number of items to be returned in the enumeration operation.
         :returns: An Iterable of triggers (dicts).
-        :rtype: Iterable[Dict[str, Any]]
+        :rtype: Iterable[dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         if max_item_count is not None:
@@ -229,13 +222,12 @@ class ScriptsProxy(object):
         )
 
     def query_triggers(self, query, parameters=None, max_item_count=None, **kwargs):
-        # type: (str, Optional[List[Dict[str, Any]]], Optional[int], Any) -> Iterable[Dict[str, Any]]
+        # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
         """Return all triggers matching the given `query`.
 
-        :param str query: The Azure Cosmos DB SQL query to execute.
+        :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :type parameters: List[Dict[str, Any]]
-        :param int max_item_count: Max number of items to be returned in the enumeration operation.
+        :param max_item_count: Max number of items to be returned in the enumeration operation.
         :returns: An Iterable of triggers (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -255,10 +247,9 @@ class ScriptsProxy(object):
         """Get a trigger identified by `id`.
 
         :param trigger: The ID (name) or dict representing trigger to retrieve.
-        :type trigger: Union[str, Dict[str, Any]]
         :returns: A dict representing the retrieved trigger.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given trigger couldn't be retrieved.
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
 
@@ -272,10 +263,10 @@ class ScriptsProxy(object):
 
         To replace an existing trigger, use the :func:`ContainerProxy.scripts.replace_trigger` method.
 
-        :param Dict[str, Any] body: A dict-like object representing the trigger to create.
+        :param body: A dict-like object representing the trigger to create.
         :returns: A dict representing the new trigger.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given trigger couldn't be created.
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
 
@@ -290,12 +281,11 @@ class ScriptsProxy(object):
         If the trigger does not already exist in the container, an exception is raised.
 
         :param trigger: The ID (name) or dict representing trigger to be replaced.
-        :type trigger: Union[str, Dict[str, Any]]
-        :param Dict[str, Any] body: A dict-like object representing the trigger to replace.
+        :param body: A dict-like object representing the trigger to replace.
         :returns: A dict representing the trigger after replace went through.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace operation failed or the trigger
-            with given id does not exist.
-        :rtype: Dict[str, Any]
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the trigger with given
+            id does not exist.
+        :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
 
@@ -313,7 +303,6 @@ class ScriptsProxy(object):
         If the trigger does not already exist in the container, an exception is raised.
 
         :param trigger: The ID (name) or dict representing trigger to be deleted.
-        :type trigger: Union[str, Dict[str, Any]]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The trigger wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The trigger does not exist in the container.
         :rtype: None
@@ -328,9 +317,9 @@ class ScriptsProxy(object):
         # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
         """List all the user-defined functions in the container.
 
-        :param int max_item_count: Max number of items to be returned in the enumeration operation.
+        :param max_item_count: Max number of items to be returned in the enumeration operation.
         :returns: An Iterable of user-defined functions (dicts).
-        :rtype: Iterable[Dict[str, Any]]
+        :rtype: Iterable[dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         if max_item_count is not None:
@@ -341,15 +330,14 @@ class ScriptsProxy(object):
         )
 
     def query_user_defined_functions(self, query, parameters=None, max_item_count=None, **kwargs):
-        # type: (str, Optional[List[Dict[str, Any]]], Optional[int], Any) -> Iterable[Dict[str, Any]]
+        # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
         """Return user-defined functions matching a given `query`.
 
-        :param str query: The Azure Cosmos DB SQL query to execute.
+        :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :type parameters: List[Dict[str, Any]]
-        :param int max_item_count: Max number of items to be returned in the enumeration operation.
+        :param max_item_count: Max number of items to be returned in the enumeration operation.
         :returns: An Iterable of user-defined functions (dicts).
-        :rtype: Iterable[Dict[str, Any]]
+        :rtype: Iterable[dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         if max_item_count is not None:
@@ -367,10 +355,9 @@ class ScriptsProxy(object):
         """Get a user-defined functions identified by `id`.
 
         :param udf: The ID (name) or dict representing udf to retrieve.
-        :type udf: Union[str, Dict[str, Any]]
         :returns: A dict representing the retrieved user-defined function.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user-defined function couldn't be retrieved.
-        :rtype: Iterable[Dict[str, Any]]
+        :rtype: Iterable[dict[str, Any]]
         """
         request_options = build_options(kwargs)
 
@@ -384,10 +371,10 @@ class ScriptsProxy(object):
 
         To replace an existing UDF, use the :func:`ContainerProxy.scripts.replace_user_defined_function` method.
 
-        :param Dict[str, Any] body: A dict-like object representing the udf to create.
+        :param body: A dict-like object representing the udf to create.
         :returns: A dict representing the new user-defined function.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user-defined function couldn't be created.
-        :rtype: Dict[str, Any]
+        :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
 
@@ -402,12 +389,11 @@ class ScriptsProxy(object):
         If the UDF does not already exist in the container, an exception is raised.
 
         :param udf: The ID (name) or dict representing udf to be replaced.
-        :type udf: Union[str, Dict[str, Any]]
-        :param Dict[str, Any] body: A dict-like object representing the udf to replace.
+        :param body: A dict-like object representing the udf to replace.
         :returns: A dict representing the user-defined function after replace went through.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace operation failed or the user-defined
-            function with the given id does not exist.
-        :rtype: Dict[str, Any]
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the user-defined function
+            with the given id does not exist.
+        :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
 
@@ -425,7 +411,6 @@ class ScriptsProxy(object):
         If the UDF does not already exist in the container, an exception is raised.
 
         :param udf: The ID (name) or dict representing udf to be deleted.
-        :type udf: Union[str, Dict[str, Any]]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The udf wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The UDF does not exist in the container.
         :rtype: None

@@ -1,3 +1,4 @@
+import imp
 import logging
 from logging import Logger
 from ci_tools.variables import get_log_directory, in_ci

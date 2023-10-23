@@ -18,15 +18,6 @@ class NlpLimitSettings(RestTranslatableMixin):
     :type max_trials: int
     :param timeout_minutes: AutoML job timeout.
     :type timeout_minutes: int
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/ml_samples_automl_nlp.py
-                :start-after: [START automl.nlp_limit_settings]
-                :end-before: [END automl.nlp_limit_settings]
-                :language: python
-                :dedent: 8
-                :caption: creating an nlp limit settings
     """
 
     def __init__(

@@ -110,7 +110,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 ):
     """Gets HTTP request headers.
 
-    :param _cosmos_client_connection.CosmosClientConnection cosmos_client_connection:
+    :param cosmos_client_connection.CosmosClient cosmos_client:
     :param dict default_headers:
     :param str verb:
     :param str path:
@@ -215,12 +215,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
             headers[http_constants.HttpHeaders.PartitionKey] = []
         # else serialize using json dumps method which apart from regular values will serialize None into null
         else:
-            # single partitioning uses a string and needs to be turned into a list
-            if isinstance(options["partitionKey"], list) and options["partitionKey"]:
-                pk_val = json.dumps(options["partitionKey"], separators=(',', ':'))
-            else:
-                pk_val = json.dumps([options["partitionKey"]])
-            headers[http_constants.HttpHeaders.PartitionKey] = pk_val
+            headers[http_constants.HttpHeaders.PartitionKey] = json.dumps([options["partitionKey"]])
 
     if options.get("enableCrossPartitionQuery"):
         headers[http_constants.HttpHeaders.EnableCrossPartitionQuery] = options["enableCrossPartitionQuery"]
@@ -229,11 +224,10 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         headers[http_constants.HttpHeaders.PopulateQueryMetrics] = options["populateQueryMetrics"]
 
     if options.get("responseContinuationTokenLimitInKb"):
-        headers[http_constants.HttpHeaders.ResponseContinuationTokenLimitInKb] = options[
-            "responseContinuationTokenLimitInKb"]
+        headers[http_constants.HttpHeaders.ResponseContinuationTokenLimitInKb] = options["responseContinuationTokenLimitInKb"] # pylint: disable=line-too-long
 
     if cosmos_client_connection.master_key:
-        # formatedate guarantees RFC 1123 date format regardless of current locale
+        #formatedate guarantees RFC 1123 date format regardless of current locale
         headers[http_constants.HttpHeaders.XDate] = formatdate(timeval=None, localtime=False, usegmt=True)
 
     if cosmos_client_connection.master_key or cosmos_client_connection.resource_tokens:
@@ -492,7 +486,7 @@ def IsItemContainerLink(link):  # pylint: disable=too-many-return-statements
     return True
 
 
-def GetItemContainerInfo(self_link, alt_content_path, resource_id):
+def GetItemContainerInfo(self_link, alt_content_path, id_from_response):
     """Given the self link and alt_content_path from the response header and
     result extract the collection name and collection id.
 
@@ -522,13 +516,13 @@ def GetItemContainerInfo(self_link, alt_content_path, resource_id):
             # this is a collection request
             index_second_slash = IndexOfNth(alt_content_path, "/", 2)
             if index_second_slash == -1:
-                collection_name = alt_content_path + "/colls/" + urllib_quote(resource_id)
+                collection_name = alt_content_path + "/colls/" + urllib_quote(id_from_response)
                 return collection_id, collection_name
             collection_name = alt_content_path
             return collection_id, collection_name
         raise ValueError(
             "Response Not from Server Partition, self_link: {0}, alt_content_path: {1}, id: {2}".format(
-                self_link, alt_content_path, resource_id
+                self_link, alt_content_path, id_from_response
             )
         )
 
@@ -612,53 +606,56 @@ def TrimBeginningAndEndingSlashes(path):
 
 # Parses the paths into a list of token each representing a property
 def ParsePaths(paths):
+    if len(paths) != 1:
+        raise ValueError("Unsupported paths count.")
+
     segmentSeparator = "/"
+    path = paths[0]
     tokens = []
-    for path in paths:
-        currentIndex = 0
+    currentIndex = 0
 
-        while currentIndex < len(path):
-            if path[currentIndex] != segmentSeparator:
-                raise ValueError("Invalid path character at index " + currentIndex)
+    while currentIndex < len(path):
+        if path[currentIndex] != segmentSeparator:
+            raise ValueError("Invalid path character at index " + currentIndex)
 
-            currentIndex += 1
-            if currentIndex == len(path):
-                break
+        currentIndex += 1
+        if currentIndex == len(path):
+            break
 
-            # " and ' are treated specially in the sense that they can have the / (segment separator)
-            # between them which is considered part of the token
-            if path[currentIndex] == '"' or path[currentIndex] == "'":
-                quote = path[currentIndex]
-                newIndex = currentIndex + 1
+        # " and ' are treated specially in the sense that they can have the / (segment separator)
+        # between them which is considered part of the token
+        if path[currentIndex] == '"' or path[currentIndex] == "'":
+            quote = path[currentIndex]
+            newIndex = currentIndex + 1
 
-                while True:
-                    newIndex = path.find(quote, newIndex)
-                    if newIndex == -1:
-                        raise ValueError("Invalid path character at index " + currentIndex)
-
-                    # check if the quote itself is escaped by a preceding \ in which case it's part of the token
-                    if path[newIndex - 1] != "\\":
-                        break
-                    newIndex += 1
-
-                # This will extract the token excluding the quote chars
-                token = path[currentIndex + 1: newIndex]
-                tokens.append(token)
-                currentIndex = newIndex + 1
-            else:
-                newIndex = path.find(segmentSeparator, currentIndex)
-                token = None
+            while True:
+                newIndex = path.find(quote, newIndex)
                 if newIndex == -1:
-                    # This will extract the token from currentIndex to end of the string
-                    token = path[currentIndex:]
-                    currentIndex = len(path)
-                else:
-                    # This will extract the token from currentIndex to the char before the segmentSeparator
-                    token = path[currentIndex:newIndex]
-                    currentIndex = newIndex
+                    raise ValueError("Invalid path character at index " + currentIndex)
 
-                token = token.strip()
-                tokens.append(token)
+                # check if the quote itself is escaped by a preceding \ in which case it's part of the token
+                if path[newIndex - 1] != "\\":
+                    break
+                newIndex += 1
+
+            # This will extract the token excluding the quote chars
+            token = path[currentIndex + 1: newIndex]
+            tokens.append(token)
+            currentIndex = newIndex + 1
+        else:
+            newIndex = path.find(segmentSeparator, currentIndex)
+            token = None
+            if newIndex == -1:
+                # This will extract the token from currentIndex to end of the string
+                token = path[currentIndex:]
+                currentIndex = len(path)
+            else:
+                # This will extract the token from currentIndex to the char before the segmentSeparator
+                token = path[currentIndex:newIndex]
+                currentIndex = newIndex
+
+            token = token.strip()
+            tokens.append(token)
 
     return tokens
 
@@ -701,11 +698,11 @@ def _set_throughput_options(offer: Union[int, ThroughputProperties], request_opt
             if offer.offer_throughput:
                 request_options["offerThroughput"] = offer.offer_throughput
 
-        except AttributeError as e:
+        except AttributeError:
             if isinstance(offer, int):
                 request_options["offerThroughput"] = offer
             else:
-                raise TypeError("offer_throughput must be int or an instance of ThroughputProperties") from e
+                raise TypeError("offer_throughput must be int or an instance of ThroughputProperties")
 
 
 def _deserialize_throughput(throughput: list) -> Any:
@@ -740,21 +737,18 @@ def _replace_throughput(throughput: Union[int, ThroughputProperties], new_throug
             if throughput.offer_throughput:
                 new_throughput_properties["content"]["offerThroughput"] = throughput.offer_throughput
 
-    except AttributeError as e:
+    except AttributeError:
         if isinstance(throughput, int):
             new_throughput_properties["content"]["offerThroughput"] = throughput
         else:
-            raise TypeError("offer_throughput must be int or an instance of ThroughputProperties") from e
+            raise TypeError("offer_throughput must be int or an instance of ThroughputProperties")
 
 
 def _internal_resourcetype(resource_type: str) -> str:
-    """Partition key is used as the resource type for deleting all items by partition key in other SDKs,
-    but the colls (collection) resource type needs to be sent for the feature to work. In order to keep it consistent
+    """Partitionkey is used as the resource type for deleting all items by partition key in
+    other SDKs, but the colls resource type needs to be sent for the feature to work. In order to keep it consistent
     with other SDKs, we switch it here.
-    :param str resource_type: the resource type
-    :return: the resource type after checking if we're doing partition key delete.
-    :rtype: str
     """
-    if resource_type.lower() == "partitionkey":
+    if resource_type.lower() ==  "partitionkey":
         return "colls"
     return resource_type

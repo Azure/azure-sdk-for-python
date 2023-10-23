@@ -3,14 +3,13 @@ import subprocess
 import shutil
 import zipfile
 import tarfile
-import stat
 from ast import Not
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse, InvalidVersion
 from pkg_resources import Requirement
 
 from ci_tools.variables import discover_repo_root, DEV_BUILD_IDENTIFIER
-from ci_tools.parsing import ParsedSetup, get_config_setting
+from ci_tools.parsing import ParsedSetup, get_build_config
 from pypi_tools.pypi import PyPIClient
 
 import os, sys, platform, glob, re, logging
@@ -123,7 +122,7 @@ def compare_python_version(version_spec: str) -> bool:
     # we want to be loud if we can't parse out a major version from the version string, not silently
     # fail and skip running samples on a platform we really should be
     if parsed_version is None:
-        raise InvalidVersion(f'Unable to parse the platform version. Unparsed value was "{platform_version}".')
+        raise InvalidVersion(f"Unable to parse the platform version. Unparsed value was \"{platform_version}\".")
     else:
         current_sys_version = parse(parsed_version[0])
         spec_set = SpecifierSet(version_spec)
@@ -215,6 +214,22 @@ def discover_targeted_packages(
     collected_packages = apply_business_filter(collected_packages, filter_type)
 
     return sorted(collected_packages)
+
+
+def get_config_setting(package_path: str, setting: str, default: Any = True) -> Any:
+    # we should always take the override if one is present
+    override_value = os.getenv(f"{os.path.basename(package_path).upper()}_{setting.upper()}", None)
+    if override_value:
+        return override_value
+
+    # if no override, check for the config setting in the pyproject.toml
+    config = get_build_config(package_path)
+
+    if config:
+        if setting.lower() in config:
+            return config[setting.lower()]
+
+    return default
 
 
 def is_package_active(package_path: str):
@@ -529,28 +544,6 @@ def find_whl(whl_dir: str, pkg_name: str, pkg_version: str) -> str:
     return None
 
 
-def error_handler_git_access(func, path, exc):
-    """
-    This function exists because the git idx file is written with strange permissions that prevent it from being
-    deleted. Due to this, we need to register an error handler that attempts to fix the file permissions before
-    re-attempting the delete operations.
-    """
-
-    if not os.access(path, os.W_OK):
-        os.chmod(path, stat.S_IWUSR)
-        func(path)
-    else:
-        raise
-
-
-def cleanup_directory(target_directory: str) -> None:
-    """Invokes a directory delete. Specifically handles the case where bad permissions on a git .idx file
-    prevent cleanup of the directory with a generic error.
-    """
-    if os.path.exists(target_directory):
-        shutil.rmtree(target_directory, ignore_errors=False, onerror=error_handler_git_access)
-
-
 def discover_prebuilt_package(dist_directory: str, setup_path: str, package_type: str) -> List[str]:
     """Discovers a prebuild wheel or sdist for a given setup path."""
     packages = []
@@ -563,3 +556,4 @@ def discover_prebuilt_package(dist_directory: str, setup_path: str, package_type
     if prebuilt_package is not None:
         packages.append(prebuilt_package)
     return packages
+

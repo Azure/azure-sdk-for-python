@@ -35,7 +35,6 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: core
-    BuildTargetingString: '*'
     ValidateFormatting: true
     Artifacts:
     - name: azure-core
@@ -51,5 +50,3 @@ extends:
       skipPublishDocMs: true
     - name: azure-core-experimental
       safeName: azurecoreexperimental
-    - name: corehttp
-      safeName: corehttp

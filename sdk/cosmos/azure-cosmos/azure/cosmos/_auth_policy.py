@@ -105,10 +105,8 @@ class CosmosBearerTokenCredentialPolicy(_CosmosBearerTokenCredentialPolicyBase, 
         # type: (PipelineRequest) -> PipelineResponse
         """Authorize request with a bearer token and send it to the next policy
 
-        :param request: The pipeline request object.
+        :param request: The pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
-        :returns: The pipeline response object.
-        :rtype: ~azure.core.pipeline.PipelineResponse
         """
         self.on_request(request)
         try:
@@ -140,10 +138,9 @@ class CosmosBearerTokenCredentialPolicy(_CosmosBearerTokenCredentialPolicyBase, 
 
         :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
         :param ~azure.core.pipeline.PipelineResponse response: the resource provider's response
-        :returns: a boolean indicating whether the policy should send the request
-        :rtype: bool
+        :returns: a bool indicating whether the policy should send the request
         """
-        # pylint:disable=unused-argument
+        # pylint:disable=unused-argument,no-self-use
         return False
 
     def on_response(self, request, response):
@@ -165,5 +162,5 @@ class CosmosBearerTokenCredentialPolicy(_CosmosBearerTokenCredentialPolicyBase, 
         :param request: The Pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        # pylint: disable=unused-argument
+        # pylint: disable=no-self-use,unused-argument
         return

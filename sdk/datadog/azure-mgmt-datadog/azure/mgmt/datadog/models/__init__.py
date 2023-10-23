@@ -6,9 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models_py3 import CreateResourceSupportedProperties
-from ._models_py3 import CreateResourceSupportedResponse
-from ._models_py3 import CreateResourceSupportedResponseList
 from ._models_py3 import DatadogAgreementProperties
 from ._models_py3 import DatadogAgreementResource
 from ._models_py3 import DatadogAgreementResourceListResponse
@@ -40,9 +37,6 @@ from ._models_py3 import MonitorProperties
 from ._models_py3 import MonitorUpdateProperties
 from ._models_py3 import MonitoredResource
 from ._models_py3 import MonitoredResourceListResponse
-from ._models_py3 import MonitoredSubscription
-from ._models_py3 import MonitoredSubscriptionProperties
-from ._models_py3 import MonitoredSubscriptionPropertiesList
 from ._models_py3 import MonitoringTagRules
 from ._models_py3 import MonitoringTagRulesListResponse
 from ._models_py3 import MonitoringTagRulesProperties
@@ -50,7 +44,6 @@ from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
 from ._models_py3 import OperationResult
 from ._models_py3 import ResourceSku
-from ._models_py3 import SubscriptionList
 from ._models_py3 import SystemData
 from ._models_py3 import UserInfo
 
@@ -59,19 +52,14 @@ from ._microsoft_datadog_client_enums import LiftrResourceCategories
 from ._microsoft_datadog_client_enums import ManagedIdentityTypes
 from ._microsoft_datadog_client_enums import MarketplaceSubscriptionStatus
 from ._microsoft_datadog_client_enums import MonitoringStatus
-from ._microsoft_datadog_client_enums import Operation
 from ._microsoft_datadog_client_enums import ProvisioningState
 from ._microsoft_datadog_client_enums import SingleSignOnStates
-from ._microsoft_datadog_client_enums import Status
 from ._microsoft_datadog_client_enums import TagAction
 from ._patch import __all__ as _patch_all
-from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "CreateResourceSupportedProperties",
-    "CreateResourceSupportedResponse",
-    "CreateResourceSupportedResponseList",
     "DatadogAgreementProperties",
     "DatadogAgreementResource",
     "DatadogAgreementResourceListResponse",
@@ -103,9 +91,6 @@ __all__ = [
     "MonitorUpdateProperties",
     "MonitoredResource",
     "MonitoredResourceListResponse",
-    "MonitoredSubscription",
-    "MonitoredSubscriptionProperties",
-    "MonitoredSubscriptionPropertiesList",
     "MonitoringTagRules",
     "MonitoringTagRulesListResponse",
     "MonitoringTagRulesProperties",
@@ -113,7 +98,6 @@ __all__ = [
     "OperationListResult",
     "OperationResult",
     "ResourceSku",
-    "SubscriptionList",
     "SystemData",
     "UserInfo",
     "CreatedByType",
@@ -121,10 +105,8 @@ __all__ = [
     "ManagedIdentityTypes",
     "MarketplaceSubscriptionStatus",
     "MonitoringStatus",
-    "Operation",
     "ProvisioningState",
     "SingleSignOnStates",
-    "Status",
     "TagAction",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

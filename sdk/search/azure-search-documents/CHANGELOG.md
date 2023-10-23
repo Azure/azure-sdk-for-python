@@ -1,28 +1,5 @@
 # Release History
 
-## 11.4.0b12 (Unreleased)
-
-### Features Added
-
-- Exposed `VectorSearchAlgorithmMetric`, `IndexProjectionMode`, `SearchIndexerIndexProjections`,
-  `SearchIndexerIndexProjectionSelector`, `SearchIndexerIndexProjectionsParameters`
-- Added `index_projections` support for `SearchIndexerSkillset`
-- Added `semantic_query` for `Search` method.
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
-
-
-## 11.4.0b11 (2023-10-11)
-
-### Features Added
-
-- Added `vector_filter_mode` support for `Search` method.
-- Exposed `VectorizableTextQuery` in `azure.search.document.models`.
-
 ## 11.4.0b10 (2023-10-10)
 
 ### Breaking Changes

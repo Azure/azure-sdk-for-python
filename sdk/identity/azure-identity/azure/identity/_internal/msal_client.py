@@ -7,10 +7,7 @@ from typing import Any, Dict, Optional, Union
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy
-from azure.core.pipeline.transport import (  # pylint:disable=unknown-option-value,no-legacy-azure-core-http-response-import
-    HttpRequest,
-    HttpResponse,
-)
+from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.pipeline import PipelineResponse
 from .pipeline import build_pipeline
 
@@ -43,16 +40,16 @@ class MsalResponse:
         if ContentDecodePolicy.CONTEXT_NAME in self._response.context:
             content = self._response.context[ContentDecodePolicy.CONTEXT_NAME]
             if not content:
-                message = "Unexpected response from Microsoft Entra ID"
+                message = "Unexpected response from Azure Active Directory"
             elif "error" in content or "error_description" in content:
                 message = "Authentication failed: {}".format(content.get("error_description") or content.get("error"))
             else:
                 for secret in ("access_token", "refresh_token"):
                     if secret in content:
                         content[secret] = "***"
-                message = 'Unexpected response from Microsoft Entra ID: "{}"'.format(content)
+                message = 'Unexpected response from Azure Active Directory: "{}"'.format(content)
         else:
-            message = "Unexpected response from Microsoft Entra ID"
+            message = "Unexpected response from Azure Active Directory"
 
         raise ClientAuthenticationError(message=message, response=self._response.http_response)
 

@@ -5,7 +5,7 @@ Guide for migrating to the next generation of Azure Python SDK for Management Li
 ---------------------------------------------------------------------------------------
 
 This document is intended for users that are familiar with an older
-version of the Python SDK for managment libraries and wish to migrate
+version of the Python SDK for management libraries and wish to migrate
 their application to the next version of Azure resource management
 libraries
 
@@ -102,7 +102,7 @@ To the show the code snippets for the change:
     from azure.identity import ClientSecretCredential
 
     credential = ClientSecretCredential(
-        tenant_id=tenant_id,
+        client_secret=client_secret,
         client_id=client_id,
         client_secret=client_secret
     )

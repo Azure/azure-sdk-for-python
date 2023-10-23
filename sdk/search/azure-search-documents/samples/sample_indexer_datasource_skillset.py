@@ -30,9 +30,9 @@ USAGE:
 import os
 import datetime
 
-service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
-key = os.environ["AZURE_SEARCH_API_KEY"]
-connection_string = os.environ["AZURE_STORAGE_CONNECTION_STRING"]
+service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
+key = os.getenv("AZURE_SEARCH_API_KEY")
+connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.indexes.models import (
@@ -50,7 +50,6 @@ from azure.search.documents.indexes.models import (
     SearchableField,
     IndexingParameters,
     SearchIndexerDataSourceConnection,
-    IndexingParametersConfiguration,
 )
 from azure.search.documents.indexes import SearchIndexerClient, SearchIndexClient
 
@@ -116,8 +115,7 @@ def sample_indexer_workflow():
     print("Index is created")
 
     # we pass the data source, skillsets and targeted index to build an indexer
-    configuration = IndexingParametersConfiguration(parsingMode="jsonArray")
-    parameters = IndexingParameters(configuration=configuration)
+    parameters = IndexingParameters(configuration={"parsingMode": "jsonArray"})
     indexer = SearchIndexer(
         name="hotel-data-indexer",
         data_source_name=ds_name,

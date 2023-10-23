@@ -4,11 +4,11 @@
 
 from typing import Optional
 
-from azure.ai.ml._restclient.v2023_10_01.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     FeaturesetVersionBackfillResponse as RestFeaturesetVersionBackfillResponse,
 )
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental

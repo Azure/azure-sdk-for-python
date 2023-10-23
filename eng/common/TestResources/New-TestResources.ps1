@@ -771,6 +771,7 @@ try {
                     -TemplateParameterObject $templateFileParameters `
                     -Force:$Force
         }
+
         if ($deployment.ProvisioningState -ne 'Succeeded') {
             Write-Host "Deployment '$($deployment.DeploymentName)' has state '$($deployment.ProvisioningState)' with CorrelationId '$($deployment.CorrelationId)'. Exiting..."
             Write-Host @'
@@ -802,9 +803,6 @@ try {
             Write-Verbose "Removing compiled bicep file $($templateFile.jsonFilePath)"
             Remove-Item $templateFile.jsonFilePath
         }
-
-        Write-Host "Deleting ARM deployment as it may contain secrets. Deployed resources will not be affected."
-        $null = $deployment | Remove-AzResourceGroupDeployment
     }
 
 } finally {

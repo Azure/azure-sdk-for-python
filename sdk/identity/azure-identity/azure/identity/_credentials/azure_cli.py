@@ -16,7 +16,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._internal import _scopes_to_resource, resolve_tenant, within_dac, validate_tenant_id, validate_scope
+from .._internal import _scopes_to_resource, resolve_tenant, within_dac
 from .._internal.decorators import log_get_token
 
 
@@ -54,8 +54,7 @@ class AzureCliCredential:
         additionally_allowed_tenants: Optional[List[str]] = None,
         process_timeout: int = 10,
     ) -> None:
-        if tenant_id:
-            validate_tenant_id(tenant_id)
+
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._process_timeout = process_timeout
@@ -95,10 +94,6 @@ class AzureCliCredential:
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure CLI but didn't
           receive an access token.
         """
-        if tenant_id:
-            validate_tenant_id(tenant_id)
-        for scope in scopes:
-            validate_scope(scope)
 
         resource = _scopes_to_resource(*scopes)
         command = COMMAND_LINE.format(resource)

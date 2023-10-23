@@ -5,7 +5,6 @@
 # pylint: disable=protected-access
 
 import uuid
-import re
 from typing import Dict, Iterable, Optional
 
 from marshmallow import ValidationError
@@ -32,7 +31,6 @@ from azure.ai.ml.entities._feature_store._constants import (
     ONLINE_MATERIALIZATION_STORE_TYPE,
     ONLINE_STORE_CONNECTION_CATEGORY,
     ONLINE_STORE_CONNECTION_NAME,
-    STORE_REGEX_PATTERN,
 )
 from azure.ai.ml.entities._feature_store.feature_store import FeatureStore
 from azure.ai.ml.entities._feature_store.materialization_store import MaterializationStore
@@ -317,7 +315,8 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
             update_offline_store_role_assignment = True
             update_online_store_role_assignment = True
 
-        self._validate_offline_store(offline_store=offline_store)
+        if offline_store and offline_store.type != OFFLINE_MATERIALIZATION_STORE_TYPE:
+            raise ValidationError("offline store type should be azure_data_lake_gen2")
 
         if (
             rest_workspace_obj.feature_store_settings
@@ -522,10 +521,3 @@ class FeatureStoreOperations(WorkspaceOperationsBase):
         )
         module_logger.info("Provision network request initiated for feature store: %s\n", workspace_name)
         return poller
-
-    def _validate_offline_store(self, offline_store: MaterializationStore):
-        store_regex = re.compile(STORE_REGEX_PATTERN)
-        if offline_store and store_regex.match(offline_store.target) is None:
-            raise ValidationError(f"Invalid AzureML offlinestore target ARM Id {offline_store.target}")
-        if offline_store and offline_store.type != OFFLINE_MATERIALIZATION_STORE_TYPE:
-            raise ValidationError("offline store type should be azure_data_lake_gen2")

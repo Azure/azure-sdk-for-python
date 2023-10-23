@@ -14,12 +14,7 @@ from azure.cosmos import http_constants
 
 
 async def await_result(func, *args, **kwargs):
-    """If func returns an awaitable, await it.
-    :param Callable func: The function to be awaited.
-    :param List[Any] args: The explicit arguments for the function.
-    :returns: The result from awaiting the function.
-    :rtype: HttpResponse
-    """
+    """If func returns an awaitable, await it."""
     result = func(*args, **kwargs)
     if hasattr(result, "__await__"):
         # type ignore on await: https://github.com/python/mypy/issues/7587
@@ -122,8 +117,6 @@ class AsyncCosmosBearerTokenCredentialPolicy(_AsyncCosmosBearerTokenCredentialPo
 
         :param request: The pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
-        :returns: The result of sending the request.
-        :rtype: ~azure.core.pipeline.PipelineResponse
         """
         await await_result(self.on_request, request)
         try:
@@ -156,10 +149,9 @@ class AsyncCosmosBearerTokenCredentialPolicy(_AsyncCosmosBearerTokenCredentialPo
 
         :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
         :param ~azure.core.pipeline.PipelineResponse response: the resource provider's response
-        :returns: a boolean indicating whether the policy should send the request
-        :rtype: bool
+        :returns: a bool indicating whether the policy should send the request
         """
-        # pylint:disable=unused-argument
+        # pylint:disable=unused-argument,no-self-use
         return False
 
     def on_response(self, request: PipelineRequest, response: PipelineResponse) -> Union[None, Awaitable[None]]:
@@ -179,5 +171,5 @@ class AsyncCosmosBearerTokenCredentialPolicy(_AsyncCosmosBearerTokenCredentialPo
         :param request: The Pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
         """
-        # pylint: disable=unused-argument
+        # pylint: disable=no-self-use,unused-argument
         return

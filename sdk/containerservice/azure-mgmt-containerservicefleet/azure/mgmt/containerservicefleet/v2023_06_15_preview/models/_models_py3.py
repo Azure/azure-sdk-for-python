@@ -1181,8 +1181,9 @@ class UpdateGroup(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Name of the group.
-     It must match a group name of an existing fleet member. Required.
+    :ivar name: The name of the Fleet member group to update.
+     It should match the name of an existing FleetMember group.
+     A group can only appear once across all UpdateStages in the UpdateRun. Required.
     :vartype name: str
     """
 
@@ -1196,8 +1197,9 @@ class UpdateGroup(_serialization.Model):
 
     def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
-        :keyword name: Name of the group.
-         It must match a group name of an existing fleet member. Required.
+        :keyword name: The name of the Fleet member group to update.
+         It should match the name of an existing FleetMember group.
+         A group can only appear once across all UpdateStages in the UpdateRun. Required.
         :paramtype name: str
         """
         super().__init__(**kwargs)
@@ -1239,7 +1241,7 @@ class UpdateGroupStatus(_serialization.Model):
 
 
 class UpdateRun(ProxyResource):
-    """A multi-stage process to perform update operations across members of a Fleet.
+    """An UpdateRun is a multi-stage process to perform update operations across members of a Fleet.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1396,17 +1398,12 @@ class UpdateRunStatus(_serialization.Model):
 
 
 class UpdateRunStrategy(_serialization.Model):
-    """Defines the update sequence of the clusters via stages and groups.
-
-    Stages within a run are executed sequentially one after another.
-    Groups within a stage are executed in parallel.
-    Member clusters within a group are updated sequentially one after another.
-
-    A valid strategy contains no duplicate groups within or across stages.
+    """The UpdateRunStrategy configures the sequence of Stages and Groups in which the clusters will
+    be updated.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar stages: The list of stages that compose this update run. Min size: 1. Required.
+    :ivar stages: The list of stages that compose this update run. Required.
     :vartype stages: list[~azure.mgmt.containerservicefleet.v2023_06_15_preview.models.UpdateStage]
     """
 
@@ -1420,7 +1417,7 @@ class UpdateRunStrategy(_serialization.Model):
 
     def __init__(self, *, stages: List["_models.UpdateStage"], **kwargs: Any) -> None:
         """
-        :keyword stages: The list of stages that compose this update run. Min size: 1. Required.
+        :keyword stages: The list of stages that compose this update run. Required.
         :paramtype stages:
          list[~azure.mgmt.containerservicefleet.v2023_06_15_preview.models.UpdateStage]
         """
@@ -1429,15 +1426,21 @@ class UpdateRunStrategy(_serialization.Model):
 
 
 class UpdateStage(_serialization.Model):
-    """Defines a stage which contains the groups to update and the steps to take (e.g., wait for a
-    time period) before starting the next stage.
+    """Contains the groups to be updated by an UpdateRun.
+    Update order:
+
+
+    * Sequential between stages: Stages run sequentially. The previous stage must complete before
+    the next one starts.
+    * Parallel within a stage: Groups within a stage run in parallel.
+    * Sequential within a group: Clusters within a group are updated sequentially.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar name: The name of the stage. Must be unique within the UpdateRun. Required.
     :vartype name: str
-    :ivar groups: Defines the groups to be executed in parallel in this stage. Duplicate groups are
-     not allowed. Min size: 1.
+    :ivar groups: A list of group names that compose the stage.
+     The groups will be updated in parallel. Each group name can only appear once in the UpdateRun.
     :vartype groups: list[~azure.mgmt.containerservicefleet.v2023_06_15_preview.models.UpdateGroup]
     :ivar after_stage_wait_in_seconds: The time in seconds to wait at the end of this stage before
      starting the next one. Defaults to 0 seconds if unspecified.
@@ -1465,8 +1468,8 @@ class UpdateStage(_serialization.Model):
         """
         :keyword name: The name of the stage. Must be unique within the UpdateRun. Required.
         :paramtype name: str
-        :keyword groups: Defines the groups to be executed in parallel in this stage. Duplicate groups
-         are not allowed. Min size: 1.
+        :keyword groups: A list of group names that compose the stage.
+         The groups will be updated in parallel. Each group name can only appear once in the UpdateRun.
         :paramtype groups:
          list[~azure.mgmt.containerservicefleet.v2023_06_15_preview.models.UpdateGroup]
         :keyword after_stage_wait_in_seconds: The time in seconds to wait at the end of this stage

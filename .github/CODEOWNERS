@@ -29,9 +29,6 @@
 /sdk/ @lmazuel
 
 # Core
-# PRLabel: %Core.Http
-/sdk/core/corehttp/                                                  @pvaneck @lmazuel @annatisch @johanste @xiangyan99 @iscai-msft @kashifkhan
-
 # PRLabel: %Azure.Core
 /sdk/core/                                                           @lmazuel @annatisch @johanste
 /sdk/core/azure-core/                                                @lmazuel @annatisch @johanste @xiangyan99 @tjprescott @iscai-msft @kashifkhan
@@ -107,7 +104,7 @@
 /sdk/keyvault/                                                       @schaabs @mccoyp
 
 # PRLabel: %Load Testing
-/sdk/loadtesting/azure-developer-loadtesting/                        @msyyc @iscai-msft
+/sdk/loadtestservice/azure-developer-loadtesting/                    @msyyc @iscai-msft
 
 # PRLabel: %Monitor
 /sdk/loganalytics/azure-loganalytics/                                @azmonapplicationinsights @pvaneck
@@ -145,7 +142,7 @@
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
 /sdk/datalake/                                                       @ro-joowan
-/sdk/datamigration/                                                  @vchske
+/sdk/datadatamigration/                                              @vchske
 
 # PRLabel: %Device Provisioning
 /sdk/iothub/azure-iot-deviceprovisioning                             @c-ryan-k @digimaun
@@ -163,7 +160,7 @@
 /sdk/modelsrepository/                                               @cartertinney @digimaun
 
 # PRLabel: %Machine Learning Compute
-/sdk/machinelearning/                                                @shutchings
+/sdk/machinelearningcompute/                                         @shutchings
 
 # PRLabel: %Machine Learning
 /sdk/ml/                                                             @paulshealy1 @singankit @diondrapeck @luigiw @kdestin @MilesHolland @needuv @ninghu @YusakuNo1
@@ -284,7 +281,7 @@
 /sdk/servicefabric/                                                  @QingChenmsft @samedder
 
 # PRLabel: %SQL
-/sdk/sql/                                                            @jaredmoo
+/sql/sql/                                                            @jaredmoo
 
 # PRLabel: %Service Bus
 /sdk/servicebus/                                                     @annatisch @kashifkhan @swathipil @l0lawrence

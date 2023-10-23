@@ -6,7 +6,6 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from collections.abc import Sequence
 from io import IOBase
 import logging
 import sys
@@ -67,9 +66,6 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
 
             super()._upload(rule_id, stream=stream_name, body=logs, content_encoding=content_encoding, **kwargs)
             return
-
-        if not isinstance(logs, Sequence):
-            raise ValueError("The 'logs' parameter must be a list of JSON objects or an I/O stream that is readable.")
 
         for gzip_data, log_chunk in _create_gzip_requests(cast(List[JSON], logs)):
             try:

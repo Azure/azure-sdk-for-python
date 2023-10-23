@@ -143,7 +143,7 @@ class AadClientBase(abc.ABC):
                 for invalid_token in cache_entries:
                     cache.remove_rt(invalid_token)
             if "refresh_token" in content:
-                # Microsoft Entra ID returned a new refresh token -> update the cache entry
+                # AAD returned a new refresh token -> update the cache entry
                 cache_entries = cache.find(
                     TokenCache.CredentialType.REFRESH_TOKEN,
                     query={"secret": response.http_request.body["refresh_token"]},
@@ -162,7 +162,9 @@ class AadClientBase(abc.ABC):
             expires_on = request_time + int(content["expires_in"])
         else:
             _scrub_secrets(content)
-            raise ClientAuthenticationError(message="Unexpected response from Microsoft Entra ID: {}".format(content))
+            raise ClientAuthenticationError(
+                message="Unexpected response from Azure Active Directory: {}".format(content)
+            )
 
         token = AccessToken(content["access_token"], expires_on)
 
@@ -296,7 +298,7 @@ class AadClientBase(abc.ABC):
             "refresh_token": refresh_token,
             "scope": " ".join(scopes),
             "client_id": self._client_id,
-            "client_info": 1,  # request Microsoft Entra ID include home_account_id in its response
+            "client_info": 1,  # request AAD include home_account_id in its response
         }
 
         claims = _merge_claims_challenge_and_capabilities(
@@ -320,7 +322,7 @@ class AadClientBase(abc.ABC):
             "refresh_token": refresh_token,
             "scope": " ".join(scopes),
             "client_id": self._client_id,
-            "client_info": 1,  # request Microsoft Entra ID include home_account_id in its response
+            "client_info": 1,  # request AAD include home_account_id in its response
         }
         claims = _merge_claims_challenge_and_capabilities(
             ["CP1"] if kwargs.get("enable_cae") else [], kwargs.get("claims")
@@ -370,7 +372,7 @@ def _raise_for_error(response: PipelineResponse, content: Dict) -> None:
 
     _scrub_secrets(content)
     if "error_description" in content:
-        message = "Microsoft Entra ID error '({}) {}'".format(content["error"], content["error_description"])
+        message = "Azure Active Directory error '({}) {}'".format(content["error"], content["error_description"])
     else:
-        message = "Microsoft Entra ID error '{}'".format(content)
+        message = "Azure Active Directory error '{}'".format(content)
     raise ClientAuthenticationError(message=message, response=response.http_response)

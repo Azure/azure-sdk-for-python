@@ -81,10 +81,7 @@ class _QueryExecutionContextBase(object):
         raise NotImplementedError
 
     def __iter__(self):
-        """Returns itself as an iterator
-        :returns: Query as an iterator.
-        :rtype: Iterator
-        """
+        """Returns itself as an iterator"""
         return self
 
     def __next__(self):
@@ -110,7 +107,6 @@ class _QueryExecutionContextBase(object):
     def _fetch_items_helper_no_retries(self, fetch_function):
         """Fetches more items and doesn't retry on failure
 
-        :param Callable fetch_function: The function that fetches the items.
         :return: List of fetched items.
         :rtype: list
         """

@@ -150,12 +150,10 @@ class KeyPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class KeyRotationPolicyActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the action. The value should be compared case-insensitively."""
+    """The type of action."""
 
-    ROTATE = "Rotate"
-    """Rotate the key based on the key policy."""
-    NOTIFY = "Notify"
-    """Trigger Event Grid events. Defaults to 30 days before expiry. Key Vault only."""
+    ROTATE = "rotate"
+    NOTIFY = "notify"
 
 
 class ManagedHsmSkuFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):

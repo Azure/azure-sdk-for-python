@@ -37,7 +37,6 @@ def main():
             "properties": {
                 "description": "This is my first project.",
                 "devCenterId": "/subscriptions/0ac520ee-14c0-480f-b6c9-0a90c58ffff/resourceGroups/rg1/providers/Microsoft.DevCenter/devcenters/Contoso",
-                "displayName": "Dev",
             },
             "tags": {"CostCenter": "R&D"},
         },
@@ -45,6 +44,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/preview/2023-10-01-preview/examples/Projects_Put.json
+# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/stable/2023-04-01/examples/Projects_Put.json
 if __name__ == "__main__":
     main()

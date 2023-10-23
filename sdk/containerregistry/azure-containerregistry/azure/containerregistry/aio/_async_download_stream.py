@@ -5,9 +5,8 @@
 # ------------------------------------
 import hashlib
 from typing import AsyncIterator, AsyncContextManager, Awaitable, cast, Tuple, Dict, Any
-from typing_extensions import Protocol
+from typing_extensions import Protocol, Self
 from azure.core.pipeline import PipelineResponse
-from azure.core.rest import HttpRequest, AsyncHttpResponse
 from .._models import DigestValidationError
 
 
@@ -25,7 +24,7 @@ class AsyncDownloadBlobStream(
     def __init__(
         self,
         *,
-        response: PipelineResponse[HttpRequest, AsyncHttpResponse],
+        response: PipelineResponse,
         get_next: AsyncGetNext,
         blob_size: int,
         downloaded: int,
@@ -41,13 +40,13 @@ class AsyncDownloadBlobStream(
         self._chunk_size = chunk_size
         self._hasher = hashlib.sha256()
 
-    async def __aenter__(self) -> "AsyncDownloadBlobStream":
+    async def __aenter__(self) -> Self:
         return self
 
-    async def __aexit__(self, *args: Any) -> None:
+    async def __aexit__(self, *args) -> None:
         await self.close()
 
-    def __aiter__(self) -> "AsyncDownloadBlobStream":
+    def __aiter__(self) -> Self:
         return self
 
     async def _yield_data(self) -> bytes:
@@ -77,5 +76,5 @@ class AsyncDownloadBlobStream(
             self._response_bytes = self._response.http_response.iter_bytes()
             return await self._yield_data()
 
-    async def close(self) -> None:
+    async def close(self):
         await self._response.http_response.close()

@@ -21,9 +21,9 @@ USAGE:
 import asyncio
 import os
 
-service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
-key = os.environ["AZURE_SEARCH_API_KEY"]
-connection_string = os.environ["AZURE_STORAGE_CONNECTION_STRING"]
+service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
+key = os.getenv("AZURE_SEARCH_API_KEY")
+connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.indexes.models import (
@@ -96,17 +96,17 @@ async def get_indexer_status():
 
 async def run_indexer():
     # [START run_indexer_async]
-    await indexers_client.run_indexer("async-sample-indexer")
+    result = await indexers_client.run_indexer("async-sample-indexer")
     print("Ran the Indexer 'async-sample-indexer'")
-    return
+    return result
     # [END run_indexer_async]
 
 
 async def reset_indexer():
     # [START reset_indexer_async]
-    await indexers_client.reset_indexer("async-sample-indexer")
+    result = await indexers_client.reset_indexer("async-sample-indexer")
     print("Reset the Indexer 'async-sample-indexer'")
-    return
+    return result
     # [END reset_indexer_async]
 
 

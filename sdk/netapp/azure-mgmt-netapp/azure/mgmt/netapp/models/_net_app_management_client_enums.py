@@ -29,7 +29,6 @@ class ApplicationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Application Type."""
 
     SAP_HANA = "SAP-HANA"
-    ORACLE = "ORACLE"
 
 
 class AvsDataStore(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -39,6 +38,15 @@ class AvsDataStore(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """avsDataStore is enabled"""
     DISABLED = "Disabled"
     """avsDataStore is disabled"""
+
+
+class BackupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of backup Manual or Scheduled."""
+
+    MANUAL = "Manual"
+    """Manual backup"""
+    SCHEDULED = "Scheduled"
+    """Scheduled backup"""
 
 
 class CheckNameResourceTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -71,22 +79,6 @@ class ChownMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     RESTRICTED = "Restricted"
     UNRESTRICTED = "Unrestricted"
-
-
-class CoolAccessRetrievalPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """coolAccessRetrievalPolicy determines the data retrieval behavior from the cool tier to standard
-    storage based on the read pattern for cool access enabled volumes. The possible values for this
-    field are:
-     Default - Data will be pulled from cool tier to standard storage on random reads. This policy
-    is the default.
-     OnRead - All client-driven data read is pulled from cool tier to standard storage on both
-    sequential and random reads.
-     Never - No client-driven data is pulled from cool tier to standard storage.
-    """
-
-    DEFAULT = "Default"
-    ON_READ = "OnRead"
-    NEVER = "Never"
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -210,25 +202,12 @@ class MirrorState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class NetworkFeatures(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Network features available to the volume, or current state of update."""
+    """Basic network, or Standard features available to the volume."""
 
     BASIC = "Basic"
-    """Basic network features."""
+    """Basic network feature."""
     STANDARD = "Standard"
-    """Standard network features."""
-    BASIC_STANDARD = "Basic_Standard"
-    """Updating from Basic to Standard network features."""
-    STANDARD_BASIC = "Standard_Basic"
-    """Updating from Standard to Basic network features."""
-
-
-class NetworkSiblingSetProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets the status of the NetworkSiblingSet at the time the operation was called."""
-
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
-    UPDATING = "Updating"
+    """Standard network feature."""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -311,7 +290,7 @@ class ServiceLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SmbAccessBasedEnumeration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enables access-based enumeration share property for SMB Shares. Only applicable for
+    """Enables access based enumeration share property for SMB Shares. Only applicable for
     SMB/DualProtocol volume.
     """
 
@@ -322,7 +301,7 @@ class SmbAccessBasedEnumeration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SmbNonBrowsable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enables non-browsable property for SMB Shares. Only applicable for SMB/DualProtocol volume."""
+    """Enables non browsable property for SMB Shares. Only applicable for SMB/DualProtocol volume."""
 
     DISABLED = "Disabled"
     """smbNonBrowsable share setting is disabled"""

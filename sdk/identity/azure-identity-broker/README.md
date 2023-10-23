@@ -15,17 +15,17 @@ pip install azure-identity-broker
 
 ## Examples
 
-Now you can create `azure.identity.broker.InteractiveBrowserBrokerCredential` and `azure.identity.broker.UsernamePasswordBrokerCredential` with broker support.
+Now you can create `azure.identity.broker.InteractiveBrowserCredential` and `azure.identity.broker.UsernamePasswordCredential` with broker support.
 
 ```python
 
 import win32gui
-from azure.identity.broker import InteractiveBrowserBrokerCredential
+from azure.identity.broker import InteractiveBrowserCredential
 
 # Get the handle of the current window
 current_window_handle = win32gui.GetForegroundWindow()
 
-credential = InteractiveBrowserBrokerCredential(allow_broker=True, parent_window_handle=current_window_handle)
+credential = InteractiveBrowserCredential(allow_broker=True, parent_window_handle=current_window_handle)
 ```
 
 

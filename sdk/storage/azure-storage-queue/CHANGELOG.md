@@ -1,21 +1,9 @@
 # Release History
 
-## 12.8.0 (Unreleased)
+## 12.8.0b1 (Unreleased)
 
 ### Features Added
 
-
-## 12.8.0b1 (2023-10-17)
-
-### Features Added
-- Added `audience` as an optional keyword that can be specified on APIs that have a `credential` parameter. This
-keyword only has an effect when the credential provided is of type `TokenCredential`.
-
-## 12.7.3 (2023-10-10)
-
-### Bugs Fixed
-- Fixed an issue when an invalid type was provided for `credential` during client construction, the
-`__str__` of the object would be present in the exception message and therefore potentially logged.
 
 ## 12.7.2 (2023-09-25)
 

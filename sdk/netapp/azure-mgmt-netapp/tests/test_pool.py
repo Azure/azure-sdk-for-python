@@ -162,10 +162,7 @@ class TestNetAppCapacityPool(AzureMgmtRecordedTestCase):
         tag = {'Tag2': 'Value1'}
         capacity_pool_patch = CapacityPoolPatch(qos_type="Manual", tags=tag)
 
-        print("Updating pool")
-        self.client.pools.begin_update(setup.TEST_RG, account_name1, setup.TEST_POOL_1, capacity_pool_patch).result()
-        print("Done updating pool")
-        pool = self.client.pools.get(setup.TEST_RG, account_name1, setup.TEST_POOL_1)
+        pool = self.client.pools.begin_update(setup.TEST_RG, account_name1, setup.TEST_POOL_1, capacity_pool_patch).result()
         assert pool.qos_type == "Manual"
         assert pool.tags['Tag2'] == 'Value1'
 

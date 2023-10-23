@@ -35,14 +35,6 @@ from ._models_py3 import MsixPackageApplications
 from ._models_py3 import MsixPackageDependencies
 from ._models_py3 import OperationProperties
 from ._models_py3 import Plan
-from ._models_py3 import PrivateEndpoint
-from ._models_py3 import PrivateEndpointConnection
-from ._models_py3 import PrivateEndpointConnectionListResultWithSystemData
-from ._models_py3 import PrivateEndpointConnectionWithSystemData
-from ._models_py3 import PrivateLinkResource
-from ._models_py3 import PrivateLinkResourceListResult
-from ._models_py3 import PrivateLinkServiceConnectionState
-from ._models_py3 import ProxyResource
 from ._models_py3 import RegistrationInfo
 from ._models_py3 import RegistrationInfoPatch
 from ._models_py3 import Resource
@@ -57,9 +49,6 @@ from ._models_py3 import ScalingHostPoolReference
 from ._models_py3 import ScalingPlan
 from ._models_py3 import ScalingPlanList
 from ._models_py3 import ScalingPlanPatch
-from ._models_py3 import ScalingPlanPersonalSchedule
-from ._models_py3 import ScalingPlanPersonalScheduleList
-from ._models_py3 import ScalingPlanPersonalSchedulePatch
 from ._models_py3 import ScalingPlanPooledSchedule
 from ._models_py3 import ScalingPlanPooledScheduleList
 from ._models_py3 import ScalingPlanPooledSchedulePatch
@@ -90,25 +79,18 @@ from ._desktop_virtualization_mgmt_client_enums import DayOfWeek
 from ._desktop_virtualization_mgmt_client_enums import HealthCheckName
 from ._desktop_virtualization_mgmt_client_enums import HealthCheckResult
 from ._desktop_virtualization_mgmt_client_enums import HostPoolType
-from ._desktop_virtualization_mgmt_client_enums import HostpoolPublicNetworkAccess
 from ._desktop_virtualization_mgmt_client_enums import LoadBalancerType
 from ._desktop_virtualization_mgmt_client_enums import PersonalDesktopAssignmentType
 from ._desktop_virtualization_mgmt_client_enums import PreferredAppGroupType
-from ._desktop_virtualization_mgmt_client_enums import PrivateEndpointConnectionProvisioningState
-from ._desktop_virtualization_mgmt_client_enums import PrivateEndpointServiceConnectionStatus
-from ._desktop_virtualization_mgmt_client_enums import PublicNetworkAccess
 from ._desktop_virtualization_mgmt_client_enums import RegistrationTokenOperation
 from ._desktop_virtualization_mgmt_client_enums import RemoteApplicationType
 from ._desktop_virtualization_mgmt_client_enums import SSOSecretType
 from ._desktop_virtualization_mgmt_client_enums import ScalingHostPoolType
 from ._desktop_virtualization_mgmt_client_enums import ScalingScheduleDaysOfWeekItem
-from ._desktop_virtualization_mgmt_client_enums import SessionHandlingOperation
 from ._desktop_virtualization_mgmt_client_enums import SessionHostComponentUpdateType
 from ._desktop_virtualization_mgmt_client_enums import SessionHostLoadBalancingAlgorithm
 from ._desktop_virtualization_mgmt_client_enums import SessionState
-from ._desktop_virtualization_mgmt_client_enums import SetStartVMOnConnect
 from ._desktop_virtualization_mgmt_client_enums import SkuTier
-from ._desktop_virtualization_mgmt_client_enums import StartupBehavior
 from ._desktop_virtualization_mgmt_client_enums import Status
 from ._desktop_virtualization_mgmt_client_enums import StopHostsWhen
 from ._desktop_virtualization_mgmt_client_enums import UpdateState
@@ -146,14 +128,6 @@ __all__ = [
     "MsixPackageDependencies",
     "OperationProperties",
     "Plan",
-    "PrivateEndpoint",
-    "PrivateEndpointConnection",
-    "PrivateEndpointConnectionListResultWithSystemData",
-    "PrivateEndpointConnectionWithSystemData",
-    "PrivateLinkResource",
-    "PrivateLinkResourceListResult",
-    "PrivateLinkServiceConnectionState",
-    "ProxyResource",
     "RegistrationInfo",
     "RegistrationInfoPatch",
     "Resource",
@@ -168,9 +142,6 @@ __all__ = [
     "ScalingPlan",
     "ScalingPlanList",
     "ScalingPlanPatch",
-    "ScalingPlanPersonalSchedule",
-    "ScalingPlanPersonalScheduleList",
-    "ScalingPlanPersonalSchedulePatch",
     "ScalingPlanPooledSchedule",
     "ScalingPlanPooledScheduleList",
     "ScalingPlanPooledSchedulePatch",
@@ -200,25 +171,18 @@ __all__ = [
     "HealthCheckName",
     "HealthCheckResult",
     "HostPoolType",
-    "HostpoolPublicNetworkAccess",
     "LoadBalancerType",
     "PersonalDesktopAssignmentType",
     "PreferredAppGroupType",
-    "PrivateEndpointConnectionProvisioningState",
-    "PrivateEndpointServiceConnectionStatus",
-    "PublicNetworkAccess",
     "RegistrationTokenOperation",
     "RemoteApplicationType",
     "SSOSecretType",
     "ScalingHostPoolType",
     "ScalingScheduleDaysOfWeekItem",
-    "SessionHandlingOperation",
     "SessionHostComponentUpdateType",
     "SessionHostLoadBalancingAlgorithm",
     "SessionState",
-    "SetStartVMOnConnect",
     "SkuTier",
-    "StartupBehavior",
     "Status",
     "StopHostsWhen",
     "UpdateState",

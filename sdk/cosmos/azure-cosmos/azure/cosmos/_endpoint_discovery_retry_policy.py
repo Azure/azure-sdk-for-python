@@ -60,11 +60,11 @@ class EndpointDiscoveryRetryPolicy(object):
             self.request.route_to_location(self.location_endpoint)
 
     def ShouldRetry(self, exception):  # pylint: disable=unused-argument
-        """Returns true if the request should retry based on the passed-in exception.
+        """Returns true if should retry based on the passed-in exception.
 
-        :param exceptions.CosmosHttpResponseError exception:
-        :returns: a boolean stating whether the request should be retried
-        :rtype: bool
+        :param (exceptions.CosmosHttpResponseError instance) exception:
+        :rtype: boolean
+
         """
         if not self.connection_policy.EnableEndpointDiscovery:
             return False
