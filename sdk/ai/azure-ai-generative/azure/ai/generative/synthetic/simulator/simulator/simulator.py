@@ -21,6 +21,7 @@ import logging
 import os
 import asyncio
 import threading
+import json
 
 BASIC_MD = os.path.join(template_dir, "basic.md")
 USER_MD = os.path.join(template_dir, "user.md")
@@ -124,29 +125,49 @@ class Simulator:
                 template_paramaters=parameters,
             )
 
-        return self.to_chat_protocol(template, conversation_history, parameters)
+        return self._to_chat_protocol(template, conversation_history, parameters)
 
-    def to_chat_protocol(self, template, conversation_history, template_parameters):
-        messages = []
-
-        for i, m in enumerate(conversation_history):
-            citations = []
-            for c_key in template.context_key:
+    def _get_citations(self, parameters, context_keys):
+        citations = []
+        for c_key in context_keys:
+            if isinstance(parameters[c_key], dict):
+                for k, v in parameters[c_key].items():
+                    citations.append(
+                        {
+                            "id": k,
+                            "content": self._to_citation_content(v)
+                        }
+                    )
+            else:
                 citations.append(
                     {
                         "id": c_key,
-                        "content": template_parameters[c_key]
+                        "content": self._to_citation_content(parameters[c_key])
                     }
                 )
+
+        return {
+            "citations": citations
+        }
+                    
+    def _to_citation_content(self, obj):
+        if isinstance(obj, str):
+            return obj
+        else:
+            return json.dumps(obj)
+
+    def _to_chat_protocol(self, template, conversation_history, template_parameters):
+        messages = []
+
+        for i, m in enumerate(conversation_history):
+            citations = self._get_citations(template_parameters, template.context_key)
             messages.append(
                 {
                     "content": m.message,
                     "role": m.role.value,
                     "turn_number": i,
                     "template_parameters": template_parameters,
-                    "context": {
-                        "citations": citations
-                    }
+                    "context": citations
                 }
             )
 
