@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 
 
 PACKAGE_NAME = "azure-ai-contentsafety"
-PACKAGE_PPRINT_NAME = "Azure Ai Contentsafety"
+PACKAGE_PPRINT_NAME = "Azure AI Content Safety"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")
@@ -60,7 +60,7 @@ setup(
     ),
     include_package_data=True,
     package_data={
-        "pytyped": ["py.typed"],
+        "azure.ai.contentsafety": ["py.typed"],
     },
     install_requires=[
         "isodate<1.0.0,>=0.6.1",
