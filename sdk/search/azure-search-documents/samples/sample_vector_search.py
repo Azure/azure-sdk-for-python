@@ -135,7 +135,6 @@ def single_vector_search():
     vector_query = VectorQuery(vector=get_embeddings(query), k=3, fields="descriptionVector")
 
     results = search_client.search(
-        search_text="",
         vector_queries=[vector_query],
         select=["hotelId", "hotelName"],
     )

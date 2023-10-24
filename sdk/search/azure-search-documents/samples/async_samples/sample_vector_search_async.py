@@ -156,7 +156,6 @@ async def single_vector_search_with_filter():
 
     async with search_client:
         results = await search_client.search(
-            search_text="",
             vector_queries=[vector_query],
             filter="category eq 'Luxury'",
             select=["hotelId", "hotelName"],

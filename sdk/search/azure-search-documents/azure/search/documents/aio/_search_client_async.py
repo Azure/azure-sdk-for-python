@@ -140,7 +140,7 @@ class SearchClient(HeadersMixin):
     @distributed_trace_async
     async def search(
         self,
-        search_text: str,
+        search_text: Optional[str] = "",
         *,
         include_total_count: Optional[bool] = None,
         facets: Optional[List[str]] = None,
