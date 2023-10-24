@@ -159,7 +159,8 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
     :param api_version: The api version that this connection was created for.
     :type api_version: str
-    :param kind: The kind of the ai service that this connection points to.
+    :param kind: The kind of ai service that this connection points to. Valid inputs include:
+        "AzureOpenAI", "ContentSafety", and "Speech".
     :type kind: str
     """
 
