@@ -241,7 +241,8 @@ def build_kwargs(args, api_type):
             return {"model": ENV_AZURE_OPENAI_AUDIO_NAME}
         elif api_type == "openai":
             return {"model": ENV_OPENAI_AUDIO_MODEL}
-    if test_feature.startswith("test_chat_completions") or test_feature.startswith("test_client"):
+    if test_feature.startswith("test_chat_completions") \
+        or test_feature.startswith("test_client") or test_feature.startswith("test_models"):
         if api_type in ["azure", "azuread"]:
             return {"model": ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME}
         elif api_type == "openai":
