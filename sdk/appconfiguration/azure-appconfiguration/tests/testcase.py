@@ -24,10 +24,10 @@ from consts import (
 class AppConfigTestCase(AzureRecordedTestCase):
     def create_aad_client(self, appconfiguration_endpoint_string):
         cred = self.get_credential(AzureAppConfigurationClient)
-        return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
+        return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, api_version="2022-11-01-preview")
 
     def create_client(self, appconfiguration_connection_string):
-        return AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
+        return AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string, api_version="2022-11-01-preview")
 
     def create_config_setting(self):
         return ConfigurationSetting(
