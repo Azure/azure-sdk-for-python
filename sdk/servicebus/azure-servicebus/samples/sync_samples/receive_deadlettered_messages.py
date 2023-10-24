@@ -24,17 +24,17 @@ with servicebus_client:
         sender.send_messages(messages)
 
     print('dead lettering messages')
-    receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
+    receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, max_wait_time=5)
     with receiver:
-        received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
+        received_msgs = receiver.receive_messages(max_message_count=10)
         for msg in received_msgs:
             print(str(msg))
             receiver.dead_letter_message(msg)
 
     print('receiving deadlettered messages')
-    dlq_receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, sub_queue=ServiceBusSubQueue.DEAD_LETTER)
+    dlq_receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, max_wait_time=5, sub_queue=ServiceBusSubQueue.DEAD_LETTER)
     with dlq_receiver:
-        received_msgs = dlq_receiver.receive_messages(max_message_count=10, max_wait_time=5)
+        received_msgs = dlq_receiver.receive_messages(max_message_count=10)
         for msg in received_msgs:
             print(str(msg))
             dlq_receiver.complete_message(msg)

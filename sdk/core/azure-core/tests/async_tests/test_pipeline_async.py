@@ -42,6 +42,7 @@ from azure.core.pipeline.transport import (
     AsyncioRequestsTransport,
     TrioRequestsTransport,
     AioHttpTransport,
+    HttpRequest,
 )
 
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
@@ -56,6 +57,12 @@ import trio
 
 import pytest
 from utils import HTTP_REQUESTS
+
+
+try:
+    from unittest.mock import AsyncMock, PropertyMock
+except ImportError:
+    pass
 
 
 @pytest.mark.asyncio
@@ -272,7 +279,10 @@ async def test_add_custom_policy():
     assert pos_boo > pos_retry
 
     client = AsyncPipelineClient(
-        base_url="test", config=config, per_call_policies=boo_policy, per_retry_policies=foo_policy
+        base_url="test",
+        config=config,
+        per_call_policies=boo_policy,
+        per_retry_policies=foo_policy,
     )
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
@@ -284,7 +294,10 @@ async def test_add_custom_policy():
     assert pos_foo > pos_retry
 
     client = AsyncPipelineClient(
-        base_url="test", config=config, per_call_policies=[boo_policy], per_retry_policies=[foo_policy]
+        base_url="test",
+        config=config,
+        per_call_policies=[boo_policy],
+        per_retry_policies=[foo_policy],
     )
     policies = client._pipeline._impl_policies
     assert boo_policy in policies
@@ -311,13 +324,19 @@ async def test_add_custom_policy():
     assert foo_policy == actual_policies[2]
 
     client = AsyncPipelineClient(
-        base_url="test", policies=policies, per_call_policies=boo_policy, per_retry_policies=[foo_policy]
+        base_url="test",
+        policies=policies,
+        per_call_policies=boo_policy,
+        per_retry_policies=[foo_policy],
     )
     actual_policies = client._pipeline._impl_policies
     assert boo_policy == actual_policies[0]
     assert foo_policy == actual_policies[3]
     client = AsyncPipelineClient(
-        base_url="test", policies=policies, per_call_policies=[boo_policy], per_retry_policies=[foo_policy]
+        base_url="test",
+        policies=policies,
+        per_call_policies=[boo_policy],
+        per_retry_policies=[foo_policy],
     )
     actual_policies = client._pipeline._impl_policies
     assert boo_policy == actual_policies[0]
@@ -337,3 +356,32 @@ def test_no_cleanup_policy_when_redirect_policy_is_empty():
     for policy in policies:
         if isinstance(policy, SensitiveHeaderCleanupPolicy):
             assert False
+
+
+@pytest.mark.skipif(sys.version_info < (3, 8), reason="Python 3.7 does not support AsyncMock")
+@pytest.mark.asyncio
+async def test_default_ssl_context():
+    class MockAiohttpSession:
+        async def __aenter__(self):
+            pass
+
+        async def __aexit__(self, exc_type, exc_val, exc_tb):
+            pass
+
+        async def close(self):
+            pass
+
+        async def open(self):
+            pass
+
+        async def request(self, method: str, url: str, **kwargs):
+            assert "ssl" not in kwargs
+            mock_response = AsyncMock(spec=aiohttp.ClientResponse)
+            type(mock_response).status = PropertyMock(return_value=200)
+            return mock_response
+
+    transport = AioHttpTransport(session=MockAiohttpSession(), session_owner=False)
+    pipeline = AsyncPipeline(transport=transport)
+
+    req = HttpRequest("GET", "https://bing.com")
+    await pipeline.run(req)
