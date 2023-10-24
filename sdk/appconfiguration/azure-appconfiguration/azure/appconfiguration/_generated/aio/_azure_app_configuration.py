@@ -7,10 +7,9 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional
+from typing import Any, Awaitable, Optional, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
-from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
@@ -19,12 +18,16 @@ from .._serialization import Deserializer, Serializer
 from ._configuration import AzureAppConfigurationConfiguration
 from .operations import AzureAppConfigurationOperationsMixin
 
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
+
 
 class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """AzureAppConfiguration.
 
     :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param endpoint: The endpoint of the App Configuration instance to send requests to. Required.
     :type endpoint: str
     :param sync_token: Used to guarantee real-time consistency between requests. Default value is
@@ -38,7 +41,7 @@ class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):  # pylint: di
     """
 
     def __init__(
-        self, credential: AzureKeyCredential, endpoint: str, sync_token: Optional[str] = None, **kwargs: Any
+        self, credential: "AsyncTokenCredential", endpoint: str, sync_token: Optional[str] = None, **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
         self._config = AzureAppConfigurationConfiguration(

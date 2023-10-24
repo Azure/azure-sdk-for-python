@@ -6,10 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional
+from typing import Any, Optional, TYPE_CHECKING
 
-from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials import TokenCredential
 
 VERSION = "unknown"
 
@@ -21,7 +24,7 @@ class AzureAppConfigurationConfiguration:  # pylint: disable=too-many-instance-a
     attributes.
 
     :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: The endpoint of the App Configuration instance to send requests to. Required.
     :type endpoint: str
     :param sync_token: Used to guarantee real-time consistency between requests. Default value is
@@ -33,7 +36,7 @@ class AzureAppConfigurationConfiguration:  # pylint: disable=too-many-instance-a
     """
 
     def __init__(
-        self, credential: AzureKeyCredential, endpoint: str, sync_token: Optional[str] = None, **kwargs: Any
+        self, credential: "TokenCredential", endpoint: str, sync_token: Optional[str] = None, **kwargs: Any
     ) -> None:
         api_version: str = kwargs.pop("api_version", "2023-10-01")
 
@@ -46,6 +49,7 @@ class AzureAppConfigurationConfiguration:  # pylint: disable=too-many-instance-a
         self.endpoint = endpoint
         self.sync_token = sync_token
         self.api_version = api_version
+        self.credential_scopes = kwargs.pop("credential_scopes", [])
         kwargs.setdefault("sdk_moniker", "appconfiguration/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
@@ -60,7 +64,9 @@ class AzureAppConfigurationConfiguration:  # pylint: disable=too-many-instance-a
         self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
+        if not self.credential_scopes and not self.authentication_policy:
+            raise ValueError("You must provide either credential_scopes or authentication_policy as kwargs")
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AzureKeyCredentialPolicy(
-                self.credential, "Connection String", **kwargs
+            self.authentication_policy = policies.BearerTokenCredentialPolicy(
+                self.credential, *self.credential_scopes, **kwargs
             )
