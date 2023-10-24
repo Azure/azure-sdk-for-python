@@ -21,7 +21,7 @@ class Deployment:
     environment_variables: Dict[str, str] = None
     instance_type: str = None
     instance_count: str = 1
-    scoring_url: str = None
+    scoring_uri: str = None
     properties: Dict[str, str] = None
     tags: Dict[str, str] = None
 
@@ -38,5 +38,5 @@ class Deployment:
             app_insights_enabled=deployment.app_insights_enabled,
             tags=deployment.tags,
             properties=deployment.properties,
-            scoring_url=endpoint.scoring_uri,
+            scoring_uri=endpoint.scoring_uri,
         )

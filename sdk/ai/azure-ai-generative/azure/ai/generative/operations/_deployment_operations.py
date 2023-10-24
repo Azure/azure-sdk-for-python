@@ -270,7 +270,8 @@ class DeploymentOperations:
         deployments = []
         endpoints = self._ml_client.online_endpoints.list()
         for endpoint in endpoints:
-            deployments.extend(self._ml_client.online_deployments.list(endpoint.name))
+            v2_deployments = self._ml_client.online_deployments.list(endpoint.name)
+            deployments.extend([Deployment._from_v2_endpoint_deployment(endpoint, deployment) for deployment in v2_deployments])
         return deployments
 
     @distributed_trace
