@@ -22,9 +22,9 @@ class ChatParticipant:
     :ivar identifier: Required. The communication identifier.
     :vartype identifier: ~azure.communication.chat.CommunicationIdentifier
     :ivar display_name: Display name for the chat thread participant.
-    :vartype display_name: str
+    :vartype display_name: str or None
     :ivar share_history_time: Time from which the chat history is shared with the participant.
-    :vartype share_history_time: ~datetime.datetime
+    :vartype share_history_time: ~datetime.datetime or None
     """
 
     def __init__(
@@ -33,6 +33,7 @@ class ChatParticipant:
         identifier: CommunicationIdentifier,
         display_name: Optional[str] = None,
         share_history_time: Optional[datetime.datetime] = None,
+        **kwargs: Any  # pylint: disable=unused-argument
     ) -> None:
         """
         :keyword identifier: Identifies a participant in Azure Communication services. A
@@ -41,9 +42,9 @@ class ChatParticipant:
          match the kind enum value. Required.
         :paramtype identifier: ~azure.communication.chat.CommunicationIdentifier
         :keyword display_name: Display name for the chat participant.
-        :paramtype display_name: str
+        :paramtype display_name: str or None
         :keyword share_history_time: Time from which the chat history is shared with the participant.
-        :paramtype share_history_time: ~datetime.datetime
+        :paramtype share_history_time: ~datetime.datetime or None
         """
         self.identifier = identifier
         self.display_name = display_name
@@ -74,13 +75,13 @@ class ChatAttachment:
     :ivar attachment_type: The type of attachment. Required. Known values are: "image" and "file".
     :vartype attachment_type: str or ~azure.communication.chat.models.AttachmentType
     :ivar extension: The file extension of the attachment, if available.
-    :vartype extension: str
+    :vartype extension: str or None
     :ivar name: The name of the attachment content.
-    :vartype name: str
+    :vartype name: str or None
     :ivar url: The URL where the attachment can be downloaded.
-    :vartype url: str
+    :vartype url: str or None
     :ivar preview_url: The URL where the preview of attachment can be downloaded.
-    :vartype preview_url: str
+    :vartype preview_url: str or None
     """
 
     def __init__(
@@ -131,25 +132,25 @@ class ChatMessage: # pylint: disable=too-many-instance-attributes
     :ivar version: Version of the chat message.
     :vartype version: str
     :ivar content: Content of the chat message.
-    :vartype content: ~azure.communication.chat.ChatMessageContent
+    :vartype content: ~azure.communication.chat.ChatMessageContent or None
     :ivar sender_display_name: The display name of the chat message sender. This property is used
      to populate sender name for push notifications.
-    :vartype sender_display_name: str
+    :vartype sender_display_name: str or None
     :ivar created_on: The timestamp when the chat message arrived at the server.
     :vartype created_on: ~datetime.datetime
     :ivar sender: The chat message sender.
-    :vartype sender: ~azure.communication.chat.CommunicationIdentifier
+    :vartype sender: ~azure.communication.chat.CommunicationIdentifier or None
     :ivar deleted_on: The timestamp when the chat message was deleted.
-    :vartype deleted_on: ~datetime.datetime
+    :vartype deleted_on: ~datetime.datetime or None
     :ivar edited_on: The last timestamp (if applicable) when the message was edited.
-    :vartype edited_on: ~datetime.datetime
+    :vartype edited_on: ~datetime.datetime or None
     :ivar metadata: Message metadata.
-    :vartype metadata: dict[str, str]
+    :vartype metadata: dict[str, str] or None
     """
 
     def __init__(
             self,
-            **kwargs # type: Any
+            **kwargs: Any
     ) -> None:
         self.id = kwargs['id']
         self.type = kwargs['type']
@@ -197,22 +198,22 @@ class ChatMessageContent:
     """Content of a chat message.
 
     :ivar message: Chat message content for messages of types text or html.
-    :vartype message: str
+    :vartype message: str or None
     :ivar topic: Chat message content for messages of type topicUpdated.
-    :vartype topic: str
+    :vartype topic: str or None
     :ivar participants: Chat message content for messages of types participantAdded or
      participantRemoved.
     :vartype participants: List[~azure.communication.chat.ChatParticipant]
     :ivar initiator: Chat message content for messages of types participantAdded or
      participantRemoved.
-    :vartype initiator: ~azure.communication.chat.CommunicationIdentifier
+    :vartype initiator: ~azure.communication.chat.CommunicationIdentifier or None
     :ivar attachments: Chat message content for messages of type text or html
     :vartype attachments: List[~azure.communication.chat.ChatAttachment]
     """
 
     def __init__(
         self,
-        **kwargs # type: Any
+        **kwargs: Any
     ) -> None:
         self.message = kwargs.get('message', None)
         self.topic = kwargs.get('topic', None)
@@ -223,7 +224,7 @@ class ChatMessageContent:
     @classmethod
     def _from_generated(cls, chat_message_content):
         participants_list = chat_message_content.participants
-        if participants_list is not None and len(participants_list) > 0:
+        if participants_list:
             participants = [
                 ChatParticipant._from_generated(participant) for participant in  # pylint:disable=protected-access
                 participants_list
@@ -232,7 +233,7 @@ class ChatMessageContent:
             participants = []
 
         attachments_list = chat_message_content.attachments
-        if attachments_list is not None and len(attachments_list) > 0:
+        if attachments_list:
             attachments = [
                 ChatAttachment._from_generated(attachment) for attachment in  # pylint:disable=protected-access
                 attachments_list
@@ -273,7 +274,7 @@ class ChatThreadProperties:
 
     def __init__(
         self,
-        **kwargs # type: Any
+        **kwargs: Any
     ) -> None:
         self.id = kwargs['id']
         self.topic = kwargs.get('topic', None)
@@ -311,7 +312,7 @@ class ChatMessageReadReceipt:
 
     def __init__(
         self,
-        **kwargs # type: Any
+        **kwargs: Any
     ) -> None:
         self.sender = kwargs['sender']
         self.chat_message_id = kwargs['chat_message_id']
@@ -335,12 +336,12 @@ class CreateChatThreadResult:
     :ivar chat_thread: Chat thread.
     :vartype chat_thread: ~azure.communication.chat.ChatThreadProperties
     :ivar errors: Errors encountered during the creation of the chat thread.
-    :vartype errors: List[Tuple[~azure.communication.chat.ChatParticipant, ~azure.communication.chat.ChatError]]
+    :vartype errors: List[Tuple[~azure.communication.chat.ChatParticipant, ~azure.communication.chat.ChatError]] or None
     """
 
     def __init__(
         self,
-        **kwargs # type: Any
+        **kwargs: Any
     ) -> None:
         self.chat_thread = kwargs['chat_thread']
         self.errors = kwargs.get('errors', None)
