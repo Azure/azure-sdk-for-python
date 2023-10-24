@@ -46,7 +46,7 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
         api_type: str,
         **kwargs,
     ):
-        kwargs.pop("type")  # make sure we never somehow use wrong type
+        kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="azure_open_ai", credentials=credentials, **kwargs)
 
         self.tags[CONNECTION_API_VERSION_KEY] = api_version
@@ -117,7 +117,7 @@ class CognitiveSearchWorkspaceConnection(WorkspaceConnection):
         api_version: str,
         **kwargs,
     ):
-        kwargs.pop("type")  # make sure we never somehow use wrong type
+        kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="cognitive_search", credentials=credentials, **kwargs)
 
         self.tags[CONNECTION_API_VERSION_KEY] = api_version
@@ -170,7 +170,7 @@ class CognitiveServiceWorkspaceConnection(WorkspaceConnection):
         kind: str,
         **kwargs,
     ):
-        kwargs.pop("type")  # make sure we never somehow use wrong type
+        kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="cognitive_service", credentials=credentials, **kwargs)
 
         self.tags[CONNECTION_API_VERSION_KEY] = api_version
