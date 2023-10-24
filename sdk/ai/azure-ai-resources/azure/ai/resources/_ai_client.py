@@ -8,7 +8,6 @@ import os
 import tempfile
 from typing import Any, Optional, Union
 
-import dill as pickle
 import yaml
 
 from azure.ai.resources._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient100122
