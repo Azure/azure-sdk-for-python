@@ -705,11 +705,6 @@ def load_batch_endpoint(
     return load_common(BatchEndpoint, source, relative_origin, **kwargs)
 
 
-# dev note: This function is a copy of the main load_common with 1 extra trick: Some polymorphism
-# Based on the inputted object's type to output the right workspace connection class
-# (ex an OpenAIWorkspaceConnection if type = "azure_open_ai").
-# Implemented this way instead of just inputted the right type into load commont to avoid
-# potential bugs related to reading files twice.
 def load_workspace_connection(
     source: Union[str, PathLike, IO[AnyStr]],
     *,
@@ -747,61 +742,7 @@ def load_workspace_connection(
             :caption: Loading a Workspace Connection from a YAML config file.
     """
 
-    params_override = None
-    path = kwargs.pop("path", None)
-    # Check for deprecated path input, either named or as first unnamed input
-    if source is None and path is not None:
-        source = path
-        warnings.warn(
-            "the 'path' input for load functions is deprecated. Please use 'source' instead.", DeprecationWarning
-        )
-
-    if relative_origin is None:
-        if isinstance(source, (str, PathLike)):
-            relative_origin = source
-        else:
-            try:
-                relative_origin = source.name
-            except AttributeError:  # input is a stream or something
-                relative_origin = _DEFAULT_RELATIVE_ORIGIN
-
-    params_override = params_override or []
-    yaml_dict = _try_load_yaml_dict(source)
-
-    conn_type = yaml_dict["type"] if "type" in yaml_dict else None
-
-    cls = WorkspaceConnection._get_entity_class_from_type(conn_type)
-    # pylint: disable=protected-access
-    cls, type_str = cls._resolve_cls_and_type(data=yaml_dict, params_override=params_override)
-
-    try:
-        return _load_common_raising_marshmallow_error(cls, yaml_dict, relative_origin, params_override, **kwargs)
-    except ValidationError as e:
-        if issubclass(cls, PathAwareSchemaValidatableMixin):
-            validation_result = ValidationResultBuilder.from_validation_error(e, source_path=relative_origin)
-            schema = cls._create_schema_for_validation(context={BASE_PATH_CONTEXT_KEY: Path.cwd()})
-            if type_str is None:
-                additional_message = ""
-            else:
-                additional_message = (
-                    f"If you are trying to configure an entity that is not "
-                    f"of type {type_str}, please specify the correct "
-                    f"type in the 'type' property."
-                )
-
-            def build_error(message, _):
-                from azure.ai.ml.entities._util import decorate_validation_error
-
-                return ValidationError(
-                    message=decorate_validation_error(
-                        schema=schema.__class__,
-                        pretty_error=message,
-                        additional_message=additional_message,
-                    ),
-                )
-
-            validation_result.try_raise(error_func=build_error)
-        raise e
+    return load_common(WorkspaceConnection, source, relative_origin, **kwargs)
 
 
 def load_schedule(
