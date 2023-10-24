@@ -7,7 +7,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from azure.ai.generative._project_scope import OperationScope
 from azure.ai.generative.constants._common import DEFAULT_OPEN_AI_CONNECTION_NAME
-from azure.ai.generative.entities.connection import Connection
+from azure.ai.generative.entities import BaseConnection
 from azure.ai.ml import MLClient
 
 from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, OpsLogger
@@ -30,7 +30,7 @@ class ConnectionOperations:
 
     @distributed_trace
     @monitor_with_activity(logger, "Connection.List", ActivityType.PUBLICAPI)
-    def list(self, connection_type: Optional[str] = None) -> Iterable[Connection]:
+    def list(self, connection_type: Optional[str] = None) -> Iterable[BaseConnection]:
         """List all connection assets in a project.
 
         :param connection_type: If set, return only connections of the specified type.
@@ -40,13 +40,13 @@ class ConnectionOperations:
         :rtype: Iterable[Connection]
         """
         return [
-            Connection._from_v2_workspace_connection(conn)
+            BaseConnection._from_v2_workspace_connection(conn)
             for conn in self._ml_client._workspace_connections.list(connection_type=connection_type)
         ]
 
     @distributed_trace
     @monitor_with_activity(logger, "Connection.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, **kwargs) -> Connection:
+    def get(self, name: str, **kwargs) -> BaseConnection:
         """Get a connection by name.
 
         :param name: Name of the connection.
@@ -56,7 +56,7 @@ class ConnectionOperations:
         :rtype: Connection
         """
         workspace_connection = self._ml_client._workspace_connections.get(name=name, **kwargs)
-        connection = Connection._from_v2_workspace_connection(workspace_connection)
+        connection = BaseConnection._from_v2_workspace_connection(workspace_connection)
 
         # It's by design that both API and V2 SDK don't include the secrets from API response, the following
         # code fills the gap
@@ -72,7 +72,7 @@ class ConnectionOperations:
 
     @distributed_trace
     @monitor_with_activity(logger, "Connection.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(self, connection: Connection, **kwargs) -> Connection:
+    def create_or_update(self, connection: BaseConnection, **kwargs) -> BaseConnection:
         """Create or update a connection.
 
         :param connection: Connection definition
@@ -85,7 +85,7 @@ class ConnectionOperations:
             workspace_connection=connection._workspace_connection, **kwargs
         )
 
-        return Connection._from_v2_workspace_connection(response)
+        return BaseConnection._from_v2_workspace_connection(response)
 
     @distributed_trace
     @monitor_with_activity(logger, "Connection.Delete", ActivityType.PUBLICAPI)
