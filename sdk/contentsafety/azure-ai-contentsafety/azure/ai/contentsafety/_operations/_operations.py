@@ -406,7 +406,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         else:
             _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_content_safety_analyze_text_request(
+        _request = build_content_safety_analyze_text_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -416,11 +416,11 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -546,7 +546,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         else:
             _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_content_safety_analyze_image_request(
+        _request = build_content_safety_analyze_image_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -556,11 +556,11 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -608,7 +608,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         cls: ClsType[_models.TextBlocklist] = kwargs.pop("cls", None)
 
-        request = build_content_safety_get_text_blocklist_request(
+        _request = build_content_safety_get_text_blocklist_request(
             blocklist_name=blocklist_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -617,11 +617,11 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -755,7 +755,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         else:
             _content = json.dumps(resource, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_content_safety_create_or_update_text_blocklist_request(
+        _request = build_content_safety_create_or_update_text_blocklist_request(
             blocklist_name=blocklist_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -766,11 +766,11 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -827,7 +827,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_content_safety_delete_text_blocklist_request(
+        _request = build_content_safety_delete_text_blocklist_request(
             blocklist_name=blocklist_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -836,11 +836,11 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -852,7 +852,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def list_text_blocklists(self, **kwargs: Any) -> Iterable["_models.TextBlocklist"]:
@@ -880,7 +880,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_content_safety_list_text_blocklists_request(
+                _request = build_content_safety_list_text_blocklists_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -890,7 +890,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -902,7 +902,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -910,9 +910,9 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -922,11 +922,11 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
             return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1053,7 +1053,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         else:
             _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_content_safety_add_block_items_request(
+        _request = build_content_safety_add_block_items_request(
             blocklist_name=blocklist_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1064,11 +1064,11 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1202,7 +1202,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         else:
             _content = json.dumps(body, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        request = build_content_safety_remove_block_items_request(
+        _request = build_content_safety_remove_block_items_request(
             blocklist_name=blocklist_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1213,11 +1213,11 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1229,7 +1229,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def get_text_blocklist_item(self, blocklist_name: str, block_item_id: str, **kwargs: Any) -> _models.TextBlockItem:
@@ -1260,7 +1260,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
 
         cls: ClsType[_models.TextBlockItem] = kwargs.pop("cls", None)
 
-        request = build_content_safety_get_text_blocklist_item_request(
+        _request = build_content_safety_get_text_blocklist_item_request(
             blocklist_name=blocklist_name,
             block_item_id=block_item_id,
             api_version=self._config.api_version,
@@ -1270,11 +1270,11 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1330,7 +1330,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_content_safety_list_text_blocklist_items_request(
+                _request = build_content_safety_list_text_blocklist_items_request(
                     blocklist_name=blocklist_name,
                     top=top,
                     skip=skip,
@@ -1344,7 +1344,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -1356,7 +1356,7 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
@@ -1364,9 +1364,9 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -1376,11 +1376,11 @@ class ContentSafetyClientOperationsMixin(ContentSafetyClientMixinABC):
             return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
