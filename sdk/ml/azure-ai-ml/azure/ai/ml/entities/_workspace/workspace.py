@@ -240,12 +240,14 @@ class Workspace(Resource):
                 rest_obj.feature_store_settings
             )
         serverless_compute = None
-        if rest_obj.serverless_compute_settings and isinstance(
-            rest_obj.serverless_compute_settings, RestServerlessComputeSettings
-        ):
-            serverless_compute = ServerlessComputeSettings._from_rest_object(  # pylint: disable=protected-access
-                rest_obj.serverless_compute_settings
-            )
+        # TODO: Remove attribute check once serverless_compute_settings is in API response contract
+        if hasattr(rest_obj, "serverless_compute_settings"):
+            if rest_obj.serverless_compute_settings and isinstance(
+                rest_obj.serverless_compute_settings, RestServerlessComputeSettings
+            ):
+                serverless_compute = ServerlessComputeSettings._from_rest_object(  # pylint: disable=protected-access
+                    rest_obj.serverless_compute_settings
+                )
 
         return Workspace(
             name=rest_obj.name,
