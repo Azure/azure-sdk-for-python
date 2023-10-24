@@ -123,12 +123,10 @@ setup(
             "Jinja2>=3,<4",
             "json5>=0.9,<1",
             "jsonpath_ng>=1,<2",
-            "msal>=1,<2",
             "pybase64>=1,<2",
             "PyYAML>=4.1,<7",
             "tiktoken>=0.3,<1",
             "websocket_client>=1,<2",
-            "azure-identity>=1,<2"
         ],
     },
     project_urls={
