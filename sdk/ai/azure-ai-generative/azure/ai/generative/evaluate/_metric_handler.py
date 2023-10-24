@@ -79,11 +79,7 @@ class MetricHandler(object):
 
         metrics_calculation_data = self._get_data_for_metrics()
 
-        metrics = None
-        if self.metrics is None and self.task_type == CHAT:
-            metrics = []
-        else:
-            metrics = self.metrics
+        metrics = self.metrics if self.task_type != CHAT else [] 
 
         return compute_metrics(
             metrics=metrics,
