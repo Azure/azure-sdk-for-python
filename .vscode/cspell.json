@@ -454,7 +454,11 @@
         "mlindex",
         "mlindexes",
         "aoai",
-        "faiss"
+        "faiss",
+        "mlmodel",
+        "openmpi",
+        "vcpu",
+        "vcpus"
       ]
     },
     {

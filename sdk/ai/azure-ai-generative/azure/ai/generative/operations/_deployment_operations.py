@@ -9,7 +9,7 @@ from pathlib import Path
 import shutil
 import tempfile
 import uuid
-from typing import Any, List, Union
+from typing import Any, List, Union, Iterable
 
 import yaml
 
@@ -24,6 +24,7 @@ from .._utils._scoring_script_utils import create_chat_scoring_script, create_ml
 from .._utils._registry_utils import get_registry_model
 from .._utils._deployment_utils import get_default_allowed_instance_type_for_hugging_face
 from ..entities.deployment import Deployment
+from ..entities.deployment_keys import DeploymentKeys
 from ..entities.models import Model, PromptflowModel
 
 from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, OpsLogger
@@ -68,25 +69,11 @@ class DeploymentOperations:
                 sampling_rate=1,
             )
 
-        if deployment.managed_identity:
-            from azure.ai.ml.entities import IdentityConfiguration, ManagedIdentityConfiguration
-
-            endpoint_identity = IdentityConfiguration(
-                type="user_assigned",
-                user_assigned_identities=[
-                    ManagedIdentityConfiguration(
-                        client_id=deployment.managed_identity.client_id,
-                        resource_id=deployment.managed_identity.resource_id,
-                        principal_id=deployment.managed_identity.principal_id,
-                    )
-                ],
-            )
-        else:
-            endpoint_identity = None
         v2_endpoint = ManagedOnlineEndpoint(
             name=endpoint_name,
-            auth_mode="key",
-            identity=endpoint_identity,
+            properties={
+                "enforce_access_to_default_secret_stores": "enabled"
+            }
         )
         created_endpoint = self._ml_client.begin_create_or_update(v2_endpoint).result()
         model = deployment.model
@@ -158,42 +145,6 @@ class DeploymentOperations:
                         " specifying conda_file and one of loader_module or chat_module for deployment."
                     )
 
-            # attempt to grant endpoint SAI access to workspace:
-            if not endpoint_identity:
-                try:
-                    role_name = "AzureML Data Scientist"
-                    scope = self._ml_client.workspaces.get(name=self._ml_client.workspace_name).id
-                    system_principal_id = created_endpoint.identity.principal_id
-
-                    role_defs = self._role_definition_client.role_definitions.list(scope=scope)
-                    role_def = next((r for r in role_defs if r.role_name == role_name))
-
-                    self._role_assignment_client.role_assignments.create(
-                        scope=scope,
-                        role_assignment_name=str(uuid.uuid4()),
-                        parameters=RoleAssignmentCreateParameters(
-                            role_definition_id=role_def.id, principal_id=system_principal_id
-                        ),
-                    )
-                except ResourceExistsError as e:
-                    print(
-                        "System-assigned identity already has access to project. Skipping granting it access to project"
-                    )
-                except Exception as e:
-                    print(
-                        "Unable to grant endpoint system-assigned identity access to workspace. "
-                        "Please pass a user-assigned identity through the 'managed_identity' field of the Deployment object "
-                        "with permissions to the project instead. Please see https://aka.ms/aistudio/docs/endpoints for more information."
-                    )
-                    raise e
-                uai_env_var = {}
-            else:
-                uai_env_var = {
-                    "UAI_CLIENT_ID": deployment.managed_identity.client_id,
-                }
-            deployment_environment_variables = (
-                deployment.environment_variables if deployment.environment_variables else {}
-            )
             v2_deployment = ManagedOnlineDeployment(
                 name=deployment.name,
                 endpoint_name=endpoint_name,
@@ -203,13 +154,7 @@ class DeploymentOperations:
                 scoring_script=scoring_script,
                 instance_type=deployment.instance_type,
                 instance_count=1,
-                environment_variables={
-                    "AZURE_SUBSCRIPTION_ID": self._ml_client.subscription_id,
-                    "AZURE_RESOURCE_GROUP_NAME": self._ml_client.resource_group_name,
-                    "AZURE_PROJECT_NAME": self._ml_client.workspace_name,
-                    **uai_env_var,
-                    **deployment_environment_variables,
-                },
+                environment_variables=deployment.environment_variables,
                 app_insights_enabled=deployment.app_insights_enabled,
                 data_collector=data_collector,
             )
@@ -305,33 +250,35 @@ class DeploymentOperations:
         update_endpoint_poller = self._ml_client.begin_create_or_update(created_endpoint)
         updated_endpoint = update_endpoint_poller.result()
 
-        return Deployment(
-            name=created_deployment.name,
-            model=created_deployment.model,
-            endpoint_name=updated_endpoint.name,
-            environment_variables=created_deployment.environment_variables,
-            instance_type=created_deployment.instance_type,
-            instance_count=created_deployment.instance_count,
-            app_insights_enabled=created_deployment.app_insights_enabled,
-            tags=created_deployment.tags,
-            properties=created_deployment.properties,
-        )
+        return Deployment._from_v2_endpoint_deployment(updated_endpoint, deployment)
 
     @distributed_trace
     @monitor_with_activity(logger, "Deployment.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, endpoint_name: str = None) -> Any:
+    def get(self, name: str, endpoint_name: str = None) -> Deployment:
+        endpoint_name = endpoint_name if endpoint_name else name
         deployment = self._ml_client.online_deployments.get(
             name=name,
             endpoint_name=endpoint_name if endpoint_name else name,
         )
+        endpoint = self._ml_client.online_endpoints.get(endpoint_name)
 
-        return Deployment(
-            name=deployment.name,
-            model=deployment.model,
-            endpoint_name=deployment.endpoint_name,
-            environment_variables=deployment.environment_variables,
-            instance_type=deployment.instance_type,
-        )
+        return Deployment._from_v2_endpoint_deployment(endpoint, deployment)
+
+    @distributed_trace
+    @monitor_with_activity(logger, "Deployment.List", ActivityType.PUBLICAPI)
+    def list(self) -> Iterable[Deployment]:
+        deployments = []
+        endpoints = self._ml_client.online_endpoints.list()
+        for endpoint in endpoints:
+            v2_deployments = self._ml_client.online_deployments.list(endpoint.name)
+            deployments.extend([Deployment._from_v2_endpoint_deployment(endpoint, deployment) for deployment in v2_deployments])
+        return deployments
+
+    @distributed_trace
+    @monitor_with_activity(logger, "Deployment.GetKeys", ActivityType.PUBLICAPI)
+    def get_keys(self, name: str, endpoint_name: str = None) -> DeploymentKeys:
+        endpoint_name = endpoint_name if endpoint_name else name
+        return DeploymentKeys._from_v2_endpoint_keys(self._ml_client.online_endpoints.get_keys(endpoint_name))
 
     @distributed_trace
     @monitor_with_activity(logger, "Deployment.Delete", ActivityType.PUBLICAPI)
