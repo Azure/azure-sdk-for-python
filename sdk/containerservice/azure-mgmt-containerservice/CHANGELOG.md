@@ -1,5 +1,12 @@
 # Release History
 
+## 28.0.0 (2023-11-20)
+
+### Breaking Changes
+
+  - Renamed operation TrustedAccessRoleBindingsOperations.create_or_update to TrustedAccessRoleBindingsOperations.begin_create_or_update
+  - Renamed operation TrustedAccessRoleBindingsOperations.delete to TrustedAccessRoleBindingsOperations.begin_delete
+
 ## 27.0.0 (2023-10-23)
 
 ### Features Added
