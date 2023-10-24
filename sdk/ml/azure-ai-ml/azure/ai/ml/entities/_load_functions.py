@@ -40,11 +40,6 @@ from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._schedule.schedule import Schedule
 from azure.ai.ml.entities._validation import PathAwareSchemaValidatableMixin, ValidationResultBuilder
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
-from azure.ai.ml.entities._workspace.connections.workspace_connection_subtypes import (
-    AzureOpenAIWorkspaceConnection,
-    CognitiveSearchWorkspaceConnection,
-    CognitiveServiceWorkspaceConnection,
-)
 from azure.ai.ml.entities._workspace.workspace import Workspace
 from azure.ai.ml.entities._workspace_hub.workspace_hub import WorkspaceHub
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
@@ -741,7 +736,6 @@ def load_workspace_connection(
             :dedent: 8
             :caption: Loading a Workspace Connection from a YAML config file.
     """
-
     return load_common(WorkspaceConnection, source, relative_origin, **kwargs)
 
 
