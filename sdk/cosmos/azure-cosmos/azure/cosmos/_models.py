@@ -1,7 +1,10 @@
 # The MIT License (MIT)
 # Copyright (c) 2023 Microsoft Corporation
 
-from typing import Literal, Any
+try:
+    from typing import Literal
+except ImportError:
+    from typing_extensions import Literal
 
 
 class BatchOperationResponse:
