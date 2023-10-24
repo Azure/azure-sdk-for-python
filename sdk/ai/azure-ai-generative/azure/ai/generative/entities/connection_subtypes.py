@@ -3,9 +3,8 @@
 # ---------------------------------------------------------
 
 
-from typing import Any, Dict, Optional
+from typing import Optional
 
-from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._credentials import ApiKeyConfiguration
 from azure.core.credentials import TokenCredential
 from azure.ai.ml.constants._common import (
@@ -16,8 +15,8 @@ from azure.ai.ml.constants._common import (
 
 from .base_connection import BaseConnection
 
-class OpenAIConnection(BaseConnection):
-    """A Connection that is specifically designed for handling connections to an Open AI.
+class AzureOpenAIConnection(BaseConnection):
+    """A Connection for Azure Open AI.
 
     :param name: Name of the connection.
     :type name: str
@@ -27,9 +26,9 @@ class OpenAIConnection(BaseConnection):
     :type tags: dict
     :param credentials: The credentials for authenticating to the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
-    :param api_version: The api version that this connection was created for. Only applies to certain connection types.
+    :param api_version: The api version that this connection was created for.
     :type api_version: str
-    :param api_type: The api type that this connection was created for. Only applies to certain connection types.
+    :param api_type: The api type that this connection was created for. Defaults to "Azure" and currently rarely changes.
     :type api_type: str
     """
 
@@ -39,7 +38,7 @@ class OpenAIConnection(BaseConnection):
         target: str,
         credentials: ApiKeyConfiguration,
         api_version: str,
-        api_type: str,
+        api_type: str = "Azure",
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
@@ -88,6 +87,7 @@ class OpenAIConnection(BaseConnection):
     
     def set_current_environment(self, credential: Optional[TokenCredential] = None):
         """Sets the current environment to use the connection. To use AAD auth for AzureOpenAI connetion, pass in a credential object.
+        As an Azure Open AI connection, this sets 4 environment variables: OPEN_API_(TYPE|KEY|BASE|VERSION).
 
         :param credential: Optional credential to use for the connection. If not provided, the connection's credentials will be used.
         :type credential: :class:`~azure.core.credentials.TokenCredential`
@@ -126,7 +126,7 @@ class OpenAIConnection(BaseConnection):
 
 
 class CognitiveSearchConnection(BaseConnection):
-    """A Connection that is specifically designed for handling connections to Cognitive Search.
+    """A Connection for Cognitive Search.
 
     :param name: Name of the connection.
     :type name: str
@@ -174,6 +174,7 @@ class CognitiveSearchConnection(BaseConnection):
 
     def set_current_environment(self, credential: Optional[TokenCredential] = None):
         """Sets the current environment to use the connection. To use AAD auth for AzureOpenAI connetion, pass in a credential object.
+        As a Cognitive Search Connection, this sets two environment variables: AZURE_COGNITIVE_SEARCH_(TARGET|KEY).
 
         :param credential: Optional credential to use for the connection. If not provided, the connection's credentials will be used.
         :type credential: :class:`~azure.core.credentials.TokenCredential`
@@ -185,7 +186,7 @@ class CognitiveSearchConnection(BaseConnection):
 
 
 class CognitiveServiceConnection(BaseConnection):
-    """A Connection that is specifically designed for handling connections to Azure Cognitive Service.
+    """A Connection for an Azure Cognitive Service.
 
     :param name: Name of the connection.
     :type name: str
@@ -195,9 +196,9 @@ class CognitiveServiceConnection(BaseConnection):
     :type tags: dict
     :param credentials: The credentials for authenticating to the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
-    :param api_version: The api version that this connection was created for. Only applies to certain connection types.
+    :param api_version: The api version that this connection was created for.
     :type api_version: str
-    :param kind: The kind of the connection. Only needed for connections of type "cognitive_service".
+    :param kind: The kind of the ai service this connection points to.
     :type kind: str
     """
 

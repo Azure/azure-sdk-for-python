@@ -3,22 +3,17 @@
 # ---------------------------------------------------------
 
 
-from typing import Any, Dict, Optional, Type
+from typing import Any, Dict, Optional
 
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.entities import (
-    WorkspaceConnection,
-    AzureOpenAIWorkspaceConnection,
-    CognitiveSearchWorkspaceConnection,
-    CognitiveServiceWorkspaceConnection
-)
+from azure.ai.ml.entities import WorkspaceConnection
 from azure.ai.ml.entities._credentials import ApiKeyConfiguration
 from azure.core.credentials import TokenCredential
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionCategory
 
 
 class BaseConnection:
-    """A connection to a specific external Azure AI service. This is a base class and should not be
+    """A connection to a specific external AI system. This is a base class and should not be
     instantiated directly. Use the child classes that are specialized for connections to different services.
 
     :param name: The name of the connection
@@ -84,14 +79,14 @@ class BaseConnection:
         '''
         #import here to avoid circular import
         from .connection_subtypes import (
-            OpenAIConnection,
+            AzureOpenAIConnection,
             CognitiveSearchConnection,
             CognitiveServiceConnection,
         )
     
         cat = camel_to_snake(conn_type).lower()
         if cat == camel_to_snake(ConnectionCategory.AZURE_OPEN_AI).lower():
-            return OpenAIConnection
+            return AzureOpenAIConnection
         elif cat == camel_to_snake(ConnectionCategory.COGNITIVE_SEARCH).lower():
             return CognitiveSearchConnection
         elif cat == camel_to_snake(ConnectionCategory.COGNITIVE_SERVICE).lower():
@@ -214,9 +209,10 @@ class BaseConnection:
 
     def set_current_environment(self, credential: Optional[TokenCredential] = None):
         """Sets the current environment to use the connection. To use AAD auth for AzureOpenAI connetion, pass in a credential object.
+        Only certain types of connections make use of this function. Those that don't will raise an error if this is called.
 
         :param credential: Optional credential to use for the connection. If not provided, the connection's credentials will be used.
         :type credential: :class:`~azure.core.credentials.TokenCredential`
         """
 
-        raise NotImplementedError("Connection has no environment variables to set, and should rarely be access directly.") 
+        raise NotImplementedError("Connection type has no environment variables to set.") 

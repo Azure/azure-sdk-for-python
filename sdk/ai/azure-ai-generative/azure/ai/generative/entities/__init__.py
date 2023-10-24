@@ -8,7 +8,7 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 from .ai_resource import AIResource
 from .base_connection import BaseConnection
 from .connection_subtypes import (
-    OpenAIConnection,
+    AzureOpenAIConnection,
     CognitiveSearchConnection,
     CognitiveServiceConnection,
 )
@@ -18,7 +18,7 @@ from .data import Data
 
 __all__ = [
     "BaseConnection",
-    "OpenAIConnection",
+    "AzureOpenAIConnection",
     "CognitiveSearchConnection",
     "CognitiveServiceConnection",
     "MLIndex",
