@@ -34,9 +34,9 @@ from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, dump_yaml_
 from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
-    API_TYPE_KEY,
-    API_VERSION_KEY,
-    KIND_KEY,
+    CONNECTION_API_TYPE_KEY,
+    CONNECTION_API_VERSION_KEY,
+    CONNECTION_KIND_KEY,
 )
 from azure.ai.ml.entities._credentials import (
     AccessKeyConfiguration,
@@ -203,7 +203,7 @@ class WorkspaceConnection(Resource):
     @classmethod
     def _from_rest_object(cls, rest_obj: RestWorkspaceConnection) -> "WorkspaceConnection":
         from .workspace_connection_subtypes import (
-            OpenAIWorkspaceConnection,
+            AzureOpenAIWorkspaceConnection,
             CognitiveSearchWorkspaceConnection,
             CognitiveServiceWorkspaceConnection,
         )
@@ -215,12 +215,12 @@ class WorkspaceConnection(Resource):
         conn_class = cls._get_entity_class_from_type(conn_cat)
 
         popped_tags = []
-        if conn_class == OpenAIWorkspaceConnection:
-            popped_tags = [API_VERSION_KEY, API_TYPE_KEY]
+        if conn_class == AzureOpenAIWorkspaceConnection:
+            popped_tags = [CONNECTION_API_VERSION_KEY, CONNECTION_API_TYPE_KEY]
         elif conn_class == CognitiveSearchWorkspaceConnection:
-            popped_tags = [API_VERSION_KEY]
+            popped_tags = [CONNECTION_API_VERSION_KEY]
         elif conn_class == CognitiveServiceWorkspaceConnection:
-            popped_tags = [API_VERSION_KEY, KIND_KEY]
+            popped_tags = [CONNECTION_API_VERSION_KEY, CONNECTION_KIND_KEY]
 
         rest_kwargs = cls._extract_kwargs_from_rest_obj(rest_obj=rest_obj, popped_tags=popped_tags)
         workspace_connection = conn_class(**rest_kwargs)
@@ -317,7 +317,7 @@ class WorkspaceConnection(Resource):
             return WorkspaceConnection
         # done here to avoid circular imports on load
         from .workspace_connection_subtypes import (
-            OpenAIWorkspaceConnection,
+            AzureOpenAIWorkspaceConnection,
             CognitiveSearchWorkspaceConnection,
             CognitiveServiceWorkspaceConnection,
         )
@@ -325,7 +325,7 @@ class WorkspaceConnection(Resource):
         cat = camel_to_snake(conn_type).lower()
         conn_class = WorkspaceConnection
         if cat == camel_to_snake(ConnectionCategory.AZURE_OPEN_AI).lower():
-            conn_class = OpenAIWorkspaceConnection
+            conn_class = AzureOpenAIWorkspaceConnection
         elif cat == camel_to_snake(ConnectionCategory.COGNITIVE_SEARCH).lower():
             conn_class = CognitiveSearchWorkspaceConnection
         elif cat == camel_to_snake(ConnectionCategory.COGNITIVE_SERVICE).lower():

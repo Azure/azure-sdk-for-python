@@ -25,9 +25,9 @@ class OpenAIWorkspaceConnectionSchema(WorkspaceConnectionSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import OpenAIWorkspaceConnection
+        from azure.ai.ml.entities import AzureOpenAIWorkspaceConnection
 
-        return OpenAIWorkspaceConnection(**data)
+        return AzureOpenAIWorkspaceConnection(**data)
 
 
 class CognitiveSearchWorkspaceConnectionSchema(WorkspaceConnectionSchema):

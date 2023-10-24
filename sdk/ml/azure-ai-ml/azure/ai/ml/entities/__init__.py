@@ -130,7 +130,7 @@ from ._system_data import SystemData
 from ._validation import ValidationResult
 from ._workspace.connections.workspace_connection import WorkspaceConnection
 from ._workspace.connections.workspace_connection_subtypes import (
-    OpenAIWorkspaceConnection,
+    AzureOpenAIWorkspaceConnection,
     CognitiveSearchWorkspaceConnection,
     CognitiveServiceWorkspaceConnection,
 )
@@ -285,7 +285,7 @@ __all__ = [
     "Workspace",
     "WorkspaceKeys",
     "WorkspaceConnection",
-    "OpenAIWorkspaceConnection",
+    "AzureOpenAIWorkspaceConnection",
     "CognitiveSearchWorkspaceConnection",
     "CognitiveServiceWorkspaceConnection",
     "DiagnoseRequestProperties",

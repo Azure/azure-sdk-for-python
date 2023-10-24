@@ -6,7 +6,7 @@ from test_utilities.utils import verify_entity_load_and_dump
 from azure.ai.ml import load_workspace_connection
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthType, ConnectionCategory
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.entities import WorkspaceConnection, OpenAIWorkspaceConnection
+from azure.ai.ml.entities import WorkspaceConnection, AzureOpenAIWorkspaceConnection
 from azure.ai.ml.entities._credentials import PatTokenConfiguration
 
 
@@ -175,7 +175,7 @@ class TestWorkspaceConnectionEntity:
     def test_ws_conn_rest_conversion(self):
         ws_connection = load_workspace_connection(source="./tests/test_configs/workspace_connection/open_ai.yaml")
         rest_conn = ws_connection._to_rest_object()
-        new_ws_conn = OpenAIWorkspaceConnection._from_rest_object(rest_obj=rest_conn)
+        new_ws_conn = AzureOpenAIWorkspaceConnection._from_rest_object(rest_obj=rest_conn)
         assert ws_connection.type == new_ws_conn.type
         assert ws_connection.credentials.type == new_ws_conn.credentials.type
         assert ws_connection.credentials.key == new_ws_conn.credentials.key
