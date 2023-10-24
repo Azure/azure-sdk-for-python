@@ -148,7 +148,7 @@ class CognitiveSearchConnection(BaseConnection):
         api_version: str,
         **kwargs,
     ):
-        kwargs.pop("type")  # make sure we never somehow use wrong type
+        kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="cognitive_search", credentials=credentials, api_version=api_version, **kwargs)
 
 
@@ -210,7 +210,7 @@ class CognitiveServiceConnection(BaseConnection):
         kind: str,
         **kwargs,
     ):
-        kwargs.pop("type")  # make sure we never somehow use wrong type
+        kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="cognitive_service", credentials=credentials, api_version=api_version, kind=kind, **kwargs)
 
         self.tags[CONNECTION_API_VERSION_KEY] = api_version
