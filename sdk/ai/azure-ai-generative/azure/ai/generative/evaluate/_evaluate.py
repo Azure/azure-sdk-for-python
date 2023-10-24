@@ -21,6 +21,7 @@ from mlflow.protos.databricks_pb2 import ErrorCode, INVALID_PARAMETER_VALUE
 from azure.ai.generative.evaluate._metric_handler import MetricHandler
 from azure.ai.generative.evaluate._utils import _is_flow, load_jsonl, _get_artifact_dir_path
 from azure.ai.generative.evaluate._mlflow_log_collector import RedirectUserOutputStreams
+from azure.ai.generative.evaluate._constants import SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING, SUPPORTED_TASK_TYPE
 
 from ._utils import _write_properties_to_run_history
 
@@ -166,7 +167,7 @@ def _evaluate(
     if target is None and prediction_data is None:
         raise Exception("target and prediction data cannot be null")
 
-    if task_type not in [constants.Tasks.QUESTION_ANSWERING, CHAT]:
+    if task_type not in SUPPORTED_TASK_TYPE:
         raise Exception(f"task type {task_type} is not supported")
 
     metrics_config = {}
@@ -195,7 +196,7 @@ def _evaluate(
         )
 
         metrics_handler = MetricHandler(
-            task_type=task_type,
+            task_type=SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING[task_type],
             metrics=metrics,
             prediction_data=asset_handler.prediction_data,
             truth_data=asset_handler.ground_truth,
