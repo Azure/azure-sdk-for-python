@@ -7,7 +7,7 @@ from typing import Dict, Optional
 from dataclasses import dataclass
 
 from azure.ai.ml.entities import Data
-from azure.ai.generative.entities.connection import Connection
+from azure.ai.generative.entities import OpenAIConnection, CognitiveSearchConnection
 
 
 @dataclass
@@ -30,7 +30,7 @@ class MLIndex:
         retriever = InternalMLIndex(str(self.path)).as_langchain_retriever()
         return retriever.get_relevant_documents(text)
 
-    def override_connections(self, aoai_connection: Connection = None, acs_connection: Connection = None) -> None:
+    def override_connections(self, aoai_connection: OpenAIConnection = None, acs_connection: CognitiveSearchConnection = None) -> None:
         with open(self.path/"MLIndex", "r") as f:
             mlindex_dict = yaml.safe_load(f)
 
