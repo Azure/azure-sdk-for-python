@@ -41,7 +41,7 @@ class SimulatorTemplates:
         if template_name not in ALL_TEMPLATES.keys():
             raise ValueError(f"{template_name} not in templates library.")
 
-        templ, _, _ = self.templ_env.loader.get_source(
+        template_source = self.templ_env.loader.get_source(
             self.templ_env, ALL_TEMPLATES[template_name]
         )
         self.cached_templates_source[template_name] = template_source

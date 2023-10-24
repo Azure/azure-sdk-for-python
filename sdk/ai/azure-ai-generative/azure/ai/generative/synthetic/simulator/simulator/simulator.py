@@ -74,8 +74,12 @@ class Simulator:
     ):
         if role == ConversationRole.ASSISTANT:
             with open(BASIC_MD, "r") as f:
+                chatbot_name_key = "chatbot_name"
                 assistant_template = f.read()
-                assistant_parameters = {"chatbot_name": "ChatBot"}
+                assistant_parameters = {chatbot_name_key: "ChatBot"}
+                if parameters.get(chatbot_name_key) is not None:
+                    assistant_parameters[chatbot_name_key] = parameters[chatbot_name_key]
+
             return self.create_bot(
                 role, assistant_template, assistant_parameters, self.userConnection
             )
@@ -99,7 +103,6 @@ class Simulator:
             bots = [gpt_bot]
         else:
             customer_bot = self.setup_bot(
-                # initialize with basic.md template
                 ConversationRole.ASSISTANT, str(template), parameters
             )
             bots = [gpt_bot, customer_bot]
@@ -120,20 +123,21 @@ class Simulator:
                 api_call_delay_sec=api_call_delay_sec,
                 template_paramaters=parameters,
             )
-        # formatted_conversation = {
-        #     "conversation_id": conversation_id,
-        #     "conversation": [
-        #         turn.to_annotation_format(turn_number=turn_number)
-        #         for (turn_number, turn) in enumerate(conversation_history)
-        #     ],
-        #     "meta_data": parameters,
-        # }
+
         return self.to_chat_protocol(template, conversation_history, parameters)
 
     def to_chat_protocol(self, template, conversation_history, template_parameters):
         messages = []
 
         for i, m in enumerate(conversation_history):
+            citations = []
+            for c_key in template.context_key:
+                citations.append(
+                    {
+                        "id": c_key,
+                        "content": template_parameters[c_key]
+                    }
+                )
             messages.append(
                 {
                     "content": m.message,
@@ -141,12 +145,7 @@ class Simulator:
                     "turn_number": i,
                     "template_parameters": template_parameters,
                     "context": {
-                        "citations": [
-                            {
-                                "id": template.context_key,
-                                "content": template_paramaters[template.context_key]
-                            }
-                        ]
+                        "citations": citations
                     }
                 }
             )
