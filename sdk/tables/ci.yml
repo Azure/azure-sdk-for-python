@@ -33,7 +33,7 @@ extends:
     ValidateFormatting: true
     MatrixConfigs:
       - Name: tables_ci_matrix
-        Path: eng/pipelines/templates/stages/platform-matrix-metricsadvisor_tables.json
+        Path: eng/pipelines/templates/stages/platform-matrix-excluding-pypy.json
         Selection: sparse
         GenerateVMJobs: true
     Artifacts:
