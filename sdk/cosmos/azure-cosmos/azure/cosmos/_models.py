@@ -1,6 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) 2023 Microsoft Corporation
 
+from typing import Any
 try:
     from typing import Literal
 except ImportError:
