@@ -450,7 +450,9 @@
         "mlindex",
         "mlindexes",
         "aoai",
-        "faiss"
+        "faiss",
+        "mlmodel",
+        "openmpi"
       ]
     },
     {
