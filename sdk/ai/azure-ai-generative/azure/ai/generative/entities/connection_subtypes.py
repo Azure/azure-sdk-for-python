@@ -214,9 +214,6 @@ class CognitiveServiceConnection(BaseConnection):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="cognitive_service", credentials=credentials, api_version=api_version, kind=kind, **kwargs)
 
-        self.tags[CONNECTION_API_VERSION_KEY] = api_version
-        self.tags[CONNECTION_KIND_KEY] = kind
-
     @property
     def api_version(self) -> str:
         """The API version of the connection.
