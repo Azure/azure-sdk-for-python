@@ -68,25 +68,11 @@ class DeploymentOperations:
                 sampling_rate=1,
             )
 
-        if deployment.managed_identity:
-            from azure.ai.ml.entities import IdentityConfiguration, ManagedIdentityConfiguration
-
-            endpoint_identity = IdentityConfiguration(
-                type="user_assigned",
-                user_assigned_identities=[
-                    ManagedIdentityConfiguration(
-                        client_id=deployment.managed_identity.client_id,
-                        resource_id=deployment.managed_identity.resource_id,
-                        principal_id=deployment.managed_identity.principal_id,
-                    )
-                ],
-            )
-        else:
-            endpoint_identity = None
         v2_endpoint = ManagedOnlineEndpoint(
             name=endpoint_name,
-            auth_mode="key",
-            identity=endpoint_identity,
+            properties={
+                "enforce_access_to_default_secret_stores": "enabled"
+            }
         )
         created_endpoint = self._ml_client.begin_create_or_update(v2_endpoint).result()
         model = deployment.model
@@ -158,42 +144,6 @@ class DeploymentOperations:
                         " specifying conda_file and one of loader_module or chat_module for deployment."
                     )
 
-            # attempt to grant endpoint SAI access to workspace:
-            if not endpoint_identity:
-                try:
-                    role_name = "AzureML Data Scientist"
-                    scope = self._ml_client.workspaces.get(name=self._ml_client.workspace_name).id
-                    system_principal_id = created_endpoint.identity.principal_id
-
-                    role_defs = self._role_definition_client.role_definitions.list(scope=scope)
-                    role_def = next((r for r in role_defs if r.role_name == role_name))
-
-                    self._role_assignment_client.role_assignments.create(
-                        scope=scope,
-                        role_assignment_name=str(uuid.uuid4()),
-                        parameters=RoleAssignmentCreateParameters(
-                            role_definition_id=role_def.id, principal_id=system_principal_id
-                        ),
-                    )
-                except ResourceExistsError as e:
-                    print(
-                        "System-assigned identity already has access to project. Skipping granting it access to project"
-                    )
-                except Exception as e:
-                    print(
-                        "Unable to grant endpoint system-assigned identity access to workspace. "
-                        "Please pass a user-assigned identity through the 'managed_identity' field of the Deployment object "
-                        "with permissions to the project instead. Please see https://aka.ms/aistudio/docs/endpoints for more information."
-                    )
-                    raise e
-                uai_env_var = {}
-            else:
-                uai_env_var = {
-                    "UAI_CLIENT_ID": deployment.managed_identity.client_id,
-                }
-            deployment_environment_variables = (
-                deployment.environment_variables if deployment.environment_variables else {}
-            )
             v2_deployment = ManagedOnlineDeployment(
                 name=deployment.name,
                 endpoint_name=endpoint_name,
@@ -203,13 +153,7 @@ class DeploymentOperations:
                 scoring_script=scoring_script,
                 instance_type=deployment.instance_type,
                 instance_count=1,
-                environment_variables={
-                    "AZURE_SUBSCRIPTION_ID": self._ml_client.subscription_id,
-                    "AZURE_RESOURCE_GROUP_NAME": self._ml_client.resource_group_name,
-                    "AZURE_PROJECT_NAME": self._ml_client.workspace_name,
-                    **uai_env_var,
-                    **deployment_environment_variables,
-                },
+                environment_variables=deployment.environment_variables,
                 app_insights_enabled=deployment.app_insights_enabled,
                 data_collector=data_collector,
             )
