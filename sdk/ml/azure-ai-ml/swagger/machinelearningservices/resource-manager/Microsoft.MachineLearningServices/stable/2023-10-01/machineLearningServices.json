@@ -2547,6 +2547,10 @@
         },
         "managedNetwork": {
           "$ref": "#/definitions/ManagedNetworkSettings"
+        },
+        "featureStoreSettings": {
+          "description": "Settings for feature store type workspace.",
+          "$ref": "#/definitions/FeatureStoreSettings"
         }
       }
     },
@@ -2623,6 +2627,10 @@
         "containerRegistry": {
           "description": "ARM id of the container registry associated with this workspace.",
           "type": "string"
+        },
+        "featureStoreSettings": {
+          "description": "Settings for feature store type workspace.",
+          "$ref": "#/definitions/FeatureStoreSettings"
         }
       }
     },
@@ -6797,6 +6805,30 @@
           "x-ms-identifiers": [
             "/properties/category"
           ]
+        }
+      }
+    },
+    "FeatureStoreSettings": {
+      "type": "object",
+      "description": "Settings for feature store type workspace.",
+      "properties": {
+        "computeRuntime": {
+          "$ref": "#/definitions/ComputeRuntimeDto"
+        },
+        "offlineStoreConnectionName": {
+          "type": "string"
+        },
+        "onlineStoreConnectionName": {
+          "type": "string"
+        }
+      }
+    },
+    "ComputeRuntimeDto": {
+      "type": "object",
+      "description": "Compute runtime config for feature store type workspace.",
+      "properties": {
+        "sparkRuntimeVersion": {
+          "type": "string"
         }
       }
     }
