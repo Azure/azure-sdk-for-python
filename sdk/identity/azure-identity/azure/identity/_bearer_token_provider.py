@@ -36,8 +36,8 @@ def get_bearer_token_provider(credential: TokenCredential, *scopes: str) -> Call
     :return: A callable that returns a bearer token.
     """
 
+    policy = BearerTokenCredentialPolicy(credential, *scopes)
     def wrapper() -> str:
-        policy = BearerTokenCredentialPolicy(credential, *scopes)
         request = _make_request()
         policy.on_request(request)
         return request.http_request.headers["Authorization"][len("Bearer ") :]

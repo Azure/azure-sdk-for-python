@@ -37,8 +37,8 @@ def get_bearer_token_provider(credential: AsyncTokenCredential, *scopes: str) ->
     :return: A coroutine that returns a bearer token.
     """
 
+    policy = AsyncBearerTokenCredentialPolicy(credential, *scopes)
     async def wrapper() -> str:
-        policy = AsyncBearerTokenCredentialPolicy(credential, *scopes)
         request = _make_request()
         await policy.on_request(request)
         return request.http_request.headers["Authorization"][len("Bearer ") :]
