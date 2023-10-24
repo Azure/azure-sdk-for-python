@@ -12,6 +12,7 @@ from pathlib import Path
 import mlflow
 import pandas as pd
 from azureml.metrics import constants
+from azure.ai.generative.evaluate._constants import CHAT
 
 from mlflow.entities import Metric
 from mlflow.exceptions import MlflowException
@@ -165,7 +166,7 @@ def _evaluate(
     if target is None and prediction_data is None:
         raise Exception("target and prediction data cannot be null")
 
-    if task_type not in [constants.Tasks.QUESTION_ANSWERING, constants.Tasks.CHAT_COMPLETION]:
+    if task_type not in [constants.Tasks.QUESTION_ANSWERING, CHAT]:
         raise Exception(f"task type {task_type} is not supported")
 
     metrics_config = {}
@@ -208,7 +209,11 @@ def _evaluate(
 
         def _get_instance_table():
             metrics.get("artifacts").pop("bertscore", None)
-            instance_level_metrics_table = pd.DataFrame(metrics.get("artifacts"))
+            if task_type == "chat":
+                instance_level_metrics_table = _get_chat_instance_table(metrics.get("artifacts"))
+            else:
+                instance_level_metrics_table = pd.DataFrame(metrics.get("artifacts"))
+
             prediction_data = asset_handler.prediction_data
             for column in asset_handler.prediction_data.columns.values:
                 if column in asset_handler.test_data.columns.values:
@@ -261,7 +266,7 @@ def _evaluate(
 
             mlflow.log_artifact(tmp_path)
             log_property_and_tag("_azureml.evaluate_artifacts",
-                              json.dumps([{"path": "eval_results.jsonl", "type": "table"}]))
+                                 json.dumps([{"path": "eval_results.jsonl", "type": "table"}]))
             mlflow.log_param("task_type", task_type)
             log_param_and_tag("_azureml.evaluate_metric_mapping", json.dumps(metrics_handler._metrics_mapping_to_log))
 
@@ -297,6 +302,19 @@ def log_param_and_tag(key, value):
     mlflow.log_param(key, value)
     mlflow.set_tag(key, value)
 
+
 def log_property_and_tag(key, value, logger=LOGGER):
     _write_properties_to_run_history({key: value}, logger)
     mlflow.set_tag(key, value)
+
+
+def _get_chat_instance_table(metrics):
+    instance_table_metrics_dict = {}
+    for artifact, value in metrics.items():
+        if "score_per_conversation" in value.keys():
+            instance_table_metrics_dict.update({
+                artifact: value["score_per_conversation"]
+            })
+
+    instance_level_metrics_table = pd.DataFrame(instance_table_metrics_dict)
+    return instance_level_metrics_table
