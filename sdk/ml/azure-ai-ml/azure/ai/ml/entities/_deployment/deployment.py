@@ -135,7 +135,7 @@ class Deployment(Resource, RestTranslatableMixin):
     def type(self) -> str:
         """
         Type of deployment.
-        
+
         :rtype: str
         """
         return self._type
@@ -160,7 +160,7 @@ class Deployment(Resource, RestTranslatableMixin):
     def scoring_script(self) -> Union[str, PathLike]:
         """
         The scoring script file path relative to the code directory.
-        
+
         :rtype: Union[str, PathLike]
         """
         return self.code_configuration.scoring_script if self.code_configuration else None
