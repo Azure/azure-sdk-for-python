@@ -8,8 +8,11 @@
 
 from ._operations import Operations
 from ._workspaces_operations import WorkspacesOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._scaling_plans_operations import ScalingPlansOperations
 from ._scaling_plan_pooled_schedules_operations import ScalingPlanPooledSchedulesOperations
+from ._scaling_plan_personal_schedules_operations import ScalingPlanPersonalSchedulesOperations
 from ._application_groups_operations import ApplicationGroupsOperations
 from ._start_menu_items_operations import StartMenuItemsOperations
 from ._applications_operations import ApplicationsOperations
@@ -27,8 +30,11 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "Operations",
     "WorkspacesOperations",
+    "PrivateEndpointConnectionsOperations",
+    "PrivateLinkResourcesOperations",
     "ScalingPlansOperations",
     "ScalingPlanPooledSchedulesOperations",
+    "ScalingPlanPersonalSchedulesOperations",
     "ApplicationGroupsOperations",
     "StartMenuItemsOperations",
     "ApplicationsOperations",

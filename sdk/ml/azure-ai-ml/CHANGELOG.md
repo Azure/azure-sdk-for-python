@@ -22,6 +22,7 @@
 ### Features Added
 - Now, when you specify `delete_dependent_resources` as True when deleting a workspace, the log analytics resource
   associated with the workspace application insights resource will also be deleted.
+- Now, when creating or updating a workspace, you can provide a `serverless_compute` configuration object. This allows configuring a custom subnet in which all Serverless computes will be created. You can also specify whether or not these Serverless computes will have public IP addresses or not.
 
 ### Breaking Changes
  - [Python 3.7 reached end-of-life on June 27th 2023](https://devguide.python.org/versions/). Consequently, 3.7 will be deprecated in azure-ai-ml starting in October 2023 and azure-ai-ml will end support for 3.7 in February 2024.

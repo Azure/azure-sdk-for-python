@@ -35,7 +35,7 @@ def main():
         replica_name="myWebPubSubService-eastus",
         parameters={
             "location": "eastus",
-            "properties": {},
+            "properties": {"resourceStopped": "false"},
             "sku": {"capacity": 1, "name": "Premium_P1", "tier": "Premium"},
             "tags": {"key1": "value1"},
         },
@@ -43,6 +43,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/webpubsub/resource-manager/Microsoft.SignalRService/preview/2023-06-01-preview/examples/WebPubSubReplicas_Update.json
+# x-ms-original-file: specification/webpubsub/resource-manager/Microsoft.SignalRService/preview/2023-08-01-preview/examples/WebPubSubReplicas_Update.json
 if __name__ == "__main__":
     main()

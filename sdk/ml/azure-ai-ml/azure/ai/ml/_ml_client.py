@@ -399,7 +399,7 @@ class MLClient:
 
         self._workspaces = WorkspaceOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
-            self._service_client_06_2023_preview,
+            self._service_client_08_2023_preview,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,
