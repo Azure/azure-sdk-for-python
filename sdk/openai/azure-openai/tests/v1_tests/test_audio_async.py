@@ -31,7 +31,9 @@ class TestAudioAsync(AzureRecordedTestCase):
     async def test_transcribe_raw(self, client_async, azure_openai_creds, api_type, **kwargs):
 
         result = await client_async.audio.transcriptions.create(
-            file=open(audio_test_file, "rb").read(),
+            # file=open(audio_test_file, "rb").read(),
+            # use file tuple for now
+            file=("hello.m4a", open(audio_test_file, "rb").read(), "application/octet-stream"),
             **kwargs,
         )
         assert result.text == "Hello."
@@ -53,7 +55,9 @@ class TestAudioAsync(AzureRecordedTestCase):
     async def test_translate_raw(self, client_async, azure_openai_creds, api_type, **kwargs):
 
         result = await client_async.audio.translations.create(
-            file=open(audio_test_file, "rb").read(),
+            # file=open(audio_test_file, "rb").read(),
+            # use file tuple for now
+            file=("hello.m4a", open(audio_test_file, "rb").read(), "application/octet-stream"),
             **kwargs,
         )
         assert result.text == "Hello."

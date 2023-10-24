@@ -12,7 +12,8 @@ from conftest import configure, AZURE, OPENAI, ALL
 class TestDallE(AzureRecordedTestCase):
 
     @configure
-    @pytest.mark.parametrize("api_type", ALL)
+    # @pytest.mark.parametrize("api_type", ALL)  # re-enable when supported
+    @pytest.mark.parametrize("api_type", [OPENAI])
     def test_image_create(self, client, azure_openai_creds, api_type, **kwargs):
         image = client.images.generate(
             prompt="a cute baby seal"
@@ -22,7 +23,8 @@ class TestDallE(AzureRecordedTestCase):
         assert image.data[0].url
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
+    # @pytest.mark.parametrize("api_type", [AZURE, OPENAI])  # re-enable when supported
+    @pytest.mark.parametrize("api_type", [OPENAI])
     def test_image_create_n(self, client, azure_openai_creds, api_type, **kwargs):
         image = client.images.generate(
             prompt="a cute baby seal",
@@ -34,7 +36,8 @@ class TestDallE(AzureRecordedTestCase):
             assert img.url
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
+    # @pytest.mark.parametrize("api_type", [AZURE, OPENAI])  # re-enable when supported
+    @pytest.mark.parametrize("api_type", [OPENAI])
     def test_image_create_size(self, client, azure_openai_creds, api_type, **kwargs):
         image = client.images.generate(
             prompt="a cute baby seal",
@@ -56,7 +59,8 @@ class TestDallE(AzureRecordedTestCase):
         assert image.data[0].b64_json
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
+    # @pytest.mark.parametrize("api_type", [AZURE, OPENAI])  # re-enable when supported
+    @pytest.mark.parametrize("api_type", [OPENAI])
     def test_image_create_user(self, client, azure_openai_creds, api_type, **kwargs):
         image = client.images.generate(
             prompt="a cute baby seal",

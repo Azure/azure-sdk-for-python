@@ -13,7 +13,8 @@ class TestDallEAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", ALL)
+    # @pytest.mark.parametrize("api_type", ALL)  # re-enable when supported
+    @pytest.mark.parametrize("api_type", [OPENAI])
     async def test_image_create(self, client_async, azure_openai_creds, api_type, **kwargs):
         image = await client_async.images.generate(
             prompt="a cute baby seal"
@@ -24,7 +25,8 @@ class TestDallEAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
+    # @pytest.mark.parametrize("api_type", [AZURE, OPENAI])  # re-enable when supported
+    @pytest.mark.parametrize("api_type", [OPENAI])
     async def test_image_create_n(self, client_async, azure_openai_creds, api_type, **kwargs):
         image = await client_async.images.generate(
             prompt="a cute baby seal",
@@ -37,7 +39,8 @@ class TestDallEAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
+    # @pytest.mark.parametrize("api_type", [AZURE, OPENAI])  # re-enable when supported
+    @pytest.mark.parametrize("api_type", [OPENAI])
     async def test_image_create_size(self, client_async, azure_openai_creds, api_type, **kwargs):
         image = await client_async.images.generate(
             prompt="a cute baby seal",
@@ -61,7 +64,8 @@ class TestDallEAsync(AzureRecordedTestCase):
 
     @configure_async
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
+    # @pytest.mark.parametrize("api_type", [AZURE, OPENAI])  # re-enable when supported
+    @pytest.mark.parametrize("api_type", [OPENAI])
     async def test_image_create_user(self, client_async, azure_openai_creds, api_type, **kwargs):
         image = await client_async.images.generate(
             prompt="a cute baby seal",
