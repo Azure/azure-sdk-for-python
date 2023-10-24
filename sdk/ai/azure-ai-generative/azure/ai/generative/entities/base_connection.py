@@ -14,6 +14,7 @@ from azure.ai.ml.entities import (
 )
 from azure.ai.ml.entities._credentials import ApiKeyConfiguration
 from azure.core.credentials import TokenCredential
+from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionCategory
 
 
 class BaseConnection:
@@ -70,15 +71,16 @@ class BaseConnection:
         """
         # It's simpler to create a placeholder connection, then overwrite the internal WC.
         # We don't need to worry about the potentially changing WC fields this way.
-        conn_class = cls._get_ai_connection_class_type_from_v2_class(workspace_connection)
+        conn_class = cls._get_ai_connection_class_from_type(workspace_connection.type)
         conn = conn_class(type="a", target="a", credentials=None, name="a", make_empty=True, api_version=None, api_type=None, kind=None)
         conn._workspace_connection = workspace_connection
         return conn
     
     @classmethod
-    def _get_ai_connection_class_type_from_v2_class(cls,  workspace_connection: WorkspaceConnection):
-        ''' Given a v2 workspace connection object, get the corresponding AI SDK object via class
-        comparisons.
+    def _get_ai_connection_class_from_type(cls,  conn_type: str):
+        ''' Given a connection type string, get the corresponding AI SDK object via class
+        comparisons. Accounts for any potential camel/snake/capitalization issues. Returns
+        the BaseConnection class if no match is found.
         '''
         #import here to avoid circular import
         from .connection_subtypes import (
@@ -86,12 +88,13 @@ class BaseConnection:
             CognitiveSearchConnection,
             CognitiveServiceConnection,
         )
-        v2_class = type(workspace_connection)
-        if v2_class == AzureOpenAIWorkspaceConnection:
+    
+        cat = camel_to_snake(conn_type).lower()
+        if cat == camel_to_snake(ConnectionCategory.AZURE_OPEN_AI).lower():
             return OpenAIConnection
-        if v2_class == CognitiveSearchWorkspaceConnection:
+        elif cat == camel_to_snake(ConnectionCategory.COGNITIVE_SEARCH).lower():
             return CognitiveSearchConnection
-        if v2_class == CognitiveServiceWorkspaceConnection:
+        elif cat == camel_to_snake(ConnectionCategory.COGNITIVE_SERVICE).lower():
             return CognitiveServiceConnection
         return BaseConnection
 
