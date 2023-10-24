@@ -8,7 +8,6 @@ import os
 import tempfile
 from typing import Any, Optional, Union
 
-import dill as pickle
 import yaml
 
 from azure.ai.resources._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient100122
@@ -17,7 +16,7 @@ from azure.ai.resources._utils._open_ai_utils import build_open_ai_protocol
 from azure.ai.resources._utils._str_utils import build_connection_id
 from azure.ai.resources.constants._common import DEFAULT_OPEN_AI_CONNECTION_NAME
 from azure.ai.resources.entities.mlindex import MLIndex as MLIndexAsset
-from azure.ai.resources.index._dataindex.data_index import index_data
+"""from azure.ai.resources.index._dataindex.data_index import index_data
 from azure.ai.resources.index._dataindex.entities import (
     CitationRegex,
     Data,
@@ -26,7 +25,7 @@ from azure.ai.resources.index._dataindex.entities import (
     IndexSource,
     IndexStore,
 )
-from azure.ai.resources.index._embeddings import EmbeddingsContainer
+from azure.ai.resources.index._embeddings import EmbeddingsContainer"""
 from azure.ai.resources.operations import ACSOutputConfig, ACSSource, GitSource, IndexDataSource, LocalSource
 from azure.ai.ml import MLClient
 from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
