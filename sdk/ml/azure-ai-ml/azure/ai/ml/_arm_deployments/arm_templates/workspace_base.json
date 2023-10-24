@@ -906,8 +906,8 @@
                                     "computeruntime": {
                                         "SparkRuntimeVersion": "[parameters('spark_runtime_version')]"
                                     },
-                                    "offlinestoreconnectionname": "[parameters('offline_store_connection_name')]",
-                                    "onlinestoreconnectionname": "[parameters('online_store_connection_name')]"
+                                    "offlinestoreconnectionname": "[variables('offlineStoreConnectionName')]",
+                                    "onlinestoreconnectionname": "[if(not(empty(parameters('online_store_target'))), variables('onlineStoreConnectionName'), '')]"
                                 },
                                 "enableDataIsolation": "[parameters('enable_data_isolation')]"
                             }

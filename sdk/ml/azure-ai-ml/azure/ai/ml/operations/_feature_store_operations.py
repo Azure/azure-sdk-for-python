@@ -6,9 +6,9 @@
 
 import re
 import uuid
-from typing import Dict, Iterable, Optional
 
 from marshmallow import ValidationError
+from typing import Dict, Iterable, Optional
 
 from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ManagedNetworkProvisionOptions
