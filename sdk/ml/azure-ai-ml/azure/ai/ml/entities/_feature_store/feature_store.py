@@ -11,7 +11,6 @@ from typing import Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml._schema._feature_store.feature_store_schema import FeatureStoreSchema
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml.entities._util import load_from_dict
@@ -25,7 +24,6 @@ from ._constants import DEFAULT_SPARK_RUNTIME_VERSION, FEATURE_STORE_KIND
 from .materialization_store import MaterializationStore
 
 
-@experimental
 class FeatureStore(Workspace):
     """Feature Store
 
