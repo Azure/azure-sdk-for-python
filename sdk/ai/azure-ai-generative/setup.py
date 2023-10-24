@@ -88,7 +88,7 @@ setup(
             "GitPython>=3.1,<4"
         ],
         "evaluate": [
-            "azureml-metrics[prompt-flow]==0.1.0.105202174",
+            # "azureml-metrics[prompt-flow]==0.1.0.105202174",
             "promptflow>=0.1.0b7",
             "promptflow-tools",
         ],

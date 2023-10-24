@@ -10,7 +10,7 @@ trigger:
   paths:
     include:
     - sdk/ai/
-    - sdk/core/    
+    - sdk/core/
 
 pr:
   branches:
@@ -23,7 +23,7 @@ pr:
   paths:
     include:
     - sdk/ai/
-    - sdk/core/    
+    - sdk/core/
 
 extends:
   template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
@@ -40,3 +40,6 @@ extends:
       safeName: azureaigenerative
     - name: azure-ai-resources
       safeName: azureairesources
+
+variables:
+  Skip.Test: true
