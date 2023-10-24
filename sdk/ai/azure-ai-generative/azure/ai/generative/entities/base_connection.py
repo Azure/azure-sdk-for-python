@@ -80,17 +80,17 @@ class BaseConnection:
         #import here to avoid circular import
         from .connection_subtypes import (
             AzureOpenAIConnection,
-            CognitiveSearchConnection,
-            CognitiveServiceConnection,
+            AzureAISearchConnection,
+            AzureAIServiceConnection,
         )
     
         cat = camel_to_snake(conn_type).lower()
         if cat == camel_to_snake(ConnectionCategory.AZURE_OPEN_AI).lower():
             return AzureOpenAIConnection
         elif cat == camel_to_snake(ConnectionCategory.COGNITIVE_SEARCH).lower():
-            return CognitiveSearchConnection
+            return AzureAISearchConnection
         elif cat == camel_to_snake(ConnectionCategory.COGNITIVE_SERVICE).lower():
-            return CognitiveServiceConnection
+            return AzureAIServiceConnection
         return BaseConnection
 
 

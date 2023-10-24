@@ -37,7 +37,7 @@ class AzureOpenAIConnection(BaseConnection):
         *,
         target: str,
         credentials: ApiKeyConfiguration,
-        api_version: str,
+        api_version: str = "unset",
         api_type: str = "Azure",
         **kwargs,
     ):
@@ -125,8 +125,8 @@ class AzureOpenAIConnection(BaseConnection):
         os.environ["OPENAI_API_VERSION"] = get_api_version_case_insensitive(self._workspace_connection)
 
 
-class CognitiveSearchConnection(BaseConnection):
-    """A Connection for Cognitive Search.
+class AzureAISearchConnection(BaseConnection):
+    """A Connection for Azure AI Search
 
     :param name: Name of the connection.
     :type name: str
@@ -145,7 +145,7 @@ class CognitiveSearchConnection(BaseConnection):
         *,
         target: str,
         credentials: ApiKeyConfiguration,
-        api_version: str,
+        api_version: str = "unset",
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
@@ -185,7 +185,7 @@ class CognitiveSearchConnection(BaseConnection):
         os.environ["AZURE_COGNITIVE_SEARCH_KEY"] = self._workspace_connection.credentials.key
 
 
-class CognitiveServiceConnection(BaseConnection):
+class AzureAIServiceConnection(BaseConnection):
     """A Connection for an Azure Cognitive Service.
 
     :param name: Name of the connection.
@@ -207,7 +207,7 @@ class CognitiveServiceConnection(BaseConnection):
         *,
         target: str,
         credentials: ApiKeyConfiguration,
-        api_version: str,
+        api_version: str = "unset",
         kind: str,
         **kwargs,
     ):
