@@ -31,9 +31,9 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
     :type tags: dict
     :param credentials: The credentials for authenticating to the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
-    :param api_version: The api version that this connection was created for. Only applies to certain connection types.
+    :param api_version: The api version that this connection was created for.
     :type api_version: str
-    :param api_type: The api type that this connection was created for. Only applies to certain connection types.
+    :param api_type: The api type that this connection was created for. Defaults to Azure.
     :type api_type: str
     """
 
@@ -43,7 +43,7 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
         target: str,
         credentials: ApiKeyConfiguration,
         api_version: str,
-        api_type: str,
+        api_type: str = "Azure",
         **kwargs,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
@@ -105,7 +105,7 @@ class CognitiveSearchWorkspaceConnection(WorkspaceConnection):
     :type tags: dict
     :param credentials: The credentials for authenticating to the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
-    :param api_version: The api version that this connection was created for. Only applies to certain connection types.
+    :param api_version: The api version that this connection was created for.
     :type api_version: str
     """
 
@@ -155,9 +155,9 @@ class CognitiveServiceWorkspaceConnection(WorkspaceConnection):
     :type tags: dict
     :param credentials: The credentials for authenticating to the external resource.
     :type credentials: ~azure.ai.ml.entities.ApiKeyConfiguration
-    :param api_version: The api version that this connection was created for. Only applies to certain connection types.
+    :param api_version: The api version that this connection was created for.
     :type api_version: str
-    :param kind: The kind of the connection. Only needed for connections of type "cognitive_service".
+    :param kind: The kind of the ai service that this connection points to.
     :type kind: str
     """
 
