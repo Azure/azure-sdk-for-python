@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Updated the default `api_version` to "2023-10-01".
 
 ## 1.5.0b3 (2023-10-10)
 
