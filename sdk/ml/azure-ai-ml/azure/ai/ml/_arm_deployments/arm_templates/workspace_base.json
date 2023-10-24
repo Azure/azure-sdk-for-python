@@ -553,6 +553,13 @@
             "metadata": {
                 "description": "Resource Id of BYO open ai resource."
             }
+        },
+        "serverless_compute_settings": {
+            "type": "object",
+            "defaultValue": {},
+            "metadata": {
+                "description": "Serverless compute settings to be used for the workspace."
+            }
         }
     },
     "variables": {
@@ -750,7 +757,7 @@
         {
             "condition": "[variables('enablePE')]",
             "type": "Microsoft.MachineLearningServices/workspaces",
-            "apiVersion": "2023-04-01-preview",
+            "apiVersion": "2023-08-01-preview",
             "tags": "[parameters('tagValues')]",
             "name": "[parameters('workspaceName')]",
             "kind": "[parameters('kind')]",
@@ -798,7 +805,8 @@
                 "existingWorkspaces": "[parameters('existing_workspaces')]",
                 "azureOpenAI": {
                     "resourceId": "[parameters('byo_open_ai_resource_id')]"
-                }
+                },
+                "serverlessComputeSettings": "[parameters('serverless_compute_settings')]"
             }
         },
         {

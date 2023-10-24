@@ -56,27 +56,28 @@ class DiscoverySolutionOperations:
     def list(
         self, scope: str, filter: Optional[str] = None, skiptoken: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable["_models.SolutionMetadataResource"]:
-        """Solutions Discovery is the initial point of entry within Help API, which helps you identify the
-        relevant solutions for your Azure issue.:code:`<br/>`:code:`<br/>` You can discover solutions
-        using resourceUri OR resourceUri + problemClassificationId.:code:`<br/>`:code:`<br/>`We will do
-        our best in returning relevant diagnostics for your Azure issue.:code:`<br/>`:code:`<br/>` Get
-        the problemClassificationId(s) using this `reference
-        <https://learn.microsoft.com/rest/api/support/problem-classifications/list?tabs=HTTP>`_.:code:`<br/>`:code:`<br/>`
-        :code:`<b>Note: </b>` ‘requiredParameterSets’ from Solutions Discovery API response must be
-        passed via ‘additionalParameters’ as an input to Diagnostics API.
+        """Lists the relevant Azure diagnostics and solutions using `problemClassification API
+        <https://learn.microsoft.com/rest/api/support/problem-classifications/list?tabs=HTTP>`_\ ) AND
+        resourceUri or resourceType.:code:`<br/>` Discovery Solutions is the initial entry point within
+        Help API, which identifies relevant Azure diagnostics and solutions. We will do our best to
+        return the most effective solutions based on the type of inputs, in the request URL
+        :code:`<br/>`:code:`<br/>` Mandatory input :  problemClassificationId (Use the
+        `problemClassification API
+        <https://learn.microsoft.com/rest/api/support/problem-classifications/list?tabs=HTTP>`_\ )
+        :code:`<br/>`Optional input: resourceUri OR resource Type :code:`<br/>`:code:`<br/>`
+        :code:`<b>Note: </b>`  ‘requiredInputs’ from Discovery solutions response must be passed via
+        ‘additionalParameters’ as an input to Diagnostics and Solutions API.
 
         :param scope: This is an extension resource provider and only resource level extension is
          supported at the moment. Required.
         :type scope: str
-        :param filter: Can be used to filter solutionIds by 'ProblemClassificationId'. The filter
-         supports only 'and' and 'eq' operators. Example: $filter=ProblemClassificationId eq
-         '1ddda5b4-cf6c-4d4f-91ad-bc38ab0e811e' and ProblemClassificationId eq
-         '0a9673c2-7af6-4e19-90d3-4ee2461076d9'. Default value is None.
+        :param filter: 'ProblemClassificationId' or 'Id' is a mandatory filter to get solutions ids. It
+         also supports optional 'ResourceType' and 'SolutionType' filters. The filter supports only
+         'and', 'or' and 'eq' operators. Example: $filter=ProblemClassificationId eq
+         '1ddda5b4-cf6c-4d4f-91ad-bc38ab0e811e'. Default value is None.
         :type filter: str
-        :param skiptoken: Skiptoken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skiptoken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
+        :param skiptoken: Skiptoken is only used if a previous operation returned a partial result.
+         Default value is None.
         :type skiptoken: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SolutionMetadataResource or the result of

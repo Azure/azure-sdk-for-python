@@ -15,8 +15,9 @@ from azure.ai.ml._schema._deployment.batch.model_batch_deployment import ModelBa
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
-from azure.ai.ml.entities import BatchDeployment, Deployment
 from azure.ai.ml.entities._assets import Environment, Model
+from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
+from azure.ai.ml.entities._deployment.deployment import Deployment
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException

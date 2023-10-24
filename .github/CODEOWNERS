@@ -29,6 +29,9 @@
 /sdk/ @lmazuel
 
 # Core
+# PRLabel: %Core.Http
+/sdk/core/corehttp/                                                  @pvaneck @lmazuel @annatisch @johanste @xiangyan99 @iscai-msft @kashifkhan
+
 # PRLabel: %Azure.Core
 /sdk/core/                                                           @lmazuel @annatisch @johanste
 /sdk/core/azure-core/                                                @lmazuel @annatisch @johanste @xiangyan99 @tjprescott @iscai-msft @kashifkhan
@@ -39,6 +42,9 @@
 ####
 # Service team
 ####
+
+# PRLabel: %AI
+/sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit
 
 # PRLabel: %AgriFood
 /sdk/agrifood/azure-agrifood-farming/                                @bhargav-kansagara
