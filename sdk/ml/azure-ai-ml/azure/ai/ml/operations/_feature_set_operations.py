@@ -22,7 +22,6 @@ from azure.ai.ml._restclient.v2023_10_01.models import (
     FeaturesetVersionBackfillRequest,
     FeatureWindow,
     ListViewType,
-    DataAvailabilityStatus,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -35,6 +34,7 @@ from azure.ai.ml._utils._feature_store_utils import (
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import is_url
 from azure.ai.ml.entities._assets._artifacts.feature_set import FeatureSet
+from azure.ai.ml.entities._feature_set.data_availability_status import DataAvailabilityStatus
 from azure.ai.ml.entities._feature_set.feature import Feature
 from azure.ai.ml.entities._feature_set.feature_set_backfill_metadata import FeatureSetBackfillMetadata
 from azure.ai.ml.entities._feature_set.feature_set_materialization_metadata import FeatureSetMaterializationMetadata
@@ -218,7 +218,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :paramtype compute_resource: ~azure.ai.ml.entities.MaterializationComputeResource
         :keyword spark_configuration: Specifies the spark compute settings.
         :paramtype spark_configuration: dict[str, str]
-        :keyword data_status: Specified the data status that you want to backfill.
+        :keyword data_status: Specifies the data status that you want to backfill.
         :paramtype data_status: list[str or ~azure.mgmt.machinelearningservices.models.DataAvailabilityStatus]
         :return: An instance of LROPoller that returns ~azure.ai.ml.entities.FeatureSetBackfillMetadata
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureSetBackfillMetadata]

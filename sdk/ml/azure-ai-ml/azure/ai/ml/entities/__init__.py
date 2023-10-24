@@ -218,6 +218,7 @@ from ._feature_set.feature_set_specification import FeatureSetSpecification
 from ._feature_set.materialization_compute_resource import MaterializationComputeResource
 from ._feature_set.materialization_settings import MaterializationSettings
 from ._feature_set.materialization_type import MaterializationType
+from ._feature_set.data_availability_status import DataAvailabilityStatus
 from ._feature_set.feature_set_backfill_metadata import FeatureSetBackfillMetadata
 from ._feature_set.feature_set_materialization_metadata import FeatureSetMaterializationMetadata
 from ._feature_store.feature_store import FeatureStore
@@ -382,6 +383,7 @@ __all__ = [
     "MaterializationStore",
     "Notification",
     "FeatureSetBackfillMetadata",
+    "DataAvailabilityStatus",
     "FeatureSetMaterializationMetadata",
     # builders
     "Command",
