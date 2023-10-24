@@ -7,3 +7,4 @@ pylint = false
 black = false
 strict_sphinx = false
 bandit = false
+sphinx=false
