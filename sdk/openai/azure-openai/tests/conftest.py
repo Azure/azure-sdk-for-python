@@ -16,6 +16,74 @@ from azure.identity import DefaultAzureCredential
 from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
 
 
+# ---- copy/pasted in for now ---------------------------------------------------------------------------
+from typing import Callable, Coroutine, Any
+
+from azure.core.credentials import TokenCredential
+from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+from azure.core.pipeline import PipelineRequest, PipelineContext
+from azure.core.rest import HttpRequest
+
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
+
+
+def _make_request() -> PipelineRequest[HttpRequest]:
+    return PipelineRequest(HttpRequest("CredentialWrapper", "https://fakeurl"), PipelineContext(None))
+
+
+def get_bearer_token_provider(credential: TokenCredential, *scopes: str) -> Callable[[], str]:
+    """Returns a callable that provides a bearer token.
+    It can be used for instance to write code like:
+    .. code-block:: python
+        from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+        credential = DefaultAzureCredential()
+        bearer_token_provider = get_bearer_token_provider(credential, "https://storage.azure.com/.default")
+        # Usage
+        request.headers["Authorization"] = "Bearer " + bearer_token_provider()
+    :param credential: The credential used to authenticate the request.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param str scopes: The scopes required for the bearer token.
+    :rtype: callable
+    :return: A callable that returns a bearer token.
+    """
+    policy = BearerTokenCredentialPolicy(credential, *scopes)
+    def wrapper() -> str:
+        request = _make_request()
+        policy.on_request(request)
+        return request.http_request.headers["Authorization"][len("Bearer ") :]
+
+    return wrapper
+
+
+
+def get_bearer_token_provider_async(credential: AsyncTokenCredential, *scopes: str) -> Callable[[], Coroutine[Any, Any, str]]:
+    """Returns a callable that provides a bearer token.
+    It can be used for instance to write code like:
+    .. code-block:: python
+        from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
+        credential = DefaultAzureCredential()
+        bearer_token_provider = get_bearer_token_provider(credential, "https://storage.azure.com/.default")
+        # Usage
+        request.headers["Authorization"] = "Bearer " + await bearer_token_provider()
+    :param credential: The credential used to authenticate the request.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param str scopes: The scopes required for the bearer token.
+    :rtype: coroutine
+    :return: A coroutine that returns a bearer token.
+    """
+    policy = AsyncBearerTokenCredentialPolicy(credential, *scopes)
+    async def wrapper() -> str:
+        request = _make_request()
+        await policy.on_request(request)
+        return request.http_request.headers["Authorization"][len("Bearer ") :]
+
+    return wrapper
+# ---- copy/pasted in for now ---------------------------------------------------------------------------
+
+# controls whether we run tests against v0 or v1. Options: v0 or v1. Default: v1
+ENV_OPENAI_TEST_MODE = "OPENAI_TEST_MODE"
+
 # for pytest.parametrize
 ALL = ["azure", "azuread", "openai"]
 AZURE = "azure"
@@ -96,8 +164,8 @@ def azure_openai_creds():
 
 @pytest.fixture
 def client(api_type):
-    if os.getenv("OPENAI_TEST_MODE") != "v1":
-        pytest.skip(f"Skipping - tests set to run against v1.")
+    if os.getenv(ENV_OPENAI_TEST_MODE, "v1") != "v1":
+        pytest.skip("Skipping - tests set to run against v1.")
     if api_type == "azure":
         client = openai.AzureOpenAI(
             endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
@@ -107,7 +175,7 @@ def client(api_type):
     elif api_type == "azuread":
         client = openai.AzureOpenAI(
             endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
-            get_ad_token=DefaultAzureCredential(),
+            azure_ad_token_provider=get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
     elif api_type == "openai":
@@ -123,7 +191,7 @@ def client(api_type):
     elif api_type == "whisper_azuread":
         client = openai.AzureOpenAI(
             endpoint=os.getenv(ENV_AZURE_OPENAI_WHISPER_ENDPOINT),
-            get_ad_token=DefaultAzureCredential(),
+            azure_ad_token_provider=get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
 
@@ -132,8 +200,8 @@ def client(api_type):
 
 @pytest.fixture
 def client_async(api_type):
-    if os.getenv("OPENAI_TEST_MODE") != "v1":
-        pytest.skip(f"Skipping - tests set to run against v1.")
+    if os.getenv(ENV_OPENAI_TEST_MODE, "v1") != "v1":
+        pytest.skip("Skipping - tests set to run against v1.")
     if api_type == "azure":
         client = openai.AsyncAzureOpenAI(
             endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
@@ -143,7 +211,7 @@ def client_async(api_type):
     elif api_type == "azuread":
         client = openai.AsyncAzureOpenAI(
             endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
-            get_ad_token=AsyncDefaultAzureCredential(),
+            azure_ad_token_provider=get_bearer_token_provider_async(AsyncDefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
     elif api_type == "openai":
@@ -159,7 +227,7 @@ def client_async(api_type):
     elif api_type == "whisper_azuread":
         client = openai.AsyncAzureOpenAI(
             endpoint=os.getenv(ENV_AZURE_OPENAI_WHISPER_ENDPOINT),
-            get_ad_token=AsyncDefaultAzureCredential(),
+            azure_ad_token_provider=get_bearer_token_provider_async(AsyncDefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
 
@@ -173,7 +241,7 @@ def build_kwargs(args, api_type):
             return {"model": ENV_AZURE_OPENAI_AUDIO_NAME}
         elif api_type == "openai":
             return {"model": ENV_OPENAI_AUDIO_MODEL}
-    if test_feature.startswith("test_chat_completions"):
+    if test_feature.startswith("test_chat_completions") or test_feature.startswith("test_client"):
         if api_type in ["azure", "azuread"]:
             return {"model": ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME}
         elif api_type == "openai":
@@ -228,8 +296,8 @@ def configure(f):
 
 @pytest.fixture
 def set_vars(api_type):
-    if os.getenv("OPENAI_TEST_MODE") != "v0":
-        pytest.skip(f"Skipping - tests set to run against v0.")
+    if os.getenv(ENV_OPENAI_TEST_MODE, "v1") != "v0":
+        pytest.skip("Skipping - tests set to run against v0.")
 
     if api_type == "azure":
         openai.api_base = os.getenv(ENV_AZURE_OPENAI_ENDPOINT).rstrip("/")
