@@ -296,15 +296,15 @@ Get-AzAccessToken -ResourceUrl "https://management.core.windows.net"
 
 ## Troubleshoot WAM+MSA login issues
 
-When using `InteractiveBrowserCredential`, by default, only the Microsoft Entra account is listed:
+When using brokered authentication via the `azure-identity-broker` package on Windows, `InteractiveBrowserBrokerCredential` only lists Microsoft Entra accounts by default:
 
 ![MSA Microsoft Entra only](./images/MSA1.png)
 
-If you choose "Use another account" and type in an MSA outlook.com account, it fails:
+If you choose "Use another account", and type in an MSA outlook.com account, it fails:
 
 ![Fail on use another account](./images/MSA2.png)
 
-Since azure-identity 1.15.0b1, you can set `enable_msa_passthrough`` to `True`, and MSA outlook.com accounts that are logged in to Windows are automatically listed:
+When constructing the credential, you can set the `enable_msa_passthrough` keyword argument to `True`, and MSA outlook.com accounts that are logged in to Windows are automatically listed:
 
 ![Enable MSA](./images/MSA3.png)
 
