@@ -27,20 +27,18 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
 class PipelineComponentBatchDeployment(Deployment):
     """Job Definition entity.
 
-    :param type: Job definition type. Allowed value is: pipeline
-    :type type: str
-    :param name: Job name
-    :type name: str
-    :param job: Job definition
-    :type job: Union[Job, str]
-    :param component: Component definition
-    :type component: Union[Component, str]
-    :param settings: Job settings
-    :type settings: Dict[str, Any]
-    :param description: Job description.
-    :type description: str
-    :param tags: Job tags
-    :type tags: Dict[str, Any]
+    :param type: Job definition type. Allowed value: "pipeline"
+    :type type: Optional[str]
+    :param name: Name of the deployment resource.
+    :type name: Optional[str]
+    :param component: Component definition.
+    :type component: Optional[Union[Component, str]]
+    :param settings: Run-time settings for the pipeline job.
+    :type settings: Optional[Dict[str, Any]]
+    :param description: The description which will be applied to the job.
+    :type description: Optional[str]
+    :param tags: A set of tags. The tags which will be applied to the job.
+    :type tags: Optional[Dict[str, Any]]
     """
 
     def __init__(
