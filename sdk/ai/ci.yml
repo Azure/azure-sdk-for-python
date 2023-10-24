@@ -40,6 +40,3 @@ extends:
       safeName: azureaigenerative
     - name: azure-ai-resources
       safeName: azureairesources
-
-variables:
-  Skip.Test: true
