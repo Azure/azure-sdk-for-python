@@ -2,6 +2,6 @@
 ../../core/azure-core
 -e ../../../tools/azure-devtools
 ../../identity/azure-identity
+-e .[cognitive_search,document_parsing,evaluate,faiss,hugging_face,index,promptflow,qa_generation,simulator]
 pytest
 pytest-xdist
-azure-cli>=2.30.0
