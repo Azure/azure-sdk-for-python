@@ -15,11 +15,10 @@ from azure.communication.jobrouter._shared.utils import parse_connection_str
 
 
 class RouterPreparersAsync(object):
-
     @staticmethod
     def before_test_execute_async(
-            method_name,  # type: str
-            **kwargs  # type: Any
+        method_name,  # type: str
+        **kwargs  # type: Any
     ):
         def __decorator__(func):
             @functools.wraps(func)
@@ -35,8 +34,8 @@ class RouterPreparersAsync(object):
 
     @staticmethod
     def after_test_execute_async(
-            method_name,  # type: str
-            **kwargs  # type: Any
+        method_name,  # type: str
+        **kwargs  # type: Any
     ):
         def __decorator__(func):
             @functools.wraps(func)
@@ -51,7 +50,7 @@ class RouterPreparersAsync(object):
                     try:
                         await first_method()
                     except:
-                        print("") # Consume exceptions
+                        print("")  # Consume exceptions
 
             return wrapper
 
@@ -61,7 +60,7 @@ class RouterPreparersAsync(object):
     def router_test_decorator_async(func: Callable[[], object], **kwargs: Any):
         async def wrapper(self, *args, **kwargs):
             if is_live() or is_live_and_not_recording():
-                self.connection_string = os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING')
+                self.connection_string = os.getenv("COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING")
                 endpoint, _ = parse_connection_str(self.connection_string)
                 self.resource_name = endpoint.split(".")[0]
             else:

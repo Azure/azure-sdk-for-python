@@ -55,6 +55,7 @@
     "sdk/core/azure-core-tracing-opencensus/**",
     "sdk/core/azure-core-tracing-opentelemetry/**",
     "sdk/core/azure-servicemanagement-legacy/**",
+    "sdk/core/corehttp/**",
     "sdk/digitaltwins/azure-digitaltwins-core/**",
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
@@ -99,7 +100,7 @@
     "sdk/translation/azure-ai-translation-text/tests/test_transliteration.py",
     "sdk/translation/azure-ai-translation-text/tests/test_break_sentence_async.py",
     "sdk/translation/azure-ai-translation-text/tests/test_translation_async.py",
-    "sdk/translation/azure-ai-translation-text/tests/test_transliteration_async.py",    
+    "sdk/translation/azure-ai-translation-text/tests/test_transliteration_async.py",
     "sdk/translation/test-resources.json",
     "eng/**/*.json",
     "eng/*.txt",
@@ -123,6 +124,12 @@
     "conda/conda-releaselogs/azure-mgmt.md"
   ],
   "words": [
+    "aoai",
+    "pyprojects",
+    "certifi",
+    "cffi",
+    "tomlw",
+    "xdist",
     "pyprojecttoml",
     "tomli",
     "sdkrel",
@@ -204,6 +211,7 @@
     "ekus",
     "encryptor",
     "engsys",
+    "entra",
     "envname",
     "evals",
     "fileno",
@@ -274,6 +282,7 @@
     "mhsm",
     "mipsle",
     "mktime",
+    "mlindex",
     "msal",
     "msrest",
     "msrestazure",
@@ -298,6 +307,8 @@
     "oidc",
     "onboarded",
     "onmicrosoft",
+    "openai",
+    "OPENAI",
     "owasp",
     "ownerid",
     "PBYTE",
@@ -423,9 +434,29 @@
     "dacl",
     "whls",
     "aiter",
-    "solft"
+    "solft",
+    "amltmp",
+    "amltemp"
   ],
   "overrides": [
+    {
+      "filename": "sdk/ai/**",
+      "words": [
+        "azureml",
+        "mlflow",
+        "tika",
+        "pypdf",
+        "fsspec",
+        "openai",
+        "tiktoken",
+        "vectordb",
+        "pybase",
+        "mlindex",
+        "mlindexes",
+        "aoai",
+        "faiss"
+      ]
+    },
     {
       "filename": "doc/sphinx/generate_doc.py",
       "words": [
@@ -496,7 +527,7 @@
       "words": [
         "wammsa"
       ]
-    },    
+    },
     {
       "filename": "sdk/tables/azure-data-tables/tests/**/*.py",
       "words": [
@@ -831,7 +862,8 @@
     {
       "filename": "sdk/keyvault/**",
       "words": [
-        "eddsa"
+        "eddsa",
+        "Thawte"
       ]
     },
     {
@@ -1557,7 +1589,9 @@
         "mros",
         "deserializers",
         "ctxt",
-        "wday"
+        "wday",
+        "JSONify",
+        "Nify"
       ]
     },
     {

@@ -32,7 +32,7 @@ extends:
     # Override the base matrix due to https://github.com/Azure/azure-sdk-for-python/issues/17837
     MatrixConfigs:
       - Name: eventhub_ci_matrix
-        Path: eng/pipelines/templates/stages/platform-matrix-cryptography-dependency.json
+        Path: eng/pipelines/templates/stages/platform-matrix.json
         Selection: sparse
         GenerateVMJobs: true
     MatrixFilters:

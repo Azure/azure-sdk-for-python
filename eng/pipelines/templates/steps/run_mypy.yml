@@ -18,15 +18,14 @@ steps:
     condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'))
 
   - script: |
-      python -m pip install setuptools==58.3.0
-      pip install -r eng/ci_tools.txt
+      python -m pip install -r eng/ci_tools.txt
     displayName: 'Prep Environment'
     condition: and(succeededOrFailed(), ne(variables['Skip.MyPy'],'true'))
 
   - task: PythonScript@0
     displayName: 'Run MyPy'
     inputs:
-      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
       arguments: >-
         "$(TargetingString)" 
         --mark_arg="${{ parameters.TestMarkArgument }}" 

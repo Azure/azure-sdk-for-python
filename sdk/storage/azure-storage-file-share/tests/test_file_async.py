@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 import pytest
 import requests
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.storage.blob.aio import BlobServiceClient
 from azure.storage.fileshare import (
     AccessPolicy,
@@ -3711,3 +3711,75 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         assert 'file2' == new_file.file_name
         props = await new_file.get_file_properties()
         assert props is not None
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_storage_account_audience_file_client(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key
+        )
+        await file_client.create_file(1024)
+
+        resp = await file_client.get_file_properties()
+        assert resp is not None
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=token_credential,
+            token_intent=TEST_INTENT,
+            audience=f'https://{storage_account_name}.file.core.windows.net'
+        )
+
+        # Assert
+        response = await file_client.get_file_properties()
+        assert response is not None
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_bad_audience_file_client(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key
+        )
+        await file_client.create_file(1024)
+
+        resp = await file_client.get_file_properties()
+        assert resp is not None
+
+        # Act
+        token_credential = self.generate_oauth_token()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=token_credential,
+            token_intent=TEST_INTENT,
+            audience=f'https://badaudience.file.core.windows.net'
+        )
+
+        # Assert
+        with pytest.raises(ClientAuthenticationError):
+            await file_client.get_file_properties()
