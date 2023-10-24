@@ -96,7 +96,8 @@ async def example_create_servicebus_receiver_async():
     queue_name = os.environ['SERVICEBUS_QUEUE_NAME']
     queue_receiver = ServiceBusReceiver._from_connection_string(
         conn_str=servicebus_connection_str,
-        queue_name=queue_name
+        queue_name=queue_name,
+        max_wait_time=5
     )
     # [END create_servicebus_receiver_from_conn_str_async]
 
@@ -108,7 +109,7 @@ async def example_create_servicebus_receiver_async():
     queue_name = os.environ['SERVICEBUS_QUEUE_NAME']
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
     async with servicebus_client:
-        queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name, sub_queue=ServiceBusSubQueue.DEAD_LETTER)
+        queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name, sub_queue=ServiceBusSubQueue.DEAD_LETTER, max_wait_time=5)
     # [END create_queue_deadletter_receiver_from_sb_client_async]
 
     # [START create_servicebus_receiver_from_sb_client_async]
@@ -118,7 +119,7 @@ async def example_create_servicebus_receiver_async():
     queue_name = os.environ['SERVICEBUS_QUEUE_NAME']
     servicebus_client = ServiceBusClient.from_connection_string(conn_str=servicebus_connection_str)
     async with servicebus_client:
-        queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name)
+        queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name, max_wait_time=5)
     # [END create_servicebus_receiver_from_sb_client_async]
 
     # [START create_subscription_deadletter_receiver_from_sb_client_async]
@@ -133,7 +134,8 @@ async def example_create_servicebus_receiver_async():
         subscription_receiver = servicebus_client.get_subscription_receiver(
             topic_name=topic_name,
             subscription_name=subscription_name,
-            sub_queue=ServiceBusSubQueue.DEAD_LETTER
+            sub_queue=ServiceBusSubQueue.DEAD_LETTER,
+            max_wait_time=5
         )
     # [END create_subscription_deadletter_receiver_from_sb_client_async]
 
@@ -148,10 +150,11 @@ async def example_create_servicebus_receiver_async():
         subscription_receiver = servicebus_client.get_subscription_receiver(
             topic_name=topic_name,
             subscription_name=subscription_name,
+            max_wait_time=5
         )
     # [END create_subscription_receiver_from_sb_client_async]
 
-    queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name)
+    queue_receiver = servicebus_client.get_queue_receiver(queue_name=queue_name, max_wait_time=5)
     return queue_receiver
 
 
@@ -183,7 +186,7 @@ async def example_send_and_receive_async():
     servicebus_receiver = await example_create_servicebus_receiver_async()
     # [START receive_async]
     async with servicebus_receiver:
-        messages = await servicebus_receiver.receive_messages(max_wait_time=5)
+        messages = await servicebus_receiver.receive_messages()
         for message in messages:
             print(str(message))
             await servicebus_receiver.complete_message(message)
@@ -199,31 +202,31 @@ async def example_send_and_receive_async():
             break
 
         # [START abandon_message_async]
-        messages = await servicebus_receiver.receive_messages(max_wait_time=5)
+        messages = await servicebus_receiver.receive_messages()
         for message in messages:
             await servicebus_receiver.abandon_message(message)
         # [END abandon_message_async]
 
         # [START complete_message_async]
-        messages = await servicebus_receiver.receive_messages(max_wait_time=5)
+        messages = await servicebus_receiver.receive_messages()
         for message in messages:
             await servicebus_receiver.complete_message(message)
         # [END complete_message_async]
 
         # [START defer_message_async]
-        messages = await servicebus_receiver.receive_messages(max_wait_time=5)
+        messages = await servicebus_receiver.receive_messages()
         for message in messages:
             await servicebus_receiver.defer_message(message)
         # [END defer_message_async]
 
         # [START dead_letter_message_async]
-        messages = await servicebus_receiver.receive_messages(max_wait_time=5)
+        messages = await servicebus_receiver.receive_messages()
         for message in messages:
             await servicebus_receiver.dead_letter_message(message)
         # [END dead_letter_message_async]
 
         # [START renew_message_lock_async]
-        messages = await servicebus_receiver.receive_messages(max_wait_time=5)
+        messages = await servicebus_receiver.receive_messages()
         for message in messages:
             await servicebus_receiver.renew_message_lock(message)
         # [END renew_message_lock_async]
@@ -251,7 +254,7 @@ async def example_receive_deferred_async():
     # [START receive_defer_async]
     async with servicebus_receiver:
         deferred_sequenced_numbers = []
-        messages = await servicebus_receiver.receive_messages(max_wait_time=5)
+        messages = await servicebus_receiver.receive_messages()
         for message in messages:
             deferred_sequenced_numbers.append(message.sequence_number)
             print(str(message))
@@ -275,8 +278,8 @@ async def example_receive_deadletter_async():
         async with servicebus_client.get_queue_sender(queue_name) as servicebus_sender:
             await servicebus_sender.send_messages(ServiceBusMessage("Hello World"))
         # [START receive_deadletter_async]
-        async with servicebus_client.get_queue_receiver(queue_name) as servicebus_receiver:
-            messages = await servicebus_receiver.receive_messages(max_wait_time=5)
+        async with servicebus_client.get_queue_receiver(queue_name, max_wait_time=5) as servicebus_receiver:
+            messages = await servicebus_receiver.receive_messages()
             for message in messages:
                 await servicebus_receiver.dead_letter_message(
                     message,
@@ -284,8 +287,8 @@ async def example_receive_deadletter_async():
                     error_description='description for dead lettering'
                 )
 
-        async with servicebus_client.get_queue_receiver(queue_name, sub_queue=ServiceBusSubQueue.DEAD_LETTER) as servicebus_deadletter_receiver:
-            messages = await servicebus_deadletter_receiver.receive_messages(max_wait_time=5)
+        async with servicebus_client.get_queue_receiver(queue_name, sub_queue=ServiceBusSubQueue.DEAD_LETTER, max_wait_time=5) as servicebus_deadletter_receiver:
+            messages = await servicebus_deadletter_receiver.receive_messages()
             for message in messages:
                 await servicebus_deadletter_receiver.complete_message(message)
         # [END receive_deadletter_async]

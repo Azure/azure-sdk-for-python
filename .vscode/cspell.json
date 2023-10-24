@@ -430,9 +430,29 @@
     "dacl",
     "whls",
     "aiter",
-    "solft"
+    "solft",
+    "amltmp",
+    "amltemp"
   ],
   "overrides": [
+    {
+      "filename": "sdk/ai/**",
+      "words": [
+        "azureml",
+        "mlflow",
+        "tika",
+        "pypdf",
+        "fsspec",
+        "openai",
+        "tiktoken",
+        "vectordb",
+        "pybase",
+        "mlindex",
+        "mlindexes",
+        "aoai",
+        "faiss"
+      ]
+    },
     {
       "filename": "doc/sphinx/generate_doc.py",
       "words": [

@@ -2,6 +2,5 @@
 ../../core/azure-core
 -e ../../../tools/azure-devtools
 ../../identity/azure-identity
-pytest,
-pytest-xdist,
-azure-cli>=2.30.0
+pytest
+pytest-xdist

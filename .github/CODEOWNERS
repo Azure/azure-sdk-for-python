@@ -43,6 +43,9 @@
 # Service team
 ####
 
+# PRLabel: %AI
+/sdk/ai/                                                             @luigiw @needuv @paulshealy1 @singankit
+
 # PRLabel: %AgriFood
 /sdk/agrifood/azure-agrifood-farming/                                @bhargav-kansagara
 
