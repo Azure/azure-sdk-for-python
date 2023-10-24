@@ -85,7 +85,7 @@ class Simulator:
 
     async def simulate_async(
         self,
-        template: str,
+        template: "Template",
         parameters: dict,
         max_conversation_turns: int,
         api_call_retry_max_count: int = 3,
@@ -93,13 +93,14 @@ class Simulator:
         api_call_delay_sec: float = 0,
     ):
         # create user bot
-        gpt_bot = self.setup_bot(ConversationRole.USER, template, parameters)
+        gpt_bot = self.setup_bot(ConversationRole.USER, str(template), parameters)
 
         if self.userConnection == None:
             bots = [gpt_bot]
         else:
             customer_bot = self.setup_bot(
-                ConversationRole.ASSISTANT, template, parameters
+                # initialize with basic.md template
+                ConversationRole.ASSISTANT, str(template), parameters
             )
             bots = [gpt_bot, customer_bot]
         # simulate the conversation
@@ -119,33 +120,34 @@ class Simulator:
                 api_call_delay_sec=api_call_delay_sec,
                 template_paramaters=parameters,
             )
-        formatted_conversation = {
-            "conversation_id": conversation_id,
-            "conversation": [
-                turn.to_annotation_format(turn_number=turn_number)
-                for (turn_number, turn) in enumerate(conversation_history)
-            ],
-            "meta_data": parameters,
-        }
-        return self.to_chat_protocol(formatted_conversation)
+        # formatted_conversation = {
+        #     "conversation_id": conversation_id,
+        #     "conversation": [
+        #         turn.to_annotation_format(turn_number=turn_number)
+        #         for (turn_number, turn) in enumerate(conversation_history)
+        #     ],
+        #     "meta_data": parameters,
+        # }
+        return self.to_chat_protocol(template, conversation_history, parameters)
 
-    def to_chat_protocol(self, formatted_conversation):
-        c = formatted_conversation
-        conver_list = c["conversation"]
-
-        metadata = c["meta_data"]
-        conv_id = c["conversation_id"]
-
+    def to_chat_protocol(self, template, conversation_history, template_parameters):
         messages = []
 
-        for m in conver_list:
+        for i, m in enumerate(conversation_history):
             messages.append(
                 {
-                    "content": m["response"],
-                    "role": m["actor"],
-                    "turn_number": m["turn_number"],
-                    "meta_data": metadata,
-                    "conversation_id": conv_id,
+                    "content": m.message,
+                    "role": m.role.value,
+                    "turn_number": i,
+                    "template_parameters": template_parameters,
+                    "context": {
+                        "citations": [
+                            {
+                                "id": template.context_key,
+                                "content": template_paramaters[template.context_key]
+                            }
+                        ]
+                    }
                 }
             )
 

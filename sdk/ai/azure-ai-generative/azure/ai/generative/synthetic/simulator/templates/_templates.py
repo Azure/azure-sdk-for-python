@@ -17,8 +17,6 @@ CONTEXT_KEY = {
     "search": []
 }
 
-CONVERSATION_CONTEXT_KEY = ["metadata"]
-SUMMARIZATION_CONTEXT_KEY = [""]
 
 ALL_TEMPLATES = {
     "conversation": CONVERSATION_PATH,
