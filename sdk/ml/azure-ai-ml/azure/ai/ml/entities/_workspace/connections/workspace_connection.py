@@ -198,6 +198,9 @@ class WorkspaceConnection(Resource):
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
         schema_class = WorkspaceConnection._get_schema_class_from_type(self.type)
+        # Not sure what this pylint complaint was about, probably due to the polymorphic
+        # tricks at play. Disabling since testing indicates no issue.
+        # pylint: disable=missing-kwoa
         return schema_class(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod
@@ -271,6 +274,9 @@ class WorkspaceConnection(Resource):
             fields into the connection's initializer. Needed for subclasses that require extra inputs compared
             to the base WorkspaceConnection class.
         :type popped_tags: List[str]
+
+        :return: A dictionary containing all kwargs needed to construct a workspace connection.
+        :rtype: Dict[str, str]
         """
         properties = rest_obj.properties
         if properties.auth_type == ConnectionAuthType.PAT:
@@ -312,6 +318,9 @@ class WorkspaceConnection(Resource):
 
         :param conn_type: The connection type.
         :type conn_type: str
+
+        :return: The workspace connection class the conn_type corresponds to.
+        :rtype: Type
         """
         if conn_type is None:
             return WorkspaceConnection
@@ -340,6 +349,9 @@ class WorkspaceConnection(Resource):
 
         :param conn_type: The connection type.
         :type conn_type: str
+
+        :return: The workspace connection schema class the conn_type corresponds to.
+        :rtype: Type
         """
         if conn_type is None:
             return WorkspaceConnection
