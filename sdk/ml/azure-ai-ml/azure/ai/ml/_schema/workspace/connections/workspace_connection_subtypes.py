@@ -46,7 +46,7 @@ class CognitiveSearchWorkspaceConnectionSchema(WorkspaceConnectionSchema):
         return CognitiveSearchWorkspaceConnection(**data)
 
 
-# pylint disable-next=name-too-long
+# pylint: disable-next=name-too-long
 class CognitiveServiceWorkspaceConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
