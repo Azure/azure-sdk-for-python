@@ -131,6 +131,13 @@ class MonitorFeatureFilter(RestTranslatableMixin):
 
 @experimental
 class BaselineDataRange:
+    """Baseline data range for monitoring.
+    
+    This class is used when initializing a data_window for a ReferenceData object.
+    For trailing input, set trailing_window_size and trailing_window_offset to a desired value.
+    For static input, set window_start and window_end to a desired value.
+    
+    """
     def __init__(
         self,
         *,
