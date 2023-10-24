@@ -182,7 +182,7 @@ class TestCompletions(AzureRecordedTestCase):
         assert len(completion.choices) == 3
         for idx, c in enumerate(completion.choices):
             assert c.index == idx
-            assert c.text
+            assert c.text is not None
 
     @configure
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
@@ -277,6 +277,7 @@ class TestCompletions(AzureRecordedTestCase):
         assert completion.choices[0].index is not None
         assert completion.choices[0].text
 
+    @configure
     @pytest.mark.parametrize("api_type", [AZURE])
     def test_completion_best_of(self, client, azure_openai_creds, api_type, **kwargs):
 
@@ -350,7 +351,7 @@ class TestCompletions(AzureRecordedTestCase):
         with pytest.raises(openai.BadRequestError) as e:
             completion = client.completions.create(
                 prompt="how do I rob a bank with violence?",
-                deployment_id=azure_openai_creds["completions_name"]
+                model=azure_openai_creds["completions_name"]
             )
         err = json.loads(e.value.response.text)
         assert err["error"]["code"] == "content_filter"

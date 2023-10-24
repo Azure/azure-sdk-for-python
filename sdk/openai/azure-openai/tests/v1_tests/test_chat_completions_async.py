@@ -7,20 +7,21 @@ import pytest
 import json
 import openai
 from devtools_testutils import AzureRecordedTestCase
-from conftest import AZURE, OPENAI, ALL, AZURE_AD, configure
+from conftest import AZURE, OPENAI, ALL, AZURE_AD, configure_async
 
 
-class TestChatCompletions(AzureRecordedTestCase):
+class TestChatCompletionsAsync(AzureRecordedTestCase):
 
-    @configure
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", ALL)
-    def test_chat_completion(self, client, azure_openai_creds, api_type, **kwargs):
+    async def test_chat_completion(self, client_async, azure_openai_creds, api_type, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020?"}
         ]
 
-        completion = client.chat.completions.create(messages=messages, **kwargs)
+        completion = await client_async.chat.completions.create(messages=messages, **kwargs)
         assert completion.id
         assert completion.object == "chat.completion"
         assert completion.model
@@ -34,17 +35,18 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.content
         assert completion.choices[0].message.role
 
-    @configure
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    def test_streamed_chat_completions(self, client, azure_openai_creds, api_type, **kwargs):
+    async def test_streamed_chat_completions(self, client_async, azure_openai_creds, api_type, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "How do I bake a chocolate cake?"}
         ]
 
-        response = client.chat.completions.create(messages=messages, stream=True, **kwargs)
+        response = await client_async.chat.completions.create(messages=messages, stream=True, **kwargs)
 
-        for completion in response:
+        async for completion in response:
             # API versions after 2023-05-15 send an empty first completion with RAI
             if len(completion.choices) > 0:
                 assert completion.id
@@ -55,15 +57,16 @@ class TestChatCompletions(AzureRecordedTestCase):
                     assert c.index is not None
                     assert c.delta is not None
 
-    @configure
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    def test_chat_completion_max_tokens(self, client, azure_openai_creds, api_type, **kwargs):
+    async def test_chat_completion_max_tokens(self, client_async, azure_openai_creds, api_type, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020?"}
         ]
 
-        completion = client.chat.completions.create(messages=messages, max_tokens=50, **kwargs)
+        completion = await client_async.chat.completions.create(messages=messages, max_tokens=50, **kwargs)
 
         assert completion.id
         assert completion.object == "chat.completion"
@@ -78,15 +81,16 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.content
         assert completion.choices[0].message.role
 
-    @configure
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    def test_chat_completion_temperature(self, client, azure_openai_creds, api_type, **kwargs):
+    async def test_chat_completion_temperature(self, client_async, azure_openai_creds, api_type, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020?"}
         ]
 
-        completion = client.chat.completions.create(messages=messages, temperature=0.8, **kwargs)
+        completion = await client_async.chat.completions.create(messages=messages, temperature=0.8, **kwargs)
 
         assert completion.id
         assert completion.object == "chat.completion"
@@ -101,15 +105,16 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.content
         assert completion.choices[0].message.role
 
-    @configure
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    def test_chat_completion_top_p(self, client, azure_openai_creds, api_type, **kwargs):
+    async def test_chat_completion_top_p(self, client_async, azure_openai_creds, api_type, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020?"}
         ]
 
-        completion = client.chat.completions.create(messages=messages, top_p=0.1, **kwargs)
+        completion = await client_async.chat.completions.create(messages=messages, top_p=0.1, **kwargs)
 
         assert completion.id
         assert completion.object == "chat.completion"
@@ -124,15 +129,16 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.content
         assert completion.choices[0].message.role
 
-    @configure
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    def test_chat_completion_n(self, client, azure_openai_creds, api_type, **kwargs):
+    async def test_chat_completion_n(self, client_async, azure_openai_creds, api_type, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020?"}
         ]
 
-        completion = client.chat.completions.create(messages=messages, n=2, **kwargs)
+        completion = await client_async.chat.completions.create(messages=messages, n=2, **kwargs)
 
         assert completion.id
         assert completion.object == "chat.completion"
@@ -148,15 +154,16 @@ class TestChatCompletions(AzureRecordedTestCase):
             assert c.message.content
             assert c.message.role
 
-    @configure
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    def test_chat_completion_stop(self, client, azure_openai_creds, api_type, **kwargs):
+    async def test_chat_completion_stop(self, client_async, azure_openai_creds, api_type, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020?"}
         ]
 
-        completion = client.chat.completions.create(messages=messages, stop=" ", **kwargs)
+        completion = await client_async.chat.completions.create(messages=messages, stop=" ", **kwargs)
 
         assert completion.id
         assert completion.object == "chat.completion"
@@ -170,15 +177,16 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.content
         assert completion.choices[0].message.role
 
-    @configure
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    def test_chat_completion_token_penalty(self, client, azure_openai_creds, api_type, **kwargs):
+    async def test_chat_completion_token_penalty(self, client_async, azure_openai_creds, api_type, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020?"}
         ]
 
-        completion = client.chat.completions.create(
+        completion = await client_async.chat.completions.create(
             messages=messages,
             presence_penalty=2,
             frequency_penalty=2,
@@ -198,15 +206,16 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.content
         assert completion.choices[0].message.role
 
-    @configure
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    def test_chat_completion_user(self, client, azure_openai_creds, api_type, **kwargs):
+    async def test_chat_completion_user(self, client_async, azure_openai_creds, api_type, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "Who won the world series in 2020?"}
         ]
 
-        completion = client.chat.completions.create(
+        completion = await client_async.chat.completions.create(
             messages=messages,
             user="krista",
             **kwargs
@@ -225,15 +234,16 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.content
         assert completion.choices[0].message.role
 
-    @configure
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
-    def test_chat_completion_logit_bias(self, client, azure_openai_creds, api_type, **kwargs):
+    async def test_chat_completion_logit_bias(self, client_async, azure_openai_creds, api_type, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "What color is the ocean?"}
         ]
 
-        completion = client.chat.completions.create(
+        completion = await client_async.chat.completions.create(
             messages=messages,
             logit_bias={17585: -100, 14573: -100},
             **kwargs
@@ -251,8 +261,10 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.content
         assert completion.choices[0].message.role
 
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [AZURE])
-    def test_chat_completion_rai_annotations(self, client, azure_openai_creds, api_type, **kwargs):
+    async def test_chat_completion_rai_annotations(self, client_async, azure_openai_creds, api_type, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "how do I rob a bank with violence?"}
@@ -260,11 +272,10 @@ class TestChatCompletions(AzureRecordedTestCase):
 
         # prompt filtered
         with pytest.raises(openai.BadRequestError) as e:
-            completion = client.chat.completions.create(
+            completion = await client_async.chat.completions.create(
                 messages=messages,
                 **kwargs
             )
-        # error not captured
         err = json.loads(e.value.response.text)
         assert err["error"]["code"] == "content_filter"
         content_filter_result = err["error"]["innererror"]["content_filter_result"]
@@ -279,7 +290,7 @@ class TestChatCompletions(AzureRecordedTestCase):
 
         # not filtered
         messages[1]["content"] = "What color is the ocean?"
-        completion = client.chat.completions.create(
+        completion = await client_async.chat.completions.create(
             messages=messages,
             **kwargs
         )
@@ -309,8 +320,10 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert output_filter_result["violence"]["filtered"] is False
         assert output_filter_result["violence"]["severity"] == "safe"
 
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [OPENAI, AZURE])
-    def test_chat_completion_functions(self, client, azure_openai_creds, api_type, **kwargs):
+    async def test_chat_completion_functions(self, client_async, azure_openai_creds, api_type, **kwargs):
         messages = [
             {"role": "system", "content": "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."},
             {"role": "user", "content": "What's the weather like today in Seattle?"}
@@ -338,7 +351,7 @@ class TestChatCompletions(AzureRecordedTestCase):
             }
         ]
 
-        completion = client.chat.completions.create(
+        completion = await client_async.chat.completions.create(
             messages=messages,
             functions=functions,
             **kwargs
@@ -381,7 +394,7 @@ class TestChatCompletions(AzureRecordedTestCase):
                 "content": "{\"temperature\": \"22\", \"unit\": \"celsius\", \"description\": \"Sunny\"}"
             }
         )
-        function_completion = client.chat.completions.create(
+        function_completion = await client_async.chat.completions.create(
             messages=messages,
             functions=functions,
             **kwargs
@@ -403,8 +416,10 @@ class TestChatCompletions(AzureRecordedTestCase):
             assert output_filter_result["violence"]["filtered"] is False
             assert output_filter_result["violence"]["severity"] == "safe"
 
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [OPENAI, AZURE])
-    def test_chat_completion_functions_stream(self, client, azure_openai_creds, api_type, **kwargs):
+    async def test_chat_completion_functions_stream(self, client_async, azure_openai_creds, api_type, **kwargs):
         messages = [
             {"role": "system", "content": "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."},
             {"role": "user", "content": "What's the weather like today in Seattle?"}
@@ -432,14 +447,14 @@ class TestChatCompletions(AzureRecordedTestCase):
             }
         ]
 
-        response = client.chat.completions.create(
+        response = await client_async.chat.completions.create(
             messages=messages,
             functions=functions,
             stream=True,
             **kwargs
         )
         args = ""
-        for completion in response:
+        async for completion in response:
             for c in completion.choices:
                 assert c.delta is not None
                 if c.delta.function_call:
@@ -456,14 +471,14 @@ class TestChatCompletions(AzureRecordedTestCase):
                 "content": "{\"temperature\": \"22\", \"unit\": \"celsius\", \"description\": \"Sunny\"}"
             }
         )
-        function_completion = client.chat.completions.create(
+        function_completion = await client_async.chat.completions.create(
             messages=messages,
             functions=functions,
             stream=True,
             **kwargs
         )
         content = ""
-        for completion in function_completion:
+        async for completion in function_completion:
             for c in completion.choices:
                 assert c.delta is not None
                 if c.delta.content:
@@ -473,8 +488,10 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert "sunny" in content.lower()
         assert "22" in content
 
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [OPENAI, AZURE])
-    def test_chat_completion_given_function(self, client, azure_openai_creds, api_type, **kwargs):
+    async def test_chat_completion_given_function(self, client_async, azure_openai_creds, api_type, **kwargs):
         messages = [
             {"role": "system", "content": "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."},
             {"role": "user", "content": "What's the weather like today in Seattle?"}
@@ -521,7 +538,7 @@ class TestChatCompletions(AzureRecordedTestCase):
             }
         ]
 
-        completion = client.chat.completions.create(
+        completion = await client_async.chat.completions.create(
             messages=messages,
             functions=functions,
             function_call={"name": "get_current_temperature"},
@@ -549,7 +566,7 @@ class TestChatCompletions(AzureRecordedTestCase):
                 "content": "{\"temperature\": \"22\", \"unit\": \"celsius\"}"
             }
         )
-        function_completion = client.chat.completions.create(
+        function_completion = await client_async.chat.completions.create(
             messages=messages,
             functions=functions,
             **kwargs
@@ -558,8 +575,10 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert "22" in function_completion.choices[0].message.content
         assert function_completion.choices[0].message.role == "assistant"
 
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [AZURE])
-    def test_chat_completion_functions_rai(self, client, azure_openai_creds, api_type, **kwargs):
+    async def test_chat_completion_functions_rai(self, client_async, azure_openai_creds, api_type, **kwargs):
         messages = [
             {"role": "system", "content": "Don't make assumptions about what values to plug into functions. Ask for clarification if a user request is ambiguous."},
             {"role": "user", "content": "how do I rob a bank with violence?"}
@@ -588,12 +607,11 @@ class TestChatCompletions(AzureRecordedTestCase):
         ]
 
         with pytest.raises(openai.BadRequestError) as e:
-            response = client.chat.completions.create(
+            response = await client_async.chat.completions.create(
                 messages=messages,
                 functions=functions,
                 **kwargs
             )
-        # error not captured
         err = json.loads(e.value.response.text)
         assert err["error"]["code"] == "content_filter"
         content_filter_result = err["error"]["innererror"]["content_filter_result"]
@@ -614,7 +632,7 @@ class TestChatCompletions(AzureRecordedTestCase):
             }
         )
         with pytest.raises(openai.BadRequestError) as e:
-            function_completion = client.chat.completions.create(
+            function_completion = await client_async.chat.completions.create(
                 messages=messages,
                 functions=functions,
                 **kwargs
@@ -631,15 +649,17 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert content_filter_result["violence"]["filtered"] is True
         assert content_filter_result["violence"]["severity"] is not None
 
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [AZURE, AZURE_AD])
-    def test_chat_completion_byod(self, client, azure_openai_creds, api_type, **kwargs):
+    async def test_chat_completion_byod(self, client_async, azure_openai_creds, api_type, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "How is Azure machine learning different than Azure OpenAI?"}
         ]
 
-        completion = client.chat.completions.create(
-            model=azure_openai_creds["chat_completions_name"],
+        completion = await client_async.chat.completions.create(
+            model=f"{azure_openai_creds['chat_completions_name']}/extensions",
             messages=messages,
             extra_body={
                 "dataSources":[
@@ -652,7 +672,7 @@ class TestChatCompletions(AzureRecordedTestCase):
                         }
                     }
                 ],
-            }
+            },
         )
         assert completion.id
         assert completion.object == "extensions.chat.completion"
@@ -666,15 +686,17 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.choices[0].message.model_extra["context"]["messages"][0]["role"] == "tool"
         assert completion.choices[0].message.model_extra["context"]["messages"][0]["content"]
 
+    @configure_async
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("api_type", [AZURE])
-    def test_streamed_chat_completions_byod(self, client, azure_openai_creds, api_type, **kwargs):
+    async def test_streamed_chat_completions_byod(self, client_async, azure_openai_creds, api_type, **kwargs):
         messages = [
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": "How is Azure machine learning different than Azure OpenAI?"}
         ]
 
-        response = client.chat.completions.create(
-            model=azure_openai_creds["chat_completions_name"],
+        response = await client_async.chat.completions.create(
+            model=f"{azure_openai_creds['chat_completions_name']}/extensions",
             messages=messages,
             extra_body={
                 "dataSources":[
@@ -690,7 +712,7 @@ class TestChatCompletions(AzureRecordedTestCase):
             },
             stream=True
         )
-        for chunk in response:
+        async for chunk in response:
             assert chunk.id
             assert chunk.object == "extensions.chat.completion.chunk"
             assert chunk.created

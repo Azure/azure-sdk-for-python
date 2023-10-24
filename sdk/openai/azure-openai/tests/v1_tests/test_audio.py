@@ -8,8 +8,8 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase
 from conftest import WHISPER_AZURE, OPENAI, WHISPER_ALL, configure
 
-audio_test_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./assets/hello.m4a"))
-audio_long_test_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./assets/wikipediaOcelot.wav"))
+audio_test_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./assets/hello.m4a"))
+audio_long_test_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./assets/wikipediaOcelot.wav"))
 
 class TestAudio(AzureRecordedTestCase):
 

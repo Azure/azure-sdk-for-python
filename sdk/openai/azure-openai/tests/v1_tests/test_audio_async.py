@@ -8,8 +8,8 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase
 from conftest import WHISPER_AZURE, OPENAI, WHISPER_ALL, configure_async
 
-audio_test_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./assets/hello.m4a"))
-audio_long_test_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./assets/wikipediaOcelot.wav"))
+audio_test_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./assets/hello.m4a"))
+audio_long_test_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./assets/wikipediaOcelot.wav"))
 
 
 class TestAudioAsync(AzureRecordedTestCase):
@@ -80,16 +80,16 @@ class TestAudioAsync(AzureRecordedTestCase):
         assert result.language == "english"
         assert result.duration == 56.25
         for segment in result.segments:
-            assert segment.id is not None
-            assert segment.seek is not None
-            assert segment.start is not None
-            assert segment.end is not None
-            assert segment.text is not None
-            assert segment.tokens is not None
-            assert segment.temperature is not None
-            assert segment.avg_logprob is not None
-            assert segment.compression_ratio is not None
-            assert segment.no_speech_prob is not None
+            assert segment["id"] is not None
+            assert segment["seek"] is not None
+            assert segment["start"] is not None
+            assert segment["end"] is not None
+            assert segment["text"] is not None
+            assert segment["tokens"] is not None
+            assert segment["temperature"] is not None
+            assert segment["avg_logprob"] is not None
+            assert segment["compression_ratio"] is not None
+            assert segment["no_speech_prob"] is not None
 
     @configure_async
     @pytest.mark.asyncio
@@ -149,16 +149,16 @@ class TestAudioAsync(AzureRecordedTestCase):
         assert result.language == "english"
         assert result.duration == 56.25
         for segment in result.segments:
-            assert segment.id is not None
-            assert segment.seek is not None
-            assert segment.start is not None
-            assert segment.end is not None
-            assert segment.text is not None
-            assert segment.tokens is not None
-            assert segment.temperature is not None
-            assert segment.avg_logprob is not None
-            assert segment.compression_ratio is not None
-            assert segment.no_speech_prob is not None
+            assert segment["id"] is not None
+            assert segment["seek"] is not None
+            assert segment["start"] is not None
+            assert segment["end"] is not None
+            assert segment["text"] is not None
+            assert segment["tokens"] is not None
+            assert segment["temperature"] is not None
+            assert segment["avg_logprob"] is not None
+            assert segment["compression_ratio"] is not None
+            assert segment["no_speech_prob"] is not None
 
     @configure_async
     @pytest.mark.asyncio

@@ -12,7 +12,7 @@ from conftest import configure, AZURE, OPENAI, ALL
 class TestEmbeddings(AzureRecordedTestCase):
 
     @configure
-    @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
+    @pytest.mark.parametrize("api_type", ALL)
     def test_embedding(self, client, azure_openai_creds, api_type, **kwargs):
 
         embedding = client.embeddings.create(input="hello world", **kwargs)
