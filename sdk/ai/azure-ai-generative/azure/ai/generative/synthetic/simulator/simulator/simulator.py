@@ -118,7 +118,7 @@ class Simulator:
         async with asyncHttpClient.client as session:
             conversation_id, conversation_history = await simulate_conversation(
                 bots=bots,
-                simualte_callback=self.simulate_callback,
+                simulate_callback=self.simulate_callback,
                 session=session,
                 turn_limit=max_conversation_turns,
                 api_call_delay_sec=api_call_delay_sec,
