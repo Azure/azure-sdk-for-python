@@ -16,7 +16,6 @@ from azure.ai.ml._utils.utils import camel_to_snake
 @pytest.mark.core_sdk_test
 @pytest.mark.usefixtures("recorded_test")
 class TestWorkspaceConnections(AzureRecordedTestCase):
-
     @pytest.mark.skip(reason="TODO: Message: e2e recording not working")
     def test_workspace_connections_create_update_and_delete_python_feed(
         self,
