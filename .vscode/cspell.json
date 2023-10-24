@@ -124,6 +124,7 @@
     "conda/conda-releaselogs/azure-mgmt.md"
   ],
   "words": [
+    "aoai",
     "pyprojects",
     "certifi",
     "cffi",
@@ -281,6 +282,7 @@
     "mhsm",
     "mipsle",
     "mktime",
+    "mlindex",
     "msal",
     "msrest",
     "msrestazure",
@@ -305,6 +307,8 @@
     "oidc",
     "onboarded",
     "onmicrosoft",
+    "openai",
+    "OPENAI",
     "owasp",
     "ownerid",
     "PBYTE",

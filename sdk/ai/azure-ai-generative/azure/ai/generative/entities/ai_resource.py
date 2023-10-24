@@ -61,8 +61,8 @@ class AIResource:
         :param workspace_hub: The workspace connection object to convert into a workspace.
         :type workspace_hub: ~azure.ai.ml.entities.WorkspaceConnection
 
-        :return: The converted connection.
-        :rtype: ~azure.ai.generative.entities.Connection
+        :return: The converted AI resource.
+        :rtype: ~azure.ai.generative.entities.AIResource
         """
         # It's simpler to create a placeholder resource, then overwrite the internal WC.
         # We don't need to worry about the potentially changing WC fields this way.
