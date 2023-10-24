@@ -14,7 +14,7 @@ from azure.core.exceptions import ClientAuthenticationError
 import subprocess
 import pytest
 
-from helpers import mock
+from helpers import mock, INVALID_CHARACTERS
 
 CHECK_OUTPUT = AzureDeveloperCliCredential.__module__ + ".subprocess.check_output"
 
@@ -40,6 +40,28 @@ def test_no_scopes():
 
     with pytest.raises(ValueError):
         AzureDeveloperCliCredential().get_token()
+
+
+def test_invalid_tenant_id():
+    """Invalid tenant IDs should raise ValueErrors."""
+
+    for c in INVALID_CHARACTERS:
+        with pytest.raises(ValueError):
+            AzureDeveloperCliCredential(tenant_id="tenant" + c)
+
+        with pytest.raises(ValueError):
+            AzureDeveloperCliCredential().get_token("scope", tenant_id="tenant" + c)
+
+
+def test_invalid_scopes():
+    """Scopes with invalid characters should raise ValueErrors."""
+
+    for c in INVALID_CHARACTERS:
+        with pytest.raises(ValueError):
+            AzureDeveloperCliCredential().get_token("scope" + c)
+
+        with pytest.raises(ValueError):
+            AzureDeveloperCliCredential().get_token("scope", "scope2", "scope" + c)
 
 
 def test_get_token():

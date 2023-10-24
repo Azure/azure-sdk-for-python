@@ -7,10 +7,7 @@ import json
 import copy
 import re
 from azure_devtools.scenario_tests import RecordingProcessor
-from azure_devtools.scenario_tests.utilities import (
-    is_text_payload,
-    _get_content_type
-)
+from azure_devtools.scenario_tests.utilities import is_text_payload, _get_content_type
 
 from urllib.parse import urlparse, parse_qs, urlencode, quote_plus
 
@@ -20,13 +17,17 @@ def _is_merge_patch_payload(entity):
     content_type = _get_content_type(entity)
     return content_type.startswith(router_additional_accepted_content_type)
 
+
 def _is_text_payload_internal(entity):
     return is_text_payload(entity)
 
-def sanitize_query_params(value,  # type: str
-                          exceptions,  # type: List[str]
-                          replacement,  # type: str
-                          **kwargs):
+
+def sanitize_query_params(
+    value,  # type: str
+    exceptions,  # type: List[str]
+    replacement,  # type: str
+    **kwargs
+):
     parsed_url = urlparse(value)
     qs = parse_qs(parsed_url.query)
 
@@ -34,15 +35,17 @@ def sanitize_query_params(value,  # type: str
         if k not in exceptions:
             qs[k] = replacement
 
-    parsed_url = parsed_url._replace(query = urlencode(qs, doseq = True))  # cSpell:disable-line
+    parsed_url = parsed_url._replace(query=urlencode(qs, doseq=True))  # cSpell:disable-line
 
     return parsed_url.geturl()
 
 
 class RouterHeaderSanitizer(RecordingProcessor):
-    def __init__(self,
-                 headers=None,  # type: List[str]
-                 replacement="REDACTED"):
+    def __init__(
+        self,
+        headers=None,  # type: List[str]
+        replacement="REDACTED",
+    ):
         self._headers = headers if headers else []
         self._replacement = replacement
 
@@ -63,55 +66,47 @@ class RouterQuerySanitizer(RecordingProcessor):
         self._sanitized_value = replacement
 
     def process_request(self, request):
-        request.uri = sanitize_query_params(request.uri,
-                                            exceptions = self._exceptions,
-                                            replacement = self._sanitized_value)
+        request.uri = sanitize_query_params(request.uri, exceptions=self._exceptions, replacement=self._sanitized_value)
         return request
 
-    def process_response(self,
-                         response):
-        if 'url' in response:
-            response['url'] = sanitize_query_params(response['url'],
-                                                    exceptions = self._exceptions,
-                                                    replacement = self._sanitized_value)
+    def process_response(self, response):
+        if "url" in response:
+            response["url"] = sanitize_query_params(
+                response["url"], exceptions=self._exceptions, replacement=self._sanitized_value
+            )
         return response
 
 
 class RouterURIIdentityReplacer(RecordingProcessor):
     def process_request(self, request):
-        request.uri = re.sub('/routing/classificationPolicies/([^/?]+)', '/routing/classificationPolicies/sanitized',
-                             request.uri)
-        request.uri = re.sub('/routing/distributionPolicies/([^/?]+)', '/routing/distributionPolicies/sanitized',
-                             request.uri)
-        request.uri = re.sub('/routing/exceptionPolicies/([^/?]+)', '/routing/exceptionPolicies/sanitized',
-                             request.uri)
-        request.uri = re.sub('/routing/jobs/([^/?]+)', '/routing/jobs/sanitized',
-                             request.uri)
-        request.uri = re.sub('/offers/([^/?]+):', '/offers/sanitized:',
-                             request.uri)
-        request.uri = re.sub('/routing/queues/([^/?]+)', '/routing/queues/sanitized',
-                             request.uri)
-        request.uri = re.sub('/routing/workers/([^/?]+)', '/routing/workers/sanitized',
-                             request.uri)
+        request.uri = re.sub(
+            "/routing/classificationPolicies/([^/?]+)", "/routing/classificationPolicies/sanitized", request.uri
+        )
+        request.uri = re.sub(
+            "/routing/distributionPolicies/([^/?]+)", "/routing/distributionPolicies/sanitized", request.uri
+        )
+        request.uri = re.sub("/routing/exceptionPolicies/([^/?]+)", "/routing/exceptionPolicies/sanitized", request.uri)
+        request.uri = re.sub("/routing/jobs/([^/?]+)", "/routing/jobs/sanitized", request.uri)
+        request.uri = re.sub("/offers/([^/?]+):", "/offers/sanitized:", request.uri)
+        request.uri = re.sub("/routing/queues/([^/?]+)", "/routing/queues/sanitized", request.uri)
+        request.uri = re.sub("/routing/workers/([^/?]+)", "/routing/workers/sanitized", request.uri)
         return request
 
     def process_response(self, response):
-        if 'url' in response:
-            response['url'] = re.sub('/routing/classificationPolicies/([^/?]+)',
-                                  '/routing/classificationPolicies/sanitized',
-                                  response['url'])
-            response['url'] = re.sub('/routing/distributionPolicies/([^/?]+)', '/routing/distributionPolicies/sanitized',
-                                  response['url'])
-            response['url'] = re.sub('/routing/exceptionPolicies/([^/?]+)', '/routing/exceptionPolicies/sanitized',
-                                  response['url'])
-            response['url'] = re.sub('/routing/jobs/([^/?]+)', '/routing/jobs/sanitized',
-                                  response['url'])
-            response['url'] = re.sub('/offers/([^/?]+):', '/offers/sanitized:',
-                                  response['url'])
-            response['url'] = re.sub('/routing/queues/([^/?]+)', '/routing/queues/sanitized',
-                                  response['url'])
-            response['url'] = re.sub('/routing/workers/([^/?]+)', '/routing/workers/sanitized',
-                                  response['url'])
+        if "url" in response:
+            response["url"] = re.sub(
+                "/routing/classificationPolicies/([^/?]+)", "/routing/classificationPolicies/sanitized", response["url"]
+            )
+            response["url"] = re.sub(
+                "/routing/distributionPolicies/([^/?]+)", "/routing/distributionPolicies/sanitized", response["url"]
+            )
+            response["url"] = re.sub(
+                "/routing/exceptionPolicies/([^/?]+)", "/routing/exceptionPolicies/sanitized", response["url"]
+            )
+            response["url"] = re.sub("/routing/jobs/([^/?]+)", "/routing/jobs/sanitized", response["url"])
+            response["url"] = re.sub("/offers/([^/?]+):", "/offers/sanitized:", response["url"])
+            response["url"] = re.sub("/routing/queues/([^/?]+)", "/routing/queues/sanitized", response["url"])
+            response["url"] = re.sub("/routing/workers/([^/?]+)", "/routing/workers/sanitized", response["url"])
         return response
 
 
@@ -136,10 +131,9 @@ class RouterScrubber(RecordingProcessor):
         return request
 
     def process_response(self, response):
-        if _is_text_payload_internal(response) and 'body' in response:
+        if _is_text_payload_internal(response) and "body" in response:
             try:
-                if isinstance(response['body'], dict) \
-                        and 'string' in response['body']:
+                if isinstance(response["body"], dict) and "string" in response["body"]:
                     body = response["body"]["string"]
 
                     if body == b"":
@@ -150,7 +144,7 @@ class RouterScrubber(RecordingProcessor):
                         body = json.loads(body)
 
                     body = self._scrub(body, 0)
-                    response["body"]["string"] = json.dumps(body).encode('utf-8')
+                    response["body"]["string"] = json.dumps(body).encode("utf-8")
             except (KeyError, ValueError) as e:
                 raise e
 
@@ -174,4 +168,3 @@ class RouterScrubber(RecordingProcessor):
 
         # Finished scrubbing
         return ret
-

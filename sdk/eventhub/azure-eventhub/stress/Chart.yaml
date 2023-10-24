@@ -9,5 +9,5 @@ annotations:
 
 dependencies:
 - name: stress-test-addons
-  version: ~0.2.0
+  version: ~0.3.0
   repository: "@stress-test-charts"

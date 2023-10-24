@@ -253,9 +253,9 @@ for item in config_settings:
 <!-- SNIPPET:snapshot_samples.create_snapshot -->
 
 ```python
-from azure.appconfiguration import ConfigurationSettingFilter
+from azure.appconfiguration import ConfigurationSettingsFilter
 
-filters = [ConfigurationSettingFilter(key="my_key1", label="my_label1")]
+filters = [ConfigurationSettingsFilter(key="my_key1", label="my_label1")]
 response = client.begin_create_snapshot(name=snapshot_name, filters=filters)
 created_snapshot = response.result()
 print_snapshot(created_snapshot)
@@ -308,10 +308,10 @@ for snapshot in client.list_snapshots():
 
 ### List Configuration Settings of a Snapshot
 
-<!-- SNIPPET:snapshot_samples.list_snapshot_configuration_settings -->
+<!-- SNIPPET:snapshot_samples.list_configuration_settings_for_snapshot -->
 
 ```python
-for config_setting in client.list_snapshot_configuration_settings(snapshot_name=snapshot_name):
+for config_setting in client.list_configuration_settings(snapshot_name=snapshot_name):
     print_configuration_setting(config_setting)
 ```
 
@@ -362,9 +362,9 @@ async for item in config_settings:
 <!-- SNIPPET:snapshot_samples_async.create_snapshot -->
 
 ```python
-from azure.appconfiguration import ConfigurationSettingFilter
+from azure.appconfiguration import ConfigurationSettingsFilter
 
-filters = [ConfigurationSettingFilter(key="my_key1", label="my_label1")]
+filters = [ConfigurationSettingsFilter(key="my_key1", label="my_label1")]
 response = await client.begin_create_snapshot(name=snapshot_name, filters=filters)
 created_snapshot = await response.result()
 print_snapshot(created_snapshot)
@@ -407,10 +407,10 @@ async for snapshot in client.list_snapshots():
 
 <!-- END SNIPPET -->
 
-<!-- SNIPPET:snapshot_samples_async.list_snapshot_configuration_settings -->
+<!-- SNIPPET:snapshot_samples_async.list_configuration_settings_for_snapshot -->
 
 ```python
-async for config_setting in client.list_snapshot_configuration_settings(snapshot_name=snapshot_name):
+async for config_setting in client.list_configuration_settings(snapshot_name=snapshot_name):
     print_configuration_setting(config_setting)
 ```
 

@@ -80,14 +80,14 @@ steps:
     displayName: 'Verify sdist'
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifySdist'],'true'))
     inputs:
-     scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+     scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
      arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifysdist'
 
   - task: PythonScript@0
     displayName: 'Verify whl'
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifyWhl'],'true'))
     inputs:
-     scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+     scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
      arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl'
 
   - template: run_mypy.yml
@@ -113,7 +113,7 @@ steps:
   - task: PythonScript@0
     displayName: 'Run Keyword Validation Check'
     inputs:
-      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
       arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verify_keywords'
     condition: and(succeededOrFailed(), ne(variables['Skip.KeywordCheck'],'true'))
 

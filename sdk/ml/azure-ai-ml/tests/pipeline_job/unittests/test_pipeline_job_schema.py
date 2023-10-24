@@ -776,7 +776,7 @@ class TestPipelineJobSchema:
     @pytest.mark.parametrize(
         "test_path,expected_inputs",
         [
-            (
+            pytest.param(
                 "tests/test_configs/pipeline_jobs/pipeline_job_with_sweep_job_with_input_bindings.yml",
                 {
                     "hello_world": {
@@ -793,8 +793,9 @@ class TestPipelineJobSchema:
                         "test2": {"job_input_type": "literal", "value": "${{parent.inputs.job_data_path}}"},
                     },
                 },
+                id="pipeline_job_with_sweep_job_with_input_bindings",
             ),
-            (
+            pytest.param(
                 "tests/test_configs/pipeline_jobs/pipeline_job_with_command_job_with_input_bindings.yml",
                 {
                     "hello_world": {
@@ -819,19 +820,21 @@ class TestPipelineJobSchema:
                         },
                     },
                 },
+                id="pipeline_job_with_command_job_with_input_bindings",
             ),
-            (
+            pytest.param(
                 "tests/test_configs/pipeline_jobs/pipeline_job_with_parallel_job_with_input_bindings.yml",
                 {
                     "hello_world": {
-                        "test1": {
+                        "job_data_path": {
                             "job_input_type": "literal",
                             "value": "${{parent.inputs.job_data_path}}",
                         }
                     },
                 },
+                id="pipeline_job_with_parallel_job_with_input_bindings",
             ),
-            (
+            pytest.param(
                 "tests/test_configs/pipeline_jobs/pipeline_job_with_spark_job_with_input_bindings.yml",
                 {
                     "hello_world": {
@@ -845,6 +848,7 @@ class TestPipelineJobSchema:
                         },
                     }
                 },
+                id="pipeline_job_with_spark_job_with_input_bindings",
             ),
         ],
     )
@@ -869,14 +873,12 @@ class TestPipelineJobSchema:
             assert "Failed to find top level definition for input binding" in str(e.value)
 
         # Check that all inputs are present and are of type Input or are literals
-        for index, input_name in enumerate(yaml_obj["inputs"].keys()):
+        for input_name, input_yaml in yaml_obj["inputs"].items():
             job_obj_input = job.inputs.get(input_name, None)
-            assert job_obj_input is not None
+            assert job_obj_input is not None, f"Input {input_name} not found in loaded job"
             assert isinstance(job_obj_input, PipelineInput)
             job_obj_input = job_obj_input._to_job_input()
-            if index == 0:
-                assert isinstance(job_obj_input, Input)
-            elif index == 1:
+            if isinstance(input_yaml, dict):
                 assert isinstance(job_obj_input, Input)
             else:
                 assert isinstance(job_obj_input, int)
