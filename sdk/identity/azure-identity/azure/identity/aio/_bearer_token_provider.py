@@ -38,6 +38,7 @@ def get_bearer_token_provider(credential: AsyncTokenCredential, *scopes: str) ->
     """
 
     policy = AsyncBearerTokenCredentialPolicy(credential, *scopes)
+
     async def wrapper() -> str:
         request = _make_request()
         await policy.on_request(request)

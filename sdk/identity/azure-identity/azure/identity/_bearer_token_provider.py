@@ -37,6 +37,7 @@ def get_bearer_token_provider(credential: TokenCredential, *scopes: str) -> Call
     """
 
     policy = BearerTokenCredentialPolicy(credential, *scopes)
+
     def wrapper() -> str:
         request = _make_request()
         policy.on_request(request)
