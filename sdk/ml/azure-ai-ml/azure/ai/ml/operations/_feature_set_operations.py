@@ -220,7 +220,7 @@ class FeatureSetOperations(_ScopeDependentOperations):
         :keyword spark_configuration: Specifies the spark compute settings.
         :paramtype spark_configuration: dict[str, str]
         :keyword data_status: Specifies the data status that you want to backfill.
-        :paramtype data_status: list[str or ~azure.mgmt.machinelearningservices.models.DataAvailabilityStatus]
+        :paramtype data_status: list[str or ~azure.ai.ml.entities.DataAvailabilityStatus]
         :return: An instance of LROPoller that returns ~azure.ai.ml.entities.FeatureSetBackfillMetadata
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureSetBackfillMetadata]
         """
