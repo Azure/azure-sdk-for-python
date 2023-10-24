@@ -452,7 +452,9 @@
         "aoai",
         "faiss",
         "mlmodel",
-        "openmpi"
+        "openmpi",
+        "vcpu",
+        "vcpus"
       ]
     },
     {
