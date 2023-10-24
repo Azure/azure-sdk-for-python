@@ -7,13 +7,13 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 from .workspace_connection import WorkspaceConnectionSchema
 from .workspace_connection_subtypes import (
     OpenAIWorkspaceConnectionSchema,
-    CognitiveSearchWorkspaceConnectionSchema,
-    CognitiveServiceWorkspaceConnectionSchema,
+    AzureAISearchWorkspaceConnectionSchema,
+    AzureAIServiceWorkspaceConnectionSchema,
 )
 
 __all__ = [
     "WorkspaceConnectionSchema",
     "OpenAIWorkspaceConnectionSchema",
-    "CognitiveSearchWorkspaceConnectionSchema",
-    "CognitiveServiceWorkspaceConnectionSchema",
+    "AzureAISearchWorkspaceConnectionSchema",
+    "AzureAIServiceWorkspaceConnectionSchema",
 ]

@@ -197,8 +197,8 @@ from ._workspace.compute_runtime import ComputeRuntime
 from ._workspace.connections.workspace_connection import WorkspaceConnection
 from ._workspace.connections.workspace_connection_subtypes import (
     AzureOpenAIWorkspaceConnection,
-    CognitiveSearchWorkspaceConnection,
-    CognitiveServiceWorkspaceConnection,
+    AzureAISearchWorkspaceConnection,
+    AzureAIServiceWorkspaceConnection,
 )
 from ._workspace.customer_managed_key import CustomerManagedKey
 from ._workspace.diagnose import (
@@ -279,8 +279,8 @@ __all__ = [
     "WorkspaceKeys",
     "WorkspaceConnection",
     "AzureOpenAIWorkspaceConnection",
-    "CognitiveSearchWorkspaceConnection",
-    "CognitiveServiceWorkspaceConnection",
+    "AzureAISearchWorkspaceConnection",
+    "AzureAIServiceWorkspaceConnection",
     "DiagnoseRequestProperties",
     "DiagnoseResult",
     "DiagnoseResponseResult",

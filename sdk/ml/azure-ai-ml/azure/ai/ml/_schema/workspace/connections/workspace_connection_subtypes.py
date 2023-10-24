@@ -30,7 +30,7 @@ class OpenAIWorkspaceConnectionSchema(WorkspaceConnectionSchema):
         return AzureOpenAIWorkspaceConnection(**data)
 
 
-class CognitiveSearchWorkspaceConnectionSchema(WorkspaceConnectionSchema):
+class AzureAISearchWorkspaceConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
         allowed_values=ConnectionCategory.COGNITIVE_SEARCH, casing_transform=camel_to_snake, required=True
@@ -41,13 +41,13 @@ class CognitiveSearchWorkspaceConnectionSchema(WorkspaceConnectionSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import CognitiveSearchWorkspaceConnection
+        from azure.ai.ml.entities import AzureAISearchWorkspaceConnection
 
-        return CognitiveSearchWorkspaceConnection(**data)
+        return AzureAISearchWorkspaceConnection(**data)
 
 
 # pylint: disable-next=name-too-long
-class CognitiveServiceWorkspaceConnectionSchema(WorkspaceConnectionSchema):
+class AzureAIServiceWorkspaceConnectionSchema(WorkspaceConnectionSchema):
     # type and credentials limited
     type = StringTransformedEnum(
         allowed_values=ConnectionCategory.COGNITIVE_SERVICE, casing_transform=camel_to_snake, required=True
@@ -59,6 +59,6 @@ class CognitiveServiceWorkspaceConnectionSchema(WorkspaceConnectionSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities import CognitiveServiceWorkspaceConnection
+        from azure.ai.ml.entities import AzureAIServiceWorkspaceConnection
 
-        return CognitiveServiceWorkspaceConnection(**data)
+        return AzureAIServiceWorkspaceConnection(**data)

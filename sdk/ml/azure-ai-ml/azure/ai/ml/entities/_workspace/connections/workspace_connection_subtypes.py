@@ -21,7 +21,8 @@ from .workspace_connection import WorkspaceConnection
 # WorkspaceConnection parent class: _from_rest_object, _get_entity_class_from_type, _get_schema_class_from_type
 @experimental
 class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
-    """A Workspace Connection that is specifically designed for handling connections to an Open AI resource.
+    """A Workspace Connection that is specifically designed for handling connections
+    to Azure Open AI.
 
     :param name: Name of the workspace connection.
     :type name: str
@@ -94,8 +95,9 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
 
 
 @experimental
-class CognitiveSearchWorkspaceConnection(WorkspaceConnection):
-    """A Workspace Connection that is specifically designed for handling connections to Cognitive Search.
+class AzureAISearchWorkspaceConnection(WorkspaceConnection):
+    """A Workspace Connection that is specifically designed for handling connections to
+    Azure AI Search.
 
     :param name: Name of the workspace connection.
     :type name: str
@@ -144,8 +146,8 @@ class CognitiveSearchWorkspaceConnection(WorkspaceConnection):
 
 
 @experimental
-class CognitiveServiceWorkspaceConnection(WorkspaceConnection):
-    """A Workspace Connection that is specifically designed for handling connections to Azure Cognitive Service.
+class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
+    """A Workspace Connection that is specifically designed for handling connections to an Azure AI Service.
 
     :param name: Name of the workspace connection.
     :type name: str
