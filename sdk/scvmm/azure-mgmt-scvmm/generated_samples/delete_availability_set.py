@@ -29,13 +29,12 @@ def main():
         subscription_id="fd3c3665-1729-4b7b-9a38-238e83b0f98b",
     )
 
-    response = client.availability_sets.begin_delete(
+    client.availability_sets.begin_delete(
         resource_group_name="testrg",
-        availability_set_name="HRAvailabilitySet",
+        availability_set_resource_name="HRAvailabilitySet",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/scvmm/resource-manager/Microsoft.ScVmm/preview/2020-06-05-preview/examples/DeleteAvailabilitySet.json
+# x-ms-original-file: specification/scvmm/resource-manager/Microsoft.ScVmm/stable/2023-10-07/examples/DeleteAvailabilitySet.json
 if __name__ == "__main__":
     main()

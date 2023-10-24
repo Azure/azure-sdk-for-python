@@ -39,7 +39,7 @@ def main():
             },
             "location": "East US",
             "properties": {
-                "uuid": "aaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+                "uuid": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
                 "vmmServerId": "/subscriptions/fd3c3665-1729-4b7b-9a38-238e83b0f98b/resourceGroups/testrg/providers/Microsoft.SCVMM/VMMServers/ContosoVMMServer",
             },
         },
@@ -47,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/scvmm/resource-manager/Microsoft.ScVmm/preview/2020-06-05-preview/examples/CreateVirtualMachineTemplate.json
+# x-ms-original-file: specification/scvmm/resource-manager/Microsoft.ScVmm/stable/2023-10-07/examples/CreateVirtualMachineTemplate.json
 if __name__ == "__main__":
     main()

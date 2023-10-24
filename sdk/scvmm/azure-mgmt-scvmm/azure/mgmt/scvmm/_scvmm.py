@@ -20,8 +20,10 @@ from .operations import (
     CloudsOperations,
     InventoryItemsOperations,
     Operations,
+    VMInstanceGuestAgentsOperations,
+    VirtualMachineInstanceHybridIdentityMetadataOperations,
+    VirtualMachineInstancesOperations,
     VirtualMachineTemplatesOperations,
-    VirtualMachinesOperations,
     VirtualNetworksOperations,
     VmmServersOperations,
 )
@@ -42,8 +44,6 @@ class SCVMM:  # pylint: disable=client-accepts-api-version-keyword,too-many-inst
     :vartype clouds: azure.mgmt.scvmm.operations.CloudsOperations
     :ivar virtual_networks: VirtualNetworksOperations operations
     :vartype virtual_networks: azure.mgmt.scvmm.operations.VirtualNetworksOperations
-    :ivar virtual_machines: VirtualMachinesOperations operations
-    :vartype virtual_machines: azure.mgmt.scvmm.operations.VirtualMachinesOperations
     :ivar virtual_machine_templates: VirtualMachineTemplatesOperations operations
     :vartype virtual_machine_templates:
      azure.mgmt.scvmm.operations.VirtualMachineTemplatesOperations
@@ -51,15 +51,23 @@ class SCVMM:  # pylint: disable=client-accepts-api-version-keyword,too-many-inst
     :vartype availability_sets: azure.mgmt.scvmm.operations.AvailabilitySetsOperations
     :ivar inventory_items: InventoryItemsOperations operations
     :vartype inventory_items: azure.mgmt.scvmm.operations.InventoryItemsOperations
+    :ivar virtual_machine_instances: VirtualMachineInstancesOperations operations
+    :vartype virtual_machine_instances:
+     azure.mgmt.scvmm.operations.VirtualMachineInstancesOperations
+    :ivar virtual_machine_instance_hybrid_identity_metadata:
+     VirtualMachineInstanceHybridIdentityMetadataOperations operations
+    :vartype virtual_machine_instance_hybrid_identity_metadata:
+     azure.mgmt.scvmm.operations.VirtualMachineInstanceHybridIdentityMetadataOperations
+    :ivar vm_instance_guest_agents: VMInstanceGuestAgentsOperations operations
+    :vartype vm_instance_guest_agents: azure.mgmt.scvmm.operations.VMInstanceGuestAgentsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The Azure subscription ID. This is a GUID-formatted string (e.g.
-     00000000-0000-0000-0000-000000000000). Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2020-06-05-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-10-07". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -73,7 +81,7 @@ class SCVMM:  # pylint: disable=client-accepts-api-version-keyword,too-many-inst
         **kwargs: Any
     ) -> None:
         self._config = SCVMMConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -85,9 +93,6 @@ class SCVMM:  # pylint: disable=client-accepts-api-version-keyword,too-many-inst
         self.virtual_networks = VirtualNetworksOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.virtual_machines = VirtualMachinesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.virtual_machine_templates = VirtualMachineTemplatesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -95,6 +100,15 @@ class SCVMM:  # pylint: disable=client-accepts-api-version-keyword,too-many-inst
             self._client, self._config, self._serialize, self._deserialize
         )
         self.inventory_items = InventoryItemsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.virtual_machine_instances = VirtualMachineInstancesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_machine_instance_hybrid_identity_metadata = VirtualMachineInstanceHybridIdentityMetadataOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.vm_instance_guest_agents = VMInstanceGuestAgentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
@@ -125,5 +139,5 @@ class SCVMM:  # pylint: disable=client-accepts-api-version-keyword,too-many-inst
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details) -> None:
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

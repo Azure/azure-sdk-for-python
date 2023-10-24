@@ -29,13 +29,12 @@ def main():
         subscription_id="fd3c3665-1729-4b7b-9a38-238e83b0f98b",
     )
 
-    response = client.clouds.begin_delete(
+    client.clouds.begin_delete(
         resource_group_name="testrg",
-        cloud_name="HRCloud",
+        cloud_resource_name="HRCloud",
     ).result()
-    print(response)
 
 
-# x-ms-original-file: specification/scvmm/resource-manager/Microsoft.ScVmm/preview/2020-06-05-preview/examples/DeleteCloud.json
+# x-ms-original-file: specification/scvmm/resource-manager/Microsoft.ScVmm/stable/2023-10-07/examples/DeleteCloud.json
 if __name__ == "__main__":
     main()

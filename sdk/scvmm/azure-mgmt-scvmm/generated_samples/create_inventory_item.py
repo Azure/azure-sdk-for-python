@@ -32,11 +32,11 @@ def main():
     response = client.inventory_items.create(
         resource_group_name="testrg",
         vmm_server_name="ContosoVMMServer",
-        inventory_item_name="12345678-1234-1234-1234-123456789abc",
+        inventory_item_resource_name="12345678-1234-1234-1234-123456789abc",
     )
     print(response)
 
 
-# x-ms-original-file: specification/scvmm/resource-manager/Microsoft.ScVmm/preview/2020-06-05-preview/examples/CreateInventoryItem.json
+# x-ms-original-file: specification/scvmm/resource-manager/Microsoft.ScVmm/stable/2023-10-07/examples/CreateInventoryItem.json
 if __name__ == "__main__":
     main()

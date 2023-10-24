@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -21,10 +21,12 @@ from azure.core.exceptions import (
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
@@ -37,13 +39,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_create_request(
-    resource_group_name: str,
-    vmm_server_name: str,
-    inventory_item_resource_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_create_request(resource_uri: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -53,23 +49,10 @@ def build_create_request(
 
     # Construct URL
     _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ScVmm/vmmServers/{vmmServerName}/inventoryItems/{inventoryItemResourceName}",
+        "template_url", "/{resourceUri}/providers/Microsoft.ScVmm/virtualMachineInstances/default/guestAgents/default"
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "vmmServerName": _SERIALIZER.url(
-            "vmm_server_name", vmm_server_name, "str", max_length=54, min_length=1, pattern=r"[a-zA-Z0-9-_\.]"
-        ),
-        "inventoryItemResourceName": _SERIALIZER.url(
-            "inventory_item_resource_name",
-            inventory_item_resource_name,
-            "str",
-            pattern=r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-        ),
+        "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -85,13 +68,7 @@ def build_create_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_request(
-    resource_group_name: str,
-    vmm_server_name: str,
-    inventory_item_resource_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_request(resource_uri: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -100,23 +77,10 @@ def build_get_request(
 
     # Construct URL
     _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ScVmm/vmmServers/{vmmServerName}/inventoryItems/{inventoryItemResourceName}",
+        "template_url", "/{resourceUri}/providers/Microsoft.ScVmm/virtualMachineInstances/default/guestAgents/default"
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "vmmServerName": _SERIALIZER.url(
-            "vmm_server_name", vmm_server_name, "str", max_length=54, min_length=1, pattern=r"[a-zA-Z0-9-_\.]"
-        ),
-        "inventoryItemResourceName": _SERIALIZER.url(
-            "inventory_item_resource_name",
-            inventory_item_resource_name,
-            "str",
-            pattern=r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-        ),
+        "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -130,13 +94,7 @@ def build_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_request(
-    resource_group_name: str,
-    vmm_server_name: str,
-    inventory_item_resource_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_delete_request(resource_uri: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -145,23 +103,10 @@ def build_delete_request(
 
     # Construct URL
     _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ScVmm/vmmServers/{vmmServerName}/inventoryItems/{inventoryItemResourceName}",
+        "template_url", "/{resourceUri}/providers/Microsoft.ScVmm/virtualMachineInstances/default/guestAgents/default"
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "vmmServerName": _SERIALIZER.url(
-            "vmm_server_name", vmm_server_name, "str", max_length=54, min_length=1, pattern=r"[a-zA-Z0-9-_\.]"
-        ),
-        "inventoryItemResourceName": _SERIALIZER.url(
-            "inventory_item_resource_name",
-            inventory_item_resource_name,
-            "str",
-            pattern=r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-        ),
+        "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -175,9 +120,7 @@ def build_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_by_vmm_server_request(
-    resource_group_name: str, vmm_server_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_list_request(resource_uri: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -186,17 +129,10 @@ def build_list_by_vmm_server_request(
 
     # Construct URL
     _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ScVmm/vmmServers/{vmmServerName}/inventoryItems",
-    )  # pylint: disable=line-too-long
+        "template_url", "/{resourceUri}/providers/Microsoft.ScVmm/virtualMachineInstances/default/guestAgents"
+    )
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
-        "vmmServerName": _SERIALIZER.url(
-            "vmm_server_name", vmm_server_name, "str", max_length=54, min_length=1, pattern=r"[a-zA-Z0-9-_\.]"
-        ),
+        "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -210,14 +146,14 @@ def build_list_by_vmm_server_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class InventoryItemsOperations:
+class VMInstanceGuestAgentsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.scvmm.SCVMM`'s
-        :attr:`inventory_items` attribute.
+        :attr:`vm_instance_guest_agents` attribute.
     """
 
     models = _models
@@ -229,103 +165,9 @@ class InventoryItemsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @overload
-    def create(
-        self,
-        resource_group_name: str,
-        vmm_server_name: str,
-        inventory_item_resource_name: str,
-        body: Optional[_models.InventoryItem] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.InventoryItem:
-        """Implements InventoryItem PUT method.
-
-        Create Or Update InventoryItem.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param vmm_server_name: Name of the VMMServer. Required.
-        :type vmm_server_name: str
-        :param inventory_item_resource_name: Name of the inventoryItem. Required.
-        :type inventory_item_resource_name: str
-        :param body: Request payload. Default value is None.
-        :type body: ~azure.mgmt.scvmm.models.InventoryItem
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: InventoryItem or the result of cls(response)
-        :rtype: ~azure.mgmt.scvmm.models.InventoryItem
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create(
-        self,
-        resource_group_name: str,
-        vmm_server_name: str,
-        inventory_item_resource_name: str,
-        body: Optional[IO] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.InventoryItem:
-        """Implements InventoryItem PUT method.
-
-        Create Or Update InventoryItem.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param vmm_server_name: Name of the VMMServer. Required.
-        :type vmm_server_name: str
-        :param inventory_item_resource_name: Name of the inventoryItem. Required.
-        :type inventory_item_resource_name: str
-        :param body: Request payload. Default value is None.
-        :type body: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: InventoryItem or the result of cls(response)
-        :rtype: ~azure.mgmt.scvmm.models.InventoryItem
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def create(
-        self,
-        resource_group_name: str,
-        vmm_server_name: str,
-        inventory_item_resource_name: str,
-        body: Optional[Union[_models.InventoryItem, IO]] = None,
-        **kwargs: Any
-    ) -> _models.InventoryItem:
-        """Implements InventoryItem PUT method.
-
-        Create Or Update InventoryItem.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param vmm_server_name: Name of the VMMServer. Required.
-        :type vmm_server_name: str
-        :param inventory_item_resource_name: Name of the inventoryItem. Required.
-        :type inventory_item_resource_name: str
-        :param body: Request payload. Is either a InventoryItem type or a IO type. Default value is
-         None.
-        :type body: ~azure.mgmt.scvmm.models.InventoryItem or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: InventoryItem or the result of cls(response)
-        :rtype: ~azure.mgmt.scvmm.models.InventoryItem
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    def _create_initial(
+        self, resource_uri: str, body: Optional[Union[_models.GuestAgent, IO]] = None, **kwargs: Any
+    ) -> _models.GuestAgent:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -339,7 +181,7 @@ class InventoryItemsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.InventoryItem] = kwargs.pop("cls", None)
+        cls: ClsType[_models.GuestAgent] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -348,20 +190,17 @@ class InventoryItemsOperations:
             _content = body
         else:
             if body is not None:
-                _json = self._serialize.body(body, "InventoryItem")
+                _json = self._serialize.body(body, "GuestAgent")
             else:
                 _json = None
 
         request = build_create_request(
-            resource_group_name=resource_group_name,
-            vmm_server_name=vmm_server_name,
-            inventory_item_resource_name=inventory_item_resource_name,
-            subscription_id=self._config.subscription_id,
+            resource_uri=resource_uri,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create.metadata["url"],
+            template_url=self._create_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -381,38 +220,172 @@ class InventoryItemsOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("InventoryItem", pipeline_response)
+            deserialized = self._deserialize("GuestAgent", pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("InventoryItem", pipeline_response)
+            deserialized = self._deserialize("GuestAgent", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    create.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ScVmm/vmmServers/{vmmServerName}/inventoryItems/{inventoryItemResourceName}"
+    _create_initial.metadata = {
+        "url": "/{resourceUri}/providers/Microsoft.ScVmm/virtualMachineInstances/default/guestAgents/default"
+    }
+
+    @overload
+    def begin_create(
+        self,
+        resource_uri: str,
+        body: Optional[_models.GuestAgent] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.GuestAgent]:
+        """Implements GuestAgent PUT method.
+
+        Create Or Update GuestAgent.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the Hybrid
+         Compute machine resource to be extended. Required.
+        :type resource_uri: str
+        :param body: Request payload. Default value is None.
+        :type body: ~azure.mgmt.scvmm.models.GuestAgent
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either GuestAgent or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.scvmm.models.GuestAgent]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create(
+        self, resource_uri: str, body: Optional[IO] = None, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[_models.GuestAgent]:
+        """Implements GuestAgent PUT method.
+
+        Create Or Update GuestAgent.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the Hybrid
+         Compute machine resource to be extended. Required.
+        :type resource_uri: str
+        :param body: Request payload. Default value is None.
+        :type body: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either GuestAgent or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.scvmm.models.GuestAgent]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_create(
+        self, resource_uri: str, body: Optional[Union[_models.GuestAgent, IO]] = None, **kwargs: Any
+    ) -> LROPoller[_models.GuestAgent]:
+        """Implements GuestAgent PUT method.
+
+        Create Or Update GuestAgent.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the Hybrid
+         Compute machine resource to be extended. Required.
+        :type resource_uri: str
+        :param body: Request payload. Is either a GuestAgent type or a IO type. Default value is None.
+        :type body: ~azure.mgmt.scvmm.models.GuestAgent or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either GuestAgent or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.scvmm.models.GuestAgent]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.GuestAgent] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_initial(
+                resource_uri=resource_uri,
+                body=body,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("GuestAgent", pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    begin_create.metadata = {
+        "url": "/{resourceUri}/providers/Microsoft.ScVmm/virtualMachineInstances/default/guestAgents/default"
     }
 
     @distributed_trace
-    def get(
-        self, resource_group_name: str, vmm_server_name: str, inventory_item_resource_name: str, **kwargs: Any
-    ) -> _models.InventoryItem:
-        """Implements GET InventoryItem method.
+    def get(self, resource_uri: str, **kwargs: Any) -> _models.GuestAgent:
+        """Gets GuestAgent.
 
-        Shows an inventory item.
+        Implements GuestAgent GET method.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param vmm_server_name: Name of the VMMServer. Required.
-        :type vmm_server_name: str
-        :param inventory_item_resource_name: Name of the inventoryItem. Required.
-        :type inventory_item_resource_name: str
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the Hybrid
+         Compute machine resource to be extended. Required.
+        :type resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: InventoryItem or the result of cls(response)
-        :rtype: ~azure.mgmt.scvmm.models.InventoryItem
+        :return: GuestAgent or the result of cls(response)
+        :rtype: ~azure.mgmt.scvmm.models.GuestAgent
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -427,13 +400,10 @@ class InventoryItemsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.InventoryItem] = kwargs.pop("cls", None)
+        cls: ClsType[_models.GuestAgent] = kwargs.pop("cls", None)
 
         request = build_get_request(
-            resource_group_name=resource_group_name,
-            vmm_server_name=vmm_server_name,
-            inventory_item_resource_name=inventory_item_resource_name,
-            subscription_id=self._config.subscription_id,
+            resource_uri=resource_uri,
             api_version=api_version,
             template_url=self.get.metadata["url"],
             headers=_headers,
@@ -454,7 +424,7 @@ class InventoryItemsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("InventoryItem", pipeline_response)
+        deserialized = self._deserialize("GuestAgent", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
@@ -462,24 +432,18 @@ class InventoryItemsOperations:
         return deserialized
 
     get.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ScVmm/vmmServers/{vmmServerName}/inventoryItems/{inventoryItemResourceName}"
+        "url": "/{resourceUri}/providers/Microsoft.ScVmm/virtualMachineInstances/default/guestAgents/default"
     }
 
     @distributed_trace
-    def delete(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, vmm_server_name: str, inventory_item_resource_name: str, **kwargs: Any
-    ) -> None:
-        """Implements inventoryItem DELETE method.
+    def delete(self, resource_uri: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Deletes an GuestAgent.
 
-        Deletes an inventoryItem.
+        Implements GuestAgent DELETE method.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param vmm_server_name: Name of the VMMServer. Required.
-        :type vmm_server_name: str
-        :param inventory_item_resource_name: Name of the inventoryItem. Required.
-        :type inventory_item_resource_name: str
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the Hybrid
+         Compute machine resource to be extended. Required.
+        :type resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -500,10 +464,7 @@ class InventoryItemsOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
-            resource_group_name=resource_group_name,
-            vmm_server_name=vmm_server_name,
-            inventory_item_resource_name=inventory_item_resource_name,
-            subscription_id=self._config.subscription_id,
+            resource_uri=resource_uri,
             api_version=api_version,
             template_url=self.delete.metadata["url"],
             headers=_headers,
@@ -528,32 +489,28 @@ class InventoryItemsOperations:
             return cls(pipeline_response, None, {})
 
     delete.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ScVmm/vmmServers/{vmmServerName}/inventoryItems/{inventoryItemResourceName}"
+        "url": "/{resourceUri}/providers/Microsoft.ScVmm/virtualMachineInstances/default/guestAgents/default"
     }
 
     @distributed_trace
-    def list_by_vmm_server(
-        self, resource_group_name: str, vmm_server_name: str, **kwargs: Any
-    ) -> Iterable["_models.InventoryItem"]:
-        """Implements GET for the list of Inventory Items in the VMMServer.
+    def list(self, resource_uri: str, **kwargs: Any) -> Iterable["_models.GuestAgent"]:
+        """Implements GET GuestAgent in a vm.
 
-        Returns the list of inventoryItems in the given VMMServer.
+        Returns the list of GuestAgent of the given vm.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param vmm_server_name: Name of the VMMServer. Required.
-        :type vmm_server_name: str
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the Hybrid
+         Compute machine resource to be extended. Required.
+        :type resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either InventoryItem or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.scvmm.models.InventoryItem]
+        :return: An iterator like instance of either GuestAgent or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.scvmm.models.GuestAgent]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.InventoryItemsList] = kwargs.pop("cls", None)
+        cls: ClsType[_models.GuestAgentList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -566,12 +523,10 @@ class InventoryItemsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_by_vmm_server_request(
-                    resource_group_name=resource_group_name,
-                    vmm_server_name=vmm_server_name,
-                    subscription_id=self._config.subscription_id,
+                request = build_list_request(
+                    resource_uri=resource_uri,
                     api_version=api_version,
-                    template_url=self.list_by_vmm_server.metadata["url"],
+                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
@@ -597,7 +552,7 @@ class InventoryItemsOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("InventoryItemsList", pipeline_response)
+            deserialized = self._deserialize("GuestAgentList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -621,6 +576,4 @@ class InventoryItemsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_vmm_server.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ScVmm/vmmServers/{vmmServerName}/inventoryItems"
-    }
+    list.metadata = {"url": "/{resourceUri}/providers/Microsoft.ScVmm/virtualMachineInstances/default/guestAgents"}

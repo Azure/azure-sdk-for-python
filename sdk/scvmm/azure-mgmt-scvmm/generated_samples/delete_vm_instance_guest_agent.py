@@ -14,7 +14,7 @@ from azure.mgmt.scvmm import SCVMM
     pip install azure-identity
     pip install azure-mgmt-scvmm
 # USAGE
-    python list_virtual_machines_by_subscription.py
+    python delete_vm_instance_guest_agent.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,14 +26,14 @@ from azure.mgmt.scvmm import SCVMM
 def main():
     client = SCVMM(
         credential=DefaultAzureCredential(),
-        subscription_id="fd3c3665-1729-4b7b-9a38-238e83b0f98b",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.virtual_machines.list_by_subscription()
-    for item in response:
-        print(item)
+    client.vm_instance_guest_agents.delete(
+        resource_uri="subscriptions/fd3c3665-1729-4b7b-9a38-238e83b0f98b/resourceGroups/testrg/providers/Microsoft.HybridCompute/machines/DemoVM",
+    )
 
 
-# x-ms-original-file: specification/scvmm/resource-manager/Microsoft.ScVmm/preview/2020-06-05-preview/examples/ListVirtualMachinesBySubscription.json
+# x-ms-original-file: specification/scvmm/resource-manager/Microsoft.ScVmm/stable/2023-10-07/examples/DeleteVMInstanceGuestAgent.json
 if __name__ == "__main__":
     main()

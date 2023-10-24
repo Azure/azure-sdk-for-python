@@ -31,12 +31,12 @@ def main():
 
     response = client.clouds.begin_update(
         resource_group_name="testrg",
-        cloud_name="HRCloud",
+        cloud_resource_name="HRCloud",
         body={"tags": {"tag1": "value1", "tag2": "value2"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/scvmm/resource-manager/Microsoft.ScVmm/preview/2020-06-05-preview/examples/UpdateCloud.json
+# x-ms-original-file: specification/scvmm/resource-manager/Microsoft.ScVmm/stable/2023-10-07/examples/UpdateCloud.json
 if __name__ == "__main__":
     main()

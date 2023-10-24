@@ -31,11 +31,11 @@ def main():
 
     response = client.clouds.get(
         resource_group_name="testrg",
-        cloud_name="HRCloud",
+        cloud_resource_name="HRCloud",
     )
     print(response)
 
 
-# x-ms-original-file: specification/scvmm/resource-manager/Microsoft.ScVmm/preview/2020-06-05-preview/examples/GetCloud.json
+# x-ms-original-file: specification/scvmm/resource-manager/Microsoft.ScVmm/stable/2023-10-07/examples/GetCloud.json
 if __name__ == "__main__":
     main()

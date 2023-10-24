@@ -31,11 +31,11 @@ def main():
 
     response = client.availability_sets.get(
         resource_group_name="testrg",
-        availability_set_name="HRAvailabilitySet",
+        availability_set_resource_name="HRAvailabilitySet",
     )
     print(response)
 
 
-# x-ms-original-file: specification/scvmm/resource-manager/Microsoft.ScVmm/preview/2020-06-05-preview/examples/GetAvailabilitySet.json
+# x-ms-original-file: specification/scvmm/resource-manager/Microsoft.ScVmm/stable/2023-10-07/examples/GetAvailabilitySet.json
 if __name__ == "__main__":
     main()

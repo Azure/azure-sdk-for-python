@@ -31,7 +31,7 @@ def main():
 
     response = client.availability_sets.begin_create_or_update(
         resource_group_name="testrg",
-        availability_set_name="HRAvailabilitySet",
+        availability_set_resource_name="HRAvailabilitySet",
         body={
             "extendedLocation": {
                 "name": "/subscriptions/a5015e1c-867f-4533-8541-85cd470d0cfb/resourceGroups/demoRG/providers/Microsoft.Arc/customLocations/contoso",
@@ -47,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/scvmm/resource-manager/Microsoft.ScVmm/preview/2020-06-05-preview/examples/CreateAvailabilitySet.json
+# x-ms-original-file: specification/scvmm/resource-manager/Microsoft.ScVmm/stable/2023-10-07/examples/CreateAvailabilitySet.json
 if __name__ == "__main__":
     main()

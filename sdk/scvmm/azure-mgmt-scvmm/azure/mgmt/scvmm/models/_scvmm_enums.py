@@ -10,6 +10,12 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
+
+    INTERNAL = "Internal"
+
+
 class AllocationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allocation method."""
 
@@ -33,11 +39,32 @@ class CreateDiffDisk(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TRUE = "true"
 
 
+class DeleteFromHost(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DeleteFromHost."""
+
+    FALSE = "false"
+    TRUE = "true"
+
+
 class DynamicMemoryEnabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets a value indicating whether to enable dynamic memory or not."""
 
     FALSE = "false"
     TRUE = "true"
+
+
+class Force(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Force."""
+
+    FALSE = "false"
+    TRUE = "true"
+
+
+class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of managed service identity."""
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
 
 
 class InventoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -50,7 +77,14 @@ class InventoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class IsCustomizable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets or sets a value indicating whether the vm template is customizable or not."""
+    """Gets a value indicating whether the vm template is customizable or not."""
+
+    FALSE = "false"
+    TRUE = "true"
+
+
+class IsHighlyAvailable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets highly available property."""
 
     FALSE = "false"
     TRUE = "true"
@@ -65,9 +99,49 @@ class LimitCpuForMigration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TRUE = "true"
 
 
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+    logs UX. Default value is "user,system".
+    """
+
+    USER = "user"
+    SYSTEM = "system"
+    USER_SYSTEM = "user,system"
+
+
 class OsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the different types of VM guest operating systems."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"
     OTHER = "Other"
+
+
+class ProvisioningAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the different types of operations for guest agent."""
+
+    INSTALL = "install"
+    UNINSTALL = "uninstall"
+    REPAIR = "repair"
+
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of a resource."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    PROVISIONING = "Provisioning"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    ACCEPTED = "Accepted"
+    CREATED = "Created"
+
+
+class SkipShutdown(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets a value indicating whether to request non-graceful VM shutdown. True value for
+    this flag indicates non-graceful shutdown whereas false indicates otherwise. Defaults to false.
+    """
+
+    FALSE = "false"
+    TRUE = "true"

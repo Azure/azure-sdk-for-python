@@ -31,12 +31,12 @@ def main():
 
     response = client.availability_sets.begin_update(
         resource_group_name="testrg",
-        availability_set_name="HRAvailabilitySet",
+        availability_set_resource_name="HRAvailabilitySet",
         body={"tags": {"tag1": "value1", "tag2": "value2"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/scvmm/resource-manager/Microsoft.ScVmm/preview/2020-06-05-preview/examples/UpdateAvailabilitySet.json
+# x-ms-original-file: specification/scvmm/resource-manager/Microsoft.ScVmm/stable/2023-10-07/examples/UpdateAvailabilitySet.json
 if __name__ == "__main__":
     main()
