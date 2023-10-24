@@ -828,8 +828,7 @@
                     "name": "[parameters('online_store_connection_name')]",
                     "location": "[parameters('location')]",
                     "dependsOn": [
-                        "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]",
-                        "[resourceId('Microsoft.MachineLearningServices/workspaces/connections', parameters('workspaceName'), parameters('offline_store_connection_name'))]"
+                        "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]"
                     ],
                     "identity": {
                         "type": "SystemAssigned"
@@ -963,7 +962,7 @@
             }
         },
         {
-            "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), equals(parameters('grant_materialization_permissions'), 'true'), not(empty(parameters('online_store_connection_name'))))]",
+            "condition": "[and(equals(parameters('set_up_feature_store'), 'true'), equals(parameters('grant_materialization_permissions'), 'true'), not(empty(parameters('online_store_target'))))]",
             "type": "Microsoft.Resources/deployments",
             "name": "online-store-role-assignment",
             "apiVersion": "2020-06-01",
