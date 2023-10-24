@@ -75,12 +75,18 @@ class MetricHandler(object):
 
     def calculate_metrics(self):
         from azureml.metrics import compute_metrics
+        from azureml.metrics import constants
 
         metrics_calculation_data = self._get_data_for_metrics()
 
+        metrics = None
+        if self.metrics is None and self.task_type == "chat":
+            metrics = []
+        else:
+            metrics = self.metrics
+
         return compute_metrics(
-            metrics=self.metrics,
-            task_type=self.task_type,
-            use_chat_completion=True,
-            **metrics_calculation_data
+            metrics=metrics,
+            task_type=constants.Tasks.RAG_EVALUATION if self.task_type == "chat" else self.task_type,
+            **metrics_calculation_data,
         )
