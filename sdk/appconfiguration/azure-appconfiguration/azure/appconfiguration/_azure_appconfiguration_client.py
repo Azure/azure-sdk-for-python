@@ -53,7 +53,7 @@ class AzureAppConfigurationClient:
     :param credential: An object which can provide secrets for the app configuration service
     :type credential: ~azure.appconfiguration.AppConfigConnectionStringCredential
         or ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2022-11-01-preview". Note that overriding this default
+    :keyword api_version: Api Version. Default value is "2023-10-01". Note that overriding this default
         value may result in unsupported behavior.
     :paramtype api_version: str
 
@@ -72,7 +72,7 @@ class AzureAppConfigurationClient:
 
         self._credential_scopes = base_url.strip("/") + "/.default"
 
-        self._config = AzureAppConfigurationConfiguration(base_url, credential_scopes=self._credential_scopes, **kwargs)
+        self._config = AzureAppConfigurationConfiguration(credential, base_url, credential_scopes=self._credential_scopes, **kwargs)
         self._config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
         self._sync_token_policy = SyncTokenPolicy()
 
@@ -85,7 +85,7 @@ class AzureAppConfigurationClient:
             )
 
         self._impl = AzureAppConfiguration(
-            base_url, pipeline=pipeline, credential_scopes=self._credential_scopes, **kwargs
+            credential, base_url, pipeline=pipeline, credential_scopes=self._credential_scopes, **kwargs
         )
 
     @classmethod

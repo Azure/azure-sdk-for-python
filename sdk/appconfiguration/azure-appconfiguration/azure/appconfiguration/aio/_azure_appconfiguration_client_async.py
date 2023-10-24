@@ -45,7 +45,7 @@ class AzureAppConfigurationClient:
         :param credential: An object which can provide secrets for the app configuration service
         :type credential: ~azure.appconfiguration.AppConfigConnectionStringCredential
             or ~azure.core.credentials_async.AsyncTokenCredential
-        :keyword api_version: Api Version. Default value is "2022-11-01-preview". Note that overriding this default
+        :keyword api_version: Api Version. Default value is "2023-10-01". Note that overriding this default
             value may result in unsupported behavior.
         :paramtype api_version: str
 
@@ -86,6 +86,7 @@ class AzureAppConfigurationClient:
             credential_policy = AppConfigRequestsCredentialsPolicy(credential)  # type: ignore
 
         self._impl = AzureAppConfiguration(
+            credential,
             base_url,
             credential_scopes=credential_scopes,
             authentication_policy=credential_policy,
