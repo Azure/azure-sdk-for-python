@@ -390,6 +390,8 @@ def generate_share_sas(
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
+    if not policy_id and not (expiry and permission):
+        raise ValueError("Both expiry and permission must be provided when not using a stored access policy.")
     sas = FileSharedAccessSignature(account_name, account_key)
     return sas.generate_share(
         share_name=share_name,
@@ -481,6 +483,8 @@ def generate_file_sas(
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
+    if not policy_id and not (expiry and permission):
+        raise ValueError("Both expiry and permission must be provided when not using a stored access policy.")
     sas = FileSharedAccessSignature(account_name, account_key)
     if len(file_path) > 1:
         dir_path = '/'.join(file_path[:-1])

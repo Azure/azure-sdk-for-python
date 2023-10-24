@@ -92,6 +92,8 @@ def generate_file_system_sas(
         credential,  # type: Union[str, UserDelegationKey]
         permission=None,  # type: Optional[Union[FileSystemSasPermissions, str]]
         expiry=None,  # type: Optional[Union[datetime, str]]
+        start=None,  # type: Optional[Union[datetime, str]]
+        policy_id=None,  # type: Optional[str]
         **kwargs # type: Any
     ):
     # type: (...) -> str
@@ -136,6 +138,10 @@ def generate_file_system_sas(
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
     :paramtype start: datetime or str
+    :keyword str policy_id:
+        A unique value up to 64 characters in length that correlates to a
+        stored access policy. To create a stored access policy, use
+        :func:`~azure.storage.queue.QueueClient.set_queue_access_policy`.
     :keyword str ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
         If the IP address from which the request originates does not match the IP address
@@ -177,6 +183,8 @@ def generate_file_system_sas(
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
+    if not policy_id and not (expiry and permission):
+        raise ValueError("Both expiry and permission must be provided when not using a stored access policy.")
     return generate_container_sas(
         account_name=account_name,
         container_name=file_system_name,
@@ -184,6 +192,8 @@ def generate_file_system_sas(
         user_delegation_key=credential if not isinstance(credential, str) else None,
         permission=permission,
         expiry=expiry,
+        start=start,
+        policy_id=policy_id,
         **kwargs)
 
 
@@ -194,6 +204,8 @@ def generate_directory_sas(
         credential,  # type: Union[str, UserDelegationKey]
         permission=None,  # type: Optional[Union[DirectorySasPermissions, str]]
         expiry=None,  # type: Optional[Union[datetime, str]]
+        start=None,  # type: Optional[Union[datetime, str]]
+        policy_id=None,  # type: Optional[str]
         **kwargs # type: Any
     ):
     # type: (...) -> str
@@ -240,6 +252,10 @@ def generate_directory_sas(
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
     :paramtype start: ~datetime.datetime or str
+    :keyword str policy_id:
+        A unique value up to 64 characters in length that correlates to a
+        stored access policy. To create a stored access policy, use
+        :func:`~azure.storage.queue.QueueClient.set_queue_access_policy`.
     :keyword str ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
         If the IP address from which the request originates does not match the IP address
@@ -290,6 +306,8 @@ def generate_directory_sas(
         user_delegation_key=credential if not isinstance(credential, str) else None,
         permission=permission,
         expiry=expiry,
+        start=start,
+        policy_id=policy_id,
         sdd=depth,
         is_directory=True,
         **kwargs)
@@ -303,6 +321,8 @@ def generate_file_sas(
         credential,  # type: Union[str, UserDelegationKey]
         permission=None,  # type: Optional[Union[FileSasPermissions, str]]
         expiry=None,  # type: Optional[Union[datetime, str]]
+        start=None,  # type: Optional[Union[datetime, str]]
+        policy_id=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
     # type: (...) -> str
@@ -351,6 +371,10 @@ def generate_file_sas(
         to UTC. If a date is passed in without timezone info, it is assumed to
         be UTC.
     :paramtype start: ~datetime.datetime or str
+    :keyword str policy_id:
+        A unique value up to 64 characters in length that correlates to a
+        stored access policy. To create a stored access policy, use
+        :func:`~azure.storage.queue.QueueClient.set_queue_access_policy`.
     :keyword str ip:
         Specifies an IP address or a range of IP addresses from which to accept requests.
         If the IP address from which the request originates does not match the IP address
@@ -404,4 +428,6 @@ def generate_file_sas(
         user_delegation_key=credential if not isinstance(credential, str) else None,
         permission=permission,
         expiry=expiry,
+        start=start,
+        policy_id=policy_id,
         **kwargs)

@@ -252,6 +252,8 @@ def generate_queue_sas(
             :dedent: 12
             :caption: Generate a sas token.
     """
+    if not policy_id and not (expiry and permission):
+        raise ValueError("Both expiry and permission must be provided when not using a stored access policy.")
     sas = QueueSharedAccessSignature(account_name, account_key)
     return sas.generate_queue(
         queue_name,

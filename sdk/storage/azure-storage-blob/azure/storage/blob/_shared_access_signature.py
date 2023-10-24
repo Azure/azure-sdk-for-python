@@ -481,6 +481,8 @@ def generate_container_sas(
             :dedent: 12
             :caption: Generating a sas token.
     """
+    if not policy_id and not (expiry and permission):
+        raise ValueError("Both expiry and permission must be provided when not using a stored access policy.")
     if not user_delegation_key and not account_key:
         raise ValueError("Either user_delegation_key or account_key must be provided.")
     if isinstance(account_key, UserDelegationKey):
@@ -602,6 +604,8 @@ def generate_blob_sas(
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
+    if not policy_id and not (expiry and permission):
+        raise ValueError("Both expiry and permission must be provided when not using a stored access policy.")
     if not user_delegation_key and not account_key:
         raise ValueError("Either user_delegation_key or account_key must be provided.")
     if isinstance(account_key, UserDelegationKey):
