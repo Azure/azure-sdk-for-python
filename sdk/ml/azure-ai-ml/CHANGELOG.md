@@ -3,7 +3,9 @@
 ## 1.12.0 (unreleased)
 
 ### Features Added
+- Workspace Connections had 3 child classes added for open AI, cog search, and cog service connections.
 - Workspace Connections replaced metadata with tags, and surfaced api_version, api_type, and kind for certain connection types.
+
 
 ### Bugs Fixed
 
