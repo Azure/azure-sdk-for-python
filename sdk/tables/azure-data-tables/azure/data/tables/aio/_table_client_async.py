@@ -666,7 +666,6 @@ class TableClient(AsyncTablesBaseClient):
             endpoint=f"{self.scheme}://{self._primary_hostname}",
             table_name=self.table_name,
             is_cosmos_endpoint=self._cosmos_endpoint,
-            **kwargs,
         )
         if isinstance(operations, AsyncIterable):
             async for operation in operations:

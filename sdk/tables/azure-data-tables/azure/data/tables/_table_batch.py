@@ -5,6 +5,9 @@
 # --------------------------------------------------------------------------
 from typing import Union, Any, Mapping, Optional, List, Tuple
 
+from azure.core import MatchConditions
+from azure.core.rest import HttpRequest
+
 from ._common_conversion import _transform_patch_to_cosmos_post
 from ._models import UpdateMode, TransactionOperation
 from ._serialize import _add_entity_properties, _prepare_key, _get_match_condition
@@ -17,9 +20,6 @@ from ._generated.operations._operations import (
 )
 from ._generated._configuration import AzureTableConfiguration
 from ._generated.aio._configuration import AzureTableConfiguration as AsyncAzureTableConfiguration
-
-from azure.core import MatchConditions
-from azure.core.rest import HttpRequest
 
 
 EntityType = Union[TableEntity, Mapping[str, Any]]
@@ -48,7 +48,6 @@ class TableBatchOperations(object):
         endpoint: str,
         table_name: str,
         is_cosmos_endpoint: bool = False,
-        **kwargs,
     ) -> None:
         """Create TableClient from a Credential.
 
@@ -61,12 +60,12 @@ class TableBatchOperations(object):
         :param is_cosmos_endpoint: True if the client endpoint is for Tables Cosmos. False if not. Default is False.
         :type is_cosmos_endpoint: bool
         """
-        self._config: Union[AzureTableConfiguration, AsyncAzureTableConfiguration] = config
-        self._base_url: str = endpoint
-        self._is_cosmos_endpoint: bool = is_cosmos_endpoint
-        self.table_name: str = table_name
+        self._config = config
+        self._base_url = endpoint
+        self._is_cosmos_endpoint = is_cosmos_endpoint
+        self.table_name = table_name
 
-        self._partition_key: Optional[str] = kwargs.pop("partition_key", None)
+        self._partition_key: Optional[str] = None
         self.requests: List[HttpRequest] = []
 
     def __len__(self) -> int:

@@ -214,7 +214,9 @@ def _add_entity_properties(source: Union[TableEntity, Mapping[str, Any]]) -> Dic
             mtype, value = convert(value)
         elif isinstance(value, datetime):
             mtype, value = _to_entity_datetime(value)
-        elif isinstance(value, tuple) and value[0] is not None:
+        elif isinstance(value, tuple):
+            if value[0] is None:
+                continue
             convert = _EDM_TO_ENTITY_CONVERSIONS[EdmType(value[1])]
             mtype, value = convert(value[0])
         else:

@@ -649,7 +649,6 @@ class TableClient(TablesBaseClient):
             endpoint=f"{self.scheme}://{self._primary_hostname}",
             table_name=self.table_name,
             is_cosmos_endpoint=self._cosmos_endpoint,
-            **kwargs,
         )
         try:
             for operation in operations:
