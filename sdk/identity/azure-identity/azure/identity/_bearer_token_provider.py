@@ -24,7 +24,7 @@ def get_bearer_token_provider(credential: TokenCredential, *scopes: str) -> Call
         from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
         credential = DefaultAzureCredential()
-        bearer_token_provider = get_bearer_token_provider(credential, "https://storage.azure.com/.default")
+        bearer_token_provider = get_bearer_token_provider(credential, "https://cognitiveservices.azure.com/.default")
 
         # Usage
         request.headers["Authorization"] = "Bearer " + bearer_token_provider()

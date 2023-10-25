@@ -24,14 +24,14 @@ def get_bearer_token_provider(credential: AsyncTokenCredential, *scopes: str) ->
         from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 
         credential = DefaultAzureCredential()
-        bearer_token_provider = get_bearer_token_provider(credential, "https://storage.azure.com/.default")
+        bearer_token_provider = get_bearer_token_provider(credential, "https://cognitiveservices.azure.com/.default")
 
 
         # Usage
         request.headers["Authorization"] = "Bearer " + await bearer_token_provider()
 
     :param credential: The credential used to authenticate the request.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param str scopes: The scopes required for the bearer token.
     :rtype: coroutine
     :return: A coroutine that returns a bearer token.
