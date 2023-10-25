@@ -7,18 +7,17 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_layout.py
+FILE: sample_analyze_addon_highres.py
 
 DESCRIPTION:
-    This sample demonstrates how to extract text, selection marks, and layout information from a document
-    given through a file.
+    This sample demonstrates how to recognize documents with improved quality using
+    the add-on 'highResolution' capability.
 
-    Note that selection marks returned from begin_analyze_document(model_id="prebuilt-layout") do not return the text
-    associated with the checkbox. For the API to return this information, build a custom model to analyze the
-    checkbox and its text. See sample_build_model.py for more information.
+    Add-on capabilities are available within all models except for the Business card
+    model. The sample uses Layout model to demonstrate.
 
 USAGE:
-    python sample_analyze_layout.py
+    python sample_analyze_addon_highres.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
@@ -26,6 +25,11 @@ USAGE:
 """
 
 import os
+
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 
 def format_polygon(polygon):
@@ -40,13 +44,13 @@ def analyze_layout():
             os.path.abspath(__file__),
             "..",
             "..",
-            "./sample_forms/forms/form_selection_mark.png",
+            "sample_forms/add_ons/highres.png",
         )
     )
 
     # [START extract_layout]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.formrecognizer import DocumentAnalysisClient
+    from azure.ai.formrecognizer import DocumentAnalysisClient, AnalysisFeature
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -56,7 +60,7 @@ def analyze_layout():
     )
     with open(path_to_sample_documents, "rb") as f:
         poller = document_analysis_client.begin_analyze_document(
-            "prebuilt-layout", document=f
+            "prebuilt-layout", document=f, features=[AnalysisFeature.OCR_HIGH_RESOLUTION]
         )
     result = poller.result()
 
@@ -112,7 +116,6 @@ def analyze_layout():
 
 
 if __name__ == "__main__":
-    import sys
     from azure.core.exceptions import HttpResponseError
 
     try:
