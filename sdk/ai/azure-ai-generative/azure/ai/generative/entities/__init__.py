@@ -6,10 +6,24 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
 
 from .ai_resource import AIResource
-from .connection import Connection
+from .base_connection import BaseConnection
+from .connection_subtypes import (
+    AzureOpenAIConnection,
+    AzureAISearchConnection,
+    AzureAIServiceConnection,
+)
 from .mlindex import MLIndex
 from .project import Project
 from .data import Data
-from .configs import AzureOpenAIModelConfiguration
 
-__all__ = ["Connection", "MLIndex", "Project", "AIResource", "Data", "AzureOpenAIModelConfiguration"]
+__all__ = [
+    "BaseConnection",
+    "AzureOpenAIConnection",
+    "AzureAISearchConnection",
+    "AzureAIServiceConnection",
+    "MLIndex",
+    "Project",
+    "AIResource",
+    "Data",
+]
+

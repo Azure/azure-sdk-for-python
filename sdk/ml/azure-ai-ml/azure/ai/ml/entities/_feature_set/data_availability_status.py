@@ -3,12 +3,13 @@
 # ---------------------------------------------------------
 
 from enum import Enum
-
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class MaterializationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Materialization Type Enum"""
+class DataAvailabilityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DataAvailabilityStatus."""
 
-    RECURRENT_MATERIALIZATION = 1
-    BACKFILL_MATERIALIZATION = 2
+    NONE = "None"
+    PENDING = "Pending"
+    INCOMPLETE = "Incomplete"
+    COMPLETE = "Complete"

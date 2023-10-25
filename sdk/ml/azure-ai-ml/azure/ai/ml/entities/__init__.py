@@ -104,6 +104,7 @@ from ._endpoint.online_endpoint import (
     ManagedOnlineEndpoint,
     OnlineEndpoint,
 )
+from ._feature_set.data_availability_status import DataAvailabilityStatus
 from ._feature_set.feature import Feature
 from ._feature_set.feature_set_backfill_metadata import FeatureSetBackfillMetadata
 from ._feature_set.feature_set_backfill_request import FeatureSetBackfillRequest
@@ -195,6 +196,11 @@ from ._system_data import SystemData
 from ._validation import ValidationResult
 from ._workspace.compute_runtime import ComputeRuntime
 from ._workspace.connections.workspace_connection import WorkspaceConnection
+from ._workspace.connections.workspace_connection_subtypes import (
+    AzureOpenAIWorkspaceConnection,
+    AzureAISearchWorkspaceConnection,
+    AzureAIServiceWorkspaceConnection,
+)
 from ._workspace.customer_managed_key import CustomerManagedKey
 from ._workspace.diagnose import (
     DiagnoseRequestProperties,
@@ -273,6 +279,9 @@ __all__ = [
     "Workspace",
     "WorkspaceKeys",
     "WorkspaceConnection",
+    "AzureOpenAIWorkspaceConnection",
+    "AzureAISearchWorkspaceConnection",
+    "AzureAIServiceWorkspaceConnection",
     "DiagnoseRequestProperties",
     "DiagnoseResult",
     "DiagnoseResponseResult",
@@ -375,6 +384,7 @@ __all__ = [
     "MaterializationStore",
     "Notification",
     "FeatureSetBackfillMetadata",
+    "DataAvailabilityStatus",
     "FeatureSetMaterializationMetadata",
     "ServerlessComputeSettings",
     # builders

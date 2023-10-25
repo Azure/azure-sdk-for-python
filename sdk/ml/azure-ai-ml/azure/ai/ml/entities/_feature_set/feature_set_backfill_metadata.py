@@ -7,11 +7,9 @@ from typing import Optional
 from azure.ai.ml._restclient.v2023_10_01.models import (
     FeaturesetVersionBackfillResponse as RestFeaturesetVersionBackfillResponse,
 )
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
-@experimental
 class FeatureSetBackfillMetadata(RestTranslatableMixin):
     """Feature Set Backfill Metadata
 

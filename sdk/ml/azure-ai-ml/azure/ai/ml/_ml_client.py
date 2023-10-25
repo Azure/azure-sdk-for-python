@@ -785,7 +785,6 @@ class MLClient:
         return self._registries
 
     @property
-    @experimental
     def feature_stores(self) -> FeatureStoreOperations:
         """A collection of feature store related operations.
 
@@ -795,7 +794,6 @@ class MLClient:
         return self._featurestores
 
     @property
-    @experimental
     def feature_sets(self) -> FeatureSetOperations:
         """A collection of feature set related operations.
 
@@ -815,7 +813,6 @@ class MLClient:
         return self._workspace_hubs
 
     @property
-    @experimental
     def feature_store_entities(self) -> FeatureStoreEntityOperations:
         """A collection of feature store entity related operations.
 

@@ -124,6 +124,7 @@
     "conda/conda-releaselogs/azure-mgmt.md"
   ],
   "words": [
+    "aoai",
     "pyprojects",
     "certifi",
     "cffi",
@@ -281,6 +282,7 @@
     "mhsm",
     "mipsle",
     "mktime",
+    "mlindex",
     "msal",
     "msrest",
     "msrestazure",
@@ -305,6 +307,8 @@
     "oidc",
     "onboarded",
     "onmicrosoft",
+    "openai",
+    "OPENAI",
     "owasp",
     "ownerid",
     "PBYTE",
@@ -435,6 +439,28 @@
     "amltemp"
   ],
   "overrides": [
+    {
+      "filename": "sdk/ai/**",
+      "words": [
+        "azureml",
+        "mlflow",
+        "tika",
+        "pypdf",
+        "fsspec",
+        "openai",
+        "tiktoken",
+        "vectordb",
+        "pybase",
+        "mlindex",
+        "mlindexes",
+        "aoai",
+        "faiss",
+        "mlmodel",
+        "openmpi",
+        "vcpu",
+        "vcpus"
+      ]
+    },
     {
       "filename": "doc/sphinx/generate_doc.py",
       "words": [
@@ -1567,7 +1593,9 @@
         "mros",
         "deserializers",
         "ctxt",
-        "wday"
+        "wday",
+        "JSONify",
+        "Nify"
       ]
     },
     {
