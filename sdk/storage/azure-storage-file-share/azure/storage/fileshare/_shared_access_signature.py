@@ -265,16 +265,10 @@ def generate_account_sas(
     :param ~azure.storage.fileshare.AccountSasPermissions permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
-        Required unless an id is given referencing a stored access policy
-        which contains this field. This field must be omitted if it has been
-        specified in an associated stored access policy.
     :param expiry:
         The time at which the shared access signature becomes invalid.
-        Required unless an id is given referencing a stored access policy
-        which contains this field. This field must be omitted if it has
-        been specified in an associated stored access policy. Azure will always
-        convert values to UTC. If a date is passed in without timezone info, it
-        is assumed to be UTC.
+        Azure will always convert values to UTC. If a date is passed in without
+        timezone info, it is assumed to be UTC.
     :type expiry: ~datetime.datetime or str
     :param start:
         The time at which the shared access signature becomes valid. If
