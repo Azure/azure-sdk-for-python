@@ -13,6 +13,7 @@ from .._paging import (
     pack_continuation_token,
     unpack_continuation_token,
 )
+from .._api_versions import DEFAULT_VERSION
 
 
 class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
@@ -100,7 +101,7 @@ class AsyncSearchPageIterator(AsyncPageIterator[ReturnType]):
         self._initial_query = initial_query
         self._kwargs = kwargs
         self._facets = None
-        self._api_version = kwargs.pop("api_version", "2020-06-30")
+        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
 
     async def _get_next_cb(self, continuation_token):
         if continuation_token is None:

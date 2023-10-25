@@ -133,7 +133,7 @@ async def single_vector_search():
     query = "Top hotels in town"
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
-    vector_query = VectorQuery(vector=get_embeddings(query), k=3, fields="descriptionVector")
+    vector_query = VectorQuery(vector=get_embeddings(query), k_nearest_neighbors=3, fields="descriptionVector")
 
     async with search_client:
         results = await search_client.search(
@@ -152,7 +152,7 @@ async def single_vector_search_with_filter():
     query = "Top hotels in town"
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
-    vector_query = VectorQuery(vector=get_embeddings(query), k=3, fields="descriptionVector")
+    vector_query = VectorQuery(vector=get_embeddings(query), k_nearest_neighbors=3, fields="descriptionVector")
 
     async with search_client:
         results = await search_client.search(
@@ -171,7 +171,7 @@ async def simple_hybrid_search():
     query = "Top hotels in town"
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
-    vector_query = VectorQuery(vector=get_embeddings(query), k=3, fields="descriptionVector")
+    vector_query = VectorQuery(vector=get_embeddings(query), k_nearest_neighbors=3, fields="descriptionVector")
 
     async with search_client:
         results = await search_client.search(

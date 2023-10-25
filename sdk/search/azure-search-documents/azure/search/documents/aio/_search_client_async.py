@@ -23,10 +23,10 @@ from .._generated.models import (
     SearchMode,
     ScoringStatistics,
     VectorFilterMode,
-    VectorQuery,
     SemanticErrorMode,
     SuggestRequest,
 )
+from ..models import VectorQuery
 from .._search_documents_error import RequestEntityTooLargeError
 from .._index_documents_batch import IndexDocumentsBatch
 from .._queries import AutocompleteQuery, SearchQuery, SuggestQuery
@@ -263,12 +263,12 @@ class SearchClient(HeadersMixin):
         :keyword int semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
          time it takes for semantic enrichment to finish processing before the request fails.
         :keyword vector_queries: The query parameters for vector and hybrid search queries.
-        :paramtype vector_queries: list[VectorQuery]
+        :paramtype vector_queries: List[VectorQuery]
         :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
           vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
         :paramtype vector_filter_mode: str or VectorFilterMode
         :return: A list of documents (dicts) matching the specified search criteria.
-        :rtype:  AsyncSearchItemPaged[dict]
+        :rtype:  AsyncSearchItemPaged[Dict]
 
         .. admonition:: Example:
 
@@ -332,7 +332,7 @@ class SearchClient(HeadersMixin):
             top=top,
             session_id=session_id,
             scoring_statistics=scoring_statistics,
-            vector_queries=vector_queries,
+            vector_queries=[v._to_generated() for v in vector_queries],  # pylint:disable=protected-access
             vector_filter_mode=vector_filter_mode,
             semantic_error_handling=semantic_error_mode,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,

@@ -136,10 +136,11 @@ class SearchIndexerSkillset(_serialization.Model):
 class EntityRecognitionSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the Entity Recognition skill version to use."""
 
+    V1 = "#Microsoft.Skills.Text.EntityRecognitionSkill"
     #: Use Entity Recognition skill V3.
     V3 = "#Microsoft.Skills.Text.V3.EntityRecognitionSkill"
     #: Use latest version of Entity Recognition skill.
-    LATEST = "#Microsoft.Skills.Text.V3.EntityRecognitionSkill"
+    LATEST = V3
 
 
 class EntityRecognitionSkill(SearchIndexerSkill):
@@ -256,10 +257,11 @@ class EntityRecognitionSkill(SearchIndexerSkill):
 class SentimentSkillVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the Sentiment Skill version to use."""
 
+    V1 = "#Microsoft.Skills.Text.SentimentSkill"
     #: Use Sentiment skill V3.
     V3 = "#Microsoft.Skills.Text.V3.SentimentSkill"
     #: Use latest version of Sentiment skill.
-    LATEST = "#Microsoft.Skills.Text.V3.SentimentSkill"
+    LATEST = V3
 
 
 class SentimentSkill(SearchIndexerSkill):

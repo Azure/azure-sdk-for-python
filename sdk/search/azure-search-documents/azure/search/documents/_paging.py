@@ -11,6 +11,7 @@ import json
 
 from azure.core.paging import ItemPaged, PageIterator, ReturnType
 from ._generated.models import SearchRequest, SearchDocumentsResult, AnswerResult
+from ._api_versions import DEFAULT_VERSION
 
 
 def convert_search_result(result):
@@ -22,7 +23,7 @@ def convert_search_result(result):
     return ret
 
 
-def pack_continuation_token(response, api_version="2020-06-30"):
+def pack_continuation_token(response, api_version=DEFAULT_VERSION):
     if response.next_page_parameters is not None:
         token = {
             "apiVersion": api_version,
@@ -116,7 +117,7 @@ class SearchPageIterator(PageIterator):
         self._initial_query = initial_query
         self._kwargs = kwargs
         self._facets = None
-        self._api_version = kwargs.pop("api_version", "2020-06-30")
+        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
 
     def _get_next_cb(self, continuation_token):
         if continuation_token is None:
