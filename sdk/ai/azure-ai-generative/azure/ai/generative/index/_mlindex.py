@@ -171,11 +171,11 @@ class MLIndex:
                     connection_credential = get_connection_credential(self.index_config, credential=credential)
                 except Exception as e:
                     # azure.ai.generative has workflow where env vars are set before doing stuff.
-                    if "AZURE_COGNITIVE_SEARCH_KEY" in os.environ:
+                    if "AZURE_AI_SEARCH_KEY" in os.environ or "AZURE_COGNITIVE_SEARCH_KEY" in os.environ:
                         from azure.core.credentials import AzureKeyCredential
 
                         logger.warning(f"Failed to get credential for ACS with {e}, falling back to env vars.")
-                        connection_credential = AzureKeyCredential(os.environ["AZURE_COGNITIVE_SEARCH_KEY"])
+                        connection_credential = AzureKeyCredential(os.environ["AZURE_AI_SEARCH_KEY"] if "AZURE_AI_SEARCH_KEY" in os.environ else os.environ["AZURE_COGNITIVE_SEARCH_KEY"])
                     else:
                         raise e
 
@@ -605,13 +605,13 @@ class MLIndex:
                 index_config = {
                     **index_config,
                     **{
-                        "endpoint": os.getenv("AZURE_COGNITIVE_SEARCH_TARGET"),
+                        "endpoint": os.getenv("AZURE_AI_SEARCH_ENDPOINT"),
                         "api_version": "2023-07-01-preview",
                     }
                 }
                 connection_args = {
                     "connection_type": "environment",
-                    "connection": {"key": "AZURE_COGNITIVE_SEARCH_KEY"}
+                    "connection": {"key": "AZURE_AI_SEARCH_KEY"}
                 }
             else:
                 if isinstance(index_connection, str):

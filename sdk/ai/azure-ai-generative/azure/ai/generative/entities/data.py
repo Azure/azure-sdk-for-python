@@ -6,7 +6,15 @@ from typing import Dict, Optional
 from dataclasses import dataclass
 
 from azure.ai.ml.entities import Data as DataAsset
-from azure.ai.ml.constants import AssetTypes
+from azure.ai.ml.constants import AssetTypes as DataAssetTypes
+from azure.ai.generative.constants import AssetTypes
+
+
+DataAssetTypesMapping: Dict[DataAssetTypes, AssetTypes] = {
+    DataAssetTypes.URI_FILE: AssetTypes.FILE,
+    DataAssetTypes.URI_FOLDER: AssetTypes.FOLDER,
+    DataAssetTypes.MLTABLE: AssetTypes.TABLE,
+}
 
 
 @dataclass
@@ -14,7 +22,7 @@ class Data:
     name: str
     path: str
     version: str = None
-    type: str = AssetTypes.URI_FOLDER
+    type: str = AssetTypes.FOLDER
     description: Optional[str] = None
     tags: Optional[Dict[str, str]] = None
     properties: Optional[Dict[str, str]] = None
@@ -24,7 +32,7 @@ class Data:
         return cls(
             name=data.name,
             version=data.version,
-            type = data.type,
+            type = DataAssetTypesMapping[data.type],
             path=data.path,
             description=data.description,
             tags=data.tags,
