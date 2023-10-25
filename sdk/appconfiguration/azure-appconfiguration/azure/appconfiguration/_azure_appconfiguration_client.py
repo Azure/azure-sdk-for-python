@@ -72,7 +72,9 @@ class AzureAppConfigurationClient:
 
         self._credential_scopes = base_url.strip("/") + "/.default"
 
-        self._config = AzureAppConfigurationConfiguration(credential, base_url, credential_scopes=self._credential_scopes, **kwargs)
+        self._config = AzureAppConfigurationConfiguration(
+            credential, base_url, credential_scopes=self._credential_scopes, **kwargs
+        )
         self._config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
         self._sync_token_policy = SyncTokenPolicy()
 

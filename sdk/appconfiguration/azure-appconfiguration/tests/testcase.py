@@ -27,7 +27,9 @@ class AppConfigTestCase(AzureRecordedTestCase):
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, api_version="2022-11-01-preview")
 
     def create_client(self, appconfiguration_connection_string):
-        return AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string, api_version="2022-11-01-preview")
+        return AzureAppConfigurationClient.from_connection_string(
+            appconfiguration_connection_string, api_version="2022-11-01-preview"
+        )
 
     def create_config_setting(self):
         return ConfigurationSetting(
