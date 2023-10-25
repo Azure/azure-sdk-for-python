@@ -148,7 +148,9 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
+        # Do we want this in case they try to directly send in an event from SB or EH?
+        if isinstance(body, dict):
+            raise TypeError("Incorrect type for body. Expected CloudEvent or list of CloudEvents.")
         if isinstance(body, CloudEvent):
             kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
             if binary_mode:
