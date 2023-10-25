@@ -478,7 +478,7 @@ def func(self, value: Optional[Union[Dict[str, str], SparkJobEntry]]):
 
 ### Returning Any from function
 
-- In some cases, mypy would complaint about returning Any from function declared to return "bool" for example
+- In some cases, mypy will complain about returning Any from a function with a return declaration of bool, for example
 
 ```python
 # for example
