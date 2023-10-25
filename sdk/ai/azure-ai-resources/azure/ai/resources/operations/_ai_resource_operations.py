@@ -3,11 +3,18 @@
 # ---------------------------------------------------------
 from typing import Any, Iterable
 
+from azure.core.tracing.decorator import distributed_trace
+
 from azure.ai.resources.constants._common import DEFAULT_OPEN_AI_CONNECTION_NAME
 from azure.ai.resources.entities import AIResource
 from azure.ai.ml import MLClient
 from azure.ai.ml.constants._common import Scope
 from azure.core.polling import LROPoller
+
+from azure.ai.resources._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin, OpsLogger
+
+ops_logger = OpsLogger(__name__)
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class AIResourceOperations:
@@ -21,7 +28,10 @@ class AIResourceOperations:
     # TODO add operation scope at init level?
     def __init__(self, ml_client: MLClient, **kwargs: Any):
         self._ml_client = ml_client
+        ops_logger.update_info(kwargs)
 
+    @distributed_trace
+    @monitor_with_activity(logger, "AIResource.Get", ActivityType.PUBLICAPI)
     def get(self, *, name: str, **kwargs) -> AIResource:
         """Get an AI resource by name.
 
@@ -35,6 +45,8 @@ class AIResourceOperations:
         resource = AIResource._from_v2_workspace_hub(workspace_hub)
         return resource
 
+    @distributed_trace
+    @monitor_with_activity(logger, "AIResource.List", ActivityType.PUBLICAPI)
     def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[AIResource]:
         """List all AI resource assets in a project.
 
@@ -46,6 +58,8 @@ class AIResourceOperations:
         """
         return [AIResource._from_v2_workspace_hub(wh) for wh in self._ml_client._workspace_hubs.list(scope=scope)]
 
+    @distributed_trace
+    @monitor_with_activity(logger, "AIResource.BeginCreate", ActivityType.PUBLICAPI)
     def begin_create(
         self, *, ai_resource: AIResource, update_dependent_resources: bool = False, **kwargs
     ) -> LROPoller[AIResource]:
@@ -66,6 +80,8 @@ class AIResourceOperations:
             **kwargs
         )
 
+    @distributed_trace
+    @monitor_with_activity(logger, "AIResource.BeginUpdate", ActivityType.PUBLICAPI)
     def begin_update(
         self, *, ai_resource: AIResource, update_dependent_resources: bool = False, **kwargs
     ) -> LROPoller[AIResource]:
@@ -85,6 +101,8 @@ class AIResourceOperations:
             **kwargs
         )
 
+    @distributed_trace
+    @monitor_with_activity(logger, "AIResource.BeginDelete", ActivityType.PUBLICAPI)
     def begin_delete(
         self, *, name: str, delete_dependent_resources: bool, permanently_delete: bool = False, **kwargs
     ) -> LROPoller[None]:

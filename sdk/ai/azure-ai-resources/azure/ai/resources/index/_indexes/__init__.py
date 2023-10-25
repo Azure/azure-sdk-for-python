@@ -2,10 +2,5 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from dataclasses import dataclass
 
-
-@dataclass
-class ManagedIdentity:
-    client_id: str = None
-    resource_id: str = None
+__path__ = __import__("pkgutil").extend_path(__path__, __name__)
