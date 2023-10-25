@@ -47,6 +47,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -59,7 +60,7 @@ setup(
     ),
     python_requires=">=3.7",
     install_requires=[
-        "azure-core<2.0.0,>=1.11.0",
+        "azure-core<2.0.0,>=1.23.0",
         "cryptography>=2.5",
         "msal<2.0.0,>=1.24.0",
         "msal-extensions<2.0.0,>=0.3.0",
