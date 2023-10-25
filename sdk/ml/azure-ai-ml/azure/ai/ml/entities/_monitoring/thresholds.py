@@ -376,11 +376,11 @@ class DataQualityMetricsNumerical(RestTranslatableMixin):
         data_type_error_rate_val = None
         out_of_bounds_rate_val = None
         for thresholds in obj:
-            if thresholds.metric == "nullValueRate":
+            if thresholds.metric == "NullValueRate" or thresholds.metric == "nullValueRate":
                 null_value_rate_val = thresholds.threshold.value
-            if thresholds.metric == "dataTypeErrorRate":
+            if thresholds.metric == "DataTypeErrorRate" or thresholds.metric == "dataTypeErrorRate":
                 data_type_error_rate_val = thresholds.threshold.value
-            if thresholds.metric == "outOfBoundsRate":
+            if thresholds.metric == "OutOfBoundsRate" or thresholds.metric == "outOfBoundsRate":
                 out_of_bounds_rate_val = thresholds.threshold.value
         return cls(
             null_value_rate=null_value_rate_val,
@@ -439,11 +439,11 @@ class DataQualityMetricsCategorical(RestTranslatableMixin):
         data_type_error_rate_val = None
         out_of_bounds_rate_val = None
         for thresholds in obj:
-            if thresholds.metric == "nullValueRate":
+            if thresholds.metric == "NullValueRate" or thresholds.metric == "nullValueRate":
                 null_value_rate_val = thresholds.threshold.value
-            if thresholds.metric == "dataTypeErrorRate":
+            if thresholds.metric == "DataTypeErrorRate" or thresholds.metric == "dataTypeErrorRate":
                 data_type_error_rate_val = thresholds.threshold.value
-            if thresholds.metric == "outOfBoundsRate":
+            if thresholds.metric == "OutOfBoundsRate" or thresholds.metric == "outOfBoundsRate":
                 out_of_bounds_rate_val = thresholds.threshold.value
         return cls(
             null_value_rate=null_value_rate_val,
