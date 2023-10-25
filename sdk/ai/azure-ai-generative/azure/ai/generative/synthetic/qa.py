@@ -6,7 +6,6 @@
 
 try:
     import asyncio
-    import logging
     import os
     import json
     import time
@@ -25,9 +24,8 @@ except ImportError as e:
 
 
 _TEMPLATES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "templates")
-logger = logging.getLogger(__name__)
 ops_logger = OpsLogger(__name__)
-package_logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 _DEFAULT_AOAI_VERSION = "2023-07-01-preview"
 _MAX_RETRIES = 7
@@ -110,7 +108,7 @@ class QADataGenerator:
                 raise ValueError(f"Unknown auth type '{connection.credentials.type}' for connection '{connection.name}'")
             self._chat_completion_params = dict(
                 api_type=api_type,
-                api_version=metadata.get("apiVersion") or metadata.get("ApiVersion", "_DEFAULT_AOAI_VERSION),
+                api_version=metadata.get("apiVersion") or metadata.get("ApiVersion", _DEFAULT_AOAI_VERSION),
                 api_base=connection.target,
                 api_key=api_key,
                 deployment_id=model_config["deployment"],
