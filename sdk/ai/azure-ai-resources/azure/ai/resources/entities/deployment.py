@@ -7,7 +7,6 @@ from typing import Dict, Union
 
 from azure.ai.ml.entities import OnlineEndpoint, OnlineDeployment
 
-from .managed_identity import ManagedIdentity
 from .models import Model, PromptflowModel
 
 
