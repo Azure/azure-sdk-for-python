@@ -24,7 +24,7 @@ from .._generated.models import (
     ScoringStatistics,
     VectorFilterMode,
     VectorQuery,
-    SemanticErrorHandling as SemanticErrorMode,
+    SemanticErrorMode,
     SuggestRequest,
 )
 from .._search_documents_error import RequestEntityTooLargeError

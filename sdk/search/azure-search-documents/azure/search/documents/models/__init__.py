@@ -25,28 +25,24 @@
 # --------------------------------------------------------------------------
 
 from .._generated.models import (
-    AnswerResult,
     AutocompleteMode,
-    CaptionResult,
     IndexAction,
     IndexingResult,
     QueryAnswerType,
     QueryCaptionType,
     QueryType,
-    RawVectorQuery as VectorQuery,
+    VectorQuery,
     ScoringStatistics,
     SearchMode,
-    SemanticErrorHandling as SemanticErrorMode,
+    SemanticErrorMode,
     VectorFilterMode,
-    VectorQuery as VectorizableQuery,
+    VectorizableQuery,
 )
 from .._utils import odata
 
 
 __all__ = (
-    "AnswerResult",
     "AutocompleteMode",
-    "CaptionResult",
     "IndexAction",
     "IndexingResult",
     "odata",
