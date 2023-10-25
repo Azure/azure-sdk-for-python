@@ -4,9 +4,11 @@
 
 from azureml.metrics import constants
 
-CHAT = "chat"
+QA = "qa"
+QA_RAG = "qa-rag"
+CHAT_RAG = "chat-rag"
 
-SUPPORTED_TASK_TYPE = ["qa", "qa-rag", "chat-rag"]
+SUPPORTED_TASK_TYPE = [QA, QA_RAG, CHAT_RAG]
 
 SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING = {
     "qa": constants.QUESTION_ANSWERING,
