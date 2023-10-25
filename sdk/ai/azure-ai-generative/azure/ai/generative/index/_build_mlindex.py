@@ -8,8 +8,8 @@ from typing import Union
 import yaml
 
 from azure.ai.generative.entities.mlindex import Index
-from azure.ai.generative.operations._index_data_source import ACSSource, LocalSource
-from azure.ai.generative.operations._acs_output_config import ACSOutputConfig
+from azure.ai.resources.operations._index_data_source import ACSSource, LocalSource
+from azure.ai.resources.operations._acs_output_config import ACSOutputConfig
 from azure.ai.generative._utils._open_ai_utils import build_open_ai_protocol
 
 
