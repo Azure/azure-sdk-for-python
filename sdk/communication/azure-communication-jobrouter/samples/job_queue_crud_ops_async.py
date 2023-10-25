@@ -116,9 +116,7 @@ class JobQueueSamplesAsync(object):
         router_client: JobRouterClient = JobRouterClient.from_connection_string(conn_str=connection_string)
 
         async with router_client:
-            job_queue_statistics: RouterQueueStatistics = await router_client.get_queue_statistics(
-                id=job_queue_id
-            )
+            job_queue_statistics: RouterQueueStatistics = await router_client.get_queue_statistics(id=job_queue_id)
 
             print(f"Successfully fetched queue statistics router queue: {job_queue_statistics}")
         # [END get_queue_statistics_async]

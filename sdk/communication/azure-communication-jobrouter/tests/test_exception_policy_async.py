@@ -366,9 +366,7 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
                         exception_policy, identifier=ep_identifier, name=ep_identifier, exception_rules=exception_rules
                     )
 
-                    queried_exception_policy = await router_client.get_exception_policy(
-                        id=ep_identifier
-                    )
+                    queried_exception_policy = await router_client.get_exception_policy(id=ep_identifier)
 
                     assert queried_exception_policy is not None
                     ExceptionPolicyValidator.validate_exception_policy(

@@ -130,9 +130,7 @@ class TestRouterJob(RouterRecordedTestCase):
             name=distribution_policy_id,
         )
 
-        distribution_policy = client.create_distribution_policy(
-            id=distribution_policy_id, distribution_policy=policy
-        )
+        distribution_policy = client.create_distribution_policy(id=distribution_policy_id, distribution_policy=policy)
 
         # add for cleanup later
         if self._testMethodName in self.distribution_policy_ids:
@@ -208,9 +206,7 @@ class TestRouterJob(RouterRecordedTestCase):
             worker_selectors=cp_worker_selectors,
         )
 
-        job_queue = client.create_classification_policy(
-            id=cp_id, classification_policy=classification_policy
-        )
+        job_queue = client.create_classification_policy(id=cp_id, classification_policy=classification_policy)
 
         # add for cleanup later
         if self._testMethodName in self.classification_policy_ids:
@@ -670,7 +666,7 @@ class TestRouterJob(RouterRecordedTestCase):
         self._poll_until_no_exception(self.validate_job_is_queued, Exception, job_identifier)
 
         # Act
-        updated_job_labels = {k: v for k,v in router_job.labels.items()}
+        updated_job_labels = {k: v for k, v in router_job.labels.items()}
         updated_job_labels["FakeKey"] = "FakeWorkerValue"
 
         update_router_job = router_client.update_job(id=job_identifier, labels=updated_job_labels)

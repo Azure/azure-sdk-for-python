@@ -44,12 +44,12 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 self.distribution_policy_ids[self._testMethodName]
             ):
                 for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
-                    router_client.delete_distribution_policy(id=policy_id)
+                    router_client.delete_distribution_policy(distribution_policy_id=policy_id)
 
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
     def test_create_distribution_policy(self, **kwargs):
-        dp_identifier = "tst_create_dp"
+        dp_identifier = "_tst_create_dp"
         router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         for mode in distribution_modes:
@@ -60,7 +60,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
             )
 
             distribution_policy_response = router_client.create_distribution_policy(
-                id=dp_identifier, distribution_policy=policy
+                distribution_policy_id=dp_identifier, distribution_policy=policy
             )
 
             # add for cleanup
@@ -78,7 +78,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
     def test_update_distribution_policy(self, **kwargs):
-        dp_identifier = "tst_update_dp"
+        dp_identifier = "_tst_update_dp"
         router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         for mode in distribution_modes:
@@ -91,7 +91,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
             )
 
             distribution_policy_response = router_client.create_distribution_policy(
-                id=dp_identifier, distribution_policy=policy
+                distribution_policy_id=dp_identifier, distribution_policy=policy
             )
 
             # add for cleanup
@@ -127,7 +127,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
     def test_update_distribution_policy_w_kwargs(self, **kwargs):
-        dp_identifier = "tst_update_dp_w_kwargs"
+        dp_identifier = "_tst_update_dp_w_kwargs"
         router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         for mode in distribution_modes:
@@ -140,7 +140,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
             )
 
             distribution_policy_response = router_client.create_distribution_policy(
-                id=dp_identifier, distribution_policy=policy
+                distribution_policy_id=dp_identifier, distribution_policy=policy
             )
 
             # add for cleanup
@@ -176,7 +176,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
     def test_get_distribution_policy(self, **kwargs):
-        dp_identifier = "tst_get_dp"
+        dp_identifier = "_tst_get_dp"
         router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         for mode in distribution_modes:
@@ -187,7 +187,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
             )
 
             distribution_policy_response = router_client.create_distribution_policy(
-                id=dp_identifier, distribution_policy=policy
+                distribution_policy_id=dp_identifier, distribution_policy=policy
             )
 
             # add for cleanup
@@ -202,7 +202,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 mode=mode,
             )
 
-            queried_distribution_policy = router_client.get_distribution_policy(id=dp_identifier)
+            queried_distribution_policy = router_client.get_distribution_policy(distribution_policy_id=dp_identifier)
             DistributionPolicyValidator.validate_distribution_policy(
                 distribution_policy=queried_distribution_policy,
                 identifier=dp_identifier,
@@ -214,7 +214,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
     def test_delete_distribution_policy(self, **kwargs):
-        dp_identifier = "tst_delete_dp"
+        dp_identifier = "_tst_delete_dp"
         router_client: JobRouterAdministrationClient = self.create_admin_client()
 
         for mode in distribution_modes:
@@ -225,7 +225,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
             )
 
             distribution_policy_response = router_client.create_distribution_policy(
-                id=dp_identifier, distribution_policy=policy
+                distribution_policy_id=dp_identifier, distribution_policy=policy
             )
 
             assert distribution_policy_response is not None
@@ -237,16 +237,16 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 mode=mode,
             )
 
-            router_client.delete_distribution_policy(id=dp_identifier)
+            router_client.delete_distribution_policy(distribution_policy_id=dp_identifier)
             with pytest.raises(ResourceNotFoundError) as nfe:
-                router_client.get_distribution_policy(id=dp_identifier)
+                router_client.get_distribution_policy(distribution_policy_id=dp_identifier)
             assert nfe.value.reason == "Not Found"
             assert nfe.value.status_code == 404
 
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
     def test_list_distribution_policy(self, **kwargs):
-        dp_identifiers = ["tst_list_dp_1", "tst_list_dp_2", "tst_list_dp_3"]
+        dp_identifiers = ["_tst_list_dp_1", "_tst_list_dp_2", "_tst_list_dp_3"]
         created_dp_response = {}
         policy_count = len(dp_identifiers)
         router_client: JobRouterAdministrationClient = self.create_admin_client()
@@ -260,7 +260,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
             )
 
             distribution_policy_response = router_client.create_distribution_policy(
-                id=identifier, distribution_policy=policy
+                distribution_policy_id=identifier, distribution_policy=policy
             )
 
             # add for cleanup
@@ -282,13 +282,13 @@ class TestDistributionPolicy(RouterRecordedTestCase):
             assert len(list_of_policies) <= 2
 
             for policy_item in list_of_policies:
-                response_at_creation = created_dp_response.get(policy_item.distribution_policy.id, None)
+                response_at_creation = created_dp_response.get(policy_item.id, None)
 
                 if not response_at_creation:
                     continue
 
                 DistributionPolicyValidator.validate_distribution_policy(
-                    distribution_policy=policy_item.distribution_policy,
+                    distribution_policy=policy_item,
                     identifier=response_at_creation.id,
                     name=response_at_creation.name,
                     offer_expires_after_seconds=response_at_creation.offer_expires_after_seconds,

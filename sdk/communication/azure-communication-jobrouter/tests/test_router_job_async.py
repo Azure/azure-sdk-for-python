@@ -213,9 +213,7 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
                 worker_selectors=cp_worker_selectors,
             )
 
-            cp = await client.create_classification_policy(
-                id=cp_id, classification_policy=classification_policy
-            )
+            cp = await client.create_classification_policy(id=cp_id, classification_policy=classification_policy)
 
             # add for cleanup later
             if self._testMethodName in self.classification_policy_ids:
@@ -454,7 +452,7 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
             await self._poll_until_no_exception(self.validate_job_is_queued, Exception, job_identifier)
 
             # Act
-            updated_job_labels = {k: v for k,v in router_job.labels.items()}
+            updated_job_labels = {k: v for k, v in router_job.labels.items()}
             updated_job_labels["FakeKey"] = "FakeWorkerValue"
 
             update_router_job = await router_client.update_job(job_identifier, labels=updated_job_labels)

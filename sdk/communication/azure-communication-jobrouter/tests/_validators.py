@@ -23,7 +23,7 @@ from azure.communication.jobrouter.models import (
     ReclassifyExceptionAction,
     ManualReclassifyExceptionAction,
     CancelExceptionAction,
-    ChannelConfiguration,
+    RouterChannel,
     RouterWorker,
     RouterWorkerState,
     RouterJob,
@@ -45,7 +45,8 @@ from azure.communication.jobrouter.models import (
     StaticRouterRule,
     RouterQueueSelector,
     ExpressionRouterRule,
-    LabelOperator
+    LabelOperator,
+    RouterJobNote,
 )
 
 
@@ -423,8 +424,7 @@ class LabelOperatorValidator(object):
         try:
             assert actual == expected
         except AssertionError:
-            assert LabelOperator._value2member_map_[actual] == LabelOperator.__getattr__(
-                expected.split('.', 1)[1])
+            assert LabelOperator._value2member_map_[actual] == LabelOperator.__getattr__(expected.split(".", 1)[1])
 
 
 class ExceptionPolicyValidator(object):
@@ -468,18 +468,13 @@ class ExceptionPolicyValidator(object):
 
     @staticmethod
     def validate_exception_actions(
-        actual,  # type: Dict[str, Union[ReclassifyExceptionAction, ManualReclassifyExceptionAction, CancelExceptionAction]]
-        expected,  # type: Dict[str, Union[ReclassifyExceptionAction, ManualReclassifyExceptionAction, CancelExceptionAction]]
+        actual,  # type: List[Union[ReclassifyExceptionAction, ManualReclassifyExceptionAction, CancelExceptionAction]]
+        expected,  # type: List[Union[ReclassifyExceptionAction, ManualReclassifyExceptionAction, CancelExceptionAction]]
         **kwargs,  # type: Any
     ):
         assert len(actual) == len(expected)
 
-        for a, e in zip(actual.items(), expected.items()):
-            assert a[0] == e[0]
-            assert isinstance(a[1], type(e[1])) is True
-            actual_exception_action = a[1]
-            expected_exception_action = e[1]
-
+        for actual_exception_action, expected_exception_action in zip(actual, expected):
             if isinstance(actual_exception_action, ManualReclassifyExceptionAction):
                 assert actual_exception_action.queue_id == expected_exception_action.queue_id
                 assert actual_exception_action.priority == expected_exception_action.priority
@@ -517,27 +512,19 @@ class ExceptionPolicyValidator(object):
     @staticmethod
     def validate_exception_rules(
         entity,  # type: ExceptionPolicy
-        exception_rules,  # type: Dict[str, ExceptionRule]
+        exception_rules,  # type: List[ExceptionRule]
         **kwargs,
     ):
-        for k, v in exception_rules.items():
-            if k in entity.exception_rules:
-                assert isinstance(entity.exception_rules[k], type(exception_rules[k])) is True
-                actual_rule = entity.exception_rules[k]
-                expected_rule = v
+        for expected_rule, actual_rule in zip(exception_rules, entity.exception_rules):
+            assert isinstance(actual_rule, type(expected_rule)) is True
+            assert isinstance(actual_rule, ExceptionRule) is True
+            assert isinstance(expected_rule, ExceptionRule) is True
 
-                assert isinstance(actual_rule, ExceptionRule) is True
-                assert isinstance(expected_rule, ExceptionRule) is True
+            ExceptionPolicyValidator.validate_exception_trigger(actual_rule.trigger, expected_rule.trigger)
+            assert any(actual_rule.actions) is True
+            assert any(expected_rule.actions) is True
 
-                ExceptionPolicyValidator.validate_exception_trigger(actual_rule.trigger, expected_rule.trigger)
-                assert any(actual_rule.actions) is True
-                assert any(expected_rule.actions) is True
-
-                ExceptionPolicyValidator.validate_exception_actions(actual_rule.actions, expected_rule.actions)
-
-            else:
-                # key is not present in policy hence was set to None for request
-                assert exception_rules[k] is None
+            ExceptionPolicyValidator.validate_exception_actions(actual_rule.actions, expected_rule.actions)
 
     @staticmethod
     def validate_exception_policy(exception_policy, **kwargs):
@@ -588,7 +575,7 @@ class RouterWorkerValidator(object):
     @staticmethod
     def validate_channel_configurations(
         entity,  # type: RouterWorker
-        channel_configurations,  # type: dict[str, ChannelConfiguration]
+        channel_configurations,  # type: dict[str, RouterChannel]
         **kwargs,
     ):
         assert len(entity.channel_configurations) == len(channel_configurations)
@@ -673,17 +660,12 @@ class RouterJobValidator(object):
         assert entity.tags == tag_collection
 
     @staticmethod
-    def validate_notes(entity: RouterJob, note_collection: Dict[str, str], **kwargs):
-        assert isinstance(entity.notes, dict) is True
+    def validate_notes(entity: RouterJob, note_collection: List[RouterJobNote], **kwargs):
+        assert isinstance(entity.notes, list) is True
         assert len(entity.notes) == len(note_collection)
 
-        for k1, k2 in zip([key for key in entity.notes.keys()], [key for key in note_collection.keys()]):
-            # cSpell:ignore tzinfos
-            k1_as_dt: datetime = parse(k1, tzinfos=[timezone.utc])
-            k2_as_dt: datetime = parse(k2, tzinfos=[timezone.utc])
-
-            assert k1_as_dt == k2_as_dt
-            assert entity.notes[k1] == note_collection[k2]
+        for k1, k2 in zip(entity.notes, note_collection):
+            assert k1 == k2
 
     @staticmethod
     def validate_scheduled_time_utc(entity: RouterJob, scheduled_time_utc: Union[str, datetime], **kwargs):

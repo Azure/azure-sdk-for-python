@@ -127,9 +127,7 @@ class ClassificationPolicySamplesAsync(object):
         router_admin_client = JobRouterAdministrationClient.from_connection_string(conn_str=connection_string)
 
         async with router_admin_client:
-            classification_policy = await router_admin_client.get_classification_policy(
-                id=policy_id
-            )
+            classification_policy = await router_admin_client.get_classification_policy(id=policy_id)
 
             print(f"Successfully fetched classification policy with id: {classification_policy.id}")
         # [END get_classification_policy_async]
