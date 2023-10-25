@@ -14,7 +14,7 @@ from devtools_testutils import (
 )
 from devtools_testutils.proxy_fixtures import EnvironmentVariableSanitizer
 
-from azure.ai.resources import AIClient
+from azure.ai.resources.client import AIClient
 from azure.ai.ml import MLClient
 from azure.core.credentials import TokenCredential
 from azure.identity import AzureCliCredential, ClientSecretCredential
