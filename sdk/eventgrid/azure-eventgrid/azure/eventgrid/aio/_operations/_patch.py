@@ -33,6 +33,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         topic_name: str,
         body: List[CloudEvent],
         *,
+        binary_mode: Optional[bool] = False,
         content_type: str = "application/cloudevents-batch+json; charset=utf-8",
         **kwargs: Any
     ) -> None:
@@ -46,6 +47,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type topic_name: str
         :param body: Array of Cloud Events being published. Required.
         :type body: list[~azure.core.messaging.CloudEvent]
+        :keyword bool binary_mode: Whether to use binary mode for sending events. Defaults to False.
         :keyword content_type: content type. Default value is "application/cloudevents-batch+json;
          charset=utf-8".
         :paramtype content_type: str
@@ -62,6 +64,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         topic_name: str,
         body: CloudEvent,
         *,
+        binary_mode: Optional[bool] = False,
         content_type: str = "application/cloudevents+json; charset=utf-8",
         **kwargs: Any
     ) -> None:
@@ -75,6 +78,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type topic_name: str
         :param body: Single Cloud Event being published. Required.
         :type body: ~azure.core.messaging.CloudEvent
+        :keyword bool binary_mode: Whether to use binary mode for sending events. Defaults to False.
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
         :paramtype content_type: str
@@ -87,7 +91,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
     @distributed_trace_async
     async def publish_cloud_events(
-        self, topic_name: str, body: Union[List[CloudEvent], CloudEvent], **kwargs
+        self, topic_name: str, body: Union[List[CloudEvent], CloudEvent], *, binary_mode: Optional[bool] = False, **kwargs
     ) -> None:
         """Publish Batch Cloud Event or Events to namespace topic. In case of success, the server responds with an
         HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
@@ -99,6 +103,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :type topic_name: str
         :param body: Cloud Event or Array of Cloud Events being published. Required.
         :type body: ~azure.core.messaging.CloudEvent or list[~azure.core.messaging.CloudEvent]
+        :keyword bool binary_mode: Whether to use binary mode for sending events. Defaults to False.
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
         :paramtype content_type: str
