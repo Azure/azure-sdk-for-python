@@ -31,6 +31,7 @@
     "sdk/anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/batch/azure-batch/**",
+    "sdk/ai/**/index/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customsearch/**",
