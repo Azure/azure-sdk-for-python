@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from azure.ai.generative import AIClient
+from azure.ai.resources import AIClient
 from azure.ai.ml.identity import AzureMLOnBehalfOfCredential
 from promptflow._sdk._constants import RunStatus
 from azure.ai.generative.evaluate import evaluate

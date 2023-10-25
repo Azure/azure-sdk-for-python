@@ -6,7 +6,7 @@ import os
 
 from typing import Optional, Union
 from azure.core.credentials import TokenCredential
-from azure.ai.generative.entities import Index
+from azure.ai.resources.entities import Index
 
 from ._mlindex import MLIndex as DataplaneMLIndex
 

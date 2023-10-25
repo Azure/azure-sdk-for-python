@@ -13,7 +13,7 @@ from azure.ai.generative.synthetic.simulator._model_tools.models import (
     AsyncHTTPClientWithRetry,
 )
 from azure.ai.generative.synthetic.simulator import _template_dir as template_dir
-from azure.ai.generative.entities import AzureOpenAIModelConfiguration
+from azure.ai.resources.entities import AzureOpenAIModelConfiguration
 from azure.ai.generative.synthetic.simulator._model_tools import APITokenManager, OpenAIChatCompletionsModel
 
 
