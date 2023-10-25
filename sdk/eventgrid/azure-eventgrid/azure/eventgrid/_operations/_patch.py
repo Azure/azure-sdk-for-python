@@ -162,7 +162,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
             for item in body:
                 internal_body_list.append(_cloud_event_to_generated(item))
             if binary_mode:
-                raise HttpResponseError("Binary mode is not supported for batch events.")
+                raise ValueError("Binary mode is not supported for batch events.")
             self._publish_cloud_events(topic_name, internal_body_list, **kwargs)
 
     @distributed_trace
