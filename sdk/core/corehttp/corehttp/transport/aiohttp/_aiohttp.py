@@ -24,7 +24,6 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import annotations
-import sys
 from typing import Optional, TYPE_CHECKING, Type, cast
 from types import TracebackType
 

@@ -155,7 +155,7 @@ stages:
         timeoutInMinutes: 90
 
         variables:
-          PythonVersion: '3.7'
+          PythonVersion: '3.8'
 
         pool:
           name: azsdk-pool-mms-ubuntu-2004-general
@@ -163,9 +163,9 @@ stages:
 
         steps:
           - task: UsePythonVersion@0
-            displayName: 'Use Python 3.7'
+            displayName: 'Use Python 3.8'
             inputs:
-             versionSpec: '3.7'
+             versionSpec: '3.8'
           - script: |
               python -m pip install setuptools==58.3.0
               python -m pip install -r eng/ci_tools.txt
@@ -176,9 +176,9 @@ stages:
             inputs:
               scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
               arguments: >-
-                "azure*" 
-                --mark_arg="${{ parameters.TestMarkArgument }}" 
-                --service="${{ parameters.ServiceDirectory }}" 
+                ${{ parameters.BuildTargetingString }}
+                --mark_arg="${{ parameters.TestMarkArgument }}"
+                --service="${{ parameters.ServiceDirectory }}"
                 --toxenv="next-pylint"
                 --disablecov
                 --filter-type="Omit_management"
@@ -191,9 +191,9 @@ stages:
             inputs:
               scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
               arguments: >-
-                "azure*" 
-                --mark_arg="${{ parameters.TestMarkArgument }}" 
-                --service="${{ parameters.ServiceDirectory }}" 
+                ${{ parameters.BuildTargetingString }}
+                --mark_arg="${{ parameters.TestMarkArgument }}"
+                --service="${{ parameters.ServiceDirectory }}"
                 --toxenv="next-mypy"
                 --disablecov
             env:
@@ -205,7 +205,7 @@ stages:
             inputs:
               scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
               arguments: >-
-                "azure*"
+                ${{ parameters.BuildTargetingString }}
                 --mark_arg="${{ parameters.TestMarkArgument }}"
                 --service="${{ parameters.ServiceDirectory }}"
                 --toxenv="next-pyright"
@@ -219,9 +219,9 @@ stages:
             inputs:
               scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
               arguments: >-
-                "azure*" 
-                --mark_arg="${{ parameters.TestMarkArgument }}" 
-                --service="${{ parameters.ServiceDirectory }}" 
+                ${{ parameters.BuildTargetingString }}
+                --mark_arg="${{ parameters.TestMarkArgument }}"
+                --service="${{ parameters.ServiceDirectory }}"
                 --toxenv="ruff"
                 --disablecov
             env: ${{ parameters.EnvVars }}
