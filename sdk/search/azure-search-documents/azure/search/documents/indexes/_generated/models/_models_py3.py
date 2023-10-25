@@ -206,7 +206,7 @@ class TokenFilter(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -273,7 +273,7 @@ class AsciiFoldingTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -436,7 +436,7 @@ class CharFilter(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of char filter. Required.
+    :ivar odata_type: Identifies the concrete type of the char filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the char filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -479,7 +479,7 @@ class CjkBigramTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -566,7 +566,7 @@ class LexicalTokenizer(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required.
+    :ivar odata_type: Identifies the concrete type of the tokenizer. Required.
     :vartype odata_type: str
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
      underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -619,7 +619,7 @@ class ClassicTokenizer(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required.
+    :ivar odata_type: Identifies the concrete type of the tokenizer. Required.
     :vartype odata_type: str
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
      underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -658,17 +658,17 @@ class ClassicTokenizer(LexicalTokenizer):
 
 
 class CognitiveServicesAccount(_serialization.Model):
-    """Base type for describing any Azure AI service resource attached to a skillset.
+    """Base type for describing any cognitive service resource attached to a skillset.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     CognitiveServicesAccountKey, DefaultCognitiveServicesAccount
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of Azure AI service resource attached to a
+    :ivar odata_type: Identifies the concrete type of the cognitive service resource attached to a
      skillset. Required.
     :vartype odata_type: str
-    :ivar description: Description of the Azure AI service resource attached to a skillset.
+    :ivar description: Description of the cognitive service resource attached to a skillset.
     :vartype description: str
     """
 
@@ -690,7 +690,7 @@ class CognitiveServicesAccount(_serialization.Model):
 
     def __init__(self, *, description: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword description: Description of the Azure AI service resource attached to a skillset.
+        :keyword description: Description of the cognitive service resource attached to a skillset.
         :paramtype description: str
         """
         super().__init__(**kwargs)
@@ -699,16 +699,16 @@ class CognitiveServicesAccount(_serialization.Model):
 
 
 class CognitiveServicesAccountKey(CognitiveServicesAccount):
-    """An Azure AI service resource provisioned with a key that is attached to a skillset.
+    """A cognitive service resource provisioned with a key that is attached to a skillset.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of Azure AI service resource attached to a
+    :ivar odata_type: Identifies the concrete type of the cognitive service resource attached to a
      skillset. Required.
     :vartype odata_type: str
-    :ivar description: Description of the Azure AI service resource attached to a skillset.
+    :ivar description: Description of the cognitive service resource attached to a skillset.
     :vartype description: str
-    :ivar key: The key used to provision the Azure AI service resource attached to a skillset.
+    :ivar key: The key used to provision the cognitive service resource attached to a skillset.
      Required.
     :vartype key: str
     """
@@ -726,9 +726,9 @@ class CognitiveServicesAccountKey(CognitiveServicesAccount):
 
     def __init__(self, *, key: str, description: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword description: Description of the Azure AI service resource attached to a skillset.
+        :keyword description: Description of the cognitive service resource attached to a skillset.
         :paramtype description: str
-        :keyword key: The key used to provision the Azure AI service resource attached to a skillset.
+        :keyword key: The key used to provision the cognitive service resource attached to a skillset.
          Required.
         :paramtype key: str
         """
@@ -743,7 +743,7 @@ class CommonGramTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -816,11 +816,11 @@ class SearchIndexerSkill(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of skill. Required.
+    :ivar odata_type: Identifies the concrete type of the skill. Required.
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -887,7 +887,7 @@ class SearchIndexerSkill(_serialization.Model):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -918,11 +918,11 @@ class ConditionalSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of skill. Required.
+    :ivar odata_type: Identifies the concrete type of the skill. Required.
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -966,7 +966,7 @@ class ConditionalSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -993,8 +993,8 @@ class CorsOptions(_serialization.Model):
 
     :ivar allowed_origins: The list of origins from which JavaScript code will be granted access to
      your index. Can contain a list of hosts of the form
-     {protocol}://{fully-qualified-domain-name}[:{port#}], or a single ``*`` to allow all origins
-     (not recommended). Required.
+     {protocol}://{fully-qualified-domain-name}[:{port#}], or a single '*' to allow all origins (not
+     recommended). Required.
     :vartype allowed_origins: list[str]
     :ivar max_age_in_seconds: The duration for which browsers should cache CORS preflight
      responses. Defaults to 5 minutes.
@@ -1014,8 +1014,8 @@ class CorsOptions(_serialization.Model):
         """
         :keyword allowed_origins: The list of origins from which JavaScript code will be granted access
          to your index. Can contain a list of hosts of the form
-         {protocol}://{fully-qualified-domain-name}[:{port#}], or a single ``*`` to allow all origins
-         (not recommended). Required.
+         {protocol}://{fully-qualified-domain-name}[:{port#}], or a single '*' to allow all origins (not
+         recommended). Required.
         :paramtype allowed_origins: list[str]
         :keyword max_age_in_seconds: The duration for which browsers should cache CORS preflight
          responses. Defaults to 5 minutes.
@@ -1034,7 +1034,7 @@ class LexicalAnalyzer(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of analyzer. Required.
+    :ivar odata_type: Identifies the concrete type of the analyzer. Required.
     :vartype odata_type: str
     :ivar name: The name of the analyzer. It must only contain letters, digits, spaces, dashes or
      underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -1081,7 +1081,7 @@ class CustomAnalyzer(LexicalAnalyzer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of analyzer. Required.
+    :ivar odata_type: Identifies the concrete type of the analyzer. Required.
     :vartype odata_type: str
     :ivar name: The name of the analyzer. It must only contain letters, digits, spaces, dashes or
      underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -1361,11 +1361,11 @@ class CustomEntityLookupSkill(SearchIndexerSkill):  # pylint: disable=too-many-i
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of skill. Required.
+    :ivar odata_type: Identifies the concrete type of the skill. Required.
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -1379,7 +1379,7 @@ class CustomEntityLookupSkill(SearchIndexerSkill):  # pylint: disable=too-many-i
     :ivar outputs: The output of a skill is either a field in a search index, or a value that can
      be consumed as an input by another skill. Required.
     :vartype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
-    :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+    :ivar default_language_code: A value indicating which language code to use. Default is en.
      Known values are: "da", "de", "en", "es", "fi", "fr", "it", "ko", and "pt".
     :vartype default_language_code: str or
      ~search_service_client.models.CustomEntityLookupSkillLanguage
@@ -1441,7 +1441,7 @@ class CustomEntityLookupSkill(SearchIndexerSkill):  # pylint: disable=too-many-i
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -1456,8 +1456,8 @@ class CustomEntityLookupSkill(SearchIndexerSkill):  # pylint: disable=too-many-i
         :keyword outputs: The output of a skill is either a field in a search index, or a value that
          can be consumed as an input by another skill. Required.
         :paramtype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
-        :keyword default_language_code: A value indicating which language code to use. Default is
-         ``en``. Known values are: "da", "de", "en", "es", "fi", "fr", "it", "ko", and "pt".
+        :keyword default_language_code: A value indicating which language code to use. Default is en.
+         Known values are: "da", "de", "en", "es", "fi", "fr", "it", "ko", and "pt".
         :paramtype default_language_code: str or
          ~search_service_client.models.CustomEntityLookupSkillLanguage
         :keyword entities_definition_uri: Path to a JSON or CSV file containing all the target text to
@@ -1495,7 +1495,7 @@ class DataChangeDetectionPolicy(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of data change detection policy. Required.
+    :ivar odata_type: Identifies the concrete type of the data change detection policy. Required.
     :vartype odata_type: str
     """
 
@@ -1528,8 +1528,7 @@ class DataDeletionDetectionPolicy(_serialization.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of data deletion detection policy.
-     Required.
+    :ivar odata_type: Identifies the concrete type of the data deletion detection policy. Required.
     :vartype odata_type: str
     """
 
@@ -1556,9 +1555,8 @@ class DataDeletionDetectionPolicy(_serialization.Model):
 class DataSourceCredentials(_serialization.Model):
     """Represents credentials that can be used to connect to a datasource.
 
-    :ivar connection_string: The connection string for the datasource. Set to ``<unchanged>`` (with
-     brackets) if you don't want the connection string updated. Set to ``<redacted>`` if you want to
-     remove the connection string value from the datasource.
+    :ivar connection_string: The connection string for the datasource. Set to ':code:`<unchanged>`'
+     if you do not want the connection string updated.
     :vartype connection_string: str
     """
 
@@ -1568,9 +1566,8 @@ class DataSourceCredentials(_serialization.Model):
 
     def __init__(self, *, connection_string: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword connection_string: The connection string for the datasource. Set to ``<unchanged>``
-         (with brackets) if you don't want the connection string updated. Set to ``<redacted>`` if you
-         want to remove the connection string value from the datasource.
+        :keyword connection_string: The connection string for the datasource. Set to
+         ':code:`<unchanged>`' if you do not want the connection string updated.
         :paramtype connection_string: str
         """
         super().__init__(**kwargs)
@@ -1578,14 +1575,14 @@ class DataSourceCredentials(_serialization.Model):
 
 
 class DefaultCognitiveServicesAccount(CognitiveServicesAccount):
-    """An empty object that represents the default Azure AI service resource for a skillset.
+    """An empty object that represents the default cognitive service resource for a skillset.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of Azure AI service resource attached to a
+    :ivar odata_type: Identifies the concrete type of the cognitive service resource attached to a
      skillset. Required.
     :vartype odata_type: str
-    :ivar description: Description of the Azure AI service resource attached to a skillset.
+    :ivar description: Description of the cognitive service resource attached to a skillset.
     :vartype description: str
     """
 
@@ -1600,7 +1597,7 @@ class DefaultCognitiveServicesAccount(CognitiveServicesAccount):
 
     def __init__(self, *, description: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword description: Description of the Azure AI service resource attached to a skillset.
+        :keyword description: Description of the cognitive service resource attached to a skillset.
         :paramtype description: str
         """
         super().__init__(description=description, **kwargs)
@@ -1613,7 +1610,7 @@ class DictionaryDecompounderTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -1869,11 +1866,11 @@ class DocumentExtractionSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of skill. Required.
+    :ivar odata_type: Identifies the concrete type of the skill. Required.
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -1930,7 +1927,7 @@ class DocumentExtractionSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -1966,7 +1963,7 @@ class EdgeNGramTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -2031,7 +2028,7 @@ class EdgeNGramTokenFilterV2(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -2098,7 +2095,7 @@ class EdgeNGramTokenizer(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required.
+    :ivar odata_type: Identifies the concrete type of the tokenizer. Required.
     :vartype odata_type: str
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
      underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -2163,7 +2160,7 @@ class ElisionTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -2203,11 +2200,11 @@ class EntityLinkingSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of skill. Required.
+    :ivar odata_type: Identifies the concrete type of the skill. Required.
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -2221,7 +2218,7 @@ class EntityLinkingSkill(SearchIndexerSkill):
     :ivar outputs: The output of a skill is either a field in a search index, or a value that can
      be consumed as an input by another skill. Required.
     :vartype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
-    :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+    :ivar default_language_code: A value indicating which language code to use. Default is en.
     :vartype default_language_code: str
     :ivar minimum_precision: A value between 0 and 1 that be used to only include entities whose
      confidence score is greater than the value specified. If not set (default), or if explicitly
@@ -2268,7 +2265,7 @@ class EntityLinkingSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -2283,8 +2280,7 @@ class EntityLinkingSkill(SearchIndexerSkill):
         :keyword outputs: The output of a skill is either a field in a search index, or a value that
          can be consumed as an input by another skill. Required.
         :paramtype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
-        :keyword default_language_code: A value indicating which language code to use. Default is
-         ``en``.
+        :keyword default_language_code: A value indicating which language code to use. Default is en.
         :paramtype default_language_code: str
         :keyword minimum_precision: A value between 0 and 1 that be used to only include entities whose
          confidence score is greater than the value specified. If not set (default), or if explicitly
@@ -2307,11 +2303,11 @@ class EntityRecognitionSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of skill. Required.
+    :ivar odata_type: Identifies the concrete type of the skill. Required.
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -2327,7 +2323,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
     :vartype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
     :ivar categories: A list of entity categories that should be extracted.
     :vartype categories: list[str or ~search_service_client.models.EntityCategory]
-    :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+    :ivar default_language_code: A value indicating which language code to use. Default is en.
      Known values are: "ar", "cs", "zh-Hans", "zh-Hant", "da", "nl", "en", "fi", "fr", "de", "el",
      "hu", "it", "ja", "ko", "no", "pl", "pt-PT", "pt-BR", "ru", "es", "sv", and "tr".
     :vartype default_language_code: str or
@@ -2379,7 +2375,7 @@ class EntityRecognitionSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -2396,9 +2392,9 @@ class EntityRecognitionSkill(SearchIndexerSkill):
         :paramtype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
         :keyword categories: A list of entity categories that should be extracted.
         :paramtype categories: list[str or ~search_service_client.models.EntityCategory]
-        :keyword default_language_code: A value indicating which language code to use. Default is
-         ``en``. Known values are: "ar", "cs", "zh-Hans", "zh-Hant", "da", "nl", "en", "fi", "fr", "de",
-         "el", "hu", "it", "ja", "ko", "no", "pl", "pt-PT", "pt-BR", "ru", "es", "sv", and "tr".
+        :keyword default_language_code: A value indicating which language code to use. Default is en.
+         Known values are: "ar", "cs", "zh-Hans", "zh-Hant", "da", "nl", "en", "fi", "fr", "de", "el",
+         "hu", "it", "ja", "ko", "no", "pl", "pt-PT", "pt-BR", "ru", "es", "sv", and "tr".
         :paramtype default_language_code: str or
          ~search_service_client.models.EntityRecognitionSkillLanguage
         :keyword include_typeless_entities: Determines whether or not to include entities which are
@@ -2424,11 +2420,11 @@ class EntityRecognitionSkillV3(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of skill. Required.
+    :ivar odata_type: Identifies the concrete type of the skill. Required.
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -2444,7 +2440,7 @@ class EntityRecognitionSkillV3(SearchIndexerSkill):
     :vartype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
     :ivar categories: A list of entity categories that should be extracted.
     :vartype categories: list[str]
-    :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+    :ivar default_language_code: A value indicating which language code to use. Default is en.
     :vartype default_language_code: str
     :ivar minimum_precision: A value between 0 and 1 that be used to only include entities whose
      confidence score is greater than the value specified. If not set (default), or if explicitly
@@ -2493,7 +2489,7 @@ class EntityRecognitionSkillV3(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -2510,8 +2506,7 @@ class EntityRecognitionSkillV3(SearchIndexerSkill):
         :paramtype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
         :keyword categories: A list of entity categories that should be extracted.
         :paramtype categories: list[str]
-        :keyword default_language_code: A value indicating which language code to use. Default is
-         ``en``.
+        :keyword default_language_code: A value indicating which language code to use. Default is en.
         :paramtype default_language_code: str
         :keyword minimum_precision: A value between 0 and 1 that be used to only include entities whose
          confidence score is greater than the value specified. If not set (default), or if explicitly
@@ -2531,7 +2526,7 @@ class EntityRecognitionSkillV3(SearchIndexerSkill):
 
 
 class VectorSearchAlgorithmConfiguration(_serialization.Model):
-    """Contains configuration options specific to the algorithm used during indexing or querying.
+    """Contains configuration options specific to the algorithm used during indexing and/or querying.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ExhaustiveKnnAlgorithmConfiguration, HnswAlgorithmConfiguration
@@ -2848,7 +2843,7 @@ class HighWaterMarkChangeDetectionPolicy(DataChangeDetectionPolicy):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of data change detection policy. Required.
+    :ivar odata_type: Identifies the concrete type of the data change detection policy. Required.
     :vartype odata_type: str
     :ivar high_water_mark_column_name: The name of the high water mark column. Required.
     :vartype high_water_mark_column_name: str
@@ -2875,8 +2870,8 @@ class HighWaterMarkChangeDetectionPolicy(DataChangeDetectionPolicy):
 
 
 class HnswAlgorithmConfiguration(VectorSearchAlgorithmConfiguration):
-    """Contains configuration options specific to the HNSW approximate nearest neighbors algorithm
-    used during indexing and querying. The HNSW algorithm offers a tunable trade-off between search
+    """Contains configuration options specific to the hnsw approximate nearest neighbors algorithm
+    used during indexing and querying. The hnsw algorithm offers a tunable trade-off between search
     speed and accuracy.
 
     All required parameters must be populated in order to send to Azure.
@@ -2886,7 +2881,7 @@ class HnswAlgorithmConfiguration(VectorSearchAlgorithmConfiguration):
     :ivar kind: The name of the kind of algorithm being configured for use with vector search.
      Required. Known values are: "hnsw" and "exhaustiveKnn".
     :vartype kind: str or ~search_service_client.models.VectorSearchAlgorithmKind
-    :ivar parameters: Contains the parameters specific to HNSW algorithm.
+    :ivar parameters: Contains the parameters specific to hnsw algorithm.
     :vartype parameters: ~search_service_client.models.HnswParameters
     """
 
@@ -2905,7 +2900,7 @@ class HnswAlgorithmConfiguration(VectorSearchAlgorithmConfiguration):
         """
         :keyword name: The name to associate with this particular configuration. Required.
         :paramtype name: str
-        :keyword parameters: Contains the parameters specific to HNSW algorithm.
+        :keyword parameters: Contains the parameters specific to hnsw algorithm.
         :paramtype parameters: ~search_service_client.models.HnswParameters
         """
         super().__init__(name=name, **kwargs)
@@ -2914,7 +2909,7 @@ class HnswAlgorithmConfiguration(VectorSearchAlgorithmConfiguration):
 
 
 class HnswParameters(_serialization.Model):
-    """Contains the parameters specific to the HNSW algorithm.
+    """Contains the parameters specific to hnsw algorithm.
 
     :ivar m: The number of bi-directional links created for every new element during construction.
      Increasing this parameter value may improve recall and reduce retrieval times for datasets with
@@ -2989,11 +2984,11 @@ class ImageAnalysisSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of skill. Required.
+    :ivar odata_type: Identifies the concrete type of the skill. Required.
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -3007,7 +3002,7 @@ class ImageAnalysisSkill(SearchIndexerSkill):
     :ivar outputs: The output of a skill is either a field in a search index, or a value that can
      be consumed as an input by another skill. Required.
     :vartype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
-    :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+    :ivar default_language_code: A value indicating which language code to use. Default is en.
      Known values are: "ar", "az", "bg", "bs", "ca", "cs", "cy", "da", "de", "el", "en", "es", "et",
      "eu", "fi", "fr", "ga", "gl", "he", "hi", "hr", "hu", "id", "it", "ja", "kk", "ko", "lt", "lv",
      "mk", "ms", "nb", "nl", "pl", "prs", "pt-BR", "pt", "pt-PT", "ro", "ru", "sk", "sl", "sr-Cyrl",
@@ -3053,7 +3048,7 @@ class ImageAnalysisSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -3068,11 +3063,11 @@ class ImageAnalysisSkill(SearchIndexerSkill):
         :keyword outputs: The output of a skill is either a field in a search index, or a value that
          can be consumed as an input by another skill. Required.
         :paramtype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
-        :keyword default_language_code: A value indicating which language code to use. Default is
-         ``en``. Known values are: "ar", "az", "bg", "bs", "ca", "cs", "cy", "da", "de", "el", "en",
-         "es", "et", "eu", "fi", "fr", "ga", "gl", "he", "hi", "hr", "hu", "id", "it", "ja", "kk", "ko",
-         "lt", "lv", "mk", "ms", "nb", "nl", "pl", "prs", "pt-BR", "pt", "pt-PT", "ro", "ru", "sk",
-         "sl", "sr-Cyrl", "sr-Latn", "sv", "th", "tr", "uk", "vi", "zh", "zh-Hans", and "zh-Hant".
+        :keyword default_language_code: A value indicating which language code to use. Default is en.
+         Known values are: "ar", "az", "bg", "bs", "ca", "cs", "cy", "da", "de", "el", "en", "es", "et",
+         "eu", "fi", "fr", "ga", "gl", "he", "hi", "hr", "hu", "id", "it", "ja", "kk", "ko", "lt", "lv",
+         "mk", "ms", "nb", "nl", "pl", "prs", "pt-BR", "pt", "pt-PT", "ro", "ru", "sk", "sl", "sr-Cyrl",
+         "sr-Latn", "sv", "th", "tr", "uk", "vi", "zh", "zh-Hans", and "zh-Hant".
         :paramtype default_language_code: str or
          ~search_service_client.models.ImageAnalysisSkillLanguage
         :keyword visual_features: A list of visual features.
@@ -3510,7 +3505,7 @@ class KeepTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -3559,11 +3554,11 @@ class KeyPhraseExtractionSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of skill. Required.
+    :ivar odata_type: Identifies the concrete type of the skill. Required.
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -3577,7 +3572,7 @@ class KeyPhraseExtractionSkill(SearchIndexerSkill):
     :ivar outputs: The output of a skill is either a field in a search index, or a value that can
      be consumed as an input by another skill. Required.
     :vartype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
-    :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+    :ivar default_language_code: A value indicating which language code to use. Default is en.
      Known values are: "da", "nl", "en", "fi", "fr", "de", "it", "ja", "ko", "no", "pl", "pt-PT",
      "pt-BR", "ru", "es", and "sv".
     :vartype default_language_code: str or
@@ -3625,7 +3620,7 @@ class KeyPhraseExtractionSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -3640,9 +3635,9 @@ class KeyPhraseExtractionSkill(SearchIndexerSkill):
         :keyword outputs: The output of a skill is either a field in a search index, or a value that
          can be consumed as an input by another skill. Required.
         :paramtype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
-        :keyword default_language_code: A value indicating which language code to use. Default is
-         ``en``. Known values are: "da", "nl", "en", "fi", "fr", "de", "it", "ja", "ko", "no", "pl",
-         "pt-PT", "pt-BR", "ru", "es", and "sv".
+        :keyword default_language_code: A value indicating which language code to use. Default is en.
+         Known values are: "da", "nl", "en", "fi", "fr", "de", "it", "ja", "ko", "no", "pl", "pt-PT",
+         "pt-BR", "ru", "es", and "sv".
         :paramtype default_language_code: str or
          ~search_service_client.models.KeyPhraseExtractionSkillLanguage
         :keyword max_key_phrase_count: A number indicating how many key phrases to return. If absent,
@@ -3665,7 +3660,7 @@ class KeywordMarkerTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -3714,7 +3709,7 @@ class KeywordTokenizer(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required.
+    :ivar odata_type: Identifies the concrete type of the tokenizer. Required.
     :vartype odata_type: str
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
      underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -3754,7 +3749,7 @@ class KeywordTokenizerV2(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required.
+    :ivar odata_type: Identifies the concrete type of the tokenizer. Required.
     :vartype odata_type: str
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
      underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -3799,11 +3794,11 @@ class LanguageDetectionSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of skill. Required.
+    :ivar odata_type: Identifies the concrete type of the skill. Required.
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -3858,7 +3853,7 @@ class LanguageDetectionSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -3893,7 +3888,7 @@ class LengthTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -3944,7 +3939,7 @@ class LimitTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -4123,7 +4118,7 @@ class LuceneStandardAnalyzer(LexicalAnalyzer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of analyzer. Required.
+    :ivar odata_type: Identifies the concrete type of the analyzer. Required.
     :vartype odata_type: str
     :ivar name: The name of the analyzer. It must only contain letters, digits, spaces, dashes or
      underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -4175,7 +4170,7 @@ class LuceneStandardTokenizer(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required.
+    :ivar odata_type: Identifies the concrete type of the tokenizer. Required.
     :vartype odata_type: str
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
      underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -4218,7 +4213,7 @@ class LuceneStandardTokenizerV2(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required.
+    :ivar odata_type: Identifies the concrete type of the tokenizer. Required.
     :vartype odata_type: str
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
      underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -4374,7 +4369,7 @@ class MappingCharFilter(CharFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of char filter. Required.
+    :ivar odata_type: Identifies the concrete type of the char filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the char filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -4418,11 +4413,11 @@ class MergeSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of skill. Required.
+    :ivar odata_type: Identifies the concrete type of the skill. Required.
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -4476,7 +4471,7 @@ class MergeSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -4509,7 +4504,7 @@ class MicrosoftLanguageStemmingTokenizer(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required.
+    :ivar odata_type: Identifies the concrete type of the tokenizer. Required.
     :vartype odata_type: str
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
      underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -4590,7 +4585,7 @@ class MicrosoftLanguageTokenizer(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required.
+    :ivar odata_type: Identifies the concrete type of the tokenizer. Required.
     :vartype odata_type: str
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
      underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -4671,7 +4666,7 @@ class NGramTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -4719,7 +4714,7 @@ class NGramTokenFilterV2(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -4770,7 +4765,7 @@ class NGramTokenizer(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required.
+    :ivar odata_type: Identifies the concrete type of the tokenizer. Required.
     :vartype odata_type: str
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
      underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -4834,11 +4829,11 @@ class OcrSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of skill. Required.
+    :ivar odata_type: Identifies the concrete type of the skill. Required.
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -4852,7 +4847,7 @@ class OcrSkill(SearchIndexerSkill):
     :ivar outputs: The output of a skill is either a field in a search index, or a value that can
      be consumed as an input by another skill. Required.
     :vartype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
-    :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+    :ivar default_language_code: A value indicating which language code to use. Default is en.
      Known values are: "af", "sq", "anp", "ar", "ast", "awa", "az", "bfy", "eu", "be", "be-cyrl",
      "be-latn", "bho", "bi", "brx", "bs", "bra", "br", "bg", "bns", "bua", "ca", "ceb", "rab", "ch",
      "hne", "zh-Hans", "zh-Hant", "kw", "co", "crh", "hr", "cs", "da", "prs", "dhi", "doi", "nl",
@@ -4904,7 +4899,7 @@ class OcrSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -4919,20 +4914,20 @@ class OcrSkill(SearchIndexerSkill):
         :keyword outputs: The output of a skill is either a field in a search index, or a value that
          can be consumed as an input by another skill. Required.
         :paramtype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
-        :keyword default_language_code: A value indicating which language code to use. Default is
-         ``en``. Known values are: "af", "sq", "anp", "ar", "ast", "awa", "az", "bfy", "eu", "be",
-         "be-cyrl", "be-latn", "bho", "bi", "brx", "bs", "bra", "br", "bg", "bns", "bua", "ca", "ceb",
-         "rab", "ch", "hne", "zh-Hans", "zh-Hant", "kw", "co", "crh", "hr", "cs", "da", "prs", "dhi",
-         "doi", "nl", "en", "myv", "et", "fo", "fj", "fil", "fi", "fr", "fur", "gag", "gl", "de", "gil",
-         "gon", "el", "kl", "gvr", "ht", "hlb", "hni", "bgc", "haw", "hi", "mww", "hoc", "hu", "is",
-         "smn", "id", "ia", "iu", "ga", "it", "ja", "Jns", "jv", "kea", "kac", "xnr", "krc", "kaa-cyrl",
-         "kaa", "csb", "kk-cyrl", "kk-latn", "klr", "kha", "quc", "ko", "kfq", "kpy", "kos", "kum",
-         "ku-arab", "ku-latn", "kru", "ky", "lkt", "la", "lt", "dsb", "smj", "lb", "bfz", "ms", "mt",
-         "kmj", "gv", "mi", "mr", "mn", "cnr-cyrl", "cnr-latn", "nap", "ne", "niu", "nog", "sme", "nb",
-         "no", "oc", "os", "ps", "fa", "pl", "pt", "pa", "ksh", "ro", "rm", "ru", "sck", "sm", "sa",
-         "sat", "sco", "gd", "sr", "sr-Cyrl", "sr-Latn", "xsr", "srx", "sms", "sk", "sl", "so", "sma",
-         "es", "sw", "sv", "tg", "tt", "tet", "thf", "to", "tr", "tk", "tyv", "hsb", "ur", "ug",
-         "uz-arab", "uz-cyrl", "uz", "vo", "wae", "cy", "fy", "yua", "za", "zu", "unk", and "is".
+        :keyword default_language_code: A value indicating which language code to use. Default is en.
+         Known values are: "af", "sq", "anp", "ar", "ast", "awa", "az", "bfy", "eu", "be", "be-cyrl",
+         "be-latn", "bho", "bi", "brx", "bs", "bra", "br", "bg", "bns", "bua", "ca", "ceb", "rab", "ch",
+         "hne", "zh-Hans", "zh-Hant", "kw", "co", "crh", "hr", "cs", "da", "prs", "dhi", "doi", "nl",
+         "en", "myv", "et", "fo", "fj", "fil", "fi", "fr", "fur", "gag", "gl", "de", "gil", "gon", "el",
+         "kl", "gvr", "ht", "hlb", "hni", "bgc", "haw", "hi", "mww", "hoc", "hu", "is", "smn", "id",
+         "ia", "iu", "ga", "it", "ja", "Jns", "jv", "kea", "kac", "xnr", "krc", "kaa-cyrl", "kaa",
+         "csb", "kk-cyrl", "kk-latn", "klr", "kha", "quc", "ko", "kfq", "kpy", "kos", "kum", "ku-arab",
+         "ku-latn", "kru", "ky", "lkt", "la", "lt", "dsb", "smj", "lb", "bfz", "ms", "mt", "kmj", "gv",
+         "mi", "mr", "mn", "cnr-cyrl", "cnr-latn", "nap", "ne", "niu", "nog", "sme", "nb", "no", "oc",
+         "os", "ps", "fa", "pl", "pt", "pa", "ksh", "ro", "rm", "ru", "sck", "sm", "sa", "sat", "sco",
+         "gd", "sr", "sr-Cyrl", "sr-Latn", "xsr", "srx", "sms", "sk", "sl", "so", "sma", "es", "sw",
+         "sv", "tg", "tt", "tet", "thf", "to", "tr", "tk", "tyv", "hsb", "ur", "ug", "uz-arab",
+         "uz-cyrl", "uz", "vo", "wae", "cy", "fy", "yua", "za", "zu", "unk", and "is".
         :paramtype default_language_code: str or ~search_service_client.models.OcrSkillLanguage
         :keyword should_detect_orientation: A value indicating to turn orientation detection on or not.
          Default is false.
@@ -4981,7 +4976,7 @@ class PathHierarchyTokenizerV2(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required.
+    :ivar odata_type: Identifies the concrete type of the tokenizer. Required.
     :vartype odata_type: str
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
      underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -5059,7 +5054,7 @@ class PatternAnalyzer(LexicalAnalyzer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of analyzer. Required.
+    :ivar odata_type: Identifies the concrete type of the analyzer. Required.
     :vartype odata_type: str
     :ivar name: The name of the analyzer. It must only contain letters, digits, spaces, dashes or
      underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -5133,7 +5128,7 @@ class PatternCaptureTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -5186,7 +5181,7 @@ class PatternReplaceCharFilter(CharFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of char filter. Required.
+    :ivar odata_type: Identifies the concrete type of the char filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the char filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -5238,7 +5233,7 @@ class PatternReplaceTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -5287,7 +5282,7 @@ class PatternTokenizer(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required.
+    :ivar odata_type: Identifies the concrete type of the tokenizer. Required.
     :vartype odata_type: str
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
      underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -5355,7 +5350,7 @@ class PhoneticTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -5415,11 +5410,11 @@ class PIIDetectionSkill(SearchIndexerSkill):  # pylint: disable=too-many-instanc
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of skill. Required.
+    :ivar odata_type: Identifies the concrete type of the skill. Required.
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -5433,7 +5428,7 @@ class PIIDetectionSkill(SearchIndexerSkill):  # pylint: disable=too-many-instanc
     :ivar outputs: The output of a skill is either a field in a search index, or a value that can
      be consumed as an input by another skill. Required.
     :vartype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
-    :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+    :ivar default_language_code: A value indicating which language code to use. Default is en.
     :vartype default_language_code: str
     :ivar minimum_precision: A value between 0 and 1 that be used to only include entities whose
      confidence score is greater than the value specified. If not set (default), or if explicitly
@@ -5443,7 +5438,7 @@ class PIIDetectionSkill(SearchIndexerSkill):  # pylint: disable=too-many-instanc
      detected in the input text. Default is 'none'. Known values are: "none" and "replace".
     :vartype masking_mode: str or ~search_service_client.models.PIIDetectionSkillMaskingMode
     :ivar masking_character: The character used to mask the text if the maskingMode parameter is
-     set to replace. Default is ``*``.
+     set to replace. Default is '*'.
     :vartype masking_character: str
     :ivar model_version: The version of the model to use when calling the Text Analytics service.
      It will default to the latest available when not specified. We recommend you do not specify
@@ -5500,7 +5495,7 @@ class PIIDetectionSkill(SearchIndexerSkill):  # pylint: disable=too-many-instanc
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -5515,8 +5510,7 @@ class PIIDetectionSkill(SearchIndexerSkill):  # pylint: disable=too-many-instanc
         :keyword outputs: The output of a skill is either a field in a search index, or a value that
          can be consumed as an input by another skill. Required.
         :paramtype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
-        :keyword default_language_code: A value indicating which language code to use. Default is
-         ``en``.
+        :keyword default_language_code: A value indicating which language code to use. Default is en.
         :paramtype default_language_code: str
         :keyword minimum_precision: A value between 0 and 1 that be used to only include entities whose
          confidence score is greater than the value specified. If not set (default), or if explicitly
@@ -5526,7 +5520,7 @@ class PIIDetectionSkill(SearchIndexerSkill):  # pylint: disable=too-many-instanc
          detected in the input text. Default is 'none'. Known values are: "none" and "replace".
         :paramtype masking_mode: str or ~search_service_client.models.PIIDetectionSkillMaskingMode
         :keyword masking_character: The character used to mask the text if the maskingMode parameter is
-         set to replace. Default is ``*``.
+         set to replace. Default is '*'.
         :paramtype masking_character: str
         :keyword model_version: The version of the model to use when calling the Text Analytics
          service. It will default to the latest available when not specified. We recommend you do not
@@ -5661,7 +5655,7 @@ class ScoringProfile(_serialization.Model):
 
 
 class SearchError(_serialization.Model):
-    """Describes an error condition for the API.
+    """Describes an error condition for the Azure Cognitive Search API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -5705,8 +5699,8 @@ class SearchField(_serialization.Model):  # pylint: disable=too-many-instance-at
      index or parent field. Required.
     :vartype name: str
     :ivar type: The data type of the field. Required. Known values are: "Edm.String", "Edm.Int32",
-     "Edm.Int64", "Edm.Double", "Edm.Boolean", "Edm.DateTimeOffset", "Edm.GeographyPoint", and
-     "Edm.ComplexType".
+     "Edm.Int64", "Edm.Double", "Edm.Boolean", "Edm.DateTimeOffset", "Edm.GeographyPoint",
+     "Edm.ComplexType", and "Edm.Single".
     :vartype type: str or ~search_service_client.models.SearchFieldDataType
     :ivar key: A value indicating whether the field uniquely identifies documents in the index.
      Exactly one top-level field in each index must be chosen as the key field and it must be of
@@ -5726,9 +5720,9 @@ class SearchField(_serialization.Model):  # pylint: disable=too-many-instance-at
      "day". This enables full-text searches for these terms. Fields of type Edm.String or
      Collection(Edm.String) are searchable by default. This property must be false for simple fields
      of other non-string data types, and it must be null for complex fields. Note: searchable fields
-     consume extra space in your index to accommodate additional tokenized versions of the field
-     value for full-text searches. If you want to save space in your index and you don't need a
-     field to be included in searches, set searchable to false.
+     consume extra space in your index since Azure Cognitive Search will store an additional
+     tokenized version of the field value for full-text searches. If you want to save space in your
+     index and you don't need a field to be included in searches, set searchable to false.
     :vartype searchable: bool
     :ivar filterable: A value indicating whether to enable the field to be referenced in $filter
      queries. filterable differs from searchable in how strings are handled. Fields of type
@@ -5738,7 +5732,7 @@ class SearchField(_serialization.Model):  # pylint: disable=too-many-instance-at
      must be null for complex fields. Default is true for simple fields and null for complex fields.
     :vartype filterable: bool
     :ivar sortable: A value indicating whether to enable the field to be referenced in $orderby
-     expressions. By default, the search engine sorts results by score, but in many experiences
+     expressions. By default Azure Cognitive Search sorts results by score, but in many experiences
      users will want to sort by fields in the documents. A simple field can be sortable only if it
      is single-valued (it has a single value in the scope of the parent document). Simple collection
      fields cannot be sortable, since they are multi-valued. Simple sub-fields of complex
@@ -5888,7 +5882,7 @@ class SearchField(_serialization.Model):  # pylint: disable=too-many-instance-at
         :paramtype name: str
         :keyword type: The data type of the field. Required. Known values are: "Edm.String",
          "Edm.Int32", "Edm.Int64", "Edm.Double", "Edm.Boolean", "Edm.DateTimeOffset",
-         "Edm.GeographyPoint", and "Edm.ComplexType".
+         "Edm.GeographyPoint", "Edm.ComplexType", and "Edm.Single".
         :paramtype type: str or ~search_service_client.models.SearchFieldDataType
         :keyword key: A value indicating whether the field uniquely identifies documents in the index.
          Exactly one top-level field in each index must be chosen as the key field and it must be of
@@ -5908,9 +5902,9 @@ class SearchField(_serialization.Model):  # pylint: disable=too-many-instance-at
          "day". This enables full-text searches for these terms. Fields of type Edm.String or
          Collection(Edm.String) are searchable by default. This property must be false for simple fields
          of other non-string data types, and it must be null for complex fields. Note: searchable fields
-         consume extra space in your index to accommodate additional tokenized versions of the field
-         value for full-text searches. If you want to save space in your index and you don't need a
-         field to be included in searches, set searchable to false.
+         consume extra space in your index since Azure Cognitive Search will store an additional
+         tokenized version of the field value for full-text searches. If you want to save space in your
+         index and you don't need a field to be included in searches, set searchable to false.
         :paramtype searchable: bool
         :keyword filterable: A value indicating whether to enable the field to be referenced in $filter
          queries. filterable differs from searchable in how strings are handled. Fields of type
@@ -5920,7 +5914,7 @@ class SearchField(_serialization.Model):  # pylint: disable=too-many-instance-at
          must be null for complex fields. Default is true for simple fields and null for complex fields.
         :paramtype filterable: bool
         :keyword sortable: A value indicating whether to enable the field to be referenced in $orderby
-         expressions. By default, the search engine sorts results by score, but in many experiences
+         expressions. By default Azure Cognitive Search sorts results by score, but in many experiences
          users will want to sort by fields in the documents. A simple field can be sortable only if it
          is single-valued (it has a single value in the scope of the parent document). Simple collection
          fields cannot be sortable, since they are multi-valued. Simple sub-fields of complex
@@ -6067,12 +6061,12 @@ class SearchIndex(_serialization.Model):  # pylint: disable=too-many-instance-at
     :vartype char_filters: list[~search_service_client.models.CharFilter]
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your data when you
-     want full assurance that no one, not even Microsoft, can decrypt your data. Once you have
-     encrypted your data, it will always remain encrypted. The search service will ignore attempts
-     to set this property to null. You can change this property as needed if you want to rotate your
-     encryption key; Your data will be unaffected. Encryption with customer-managed keys is not
-     available for free search services, and is only available for paid services created on or after
-     January 1, 2019.
+     want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
+     Search. Once you have encrypted your data, it will always remain encrypted. Azure Cognitive
+     Search will ignore attempts to set this property to null. You can change this property as
+     needed if you want to rotate your encryption key; Your data will be unaffected. Encryption with
+     customer-managed keys is not available for free search services, and is only available for paid
+     services created on or after January 1, 2019.
     :vartype encryption_key: ~search_service_client.models.SearchResourceEncryptionKey
     :ivar similarity: The type of similarity algorithm to be used when scoring and ranking the
      documents matching a search query. The similarity algorithm can only be defined at index
@@ -6156,12 +6150,12 @@ class SearchIndex(_serialization.Model):  # pylint: disable=too-many-instance-at
         :paramtype char_filters: list[~search_service_client.models.CharFilter]
         :keyword encryption_key: A description of an encryption key that you create in Azure Key Vault.
          This key is used to provide an additional level of encryption-at-rest for your data when you
-         want full assurance that no one, not even Microsoft, can decrypt your data. Once you have
-         encrypted your data, it will always remain encrypted. The search service will ignore attempts
-         to set this property to null. You can change this property as needed if you want to rotate your
-         encryption key; Your data will be unaffected. Encryption with customer-managed keys is not
-         available for free search services, and is only available for paid services created on or after
-         January 1, 2019.
+         want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
+         Search. Once you have encrypted your data, it will always remain encrypted. Azure Cognitive
+         Search will ignore attempts to set this property to null. You can change this property as
+         needed if you want to rotate your encryption key; Your data will be unaffected. Encryption with
+         customer-managed keys is not available for free search services, and is only available for paid
+         services created on or after January 1, 2019.
         :paramtype encryption_key: ~search_service_client.models.SearchResourceEncryptionKey
         :keyword similarity: The type of similarity algorithm to be used when scoring and ranking the
          documents matching a search query. The similarity algorithm can only be defined at index
@@ -6227,12 +6221,12 @@ class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your indexer
      definition (as well as indexer execution status) when you want full assurance that no one, not
-     even Microsoft, can decrypt them. Once you have encrypted your indexer definition, it will
-     always remain encrypted. The search service will ignore attempts to set this property to null.
-     You can change this property as needed if you want to rotate your encryption key; Your indexer
-     definition (and indexer execution status) will be unaffected. Encryption with customer-managed
-     keys is not available for free search services, and is only available for paid services created
-     on or after January 1, 2019.
+     even Microsoft, can decrypt them in Azure Cognitive Search. Once you have encrypted your
+     indexer definition, it will always remain encrypted. Azure Cognitive Search will ignore
+     attempts to set this property to null. You can change this property as needed if you want to
+     rotate your encryption key; Your indexer definition (and indexer execution status) will be
+     unaffected. Encryption with customer-managed keys is not available for free search services,
+     and is only available for paid services created on or after January 1, 2019.
     :vartype encryption_key: ~search_service_client.models.SearchResourceEncryptionKey
     """
 
@@ -6303,12 +6297,12 @@ class SearchIndexer(_serialization.Model):  # pylint: disable=too-many-instance-
         :keyword encryption_key: A description of an encryption key that you create in Azure Key Vault.
          This key is used to provide an additional level of encryption-at-rest for your indexer
          definition (as well as indexer execution status) when you want full assurance that no one, not
-         even Microsoft, can decrypt them. Once you have encrypted your indexer definition, it will
-         always remain encrypted. The search service will ignore attempts to set this property to null.
-         You can change this property as needed if you want to rotate your encryption key; Your indexer
-         definition (and indexer execution status) will be unaffected. Encryption with customer-managed
-         keys is not available for free search services, and is only available for paid services created
-         on or after January 1, 2019.
+         even Microsoft, can decrypt them in Azure Cognitive Search. Once you have encrypted your
+         indexer definition, it will always remain encrypted. Azure Cognitive Search will ignore
+         attempts to set this property to null. You can change this property as needed if you want to
+         rotate your encryption key; Your indexer definition (and indexer execution status) will be
+         unaffected. Encryption with customer-managed keys is not available for free search services,
+         and is only available for paid services created on or after January 1, 2019.
         :paramtype encryption_key: ~search_service_client.models.SearchResourceEncryptionKey
         """
         super().__init__(**kwargs)
@@ -6389,11 +6383,12 @@ class SearchIndexerDataSource(_serialization.Model):
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your datasource
      definition when you want full assurance that no one, not even Microsoft, can decrypt your data
-     source definition. Once you have encrypted your data source definition, it will always remain
-     encrypted. The search service will ignore attempts to set this property to null. You can change
-     this property as needed if you want to rotate your encryption key; Your datasource definition
-     will be unaffected. Encryption with customer-managed keys is not available for free search
-     services, and is only available for paid services created on or after January 1, 2019.
+     source definition in Azure Cognitive Search. Once you have encrypted your data source
+     definition, it will always remain encrypted. Azure Cognitive Search will ignore attempts to set
+     this property to null. You can change this property as needed if you want to rotate your
+     encryption key; Your datasource definition will be unaffected. Encryption with customer-managed
+     keys is not available for free search services, and is only available for paid services created
+     on or after January 1, 2019.
     :vartype encryption_key: ~search_service_client.models.SearchResourceEncryptionKey
     """
 
@@ -6453,11 +6448,12 @@ class SearchIndexerDataSource(_serialization.Model):
         :keyword encryption_key: A description of an encryption key that you create in Azure Key Vault.
          This key is used to provide an additional level of encryption-at-rest for your datasource
          definition when you want full assurance that no one, not even Microsoft, can decrypt your data
-         source definition. Once you have encrypted your data source definition, it will always remain
-         encrypted. The search service will ignore attempts to set this property to null. You can change
-         this property as needed if you want to rotate your encryption key; Your datasource definition
-         will be unaffected. Encryption with customer-managed keys is not available for free search
-         services, and is only available for paid services created on or after January 1, 2019.
+         source definition in Azure Cognitive Search. Once you have encrypted your data source
+         definition, it will always remain encrypted. Azure Cognitive Search will ignore attempts to set
+         this property to null. You can change this property as needed if you want to rotate your
+         encryption key; Your datasource definition will be unaffected. Encryption with customer-managed
+         keys is not available for free search services, and is only available for paid services created
+         on or after January 1, 2019.
         :paramtype encryption_key: ~search_service_client.models.SearchResourceEncryptionKey
         """
         super().__init__(**kwargs)
@@ -6892,10 +6888,10 @@ class SearchIndexerSkillset(_serialization.Model):
     :vartype description: str
     :ivar skills: A list of skills in the skillset. Required.
     :vartype skills: list[~search_service_client.models.SearchIndexerSkill]
-    :ivar cognitive_services_account: Details about the Azure AI service to be used when running
+    :ivar cognitive_services_account: Details about cognitive services to be used when running
      skills.
     :vartype cognitive_services_account: ~search_service_client.models.CognitiveServicesAccount
-    :ivar knowledge_store: Definition of additional projections to Azure blob, table, or files, of
+    :ivar knowledge_store: Definition of additional projections to azure blob, table, or files, of
      enriched data.
     :vartype knowledge_store: ~search_service_client.models.SearchIndexerKnowledgeStore
     :ivar e_tag: The ETag of the skillset.
@@ -6903,11 +6899,12 @@ class SearchIndexerSkillset(_serialization.Model):
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your skillset
      definition when you want full assurance that no one, not even Microsoft, can decrypt your
-     skillset definition. Once you have encrypted your skillset definition, it will always remain
-     encrypted. The search service will ignore attempts to set this property to null. You can change
-     this property as needed if you want to rotate your encryption key; Your skillset definition
-     will be unaffected. Encryption with customer-managed keys is not available for free search
-     services, and is only available for paid services created on or after January 1, 2019.
+     skillset definition in Azure Cognitive Search. Once you have encrypted your skillset
+     definition, it will always remain encrypted. Azure Cognitive Search will ignore attempts to set
+     this property to null. You can change this property as needed if you want to rotate your
+     encryption key; Your skillset definition will be unaffected. Encryption with customer-managed
+     keys is not available for free search services, and is only available for paid services created
+     on or after January 1, 2019.
     :vartype encryption_key: ~search_service_client.models.SearchResourceEncryptionKey
     """
 
@@ -6945,10 +6942,10 @@ class SearchIndexerSkillset(_serialization.Model):
         :paramtype description: str
         :keyword skills: A list of skills in the skillset. Required.
         :paramtype skills: list[~search_service_client.models.SearchIndexerSkill]
-        :keyword cognitive_services_account: Details about the Azure AI service to be used when running
+        :keyword cognitive_services_account: Details about cognitive services to be used when running
          skills.
         :paramtype cognitive_services_account: ~search_service_client.models.CognitiveServicesAccount
-        :keyword knowledge_store: Definition of additional projections to Azure blob, table, or files,
+        :keyword knowledge_store: Definition of additional projections to azure blob, table, or files,
          of enriched data.
         :paramtype knowledge_store: ~search_service_client.models.SearchIndexerKnowledgeStore
         :keyword e_tag: The ETag of the skillset.
@@ -6956,11 +6953,12 @@ class SearchIndexerSkillset(_serialization.Model):
         :keyword encryption_key: A description of an encryption key that you create in Azure Key Vault.
          This key is used to provide an additional level of encryption-at-rest for your skillset
          definition when you want full assurance that no one, not even Microsoft, can decrypt your
-         skillset definition. Once you have encrypted your skillset definition, it will always remain
-         encrypted. The search service will ignore attempts to set this property to null. You can change
-         this property as needed if you want to rotate your encryption key; Your skillset definition
-         will be unaffected. Encryption with customer-managed keys is not available for free search
-         services, and is only available for paid services created on or after January 1, 2019.
+         skillset definition in Azure Cognitive Search. Once you have encrypted your skillset
+         definition, it will always remain encrypted. Azure Cognitive Search will ignore attempts to set
+         this property to null. You can change this property as needed if you want to rotate your
+         encryption key; Your skillset definition will be unaffected. Encryption with customer-managed
+         keys is not available for free search services, and is only available for paid services created
+         on or after January 1, 2019.
         :paramtype encryption_key: ~search_service_client.models.SearchResourceEncryptionKey
         """
         super().__init__(**kwargs)
@@ -7066,7 +7064,7 @@ class SearchIndexerWarning(_serialization.Model):
 
 class SearchResourceEncryptionKey(_serialization.Model):
     """A customer-managed encryption key in Azure Key Vault. Keys that you create and manage can be
-    used to encrypt or decrypt data-at-rest on your search service, such as indexes and synonym
+    used to encrypt or decrypt data-at-rest in Azure Cognitive Search, such as indexes and synonym
     maps.
 
     All required parameters must be populated in order to send to Azure.
@@ -7079,7 +7077,7 @@ class SearchResourceEncryptionKey(_serialization.Model):
     :vartype key_version: str
     :ivar vault_uri: The URI of your Azure Key Vault, also referred to as DNS name, that contains
      the key to be used to encrypt your data at rest. An example URI might be
-     ``https://my-keyvault-name.vault.azure.net``. Required.
+     https://my-keyvault-name.vault.azure.net. Required.
     :vartype vault_uri: str
     :ivar access_credentials: Optional Azure Active Directory credentials used for accessing your
      Azure Key Vault. Not required if using managed identity instead.
@@ -7118,7 +7116,7 @@ class SearchResourceEncryptionKey(_serialization.Model):
         :paramtype key_version: str
         :keyword vault_uri: The URI of your Azure Key Vault, also referred to as DNS name, that
          contains the key to be used to encrypt your data at rest. An example URI might be
-         ``https://my-keyvault-name.vault.azure.net``. Required.
+         https://my-keyvault-name.vault.azure.net. Required.
         :paramtype vault_uri: str
         :keyword access_credentials: Optional Azure Active Directory credentials used for accessing
          your Azure Key Vault. Not required if using managed identity instead.
@@ -7283,11 +7281,11 @@ class SentimentSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of skill. Required.
+    :ivar odata_type: Identifies the concrete type of the skill. Required.
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -7301,7 +7299,7 @@ class SentimentSkill(SearchIndexerSkill):
     :ivar outputs: The output of a skill is either a field in a search index, or a value that can
      be consumed as an input by another skill. Required.
     :vartype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
-    :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+    :ivar default_language_code: A value indicating which language code to use. Default is en.
      Known values are: "da", "nl", "en", "fi", "fr", "de", "el", "it", "no", "pl", "pt-PT", "ru",
      "es", "sv", and "tr".
     :vartype default_language_code: str or ~search_service_client.models.SentimentSkillLanguage
@@ -7337,7 +7335,7 @@ class SentimentSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -7352,9 +7350,9 @@ class SentimentSkill(SearchIndexerSkill):
         :keyword outputs: The output of a skill is either a field in a search index, or a value that
          can be consumed as an input by another skill. Required.
         :paramtype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
-        :keyword default_language_code: A value indicating which language code to use. Default is
-         ``en``. Known values are: "da", "nl", "en", "fi", "fr", "de", "el", "it", "no", "pl", "pt-PT",
-         "ru", "es", "sv", and "tr".
+        :keyword default_language_code: A value indicating which language code to use. Default is en.
+         Known values are: "da", "nl", "en", "fi", "fr", "de", "el", "it", "no", "pl", "pt-PT", "ru",
+         "es", "sv", and "tr".
         :paramtype default_language_code: str or ~search_service_client.models.SentimentSkillLanguage
         """
         super().__init__(name=name, description=description, context=context, inputs=inputs, outputs=outputs, **kwargs)
@@ -7369,11 +7367,11 @@ class SentimentSkillV3(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of skill. Required.
+    :ivar odata_type: Identifies the concrete type of the skill. Required.
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -7387,7 +7385,7 @@ class SentimentSkillV3(SearchIndexerSkill):
     :ivar outputs: The output of a skill is either a field in a search index, or a value that can
      be consumed as an input by another skill. Required.
     :vartype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
-    :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+    :ivar default_language_code: A value indicating which language code to use. Default is en.
     :vartype default_language_code: str
     :ivar include_opinion_mining: If set to true, the skill output will include information from
      Text Analytics for opinion mining, namely targets (nouns or verbs) and their associated
@@ -7433,7 +7431,7 @@ class SentimentSkillV3(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -7448,8 +7446,7 @@ class SentimentSkillV3(SearchIndexerSkill):
         :keyword outputs: The output of a skill is either a field in a search index, or a value that
          can be consumed as an input by another skill. Required.
         :paramtype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
-        :keyword default_language_code: A value indicating which language code to use. Default is
-         ``en``.
+        :keyword default_language_code: A value indicating which language code to use. Default is en.
         :paramtype default_language_code: str
         :keyword include_opinion_mining: If set to true, the skill output will include information from
          Text Analytics for opinion mining, namely targets (nouns or verbs) and their associated
@@ -7651,11 +7648,11 @@ class ShaperSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of skill. Required.
+    :ivar odata_type: Identifies the concrete type of the skill. Required.
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -7699,7 +7696,7 @@ class ShaperSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -7725,7 +7722,7 @@ class ShingleTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -7821,7 +7818,7 @@ class SnowballTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -7872,8 +7869,7 @@ class SoftDeleteColumnDeletionDetectionPolicy(DataDeletionDetectionPolicy):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of data deletion detection policy.
-     Required.
+    :ivar odata_type: Identifies the concrete type of the data deletion detection policy. Required.
     :vartype odata_type: str
     :ivar soft_delete_column_name: The name of the column to use for soft-deletion detection.
     :vartype soft_delete_column_name: str
@@ -7915,11 +7911,11 @@ class SplitSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of skill. Required.
+    :ivar odata_type: Identifies the concrete type of the skill. Required.
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -7933,7 +7929,7 @@ class SplitSkill(SearchIndexerSkill):
     :ivar outputs: The output of a skill is either a field in a search index, or a value that can
      be consumed as an input by another skill. Required.
     :vartype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
-    :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
+    :ivar default_language_code: A value indicating which language code to use. Default is en.
      Known values are: "da", "de", "en", "es", "fi", "fr", "it", "ko", and "pt".
     :vartype default_language_code: str or ~search_service_client.models.SplitSkillLanguage
     :ivar text_split_mode: A value indicating which split mode to perform. Known values are:
@@ -7977,7 +7973,7 @@ class SplitSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -7992,8 +7988,8 @@ class SplitSkill(SearchIndexerSkill):
         :keyword outputs: The output of a skill is either a field in a search index, or a value that
          can be consumed as an input by another skill. Required.
         :paramtype outputs: list[~search_service_client.models.OutputFieldMappingEntry]
-        :keyword default_language_code: A value indicating which language code to use. Default is
-         ``en``. Known values are: "da", "de", "en", "es", "fi", "fr", "it", "ko", and "pt".
+        :keyword default_language_code: A value indicating which language code to use. Default is en.
+         Known values are: "da", "de", "en", "es", "fi", "fr", "it", "ko", and "pt".
         :paramtype default_language_code: str or ~search_service_client.models.SplitSkillLanguage
         :keyword text_split_mode: A value indicating which split mode to perform. Known values are:
          "pages" and "sentences".
@@ -8014,7 +8010,7 @@ class SqlIntegratedChangeTrackingPolicy(DataChangeDetectionPolicy):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of data change detection policy. Required.
+    :ivar odata_type: Identifies the concrete type of the data change detection policy. Required.
     :vartype odata_type: str
     """
 
@@ -8040,7 +8036,7 @@ class StemmerOverrideTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -8083,7 +8079,7 @@ class StemmerTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -8141,7 +8137,7 @@ class StopAnalyzer(LexicalAnalyzer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of analyzer. Required.
+    :ivar odata_type: Identifies the concrete type of the analyzer. Required.
     :vartype odata_type: str
     :ivar name: The name of the analyzer. It must only contain letters, digits, spaces, dashes or
      underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -8181,7 +8177,7 @@ class StopwordsTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -8320,12 +8316,12 @@ class SynonymMap(_serialization.Model):
     :vartype synonyms: str
     :ivar encryption_key: A description of an encryption key that you create in Azure Key Vault.
      This key is used to provide an additional level of encryption-at-rest for your data when you
-     want full assurance that no one, not even Microsoft, can decrypt your sensitive data. Once you
-     have encrypted your data, it will always remain encrypted. The search service will ignore
-     attempts to set this property to null. You can change this property as needed if you want to
-     rotate your encryption key; Your data will be unaffected. Encryption with customer-managed keys
-     is not available for free search services, and is only available for paid services created on
-     or after January 1, 2019.
+     want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
+     Search. Once you have encrypted your data, it will always remain encrypted. Azure Cognitive
+     Search will ignore attempts to set this property to null. You can change this property as
+     needed if you want to rotate your encryption key; Your data will be unaffected. Encryption with
+     customer-managed keys is not available for free search services, and is only available for paid
+     services created on or after January 1, 2019.
     :vartype encryption_key: ~search_service_client.models.SearchResourceEncryptionKey
     :ivar e_tag: The ETag of the synonym map.
     :vartype e_tag: str
@@ -8364,12 +8360,12 @@ class SynonymMap(_serialization.Model):
         :paramtype synonyms: str
         :keyword encryption_key: A description of an encryption key that you create in Azure Key Vault.
          This key is used to provide an additional level of encryption-at-rest for your data when you
-         want full assurance that no one, not even Microsoft, can decrypt your sensitive data. Once you
-         have encrypted your data, it will always remain encrypted. The search service will ignore
-         attempts to set this property to null. You can change this property as needed if you want to
-         rotate your encryption key; Your data will be unaffected. Encryption with customer-managed keys
-         is not available for free search services, and is only available for paid services created on
-         or after January 1, 2019.
+         want full assurance that no one, not even Microsoft, can decrypt your data in Azure Cognitive
+         Search. Once you have encrypted your data, it will always remain encrypted. Azure Cognitive
+         Search will ignore attempts to set this property to null. You can change this property as
+         needed if you want to rotate your encryption key; Your data will be unaffected. Encryption with
+         customer-managed keys is not available for free search services, and is only available for paid
+         services created on or after January 1, 2019.
         :paramtype encryption_key: ~search_service_client.models.SearchResourceEncryptionKey
         :keyword e_tag: The ETag of the synonym map.
         :paramtype e_tag: str
@@ -8387,7 +8383,7 @@ class SynonymTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -8556,11 +8552,11 @@ class TextTranslationSkill(SearchIndexerSkill):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of skill. Required.
+    :ivar odata_type: Identifies the concrete type of the skill. Required.
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -8594,7 +8590,7 @@ class TextTranslationSkill(SearchIndexerSkill):
      ~search_service_client.models.TextTranslationSkillLanguage
     :ivar suggested_from: The language code to translate documents from when neither the
      fromLanguageCode input nor the defaultFromLanguageCode parameter are provided, and the
-     automatic language detection is unsuccessful. Default is ``en``. Known values are: "af", "ar",
+     automatic language detection is unsuccessful. Default is en. Known values are: "af", "ar",
      "bn", "bs", "bg", "yue", "ca", "zh-Hans", "zh-Hant", "hr", "cs", "da", "nl", "en", "et", "fj",
      "fil", "fi", "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw",
      "tlh", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "otq", "ro", "ru", "sm",
@@ -8638,7 +8634,7 @@ class TextTranslationSkill(SearchIndexerSkill):
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -8673,7 +8669,7 @@ class TextTranslationSkill(SearchIndexerSkill):
          ~search_service_client.models.TextTranslationSkillLanguage
         :keyword suggested_from: The language code to translate documents from when neither the
          fromLanguageCode input nor the defaultFromLanguageCode parameter are provided, and the
-         automatic language detection is unsuccessful. Default is ``en``. Known values are: "af", "ar",
+         automatic language detection is unsuccessful. Default is en. Known values are: "af", "ar",
          "bn", "bs", "bg", "yue", "ca", "zh-Hans", "zh-Hant", "hr", "cs", "da", "nl", "en", "et", "fj",
          "fil", "fi", "fr", "de", "el", "ht", "he", "hi", "mww", "hu", "is", "id", "it", "ja", "sw",
          "tlh", "ko", "lv", "lt", "mg", "ms", "mt", "nb", "fa", "pl", "pt", "otq", "ro", "ru", "sm",
@@ -8721,7 +8717,7 @@ class TruncateTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -8762,7 +8758,7 @@ class UaxUrlEmailTokenizer(LexicalTokenizer):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of tokenizer. Required.
+    :ivar odata_type: Identifies the concrete type of the tokenizer. Required.
     :vartype odata_type: str
     :ivar name: The name of the tokenizer. It must only contain letters, digits, spaces, dashes or
      underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -8806,7 +8802,7 @@ class UniqueTokenFilter(TokenFilter):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128
@@ -8849,7 +8845,7 @@ class VectorSearch(_serialization.Model):
     :ivar profiles: Defines combinations of configurations to use with vector search.
     :vartype profiles: list[~search_service_client.models.VectorSearchProfile]
     :ivar algorithms: Contains configuration options specific to the algorithm used during indexing
-     or querying.
+     and/or querying.
     :vartype algorithms: list[~search_service_client.models.VectorSearchAlgorithmConfiguration]
     """
 
@@ -8869,7 +8865,7 @@ class VectorSearch(_serialization.Model):
         :keyword profiles: Defines combinations of configurations to use with vector search.
         :paramtype profiles: list[~search_service_client.models.VectorSearchProfile]
         :keyword algorithms: Contains configuration options specific to the algorithm used during
-         indexing or querying.
+         indexing and/or querying.
         :paramtype algorithms: list[~search_service_client.models.VectorSearchAlgorithmConfiguration]
         """
         super().__init__(**kwargs)
@@ -8918,11 +8914,11 @@ class WebApiSkill(SearchIndexerSkill):  # pylint: disable=too-many-instance-attr
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of skill. Required.
+    :ivar odata_type: Identifies the concrete type of the skill. Required.
     :vartype odata_type: str
     :ivar name: The name of the skill which uniquely identifies it within the skillset. A skill
      with no name defined will be given a default name of its 1-based index in the skills array,
-     prefixed with the character ``#``.
+     prefixed with the character '#'.
     :vartype name: str
     :ivar description: The description of the skill which describes the inputs, outputs, and usage
      of the skill.
@@ -8992,7 +8988,7 @@ class WebApiSkill(SearchIndexerSkill):  # pylint: disable=too-many-instance-attr
         """
         :keyword name: The name of the skill which uniquely identifies it within the skillset. A skill
          with no name defined will be given a default name of its 1-based index in the skills array,
-         prefixed with the character ``#``.
+         prefixed with the character '#'.
         :paramtype name: str
         :keyword description: The description of the skill which describes the inputs, outputs, and
          usage of the skill.
@@ -9037,7 +9033,7 @@ class WordDelimiterTokenFilter(TokenFilter):  # pylint: disable=too-many-instanc
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: A URI fragment specifying the type of token filter. Required.
+    :ivar odata_type: Identifies the concrete type of the token filter. Required.
     :vartype odata_type: str
     :ivar name: The name of the token filter. It must only contain letters, digits, spaces, dashes
      or underscores, can only start and end with alphanumeric characters, and is limited to 128

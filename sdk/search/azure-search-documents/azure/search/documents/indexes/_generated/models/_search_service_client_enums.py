@@ -57,10 +57,11 @@ class BlobIndexerParsingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     JSON = "json"
     """Set to json to extract structured content from JSON files."""
     JSON_ARRAY = "jsonArray"
-    """Set to jsonArray to extract individual elements of a JSON array as separate documents."""
+    """Set to jsonArray to extract individual elements of a JSON array as separate documents in Azure
+    #: Cognitive Search."""
     JSON_LINES = "jsonLines"
     """Set to jsonLines to extract individual JSON entities, separated by a new line, as separate
-    #: documents."""
+    #: documents in Azure Cognitive Search."""
 
 
 class BlobIndexerPDFTextRotationAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -76,7 +77,7 @@ class BlobIndexerPDFTextRotationAlgorithm(str, Enum, metaclass=CaseInsensitiveEn
 
 
 class CharFilterName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the names of all character filters supported by the search engine."""
+    """Defines the names of all character filters supported by Azure Cognitive Search."""
 
     HTML_STRIP = "html_strip"
     """A character filter that attempts to strip out HTML constructs. See
@@ -326,8 +327,8 @@ class IndexerExecutionEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the environment in which the indexer should execute."""
 
     STANDARD = "standard"
-    """Indicates that the search service can determine where the indexer should execute. This is the
-    #: default environment when nothing is specified and is the recommended value."""
+    """Indicates that Azure Cognitive Search can determine where the indexer should execute. This is
+    #: the default environment when nothing is specified and is the recommended value."""
     PRIVATE = "private"
     """Indicates that the indexer should run with the environment provisioned specifically for the
     #: search service. This should only be specified as the execution environment if the indexer needs
@@ -398,7 +399,7 @@ class KeyPhraseExtractionSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumM
 
 
 class LexicalAnalyzerName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the names of all text analyzers supported by the search engine."""
+    """Defines the names of all text analyzers supported by Azure Cognitive Search."""
 
     AR_MICROSOFT = "ar.microsoft"
     """Microsoft analyzer for Arabic."""
@@ -596,7 +597,7 @@ class LexicalAnalyzerName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class LexicalTokenizerName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the names of all tokenizers supported by the search engine."""
+    """Defines the names of all tokenizers supported by Azure Cognitive Search."""
 
     CLASSIC = "classic"
     """Grammar-based tokenizer that is suitable for processing most European-language documents. See
@@ -1287,6 +1288,9 @@ class SearchFieldDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COMPLEX = "Edm.ComplexType"
     """Indicates that a field contains one or more complex objects that in turn have sub-fields of
     #: other types."""
+    SINGLE = "Edm.Single"
+    """Indicates that a field contains a single-precision floating point number. This is only valid
+    #: when used with Collection(Edm.Single)."""
 
 
 class SearchIndexerDataSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1755,7 +1759,7 @@ class TokenCharacterKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class TokenFilterName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the names of all token filters supported by the search engine."""
+    """Defines the names of all token filters supported by Azure Cognitive Search."""
 
     ARABIC_NORMALIZATION = "arabic_normalization"
     """A token filter that applies the Arabic normalizer to normalize the orthography. See
@@ -1870,7 +1874,7 @@ class VectorSearchAlgorithmKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The algorithm used for indexing and querying."""
 
     HNSW = "hnsw"
-    """HNSW (Hierarchical Navigable Small World), a type of approximate nearest neighbors algorithm."""
+    """Hnsw (Hierarchical Navigable Small World), a type of approximate nearest neighbors algorithm."""
     EXHAUSTIVE_KNN = "exhaustiveKnn"
     """Exhaustive KNN algorithm which will perform brute-force search."""
 

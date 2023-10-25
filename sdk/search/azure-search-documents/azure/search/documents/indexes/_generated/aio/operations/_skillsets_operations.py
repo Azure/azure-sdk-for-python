@@ -404,7 +404,7 @@ class SkillsetsOperations:
            - https://learn.microsoft.com/rest/api/searchservice/list-skillset
 
         :param select: Selects which top-level properties of the skillsets to retrieve. Specified as a
-         comma-separated list of JSON property names, or ``*`` for all properties. The default is all
+         comma-separated list of JSON property names, or '*' for all properties. The default is all
          properties. Default value is None.
         :type select: str
         :param request_options: Parameter group. Default value is None.

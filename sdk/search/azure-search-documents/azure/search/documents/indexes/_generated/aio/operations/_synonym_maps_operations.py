@@ -402,7 +402,7 @@ class SynonymMapsOperations:
            - https://learn.microsoft.com/rest/api/searchservice/List-Synonym-Maps
 
         :param select: Selects which top-level properties of the synonym maps to retrieve. Specified as
-         a comma-separated list of JSON property names, or ``*`` for all properties. The default is all
+         a comma-separated list of JSON property names, or '*' for all properties. The default is all
          properties. Default value is None.
         :type select: str
         :param request_options: Parameter group. Default value is None.
