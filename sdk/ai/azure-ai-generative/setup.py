@@ -128,7 +128,8 @@ setup(
             "PyYAML>=4.1,<7",
             "tiktoken>=0.3,<1",
             "websocket_client>=1,<2",
-            "azure-identity>=1,<2"
+            "azure-identity>=1,<2",
+            "azure-keyvault-secrets>=1,<5",
         ],
     },
     project_urls={
