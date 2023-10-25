@@ -7,17 +7,17 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_addon_lang.py
+FILE: sample_analyze_addon_barcodes.py
 
 DESCRIPTION:
-    This sample demonstrates how to extract font information using the add-on
-    'font' capability.
+    This sample demonstrates how to extract barcode information using the add-on
+    'BARCODES' capability.
 
     Add-on capabilities are available within all models except for the Business card
-    model. The sample uses Layout model to demonstrate.
+    model. This sample uses Layout model to demonstrate.
 
 USAGE:
-    python sample_analyze_addon_lang.py
+    python sample_analyze_addon_barcodes.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
@@ -47,19 +47,13 @@ def format_polygon(polygon):
     return ", ".join([f"[{p.x}, {p.y}]" for p in polygon])
 
 
-def get_text(styles, content):
-    spans = [span for style in styles for span in style.spans]
-    spans.sort(key=lambda span: span.offset)
-    return ','.join([content[span.offset : span.offset + span.length] for span in spans])
-
-
-def analyze_languages():
+def analyze_barcodes():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
             "..",
             "..",
-            "sample_forms/add_ons/font_and_languages.png",
+            "sample_forms/add_ons/barcode.jpg",
         )
     )
 
@@ -74,16 +68,17 @@ def analyze_languages():
     )
     with open(path_to_sample_documents, "rb") as f:
         poller = document_analysis_client.begin_analyze_document(
-            "prebuilt-layout", document=f, features=[AnalysisFeature.LANGUAGES]
+            "prebuilt-layout", document=f, features=[AnalysisFeature.BARCODES]
         )
     result = poller.result()
 
-    print("----Languages detected in the document----")
-    print(f"Detected {len(result.languages)} languages:")
-    for lang_idx, lang in enumerate(result.languages):
-        print(f"- Language #{lang_idx}: locale '{lang.locale}'")
-        print(f"  Confidence: {lang.confidence}")
-        print(f"  Text: '{','.join([result.content[span.offset : span.offset + span.length] for span in lang.spans])}'")
+    for page in result.pages:
+        print(f"----{len(page.barcodes)} Barcodes detected from page #{page.page_number}----")
+        for barcode_idx, barcode in enumerate(page.barcodes):
+            print(f"- Barcode #{barcode_idx}: {barcode.value}")
+            print(f"  Kind: {barcode.kind}")
+            print(f"  Confidence: {barcode.confidence}")
+            print(f"  Bounding regions: {format_polygon(barcode.polygon)}")
 
     print("----------------------------------------")
 
@@ -92,7 +87,7 @@ if __name__ == "__main__":
     from azure.core.exceptions import HttpResponseError
 
     try:
-        analyze_languages()
+        analyze_barcodes()
     except HttpResponseError as error:
         print(
             "For more information about troubleshooting errors, see the following guide: "

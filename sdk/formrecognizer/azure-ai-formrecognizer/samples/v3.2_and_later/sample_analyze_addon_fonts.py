@@ -7,17 +7,17 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_addon_barcode.py
+FILE: sample_analyze_addon_fonts.py
 
 DESCRIPTION:
-    This sample demonstrates how to extract barcode information using the add-on
-    'barcode' capability.
+    This sample demonstrates how to extract font information using the add-on
+    'STYLE_FONT' capability.
 
     Add-on capabilities are available within all models except for the Business card
-    model. The sample uses Layout model to demonstrate.
+    model. This sample uses Layout model to demonstrate.
 
 USAGE:
-    python sample_analyze_addon_barcode.py
+    python sample_analyze_addon_fonts.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
@@ -25,6 +25,7 @@ USAGE:
 """
 
 import os
+from collections import defaultdict
 
 from dotenv import load_dotenv
 
@@ -47,13 +48,19 @@ def format_polygon(polygon):
     return ", ".join([f"[{p.x}, {p.y}]" for p in polygon])
 
 
-def analyze_barcode():
+def get_styled_text(styles, content):
+    spans = [span for style in styles for span in style.spans]
+    spans.sort(key=lambda span: span.offset)
+    return ','.join([content[span.offset : span.offset + span.length] for span in spans])
+
+
+def analyze_fonts():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
             "..",
             "..",
-            "sample_forms/add_ons/barcode.jpg",
+            "sample_forms/add_ons/fonts_and_languages.png",
         )
     )
 
@@ -68,17 +75,63 @@ def analyze_barcode():
     )
     with open(path_to_sample_documents, "rb") as f:
         poller = document_analysis_client.begin_analyze_document(
-            "prebuilt-layout", document=f, features=[AnalysisFeature.BARCODES]
+            "prebuilt-layout", document=f, features=[AnalysisFeature.STYLE_FONT]
         )
     result = poller.result()
 
-    for page in result.pages:
-        print(f"----{len(page.barcodes)} Barcodes detected from page #{page.page_number}----")
-        for barcode_idx, barcode in enumerate(page.barcodes):
-            print(f"- Barcode #{barcode_idx}: {barcode.value}")
-            print(f"  Kind: {barcode.kind}")
-            print(f"  Confidence: {barcode.confidence}")
-            print(f"  Bounding regions: {format_polygon(barcode.polygon)}")
+    if any([style.is_handwritten for style in result.styles]):
+        print("Document contains handwritten content")
+    else:
+        print("Document does not contain handwritten content")
+
+    print()
+    print("----Fonts styles detected in the document----")
+    font_faimilies = defaultdict(list)
+    font_styles = defaultdict(list)
+    font_weights = defaultdict(list)
+    font_colors = defaultdict(list)
+    font_background_colors = defaultdict(list)
+
+    for style in result.styles:
+        if style.similar_font_family:
+            font_faimilies[style.similar_font_family].append(style)
+        if style.font_style:
+            font_styles[style.font_style].append(style)
+        if style.font_weight:
+            font_weights[style.font_weight].append(style)
+        if style.color:
+            font_colors[style.color].append(style)
+        if style.background_color:
+            font_background_colors[style.background_color].append(style)
+
+    print(f"Detected {len(font_faimilies)} font families:")
+    for font_family, styles in font_faimilies.items():
+        print(f"- Font family: '{font_family}'")
+        print(f"  Text: '{get_styled_text(styles, result.content)}'")
+
+    print()
+    print(f"Detected {len(font_styles)} font styles:")
+    for font_style, styles in font_styles.items():
+        print(f"- Font style: '{font_style}'")
+        print(f"  Text: '{get_styled_text(styles, result.content)}'")
+
+    print()
+    print(f"Detected {len(font_weights)} font weights:")
+    for font_weight, styles in font_weights.items():
+        print(f"- Font weight: '{font_weight}'")
+        print(f"  Text: '{get_styled_text(styles, result.content)}'")
+
+    print()
+    print(f"Detected {len(font_colors)} font colors:")
+    for font_color, styles in font_colors.items():
+        print(f"- Font color: '{font_color}'")
+        print(f"  Text: '{get_styled_text(styles, result.content)}'")
+
+    print()
+    print(f"Detected {len(font_background_colors)} font background colors:")
+    for font_background_color, styles in font_background_colors.items():
+        print(f"- Font background color: '{font_background_color}'")
+        print(f"  Text: '{get_styled_text(styles, result.content)}'")
 
     print("----------------------------------------")
 
@@ -87,7 +140,7 @@ if __name__ == "__main__":
     from azure.core.exceptions import HttpResponseError
 
     try:
-        analyze_barcode()
+        analyze_fonts()
     except HttpResponseError as error:
         print(
             "For more information about troubleshooting errors, see the following guide: "

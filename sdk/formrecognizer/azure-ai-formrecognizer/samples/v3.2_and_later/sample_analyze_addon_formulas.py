@@ -7,17 +7,17 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_addon_formula.py
+FILE: sample_analyze_addon_formulas.py
 
 DESCRIPTION:
     This sample demonstrates how to extract math formula information using the add-on
-    'formula' capability.
+    'FORMULAS' capability.
 
     Add-on capabilities are available within all models except for the Business card
-    model. The sample uses Layout model to demonstrate.
+    model. This sample uses Layout model to demonstrate.
 
 USAGE:
-    python sample_analyze_addon_formula.py
+    python sample_analyze_addon_formulas.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
@@ -47,7 +47,7 @@ def format_polygon(polygon):
     return ", ".join([f"[{p.x}, {p.y}]" for p in polygon])
 
 
-def analyze_barcode():
+def analyze_formulas():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
@@ -97,7 +97,7 @@ if __name__ == "__main__":
     from azure.core.exceptions import HttpResponseError
 
     try:
-        analyze_barcode()
+        analyze_formulas()
     except HttpResponseError as error:
         print(
             "For more information about troubleshooting errors, see the following guide: "
