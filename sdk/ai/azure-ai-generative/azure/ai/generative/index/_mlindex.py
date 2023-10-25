@@ -281,17 +281,18 @@ class MLIndex:
 
                 connection_credential = get_connection_credential(self.index_config, credential=credential)
 
+                endpoint = self.index_config.get("endpoint", None)
+                if not endpoint:
+                    endpoint = get_target_from_connection(
+                        get_connection_by_id_v2(
+                            self.index_config["connection"]["id"],
+                            credential=credential
+                        )
+                    )
+
                 return AzureCognitiveSearchVectorStore(
                     index_name=self.index_config.get("index"),
-                    endpoint=self.index_config.get(
-                        "endpoint",
-                        get_target_from_connection(
-                            get_connection_by_id_v2(
-                                self.index_config["connection"]["id"],
-                                credential=credential
-                            )
-                        )
-                    ),
+                    endpoint=endpoint,
                     embeddings=self.get_langchain_embeddings(credential=credential),
                     field_mapping=self.index_config.get("field_mapping", {}),
                     credential=connection_credential,
