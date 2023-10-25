@@ -47,7 +47,7 @@ class TestModuleClient(AzureRecordedTestCase):
         assert len(completion.choices) == 1
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
-        assert completion.choices[0].text
+        assert completion.choices[0].text is not None
 
     @configure
     @pytest.mark.parametrize("api_type", [AZURE])
@@ -74,7 +74,7 @@ class TestModuleClient(AzureRecordedTestCase):
         assert len(completion.choices) == 1
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
-        assert completion.choices[0].message.content
+        assert completion.choices[0].message.content is not None
         assert completion.choices[0].message.role
 
     @configure

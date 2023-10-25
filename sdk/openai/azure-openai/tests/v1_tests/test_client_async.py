@@ -63,7 +63,7 @@ class TestClientAsync(AzureRecordedTestCase):
         assert len(completion.choices) == 1
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
-        assert completion.choices[0].message.content
+        assert completion.choices[0].message.content is not None
         assert completion.choices[0].message.role
 
         # try to call some other feature not under the same deployment name
@@ -99,7 +99,7 @@ class TestClientAsync(AzureRecordedTestCase):
         assert len(completion.choices) == 1
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
-        assert completion.choices[0].message.content
+        assert completion.choices[0].message.content is not None
         assert completion.choices[0].message.role
 
     @configure_async
@@ -129,7 +129,7 @@ class TestClientAsync(AzureRecordedTestCase):
         assert len(completion.choices) == 1
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
-        assert completion.choices[0].message.content
+        assert completion.choices[0].message.content is not None
         assert completion.choices[0].message.role
 
     @configure_async

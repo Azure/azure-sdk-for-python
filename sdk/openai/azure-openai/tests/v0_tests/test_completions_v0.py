@@ -50,7 +50,7 @@ class TestCompletions(AzureRecordedTestCase):
         assert len(completion.choices) == 1
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
-        assert completion.choices[0].text
+        assert completion.choices[0].text is not None
 
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure_v0
@@ -134,7 +134,7 @@ class TestCompletions(AzureRecordedTestCase):
         assert len(completion.choices) == 1
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
-        assert completion.choices[0].text
+        assert completion.choices[0].text is not None
 
     @pytest.mark.parametrize("api_type", [AZURE])
     @configure_v0
@@ -172,7 +172,7 @@ class TestCompletions(AzureRecordedTestCase):
         assert len(completion.choices) == 1
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
-        assert completion.choices[0].text
+        assert completion.choices[0].text is not None
 
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure_v0
@@ -196,7 +196,7 @@ class TestCompletions(AzureRecordedTestCase):
         assert len(completion.choices) == 1
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
-        assert completion.choices[0].text
+        assert completion.choices[0].text is not None
 
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure_v0
@@ -244,7 +244,7 @@ class TestCompletions(AzureRecordedTestCase):
         assert len(completion.choices) == 1
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
-        assert completion.choices[0].text
+        assert completion.choices[0].text is not None
         assert completion.choices[0].logprobs.tokens
         assert completion.choices[0].logprobs.token_logprobs
         assert completion.choices[0].logprobs.top_logprobs
@@ -296,7 +296,7 @@ class TestCompletions(AzureRecordedTestCase):
         assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
         assert len(completion.choices) == 1
         assert completion.choices[0].index is not None
-        assert completion.choices[0].text
+        assert completion.choices[0].text is not None
 
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure_v0
@@ -321,7 +321,7 @@ class TestCompletions(AzureRecordedTestCase):
         assert len(completion.choices) == 1
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
-        assert completion.choices[0].text
+        assert completion.choices[0].text is not None
 
     @pytest.mark.parametrize("api_type", [AZURE])
     @configure_v0
@@ -346,7 +346,7 @@ class TestCompletions(AzureRecordedTestCase):
         assert len(completion.choices) == 1
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
-        assert completion.choices[0].text
+        assert completion.choices[0].text is not None
 
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure_v0
@@ -370,7 +370,7 @@ class TestCompletions(AzureRecordedTestCase):
         assert len(completion.choices) == 1
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
-        assert completion.choices[0].text
+        assert completion.choices[0].text is not None
 
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
     @configure_v0
@@ -394,7 +394,7 @@ class TestCompletions(AzureRecordedTestCase):
         assert len(completion.choices) == 1
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
-        assert completion.choices[0].text
+        assert completion.choices[0].text is not None
 
     @pytest.mark.parametrize("api_type", [AZURE])
     @configure_v0

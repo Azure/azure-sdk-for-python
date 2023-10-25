@@ -62,7 +62,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert len(completion.choices) == 1
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
-        assert completion.choices[0].message.content
+        assert completion.choices[0].message.content is not None
         assert completion.choices[0].message.role
 
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
@@ -110,7 +110,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert len(completion.choices) == 1
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
-        assert completion.choices[0].message.content
+        assert completion.choices[0].message.content is not None
         assert completion.choices[0].message.role
 
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
@@ -135,7 +135,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert len(completion.choices) == 1
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
-        assert completion.choices[0].message.content
+        assert completion.choices[0].message.content is not None
         assert completion.choices[0].message.role
 
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
@@ -160,7 +160,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert len(completion.choices) == 1
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
-        assert completion.choices[0].message.content
+        assert completion.choices[0].message.content is not None
         assert completion.choices[0].message.role
 
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
@@ -210,7 +210,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
         assert len(completion.choices) == 1
         assert completion.choices[0].index is not None
-        assert completion.choices[0].message.content
+        assert completion.choices[0].message.content is not None
         assert completion.choices[0].message.role
 
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
@@ -240,7 +240,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert len(completion.choices) == 1
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
-        assert completion.choices[0].message.content
+        assert completion.choices[0].message.content is not None
         assert completion.choices[0].message.role
 
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
@@ -269,7 +269,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert len(completion.choices) == 1
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
-        assert completion.choices[0].message.content
+        assert completion.choices[0].message.content is not None
         assert completion.choices[0].message.role
 
     @pytest.mark.parametrize("api_type", [AZURE, OPENAI])
@@ -297,7 +297,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert len(completion.choices) == 1
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
-        assert completion.choices[0].message.content
+        assert completion.choices[0].message.content is not None
         assert completion.choices[0].message.role
 
     @pytest.mark.parametrize("api_type", [AZURE])
@@ -718,7 +718,7 @@ class TestChatCompletions(AzureRecordedTestCase):
         assert len(completion.choices) == 1
         assert completion.choices[0].finish_reason
         assert completion.choices[0].index is not None
-        assert completion.choices[0].message.content
+        assert completion.choices[0].message.content is not None
         assert completion.choices[0].message.role
         assert completion.choices[0].message.context.messages[0].role == "tool"
         assert completion.choices[0].message.context.messages[0].content

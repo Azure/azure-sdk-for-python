@@ -242,7 +242,7 @@ def build_kwargs(args, api_type):
         elif api_type == "openai":
             return {"model": ENV_OPENAI_AUDIO_MODEL}
     if test_feature.startswith("test_chat_completions") \
-        or test_feature.startswith("test_client") or test_feature.startswith("test_models"):
+        or test_feature.startswith(("test_client", "test_models")):
         if api_type in ["azure", "azuread"]:
             return {"model": ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME}
         elif api_type == "openai":
@@ -257,7 +257,7 @@ def build_kwargs(args, api_type):
             return {"model": ENV_AZURE_OPENAI_EMBEDDINGS_NAME}
         elif api_type == "openai":
             return {"model": ENV_OPENAI_EMBEDDINGS_MODEL}
-    if test_feature.startswith("test_dall_e") or test_feature.startswith("test_module_client"):
+    if test_feature.startswith(("test_dall_e", "test_module_client", "test_cli")):
         return {}
     raise ValueError(f"Test feature: {test_feature} needs to have its kwargs configured.")
 

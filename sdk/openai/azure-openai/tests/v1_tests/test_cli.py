@@ -6,6 +6,7 @@
 import os
 import pytest
 import subprocess
+from devtools_testutils import AzureRecordedTestCase
 from conftest import (
     ENV_AZURE_OPENAI_ENDPOINT,
     ENV_AZURE_OPENAI_KEY,
@@ -15,15 +16,19 @@ from conftest import (
     ENV_AZURE_OPENAI_AUDIO_NAME,
     ENV_AZURE_OPENAI_WHISPER_ENDPOINT,
     ENV_AZURE_OPENAI_WHISPER_KEY,
+    configure,
+    AZURE,
 )
 
 audio_test_file = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "./assets/hello.m4a"))
 
 
-class TestCLI:
+class TestCLI(AzureRecordedTestCase):
     """No support for embeddings CLI cmd"""
 
-    def test_cli_completions(self):
+    @configure
+    @pytest.mark.parametrize("api_type", [AZURE])
+    def test_cli_completions(self, client, azure_openai_creds, api_type, **kwargs):
         os.environ["AZURE_OPENAI_API_KEY"] = os.getenv(ENV_AZURE_OPENAI_KEY)
         try:
             result = subprocess.run(
@@ -45,7 +50,9 @@ class TestCLI:
         finally:
             del os.environ['AZURE_OPENAI_API_KEY']
 
-    def test_cli_chat_completions(self):
+    @configure
+    @pytest.mark.parametrize("api_type", [AZURE])
+    def test_cli_chat_completions(self, client, azure_openai_creds, api_type, **kwargs):
         os.environ["AZURE_OPENAI_API_KEY"] = os.getenv(ENV_AZURE_OPENAI_KEY)
 
         try:
@@ -70,7 +77,9 @@ class TestCLI:
             del os.environ['AZURE_OPENAI_API_KEY']
 
     @pytest.mark.skip("Unrecognized file format")
-    def test_cli_audio_transcription(self):
+    @configure
+    @pytest.mark.parametrize("api_type", [AZURE])
+    def test_cli_audio_transcription(self, client, azure_openai_creds, api_type, **kwargs):
         os.environ["AZURE_OPENAI_API_KEY"] = os.getenv(ENV_AZURE_OPENAI_WHISPER_KEY)
 
         try:
@@ -94,7 +103,9 @@ class TestCLI:
             del os.environ['AZURE_OPENAI_API_KEY']
 
     @pytest.mark.skip("Unrecognized file format")
-    def test_cli_audio_translation(self):
+    @configure
+    @pytest.mark.parametrize("api_type", [AZURE])
+    def test_cli_audio_translation(self, client, azure_openai_creds, api_type, **kwargs):
         os.environ["AZURE_OPENAI_API_KEY"] = os.getenv(ENV_AZURE_OPENAI_WHISPER_KEY)
 
         try:
@@ -117,7 +128,9 @@ class TestCLI:
         finally:
             del os.environ['AZURE_OPENAI_API_KEY']
 
-    def test_cli_models_list(self):
+    @configure
+    @pytest.mark.parametrize("api_type", [AZURE])
+    def test_cli_models_list(self, client, azure_openai_creds, api_type, **kwargs):
         os.environ["AZURE_OPENAI_API_KEY"] = os.getenv(ENV_AZURE_OPENAI_KEY)
         try:
             result = subprocess.run(
@@ -135,7 +148,9 @@ class TestCLI:
         finally:
             del os.environ['AZURE_OPENAI_API_KEY']
 
-    def test_cli_models_retrieve(self):
+    @configure
+    @pytest.mark.parametrize("api_type", [AZURE])
+    def test_cli_models_retrieve(self, client, azure_openai_creds, api_type, **kwargs):
         os.environ["AZURE_OPENAI_API_KEY"] = os.getenv(ENV_AZURE_OPENAI_KEY)
         try:
             result = subprocess.run(
