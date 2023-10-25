@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.connectedvmware import AzureArcVMwareManagementServiceAPI
+from azure.mgmt.connectedvmware import ConnectedVMwareMgmtClient
 
 """
 # PREREQUISITES
     pip install azure-identity
     pip install azure-mgmt-connectedvmware
 # USAGE
-    python virtual_machine_install_patches.py
+    python hybrid_identity_metadata_list_by_vm_instance.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -24,26 +24,18 @@ from azure.mgmt.connectedvmware import AzureArcVMwareManagementServiceAPI
 
 
 def main():
-    client = AzureArcVMwareManagementServiceAPI(
+    client = ConnectedVMwareMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="{subscription-id}",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.virtual_machines.begin_install_patches(
-        resource_group_name="myResourceGroupName",
-        virtual_machine_name="myMachineName",
-        install_patches_input={
-            "maximumDuration": "PT3H",
-            "rebootSetting": "IfRequired",
-            "windowsParameters": {
-                "classificationsToInclude": ["Critical", "Security"],
-                "maxPatchPublishDate": "2022-01-15T02:36:43.0539904+00:00",
-            },
-        },
-    ).result()
-    print(response)
+    response = client.vm_instance_hybrid_identity_metadata.list(
+        resource_uri="subscriptions/fd3c3665-1729-4b7b-9a38-238e83b0f98b/resourceGroups/testrg/providers/Microsoft.HybridCompute/machines/DemoVM",
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/connectedvmware/resource-manager/Microsoft.ConnectedVMwarevSphere/preview/2022-07-15-preview/examples/VirtualMachineInstallPatches.json
+# x-ms-original-file: specification/connectedvmware/resource-manager/Microsoft.ConnectedVMwarevSphere/stable/2023-10-01/examples/HybridIdentityMetadata_ListByVmInstance.json
 if __name__ == "__main__":
     main()
