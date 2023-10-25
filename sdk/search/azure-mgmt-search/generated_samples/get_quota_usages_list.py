@@ -14,7 +14,7 @@ from azure.mgmt.search import SearchManagementClient
     pip install azure-identity
     pip install azure-mgmt-search
 # USAGE
-    python search_get_service.py
+    python get_quota_usages_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,13 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.services.get(
-        resource_group_name="rg1",
-        search_service_name="mysearchservice",
+    response = client.usages.list_by_subscription(
+        location="westus",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/stable/2023-11-01/examples/SearchGetService.json
+# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/stable/2023-11-01/examples/GetQuotaUsagesList.json
 if __name__ == "__main__":
     main()
