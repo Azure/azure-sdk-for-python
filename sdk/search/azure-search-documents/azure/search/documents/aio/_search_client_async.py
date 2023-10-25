@@ -168,7 +168,7 @@ class SearchClient(HeadersMixin):
         session_id: Optional[str] = None,
         vector_queries: Optional[List[VectorQuery]] = None,
         vector_filter_mode: Optional[Union[str, VectorFilterMode]] = None,
-        semantic_error_handling: Optional[Union[str, SemanticErrorMode]] = None,
+        semantic_error_mode: Optional[Union[str, SemanticErrorMode]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
         **kwargs
     ) -> AsyncSearchItemPaged[Dict]:
@@ -256,10 +256,10 @@ class SearchClient(HeadersMixin):
          interfere with the load balancing of the requests across replicas and adversely affect the
          performance of the search service. The value used as sessionId cannot start with a '_'
          character.
-        :keyword semantic_error_handling: Allows the user to choose whether a semantic call should fail
+        :keyword semantic_error_mode: Allows the user to choose whether a semantic call should fail
          completely (default / current behavior), or to return partial results. Known values are:
          "partial" and "fail".
-        :paramtype semantic_error_handling: str or ~azure.search.documents.models.SemanticErrorMode
+        :paramtype semantic_error_mode: str or ~azure.search.documents.models.SemanticErrorMode
         :keyword int semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
          time it takes for semantic enrichment to finish processing before the request fails.
         :keyword vector_queries: The query parameters for vector and hybrid search queries.
@@ -334,7 +334,7 @@ class SearchClient(HeadersMixin):
             scoring_statistics=scoring_statistics,
             vector_queries=vector_queries,
             vector_filter_mode=vector_filter_mode,
-            semantic_error_handling=semantic_error_handling,
+            semantic_error_handling=semantic_error_mode,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
         )
         if isinstance(select, list):
