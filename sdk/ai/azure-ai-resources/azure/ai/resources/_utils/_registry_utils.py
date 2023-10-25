@@ -9,8 +9,8 @@ REGISTRY_LABEL_ID_REGEX = "^azureml://registries/([^/]+)/([^/]+)/([^/]+)/labels/
 
 
 def get_registry_model(
-    registry_name: str,
     credential,
+    registry_name: str = None,
     id: str = None,
     model_name: str = None,
     version: str = None,
@@ -18,16 +18,17 @@ def get_registry_model(
 ):
     from azure.ai.ml import MLClient
 
-    registry_client = MLClient(credential, registry_name=registry_name)
-
     if id:
         if "versions" in id:
             match = re.match(REGISTRY_VERSIONED_ID_REGEX, id)
+            registry_name = match.group(1)
             model_name = match.group(3)
             version = match.group(4)
         elif "labels" in id:
             match = re.match(REGISTRY_LABEL_ID_REGEX, id)
+            registry_name = match.group(1)
             model_name = match.group(3)
             label = match.group(4)
 
+    registry_client = MLClient(credential, registry_name=registry_name)
     return registry_client.models.get(name=model_name, label=label, version=version)
