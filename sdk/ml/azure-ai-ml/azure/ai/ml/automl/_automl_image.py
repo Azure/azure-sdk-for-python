@@ -150,8 +150,8 @@ def image_classification_multilabel(
     :paramtype primary_metric: Union[str, azure.ai.ml.automl.ClassificationMultilabelPrimaryMetrics]
     :keyword validation_data: The validation data to be used within the experiment.
     :paramtype validation_data: Optional[azure.ai.ml.entities.Input]
-    :keyword validation_data_size: The fraction of the training data to hold out for validation when user does not provide the validation data.
-            is not specified. This should be between 0.0 and 1.0 non-inclusive.
+    :keyword validation_data_size: The fraction of the training data to hold out for validation when user does not
+            provide the validation data. This should be between 0.0 and 1.0 non-inclusive.
 
             Specify ``validation_data`` to provide validation data, otherwise set ``validation_data_size``
             to extract validation data out of the specified training data.
@@ -211,8 +211,8 @@ def image_object_detection(
     :paramtype primary_metric: Union[str, azure.ai.ml.automl.ObjectDetectionPrimaryMetrics]
     :keyword validation_data: The validation data to be used within the experiment.
     :paramtype validation_data: Optional[azure.ai.ml.entities.Input]
-    :keyword validation_data_size: The fraction of the training data to hold out for validation when user does not provide the validation data.
-            is not specified. This should be between 0.0 and 1.0 non-inclusive.
+    :keyword validation_data_size: The fraction of the training data to hold out for validation when user does not
+            provide the validation data. This should be between 0.0 and 1.0 non-inclusive.
 
             Specify ``validation_data`` to provide validation data, otherwise set ``validation_data_size``
             to extract validation data out of the specified training data.
@@ -272,8 +272,8 @@ def image_instance_segmentation(
     :paramtype primary_metric: Union[str, azure.ai.ml.automl.InstanceSegmentationPrimaryMetrics]
     :keyword validation_data: The validation data to be used within the experiment.
     :paramtype validation_data: Optional[azure.ai.ml.entities.Input]
-    :keyword validation_data_size: The fraction of the training data to hold out for validation when user does not provide the validation data.
-            is not specified. This should be between 0.0 and 1.0 non-inclusive.
+    :keyword validation_data_size: The fraction of the training data to hold out for validation when user does not
+            provide the validation data. This should be between 0.0 and 1.0 non-inclusive.
 
             Specify ``validation_data`` to provide validation data, otherwise set ``validation_data_size``
             to extract validation data out of the specified training data.
