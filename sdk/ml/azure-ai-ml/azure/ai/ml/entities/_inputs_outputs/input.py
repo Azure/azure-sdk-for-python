@@ -40,6 +40,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         * 'download': Download the data to the compute target,
         * 'direct': Pass in the URI as a string to be accessed at runtime
     :paramtype mode: Optional[str]
+    :keyword path_on_compute: The access path of the data input for compute
+    :paramtype mode: Optional[str]
     :keyword default: The default value of the input. If a default is set, the input data will be optional.
     :paramtype default: Union[str, int, float, bool]
     :keyword min: The minimum value for the input. If a value smaller than the minimum is passed to the job, the job
@@ -70,7 +72,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     """
 
     _EMPTY = Parameter.empty
-    _IO_KEYS = ["path", "type", "mode", "description", "default", "min", "max", "enum", "optional", "datastore"]
+    _IO_KEYS = ["path", "type", "mode", "path_on_compute","description", "default", "min", "max", "enum", "optional", "datastore"]
 
     @overload
     def __init__(
@@ -79,6 +81,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         type: Literal["uri_folder"] = "uri_folder",
         path: Optional[str] = None,
         mode: Optional[str] = None,
+        path_on_compute: Optional[str] = None,
         optional: Optional[bool] = None,
         description: Optional[str] = None,
         **kwargs,
@@ -204,6 +207,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         type: str = "uri_folder",
         path: Optional[str] = None,
         mode: Optional[str] = None,
+        path_on_compute: Optional[str] = None,
         default: Optional[Union[str, int, float, bool]] = None,
         optional: Optional[bool] = None,
         min: Optional[Union[int, float]] = None,
@@ -223,7 +227,13 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
             # it's written to handle InputOutputBase, but there will be loop import if we import InputOutputBase here
             self.path = str(path)
         else:
-            self.path = path
+            self.path = path        
+        if path_on_compute is not None and not isinstance(path_on_compute, str):
+            # this logic will make dsl data binding expression working in the same way as yaml
+            # it's written to handle InputOutputBase, but there will be loop import if we import InputOutputBase here
+            self.path_on_compute = str(path_on_compute)
+        else:
+            self.path_on_compute = path_on_compute
         self.mode = None if self._is_primitive_type else mode
         self._update_default(default)
         self.optional = optional
@@ -448,7 +458,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
 
     def _validate_parameter_combinations(self):
         """Validate different parameter combinations according to type."""
-        parameters = ["type", "path", "mode", "default", "min", "max"]
+        parameters = ["type", "path", "path_on_compute", "mode", "default", "min", "max"]
         parameters = {key: getattr(self, key, None) for key in parameters}
         type = parameters.pop("type")
 

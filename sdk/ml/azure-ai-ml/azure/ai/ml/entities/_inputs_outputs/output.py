@@ -18,7 +18,7 @@ from .utils import _remove_empty_values
 
 
 class Output(_InputOutputBase):
-    _IO_KEYS = ["name", "version", "path", "type", "mode", "description", "early_available"]
+    _IO_KEYS = ["name", "version", "path", "path_on_compute", "type", "mode", "description", "early_available"]
 
     @overload
     def __init__(self, type: Literal["uri_folder"] = "uri_folder", path=None, mode=None, description=None) -> None:
@@ -30,6 +30,8 @@ class Output(_InputOutputBase):
         :paramtype type: str
         :keyword path: The remote path where the output should be stored.
         :paramtype path: Optional[str]
+        :keyword path_on_compute: The access path of the data input for compute
+        :paramtype mode: Optional[str]
         :keyword mode: The access mode of the data output. Accepted values are
             * 'rw_mount': Read-write mount the data
             * 'upload': Upload the data from the compute target
@@ -86,7 +88,7 @@ class Output(_InputOutputBase):
         :paramtype version: str
         """
 
-    def __init__(self, *, type=AssetTypes.URI_FOLDER, path=None, mode=None, description=None, **kwargs) -> None:
+    def __init__(self, *, type=AssetTypes.URI_FOLDER, path=None, path_on_compute=None, mode=None, description=None, **kwargs) -> None:
         super(Output, self).__init__(type=type)
         # As an annotation, it is not allowed to initialize the _port_name.
         self._port_name = None
@@ -95,6 +97,7 @@ class Output(_InputOutputBase):
         self._is_primitive_type = self.type in IOConstants.PRIMITIVE_STR_2_TYPE
         self.description = description
         self.path = path
+        self.path_on_compute = path_on_compute
         self.mode = mode
         # use this field to mark Output for early node orchestrate, currently hide in kwargs
         self.early_available = kwargs.pop("early_available", None)

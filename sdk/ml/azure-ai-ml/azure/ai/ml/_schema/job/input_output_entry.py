@@ -58,6 +58,14 @@ def generate_path_property(azureml_type):
         is_strict=True,
     )
 
+def generate_path_on_compute_property(azureml_type):
+    return UnionField(
+        [
+            ArmVersionedStr(azureml_type=azureml_type),
+            LocalPathField(pattern=r"^file:.*"),
+        ],
+        is_strict=True,
+    )
 
 def generate_datastore_property():
     metadata = {
@@ -103,6 +111,7 @@ class DataInputSchema(InputSchema):
         ]
     )
     path = generate_path_property(azureml_type=AzureMLResourceType.DATA)
+    path_on_compute = generate_path_on_compute_property(azureml_type=AzureMLResourceType.DATA)
     datastore = generate_datastore_property()
 
 
@@ -119,6 +128,7 @@ class MLTableInputSchema(InputSchema):
     )
     type = StringTransformedEnum(allowed_values=[AssetTypes.MLTABLE])
     path = generate_path_property(azureml_type=AzureMLResourceType.DATA)
+    path_on_compute = generate_path_on_compute_property(azureml_type=AzureMLResourceType.DATA)
     datastore = generate_datastore_property()
 
 
