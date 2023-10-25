@@ -3,5 +3,6 @@
 -e ../../../tools/azure-devtools
 ../../identity/azure-identity
 -e ../../ml/azure-ai-ml
+-e ../../azure-ai-resources
 pytest
 pytest-xdist
