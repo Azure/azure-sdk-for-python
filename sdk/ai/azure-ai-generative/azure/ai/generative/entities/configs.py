@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from dataclasses import dataclass
 from typing import Any, Dict
-from azure.ai.generative.entities.connection import Connection
+from azure.ai.generative.entities import AzureOpenAIConnection
 from azure.ai.ml._utils.utils import camel_to_snake
 
 
@@ -19,9 +19,9 @@ class AzureOpenAIModelConfiguration:
 
     @staticmethod
     def from_connection(
-        connection: Connection, model_name: str, deployment_name: str, **model_kwargs
+        connection: AzureOpenAIConnection, model_name: str, deployment_name: str, **model_kwargs
     ) -> 'AzureOpenAIModelConfiguration':
-        if not isinstance(connection, Connection) or camel_to_snake(connection.type) != "azure_open_ai":
+        if not isinstance(connection, AzureOpenAIConnection) or camel_to_snake(connection.type) != "azure_open_ai":
             raise TypeError(
                 "Only AzureOpenAI connection objects are supported."
             )
@@ -31,8 +31,8 @@ class AzureOpenAIModelConfiguration:
 
         return AzureOpenAIModelConfiguration(
             api_base=connection.target,
-            api_key=connection.credentials.get("key"),
-            api_version=connection.metadata.get("ApiVersion"),
+            api_key=connection.credentials.key,
+            api_version=connection.api_version,
             model_name=model_name,
             deployment_name=deployment_name,
             model_kwargs=model_kwargs,
