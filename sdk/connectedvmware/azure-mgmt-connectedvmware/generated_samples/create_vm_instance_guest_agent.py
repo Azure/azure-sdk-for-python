@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.connectedvmware import AzureArcVMwareManagementServiceAPI
+from azure.mgmt.connectedvmware import ConnectedVMwareMgmtClient
 
 """
 # PREREQUISITES
     pip install azure-identity
     pip install azure-mgmt-connectedvmware
 # USAGE
-    python delete_extension.py
+    python create_vm_instance_guest_agent.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -24,19 +24,17 @@ from azure.mgmt.connectedvmware import AzureArcVMwareManagementServiceAPI
 
 
 def main():
-    client = AzureArcVMwareManagementServiceAPI(
+    client = ConnectedVMwareMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="{subscriptionId}",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.machine_extensions.begin_delete(
-        resource_group_name="myResourceGroup",
-        virtual_machine_name="myMachine",
-        extension_name="MMA",
+    response = client.vm_instance_guest_agents.begin_create(
+        resource_uri="subscriptions/fd3c3665-1729-4b7b-9a38-238e83b0f98b/resourceGroups/testrg/providers/Microsoft.HybridCompute/machines/DemoVM",
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/connectedvmware/resource-manager/Microsoft.ConnectedVMwarevSphere/preview/2022-07-15-preview/examples/DELETEExtension.json
+# x-ms-original-file: specification/connectedvmware/resource-manager/Microsoft.ConnectedVMwarevSphere/stable/2023-10-01/examples/CreateVMInstanceGuestAgent.json
 if __name__ == "__main__":
     main()
