@@ -25,7 +25,7 @@ from azure.core.credentials import TokenCredential
 
 from ._project_scope import OperationScope
 from ._user_agent import USER_AGENT
-from .operations import (
+from azure.ai.resources.operations import (
     AIResourceOperations,
     ConnectionOperations,
     DeploymentOperations,
@@ -35,7 +35,7 @@ from .operations import (
     DataOperations,
     ModelOperations,
 )
-from .operations._ingest_data_to_index import ingest_data_to_index
+from azure.ai.resources.operations._ingest_data_to_index import ingest_data_to_index
 
 module_logger = logging.getLogger(__name__)
 
