@@ -16,18 +16,12 @@ class LangchainModel:
 @dataclass
 class PromptflowModel:
     path: Union[str, os.PathLike]
-    conda_file: Union[str, os.PathLike]
+    base_image: str = None
 
 
 @dataclass
-class LocalModel:
+class Model:
     path: Union[str, os.PathLike]
     conda_file: Union[str, os.PathLike] = None
-    loader_module: Union[str, os.PathLike] = None
-
-
-@dataclass
-class FoundationModel:
-    registry_name: str
-    name: str
-    version: str = None
+    loader_module: str = None
+    chat_module: str = None
