@@ -150,7 +150,8 @@ class AutoMLImage(AutoMLVertical, ABC):
         :keyword validation_data: Optional. Validation data.
         :type validation_data: Optional[~azure.ai.ml.entities.Input]
         :keyword validation_data_size: Optional. The fraction of training dataset that needs to be set aside for
-                                      validation purpose. Values between (0.0 , 1.0). Applied when validation dataset is not provided.
+                                      validation purpose. Values should be in range (0.0 , 1.0).
+                                      Applied only when validation dataset is not provided.
         :type validation_data_size: Optional[float]
         :return: None
         """
