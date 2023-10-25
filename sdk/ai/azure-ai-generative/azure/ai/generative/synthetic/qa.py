@@ -14,7 +14,7 @@ try:
     from typing import Dict, List, Tuple, Any, Union
     import openai
     from collections import defaultdict
-    from azure.ai.generative.entities import Connection
+    from azure.ai.resources.entities import Connection
     from azure.identity import DefaultAzureCredential
     from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, OpsLogger
     from azure.core.tracing.decorator import distributed_trace
