@@ -61,7 +61,6 @@ class TestFeatureSet(AzureRecordedTestCase):
     # ---------------------------------------------------------------------------------------------------------------#
     # NOTE Please enable materialization store on test featurestore 'sdk_vnext_cli_fs' to run this test in live mode.
     # ---------------------------------------------------------------------------------------------------------------#
-    @pytest.mark.skip(reason="Skip the test until list jobs API in v2023-10-01 version is working well")
     def test_list_materialization_jobs(
         self, feature_store_client: MLClient, tmp_path: Path, randstr: Callable[[], str]
     ) -> None:
@@ -109,6 +108,7 @@ class TestFeatureSet(AzureRecordedTestCase):
                     version=version,
                     feature_window_start_time=datetime.datetime.now() - datetime.timedelta(i + 1),
                     feature_window_end_time=datetime.datetime.now() - datetime.timedelta(i),
+                    data_status=["None", "Complete"],
                 )
                 assert isinstance(backfill_poller, LROPoller)
                 backfill_response = backfill_poller.result()

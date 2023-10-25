@@ -5,8 +5,7 @@
 from datetime import datetime, timedelta
 from typing import Dict, Optional
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as RestJobBase
-from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._restclient.v2023_10_01.models import JobBase as RestJobBase
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
 
@@ -18,7 +17,6 @@ FeaturestoreJobTypeMap: Dict[str, MaterializationType] = {
 }
 
 
-@experimental
 class FeatureSetMaterializationMetadata(RestTranslatableMixin):
     """Feature Set Materialization Metadata
 

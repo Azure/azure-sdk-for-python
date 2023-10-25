@@ -105,8 +105,10 @@ class ServiceBusReceiver(
      the client connects to.
     :keyword str subscription_name: The path of specific Service Bus Subscription under the
      specified Topic the client connects to.
-    :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
-     receiver will automatically stop receiving. The default value is None, meaning no timeout.
+    :keyword Optional[float] max_wait_time: The timeout in seconds to wait for the first and subsequent
+     messages to arrive after which the receiver will automatically stop receiving. If no messages arrive,
+     and no timeout is specified, this call will not return until the connection is closed.
+     The default value is None, meaning no timeout.
     :keyword receive_mode: The mode with which messages will be retrieved from the entity. The two options
      are PEEK_LOCK and RECEIVE_AND_DELETE. Messages received with PEEK_LOCK must be settled within a given
      lock period before they will be removed from the queue. Messages received with RECEIVE_AND_DELETE
@@ -286,8 +288,10 @@ class ServiceBusReceiver(
          if the client fails to process the message.
          The default mode is PEEK_LOCK.
         :paramtype receive_mode: Union[~azure.servicebus.ServiceBusReceiveMode, str]
-        :keyword Optional[float] max_wait_time: The timeout in seconds between received messages after which the
-         receiver will automatically stop receiving. The default value is None, meaning no timeout.
+        :keyword Optional[float] max_wait_time:  The timeout in seconds to wait for the first and subsequent
+         messages to arrive after which the receiver will automatically stop receiving. If no messages arrive,
+         and no timeout is specified, this call will not return until the connection is closed.
+         The default value is None, meaning no timeout.
         :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
         :keyword transport_type: The type of transport protocol that will be used for communicating with
          the Service Bus service. Default is `TransportType.Amqp`.
@@ -656,10 +660,10 @@ class ServiceBusReceiver(
         :param Optional[int] max_message_count: Maximum number of messages in the batch. Actual number
          returned will depend on prefetch_count and incoming stream rate.
          Setting to None will fully depend on the prefetch config. The default value is 1.
-        :param Optional[float] max_wait_time: Maximum time to wait in seconds for the first message to arrive.
-         If no messages arrive, and no timeout is specified, this call will not return
-         until the connection is closed. If specified, an no messages arrive within the
-         timeout period, an empty list will be returned.
+        :param Optional[float] max_wait_time: DEPRECATED. It is not advised to use this parameter when
+         calling this method. If you'd like to specify max_wait_time, please pass it in during client
+         construction. If specified, this parameter will interact with the absolute operation timeout
+         and impact the amount of time alloted to retry the receive operation.
         :return: A list of messages received. If no messages are available, this will be an empty list.
         :rtype: List[~azure.servicebus.ServiceBusReceivedMessage]
 
@@ -674,6 +678,8 @@ class ServiceBusReceiver(
 
         """
         self._check_live()
+        if max_wait_time:
+            warnings.warn("max_wait_time is deprecated. Please set it in client constructor.", DeprecationWarning)
         if max_wait_time is not None and max_wait_time <= 0:
             raise ValueError("The max_wait_time must be greater than 0.")
         if max_message_count is not None and max_message_count <= 0:

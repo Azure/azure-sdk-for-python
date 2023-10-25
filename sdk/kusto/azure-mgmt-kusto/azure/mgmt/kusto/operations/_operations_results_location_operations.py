@@ -25,7 +25,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
 from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from .._vendor import _convert_request
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -37,7 +37,7 @@ _SERIALIZER.client_side_validation = False
 def build_get_request(location: str, operation_id: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-02"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-08-15"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -49,7 +49,7 @@ def build_get_request(location: str, operation_id: str, subscription_id: str, **
         "operationId": _SERIALIZER.url("operation_id", operation_id, "str", min_length=1),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
