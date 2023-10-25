@@ -31,8 +31,8 @@ def ai_client(
     return AIClient(
         subscription_id=e2e_subscription_id,
         resource_group_name=e2e_resource_group,
-        team_name=e2e_project_name,
-        project_name=e2e_team_name,
+        team_name=e2e_team_name,
+        project_name=e2e_project_name,
         credential=credential,
     )
 
@@ -140,13 +140,13 @@ def e2e_resource_group(sanitized_environment_variables: Dict[str, str]) -> str:
 @pytest.fixture()
 def e2e_team_name(sanitized_environment_variables: Dict[str, str]) -> str:
     """Return the team name to use for end-to-end tests"""
-    return sanitized_environment_variables["AI_PROJECT_NAME"]
+    return sanitized_environment_variables["AI_TEAM_NAME"]
 
 
 @pytest.fixture()
 def e2e_project_name(sanitized_environment_variables: Dict[str, str]) -> str:
     """Return the project name to use for end-to-end tests"""
-    return sanitized_environment_variables["AI_TEAM_NAME"]
+    return sanitized_environment_variables["AI_PROJECT_NAME"]
 
 
 @pytest.fixture()
