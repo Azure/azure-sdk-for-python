@@ -42,9 +42,9 @@ class MonitorInputData(RestTranslatableMixin):
         *,
         type: MonitorInputDataType = None,
         data_context: MonitorDatasetContext = None,
-        target_columns: Dict = None,
-        job_type: str = None,
-        uri: str = None,
+        target_columns: Optional[Dict] = None,
+        job_type: Optional[str] = None,
+        uri: Optional[str] = None,
     ):
         self.type = type
         self.data_context = data_context
