@@ -1,12 +1,10 @@
 # Release History
 
-## 0.18.0 (2023-10-30)
+## 0.18.0 (2023-10-27)
 
 ### Features Added
 
   - Added Credentials operations
-
-### Breaking Changes
 
 ### Bugs Fixed
 
