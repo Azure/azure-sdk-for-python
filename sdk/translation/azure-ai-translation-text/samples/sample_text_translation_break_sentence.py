@@ -43,7 +43,7 @@ def get_text_sentence_boundaries():
         input_text_elements = [InputTextItem(text="zhè shì gè cè shì。")]
 
         response = text_translator.find_sentence_boundaries(
-            content=input_text_elements, language=source_language, script=source_script
+            request_body=input_text_elements, language=source_language, script=source_script
         )
         sentence_boundaries = response[0] if response else None
 
@@ -70,7 +70,7 @@ def get_text_sentence_boundaries_auto():
     try:
         input_text_elements = [InputTextItem(text="This is a test. This is the second sentence.")]
 
-        response = text_translator.find_sentence_boundaries(content=input_text_elements)
+        response = text_translator.find_sentence_boundaries(request_body=input_text_elements)
         sentence_boundaries = response[0] if response else None
 
         if sentence_boundaries:

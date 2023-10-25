@@ -46,7 +46,7 @@ def get_text_transliteration():
         input_text_elements = [InputTextItem(text="这是个测试。")]
 
         response = text_translator.transliterate(
-            content=input_text_elements, language=language, from_script=from_script, to_script=to_script
+            request_body=input_text_elements, language=language, from_script=from_script, to_script=to_script
         )
         transliteration = response[0] if response else None
 

@@ -143,7 +143,7 @@ try:
     target_languages = ["cs", "es", "de"]
     input_text_elements = [InputTextItem(text="This is a test")]
 
-    response = text_translator.translate(content=input_text_elements, to=target_languages)
+    response = text_translator.translate(request_body=input_text_elements, to=target_languages)
     translation = response[0] if response else None
 
     if translation:
@@ -181,7 +181,7 @@ try:
     input_text_elements = [InputTextItem(text="这是个测试。")]
 
     response = text_translator.transliterate(
-        content=input_text_elements, language=language, from_script=from_script, to_script=to_script
+        request_body=input_text_elements, language=language, from_script=from_script, to_script=to_script
     )
     transliteration = response[0] if response else None
 
@@ -215,7 +215,7 @@ try:
     input_text_elements = [InputTextItem(text="The answer lies in machine translation. This is a test.")]
 
     response = text_translator.translate(
-        content=input_text_elements, to=target_languages, include_sentence_length=include_sentence_length
+        request_body=input_text_elements, to=target_languages, include_sentence_length=include_sentence_length
     )
     translation = response[0] if response else None
 
@@ -255,7 +255,7 @@ try:
     input_text_elements = [InputTextItem(text="fly")]
 
     response = text_translator.lookup_dictionary_entries(
-        content=input_text_elements, from_parameter=source_language, to=target_language
+        request_body=input_text_elements, from_parameter=source_language, to=target_language
     )
     dictionary_entry = response[0] if response else None
 

@@ -208,7 +208,7 @@ try:
     input_text_elements = [InputTextItem(text="This is a test")]
 
     response = text_translator.translate(
-        content=input_text_elements, to=target_languages, from_parameter=source_language
+        request_body=input_text_elements, to=target_languages, from_parameter=source_language
     )
     translation = response[0] if response else None
 
@@ -240,7 +240,7 @@ try:
     target_languages = ["cs"]
     input_text_elements = [InputTextItem(text="This is a test")]
 
-    response = text_translator.translate(content=input_text_elements, to=target_languages)
+    response = text_translator.translate(request_body=input_text_elements, to=target_languages)
     translation = response[0] if response else None
 
     if translation:
@@ -276,7 +276,7 @@ try:
     input_text_elements = [InputTextItem(text="hudha akhtabar.")]
 
     response = text_translator.translate(
-        content=input_text_elements,
+        request_body=input_text_elements,
         to=target_languages,
         from_script=from_script,
         from_parameter=from_language,
@@ -318,7 +318,7 @@ try:
         InputTextItem(text="Dies ist ein Test."),
     ]
 
-    translations = text_translator.translate(content=input_text_elements, to=target_languages)
+    translations = text_translator.translate(request_body=input_text_elements, to=target_languages)
 
     for translation in translations:
         print(
@@ -346,7 +346,7 @@ try:
     target_languages = ["cs", "es", "de"]
     input_text_elements = [InputTextItem(text="This is a test")]
 
-    response = text_translator.translate(content=input_text_elements, to=target_languages)
+    response = text_translator.translate(request_body=input_text_elements, to=target_languages)
     translation = response[0] if response else None
 
     if translation:
@@ -377,7 +377,7 @@ try:
     target_languages = ["cs"]
     input_text_elements = [InputTextItem(text="<html><body>This <b>is</b> a test.</body></html>")]
 
-    response = text_translator.translate(content=input_text_elements, to=target_languages, text_type=text_type)
+    response = text_translator.translate(request_body=input_text_elements, to=target_languages, text_type=text_type)
     translation = response[0] if response else None
 
     if translation:
@@ -414,7 +414,7 @@ try:
     ]
 
     response = text_translator.translate(
-        content=input_text_elements, to=target_languages, from_parameter=source_language, text_type=text_type
+        request_body=input_text_elements, to=target_languages, from_parameter=source_language, text_type=text_type
     )
     translation = response[0] if response else None
 
@@ -448,7 +448,7 @@ try:
     ]
 
     response = text_translator.translate(
-        content=input_text_elements, to=target_languages, from_parameter=source_language
+        request_body=input_text_elements, to=target_languages, from_parameter=source_language
     )
     translation = response[0] if response else None
 
@@ -479,7 +479,7 @@ try:
     input_text_elements = [InputTextItem(text="This is ***.")]
 
     response = text_translator.translate(
-        content=input_text_elements,
+        request_body=input_text_elements,
         to=target_languages,
         profanity_action=profanity_action,
         profanity_marker=profanity_maker,
@@ -515,7 +515,7 @@ try:
     input_text_elements = [InputTextItem(text="The answer lies in machine translation.")]
 
     response = text_translator.translate(
-        content=input_text_elements, to=target_languages, include_alignment=include_alignment
+        request_body=input_text_elements, to=target_languages, include_alignment=include_alignment
     )
     translation = response[0] if response else None
 
@@ -550,7 +550,7 @@ try:
     input_text_elements = [InputTextItem(text="The answer lies in machine translation. This is a test.")]
 
     response = text_translator.translate(
-        content=input_text_elements, to=target_languages, include_sentence_length=include_sentence_length
+        request_body=input_text_elements, to=target_languages, include_sentence_length=include_sentence_length
     )
     translation = response[0] if response else None
 
@@ -589,7 +589,7 @@ try:
     target_languages = ["cs"]
     input_text_elements = [InputTextItem(text="This is a test")]
 
-    response = text_translator.translate(content=input_text_elements, to=target_languages, category=category)
+    response = text_translator.translate(request_body=input_text_elements, to=target_languages, category=category)
     translation = response[0] if response else None
 
     if translation:
@@ -624,7 +624,7 @@ try:
     input_text_elements = [InputTextItem(text="这是个测试。")]
 
     response = text_translator.transliterate(
-        content=input_text_elements, language=language, from_script=from_script, to_script=to_script
+        request_body=input_text_elements, language=language, from_script=from_script, to_script=to_script
     )
     transliteration = response[0] if response else None
 
@@ -657,7 +657,7 @@ try:
     input_text_elements = [InputTextItem(text="zhè shì gè cè shì。")]
 
     response = text_translator.find_sentence_boundaries(
-        content=input_text_elements, language=source_language, script=source_script
+        request_body=input_text_elements, language=source_language, script=source_script
     )
     sentence_boundaries = response[0] if response else None
 
@@ -690,7 +690,7 @@ You can omit source language of the input text. In this case, API will try to au
 try:
     input_text_elements = [InputTextItem(text="This is a test. This is the second sentence.")]
 
-    response = text_translator.find_sentence_boundaries(content=input_text_elements)
+    response = text_translator.find_sentence_boundaries(request_body=input_text_elements)
     sentence_boundaries = response[0] if response else None
 
     if sentence_boundaries:
@@ -725,7 +725,7 @@ try:
     input_text_elements = [InputTextItem(text="fly")]
 
     response = text_translator.lookup_dictionary_entries(
-        content=input_text_elements, from_parameter=source_language, to=target_language
+        request_body=input_text_elements, from_parameter=source_language, to=target_language
     )
     dictionary_entry = response[0] if response else None
 
