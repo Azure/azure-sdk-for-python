@@ -6,6 +6,8 @@
 # --------------------------------------------------------------------------
 import os
 import pytest
+import importlib
+import contextlib
 import requests
 import aiohttp
 import yarl
@@ -94,7 +96,7 @@ WHISPER_AZURE_AD = "whisper_azuread"
 WHISPER_ALL = ["whisper_azure", "whisper_azuread", "openai"]
 
 # Environment variable keys
-ENV_AZURE_OPENAI_ENDPOINT = "AZURE_OPENAI_ENDPOINT"
+ENV_AZURE_OPENAI_ENDPOINT = "AZ_OPENAI_ENDPOINT"
 ENV_AZURE_OPENAI_KEY = "AZURE_OPENAI_KEY"
 ENV_AZURE_OPENAI_WHISPER_ENDPOINT = "AZURE_OPENAI_WHISPER_ENDPOINT"
 ENV_AZURE_OPENAI_WHISPER_KEY = "AZURE_OPENAI_WHISPER_KEY"
@@ -291,6 +293,15 @@ def configure(f):
 
     return wrapper
 
+
+
+@contextlib.contextmanager
+def reload():
+    try:
+        importlib.reload(openai)
+        yield
+    finally:
+        importlib.reload(openai)
 
 
 # openai<1.0.0 ---------------------------------------------------------------------------

@@ -14,7 +14,8 @@ from conftest import (
     ENV_AZURE_OPENAI_KEY,
     ENV_AZURE_OPENAI_API_VERSION,
     ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME,
-    configure_async
+    configure_async,
+    reload,
 )
 
 
@@ -181,3 +182,75 @@ class TestClientAsync(AzureRecordedTestCase):
         with pytest.raises(ValueError) as e:
             await client.chat.completions.create(messages=messages, **kwargs)
         assert "ValueError: Expected `azure_ad_token_provider` argument to return a string but it returned None" in str(e.value.args)
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_type", [AZURE])
+    async def test_client_env_vars_key(self, client_async, azure_openai_creds, api_type, **kwargs):
+        with reload():
+            os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
+            os.environ["OPENAI_API_VERSION"] = ENV_AZURE_OPENAI_API_VERSION
+            os.environ["AZURE_OPENAI_API_KEY"] = os.getenv(ENV_AZURE_OPENAI_KEY)
+
+            try:
+                client = openai.AsyncAzureOpenAI(
+                    api_version=None,
+                )
+                messages = [
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": "Who won the world series in 2020?"}
+                ]
+                completion = await client.chat.completions.create(messages=messages, **kwargs)
+                assert completion.id
+                assert completion.object == "chat.completion"
+                assert completion.model
+                assert completion.created
+                assert completion.usage.completion_tokens is not None
+                assert completion.usage.prompt_tokens is not None
+                assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
+                assert len(completion.choices) == 1
+                assert completion.choices[0].finish_reason
+                assert completion.choices[0].index is not None
+                assert completion.choices[0].message.content is not None
+                assert completion.choices[0].message.role
+            finally:
+                del os.environ['AZURE_OPENAI_ENDPOINT']
+                del os.environ['AZURE_OPENAI_API_KEY']
+                del os.environ['OPENAI_API_VERSION']
+
+    @configure_async
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("api_type", [AZURE])
+    async def test_client_env_vars_token(self, client_async, azure_openai_creds, api_type, **kwargs):
+        with reload():
+            os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
+            os.environ["OPENAI_API_VERSION"] = ENV_AZURE_OPENAI_API_VERSION
+            credential = DefaultAzureCredential()
+            access_token = await credential.get_token("https://cognitiveservices.azure.com/.default")
+            os.environ["AZURE_OPENAI_AD_TOKEN"] = access_token.token
+
+            try:
+                client = openai.AsyncAzureOpenAI(
+                    api_version=None,
+                )
+                messages = [
+                    {"role": "system", "content": "You are a helpful assistant."},
+                    {"role": "user", "content": "Who won the world series in 2020?"}
+                ]
+                completion = await client.chat.completions.create(messages=messages, **kwargs)
+                assert completion.id
+                assert completion.object == "chat.completion"
+                assert completion.model
+                assert completion.created
+                assert completion.usage.completion_tokens is not None
+                assert completion.usage.prompt_tokens is not None
+                assert completion.usage.total_tokens == completion.usage.completion_tokens + completion.usage.prompt_tokens
+                assert len(completion.choices) == 1
+                assert completion.choices[0].finish_reason
+                assert completion.choices[0].index is not None
+                assert completion.choices[0].message.content is not None
+                assert completion.choices[0].message.role
+            finally:
+                del os.environ['AZURE_OPENAI_ENDPOINT']
+                del os.environ['AZURE_OPENAI_AD_TOKEN']
+                del os.environ['OPENAI_API_VERSION']
