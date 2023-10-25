@@ -1,6 +1,7 @@
 # Release History
 
 ## 1.0.0b2 (Unreleased)
+  - Synch and generate from API spec repo, update tests and samples.
 
 ### Features Added
 
