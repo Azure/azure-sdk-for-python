@@ -466,7 +466,7 @@ class ChatThreadOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_chat_read_receipts_request(
+                _request = build_list_chat_read_receipts_request(
                     chat_thread_id=chat_thread_id,
                     max_page_size=max_page_size,
                     skip=skip,
@@ -474,13 +474,13 @@ class ChatThreadOperations:
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -492,18 +492,18 @@ class ChatThreadOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ChatMessageReadReceiptsCollection", pipeline_response)
@@ -513,11 +513,11 @@ class ChatThreadOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -636,7 +636,7 @@ class ChatThreadOperations:
         else:
             _json = self._serialize.body(send_read_receipt_request, "SendReadReceiptRequest")
 
-        request = build_send_chat_read_receipt_request(
+        _request = build_send_chat_read_receipt_request(
             chat_thread_id=chat_thread_id,
             api_version=api_version,
             content_type=content_type,
@@ -645,15 +645,15 @@ class ChatThreadOperations:
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -663,7 +663,7 @@ class ChatThreadOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def send_chat_message(
@@ -772,7 +772,7 @@ class ChatThreadOperations:
         else:
             _json = self._serialize.body(send_chat_message_request, "SendChatMessageRequest")
 
-        request = build_send_chat_message_request(
+        _request = build_send_chat_message_request(
             chat_thread_id=chat_thread_id,
             api_version=api_version,
             content_type=content_type,
@@ -781,15 +781,15 @@ class ChatThreadOperations:
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -801,9 +801,9 @@ class ChatThreadOperations:
         deserialized = self._deserialize("SendChatMessageResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_chat_messages(
@@ -858,7 +858,7 @@ class ChatThreadOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_chat_messages_request(
+                _request = build_list_chat_messages_request(
                     chat_thread_id=chat_thread_id,
                     max_page_size=max_page_size,
                     start_time=start_time,
@@ -866,13 +866,13 @@ class ChatThreadOperations:
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -884,18 +884,18 @@ class ChatThreadOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ChatMessagesCollection", pipeline_response)
@@ -905,11 +905,11 @@ class ChatThreadOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -961,22 +961,22 @@ class ChatThreadOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ChatMessage] = kwargs.pop("cls", None)
 
-        request = build_get_chat_message_request(
+        _request = build_get_chat_message_request(
             chat_thread_id=chat_thread_id,
             chat_message_id=chat_message_id,
             api_version=api_version,
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -988,9 +988,9 @@ class ChatThreadOperations:
         deserialized = self._deserialize("ChatMessage", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     def update_chat_message(  # pylint: disable=inconsistent-return-statements
@@ -1112,7 +1112,7 @@ class ChatThreadOperations:
         else:
             _json = self._serialize.body(update_chat_message_request, "UpdateChatMessageRequest")
 
-        request = build_update_chat_message_request(
+        _request = build_update_chat_message_request(
             chat_thread_id=chat_thread_id,
             chat_message_id=chat_message_id,
             api_version=api_version,
@@ -1122,15 +1122,15 @@ class ChatThreadOperations:
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1140,7 +1140,7 @@ class ChatThreadOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def delete_chat_message(  # pylint: disable=inconsistent-return-statements
@@ -1184,22 +1184,22 @@ class ChatThreadOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_chat_message_request(
+        _request = build_delete_chat_message_request(
             chat_thread_id=chat_thread_id,
             chat_message_id=chat_message_id,
             api_version=api_version,
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1209,7 +1209,7 @@ class ChatThreadOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def list_chat_participants(
@@ -1259,7 +1259,7 @@ class ChatThreadOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_chat_participants_request(
+                _request = build_list_chat_participants_request(
                     chat_thread_id=chat_thread_id,
                     max_page_size=max_page_size,
                     skip=skip,
@@ -1267,13 +1267,13 @@ class ChatThreadOperations:
                     headers=_headers,
                     params=_params,
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -1285,18 +1285,18 @@ class ChatThreadOperations:
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
+                _request = HttpRequest(
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
-                request = _convert_request(request)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
-                request.method = "GET"
-            return request
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.method = "GET"
+            return _request
 
         def extract_data(pipeline_response):
             deserialized = self._deserialize("ChatParticipantsCollection", pipeline_response)
@@ -1306,11 +1306,11 @@ class ChatThreadOperations:
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=_stream, **kwargs
+                _request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1437,7 +1437,7 @@ class ChatThreadOperations:
         else:
             _json = self._serialize.body(participant_communication_identifier, "CommunicationIdentifierModel")
 
-        request = build_remove_chat_participant_request(
+        _request = build_remove_chat_participant_request(
             chat_thread_id=chat_thread_id,
             api_version=api_version,
             content_type=content_type,
@@ -1446,15 +1446,15 @@ class ChatThreadOperations:
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1464,7 +1464,7 @@ class ChatThreadOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def add_chat_participants(
@@ -1578,7 +1578,7 @@ class ChatThreadOperations:
         else:
             _json = self._serialize.body(add_chat_participants_request, "AddChatParticipantsRequest")
 
-        request = build_add_chat_participants_request(
+        _request = build_add_chat_participants_request(
             chat_thread_id=chat_thread_id,
             api_version=api_version,
             content_type=content_type,
@@ -1587,15 +1587,15 @@ class ChatThreadOperations:
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1607,9 +1607,9 @@ class ChatThreadOperations:
         deserialized = self._deserialize("AddChatParticipantsResult", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     def update_chat_thread_properties(  # pylint: disable=inconsistent-return-statements
@@ -1719,7 +1719,7 @@ class ChatThreadOperations:
         else:
             _json = self._serialize.body(update_chat_thread_request, "UpdateChatThreadRequest")
 
-        request = build_update_chat_thread_properties_request(
+        _request = build_update_chat_thread_properties_request(
             chat_thread_id=chat_thread_id,
             api_version=api_version,
             content_type=content_type,
@@ -1728,15 +1728,15 @@ class ChatThreadOperations:
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1746,7 +1746,7 @@ class ChatThreadOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def get_chat_thread_properties(self, chat_thread_id: str, **kwargs: Any) -> _models.ChatThreadProperties:
@@ -1786,21 +1786,21 @@ class ChatThreadOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ChatThreadProperties] = kwargs.pop("cls", None)
 
-        request = build_get_chat_thread_properties_request(
+        _request = build_get_chat_thread_properties_request(
             chat_thread_id=chat_thread_id,
             api_version=api_version,
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1812,9 +1812,9 @@ class ChatThreadOperations:
         deserialized = self._deserialize("ChatThreadProperties", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     def send_typing_notification(  # pylint: disable=inconsistent-return-statements
@@ -1933,7 +1933,7 @@ class ChatThreadOperations:
             else:
                 _json = None
 
-        request = build_send_typing_notification_request(
+        _request = build_send_typing_notification_request(
             chat_thread_id=chat_thread_id,
             api_version=api_version,
             content_type=content_type,
@@ -1942,15 +1942,15 @@ class ChatThreadOperations:
             headers=_headers,
             params=_params,
         )
-        request = _convert_request(request)
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=_stream, **kwargs
+            _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1960,4 +1960,4 @@ class ChatThreadOperations:
             raise HttpResponseError(response=response)
 
         if cls:
-            return cls(pipeline_response, None, {})
+            return cls(pipeline_response, None, {})  # type: ignore

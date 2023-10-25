@@ -72,7 +72,7 @@ class ChatAttachment:
 
     :ivar id: Id of the attachment. Required.
     :vartype id: str
-    :ivar attachment_type: The type of attachment. Required. Known values are: "image" and "file".
+    :ivar attachment_type: The type of attachment. Required. Known values are: "image".
     :vartype attachment_type: str or ~azure.communication.chat.models.AttachmentType
     :ivar extension: The file extension of the attachment, if available.
     :vartype extension: str or None
