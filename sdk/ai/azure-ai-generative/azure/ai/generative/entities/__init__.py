@@ -15,6 +15,7 @@ from .connection_subtypes import (
 from .mlindex import Index
 from .project import Project
 from .data import Data
+from .configs import AzureOpenAIModelConfiguration
 
 __all__ = [
     "BaseConnection",
@@ -25,5 +26,6 @@ __all__ = [
     "Project",
     "AIResource",
     "Data",
+    "AzureOpenAIModelConfiguration",
 ]
 
