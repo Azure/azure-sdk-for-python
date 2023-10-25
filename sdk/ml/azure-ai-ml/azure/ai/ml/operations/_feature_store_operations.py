@@ -4,10 +4,10 @@
 
 # pylint: disable=protected-access
 
-import uuid
 import re
-from typing import Dict, Iterable, Optional
+import uuid
 
+from typing import Dict, Iterable, Optional
 from marshmallow import ValidationError
 
 from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
