@@ -30,6 +30,6 @@ class ServerlessComputeSettingsSchema(PathAwareSchema):
         :returns: A ServerlessComputeSettings object.
         :rtype: azure.ai.ml.entities._workspace.serverless_compute.ServerlessComputeSettings
         """
-        custom_subnet = data.pop("custom_subnet")
-        no_public_ip = data.pop("no_public_ip")
+        custom_subnet = data.pop("custom_subnet", None)
+        no_public_ip = data.pop("no_public_ip", False)
         return ServerlessComputeSettings(custom_subnet, no_public_ip)
