@@ -11,10 +11,8 @@ from azure.ai.resources.index._utils.logging import get_logger
 from azure.ai.resources.index._utils.requests import create_session_with_retry, send_post_request
 
 try:
-    from azure.ai.resources import AIClient
     from azure.ai.resources.entities import BaseConnection
 except Exception:
-    AIClient = None
     BaseConnection = None
 try:
     from azure.ai.ml import MLClient
