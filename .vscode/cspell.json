@@ -459,7 +459,16 @@
         "mlmodel",
         "openmpi",
         "vcpu",
-        "vcpus"
+        "vcpus",
+        "levelno",
+        "miniconda",
+        "runsvdir",
+        "Fsubscriptions",
+        "Fresource",
+        "Fproviders",
+        "Fdeployments",
+        "roups",
+        "mltable"
       ]
     },
     {
