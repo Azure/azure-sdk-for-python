@@ -311,6 +311,7 @@ class ArmConstants:
     BASE_TYPE = "base"
     WORKSPACE_BASE = "workspace_base"
     WORKSPACE_PARAM = "workspace_param"
+    ROLE_ASSIGNMENTS = "roleAssignments"
     FEATURE_STORE_ROLE_ASSIGNMENTS = "feature_store_role_assignments"
     FEATURE_STORE_ROLE_ASSIGNMENTS_PARAM = "feature_store_role_assignments_param"
     WORKSPACE_PROJECT = "workspace_project"
