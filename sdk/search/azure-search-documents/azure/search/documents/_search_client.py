@@ -22,6 +22,7 @@ from ._generated.models import (
     QueryType,
     SearchMode,
     ScoringStatistics,
+    VectorFilterMode,
     VectorQuery,
     SemanticErrorHandling,
     QueryDebugMode,
@@ -149,6 +150,7 @@ class SearchClient(HeadersMixin):
         query_type: Optional[Union[str, QueryType]] = None,
         scoring_parameters: Optional[List[str]] = None,
         scoring_profile: Optional[str] = None,
+        semantic_query: Optional[str] = None,
         search_fields: Optional[List[str]] = None,
         search_mode: Optional[Union[str, SearchMode]] = None,
         query_language: Optional[Union[str, QueryLanguage]] = None,
@@ -166,6 +168,7 @@ class SearchClient(HeadersMixin):
         scoring_statistics: Optional[Union[str, ScoringStatistics]] = None,
         session_id: Optional[str] = None,
         vector_queries: Optional[List[VectorQuery]] = None,
+        vector_filter_mode: Optional[Union[str, VectorFilterMode]] = None,
         semantic_error_handling: Optional[Union[str, SemanticErrorHandling]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
         debug: Optional[Union[str, QueryDebugMode]] = None,
@@ -209,6 +212,10 @@ class SearchClient(HeadersMixin):
          "mylocation--122.2,44.8" (without the quotes).
         :keyword str scoring_profile: The name of a scoring profile to evaluate match scores for matching
          documents in order to sort the results.
+        :keyword str semantic_query: Allows setting a separate search query that will be solely used for
+         semantic reranking, semantic captions and semantic answers. Is useful for scenarios where there
+         is a need to use different queries between the base retrieval and ranking phase, and the L2
+         semantic phase.
         :keyword list[str] search_fields: The list of field names to which to scope the full-text search. When
          using fielded search (fieldName:searchExpression) in a full Lucene query, the field names of
          each fielded search expression take precedence over any field names listed in this parameter.
@@ -278,6 +285,9 @@ class SearchClient(HeadersMixin):
         :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
         :keyword vector_queries: The query parameters for vector and hybrid search queries.
         :paramtype vector_queries: list[VectorQuery]
+        :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
+          vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
+        :paramtype vector_filter_mode: str or VectorFilterMode
         :rtype:  SearchItemPaged[Dict]
 
         .. admonition:: Example:
@@ -335,6 +345,7 @@ class SearchClient(HeadersMixin):
             query_type=query_type,
             scoring_parameters=scoring_parameters,
             scoring_profile=scoring_profile,
+            semantic_query=semantic_query,
             search_fields=search_fields_str,
             search_mode=search_mode,
             query_language=query_language,
@@ -349,6 +360,7 @@ class SearchClient(HeadersMixin):
             session_id=session_id,
             scoring_statistics=scoring_statistics,
             vector_queries=vector_queries,
+            vector_filter_mode=vector_filter_mode,
             semantic_error_handling=semantic_error_handling,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
             debug=debug,

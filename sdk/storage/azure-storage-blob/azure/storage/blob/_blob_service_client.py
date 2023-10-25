@@ -99,6 +99,9 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
     :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
         or 4MB.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
 
     .. admonition:: Example:
 
@@ -169,6 +172,9 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
             should be the storage account key.
         :paramtype credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]]  # pylint: disable=line-too-long
+        :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+            authentication. Only has an effect when credential is of type TokenCredential. The value could be
+            https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
         :returns: A Blob service client.
         :rtype: ~azure.storage.blob.BlobServiceClient
 

@@ -15,7 +15,6 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -44,6 +43,7 @@ from ._models import FilteredBlobPaged
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.pipeline.transport import AsyncHttpResponse  # pylint: disable=C4756
     from datetime import datetime
     from .._models import ( # pylint: disable=unused-import
         AccessPolicy,
@@ -95,6 +95,9 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
     :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
         or 4MB.
+    :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
+        authentication. Only has an effect when credential is of type TokenCredential. The value could be
+        https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
 
     .. admonition:: Example:
 
@@ -1173,7 +1176,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
     async def delete_blobs(
         self, *blobs: Union[str, Dict[str, Any], BlobProperties],
         **kwargs: Any
-    ) -> AsyncIterator[AsyncHttpResponse]:
+    ) -> AsyncIterator["AsyncHttpResponse"]:
         """Marks the specified blobs or snapshots for deletion.
 
         The blobs are later deleted during garbage collection.
@@ -1271,7 +1274,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         self, standard_blob_tier: Union[str, 'StandardBlobTier'],
         *blobs: Union[str, Dict[str, Any], BlobProperties],
         **kwargs: Any
-    ) -> AsyncIterator[AsyncHttpResponse]:
+    ) -> AsyncIterator["AsyncHttpResponse"]:
         """This operation sets the tier on block blobs.
 
         A block blob's tier determines Hot/Cool/Archive storage type.
@@ -1342,7 +1345,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         self, premium_page_blob_tier: Union[str, 'PremiumPageBlobTier'],
         *blobs: Union[str, Dict[str, Any], BlobProperties],
         **kwargs: Any
-    ) -> AsyncIterator[AsyncHttpResponse]:
+    ) -> AsyncIterator["AsyncHttpResponse"]:
         """Sets the page blob tiers on the blobs. This API is only supported for page blobs on premium accounts.
 
         The maximum number of blobs that can be updated in a single request is 256.

@@ -29,12 +29,12 @@ def main():
     )
 
     response = client.diagnostics.get(
-        scope="subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourcegroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read",
+        scope="subscriptions/0d0fcd2e-c4fd-4349-8497-200edb3923c6/resourceGroups/myresourceGroup/providers/Microsoft.KeyVault/vaults/test-keyvault-non-read",
         diagnostics_resource_name="VMNotWorkingInsight",
     )
     print(response)
 
 
-# x-ms-original-file: specification/help/resource-manager/Microsoft.Help/stable/2023-06-01/examples/GetDiagnosticForKeyVaultResource.json
+# x-ms-original-file: specification/help/resource-manager/Microsoft.Help/preview/2023-09-01-preview/examples/GetDiagnosticForKeyVaultResource.json
 if __name__ == "__main__":
     main()
