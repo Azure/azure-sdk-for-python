@@ -11,7 +11,7 @@ from azure.ai.generative.entities import AzureOpenAIConnection, AzureAISearchCon
 
 
 @dataclass
-class MLIndex:
+class Index:
     name: str
     path: str
     version: str = None
@@ -24,7 +24,7 @@ class MLIndex:
         try:
             from azure.ai.generative.index._mlindex import MLIndex as InternalMLIndex
         except ImportError as e:
-            print("In order to query an MLIndex, you must have azure-ai-generative[index] installed")
+            print("In order to query an Index, you must have azure-ai-generative[index] installed")
             raise e
 
         retriever = InternalMLIndex(str(self.path)).as_langchain_retriever()
@@ -51,7 +51,7 @@ class MLIndex:
             yaml.safe_dump(mlindex_dict, f)
 
     @classmethod
-    def _from_data_asset(cls, data: Data) -> "MLIndex":
+    def _from_data_asset(cls, data: Data) -> "Index":
         return cls(
             name=data.name,
             version=data.version,

@@ -684,24 +684,17 @@ class TimeZone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class AssetTypes:
-    """AssetTypes is an enumeration of values for the asset types of a dataset.
+    """AssetTypes is an enumeration of values for the asset types of a data.
 
-    Asset types are used to identify the type of an asset. An asset can be a file, folder, mlflow model, triton model,
-    mltable or custom model.
+    Asset types are used to identify the type of an asset. An asset can be a file, folder, table
     """
 
-    URI_FILE = "uri_file"
-    """URI file asset type."""
-    URI_FOLDER = "uri_folder"
-    """URI folder asset type."""
-    MLTABLE = "mltable"
-    """MLTable asset type."""
-    MLFLOW_MODEL = "mlflow_model"
-    """MLFlow model asset type."""
-    TRITON_MODEL = "triton_model"
-    """Triton model asset type."""
-    CUSTOM_MODEL = "custom_model"
-    """Custom model asset type."""
+    FILE = "file"
+    """URI file data asset type."""
+    FOLDER = "folder"
+    """URI folder data asset type."""
+    TABLE = "table"
+    """Table data asset type."""
 
 
 class InputTypes:
