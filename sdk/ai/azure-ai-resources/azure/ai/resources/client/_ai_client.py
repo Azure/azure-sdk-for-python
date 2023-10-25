@@ -51,7 +51,7 @@ class AIClient:
         credential: TokenCredential,
         subscription_id: Optional[str] = None,
         resource_group_name: Optional[str] = None,  # Consider changing to a team name
-        team_name: Optional[str] = None,
+        ai_resource_name: Optional[str] = None,
         project_name: Optional[str] = None,
         **kwargs: Any,
     ):
@@ -62,8 +62,8 @@ class AIClient:
             "subscription_id": subscription_id,
             "resource_group_name": resource_group_name,
         }
-        if team_name:
-            properties.update({"team_name": team_name})
+        if ai_resource_name:
+            properties.update({"ai_resource_name": ai_resource_name})
         if project_name:
             properties.update({"project_name": project_name})
 
@@ -80,7 +80,7 @@ class AIClient:
         self._scope = OperationScope(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
-            team_name=team_name,
+            ai_resource_name=ai_resource_name,
             project_name=project_name,
         )
 
