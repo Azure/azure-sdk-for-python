@@ -113,16 +113,17 @@ def sanitized_environment_variables(
     environment_variables: EnvironmentVariableSanitizer, fake_datastore_key: str
 ) -> Dict[str, str]:
     """Register sanitizers for environment variables, return sanitized environment variables"""
-    sanitizings = {
-        "AI_SUBSCRIPTION_ID": "00000000-0000-0000-0000-000000000",
-        "AI_RESOURCE_GROUP": "00000",
-        "AI_WORKSPACE_NAME": "00000",
-        "AI_FEATURE_STORE_NAME": "00000",
-        "AI_TEST_STORAGE_ACCOUNT_NAME": "teststorageaccount",
-        "AI_TEST_STORAGE_ACCOUNT_PRIMARY_KEY": fake_datastore_key,
-        "AI_TEST_STORAGE_ACCOUNT_SECONDARY_KEY": fake_datastore_key,
-    }
-    return environment_variables.sanitize_batch(sanitizings)
+    return environment_variables.sanitize_batch(
+        {
+            "AI_SUBSCRIPTION_ID": "00000000-0000-0000-0000-000000000",
+            "AI_RESOURCE_GROUP": "00000",
+            "AI_WORKSPACE_NAME": "00000",
+            "AI_FEATURE_STORE_NAME": "00000",
+            "AI_TEST_STORAGE_ACCOUNT_NAME": "teststorageaccount",
+            "AI_TEST_STORAGE_ACCOUNT_PRIMARY_KEY": fake_datastore_key,
+            "AI_TEST_STORAGE_ACCOUNT_SECONDARY_KEY": fake_datastore_key,
+        }
+    )
 
 
 @pytest.fixture()
