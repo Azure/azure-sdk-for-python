@@ -64,8 +64,8 @@ class MetricHandler(object):
                             data_column: data_source[metrics_mapping[data_column]].values.tolist()
                         }
                     )
-                poped_value = metrics_mapping.pop(data_column, None)
-                metrics_mapping_to_log[data_column] = poped_value
+                popped_value = metrics_mapping.pop(data_column, None)
+                metrics_mapping_to_log[data_column] = popped_value
 
         metrics_data.update(metrics_mapping)
 
