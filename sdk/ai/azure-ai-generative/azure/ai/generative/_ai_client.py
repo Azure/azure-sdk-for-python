@@ -15,7 +15,7 @@ from azure.ai.generative._utils._ai_client_utils import find_config_file_path, g
 from azure.ai.generative._utils._open_ai_utils import build_open_ai_protocol
 from azure.ai.generative._utils._str_utils import build_connection_id
 from azure.ai.generative.constants._common import DEFAULT_OPEN_AI_CONNECTION_NAME
-from azure.ai.generative.entities.mlindex import MLIndex as MLIndexAsset
+from azure.ai.generative.entities.mlindex import Index as MLIndexAsset
 from azure.ai.generative.operations import ACSOutputConfig, ACSSource, GitSource, IndexDataSource, LocalSource
 from azure.ai.ml import MLClient
 from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
@@ -161,7 +161,7 @@ class AIClient:
         return self._connections
 
     @property
-    def mlindexes(self) -> MLIndexOperations:
+    def indexes(self) -> MLIndexOperations:
         """A collection of ML index-related operations.
 
         :return: ML index operations
@@ -329,7 +329,7 @@ class AIClient:
 
                 mlindex = MLIndexAsset(name=output_index_name, path=temp_dir)
                 # Register it
-                return self.mlindexes.create_or_update(mlindex)
+                return self.indexes.create_or_update(mlindex)
 
         if document_path_replacement_regex:
             document_path_replacement_regex = json.loads(document_path_replacement_regex)

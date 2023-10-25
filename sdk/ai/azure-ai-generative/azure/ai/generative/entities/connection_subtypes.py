@@ -174,15 +174,20 @@ class AzureAISearchConnection(BaseConnection):
 
     def set_current_environment(self, credential: Optional[TokenCredential] = None):
         """Sets the current environment to use the connection. To use AAD auth for AzureOpenAI connetion, pass in a credential object.
-        As a Cognitive Search Connection, this sets two environment variables: AZURE_COGNITIVE_SEARCH_(TARGET|KEY).
+        As a Cognitive Search Connection, this sets two environment variables: AZURE_AI_SEARCH_(ENDPOINT|KEY).
 
         :param credential: Optional credential to use for the connection. If not provided, the connection's credentials will be used.
         :type credential: :class:`~azure.core.credentials.TokenCredential`
         """
 
         import os       
+         # old env variables for backwards compatibility
         os.environ["AZURE_COGNITIVE_SEARCH_TARGET"] = self._workspace_connection.target
         os.environ["AZURE_COGNITIVE_SEARCH_KEY"] = self._workspace_connection.credentials.key
+
+        # new branded ones
+        os.environ["AZURE_AI_SEARCH_ENDPOINT"] = self._workspace_connection.target
+        os.environ["AZURE_AI_SEARCH_KEY"] = self._workspace_connection.credentials.key
 
 
 class AzureAIServiceConnection(BaseConnection):

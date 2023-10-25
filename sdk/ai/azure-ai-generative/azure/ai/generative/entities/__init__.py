@@ -12,7 +12,7 @@ from .connection_subtypes import (
     AzureAISearchConnection,
     AzureAIServiceConnection,
 )
-from .mlindex import MLIndex
+from .mlindex import Index
 from .project import Project
 from .data import Data
 
@@ -21,7 +21,7 @@ __all__ = [
     "AzureOpenAIConnection",
     "AzureAISearchConnection",
     "AzureAIServiceConnection",
-    "MLIndex",
+    "Index",
     "Project",
     "AIResource",
     "Data",
