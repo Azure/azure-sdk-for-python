@@ -24,7 +24,7 @@ from ._generated.models import (
     SemanticErrorMode,
     SuggestRequest,
 )
-from .models import VectorQuery
+from .models import VectorizableQuery
 from ._search_documents_error import RequestEntityTooLargeError
 from ._index_documents_batch import IndexDocumentsBatch
 from ._paging import SearchItemPaged, SearchPageIterator
@@ -160,7 +160,7 @@ class SearchClient(HeadersMixin):
         top: Optional[int] = None,
         scoring_statistics: Optional[Union[str, ScoringStatistics]] = None,
         session_id: Optional[str] = None,
-        vector_queries: Optional[List[VectorQuery]] = None,
+        vector_queries: Optional[List[VectorizableQuery]] = None,
         vector_filter_mode: Optional[Union[str, VectorFilterMode]] = None,
         semantic_error_mode: Optional[Union[str, SemanticErrorMode]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
@@ -256,7 +256,7 @@ class SearchClient(HeadersMixin):
         :keyword int semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
          time it takes for semantic enrichment to finish processing before the request fails.
         :keyword vector_queries: The query parameters for vector and hybrid search queries.
-        :paramtype vector_queries: List[VectorQuery]
+        :paramtype vector_queries: List[VectorizableQuery]
         :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
           vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
         :paramtype vector_filter_mode: str or VectorFilterMode
