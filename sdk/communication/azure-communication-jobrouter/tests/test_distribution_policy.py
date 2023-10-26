@@ -59,8 +59,8 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 name=dp_identifier,
             )
 
-            distribution_policy_response = router_client.create_distribution_policy(
-                distribution_policy_id=dp_identifier, distribution_policy=policy
+            distribution_policy_response = router_client.upsert_distribution_policy(
+                dp_identifier, policy
             )
 
             # add for cleanup
@@ -90,8 +90,8 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 name=dp_identifier,
             )
 
-            distribution_policy_response = router_client.create_distribution_policy(
-                distribution_policy_id=dp_identifier, distribution_policy=policy
+            distribution_policy_response = router_client.upsert_distribution_policy(
+                dp_identifier, policy
             )
 
             # add for cleanup
@@ -112,7 +112,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
             mode_copy.max_concurrent_offers = 2
             distribution_policy_response.mode = mode_copy
 
-            updated_distribution_policy = router_client.update_distribution_policy(
+            updated_distribution_policy = router_client.upsert_distribution_policy(
                 dp_identifier, distribution_policy_response
             )
 
@@ -139,8 +139,8 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 name=dp_identifier,
             )
 
-            distribution_policy_response = router_client.create_distribution_policy(
-                distribution_policy_id=dp_identifier, distribution_policy=policy
+            distribution_policy_response = router_client.upsert_distribution_policy(
+                dp_identifier, policy
             )
 
             # add for cleanup
@@ -161,7 +161,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
             mode_copy.max_concurrent_offers = 2
             distribution_policy_response.mode = mode_copy
 
-            updated_distribution_policy = router_client.update_distribution_policy(
+            updated_distribution_policy = router_client.upsert_distribution_policy(
                 dp_identifier, mode=distribution_policy_response.mode
             )
 
@@ -186,8 +186,8 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 name=dp_identifier,
             )
 
-            distribution_policy_response = router_client.create_distribution_policy(
-                distribution_policy_id=dp_identifier, distribution_policy=policy
+            distribution_policy_response = router_client.upsert_distribution_policy(
+                dp_identifier, policy
             )
 
             # add for cleanup
@@ -224,8 +224,8 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 name=dp_identifier,
             )
 
-            distribution_policy_response = router_client.create_distribution_policy(
-                distribution_policy_id=dp_identifier, distribution_policy=policy
+            distribution_policy_response = router_client.upsert_distribution_policy(
+                dp_identifier, policy
             )
 
             assert distribution_policy_response is not None
@@ -259,8 +259,8 @@ class TestDistributionPolicy(RouterRecordedTestCase):
                 name=identifier,
             )
 
-            distribution_policy_response = router_client.create_distribution_policy(
-                distribution_policy_id=identifier, distribution_policy=policy
+            distribution_policy_response = router_client.upsert_distribution_policy(
+                identifier, policy
             )
 
             # add for cleanup

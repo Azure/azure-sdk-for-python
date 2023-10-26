@@ -71,8 +71,10 @@ from ._models import WorkerWeightedAllocation
 from ._enums import ExpressionRouterRuleLanguage
 from ._enums import LabelOperator
 from ._enums import RouterJobStatus
+from ._enums import RouterJobStatusSelector
 from ._enums import RouterWorkerSelectorStatus
 from ._enums import RouterWorkerState
+from ._enums import RouterWorkerStateSelector
 from ._enums import ScoringRuleParameterSelector
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
@@ -143,8 +145,10 @@ __all__ = [
     "ExpressionRouterRuleLanguage",
     "LabelOperator",
     "RouterJobStatus",
+    "RouterJobStatusSelector",
     "RouterWorkerSelectorStatus",
     "RouterWorkerState",
+    "RouterWorkerStateSelector",
     "ScoringRuleParameterSelector",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

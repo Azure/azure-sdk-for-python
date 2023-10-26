@@ -545,7 +545,7 @@ class RouterWorkerValidator(object):
 
     @staticmethod
     def validate_total_capacity(entity, total_capacity, **kwargs):
-        assert entity.total_capacity == total_capacity
+        assert entity.capacity == total_capacity
 
     @staticmethod
     def validate_labels(entity, label_collection, **kwargs):
@@ -565,24 +565,22 @@ class RouterWorkerValidator(object):
     @staticmethod
     def validate_queue_assignment(
         entity,
-        queue_assignments,  # type: dict[str, QueueAssignment]
+        queue_assignments,  # type: List[str]
         **kwargs,
     ):
-        assert len(entity.queue_assignments) == len(queue_assignments)
-        for k, v in queue_assignments.items():
-            assert k in entity.queue_assignments
+        assert len(entity.queues) == len(queue_assignments)
+        for k, v in zip(entity.queues, queue_assignments):
+            assert k == v
 
     @staticmethod
     def validate_channel_configurations(
         entity,  # type: RouterWorker
-        channel_configurations,  # type: dict[str, RouterChannel]
+        channel_configurations,  # type: List[RouterChannel]
         **kwargs,
     ):
-        assert len(entity.channel_configurations) == len(channel_configurations)
-        for k, v in channel_configurations.items():
-            assert k in entity.channel_configurations
-            assert entity.channel_configurations[k].max_number_of_jobs == v.max_number_of_jobs
-            assert entity.channel_configurations[k].capacity_cost_per_job == v.capacity_cost_per_job
+        assert len(entity.channels) == len(channel_configurations)
+        for k, v in zip(entity.channels, channel_configurations):
+            assert k == v
 
     @staticmethod
     def validate_worker_availability(
@@ -601,8 +599,8 @@ class RouterWorkerValidator(object):
         if "identifier" in kwargs:
             RouterWorkerValidator.validate_id(worker, kwargs.pop("identifier"))
 
-        if "total_capacity" in kwargs:
-            RouterWorkerValidator.validate_total_capacity(worker, kwargs.pop("total_capacity"))
+        if "capacity" in kwargs:
+            RouterWorkerValidator.validate_total_capacity(worker, kwargs.pop("capacity"))
 
         if "labels" in kwargs:
             RouterWorkerValidator.validate_labels(worker, kwargs.pop("labels"))
@@ -610,11 +608,11 @@ class RouterWorkerValidator(object):
         if "tags" in kwargs:
             RouterWorkerValidator.validate_tags(worker, kwargs.pop("tags"))
 
-        if "queue_assignments" in kwargs:
-            RouterWorkerValidator.validate_queue_assignment(worker, kwargs.pop("queue_assignments"))
+        if "queues" in kwargs:
+            RouterWorkerValidator.validate_queue_assignment(worker, kwargs.pop("queues"))
 
-        if "channel_configurations" in kwargs:
-            RouterWorkerValidator.validate_channel_configurations(worker, kwargs.pop("channel_configurations"))
+        if "channels" in kwargs:
+            RouterWorkerValidator.validate_channel_configurations(worker, kwargs.pop("channels"))
 
         if "available_for_offers" in kwargs:
             RouterWorkerValidator.validate_worker_availability(worker, kwargs.pop("available_for_offers"))
@@ -665,7 +663,8 @@ class RouterJobValidator(object):
         assert len(entity.notes) == len(note_collection)
 
         for k1, k2 in zip(entity.notes, note_collection):
-            assert k1 == k2
+            assert k1.message == k2.message
+            assert k1.added_at is not None and k2.added_at is not None
 
     @staticmethod
     def validate_scheduled_time_utc(entity: RouterJob, scheduled_time_utc: Union[str, datetime], **kwargs):
