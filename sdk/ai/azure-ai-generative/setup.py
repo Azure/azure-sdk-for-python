@@ -68,7 +68,7 @@ setup(
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
         "azure-ai-resources",
         "azureml-telemetry",
-        "mlflow<3",
+        "mlflow-skinny<3",
         "azure-mgmt-authorization",
         "opencensus-ext-azure<2.0.0",
         "opencensus-ext-logging",
