@@ -8,8 +8,8 @@ In version 12 we also support asynchronous APIs.
 
 | <= 2.X Classes (Clients)  | V12 Clients | NEW Asynchronous clients |
 |---:|---:|---:|
-| QueueService (account-level operations) | QueueServiceClient | QueueServiceClient |
-| QueueService (queue-level operations) | QueueClient   | QueueClient |
+| QueueService (account-level operations) | QueueServiceClient | aio.QueueServiceClient |
+| QueueService (queue-level operations) | QueueClient   | aio.QueueClient |
 
 ## Version <= 2.X to Version 12 API Mapping
 
@@ -25,15 +25,6 @@ In version 12 we also support asynchronous APIs.
                 <p align="right">
                     Version 12.X
                 </p>
-            </td>
-        </tr>
-        <tr>
-            <td width="353" colspan="2" valign="top">
-                <p align="right">
-                    Note: Any class means any of QueueService class.
-                </p>
-            </td>
-            <td width="270" colspan="2" valign="top">
             </td>
         </tr>
         <tr>
@@ -66,7 +57,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="111" valign="top">
                 <p align="right">
-                    Any class
+                    QueueService
                 </p>
             </td>
             <td width="163" valign="top">
@@ -91,7 +82,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="111" valign="top">
                 <p align="right">
-                    Any class
+                    QueueService
                 </p>
             </td>
             <td width="163" valign="top">
@@ -116,7 +107,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="111" valign="top">
                 <p align="right">
-                    Any class
+                    QueueService
                 </p>
             </td>
             <td width="163" valign="top">
@@ -138,7 +129,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="111" valign="top">
                 <p align="right">
-                    Any class
+                    QueueService
                 </p>
             </td>
             <td width="163" valign="top">
@@ -160,7 +151,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="111" valign="top">
                 <p align="right">
-                    Any class
+                    QueueService
                 </p>
             </td>
             <td width="163" valign="top">
@@ -182,7 +173,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="111" valign="top">
                 <p align="right">
-                    Any class
+                    QueueService
                 </p>
             </td>
             <td width="163" valign="top">
@@ -204,7 +195,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="111" valign="top">
                 <p align="right">
-                    Any class
+                    QueueService
                 </p>
             </td>
             <td width="163" valign="top">
@@ -226,7 +217,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="111" valign="top">
                 <p align="right">
-                    Any class
+                    QueueService
                 </p>
             </td>
             <td width="163" valign="top">
@@ -248,7 +239,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="111" valign="top">
                 <p align="right">
-                    Any class
+                    QueueService
                 </p>
             </td>
             <td width="163" valign="top">
@@ -270,7 +261,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="111" valign="top">
                 <p align="right">
-                    Any class
+                    QueueService
                 </p>
             </td>
             <td width="163" valign="top">
@@ -292,7 +283,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="111" valign="top">
                 <p align="right">
-                    Any class
+                    QueueService
                 </p>
             </td>
             <td width="163" valign="top">
@@ -314,7 +305,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="111" valign="top">
                 <p align="right">
-                    Any class
+                    QueueService
                 </p>
             </td>
             <td width="163" valign="top">
@@ -336,7 +327,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="111" valign="top">
                 <p align="right">
-                    Any class
+                    QueueService
                 </p>
             </td>
             <td width="163" valign="top">
@@ -358,7 +349,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="111" valign="top">
                 <p align="right">
-                    Any class
+                    QueueService
                 </p>
             </td>
             <td width="163" valign="top">
@@ -380,7 +371,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="111" valign="top">
                 <p align="right">
-                    Any class
+                    QueueService
                 </p>
             </td>
             <td width="163" valign="top">
@@ -402,7 +393,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="111" valign="top">
                 <p align="right">
-                    Any class
+                    QueueService
                 </p>
             </td>
             <td width="163" valign="top">
@@ -424,7 +415,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="111" valign="top">
                 <p align="right">
-                    Any class
+                    QueueService
                 </p>
             </td>
             <td width="163" valign="top">
@@ -446,7 +437,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="111" valign="top">
                 <p align="right">
-                    Any class
+                    QueueService
                 </p>
             </td>
             <td width="163" valign="top">
@@ -468,7 +459,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="111" valign="top">
                 <p align="right">
-                    Any class
+                    QueueService
                 </p>
             </td>
             <td width="163" valign="top">
@@ -562,14 +553,10 @@ token_credential = TokenCredential(token)
 service = QueueService("<storage_account_name>", token_credential=token_credential)
 ```
 
-In V12, you can leverage azure-identity package.
+In V12, you can leverage the azure-identity package.
 ```python
-from azure.identity import ClientSecretCredential
-token_credential = ClientSecretCredential(
-    "<active_directory_tenant_id>",
-    "<active_directory_application_id>",
-    "<active_directory_application_secret>"
-)
+from azure.identity import DefaultAzureCredential
+token_credential = DefaultAzureCredential()
 
 # Instantiate a QueueServiceClient using a token credential
 from azure.storage.queue import QueueServiceClient
