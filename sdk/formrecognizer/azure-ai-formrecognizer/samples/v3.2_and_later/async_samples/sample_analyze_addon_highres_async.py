@@ -60,12 +60,14 @@ async def analyze_with_highres():
             os.path.abspath(__file__),
             "..",
             "..",
+            "..",
             "sample_forms/add_ons/highres.png",
         )
     )
     # [START analyze_with_highres]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.formrecognizer import DocumentAnalysisClient, AnalysisFeature
+    from azure.ai.formrecognizer import AnalysisFeature
+    from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
