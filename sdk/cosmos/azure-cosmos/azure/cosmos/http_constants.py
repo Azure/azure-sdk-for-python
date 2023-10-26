@@ -191,7 +191,6 @@ class HttpHeaders(object):
     EnableCrossPartitionQuery = "x-ms-documentdb-query-enablecrosspartition"
     PartitionKeyRangeID = "x-ms-documentdb-partitionkeyrangeid"
     PartitionKeyDeletePending = "x-ms-cosmos-is-partition-key-delete-pending"
-    PhysicalPartitionID = "x-ms-cosmos-physical-partition-id"
     StartEpkString = "x-ms-start-epk"
     EndEpkString = "x-ms-end-epk"
     ReadFeedKeyType = "x-ms-read-key-type"

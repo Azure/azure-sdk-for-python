@@ -162,9 +162,7 @@ class UInt128:
     def to_byte_array(self):
         high_bytes = self.high.value.to_bytes(8, byteorder='little')
         low_bytes = self.low.value.to_bytes(8, byteorder='little')
-        byte_array = bytearray()
-        byte_array.extend(low_bytes)
-        byte_array.extend(high_bytes)
+        byte_array = bytearray(low_bytes + high_bytes)
         return byte_array
 
     @staticmethod
