@@ -13,7 +13,6 @@ from azure.ai.generative.synthetic.simulator._model_tools.models import (
     AsyncHTTPClientWithRetry,
 )
 from azure.ai.generative.synthetic.simulator import _template_dir as template_dir
-from azure.ai.resources.entities import AzureOpenAIModelConfiguration
 from azure.ai.generative.synthetic.simulator._model_tools import APITokenManager, OpenAIChatCompletionsModel
 
 
@@ -30,15 +29,15 @@ USER_MD = os.path.join(template_dir, "user.md")
 class Simulator:
     def __init__(
         self,
-        systemConnection: AzureOpenAIModelConfiguration = None,
-        userConnection: AzureOpenAIModelConfiguration = None,
+        systemConnection: "AzureOpenAIModelConfiguration" = None,
+        userConnection: "AzureOpenAIModelConfiguration" = None,
         simulate_callback: Callable[[str, List[Dict], dict], str] = None,
     ):
         self.userConnection = self._to_openai_chat_completion_model(userConnection)
         self.systemConnection = self._to_openai_chat_completion_model(systemConnection)
         self.simulate_callback = simulate_callback
 
-    def _to_openai_chat_completion_model(self, config: AzureOpenAIModelConfiguration):
+    def _to_openai_chat_completion_model(self, config: "AzureOpenAIModelConfiguration"):
         token_manager = PlainTokenManager(
             openapi_key=config.api_key,
             auth_header="api-key",
