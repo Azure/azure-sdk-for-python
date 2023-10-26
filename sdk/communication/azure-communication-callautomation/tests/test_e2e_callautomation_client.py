@@ -34,7 +34,6 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
         self.terminate_call(unique_id)
         return
 
-    @pytest.mark.skip(reason="Need to update add_participant response")
     @recorded_by_proxy
     def test_add_participant_then_cancel_request(self):
         # try to establish the call
@@ -59,10 +58,10 @@ class TestCallAutomationClientAutomatedLiveTest(CallAutomationRecordedTestCase):
 
         call_connection.cancel_add_participant(add_participant_result.invitation_id)
 
-        add_participant_cancelled_event = self.check_for_event('AddParticipantCancelled', call_connection._call_connection_id, timedelta(seconds=15))
+        cancel_add_participant_succeeded_event = self.check_for_event('CancelAddParticipantSucceeded', call_connection._call_connection_id, timedelta(seconds=15))
 
-        if add_participant_cancelled_event is None:
-            raise ValueError("Caller AddParticipantCancelled event is None")
+        if cancel_add_participant_succeeded_event is None:
+            raise ValueError("Caller CancelAddParticipantSucceeded event is None")
 
         self.terminate_call(unique_id)
         return

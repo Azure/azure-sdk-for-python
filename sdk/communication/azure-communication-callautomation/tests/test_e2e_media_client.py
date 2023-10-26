@@ -86,7 +86,6 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         self.terminate_call(unique_id)
         return
 
-    @pytest.mark.skip(reason="Need to update mute response code")
     @recorded_by_proxy
     def test_add_and_mute_participant_in_a_call(self):
 
@@ -117,18 +116,12 @@ class TestMediaAutomatedLiveTest(CallAutomationRecordedTestCase):
         if mute_participant_result is None:
             raise ValueError("Invalid mute_participant_result")
 
-        # check for ParticipantsUpdated event
-        mute_participant_updated_event = self.check_for_event('ParticipantsUpdated', call_connection._call_connection_id, timedelta(seconds=15))
-        if mute_participant_updated_event is None:
-            raise ValueError("Mute related ParticipantsUpdated event is None")
+        time.sleep(2)
+        get_participant_result = call_connection.get_participant(target)
+        if get_participant_result is None:
+            raise ValueError("Invalid get_participant_result")
 
-        is_muted = False
-        for participant in mute_participant_updated_event['data']['participants']:
-            if participant['identifier']['rawId'] == target.raw_id:
-                is_muted = participant['isMuted']
-                break
-
-        if is_muted is False:
+        if get_participant_result.is_muted is False:
             raise ValueError("Failed to mute participant")
 
         self.terminate_call(unique_id)
