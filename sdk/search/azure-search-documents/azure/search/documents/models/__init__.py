@@ -96,8 +96,9 @@ class VectorQuery(VectorizableQuery):
         :keyword vector: The vector representation of a search query.
         :paramtype vector: list[float]
         """
-        super().__init__(k_nearest_neighbors=k_nearest_neighbors, fields=fields, exhaustive=exhaustive, **kwargs)
+        super().__init__(fields=fields, exhaustive=exhaustive, **kwargs)
         self.kind: str = "vector"
+        self.k_nearest_neighbors = k_nearest_neighbors
         self.vector = vector
 
     def _to_generated(self) -> _VectorQuery:
