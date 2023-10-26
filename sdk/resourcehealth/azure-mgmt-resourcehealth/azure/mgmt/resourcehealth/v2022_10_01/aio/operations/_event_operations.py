@@ -54,6 +54,7 @@ class EventOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
 
     @distributed_trace_async
     async def get_by_subscription_id_and_tracking_id(
@@ -91,7 +92,7 @@ class EventOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-10-01"))
         cls: ClsType[_models.Event] = kwargs.pop("cls", None)
 
         request = build_get_by_subscription_id_and_tracking_id_request(
@@ -155,7 +156,7 @@ class EventOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-10-01"))
         cls: ClsType[_models.Event] = kwargs.pop("cls", None)
 
         request = build_fetch_details_by_subscription_id_and_tracking_id_request(
@@ -228,7 +229,7 @@ class EventOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-10-01"))
         cls: ClsType[_models.Event] = kwargs.pop("cls", None)
 
         request = build_get_by_tenant_id_and_tracking_id_request(
@@ -287,7 +288,7 @@ class EventOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._api_version or "2022-10-01"))
         cls: ClsType[_models.Event] = kwargs.pop("cls", None)
 
         request = build_fetch_details_by_tenant_id_and_tracking_id_request(

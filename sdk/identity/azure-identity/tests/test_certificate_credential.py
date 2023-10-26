@@ -249,8 +249,8 @@ def test_request_body(cert_path, cert_password, send_certificate_chain):
 
 
 def validate_jwt(request, client_id, cert_bytes, cert_password, expect_x5c=False):
-    """Validate the request meets AAD's expectations for a client credential grant using a certificate, as documented
-    at https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-certificate-credentials
+    """Validate the request meets Microsoft Entra ID's expectations for a client credential grant using a certificate, as documented
+    at https://learn.microsoft.com/azure/active-directory/develop/active-directory-certificate-credentials
     """
 
     try:

@@ -462,7 +462,8 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
         self._setup(datalake_storage_account_name, datalake_storage_account_key)
-        await self.dsc.create_file_system('testfs1')
+        file_system_name = self.get_resource_name('filesystem')
+        await self.dsc.create_file_system(file_system_name)
 
         # Act
         token_credential = self.generate_oauth_token()
@@ -474,7 +475,7 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         response1 = dsc.list_file_systems()
-        response2 = dsc.create_file_system('testfs11')
+        response2 = dsc.create_file_system(file_system_name + '1')
         assert response1 is not None
         assert response2 is not None
 
@@ -485,7 +486,8 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
         self._setup(datalake_storage_account_name, datalake_storage_account_key)
-        await self.dsc.create_file_system('testfs2')
+        file_system_name = self.get_resource_name('filesystem')
+        await self.dsc.create_file_system(file_system_name)
 
         # Act
         token_credential = self.generate_oauth_token()
@@ -498,4 +500,4 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         # Assert
         with pytest.raises(ClientAuthenticationError):
             dsc.list_file_systems()
-            await dsc.create_file_system('testfs22')
+            await dsc.create_file_system(file_system_name + '1')

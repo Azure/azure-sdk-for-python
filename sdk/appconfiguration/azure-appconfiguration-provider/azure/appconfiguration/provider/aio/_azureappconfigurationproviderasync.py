@@ -186,12 +186,12 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
         raise ValueError("A keyvault credential and secret resolver can't both be configured.")
 
     provider = _buildprovider(connection_string, endpoint, credential, **kwargs)
-    await provider._load_all()
+    await provider._load_all(headers=_get_headers("Startup", **kwargs))
 
     # Refresh-All sentinels are not updated on load_all, as they are not necessarily included in the provider.
     for (key, label), etag in provider._refresh_on.items():
         if not etag:
-            sentinel = await provider._client.get_configuration_setting(key, label)
+            sentinel = await provider._client.get_configuration_setting(key, label, headers=_get_headers("Startup"))
             provider._refresh_on[(key, label)] = sentinel.etag
     return provider
 
@@ -201,7 +201,6 @@ def _buildprovider(
 ) -> "AzureAppConfigurationProvider":
     # pylint:disable=protected-access
     provider = AzureAppConfigurationProvider(**kwargs)
-    headers = _get_headers(**kwargs)
     retry_total = kwargs.pop("retry_total", 2)
     retry_backoff_max = kwargs.pop("retry_backoff_max", 60)
 
@@ -214,7 +213,6 @@ def _buildprovider(
         provider._client = AzureAppConfigurationClient.from_connection_string(
             connection_string,
             user_agent=user_agent,
-            headers=headers,
             retry_total=retry_total,
             retry_backoff_max=retry_backoff_max,
             **kwargs
@@ -224,7 +222,6 @@ def _buildprovider(
         endpoint,
         credential,
         user_agent=user_agent,
-        headers=headers,
         retry_total=retry_total,
         retry_backoff_max=retry_backoff_max,
         **kwargs
@@ -319,7 +316,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 updated_sentinel_keys = dict(self._refresh_on)
                 for (key, label), etag in self._refresh_on.items():
                     updated_sentinel = await self._client.get_configuration_setting(
-                        key=key, label=label, etag=etag, match_condition=MatchConditions.IfModified, **kwargs
+                        key=key,
+                        label=label,
+                        etag=etag,
+                        match_condition=MatchConditions.IfModified,
+                        headers=_get_headers("Watch"),
+                        **kwargs
                     )
                     if updated_sentinel is not None:
                         logging.debug(
@@ -365,7 +367,7 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             )
             async for config in configurations:
                 key = self._process_key_name(config)
-                value = await self._process_key_value(config, **kwargs)
+                value = await self._process_key_value(config)
 
                 if isinstance(config, FeatureFlagConfigurationSetting):
                     feature_management = configuration_settings.get(FEATURE_MANAGEMENT_KEY, {})
@@ -392,9 +394,9 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
             return trimmed_key[len(FEATURE_FLAG_PREFIX) :]
         return trimmed_key
 
-    async def _process_key_value(self, config, **kwargs):
+    async def _process_key_value(self, config):
         if isinstance(config, SecretReferenceConfigurationSetting):
-            return await _resolve_keyvault_reference(config, self, **kwargs)
+            return await _resolve_keyvault_reference(config, self)
         if _is_json_content_type(config.content_type) and not isinstance(config, FeatureFlagConfigurationSetting):
             # Feature flags are of type json, but don't treat them as such
             try:

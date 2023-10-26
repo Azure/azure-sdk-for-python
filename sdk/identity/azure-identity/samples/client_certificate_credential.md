@@ -1,6 +1,6 @@
 # Using the CertificateCredential
 
-Applications which execute in a protected environment can authenticate using a client assertion signed by a private key whose public key or root certificate is registered with AAD. The Azure.Identity library provides the `CertificateCredential` for applications choosing to authenticate this way. Below are some examples of how applications can utilize the `CertificateCredential` to authenticate clients.
+Applications which execute in a protected environment can authenticate using a client assertion signed by a private key whose public key or root certificate is registered with Microsoft Entra ID. The `azure-identity` library provides the `CertificateCredential` for applications choosing to authenticate this way. Below are some examples of how applications can utilize the `CertificateCredential` to authenticate clients.
 
 
 ## Loading certificates from disk

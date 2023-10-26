@@ -107,7 +107,7 @@ def test_username_password_credential():
         username="user@azure",
         password="secret_password",
         transport=transport,
-        disable_instance_discovery=True,  # kwargs are passed to MSAL; this one prevents an AAD verification request
+        disable_instance_discovery=True,  # kwargs are passed to MSAL; this one prevents a Microsoft Entra verification request
     )
 
     token = credential.get_token("scope")
@@ -124,7 +124,7 @@ def test_authenticate():
     access_token = "***"
     scope = "scope"
 
-    # mock AAD response with id token
+    # mock Microsoft Entra response with id token
     object_id = "object-id"
     home_tenant = "home-tenant-id"
     username = "me@work.com"

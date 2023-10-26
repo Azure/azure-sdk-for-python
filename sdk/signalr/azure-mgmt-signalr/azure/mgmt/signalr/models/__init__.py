@@ -14,6 +14,7 @@ from ._models_py3 import Dimension
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
+from ._models_py3 import IPRule
 from ._models_py3 import LiveTraceCategory
 from ._models_py3 import LiveTraceConfiguration
 from ._models_py3 import LogSpecification
@@ -95,6 +96,7 @@ __all__ = [
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ErrorResponse",
+    "IPRule",
     "LiveTraceCategory",
     "LiveTraceConfiguration",
     "LogSpecification",
