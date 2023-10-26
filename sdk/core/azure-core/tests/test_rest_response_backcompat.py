@@ -5,7 +5,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import sys
-from rest_client import TestRestClient
+from rest_client import MockRestClient
 import pytest
 from azure.core.pipeline.transport import HttpRequest as PipelineTransportHttpRequest
 from azure.core.rest import HttpRequest as RestHttpRequest
@@ -161,7 +161,7 @@ def test_response_parts(port):
     old_request = _create_multiapart_request(PipelineTransportHttpRequest)
     new_request = _create_multiapart_request(RestHttpRequest)
 
-    old_response = TestRestClient(port).send_request(old_request, stream=True)
-    new_response = TestRestClient(port).send_request(new_request, stream=True)
+    old_response = MockRestClient(port).send_request(old_request, stream=True)
+    new_response = MockRestClient(port).send_request(new_request, stream=True)
     _test_parts(old_response)
     _test_parts(new_response)

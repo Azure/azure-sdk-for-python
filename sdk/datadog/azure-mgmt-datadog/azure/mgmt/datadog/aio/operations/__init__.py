@@ -7,21 +7,25 @@
 # --------------------------------------------------------------------------
 
 from ._marketplace_agreements_operations import MarketplaceAgreementsOperations
+from ._creation_supported_operations import CreationSupportedOperations
 from ._monitors_operations import MonitorsOperations
 from ._operations import Operations
 from ._tag_rules_operations import TagRulesOperations
 from ._single_sign_on_configurations_operations import SingleSignOnConfigurationsOperations
+from ._monitored_subscriptions_operations import MonitoredSubscriptionsOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "MarketplaceAgreementsOperations",
+    "CreationSupportedOperations",
     "MonitorsOperations",
     "Operations",
     "TagRulesOperations",
     "SingleSignOnConfigurationsOperations",
+    "MonitoredSubscriptionsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

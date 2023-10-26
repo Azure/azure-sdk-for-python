@@ -38,8 +38,8 @@ def renew_lock_on_message_received_from_non_sessionful_entity():
         # Can also be called via "with AutoLockRenewer() as renewer" to automate shutdown.
         renewer = AutoLockRenewer()
 
-        with servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, prefetch_count=10) as receiver:
-            received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
+        with servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, prefetch_count=10, max_wait_time=5) as receiver:
+            received_msgs = receiver.receive_messages(max_message_count=10)
 
             for msg in received_msgs:
                 # automatically renew the lock on each message for 100 seconds
@@ -70,14 +70,15 @@ def renew_lock_on_session_of_the_sessionful_entity():
         with servicebus_client.get_queue_receiver(
             queue_name=SESSION_QUEUE_NAME,
             session_id='SESSION',
-            prefetch_count=10
+            prefetch_count=10,
+            max_wait_time=5
         ) as receiver:
 
             # automatically renew the lock on the session for 100 seconds
             renewer.register(receiver, receiver.session, max_lock_renewal_duration=100)
             print('Register session into AutoLockRenewer.')
 
-            received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
+            received_msgs = receiver.receive_messages(max_message_count=10)
             time.sleep(100)  # message handling for long period (E.g. application logic)
 
             for msg in received_msgs:
@@ -99,7 +100,7 @@ def renew_lock_with_lock_renewal_failure_callback():
             # For this sample we're going to set the renewal recurrence of the autolockrenewer to greater than the
             # service side message lock duration, to demonstrate failure.  Normally, this should not be adjusted.
             renewer._sleep_time = 40
-            with servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, prefetch_count=10) as receiver:
+            with servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, prefetch_count=10, max_wait_time=5) as receiver:
 
                 def on_lock_renew_failure_callback(renewable, error):
                     # If auto-lock-renewal fails, this function will be called.
@@ -109,7 +110,7 @@ def renew_lock_with_lock_renewal_failure_callback():
                     # handle any processing on the message or session that was in progress.
                     print("Intentionally failed to renew lock on {} due to {}".format(renewable, error))
 
-                received_msgs = receiver.receive_messages(max_message_count=1, max_wait_time=5)
+                received_msgs = receiver.receive_messages(max_message_count=1)
 
                 for msg in received_msgs:
                     # automatically renew the lock on each message for 120 seconds

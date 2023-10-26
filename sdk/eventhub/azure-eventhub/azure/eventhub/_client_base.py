@@ -10,12 +10,9 @@ import time
 import functools
 import collections
 from typing import Any, Dict, Tuple, List, Optional, TYPE_CHECKING, cast, Union
-try:
-    from typing import TypeAlias    # type: ignore
-except ImportError:
-    from typing_extensions import TypeAlias
 from datetime import timedelta
 from urllib.parse import urlparse
+from typing_extensions import TypeAlias
 
 from azure.core.credentials import (
     AccessToken,
@@ -47,6 +44,12 @@ from ._constants import (
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+    CredentialTypes: TypeAlias = Union[
+        AzureSasCredential,
+        AzureNamedKeyCredential,
+        "EventHubSharedKeyCredential",
+        TokenCredential,
+    ]
     try:
         from uamqp import Message as uamqp_Message
         from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
@@ -284,24 +287,12 @@ class EventhubAzureSasTokenCredential(object):
         return AccessToken(signature, expiry)
 
 
-# separate TYPE_CHECKING block here for EventHubSharedKeyCredential, o/w mypy raised error even with forward referencing
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-
-    CredentialTypes: TypeAlias = Union[
-        AzureSasCredential,
-        AzureNamedKeyCredential,
-        EventHubSharedKeyCredential,
-        TokenCredential,
-    ]
-
-
 class ClientBase(object):  # pylint:disable=too-many-instance-attributes
     def __init__(
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: CredentialTypes,
+        credential: "CredentialTypes",
         **kwargs: Any,
     ) -> None:
         uamqp_transport = kwargs.pop("uamqp_transport", False)

@@ -47,13 +47,15 @@ def get_generic_arm_resource_by_arm_id(
     arm_id: str,
     api_version: str,
 ) -> GenericResource:
-    client = ResourceManagementClient(
-        credential=credentials,
-        subscription_id=subscription_id,
-        base_url=_get_base_url_from_metadata(),
-        api_version=ArmConstants.AZURE_MGMT_RESOURCE_API_VERSION,
-    )
-    return client.resources.get_by_id(arm_id, api_version)
+    if arm_id:
+        client = ResourceManagementClient(
+            credential=credentials,
+            subscription_id=subscription_id,
+            base_url=_get_base_url_from_metadata(),
+            api_version=ArmConstants.AZURE_MGMT_RESOURCE_API_VERSION,
+        )
+        return client.resources.get_by_id(arm_id, api_version)
+    return None
 
 
 def delete_resource_by_arm_id(

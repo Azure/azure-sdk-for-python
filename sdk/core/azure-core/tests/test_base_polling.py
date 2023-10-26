@@ -50,7 +50,7 @@ from azure.core.polling.base_polling import LROBasePolling, OperationResourcePol
 from azure.core.pipeline.policies._utils import _FixedOffset
 from utils import request_and_responses_product, REQUESTS_TRANSPORT_RESPONSES, create_transport_response, HTTP_REQUESTS
 from azure.core.pipeline._tools import is_rest
-from rest_client import TestRestClient
+from rest_client import MockRestClient
 
 
 class SimpleResource:
@@ -800,7 +800,7 @@ class TestBasePolling(object):
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_final_get_via_location(port, http_request, deserialization_cb):
-    client = TestRestClient(port)
+    client = MockRestClient(port)
     request = http_request(
         "PUT",
         "http://localhost:{}/polling/polling-with-options".format(port),
