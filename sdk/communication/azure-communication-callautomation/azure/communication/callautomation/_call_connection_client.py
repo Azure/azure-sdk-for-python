@@ -498,7 +498,7 @@ class CallConnectionClient:
         operation_callback_url: Optional[str] = None,
         **kwargs
     ) -> None:
-        """Recognize tones from specific participant in this call.
+        """Recognize inputs from specific participant in this call.
 
         :param input_type: Determines the type of the recognition.
         :type input_type: str or ~azure.communication.callautomation.RecognizeInputType
@@ -517,18 +517,21 @@ class CallConnectionClient:
         :paramtype operation_context: str
         :keyword interrupt_prompt: Determines if we interrupt the prompt and start recognizing.
         :paramtype interrupt_prompt: bool
-        :keyword dtmf_inter_tone_timeout: Time to wait between DTMF inputs to stop recognizing.
+        :keyword dtmf_inter_tone_timeout: Time to wait between DTMF inputs to stop recognizing. Will be ignored
+         unless input_type is 'dtmf' or 'speechOrDtmf'.
         :paramtype dtmf_inter_tone_timeout: int
-        :keyword dtmf_max_tones_to_collect: Maximum number of DTMF tones to be collected.
+        :keyword dtmf_max_tones_to_collect: Maximum number of DTMF tones to be collected. Will be ignored
+         unless input_type is 'dtmf' or 'speechOrDtmf'.
         :paramtype dtmf_max_tones_to_collect: int
-        :keyword dtmf_stop_tones: List of tones that will stop recognizing.
+        :keyword dtmf_stop_tones: List of tones that will stop recognizing. Will be ignored
+         unless input_type is 'dtmf' or 'speechOrDtmf'.
         :paramtype dtmf_stop_tones: list[str or ~azure.communication.callautomation.DtmfTone]
         :keyword speech_language: Speech language to be recognized, If not set default is en-US.
         :paramtype speech_language: str
-        :keyword choices: Defines Ivr choices for recognize.
+        :keyword choices: Defines Ivr choices for recognize. Will be ignored unless input_type is 'choices'.
         :paramtype choices: list[~azure.communication.callautomation.RecognitionChoice]
         :keyword end_silence_timeout: The length of end silence when user stops speaking and cogservice
-         send response.
+         send response. Will be ingored unless input_type is 'speech' or 'speechOrDtmf'.
         :paramtype end_silence_timeout: int
         :keyword speech_recognition_model_endpoint_id: Endpoint where the custom model was deployed.
         :paramtype speech_recognition_model_endpoint_id: str
