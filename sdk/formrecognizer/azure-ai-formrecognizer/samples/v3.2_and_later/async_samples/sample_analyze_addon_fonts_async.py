@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_analyze_addon_fonts.py
+FILE: sample_analyze_addon_fonts_async.py
 
 DESCRIPTION:
     This sample demonstrates how to extract font information using the add-on
@@ -32,13 +32,14 @@ DESCRIPTION:
     See pricing: https://azure.microsoft.com/en-us/pricing/details/ai-document-intelligence/.
 
 USAGE:
-    python sample_analyze_addon_fonts.py
+    python sample_analyze_addon_fonts_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
 """
 
+import asyncio
 import os
 from collections import defaultdict
 
@@ -70,7 +71,7 @@ def get_styled_text(styles, content):
     return ','.join([content[span.offset : span.offset + span.length] for span in spans])
 
 
-def analyze_fonts():
+async def analyze_fonts():
     path_to_sample_documents = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
@@ -89,12 +90,14 @@ def analyze_fonts():
     document_analysis_client = DocumentAnalysisClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
-    # Specify which add-on features to enable.
-    with open(path_to_sample_documents, "rb") as f:
-        poller = document_analysis_client.begin_analyze_document(
-            "prebuilt-layout", document=f, features=[AnalysisFeature.STYLE_FONT]
-        )
-    result = poller.result()
+
+    async with document_analysis_client:
+        # Specify which add-on features to enable.
+        with open(path_to_sample_documents, "rb") as f:
+            poller = await document_analysis_client.begin_analyze_document(
+                "prebuilt-layout", document=f, features=[AnalysisFeature.STYLE_FONT]
+            )
+        result = await poller.result()
 
     # DocumentStyle has the following font related attributes:
     similar_font_families = defaultdict(list)  # e.g., 'Arial, sans-serif
@@ -152,11 +155,15 @@ def analyze_fonts():
     # [END analyze_fonts]
 
 
+async def main():
+    await analyze_fonts()
+
+
 if __name__ == "__main__":
     from azure.core.exceptions import HttpResponseError
 
     try:
-        analyze_fonts()
+        asyncio.run(main())
     except HttpResponseError as error:
         print(
             "For more information about troubleshooting errors, see the following guide: "
