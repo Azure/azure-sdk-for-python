@@ -24,8 +24,11 @@ from opencensus.trace import config_integration
 from azureml.telemetry import INSTRUMENTATION_KEY
 
 from azure.ai.ml._telemetry.logging_handler import in_jupyter_notebook, CustomDimensionsFilter
+from azure.ai.resources._version import VERSION
 
-from azure.ai.resources._user_agent import USER_AGENT
+
+USER_AGENT = "{}/{}".format("azure-ai-resources", VERSION)
+
 
 GEN_AI_INTERNAL_LOGGER_NAMESPACE = "azure.ai.resources._telemetry"
 

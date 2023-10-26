@@ -14,7 +14,6 @@ from azure.core.credentials import TokenCredential
 from azure.ai.generative.index._documents import Document, DocumentChunksIterator
 from azure.ai.generative.index._embeddings import EmbeddingsContainer
 from azure.ai.generative.index._utils.connections import (
-    Connection,
     WorkspaceConnection,
     get_connection_credential,
     get_connection_by_id_v2,
@@ -339,8 +338,8 @@ class MLIndex:
 
     def override_connections(
         self,
-        embedding_connection: Optional[Union[str, Connection, WorkspaceConnection]] = None,
-        index_connection: Optional[Union[str, Connection, WorkspaceConnection]] = None,
+        embedding_connection: Optional[Union[str, WorkspaceConnection]] = None,
+        index_connection: Optional[Union[str, WorkspaceConnection]] = None,
         credential: Optional[TokenCredential] = None
     ) -> "MLIndex":
         """
@@ -383,7 +382,7 @@ class MLIndex:
         self.save(just_config=True)
         return self
 
-    def set_embeddings_connection(self, connection: Optional[Union[str, Connection, WorkspaceConnection]], credential: Optional[TokenCredential] = None) -> "MLIndex":
+    def set_embeddings_connection(self, connection: Optional[Union[str, WorkspaceConnection]], credential: Optional[TokenCredential] = None) -> "MLIndex":
         """Set the embeddings connection used by the MLIndex."""
         return self.override_connections(embedding_connection=connection)
 
