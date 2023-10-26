@@ -46,32 +46,17 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import SasDatastoreSecre
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     ServicePrincipalDatastoreCredentials as RestServicePrincipalDatastoreCredentials,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    ServicePrincipalDatastoreSecrets as RestServicePrincipalDatastoreSecrets,
-)
-from azure.ai.ml._restclient.v2023_04_01_preview.models import UserIdentity as RestUserIdentity
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    WorkspaceConnectionAccessKey as RestWorkspaceConnectionAccessKey,
-)
-from azure.ai.ml._restclient.v2023_10_01.models import (
-    AccountKeyDatastoreCredentials as RestAccountKeyDatastoreCredentials_2310,
-)
-from azure.ai.ml._restclient.v2023_10_01.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     AccountKeyDatastoreSecrets as RestAccountKeyDatastoreSecrets,
 )
-from azure.ai.ml._restclient.v2023_10_01.models import AmlToken as RestAmlToken
-from azure.ai.ml._restclient.v2023_10_01.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import AmlToken as RestAmlToken
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     CertificateDatastoreCredentials as RestCertificateDatastoreCredentials,
 )
-from azure.ai.ml._restclient.v2023_10_01.models import CertificateDatastoreSecrets as CertificateDatastoreSecrets_2310, CredentialsType as CredentialsType_2310
-from azure.ai.ml._restclient.v2023_10_01.models import IdentityConfiguration as RestJobIdentityConfiguration_2310
-from azure.ai.ml._restclient.v2023_10_01.models import IdentityConfigurationType as IdentityConfigurationType_2310
-from azure.ai.ml._restclient.v2023_10_01.models import ManagedIdentity as RestJobManagedIdentity_2310
-from azure.ai.ml._restclient.v2023_10_01.models import ManagedServiceIdentity as RestRegistryManagedIdentity_2310
-from azure.ai.ml._restclient.v2023_10_01.models import NoneDatastoreCredentials as RestNoneDatastoreCredentials_2310
-from azure.ai.ml._restclient.v2023_10_01.models import SasDatastoreCredentials as RestSasDatastoreCredentials_2310
-from azure.ai.ml._restclient.v2023_10_01.models import SasDatastoreSecrets as RestSasDatastoreSecrets_2310
-from azure.ai.ml._restclient.v2023_10_01.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import IdentityConfigurationType as IdentityConfigurationType_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedIdentity as RestJobManagedIdentity_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     ServicePrincipalDatastoreCredentials as RestServicePrincipalDatastoreCredentials,
 )
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
@@ -417,23 +402,23 @@ class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin, YamlT
         )
 
     @classmethod
-    def _from_rest_object_2310(cls, obj: RestJobIdentityConfiguration_2310) -> "Identity":
+    def _from_rest_object_2308(cls, obj: RestJobIdentityConfiguration_2308) -> "Identity":
         if obj is None:
             return None
         mapping = {
-            IdentityConfigurationType_2310.AML_TOKEN: AmlTokenConfiguration,
-            IdentityConfigurationType_2310.MANAGED: ManagedIdentityConfiguration,
-            IdentityConfigurationType_2310.USER_IDENTITY: UserIdentityConfiguration,
+            IdentityConfigurationType_2308.AML_TOKEN: AmlTokenConfiguration,
+            IdentityConfigurationType_2308.MANAGED: ManagedIdentityConfiguration,
+            IdentityConfigurationType_2308.USER_IDENTITY: UserIdentityConfiguration,
         }
 
         if isinstance(obj, dict):
             # TODO: support data binding expression
-            obj = RestJobIdentityConfiguration_2310.from_dict(obj)
+            obj = RestJobIdentityConfiguration_2308.from_dict(obj)
 
         identity_class = mapping.get(obj.identity_type, None)
         if identity_class:
             # pylint: disable=protected-access
-            return identity_class._from_job_rest_object(obj)  # Temporarily not modified to 2310 version
+            return identity_class._from_job_rest_object(obj)  # Temporarily not modified to 2308 version
         msg = f"Unknown identity type: {obj.identity_type}"
         raise JobException(
             message=msg,
@@ -514,8 +499,8 @@ class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
             resource_id=self.resource_id,
         )
 
-    def _to_job_rest_object_2310(self) -> RestJobManagedIdentity_2310:
-        return RestJobManagedIdentity_2310(
+    def _to_job_rest_object_2308(self) -> RestJobManagedIdentity_2308:
+        return RestJobManagedIdentity_2308(
             client_id=self.client_id,
             object_id=self.object_id,
             resource_id=self.resource_id,

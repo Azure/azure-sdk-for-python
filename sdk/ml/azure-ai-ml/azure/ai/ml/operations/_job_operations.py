@@ -31,9 +31,9 @@ from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, UserIdentity
-from azure.ai.ml._restclient.v2023_10_01.models import JobBase as JobBase_2310
-from azure.ai.ml._restclient.v2023_10_01.models import JobType as RestJobType_2310
-from azure.ai.ml._restclient.v2023_10_01.models import ListViewType as ListViewType_2310, UserIdentity as UserIdentity_2310
+from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as JobBase_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ListViewType as ListViewType_2308, UserIdentity as UserIdentity_2308
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -144,7 +144,7 @@ class JobOperations(_ScopeDependentOperations):
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client: Service client to allow end users to operate on Azure Machine Learning
         Workspace resources.
-    :type service_client: ~azure.ai.ml._restclient.v2023_10_01.AzureMachineLearningWorkspaces
+    :type service_client: ~azure.ai.ml._restclient.v2023_08_01_preview.AzureMachineLearningWorkspaces
     :param all_operations: All operations classes of an MLClient object.
     :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
     :param credential: Credential to use for authentication.
@@ -664,7 +664,7 @@ class JobOperations(_ScopeDependentOperations):
         # set headers with user aml token if job is a pipeline or has a user identity setting
         if (rest_job_resource.properties.job_type == RestJobType.PIPELINE) or (
             hasattr(rest_job_resource.properties, "identity")
-            and (isinstance(rest_job_resource.properties.identity, (UserIdentity, UserIdentity_2310)))
+            and (isinstance(rest_job_resource.properties.identity, (UserIdentity, UserIdentity_2308)))
         ):
             self._set_headers_with_user_aml_token(kwargs)
 
@@ -684,7 +684,7 @@ class JobOperations(_ScopeDependentOperations):
             # request for submitting to ES. Once we request to ES and start the run, we
             # need to put the same body to MFE to append user tags etc.
             if rest_job_resource.properties.job_type == RestJobType.PIPELINE:
-                job_object = self._get_job_2310(rest_job_resource.name)
+                job_object = self._get_job_2308(rest_job_resource.name)
             else:
                 job_object = self._get_job(rest_job_resource.name)
             if result.properties.tags is not None:
@@ -722,7 +722,7 @@ class JobOperations(_ScopeDependentOperations):
     def _archive_or_restore(self, name: str, is_archived: bool):
         job_object = self._get_job(name)
         if job_object.properties.job_type == RestJobType.PIPELINE:
-            job_object = self._get_job_2310(name)
+            job_object = self._get_job_2308(name)
         if _is_pipeline_child_job(job_object):
             raise PipelineChildJobError(job_id=job_object.id)
         job_object.properties.is_archived = is_archived
@@ -1011,7 +1011,7 @@ class JobOperations(_ScopeDependentOperations):
 
     # Upgrade api from 2023-04-01-preview to 2023-10-01 for pipeline job
     # We can remove this function once `_get_job` function has also been upgraded to 2023-10-01 api
-    def _get_job_2310(self, name: str) -> JobBase_2310:
+    def _get_job_2308(self, name: str) -> JobBase_2308:
         service_client_operation = self.pipeline_service_client.jobs if self.pipeline_service_client \
             else self._service_client_operation
         return service_client_operation.get(

@@ -24,25 +24,25 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFileJobInput a
 from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFileJobOutput as RestUriFileJobOutput
 from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFolderJobInput as RestUriFolderJobInput
 from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
-from azure.ai.ml._restclient.v2023_10_01.models import CustomModelJobInput as RestCustomModelJobInput_2310
-from azure.ai.ml._restclient.v2023_10_01.models import CustomModelJobOutput as RestCustomModelJobOutput_2310
-from azure.ai.ml._restclient.v2023_10_01.models import InputDeliveryMode as InputDeliveryMode_2310
-from azure.ai.ml._restclient.v2023_10_01.models import JobInput as RestJobInput_2310
-from azure.ai.ml._restclient.v2023_10_01.models import JobInputType as JobInputType_2310
-from azure.ai.ml._restclient.v2023_10_01.models import JobOutput as RestJobOutput_2310
-from azure.ai.ml._restclient.v2023_10_01.models import JobOutputType as JobOutputType_2310
-from azure.ai.ml._restclient.v2023_10_01.models import LiteralJobInput as LiteralJobInput_2310
-from azure.ai.ml._restclient.v2023_10_01.models import MLFlowModelJobInput as RestMLFlowModelJobInput_2310
-from azure.ai.ml._restclient.v2023_10_01.models import MLFlowModelJobOutput as RestMLFlowModelJobOutput_2310
-from azure.ai.ml._restclient.v2023_10_01.models import MLTableJobInput as RestMLTableJobInput_2310
-from azure.ai.ml._restclient.v2023_10_01.models import MLTableJobOutput as RestMLTableJobOutput_2310
-from azure.ai.ml._restclient.v2023_10_01.models import OutputDeliveryMode as OutputDeliveryMode_2310
-from azure.ai.ml._restclient.v2023_10_01.models import TritonModelJobInput as RestTritonModelJobInput_2310
-from azure.ai.ml._restclient.v2023_10_01.models import TritonModelJobOutput as RestTritonModelJobOutput_2310
-from azure.ai.ml._restclient.v2023_10_01.models import UriFileJobInput as RestUriFileJobInput_2310
-from azure.ai.ml._restclient.v2023_10_01.models import UriFileJobOutput as RestUriFileJobOutput_2310
-from azure.ai.ml._restclient.v2023_10_01.models import UriFolderJobInput as RestUriFolderJobInput_2310
-from azure.ai.ml._restclient.v2023_10_01.models import UriFolderJobOutput as RestUriFolderJobOutput_2310
+from azure.ai.ml._restclient.v2023_08_01_preview.models import CustomModelJobInput as RestCustomModelJobInput_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import CustomModelJobOutput as RestCustomModelJobOutput_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import InputDeliveryMode as InputDeliveryMode_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import JobInput as RestJobInput_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import JobInputType as JobInputType_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import JobOutput as RestJobOutput_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import JobOutputType as JobOutputType_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import LiteralJobInput as LiteralJobInput_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import MLFlowModelJobInput as RestMLFlowModelJobInput_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import MLFlowModelJobOutput as RestMLFlowModelJobOutput_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import MLTableJobInput as RestMLTableJobInput_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import MLTableJobOutput as RestMLTableJobOutput_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import OutputDeliveryMode as OutputDeliveryMode_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import TritonModelJobInput as RestTritonModelJobInput_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import TritonModelJobOutput as RestTritonModelJobOutput_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import UriFileJobInput as RestUriFileJobInput_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import UriFileJobOutput as RestUriFileJobOutput_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import UriFolderJobInput as RestUriFolderJobInput_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput_2308
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes, InputOutputModes, JobType
 from azure.ai.ml.constants._component import IOConstants
@@ -69,13 +69,13 @@ INPUT_MOUNT_MAPPING_TO_REST = {
     InputOutputModes.DIRECT: InputDeliveryMode.DIRECT,
 }
 
-INPUT_MOUNT_MAPPING_TO_REST_2310 = {
-    InputOutputModes.MOUNT: InputDeliveryMode_2310.READ_ONLY_MOUNT,
-    InputOutputModes.RO_MOUNT: InputDeliveryMode_2310.READ_ONLY_MOUNT,
-    InputOutputModes.DOWNLOAD: InputDeliveryMode_2310.DOWNLOAD,
-    InputOutputModes.EVAL_MOUNT: InputDeliveryMode_2310.EVAL_MOUNT,
-    InputOutputModes.EVAL_DOWNLOAD: InputDeliveryMode_2310.EVAL_DOWNLOAD,
-    InputOutputModes.DIRECT: InputDeliveryMode_2310.DIRECT,
+INPUT_MOUNT_MAPPING_TO_REST_2308 = {
+    InputOutputModes.MOUNT: InputDeliveryMode_2308.READ_ONLY_MOUNT,
+    InputOutputModes.RO_MOUNT: InputDeliveryMode_2308.READ_ONLY_MOUNT,
+    InputOutputModes.DOWNLOAD: InputDeliveryMode_2308.DOWNLOAD,
+    InputOutputModes.EVAL_MOUNT: InputDeliveryMode_2308.EVAL_MOUNT,
+    InputOutputModes.EVAL_DOWNLOAD: InputDeliveryMode_2308.EVAL_DOWNLOAD,
+    InputOutputModes.DIRECT: InputDeliveryMode_2308.DIRECT,
 }
 
 OUTPUT_MOUNT_MAPPING_FROM_REST = {
@@ -84,10 +84,10 @@ OUTPUT_MOUNT_MAPPING_FROM_REST = {
     OutputDeliveryMode.DIRECT: InputOutputModes.DIRECT,
 }
 
-OUTPUT_MOUNT_MAPPING_FROM_REST_2310 = {
-    OutputDeliveryMode_2310.READ_WRITE_MOUNT: InputOutputModes.RW_MOUNT,
-    OutputDeliveryMode_2310.UPLOAD: InputOutputModes.UPLOAD,
-    OutputDeliveryMode.DIRECT: InputOutputModes.DIRECT,
+OUTPUT_MOUNT_MAPPING_FROM_REST_2308 = {
+    OutputDeliveryMode_2308.READ_WRITE_MOUNT: InputOutputModes.RW_MOUNT,
+    OutputDeliveryMode_2308.UPLOAD: InputOutputModes.UPLOAD,
+    OutputDeliveryMode_2308.DIRECT: InputOutputModes.DIRECT,
 }
 
 OUTPUT_MOUNT_MAPPING_TO_REST = {
@@ -97,11 +97,11 @@ OUTPUT_MOUNT_MAPPING_TO_REST = {
     InputOutputModes.DIRECT: OutputDeliveryMode.DIRECT,
 }
 
-OUTPUT_MOUNT_MAPPING_TO_REST_2310 = {
-    InputOutputModes.MOUNT: OutputDeliveryMode_2310.READ_WRITE_MOUNT,
-    InputOutputModes.UPLOAD: OutputDeliveryMode_2310.UPLOAD,
-    InputOutputModes.RW_MOUNT: OutputDeliveryMode_2310.READ_WRITE_MOUNT,
-    InputOutputModes.DIRECT: OutputDeliveryMode.DIRECT,  # OutputDeliveryMode_2310.DIRECT not exist
+OUTPUT_MOUNT_MAPPING_TO_REST_2308 = {
+    InputOutputModes.MOUNT: OutputDeliveryMode_2308.READ_WRITE_MOUNT,
+    InputOutputModes.UPLOAD: OutputDeliveryMode_2308.UPLOAD,
+    InputOutputModes.RW_MOUNT: OutputDeliveryMode_2308.READ_WRITE_MOUNT,
+    InputOutputModes.DIRECT: OutputDeliveryMode_2308.DIRECT,
 }
 
 
@@ -122,19 +122,19 @@ def get_output_type_mapping_from_rest() -> Dict[str, str]:
     }
 
 
-def get_output_type_mapping_from_rest_2310() -> Dict[str, str]:
+def get_output_type_mapping_from_rest_2308() -> Dict[str, str]:
     """Gets the mapping of JobOutputType to AssetType
 
     :return: Mapping of JobOutputType to AssetType
     :rtype: Dict[str, str]
     """
     return {
-        JobOutputType_2310.URI_FILE: AssetTypes.URI_FILE,
-        JobOutputType_2310.URI_FOLDER: AssetTypes.URI_FOLDER,
-        JobOutputType_2310.MLTABLE: AssetTypes.MLTABLE,
-        JobOutputType_2310.MLFLOW_MODEL: AssetTypes.MLFLOW_MODEL,
-        JobOutputType_2310.CUSTOM_MODEL: AssetTypes.CUSTOM_MODEL,
-        JobOutputType_2310.TRITON_MODEL: AssetTypes.TRITON_MODEL,
+        JobOutputType_2308.URI_FILE: AssetTypes.URI_FILE,
+        JobOutputType_2308.URI_FOLDER: AssetTypes.URI_FOLDER,
+        JobOutputType_2308.MLTABLE: AssetTypes.MLTABLE,
+        JobOutputType_2308.MLFLOW_MODEL: AssetTypes.MLFLOW_MODEL,
+        JobOutputType_2308.CUSTOM_MODEL: AssetTypes.CUSTOM_MODEL,
+        JobOutputType_2308.TRITON_MODEL: AssetTypes.TRITON_MODEL,
     }
 
 
@@ -154,19 +154,19 @@ def get_input_rest_cls_dict() -> Dict[str, RestJobInput]:
     }
 
 
-def get_input_rest_cls_dict_2310() -> Dict[str, RestJobInput_2310]:
+def get_input_rest_cls_dict_2308() -> Dict[str, RestJobInput_2308]:
     """Gets the mapping of AssetType to RestJobInput
 
     :return: Map of AssetType to RestJobInput
     :rtype: Dict[str, RestJobInput]
     """
     return {
-        AssetTypes.URI_FILE: RestUriFileJobInput_2310,
-        AssetTypes.URI_FOLDER: RestUriFolderJobInput_2310,
-        AssetTypes.MLTABLE: RestMLTableJobInput_2310,
-        AssetTypes.MLFLOW_MODEL: RestMLFlowModelJobInput_2310,
-        AssetTypes.CUSTOM_MODEL: RestCustomModelJobInput_2310,
-        AssetTypes.TRITON_MODEL: RestTritonModelJobInput_2310,
+        AssetTypes.URI_FILE: RestUriFileJobInput_2308,
+        AssetTypes.URI_FOLDER: RestUriFolderJobInput_2308,
+        AssetTypes.MLTABLE: RestMLTableJobInput_2308,
+        AssetTypes.MLFLOW_MODEL: RestMLFlowModelJobInput_2308,
+        AssetTypes.CUSTOM_MODEL: RestCustomModelJobInput_2308,
+        AssetTypes.TRITON_MODEL: RestTritonModelJobInput_2308,
     }
 
 
@@ -186,19 +186,19 @@ def get_output_rest_cls_dict() -> Dict[str, RestJobOutput]:
     }
 
 
-def get_output_rest_cls_dict_2310() -> Dict[str, RestJobOutput_2310]:
+def get_output_rest_cls_dict_2308() -> Dict[str, RestJobOutput_2308]:
     """Get output rest init cls dict.
 
     :return: Map of AssetType to RestJobOutput
     :rtype: Dict[str, RestJobOutput]
     """
     return {
-        AssetTypes.URI_FILE: RestUriFileJobOutput_2310,
-        AssetTypes.URI_FOLDER: RestUriFolderJobOutput_2310,
-        AssetTypes.MLTABLE: RestMLTableJobOutput_2310,
-        AssetTypes.MLFLOW_MODEL: RestMLFlowModelJobOutput_2310,
-        AssetTypes.CUSTOM_MODEL: RestCustomModelJobOutput_2310,
-        AssetTypes.TRITON_MODEL: RestTritonModelJobOutput_2310,
+        AssetTypes.URI_FILE: RestUriFileJobOutput_2308,
+        AssetTypes.URI_FOLDER: RestUriFolderJobOutput_2308,
+        AssetTypes.MLTABLE: RestMLTableJobOutput_2308,
+        AssetTypes.MLFLOW_MODEL: RestMLFlowModelJobOutput_2308,
+        AssetTypes.CUSTOM_MODEL: RestCustomModelJobOutput_2308,
+        AssetTypes.TRITON_MODEL: RestTritonModelJobOutput_2308,
     }
 
 
@@ -337,11 +337,11 @@ def to_rest_dataset_literal_inputs(
     return rest_inputs
 
 
-def to_rest_dataset_literal_inputs_2310(
+def to_rest_dataset_literal_inputs_2308(
     inputs: Dict[str, Union[int, str, float, bool, Input]],
     *,
     job_type,
-) -> Dict[str, RestJobInput_2310]:
+) -> Dict[str, RestJobInput_2308]:
     """Turns dataset and literal inputs into dictionary of REST JobInput.
 
     :param inputs: Dictionary of dataset and literal inputs to job
@@ -362,18 +362,18 @@ def to_rest_dataset_literal_inputs_2310(
             validate_key_contains_allowed_characters(input_name)
         if isinstance(input_value, Input):
             if input_value.path and isinstance(input_value.path, str) and is_data_binding_expression(input_value.path):
-                input_data = LiteralJobInput_2310(value=input_value.path)
+                input_data = LiteralJobInput_2308(value=input_value.path)
                 # set mode attribute manually for binding job input
                 if input_value.mode:
-                    input_data.mode = INPUT_MOUNT_MAPPING_TO_REST_2310[input_value.mode]
-                input_data.job_input_type = JobInputType_2310.LITERAL
+                    input_data.mode = INPUT_MOUNT_MAPPING_TO_REST_2308[input_value.mode]
+                input_data.job_input_type = JobInputType_2308.LITERAL
             else:
-                target_cls_dict = get_input_rest_cls_dict_2310()
+                target_cls_dict = get_input_rest_cls_dict_2308()
 
                 if input_value.type in target_cls_dict:
                     input_data = target_cls_dict[input_value.type](
                         uri=input_value.path,
-                        mode=INPUT_MOUNT_MAPPING_TO_REST_2310[input_value.mode.lower()] if input_value.mode else None,
+                        mode=INPUT_MOUNT_MAPPING_TO_REST_2308[input_value.mode.lower()] if input_value.mode else None,
                     )
 
                 else:
@@ -387,17 +387,17 @@ def to_rest_dataset_literal_inputs_2310(
                     )
         elif input_value is None:
             # If the input is None, we need to pass the origin None to the REST API
-            input_data = LiteralJobInput_2310(value=None)
+            input_data = LiteralJobInput_2308(value=None)
         else:
             # otherwise, the input is a literal input
             if isinstance(input_value, dict):
-                input_data = LiteralJobInput_2310(value=str(input_value["value"]))
+                input_data = LiteralJobInput_2308(value=str(input_value["value"]))
                 # set mode attribute manually for binding job input
                 if "mode" in input_value:
                     input_data.mode = input_value["mode"]
             else:
-                input_data = LiteralJobInput_2310(value=str(input_value))
-            input_data.job_input_type = JobInputType_2310.LITERAL
+                input_data = LiteralJobInput_2308(value=str(input_value))
+            input_data.job_input_type = JobInputType_2308.LITERAL
         # Pack up inputs into PipelineInputs or ComponentJobInputs depending on caller
         rest_inputs[input_name] = input_data
     return rest_inputs
@@ -454,8 +454,8 @@ def from_rest_inputs_to_dataset_literal(
     return from_rest_inputs
 
 
-def from_rest_inputs_to_dataset_literal_2310(
-    inputs: Dict[str, RestJobInput_2310]
+def from_rest_inputs_to_dataset_literal_2308(
+    inputs: Dict[str, RestJobInput_2308]
 ) -> Dict[str, Union[int, str, float, bool, Input]]:
     """Turns REST dataset and literal inputs into the SDK format.
 
@@ -474,10 +474,10 @@ def from_rest_inputs_to_dataset_literal_2310(
             continue
 
         # TODO: Remove this as both rest type and sdk type are snake case now.
-        type_transfer_dict = get_output_type_mapping_from_rest_2310()
+        type_transfer_dict = get_output_type_mapping_from_rest_2308()
         # deal with invalid input type submitted by feb api
         # todo: backend help convert node level input/output type
-        normalize_job_input_output_type(input_value)  # Temporarily not modified to 2310 version
+        normalize_job_input_output_type(input_value)  # Temporarily not modified to 2308 version
 
         if input_value.job_input_type in type_transfer_dict:
             if input_value.uri:
@@ -488,7 +488,7 @@ def from_rest_inputs_to_dataset_literal_2310(
                     path=path,
                     mode=INPUT_MOUNT_MAPPING_FROM_REST[input_value.mode] if input_value.mode else None,
                 )
-        elif input_value.job_input_type in (JobInputType_2310.LITERAL, JobInputType_2310.LITERAL):
+        elif input_value.job_input_type in (JobInputType_2308.LITERAL,):
             # otherwise, the input is a literal, so just unpack the InputData value field
             input_data = input_value.value
         else:
@@ -545,7 +545,7 @@ def to_rest_data_outputs(outputs: Dict[str, Output]) -> Dict[str, RestJobOutput]
     return rest_outputs
 
 
-def to_rest_data_outputs_2310(outputs: Dict[str, Output]) -> Dict[str, RestJobOutput_2310]:
+def to_rest_data_outputs_2308(outputs: Dict[str, Output]) -> Dict[str, RestJobOutput_2308]:
     """Turns job outputs into REST format.
 
     :param outputs: Dictionary of dataset outputs from job
@@ -558,10 +558,10 @@ def to_rest_data_outputs_2310(outputs: Dict[str, Output]) -> Dict[str, RestJobOu
         validate_key_contains_allowed_characters(output_name)
         if output_value is None:
             # pipeline output could be none, default to URI folder with None mode
-            output_cls = RestUriFolderJobOutput_2310
+            output_cls = RestUriFolderJobOutput_2308
             rest_outputs[output_name] = output_cls(mode=None)
         else:
-            target_cls_dict = get_output_rest_cls_dict_2310()
+            target_cls_dict = get_output_rest_cls_dict_2308()
 
             output_value_type = output_value.type if output_value.type else AssetTypes.URI_FOLDER
             if output_value_type in target_cls_dict:
@@ -569,7 +569,7 @@ def to_rest_data_outputs_2310(outputs: Dict[str, Output]) -> Dict[str, RestJobOu
                     asset_name=output_value.name,
                     asset_version=output_value.version,
                     uri=output_value.path,
-                    mode=OUTPUT_MOUNT_MAPPING_TO_REST_2310[output_value.mode.lower()] if output_value.mode else None,
+                    mode=OUTPUT_MOUNT_MAPPING_TO_REST_2308[output_value.mode.lower()] if output_value.mode else None,
                     description=output_value.description,
                 )
             else:
@@ -625,7 +625,7 @@ def from_rest_data_outputs(outputs: Dict[str, RestJobOutput]) -> Dict[str, Outpu
     return from_rest_outputs
 
 
-def from_rest_data_outputs_2310(outputs: Dict[str, RestJobOutput_2310]) -> Dict[str, Output]:
+def from_rest_data_outputs_2308(outputs: Dict[str, RestJobOutput_2308]) -> Dict[str, Output]:
     """Turns REST outputs into the SDK format.
 
     :param outputs: Dictionary of dataset and literal inputs to job
@@ -633,7 +633,7 @@ def from_rest_data_outputs_2310(outputs: Dict[str, RestJobOutput_2310]) -> Dict[
     :return: A dictionary mapping input name to a InputOutputEntry
     :rtype: Dict[str, JobOutput]
     """
-    output_type_mapping = get_output_type_mapping_from_rest_2310()
+    output_type_mapping = get_output_type_mapping_from_rest_2308()
     from_rest_outputs = {}
     if outputs is None:
         return {}
@@ -642,16 +642,16 @@ def from_rest_data_outputs_2310(outputs: Dict[str, RestJobOutput_2310]) -> Dict[
             continue
         # deal with invalid output type submitted by feb api
         # todo: backend help convert node level input/output type
-        normalize_job_input_output_type(output_value)  # Temporarily not modified to 2310 version
+        normalize_job_input_output_type(output_value)  # Temporarily not modified to 2308 version
 
         if output_value.job_output_type in output_type_mapping:
             from_rest_outputs[output_name] = Output(
                 type=output_type_mapping[output_value.job_output_type],
                 path=output_value.uri,
-                mode=OUTPUT_MOUNT_MAPPING_FROM_REST_2310[output_value.mode] if output_value.mode else None,
-                description=getattr(output_value, "description", None),
-                name=getattr(output_value, "asset_name", None),
-                version=getattr(output_value, "asset_version", None),
+                mode=OUTPUT_MOUNT_MAPPING_FROM_REST_2308[output_value.mode] if output_value.mode else None,
+                description=output_value.description,
+                name=output_value.asset_name,
+                version=output_value.asset_version,
             )
         else:
             msg = "unsupported JobOutput type: {}".format(output_value.job_output_type)
