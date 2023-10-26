@@ -283,8 +283,8 @@ class AIClient:
         Returns:
             _type_: _description_
         """
-        from azure.ai.resources.index._dataindex.data_index import index_data
-        from azure.ai.resources.index._dataindex.entities import (
+        from azure.ai.resources._index._dataindex.data_index import index_data
+        from azure.ai.resources._index._dataindex.entities import (
             CitationRegex,
             Data,
             DataIndex,
@@ -292,9 +292,9 @@ class AIClient:
             IndexSource,
             IndexStore,
         )
-        from azure.ai.resources.index._embeddings import EmbeddingsContainer
+        from azure.ai.resources._index._embeddings import EmbeddingsContainer
         if isinstance(input_source, ACSSource):
-            from azure.ai.resources.index._utils.connections import get_connection_by_id_v2, get_target_from_connection
+            from azure.ai.resources._index._utils.connections import get_connection_by_id_v2, get_target_from_connection
 
             # Construct MLIndex object
             mlindex_config = {}
