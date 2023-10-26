@@ -593,7 +593,7 @@ Transactional batches have a limit of 100 operations per batch, and a total size
 batch operations being passed in.
 
 Transactional Batch operations look very similar to the singular operations apis, and are tuples containing
-(`operation_type_string`, `args_tuple`, `kwargs_dictionary`):
+(`operation_type_string`, `args_tuple`, `optional_kwargs_dictionary`):
 ```python
 batch_operations = [
         ("create", (item_body,), kwargs),
