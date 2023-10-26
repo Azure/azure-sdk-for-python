@@ -315,23 +315,28 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 need_refresh = False
                 updated_sentinel_keys = dict(self._refresh_on)
                 for (key, label), etag in self._refresh_on.items():
-                    updated_sentinel = await self._client.get_configuration_setting(
-                        key=key,
-                        label=label,
-                        etag=etag,
-                        match_condition=MatchConditions.IfModified,
-                        headers=_get_headers("Watch"),
-                        **kwargs
-                    )
-                    if updated_sentinel is not None:
-                        logging.debug(
-                            "Refresh all triggered by key: %s label %s.",
-                            key,
-                            label,
+                    try:
+                        updated_sentinel = await self._client.get_configuration_setting(
+                            key=key,
+                            label=label,
+                            etag=etag,
+                            match_condition=MatchConditions.IfModified,
+                            headers=_get_headers("Watch"),
+                            **kwargs
                         )
-                        need_refresh = True
+                        if updated_sentinel is not None:
+                            logging.debug("Refresh all triggered by key: %s label %s.", key, label)
+                            need_refresh = True
 
-                        updated_sentinel_keys[(key, label)] = updated_sentinel.etag
+                            updated_sentinel_keys[(key, label)] = updated_sentinel.etag
+                    except HttpResponseError as e:
+                        if e.status_code == 404:
+                            # If the sentinel is not found, it means the key/label was deleted, so we should refresh
+                            logging.debug("Refresh all triggered by key: %s label %s.", key, label)
+                            need_refresh = True
+                            updated_sentinel_keys[(key, label)] = None
+                        else:
+                            raise e
                 # Need to only update once, no matter how many sentinels are updated
                 if need_refresh:
                     await self._load_all(**kwargs)

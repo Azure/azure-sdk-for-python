@@ -437,7 +437,12 @@ class AzureAppConfigurationProvider(Mapping[str, Union[str, JSON]]):  # pylint: 
                 for (key, label), etag in updated_sentinel_keys.items():
                     try:
                         updated_sentinel = self._client.get_configuration_setting(
-                            key=key, label=label, etag=etag, match_condition=MatchConditions.IfModified, **kwargs
+                            key=key,
+                            label=label,
+                            etag=etag,
+                            match_condition=MatchConditions.IfModified,
+                            headers=_get_headers("Watch"),
+                            **kwargs
                         )
                         if updated_sentinel is not None:
                             logging.debug(
