@@ -25,32 +25,32 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
 )
 from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestManagedServiceIdentityConfiguration
 from azure.ai.ml._restclient.v2022_05_01.models import UserAssignedIdentity as RestUserAssignedIdentityConfiguration
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     AccountKeyDatastoreCredentials as RestAccountKeyDatastoreCredentials,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     AccountKeyDatastoreSecrets as RestAccountKeyDatastoreSecrets,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken as RestAmlToken
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import AmlToken as RestAmlToken
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     CertificateDatastoreCredentials as RestCertificateDatastoreCredentials,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import CertificateDatastoreSecrets, CredentialsType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
-from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfigurationType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedIdentity as RestJobManagedIdentity
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedServiceIdentity as RestRegistryManagedIdentity
-from azure.ai.ml._restclient.v2023_04_01_preview.models import NoneDatastoreCredentials as RestNoneDatastoreCredentials
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SasDatastoreCredentials as RestSasDatastoreCredentials
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SasDatastoreSecrets as RestSasDatastoreSecrets
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import CertificateDatastoreSecrets, CredentialsType
+from azure.ai.ml._restclient.v2023_08_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
+from azure.ai.ml._restclient.v2023_08_01_preview.models import IdentityConfigurationType
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedIdentity as RestJobManagedIdentity
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedServiceIdentity as RestRegistryManagedIdentity
+from azure.ai.ml._restclient.v2023_08_01_preview.models import NoneDatastoreCredentials as RestNoneDatastoreCredentials
+from azure.ai.ml._restclient.v2023_08_01_preview.models import SasDatastoreCredentials as RestSasDatastoreCredentials
+from azure.ai.ml._restclient.v2023_08_01_preview.models import SasDatastoreSecrets as RestSasDatastoreSecrets
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     ServicePrincipalDatastoreCredentials as RestServicePrincipalDatastoreCredentials,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     ServicePrincipalDatastoreSecrets as RestServicePrincipalDatastoreSecrets,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import UserIdentity as RestUserIdentity
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     WorkspaceConnectionAccessKey as RestWorkspaceConnectionAccessKey,
 )
 from azure.ai.ml._restclient.v2023_06_01_preview.models import ConnectionAuthType

@@ -161,7 +161,7 @@ input-file:
   - Microsoft.MachineLearningServices/preview/2023-04-01-preview/registries.json
   - Microsoft.MachineLearningServices/preview/2023-04-01-preview/workspaceFeatures.json
   - Microsoft.MachineLearningServices/preview/2023-04-01-preview/mfe.json
-output-folder: $(python-sdks-folder)/v2023_04_01_preview
+output-folder: $(python-sdks-folder)/v2023_08_01_preview
 ```
 
 ### Tag: v2023-04-01

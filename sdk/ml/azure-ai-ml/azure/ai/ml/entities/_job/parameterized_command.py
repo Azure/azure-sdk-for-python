@@ -9,7 +9,7 @@ from typing import Dict, Optional, Union
 
 from marshmallow import INCLUDE
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SweepJob
+from azure.ai.ml._restclient.v2023_08_01_preview.models import SweepJob
 from azure.ai.ml._schema.core.fields import ExperimentalField
 from azure.ai.ml.entities._assets import Environment
 

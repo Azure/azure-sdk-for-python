@@ -14,7 +14,7 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._local_endpoints import LocalEndpointMode
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DeploymentLogsRequest
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
+from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,

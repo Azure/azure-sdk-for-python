@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Dict, Optional, Type, Union
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     DataContainer,
     DataContainerProperties,
     DataType,

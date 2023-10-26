@@ -7,10 +7,10 @@
 from pathlib import Path
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     AzureDataLakeGen1Datastore as RestAzureDatalakeGen1Datastore,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Datastore as DatastoreData, DatastoreType
+from azure.ai.ml._restclient.v2023_08_01_preview.models import Datastore as DatastoreData, DatastoreType
 from azure.ai.ml._schema._datastore.adls_gen1 import AzureDataLakeGen1Schema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._credentials import CertificateConfiguration, ServicePrincipalConfiguration

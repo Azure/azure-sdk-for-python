@@ -48,7 +48,7 @@ class MiscConfigurationOptions(object):
         # [END job_operations_create_and_update]
 
         # [START job_operations_list]
-        from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType
+        from azure.ai.ml._restclient.v2023_08_01_preview.models import ListViewType
 
         list_of_jobs = ml_client.jobs.list(parent_job_name=job_name, list_view_type=ListViewType.ARCHIVED_ONLY)
         # [END job_operations_list]

@@ -24,7 +24,7 @@ class FeatureSetBackfillRequest(RestTranslatableMixin):
     :param version: The version of the backfill job request.
     :type version: str
     :param feature_window: The time window for the feature set backfill request.
-    :type feature_window: ~azure.ai.ml._restclient.v2023_04_01_preview.models.FeatureWindow
+    :type feature_window: ~azure.ai.ml._restclient.v2023_08_01_preview.models.FeatureWindow
     :param description: The description of the backfill job request. Defaults to None.
     :type description: Optional[str]
     :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.

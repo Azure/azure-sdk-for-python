@@ -306,7 +306,7 @@ class TestFeatureStoreOperation:
 
         def outgoing_workspace_connection_call(resource_group_name, workspace_name, connection_name):
             if connection_name.startswith(OFFLINE_STORE_CONNECTION_NAME):
-                from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+                from azure.ai.ml._restclient.v2023_08_01_preview.models import (
                     WorkspaceConnectionPropertiesV2,
                     WorkspaceConnectionPropertiesV2BasicResource,
                 )
@@ -318,7 +318,7 @@ class TestFeatureStoreOperation:
                 )
                 return resource
             elif connection_name.startswith(ONLINE_STORE_CONNECTION_NAME):
-                from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+                from azure.ai.ml._restclient.v2023_08_01_preview.models import (
                     WorkspaceConnectionPropertiesV2,
                     WorkspaceConnectionPropertiesV2BasicResource,
                 )

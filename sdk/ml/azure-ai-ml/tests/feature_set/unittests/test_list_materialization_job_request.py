@@ -17,7 +17,7 @@ class TestListMaterializationJobRequest:
     # Upate: request.method = "POST" in list_materialization_jobs function
     # ---------------------------------------------------------
     def test_list_materialization_job_request(self) -> None:
-        test_path = "azure/ai/ml/_restclient/v2023_04_01_preview/operations/_featureset_versions_operations.py"
+        test_path = "azure/ai/ml/_restclient/v2023_08_01_preview/operations/_featureset_versions_operations.py"
         with open(test_path, "r") as f:
             file_contents = f.read()
         start = "def list_materialization_jobs"

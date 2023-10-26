@@ -8,7 +8,7 @@ import logging
 
 
 from azure.ai.ml.entities import BatchDeployment, OnlineDeployment, Deployment
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     PackageRequest,
     CodeConfiguration,
     BaseEnvironmentId,

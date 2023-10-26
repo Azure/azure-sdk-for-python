@@ -8,7 +8,7 @@ import logging
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     ConnectionAuthType,
     IdentityConfigurationType,
 )

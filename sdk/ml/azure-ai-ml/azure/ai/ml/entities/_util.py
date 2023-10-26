@@ -13,9 +13,9 @@ import msrest
 from marshmallow.exceptions import ValidationError
 
 from .._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
-from .._restclient.v2023_04_01_preview.models import JobInput as RestJobInput
-from .._restclient.v2023_04_01_preview.models import JobInputType as JobInputType10
-from .._restclient.v2023_04_01_preview.models import JobOutput as RestJobOutput
+from .._restclient.v2023_08_01_preview.models import JobInput as RestJobInput
+from .._restclient.v2023_08_01_preview.models import JobInputType as JobInputType10
+from .._restclient.v2023_08_01_preview.models import JobOutput as RestJobOutput
 from .._schema._datastore import AzureBlobSchema, AzureDataLakeGen1Schema, AzureDataLakeGen2Schema, AzureFileSchema
 from .._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
 from .._schema._deployment.online.online_deployment import (

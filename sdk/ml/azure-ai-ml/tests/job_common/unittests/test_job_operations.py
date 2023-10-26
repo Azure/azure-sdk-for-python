@@ -14,7 +14,7 @@ from pytest_mock import MockFixture
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
-from azure.ai.ml._restclient.v2023_04_01_preview import models
+from azure.ai.ml._restclient.v2023_08_01_preview import models
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AzureMLResourceType
 from azure.ai.ml.entities._builders import Command

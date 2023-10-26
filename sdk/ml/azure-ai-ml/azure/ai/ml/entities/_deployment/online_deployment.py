@@ -11,15 +11,15 @@ from abc import abstractmethod
 from pathlib import Path
 from typing import Dict, Optional, Tuple, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import CodeConfiguration as RestCodeConfiguration
-from azure.ai.ml._restclient.v2023_04_01_preview.models import EndpointComputeType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import CodeConfiguration as RestCodeConfiguration
+from azure.ai.ml._restclient.v2023_08_01_preview.models import EndpointComputeType
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     KubernetesOnlineDeployment as RestKubernetesOnlineDeployment,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedOnlineDeployment as RestManagedOnlineDeployment
-from azure.ai.ml._restclient.v2023_04_01_preview.models import OnlineDeployment as RestOnlineDeploymentData
-from azure.ai.ml._restclient.v2023_04_01_preview.models import OnlineDeploymentProperties as RestOnlineDeploymentDetails
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Sku as RestSku
+from azure.ai.ml._restclient.v2023_08_01_preview.models import ManagedOnlineDeployment as RestManagedOnlineDeployment
+from azure.ai.ml._restclient.v2023_08_01_preview.models import OnlineDeployment as RestOnlineDeploymentData
+from azure.ai.ml._restclient.v2023_08_01_preview.models import OnlineDeploymentProperties as RestOnlineDeploymentDetails
+from azure.ai.ml._restclient.v2023_08_01_preview.models import Sku as RestSku
 from azure.ai.ml._schema._deployment.online.online_deployment import (
     KubernetesOnlineDeploymentSchema,
     ManagedOnlineDeploymentSchema,

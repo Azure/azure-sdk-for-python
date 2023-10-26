@@ -6,7 +6,7 @@
 
 from typing import List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     AutoForecastHorizon,
     AutoSeasonality,
     AutoTargetLags,
@@ -17,10 +17,10 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     CustomTargetRollingWindowSize,
     ForecastHorizonMode,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     ForecastingSettings as RestForecastingSettings,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     SeasonalityMode,
     TargetLagsMode,
     TargetRollingWindowSizeMode,
