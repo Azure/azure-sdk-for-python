@@ -9,7 +9,7 @@
 
 ### Breaking Changes
 
-- Split `PurviewWorkflowServiceClient` into multiple clients by model.
+- Split `PurviewWorkflowClient` into `UserRequestsClient`, `WorkflowClient`, `WorkflowRunClient` and `WorkflowTaskClient`.
 
 ### Other Changes
 
