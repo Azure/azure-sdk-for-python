@@ -11,8 +11,7 @@ from typing_extensions import Literal
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import AllNodes
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobService as RestJobService
-from azure.ai.ml._restclient.v2023_10_01.models import AllNodes as AllNodes_2310
-from azure.ai.ml._restclient.v2023_10_01.models import JobService as RestJobService_2310
+from azure.ai.ml._restclient.v2023_08_01_preview.models import JobService as RestJobService_2308
 from azure.ai.ml.constants._job.job import JobServiceTypeNames
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
@@ -147,8 +146,8 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
         return result
 
     @classmethod
-    def _from_rest_job_services_2310(
-        cls, services: Dict[str, RestJobService_2310]
+    def _from_rest_job_services_2308(
+        cls, services: Dict[str, RestJobService_2308]
     ) -> Dict[
         str, Union["JobService", "JupyterLabJobService", "SshJobService", "TensorBoardJobService", "VsCodeJobService"]
     ]:
@@ -161,17 +160,17 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
             if service.job_service_type == JobServiceTypeNames.RestNames.JUPYTER_LAB:
                 result[name] = JupyterLabJobService._from_rest_object(
                     service
-                )  # Temporarily not modified to 2310 version
+                )  # Temporarily not modified to 2308 version
             elif service.job_service_type == JobServiceTypeNames.RestNames.SSH:
-                result[name] = SshJobService._from_rest_object(service)  # Temporarily not modified to 2310 version
+                result[name] = SshJobService._from_rest_object(service)  # Temporarily not modified to 2308 version
             elif service.job_service_type == JobServiceTypeNames.RestNames.TENSOR_BOARD:
                 result[name] = TensorBoardJobService._from_rest_object(
                     service
-                )  # Temporarily not modified to 2310 version
+                )  # Temporarily not modified to 2308 version
             elif service.job_service_type == JobServiceTypeNames.RestNames.VS_CODE:
-                result[name] = VsCodeJobService._from_rest_object(service)  # Temporarily not modified to 2310 version
+                result[name] = VsCodeJobService._from_rest_object(service)  # Temporarily not modified to 2308 version
             else:
-                result[name] = JobService._from_rest_object(service)  # Temporarily not modified to 2310 version
+                result[name] = JobService._from_rest_object(service)  # Temporarily not modified to 2308 version
         return result
 
 

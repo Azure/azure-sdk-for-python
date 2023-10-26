@@ -32,8 +32,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2023_04_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType, UserIdentity
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobBase as JobBase_2308
-from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType_2308
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ListViewType as ListViewType_2308, UserIdentity as UserIdentity_2308
+from azure.ai.ml._restclient.v2023_08_01_preview.models import UserIdentity as UserIdentity_2308
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -705,7 +704,7 @@ class JobOperations(_ScopeDependentOperations):
 
     def create_or_update_with_different_version_api(self, rest_job_resource, **kwargs):
         service_client_operation = self._service_client_operation
-        # Upgrade api from 2023-04-01-preview to 2023-10-01 for pipeline job
+        # Upgrade api from 2023-04-01-preview to 2023-08-01 for pipeline job
         if rest_job_resource.properties.job_type == RestJobType.PIPELINE and self.pipeline_service_client:
             service_client_operation = self.pipeline_service_client.jobs
 
@@ -1009,8 +1008,8 @@ class JobOperations(_ScopeDependentOperations):
             **self._kwargs,
         )
 
-    # Upgrade api from 2023-04-01-preview to 2023-10-01 for pipeline job
-    # We can remove this function once `_get_job` function has also been upgraded to 2023-10-01 api
+    # Upgrade api from 2023-04-01-preview to 2023-08-01 for pipeline job
+    # We can remove this function once `_get_job` function has also been upgraded to 2023-08-01 api
     def _get_job_2308(self, name: str) -> JobBase_2308:
         service_client_operation = self.pipeline_service_client.jobs if self.pipeline_service_client \
             else self._service_client_operation
