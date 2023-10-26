@@ -22,7 +22,7 @@ class TestSimulator:
             role=ConversationRole.USER,
             name="Jake",
             message="<|im_start|>user\nconversation turn 0",
-            full_response={"id": "convid", "responsek1":"k2"},
+            full_response={"id": "convid", "response1":"k2"},
             request={"messages": [{"content": "some template string"}]}
         )
 
@@ -30,7 +30,7 @@ class TestSimulator:
             role=ConversationRole.USER,
             name="Jake",
             message="<|im_start|>user\nconversation turn 1",
-            full_response={"id": "convid", "responsek1":"k2"},
+            full_response={"id": "convid", "response2":"k2"},
             request={"messages": [{"content": "some template string"}]}
         )
 
