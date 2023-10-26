@@ -332,7 +332,9 @@ class SearchClient(HeadersMixin):
             top=top,
             session_id=session_id,
             scoring_statistics=scoring_statistics,
-            vector_queries=[v._to_generated() for v in vector_queries],  # pylint:disable=protected-access
+            vector_queries=None
+            if not vector_queries
+            else [v._to_generated() for v in vector_queries],  # pylint:disable=protected-access
             vector_filter_mode=vector_filter_mode,
             semantic_error_handling=semantic_error_mode,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
