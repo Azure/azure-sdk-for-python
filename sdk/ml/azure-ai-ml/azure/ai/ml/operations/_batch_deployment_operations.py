@@ -338,7 +338,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                     name=deployment.component.name, version=deployment.component.version
                 )
                 deployment.component = registered_component.id
-            except ResourceNotFoundError as err:
+            except ResourceNotFoundError:
                 deployment.component = self._all_operations.all_operations[
                     AzureMLResourceType.COMPONENT
                 ].create_or_update(
