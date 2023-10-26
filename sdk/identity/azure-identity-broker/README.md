@@ -20,17 +20,15 @@ pip install azure-identity-broker
 
 ## Key concepts
 
-This package enables broker support via the following two credentials:
-
-- `azure.identity.broker.InteractiveBrowserBrokerCredential`
-- `azure.identity.broker.UsernamePasswordBrokerCredential`
-
-These credentials are subclasses of the `InteractiveBrowserCredential` and `UsernamePasswordCredential`
-classes of the Azure Identity library.
+This package enables broker support via `InteractiveBrowserBrokerCredential` which is a subclass of the `InteractiveBrowserCredential` of the Azure Identity library.
 
 ### Parent window handles
 
 When authenticating interactively via `InteractiveBrowserBrokerCredential`, a parent window handle is required to ensure that the authentication dialog is shown correctly over the requesting window. In the context of graphical user interfaces on devices, a window handle is a unique identifier that the operating system assigns to each window. For the Windows operating system, this is an integer value that serves as a reference to a specific window.
+
+## Microsoft account (MSA) passthrough
+
+Microsoft accounts (MSA) are personal accounts created by users to access Microsoft services. MSA- passthrough is a legacy configuration which enables users to get tokens to resources which normally do not accept MSA logins. This is only available to first-party applications. Users authenticating with an application that is configured to use MSA-passthrough can set `enable_msa_passthrough` to `True` inside `InteractiveBrowserBrokerCredential` to allow these personal accounts to be listed by WAM.
 
 ## Examples
 

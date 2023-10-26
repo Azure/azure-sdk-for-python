@@ -294,9 +294,9 @@ Get-AzAccessToken -ResourceUrl "https://management.core.windows.net"
 |---|---|---|
 |The current credential is not configured to acquire tokens for tenant <tenant ID>|<p>The application must configure the credential to allow token acquisition from the requested tenant.|Make one of the following changes in your app:<ul><li>Add the requested tenant ID to `additionally_allowed_tenants` on the credential options.</li><li>Add `*` to `additionally_allowed_tenants` to allow token acquisition for any tenant.</li></ul></p><p>This exception was added as part of a breaking change to multi-tenant authentication in version 1.11.0. Users experiencing this error after upgrading can find details on the change and migration in [BREAKING_CHANGES.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/BREAKING_CHANGES.md#1110).</p> |
 
-## Troubleshoot WAM+MSA login issues
+## Troubleshoot Web Account Manager (WAM) and Microsoft account (MSA) login issues
 
-When using brokered authentication via the `azure-identity-broker` package on Windows, `InteractiveBrowserBrokerCredential` only lists Microsoft Entra accounts by default:
+When using `InteractiveBrowserBrokerCredential` via the `azure-identity-broker` package on Windows, only Microsoft Entra accounts are listed by default:
 
 ![MSA Microsoft Entra only](./images/MSA1.png)
 
