@@ -6,14 +6,30 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import PurviewWorkflowClientOperationsMixin
+from ._operations import WorkflowsOperations
+from ._operations import WorkflowOperations
+from ._operations import UserRequestsOperations
+from ._operations import WorkflowRunsOperations
+from ._operations import WorkflowRunOperations
+from ._operations import WorkflowTasksOperations
+from ._operations import WorkflowTaskOperations
+from ._operations import ApprovalOperations
+from ._operations import TaskStatusOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "PurviewWorkflowClientOperationsMixin",
+    "WorkflowsOperations",
+    "WorkflowOperations",
+    "UserRequestsOperations",
+    "WorkflowRunsOperations",
+    "WorkflowRunOperations",
+    "WorkflowTasksOperations",
+    "WorkflowTaskOperations",
+    "ApprovalOperations",
+    "TaskStatusOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
