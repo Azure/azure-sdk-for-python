@@ -24,7 +24,7 @@ from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration, User
 from azure.core.credentials import TokenCredential
 
 from .._project_scope import OperationScope
-from ._user_agent import USER_AGENT
+from .._user_agent import USER_AGENT
 from azure.ai.resources.operations import (
     AIResourceOperations,
     ConnectionOperations,
