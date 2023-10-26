@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from  azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
-from azure.ai.resources._project_scope import OperationScope
+from azure.ai.resources.client._project_scope import OperationScope
 
 def build_connection_id(id: str, scope: OperationScope):
     if not id or not scope.subscription_id or not scope.resource_group_name or not scope.project_name:

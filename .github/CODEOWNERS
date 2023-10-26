@@ -269,7 +269,7 @@
 /sdk/remoterendering/                                                @FlorianBorn71
 
 # PRLabel: %Open AI
-/sdk/openai                                                          @kristapratico @glecaros
+/sdk/openai/                                                         @kristapratico @glecaros
 
 # PRLabel: %Purview
 /sdk/purview/                                                        @iscai-msft @msyyc
