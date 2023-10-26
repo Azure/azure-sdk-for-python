@@ -11,10 +11,25 @@ FILE: sample_analyze_addon_formulas.py
 
 DESCRIPTION:
     This sample demonstrates how to extract math formula information using the add-on
-    'FORMULAS' capability.
+    'FORMULAS' feature.
 
-    Add-on capabilities are available within all models except for the Business card
+    Add-on features are available within all models except for the Business card
     model. This sample uses Layout model to demonstrate.
+
+    Add-on features accept a list of strings containing values from the `AnalysisFeature`
+    enum class. For more information, see:
+    https://learn.microsoft.com/en-us/python/api/azure-ai-formrecognizer/azure.ai.formrecognizer.analysisfeature?view=azure-python.
+
+    The following add-on features are free:
+    - BARCODES
+    - LANGUAGES
+
+    The following add-on features will incur additional charges:
+    - FORMULAS
+    - OCR_HIGH_RESOLUTION
+    - STYLE_FONT
+
+    See pricing: https://azure.microsoft.com/en-us/pricing/details/ai-document-intelligence/.
 
 USAGE:
     python sample_analyze_addon_formulas.py
@@ -53,10 +68,10 @@ def analyze_formulas():
             os.path.abspath(__file__),
             "..",
             "..",
-            "sample_forms/add_ons/formula.jpg",
+            "sample_forms/add_ons/formulas.jpg",
         )
     )
-
+    # [START analyze_formulas]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer import DocumentAnalysisClient, AnalysisFeature
 
@@ -66,12 +81,16 @@ def analyze_formulas():
     document_analysis_client = DocumentAnalysisClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
+
+    # Specify which add-on features to enable
     with open(path_to_sample_documents, "rb") as f:
         poller = document_analysis_client.begin_analyze_document(
             "prebuilt-layout", document=f, features=[AnalysisFeature.FORMULAS]
         )
     result = poller.result()
 
+    # Iterate over extracted formulas on each page and print inline and display formulas
+    # separately.
     for page in result.pages:
         print(f"----Formulas detected from page #{page.page_number}----")
         inline_formulas = [f for f in page.formulas if f.kind == "inline"]
@@ -83,14 +102,14 @@ def analyze_formulas():
             print(f"  Confidence: {formula.confidence}")
             print(f"  Bounding regions: {format_polygon(formula.polygon)}")
 
-        print()
-        print(f"Detected {len(display_formulas)} display formulas.")
+        print(f"\nDetected {len(display_formulas)} display formulas.")
         for formula_idx, formula in enumerate(display_formulas):
             print(f"- Display #{formula_idx}: {formula.value}")
             print(f"  Confidence: {formula.confidence}")
             print(f"  Bounding regions: {format_polygon(formula.polygon)}")
 
     print("----------------------------------------")
+    # [END analyze_formulas]
 
 
 if __name__ == "__main__":

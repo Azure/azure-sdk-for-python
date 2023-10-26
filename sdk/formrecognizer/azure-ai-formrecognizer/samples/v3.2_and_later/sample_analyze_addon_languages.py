@@ -13,8 +13,23 @@ DESCRIPTION:
     This sample demonstrates how to extract font information using the add-on
     'LANGUAGES' capability.
 
-    Add-on capabilities are available within all models except for the Business card
+    Add-on features are available within all models except for the Business card
     model. This sample uses Layout model to demonstrate.
+
+    Add-on features accept a list of strings containing values from the `AnalysisFeature`
+    enum class. For more information, see:
+    https://learn.microsoft.com/en-us/python/api/azure-ai-formrecognizer/azure.ai.formrecognizer.analysisfeature?view=azure-python.
+
+    The following add-on features are free:
+    - BARCODES
+    - LANGUAGES
+
+    The following add-on features will incur additional charges:
+    - FORMULAS
+    - OCR_HIGH_RESOLUTION
+    - STYLE_FONT
+
+    See pricing: https://azure.microsoft.com/en-us/pricing/details/ai-document-intelligence/.
 
 USAGE:
     python sample_analyze_addon_languages.py
@@ -56,7 +71,7 @@ def analyze_languages():
             "sample_forms/add_ons/fonts_and_languages.png",
         )
     )
-
+    # [START analyze_languages]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer import DocumentAnalysisClient, AnalysisFeature
 
@@ -66,6 +81,8 @@ def analyze_languages():
     document_analysis_client = DocumentAnalysisClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
+
+    # Specify which add-on features to enable.
     with open(path_to_sample_documents, "rb") as f:
         poller = document_analysis_client.begin_analyze_document(
             "prebuilt-layout", document=f, features=[AnalysisFeature.LANGUAGES]
@@ -80,6 +97,7 @@ def analyze_languages():
         print(f"  Text: '{','.join([result.content[span.offset : span.offset + span.length] for span in lang.spans])}'")
 
     print("----------------------------------------")
+    # [END analyze_languages]
 
 
 if __name__ == "__main__":

@@ -11,10 +11,25 @@ FILE: sample_analyze_addon_barcodes.py
 
 DESCRIPTION:
     This sample demonstrates how to extract barcode information using the add-on
-    'BARCODES' capability.
+    'BARCODES' feature.
 
-    Add-on capabilities are available within all models except for the Business card
+    Add-on features are available within all models except for the Business card
     model. This sample uses Layout model to demonstrate.
+
+    Add-on features accept a list of strings containing values from the `AnalysisFeature`
+    enum class. For more information, see:
+    https://learn.microsoft.com/en-us/python/api/azure-ai-formrecognizer/azure.ai.formrecognizer.analysisfeature?view=azure-python.
+
+    The following add-on features are free:
+    - BARCODES
+    - LANGUAGES
+
+    The following add-on features will incur additional charges:
+    - FORMULAS
+    - OCR_HIGH_RESOLUTION
+    - STYLE_FONT
+
+    See pricing: https://azure.microsoft.com/en-us/pricing/details/ai-document-intelligence/.
 
 USAGE:
     python sample_analyze_addon_barcodes.py
@@ -53,10 +68,10 @@ def analyze_barcodes():
             os.path.abspath(__file__),
             "..",
             "..",
-            "sample_forms/add_ons/barcode.jpg",
+            "sample_forms/add_ons/barcodes.jpg",
         )
     )
-
+    # [START analyze_barcodes]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer import DocumentAnalysisClient, AnalysisFeature
 
@@ -66,14 +81,18 @@ def analyze_barcodes():
     document_analysis_client = DocumentAnalysisClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
+
+    # Specify which add-on features to enable.
     with open(path_to_sample_documents, "rb") as f:
         poller = document_analysis_client.begin_analyze_document(
             "prebuilt-layout", document=f, features=[AnalysisFeature.BARCODES]
         )
     result = poller.result()
 
+    # Iterate over extracted barcodes on each page.
     for page in result.pages:
-        print(f"----{len(page.barcodes)} Barcodes detected from page #{page.page_number}----")
+        print(f"----Barcodes detected from page #{page.page_number}----")
+        print(f"Detected {len(page.barcodes)} barcodes:")
         for barcode_idx, barcode in enumerate(page.barcodes):
             print(f"- Barcode #{barcode_idx}: {barcode.value}")
             print(f"  Kind: {barcode.kind}")
@@ -81,6 +100,7 @@ def analyze_barcodes():
             print(f"  Bounding regions: {format_polygon(barcode.polygon)}")
 
     print("----------------------------------------")
+    # [END analyze_barcodes]
 
 
 if __name__ == "__main__":

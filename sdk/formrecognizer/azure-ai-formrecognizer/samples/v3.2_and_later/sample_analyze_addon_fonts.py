@@ -11,10 +11,25 @@ FILE: sample_analyze_addon_fonts.py
 
 DESCRIPTION:
     This sample demonstrates how to extract font information using the add-on
-    'STYLE_FONT' capability.
+    'STYLE_FONT' feature.
 
-    Add-on capabilities are available within all models except for the Business card
+    Add-on features are available within all models except for the Business card
     model. This sample uses Layout model to demonstrate.
+
+    Add-on features accept a list of strings containing values from the `AnalysisFeature`
+    enum class. For more information, see:
+    https://learn.microsoft.com/en-us/python/api/azure-ai-formrecognizer/azure.ai.formrecognizer.analysisfeature?view=azure-python.
+
+    The following add-on features are free:
+    - BARCODES
+    - LANGUAGES
+
+    The following add-on features will incur additional charges:
+    - FORMULAS
+    - OCR_HIGH_RESOLUTION
+    - STYLE_FONT
+
+    See pricing: https://azure.microsoft.com/en-us/pricing/details/ai-document-intelligence/.
 
 USAGE:
     python sample_analyze_addon_fonts.py
@@ -49,6 +64,7 @@ def format_polygon(polygon):
 
 
 def get_styled_text(styles, content):
+    # Iterate over the styles and merge the spans from each style.
     spans = [span for style in styles for span in style.spans]
     spans.sort(key=lambda span: span.offset)
     return ','.join([content[span.offset : span.offset + span.length] for span in spans])
@@ -63,7 +79,7 @@ def analyze_fonts():
             "sample_forms/add_ons/fonts_and_languages.png",
         )
     )
-
+    # [START analyze_fonts]
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.formrecognizer import DocumentAnalysisClient, AnalysisFeature
 
@@ -73,11 +89,19 @@ def analyze_fonts():
     document_analysis_client = DocumentAnalysisClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
+    # Specify which add-on features to enable.
     with open(path_to_sample_documents, "rb") as f:
         poller = document_analysis_client.begin_analyze_document(
             "prebuilt-layout", document=f, features=[AnalysisFeature.STYLE_FONT]
         )
     result = poller.result()
+
+    # DocumentStyle has the following font related attributes:
+    similar_font_faimilies = defaultdict(list)  # e.g., 'Arial, sans-serif
+    font_styles = defaultdict(list)             # e.g, 'italic'
+    font_weights = defaultdict(list)            # e.g., 'bold'
+    font_colors = defaultdict(list)             # in '#rrggbb' hexadecimal format
+    font_background_colors = defaultdict(list)  # in '#rrggbb' hexadecimal format
 
     if any([style.is_handwritten for style in result.styles]):
         print("Document contains handwritten content")
@@ -86,15 +110,11 @@ def analyze_fonts():
 
     print()
     print("----Fonts styles detected in the document----")
-    font_faimilies = defaultdict(list)
-    font_styles = defaultdict(list)
-    font_weights = defaultdict(list)
-    font_colors = defaultdict(list)
-    font_background_colors = defaultdict(list)
 
+    # Iterate over the styles and group them by their font attributes.
     for style in result.styles:
         if style.similar_font_family:
-            font_faimilies[style.similar_font_family].append(style)
+            similar_font_faimilies[style.similar_font_family].append(style)
         if style.font_style:
             font_styles[style.font_style].append(style)
         if style.font_weight:
@@ -104,36 +124,33 @@ def analyze_fonts():
         if style.background_color:
             font_background_colors[style.background_color].append(style)
 
-    print(f"Detected {len(font_faimilies)} font families:")
-    for font_family, styles in font_faimilies.items():
+    print(f"Detected {len(similar_font_faimilies)} font families:")
+    for font_family, styles in similar_font_faimilies.items():
         print(f"- Font family: '{font_family}'")
         print(f"  Text: '{get_styled_text(styles, result.content)}'")
 
-    print()
-    print(f"Detected {len(font_styles)} font styles:")
+    print(f"\nDetected {len(font_styles)} font styles:")
     for font_style, styles in font_styles.items():
         print(f"- Font style: '{font_style}'")
         print(f"  Text: '{get_styled_text(styles, result.content)}'")
 
-    print()
-    print(f"Detected {len(font_weights)} font weights:")
+    print(f"\nDetected {len(font_weights)} font weights:")
     for font_weight, styles in font_weights.items():
         print(f"- Font weight: '{font_weight}'")
         print(f"  Text: '{get_styled_text(styles, result.content)}'")
 
-    print()
-    print(f"Detected {len(font_colors)} font colors:")
+    print(f"\nDetected {len(font_colors)} font colors:")
     for font_color, styles in font_colors.items():
         print(f"- Font color: '{font_color}'")
         print(f"  Text: '{get_styled_text(styles, result.content)}'")
 
-    print()
-    print(f"Detected {len(font_background_colors)} font background colors:")
+    print(f"\nDetected {len(font_background_colors)} font background colors:")
     for font_background_color, styles in font_background_colors.items():
         print(f"- Font background color: '{font_background_color}'")
         print(f"  Text: '{get_styled_text(styles, result.content)}'")
 
     print("----------------------------------------")
+    # [END analyze_fonts]
 
 
 if __name__ == "__main__":
