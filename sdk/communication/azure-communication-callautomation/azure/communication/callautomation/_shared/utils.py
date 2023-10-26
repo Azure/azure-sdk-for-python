@@ -8,8 +8,8 @@ import base64
 import json
 import calendar
 from typing import cast, Tuple, Optional
-from datetime import datetime
-from msrest.serialization import TZ_UTC
+from datetime import datetime, timezone
+
 from azure.core.credentials import AccessToken
 
 
@@ -53,7 +53,7 @@ def parse_connection_str(conn_str):
 
 def get_current_utc_time():
     # type: () -> str
-    return str(datetime.now(tz=TZ_UTC).strftime("%a, %d %b %Y %H:%M:%S ")) + "GMT"
+    return str(datetime.now(tz=timezone.utc).strftime("%a, %d %b %Y %H:%M:%S ")) + "GMT"
 
 
 def get_current_utc_as_int():
@@ -88,7 +88,7 @@ def create_access_token(token):
         return AccessToken(
             token,
             _convert_datetime_to_utc_int(
-                datetime.fromtimestamp(payload["exp"], TZ_UTC)
+                datetime.fromtimestamp(payload["exp"], timezone.utc)
             ),
         )
     except ValueError as val_error:
