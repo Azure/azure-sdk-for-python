@@ -212,8 +212,6 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             await self._input_handles[frame[1]].detach()
 
     async def _outgoing_flow(self, frame=None):
-        print("SENDING FLOW FRAME")
-        print(frame)
         link_flow = frame or {}
         link_flow.update(
             {
@@ -354,9 +352,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                     """Handle is not currently associated with an attached link""",
                 )
             )
-        print(self.incoming_window)
         if self.incoming_window == 0:
-            print("INCOMING WINDOW HERE")
             self.incoming_window = self.target_incoming_window
             await self._outgoing_flow()
 
