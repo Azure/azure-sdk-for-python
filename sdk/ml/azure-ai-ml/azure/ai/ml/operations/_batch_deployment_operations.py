@@ -339,7 +339,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 )
                 deployment.component = registered_component.id
             except Exception as err:  # pylint: disable=broad-except
-                if isinstance(err, ResourceNotFoundError) or isinstance(err, HttpResponseError):
+                if isinstance(err, (ResourceNotFoundError, HttpResponseError)):
                     deployment.component = self._all_operations.all_operations[
                         AzureMLResourceType.COMPONENT
                     ].create_or_update(
@@ -350,7 +350,6 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                         version=deployment.component.version,
                         **self._init_kwargs,
                     )
-                    pass
                 else:
                     raise err
         elif isinstance(deployment.component, str):
