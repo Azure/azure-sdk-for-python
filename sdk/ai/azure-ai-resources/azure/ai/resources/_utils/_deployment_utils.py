@@ -46,7 +46,6 @@ def parse_deployment_config(deployment_config: str):
 
 def get_default_allowed_instance_type_from_model_engine(engine_id: str, credential: Any):
     model_details = get_registry_model(
-        "HuggingFace",
         credential,
         id=engine_id
     )

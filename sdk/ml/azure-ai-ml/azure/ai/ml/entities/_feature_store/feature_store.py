@@ -11,20 +11,19 @@ from typing import Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Workspace as RestWorkspace
 from azure.ai.ml._schema._feature_store.feature_store_schema import FeatureStoreSchema
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
-from azure.ai.ml.entities import CustomerManagedKey, Workspace
 from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._workspace.compute_runtime import ComputeRuntime
+from azure.ai.ml.entities._workspace.customer_managed_key import CustomerManagedKey
 from azure.ai.ml.entities._workspace.feature_store_settings import FeatureStoreSettings
 from azure.ai.ml.entities._workspace.networking import ManagedNetwork
+from azure.ai.ml.entities._workspace.workspace import Workspace
 
 from ._constants import DEFAULT_SPARK_RUNTIME_VERSION, FEATURE_STORE_KIND
 from .materialization_store import MaterializationStore
 
 
-@experimental
 class FeatureStore(Workspace):
     """Feature Store
 
@@ -130,7 +129,7 @@ class FeatureStore(Workspace):
                 else ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION),
             ),
         )
-        self._workspace_id = kwargs.pop("workspace_id", "")
+        # TODO: Refactor this so that super().__init__() is not called twice coming from _from_rest_object()
         super().__init__(
             name=name,
             description=description,
@@ -169,6 +168,7 @@ class FeatureStore(Workspace):
 
         return FeatureStore(
             name=workspace_object.name,
+            id=workspace_object.id,
             description=workspace_object.description,
             tags=workspace_object.tags,
             compute_runtime=ComputeRuntime._from_rest_object(
@@ -177,6 +177,7 @@ class FeatureStore(Workspace):
                 else None
             ),
             display_name=workspace_object.display_name,
+            discovery_url=workspace_object.discovery_url,
             location=workspace_object.location,
             resource_group=workspace_object.resource_group,
             hbi_workspace=workspace_object.hbi_workspace,

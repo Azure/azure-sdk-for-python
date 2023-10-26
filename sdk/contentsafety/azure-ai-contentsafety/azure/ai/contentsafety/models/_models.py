@@ -316,7 +316,7 @@ class ImageData(_model_base.Model):
     :vartype blob_url: str
     """
 
-    content: Optional[bytes] = rest_field()
+    content: Optional[bytes] = rest_field(format="base64")
     """Base64 encoding of image."""
     blob_url: Optional[str] = rest_field(name="blobUrl")
     """The blob url of image."""
@@ -425,7 +425,7 @@ class TextBlockItem(_model_base.Model):
     :vartype text: str
     """
 
-    block_item_id: str = rest_field(name="blockItemId")
+    block_item_id: str = rest_field(name="blockItemId", visibility=["read", "create", "query"])
     """Block Item Id. It will be uuid. Required."""
     description: Optional[str] = rest_field()
     """Block item description."""
@@ -500,7 +500,7 @@ class TextBlocklist(_model_base.Model):
     :vartype description: str
     """
 
-    blocklist_name: str = rest_field(name="blocklistName")
+    blocklist_name: str = rest_field(name="blocklistName", visibility=["read", "create", "query"])
     """Text blocklist name. Required."""
     description: Optional[str] = rest_field()
     """Text blocklist description."""

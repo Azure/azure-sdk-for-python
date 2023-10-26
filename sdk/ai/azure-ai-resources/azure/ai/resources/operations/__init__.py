@@ -13,6 +13,8 @@ from ._index_data_source import ACSSource, GitSource, IndexDataSource, LocalSour
 from ._mlindex_operations import MLIndexOperations
 from ._pf_operations import PFOperations
 from ._project_operations import ProjectOperations
+from ._data_operations import DataOperations
+from ._model_operations import ModelOperations
 
 __all__ = [
     "ConnectionOperations",
@@ -26,4 +28,6 @@ __all__ = [
     "PFOperations",
     "AIResourceOperations",
     "DeploymentOperations",
+    "DataOperations",
+    "ModelOperations",
 ]

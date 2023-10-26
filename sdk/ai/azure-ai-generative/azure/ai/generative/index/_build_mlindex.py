@@ -7,13 +7,13 @@ from typing import Union
 
 import yaml
 
-from azure.ai.generative.entities.mlindex import MLIndex
-from azure.ai.generative.operations._index_data_source import ACSSource, LocalSource
-from azure.ai.generative.operations._acs_output_config import ACSOutputConfig
-from azure.ai.generative._utils._open_ai_utils import build_open_ai_protocol
+from azure.ai.resources.entities.mlindex import Index
+from azure.ai.resources.operations._index_data_source import ACSSource, LocalSource
+from azure.ai.resources.operations._acs_output_config import ACSOutputConfig
+from azure.ai.resources._utils._open_ai_utils import build_open_ai_protocol
 
 
-def build_mlindex(
+def build_index(
     *,
     ######## required args ##########
     output_index_name: str,
@@ -33,9 +33,9 @@ def build_mlindex(
     ######## data source info ########
     index_input_config: Union[ACSSource, LocalSource] = None,
     acs_config: ACSOutputConfig = None,  # todo better name?
-) -> MLIndex:
+) -> Index:
 
-    """Generates embeddings locally and stores MLIndex reference in memory
+    """Generates embeddings locally and stores Index reference in memory
     """
     try:
         from azure.ai.generative.index._documents import DocumentChunksIterator, split_documents
@@ -44,7 +44,7 @@ def build_mlindex(
         from azure.ai.generative.index._utils.connections import get_connection_by_id_v2
         from azure.ai.generative.index._utils.logging import disable_mlflow
     except ImportError as e:
-        print("In order to use build_mlindex to build an MLIndex locally, you must have azure-ai-generative[index] installed")
+        print("In order to use build_index to build an Index locally, you must have azure-ai-generative[index] installed")
         raise e
 
     disable_mlflow()
@@ -120,13 +120,13 @@ def build_mlindex(
             acs_args = {
                 **acs_args,
                 **{
-                    "endpoint": os.getenv("AZURE_COGNITIVE_SEARCH_TARGET"),
+                    "endpoint": os.getenv("AZURE_AI_SEARCH_ENDPOINT") if "AZURE_AI_SEARCH_ENDPOINT" in os.environ else os.getenv("AZURE_COGNITIVE_SEARCH_TARGET"),
                     "api_version": "2023-07-01-preview",
                 }
             }
             connection_args = {
                 "connection_type": "environment",
-                "connection": {"key": "AZURE_COGNITIVE_SEARCH_KEY"}
+                "connection": {"key": "AZURE_AI_SEARCH_KEY"}
             }
         else:
             acs_connection = get_connection_by_id_v2(acs_config.acs_connection_id)
@@ -155,7 +155,7 @@ def build_mlindex(
             "azureml.mlIndexAssetPipelineRunId": "Local",
         }
 
-    return MLIndex(
+    return Index(
         name=output_index_name,
         path=save_path,
         properties=mlindex_properties,
@@ -167,21 +167,21 @@ def _create_mlindex_from_existing_acs(
     embedding_model: str,
     aoai_connection: str,
     acs_config: ACSSource,
-) -> MLIndex:
+) -> Index:
     try:
         from azure.ai.generative.index._embeddings import EmbeddingsContainer
         from azure.ai.generative.index._utils.connections import get_connection_by_id_v2
     except ImportError as e:
-        print("In order to use build_mlindex to build an MLIndex locally, you must have azure-ai-generative[index] installed")
+        print("In order to use build_index to build an Index locally, you must have azure-ai-generative[index] installed")
         raise e
     mlindex_config = {}
     connection_info = {}
     if not acs_config.acs_connection_id:
         import os
         connection_info = {
-            "endpoint": os.getenv("AZURE_COGNITIVE_SEARCH_TARGET"),
+            "endpoint": os.getenv("AZURE_AI_SEARCH_ENDPOINT") if "AZURE_AI_SEARCH_ENDPOINT" in os.environ else os.getenv("AZURE_COGNITIVE_SEARCH_TARGET"),
             "connection_type": "environment",
-            "connection": {"key": "AZURE_COGNITIVE_SEARCH_KEY"}
+            "connection": {"key": "AZURE_AI_SEARCH_KEY"}
         }
     else:
         acs_connection = get_connection_by_id_v2(acs_config.acs_connection_id)
@@ -229,7 +229,7 @@ def _create_mlindex_from_existing_acs(
     with open(path / "MLIndex", "w") as f:
         yaml.dump(mlindex_config, f)
 
-    return MLIndex(
+    return Index(
         name=output_index_name,
         path=path,
         properties={

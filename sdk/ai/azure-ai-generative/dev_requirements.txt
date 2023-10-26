@@ -2,6 +2,7 @@
 ../../core/azure-core
 -e ../../../tools/azure-devtools
 ../../identity/azure-identity
-pytest,
-pytest-xdist,
-azure-cli>=2.30.0
+-e ../../ml/azure-ai-ml
+-e ../azure-ai-resources
+pytest
+pytest-xdist

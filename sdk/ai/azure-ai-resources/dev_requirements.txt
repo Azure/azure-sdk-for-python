@@ -2,5 +2,6 @@
 ../../core/azure-core
 -e ../../../tools/azure-devtools
 ../../identity/azure-identity
-pytest,
-pytest-xdist,
+-e ../../ml/azure-ai-ml
+pytest
+pytest-xdist

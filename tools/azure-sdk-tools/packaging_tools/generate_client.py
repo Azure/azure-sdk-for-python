@@ -1,7 +1,7 @@
 import argparse
 import logging
 from pathlib import Path
-from subprocess import run
+from subprocess import run, PIPE
 import tomli
 
 _LOGGER = logging.getLogger(__name__)
@@ -40,19 +40,25 @@ def generate_autorest(folder: Path) -> None:
 
 
 def generate_typespec(folder: Path) -> None:
+    tsp_location_path = folder / "tsp-location.yaml"
 
-    # Turns out, "pwsh" is the name for PowerShell 7 on Windows, that is required for those scripts
-    ps_cmd = "pwsh"
+    if not tsp_location_path.exists():
+        raise ValueError(
+            "Didn't find a tsp_location.yaml in local directory. Please make sure a valid "
+            "tsp-location.yaml file exists before running this command, for more information "
+            "on how to create one, see: "
+            "https://github.com/Azure/azure-sdk-tools/tree/main/tools/tsp-client/README.md"
+        )
 
-    completed_process = run([ps_cmd, "../../../eng/common/scripts/TypeSpec-Project-Sync.ps1", folder], cwd=folder)
+    completed_process = run(["tsp-client", "update"], cwd=folder, shell=True, stderr=PIPE)
     if completed_process.returncode != 0:
-        raise ValueError("Something happened with TypeSpec Synx step: " + str(completed_process))
+        if "'tsp-client' is not recognized" in completed_process.stderr.decode("utf-8"):
+            raise ValueError(
+                "tsp-client is not installed. Please run: npm install -g @azure-tools/typespec-client-generator-cli"
+                )
+        raise ValueError("Something happened with tsp-client update step: " + str(completed_process))
 
-    completed_process = run([ps_cmd, "../../../eng/common/scripts/TypeSpec-Project-Generate.ps1", folder], cwd=folder)
-    if completed_process.returncode != 0:
-        raise ValueError("Something happened with TypeSpec Generate step: " + str(completed_process))
-
-    _LOGGER.info("TypeSpec done")
+    _LOGGER.info("TypeSpec generate done")
 
 def generate(folder: Path = Path(".")) -> None:
     if (folder / "swagger" / "README.md").exists():
@@ -72,48 +78,6 @@ def generate_main() -> None:
         description="Build SDK using Codegen.",
         formatter_class=argparse.RawTextHelpFormatter,
     )
-    # FIXME, we probably don't need any of that
-    # parser.add_argument(
-    #     "--rest-folder",
-    #     "-r",
-    #     dest="restapi_git_folder",
-    #     default=None,
-    #     help="Rest API git folder. [default: %(default)s]",
-    # )
-    # parser.add_argument(
-    #     "--project",
-    #     "-p",
-    #     dest="project",
-    #     action="append",
-    #     help="Select a specific project. Do all by default. You can use a substring for several projects.",
-    # )
-    # parser.add_argument("--readme", "-m", dest="readme", help="Select a specific readme. Must be a path")
-    # parser.add_argument(
-    #     "--config",
-    #     "-c",
-    #     dest="config_path",
-    #     default=CONFIG_FILE,
-    #     help="The JSON configuration format path [default: %(default)s]",
-    # )
-    # parser.add_argument(
-    #     "--autorest",
-    #     dest="autorest_bin",
-    #     help="Force the Autorest to be executed. Must be a executable command.",
-    # )
-    # parser.add_argument(
-    #     "-f",
-    #     "--force",
-    #     dest="force",
-    #     action="store_true",
-    #     help="Should I force generation if SwaggerToSdk tag is not found",
-    # )
-    # parser.add_argument(
-    #     "--sdk-folder",
-    #     "-s",
-    #     dest="sdk_folder",
-    #     default=".",
-    #     help="A Python SDK folder. [default: %(default)s]",
-    # )
     parser.add_argument(
         "-v",
         "--verbose",
@@ -129,15 +93,7 @@ def generate_main() -> None:
         logging.basicConfig()
         main_logger.setLevel(logging.DEBUG if args.debug else logging.INFO)
 
-    generate(
-        # args.config_path,
-        # args.sdk_folder,
-        # args.project,
-        # args.readme,
-        # args.restapi_git_folder,
-        # args.autorest_bin,
-        # args.force,
-    )
+    generate()
 
 
 if __name__ == "__main__":
