@@ -393,7 +393,7 @@ class SearchClient(HeadersMixin):
         :keyword int top: The number of suggestions to retrieve. The value must be a number between 1 and
          100. The default is 5.
         :return: List of documents.
-        :rtype:  list[Dict]
+        :rtype:  list[dict]
 
         .. admonition:: Example:
 
@@ -473,7 +473,7 @@ class SearchClient(HeadersMixin):
          terms. Target fields must be included in the specified suggester.
         :keyword int top: The number of auto-completed terms to retrieve. This must be a value between 1 and
          100. The default is 5.
-        :rtype:  List[Dict]
+        :rtype:  list[dict]
 
         .. admonition:: Example:
 

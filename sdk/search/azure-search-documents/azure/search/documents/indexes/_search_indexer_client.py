@@ -155,9 +155,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
          list of JSON property names, or '*' for all properties. The default is all
          properties.
-        :paramtype select: List[str]
+        :paramtype select: list[str]
         :return: List of all the SearchIndexers.
-        :rtype: List[~azure.search.documents.indexes.models.SearchIndexer]
+        :rtype: list[~azure.search.documents.indexes.models.SearchIndexer]
 
         .. admonition:: Example:
 
@@ -180,7 +180,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """Lists all indexer names available for a search service.
 
         :return: List of all the SearchIndexers.
-        :rtype: List[str]
+        :rtype: list[str]
 
         .. admonition:: Example:
 
@@ -389,9 +389,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
          list of JSON property names, or '*' for all properties. The default is all
          properties.
-        :paramtype select: List[str]
+        :paramtype select: list[str]
         :return: List of all the data source connections.
-        :rtype: List[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]
+        :rtype: list[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]
 
         .. admonition:: Example:
 
@@ -415,7 +415,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """Lists all data source connection names available for a search service.
 
         :return: List of all the data source connection names.
-        :rtype: List[str]
+        :rtype: list[str]
 
         """
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
@@ -468,9 +468,9 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         :keyword select: Selects which top-level properties of the skillsets to retrieve. Specified as a
          list of JSON property names, or '*' for all properties. The default is all
          properties.
-        :paramtype select: List[str]
+        :paramtype select: list[str]
         :return: List of SearchIndexerSkillsets
-        :rtype: List[~azure.search.documents.indexes.models.SearchIndexerSkillset]
+        :rtype: list[~azure.search.documents.indexes.models.SearchIndexerSkillset]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         .. admonition:: Example:
@@ -495,7 +495,7 @@ class SearchIndexerClient(HeadersMixin):  # pylint: disable=R0904
         """List the SearchIndexerSkillset names in an Azure Search service.
 
         :return: List of SearchIndexerSkillset names
-        :rtype: List[str]
+        :rtype: list[str]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         """
