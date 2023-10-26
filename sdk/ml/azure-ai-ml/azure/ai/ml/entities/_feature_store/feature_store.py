@@ -129,7 +129,7 @@ class FeatureStore(Workspace):
                 else ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION),
             ),
         )
-        self._workspace_id = kwargs.pop("workspace_id", "")
+        # TODO: Refactor this so that super().__init__() is not called twice coming from _from_rest_object()
         super().__init__(
             name=name,
             description=description,
@@ -168,6 +168,7 @@ class FeatureStore(Workspace):
 
         return FeatureStore(
             name=workspace_object.name,
+            id=workspace_object.id,
             description=workspace_object.description,
             tags=workspace_object.tags,
             compute_runtime=ComputeRuntime._from_rest_object(
@@ -176,6 +177,7 @@ class FeatureStore(Workspace):
                 else None
             ),
             display_name=workspace_object.display_name,
+            discovery_url=workspace_object.discovery_url,
             location=workspace_object.location,
             resource_group=workspace_object.resource_group,
             hbi_workspace=workspace_object.hbi_workspace,

@@ -40,7 +40,7 @@ setup(
     author="Microsoft Corporation",
     author_email="azuresdkengsysadmins@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python",
-    keywords="azure, azuresdk",
+    keywords="azure, azuresdk, azure sdk",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
@@ -66,7 +66,7 @@ setup(
     python_requires="<4.0,>=3.8",
     install_requires=[
         # NOTE: To avoid breaking changes in a major version bump, all dependencies should pin an upper bound if possible.
-        "azure-ai-ml",
+        "azure-ai-resources",
         "azureml-telemetry",
         "mlflow<3",
         "azure-mgmt-authorization",
@@ -128,7 +128,8 @@ setup(
             "PyYAML>=4.1,<7",
             "tiktoken>=0.3,<1",
             "websocket_client>=1,<2",
-            "azure-identity>=1,<2"
+            "azure-identity>=1,<2",
+            "azure-keyvault-secrets>=1,<5",
         ],
     },
     project_urls={
