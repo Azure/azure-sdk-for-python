@@ -14,7 +14,7 @@ try:
     from typing import Dict, List, Tuple, Any, Union
     import openai
     from collections import defaultdict
-    from azure.ai.resources.entities import Connection
+    from azure.ai.resources.entities import BaseConnection
     from azure.identity import DefaultAzureCredential
     from azure.ai.generative._telemetry import ActivityType, monitor_with_activity, OpsLogger
     from azure.core.tracing.decorator import distributed_trace
@@ -91,7 +91,7 @@ class QADataGenerator:
     _PARSING_ERR_UNEQUAL_Q_AFTER_MOD = "Parsing error: Unequal question count after modification"
     _PARSING_ERR_FIRST_LINE = "Parsing error: First line must be a question"
 
-    def __init__(self, model_config: Dict, connection: Connection = None, **kwargs: Any):
+    def __init__(self, model_config: Dict, connection: BaseConnection = None, **kwargs: Any):
         """Initialize QADataGenerator using Azure OpenAI details."""
         if connection:
             if connection.type != "azure_open_ai":
