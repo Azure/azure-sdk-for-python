@@ -294,17 +294,17 @@ Get-AzAccessToken -ResourceUrl "https://management.core.windows.net"
 |---|---|---|
 |The current credential is not configured to acquire tokens for tenant <tenant ID>|<p>The application must configure the credential to allow token acquisition from the requested tenant.|Make one of the following changes in your app:<ul><li>Add the requested tenant ID to `additionally_allowed_tenants` on the credential options.</li><li>Add `*` to `additionally_allowed_tenants` to allow token acquisition for any tenant.</li></ul></p><p>This exception was added as part of a breaking change to multi-tenant authentication in version 1.11.0. Users experiencing this error after upgrading can find details on the change and migration in [BREAKING_CHANGES.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/BREAKING_CHANGES.md#1110).</p> |
 
-## Troubleshoot WAM+MSA login issues
+## Troubleshoot Web Account Manager (WAM) and Microsoft account (MSA) login issues
 
-When using `InteractiveBrowserCredential`, by default, only the Microsoft Entra account is listed:
+When using `InteractiveBrowserBrokerCredential` via the `azure-identity-broker` package on Windows, only Microsoft Entra accounts are listed by default:
 
 ![MSA Microsoft Entra only](./images/MSA1.png)
 
-If you choose "Use another account" and type in an MSA outlook.com account, it fails:
+If you choose "Use another account", and type in an MSA outlook.com account, it fails:
 
 ![Fail on use another account](./images/MSA2.png)
 
-Since azure-identity 1.15.0b1, you can set `enable_msa_passthrough`` to `True`, and MSA outlook.com accounts that are logged in to Windows are automatically listed:
+When constructing the credential, you can set the `enable_msa_passthrough` keyword argument to `True`, and MSA outlook.com accounts that are logged in to Windows are automatically listed:
 
 ![Enable MSA](./images/MSA3.png)
 

@@ -182,6 +182,9 @@ SPARK_ENVIRONMENT_WARNING_MESSAGE = (
     "Spark job will only install the packages defined in the Conda configuration. It "
     "will not create a docker container using the image defined in the environment."
 )
+CONNECTION_API_VERSION_KEY = "ApiVersion"
+CONNECTION_API_TYPE_KEY = "ApiType"
+CONNECTION_KIND_KEY = "kind"
 
 
 class DefaultOpenEncoding:
@@ -308,6 +311,7 @@ class ArmConstants:
     BASE_TYPE = "base"
     WORKSPACE_BASE = "workspace_base"
     WORKSPACE_PARAM = "workspace_param"
+    ROLE_ASSIGNMENTS = "roleAssignments"
     FEATURE_STORE_ROLE_ASSIGNMENTS = "feature_store_role_assignments"
     FEATURE_STORE_ROLE_ASSIGNMENTS_PARAM = "feature_store_role_assignments_param"
     WORKSPACE_PROJECT = "workspace_project"

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,protected-access
+# pylint: disable=unused-argument,protected-access,too-many-lines
 
 import copy
 import logging
@@ -797,6 +797,37 @@ class VersionField(Field):
         if isinstance(value, (int, float)):
             return str(value)
         raise Exception(f"Type {type(value)} is not supported for version.")
+
+
+class NumberVersionField(VersionField):
+    """A string represents a version, e.g.: 1, 1.0, 1.0.0.
+    Will always convert to string to ensure that "1.0" won't be converted to 1.
+    """
+
+    default_error_messages = {
+        "max_version": "Version {input} is greater than or equal to upper bound {bound}.",
+        "min_version": "Version {input} is smaller than lower bound {bound}.",
+        "invalid": "Number version must be integers concatenated by '.', like 1.0.1.",
+    }
+
+    def __init__(self, *args, upper_bound: Optional[str] = None, lower_bound: Optional[str] = None, **kwargs) -> None:
+        self._upper = None if upper_bound is None else self._version_to_tuple(upper_bound)
+        self._lower = None if lower_bound is None else self._version_to_tuple(lower_bound)
+        super().__init__(*args, **kwargs)
+
+    def _version_to_tuple(self, value: str):
+        try:
+            return tuple(int(v) for v in str(value).split("."))
+        except ValueError as e:
+            raise self.make_error("invalid") from e
+
+    def _validate(self, value):
+        super()._validate(value)
+        value_tuple = self._version_to_tuple(value)
+        if self._upper is not None and value_tuple >= self._upper:
+            raise self.make_error("max_version", input=value, bound=self._upper)
+        if self._lower is not None and value_tuple < self._lower:
+            raise self.make_error("min_version", input=value, bound=self._lower)
 
 
 class DumpableIntegerField(fields.Integer):

@@ -12,7 +12,7 @@ In the `receive` method of `EventHubConsumerClient`:
 If no partition id is specified, the checkpoint_store are used for load-balance and checkpoint.
 If partition id is specified, the checkpoint_store can only be used for checkpoint.
 """
-
+from typing import Dict
 import asyncio
 import os
 import time
@@ -25,7 +25,7 @@ STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
 
 
-partition_last_checkpoint_time = dict()
+partition_last_checkpoint_time: Dict[str, float] = {}
 checkpoint_time_interval = 15
 
 
