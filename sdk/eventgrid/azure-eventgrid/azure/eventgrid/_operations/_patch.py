@@ -61,6 +61,7 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
         internal_event.update(cloud_event.extensions)
     return internal_event
 
+
 class EventGridClientOperationsMixin(OperationsMixin):
     @overload
     def publish_cloud_events(
