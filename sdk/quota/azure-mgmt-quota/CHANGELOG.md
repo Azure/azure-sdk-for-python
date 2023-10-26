@@ -1,5 +1,9 @@
 # Release History
 
+## 1.1.0b4 (2023-11-20)
+
+change log generation failed!!!
+
 ## 1.0.0 (2023-04-20)
 
 ### Breaking Changes

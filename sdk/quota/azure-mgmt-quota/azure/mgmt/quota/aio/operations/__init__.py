@@ -6,6 +6,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._group_quotas_operations import GroupQuotasOperations
+from ._group_quota_subscriptions_operations import GroupQuotaSubscriptionsOperations
+from ._subscription_requests_operations import SubscriptionRequestsOperations
+from ._group_quota_limits_operations import GroupQuotaLimitsOperations
+from ._group_quota_limits_requests_operations import GroupQuotaLimitsRequestsOperations
+from ._group_quota_subscription_quota_allocation_operations import GroupQuotaSubscriptionQuotaAllocationOperations
+from ._group_quota_subscription_quota_allocation_requests_operations import (
+    GroupQuotaSubscriptionQuotaAllocationRequestsOperations,
+)
 from ._usages_operations import UsagesOperations
 from ._quota_operations import QuotaOperations
 from ._quota_request_status_operations import QuotaRequestStatusOperations
@@ -16,6 +25,13 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "GroupQuotasOperations",
+    "GroupQuotaSubscriptionsOperations",
+    "SubscriptionRequestsOperations",
+    "GroupQuotaLimitsOperations",
+    "GroupQuotaLimitsRequestsOperations",
+    "GroupQuotaSubscriptionQuotaAllocationOperations",
+    "GroupQuotaSubscriptionQuotaAllocationRequestsOperations",
     "UsagesOperations",
     "QuotaOperations",
     "QuotaRequestStatusOperations",

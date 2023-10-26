@@ -26,6 +26,8 @@ from azure.mgmt.quota import QuotaMgmtClient
 def main():
     client = QuotaMgmtClient(
         credential=DefaultAzureCredential(),
+        subscription_id="SUBSCRIPTION_ID",
+        base_url="BASE_URL",
     )
 
     response = client.usages.list(

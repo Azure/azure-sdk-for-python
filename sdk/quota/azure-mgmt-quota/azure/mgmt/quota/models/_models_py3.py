@@ -7,6 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import datetime
 import sys
 from typing import Any, List, Optional, TYPE_CHECKING, Union
 
@@ -21,6 +22,96 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+
+
+class AdditionalAttributes(_serialization.Model):
+    """Additional attribute to allow subscriptions to be part of the GroupQuota.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar group_id: The grouping Id for the group quota. It can be management Group Id or
+     ServiceTreeId if applicable. Required.
+    :vartype group_id: ~azure.mgmt.quota.models.GroupingId
+    :ivar environment: Environment name. Known values are: "NonProduction" and "Production".
+    :vartype environment: str or ~azure.mgmt.quota.models.EnvironmentType
+    """
+
+    _validation = {
+        "group_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "group_id": {"key": "groupId", "type": "GroupingId"},
+        "environment": {"key": "environment", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        group_id: "_models.GroupingId",
+        environment: Optional[Union[str, "_models.EnvironmentType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword group_id: The grouping Id for the group quota. It can be management Group Id or
+         ServiceTreeId if applicable. Required.
+        :paramtype group_id: ~azure.mgmt.quota.models.GroupingId
+        :keyword environment: Environment name. Known values are: "NonProduction" and "Production".
+        :paramtype environment: str or ~azure.mgmt.quota.models.EnvironmentType
+        """
+        super().__init__(**kwargs)
+        self.group_id = group_id
+        self.environment = environment
+
+
+class AssignedToSubscription(_serialization.Model):
+    """SubscriptionIds and quota allocated to subscriptions from the GroupQuota.
+
+    :ivar subscription_id: An Azure subscriptionId.
+    :vartype subscription_id: str
+    :ivar quota_allocated: The amount of quota allocated to this subscriptionId from the
+     GroupQuotasEntity.
+    :vartype quota_allocated: int
+    """
+
+    _attribute_map = {
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "quota_allocated": {"key": "quotaAllocated", "type": "int"},
+    }
+
+    def __init__(
+        self, *, subscription_id: Optional[str] = None, quota_allocated: Optional[int] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword subscription_id: An Azure subscriptionId.
+        :paramtype subscription_id: str
+        :keyword quota_allocated: The amount of quota allocated to this subscriptionId from the
+         GroupQuotasEntity.
+        :paramtype quota_allocated: int
+        """
+        super().__init__(**kwargs)
+        self.subscription_id = subscription_id
+        self.quota_allocated = quota_allocated
+
+
+class BillingAccountId(_serialization.Model):
+    """A Billing Account Id.
+
+    :ivar id:
+    :vartype id: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+        """
+        :keyword id:
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
 
 
 class CommonResourceProperties(_serialization.Model):
@@ -158,6 +249,98 @@ class CurrentUsagesBase(_serialization.Model):
         self.properties = properties
 
 
+class ErrorAdditionalInfo(_serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: JSON
+    """
+
+    _validation = {
+        "type": {"readonly": True},
+        "info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.quota.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.quota.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.quota.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.quota.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
 class ExceptionResponse(_serialization.Model):
     """Error.
 
@@ -176,6 +359,525 @@ class ExceptionResponse(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.error = error
+
+
+class GroupingId(_serialization.Model):
+    """The grouping Id for the group quota. It can be management Group Id or ServiceTreeId if
+    applicable.
+
+    :ivar grouping_id_type: GroupingId type. It is a required property. More types of groupIds can
+     be supported in future. MGID is already in the URI, so it's not needed.'. Known values are:
+     "ServiceTreeId" and "BillingId".
+    :vartype grouping_id_type: str or ~azure.mgmt.quota.models.GroupingIdType
+    :ivar value: GroupId value based on the groupingType selected - management Group Id or
+     ServiceTreeId.
+    :vartype value: str
+    """
+
+    _attribute_map = {
+        "grouping_id_type": {"key": "groupingIdType", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        grouping_id_type: Optional[Union[str, "_models.GroupingIdType"]] = None,
+        value: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword grouping_id_type: GroupingId type. It is a required property. More types of groupIds
+         can be supported in future. MGID is already in the URI, so it's not needed.'. Known values are:
+         "ServiceTreeId" and "BillingId".
+        :paramtype grouping_id_type: str or ~azure.mgmt.quota.models.GroupingIdType
+        :keyword value: GroupId value based on the groupingType selected - management Group Id or
+         ServiceTreeId.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
+        self.grouping_id_type = grouping_id_type
+        self.value = value
+
+
+class GroupQuotaDetails(_serialization.Model):
+    """Group Quota details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar limit: The current Group Quota Limit at the parentId level.
+    :vartype limit: int
+    :ivar comment: Any comment related to quota request.
+    :vartype comment: str
+    :ivar name: Name of the resource provided by the resource Provider. This property is already
+     included in the request URI, so it is a readonly property returned in the response.
+    :vartype name: ~azure.mgmt.quota.models.GroupQuotaDetailsName
+    :ivar unit: The usages units, such as Count and Bytes. When requesting quota, use the **unit**
+     value returned in the GET response in the request body of your PUT operation.
+    :vartype unit: str
+    :ivar available_limit: The available Group Quota Limit at the MG level. This Group quota can be
+     assigned to subscription(s).
+    :vartype available_limit: int
+    :ivar assigned_to_subscriptions: Assigned Group Quota to subscriptions.
+    :vartype assigned_to_subscriptions: list[~azure.mgmt.quota.models.AssignedToSubscription]
+    :ivar provisioning_state: Request status. Known values are: "Accepted", "Created", "Invalid",
+     "Succeeded", "Failed", "InProgress", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.quota.models.RequestState
+    """
+
+    _validation = {
+        "unit": {"readonly": True},
+        "available_limit": {"readonly": True},
+        "assigned_to_subscriptions": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "limit": {"key": "limit", "type": "int"},
+        "comment": {"key": "comment", "type": "str"},
+        "name": {"key": "name", "type": "GroupQuotaDetailsName"},
+        "unit": {"key": "unit", "type": "str"},
+        "available_limit": {"key": "availableLimit", "type": "int"},
+        "assigned_to_subscriptions": {"key": "assignedToSubscriptions", "type": "[AssignedToSubscription]"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        limit: Optional[int] = None,
+        comment: Optional[str] = None,
+        name: Optional["_models.GroupQuotaDetailsName"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword limit: The current Group Quota Limit at the parentId level.
+        :paramtype limit: int
+        :keyword comment: Any comment related to quota request.
+        :paramtype comment: str
+        :keyword name: Name of the resource provided by the resource Provider. This property is already
+         included in the request URI, so it is a readonly property returned in the response.
+        :paramtype name: ~azure.mgmt.quota.models.GroupQuotaDetailsName
+        """
+        super().__init__(**kwargs)
+        self.limit = limit
+        self.comment = comment
+        self.name = name
+        self.unit = None
+        self.available_limit = None
+        self.assigned_to_subscriptions = None
+        self.provisioning_state = None
+
+
+class GroupQuotaDetailsName(_serialization.Model):
+    """Name of the resource provided by the resource Provider. This property is already included in
+    the request URI, so it is a readonly property returned in the response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Resource name.
+    :vartype value: str
+    :ivar localized_value: Resource display name.
+    :vartype localized_value: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "localized_value": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+        self.localized_value = None
+
+
+class Resource(_serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.quota.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.system_data = None
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.quota.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+
+
+class GroupQuotaLimit(ProxyResource):
+    """Group Quota limit.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.quota.models.SystemData
+    :ivar properties: Group Quota properties for the specified resource.
+    :vartype properties: ~azure.mgmt.quota.models.GroupQuotaDetails
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "GroupQuotaDetails"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.GroupQuotaDetails"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: Group Quota properties for the specified resource.
+        :paramtype properties: ~azure.mgmt.quota.models.GroupQuotaDetails
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class GroupQuotaLimitList(_serialization.Model):
+    """List of Group Quota Limit details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of Group Quota Limit details.
+    :vartype value: list[~azure.mgmt.quota.models.GroupQuotaLimit]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[GroupQuotaLimit]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.GroupQuotaLimit"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: List of Group Quota Limit details.
+        :paramtype value: list[~azure.mgmt.quota.models.GroupQuotaLimit]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class GroupQuotaList(_serialization.Model):
+    """List of Group Quotas at MG level.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of Group Quotas at MG level.
+    :vartype value: list[~azure.mgmt.quota.models.GroupQuotasEntity]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[GroupQuotasEntity]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.GroupQuotasEntity"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: List of Group Quotas at MG level.
+        :paramtype value: list[~azure.mgmt.quota.models.GroupQuotasEntity]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class GroupQuotasEntity(ProxyResource):
+    """Properties and filters for ShareQuota. The request parameter is optional, if there are no
+    filters specified.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.quota.models.SystemData
+    :ivar properties: Properties and filters for ShareQuota. The request parameter is optional, if
+     there are no filters specified.
+    :vartype properties: ~azure.mgmt.quota.models.GroupQuotasEntityBase
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "GroupQuotasEntityBase"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.GroupQuotasEntityBase"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: Properties and filters for ShareQuota. The request parameter is optional,
+         if there are no filters specified.
+        :paramtype properties: ~azure.mgmt.quota.models.GroupQuotasEntityBase
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class GroupQuotasEntityBase(_serialization.Model):
+    """Properties and filters for ShareQuota. The request parameter is optional, if there are no
+    filters specified.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar display_name: Display name of the GroupQuota entity.
+    :vartype display_name: str
+    :ivar additional_attributes: Additional attributes to allow subscription, which can be added to
+     the subscriptionIds.
+    :vartype additional_attributes: ~azure.mgmt.quota.models.AdditionalAttributes
+    :ivar provisioning_state: Provisioning state of the operation. Known values are: "Accepted",
+     "Created", "Invalid", "Succeeded", "Failed", "InProgress", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.quota.models.RequestState
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "display_name": {"key": "displayName", "type": "str"},
+        "additional_attributes": {"key": "additionalAttributes", "type": "AdditionalAttributes"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        display_name: Optional[str] = None,
+        additional_attributes: Optional["_models.AdditionalAttributes"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword display_name: Display name of the GroupQuota entity.
+        :paramtype display_name: str
+        :keyword additional_attributes: Additional attributes to allow subscription, which can be added
+         to the subscriptionIds.
+        :paramtype additional_attributes: ~azure.mgmt.quota.models.AdditionalAttributes
+        """
+        super().__init__(**kwargs)
+        self.display_name = display_name
+        self.additional_attributes = additional_attributes
+        self.provisioning_state = None
+
+
+class GroupQuotaSubscriptionId(ProxyResource):
+    """This represents a Azure subscriptionId that is associated with a GroupQuotaSEntity.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.quota.models.SystemData
+    :ivar properties:
+    :vartype properties: ~azure.mgmt.quota.models.GroupQuotaSubscriptionIdProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "GroupQuotaSubscriptionIdProperties"},
+    }
+
+    def __init__(
+        self, *, properties: Optional["_models.GroupQuotaSubscriptionIdProperties"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword properties:
+        :paramtype properties: ~azure.mgmt.quota.models.GroupQuotaSubscriptionIdProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class GroupQuotaSubscriptionIdList(_serialization.Model):
+    """List of GroupQuotaSubscriptionIds.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of GroupQuotaSubscriptionIds.
+    :vartype value: list[~azure.mgmt.quota.models.GroupQuotaSubscriptionId]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[GroupQuotaSubscriptionId]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.GroupQuotaSubscriptionId"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: List of GroupQuotaSubscriptionIds.
+        :paramtype value: list[~azure.mgmt.quota.models.GroupQuotaSubscriptionId]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class GroupQuotaSubscriptionIdProperties(_serialization.Model):
+    """GroupQuotaSubscriptionIdProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar subscription_id: An Azure subscriptionId.
+    :vartype subscription_id: str
+    :ivar provisioning_state: Status of this subscriptionId being associated with the
+     GroupQuotasEntity. Known values are: "Accepted", "Created", "Invalid", "Succeeded", "Failed",
+     "InProgress", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.quota.models.RequestState
+    """
+
+    _validation = {
+        "subscription_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.subscription_id = None
+        self.provisioning_state = None
 
 
 class LimitJsonObject(_serialization.Model):
@@ -922,6 +1624,45 @@ class QuotaRequestSubmitResponse202(_serialization.Model):  # pylint: disable=to
         self.properties = properties
 
 
+class ResourceBaseRequest(_serialization.Model):
+    """Resource definition with the requested quota.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar resource_name: The resource name, such as SKU name.
+    :vartype resource_name: str
+    :ivar limits: Quota requested for the resource.
+    :vartype limits: int
+    :ivar unit: Representing the units of the usage quota. Possible values are: Count, Bytes,
+     Seconds, Percent, CountPerSecond, BytesPerSecond. Based on -
+     https://armwiki.azurewebsites.net/api_contracts/UsagesAPIContract.html?q=usages . Different RPs
+     may have different units, Count, type as int64 should work for most of the integer values.
+    :vartype unit: str
+    """
+
+    _validation = {
+        "unit": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "resource_name": {"key": "resourceName", "type": "str"},
+        "limits": {"key": "limits", "type": "int"},
+        "unit": {"key": "unit", "type": "str"},
+    }
+
+    def __init__(self, *, resource_name: Optional[str] = None, limits: Optional[int] = None, **kwargs: Any) -> None:
+        """
+        :keyword resource_name: The resource name, such as SKU name.
+        :paramtype resource_name: str
+        :keyword limits: Quota requested for the resource.
+        :paramtype limits: int
+        """
+        super().__init__(**kwargs)
+        self.resource_name = resource_name
+        self.limits = limits
+        self.unit = None
+
+
 class ResourceName(_serialization.Model):
     """Name of the resource provided by the resource Provider. When requesting quota, use this
     property name.
@@ -1017,6 +1758,69 @@ class ServiceErrorDetail(_serialization.Model):
         self.message = None
 
 
+class SubmittedResourceRequestStatus(_serialization.Model):
+    """Status of a single GroupQuota request.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar requested_resource: Requested Resource.
+    :vartype requested_resource: ~azure.mgmt.quota.models.ResourceBaseRequest
+    :ivar status: Request status. Known values are: "Accepted", "Created", "Invalid", "Succeeded",
+     "Failed", "InProgress", and "Canceled".
+    :vartype status: str or ~azure.mgmt.quota.models.RequestState
+    """
+
+    _validation = {
+        "status": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "requested_resource": {"key": "requestedResource", "type": "ResourceBaseRequest"},
+        "status": {"key": "status", "type": "str"},
+    }
+
+    def __init__(self, *, requested_resource: Optional["_models.ResourceBaseRequest"] = None, **kwargs: Any) -> None:
+        """
+        :keyword requested_resource: Requested Resource.
+        :paramtype requested_resource: ~azure.mgmt.quota.models.ResourceBaseRequest
+        """
+        super().__init__(**kwargs)
+        self.requested_resource = requested_resource
+        self.status = None
+
+
+class SubmittedResourceRequestStatusList(_serialization.Model):
+    """Share Quota Entity list.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Subscription groupQuotaRequests list.
+    :vartype value: list[~azure.mgmt.quota.models.SubmittedResourceRequestStatus]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[SubmittedResourceRequestStatus]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.SubmittedResourceRequestStatus"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: Subscription groupQuotaRequests list.
+        :paramtype value: list[~azure.mgmt.quota.models.SubmittedResourceRequestStatus]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
 class SubRequest(_serialization.Model):
     """Request property.
 
@@ -1082,6 +1886,306 @@ class SubRequest(_serialization.Model):
         self.message = None
         self.sub_request_id = None
         self.limit = limit
+
+
+class SubscriptionGroupQuotaAssignment(_serialization.Model):
+    """MGId the source of groupQuota.
+
+    :ivar management_group_id: The management group id of the quota source.
+    :vartype management_group_id: str
+    :ivar quota_allocated: The amount of quota allocated to this subscriptionId from the quota
+     source.
+    :vartype quota_allocated: int
+    """
+
+    _attribute_map = {
+        "management_group_id": {"key": "managementGroupId", "type": "str"},
+        "quota_allocated": {"key": "quotaAllocated", "type": "int"},
+    }
+
+    def __init__(
+        self, *, management_group_id: Optional[str] = None, quota_allocated: Optional[int] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword management_group_id: The management group id of the quota source.
+        :paramtype management_group_id: str
+        :keyword quota_allocated: The amount of quota allocated to this subscriptionId from the quota
+         source.
+        :paramtype quota_allocated: int
+        """
+        super().__init__(**kwargs)
+        self.management_group_id = management_group_id
+        self.quota_allocated = quota_allocated
+
+
+class SubscriptionQuotaAllocationRequest(_serialization.Model):
+    """The new quota limit for the subscription.
+
+    :ivar properties:
+    :vartype properties: ~azure.mgmt.quota.models.SubscriptionQuotaAllocationRequestProperties
+    """
+
+    _attribute_map = {
+        "properties": {"key": "properties", "type": "SubscriptionQuotaAllocationRequestProperties"},
+    }
+
+    def __init__(
+        self, *, properties: Optional["_models.SubscriptionQuotaAllocationRequestProperties"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword properties:
+        :paramtype properties: ~azure.mgmt.quota.models.SubscriptionQuotaAllocationRequestProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class SubscriptionQuotaAllocationRequestList(_serialization.Model):
+    """SubscriptionQuotaAllocationRequestList.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Assigned Group Quota to subscriptions.
+    :vartype value: list[~azure.mgmt.quota.models.SubscriptionQuotaAllocationRequest]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[SubscriptionQuotaAllocationRequest]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.SubscriptionQuotaAllocationRequest"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: Assigned Group Quota to subscriptions.
+        :paramtype value: list[~azure.mgmt.quota.models.SubscriptionQuotaAllocationRequest]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class SubscriptionQuotaAllocationRequestProperties(_serialization.Model):
+    """SubscriptionQuotaAllocationRequestProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provisioning_state: Request status. Known values are: "Accepted", "Created", "Invalid",
+     "Succeeded", "Failed", "InProgress", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.quota.models.RequestState
+    :ivar limit: The new quota limit for the subscription. The incremental quota will be assigned
+     from pre-approved groupQuota.
+    :vartype limit: int
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "limit": {"key": "limit", "type": "int"},
+    }
+
+    def __init__(self, *, limit: Optional[int] = None, **kwargs: Any) -> None:
+        """
+        :keyword limit: The new quota limit for the subscription. The incremental quota will be
+         assigned from pre-approved groupQuota.
+        :paramtype limit: int
+        """
+        super().__init__(**kwargs)
+        self.provisioning_state = None
+        self.limit = limit
+
+
+class SubscriptionQuotaAllocations(ProxyResource):
+    """Quota assigned to a subscription for the specific Resource Provider, Location, ResourceName.
+    This will include the GroupQuota and total quota assigned to the subscription. Only the Group
+    quota assigned to the subscription can be assigned back to the MG Group Quota.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.quota.models.SystemData
+    :ivar properties: Quota properties for the specified resource.
+    :vartype properties: ~azure.mgmt.quota.models.SubscriptionQuotaDetails
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "SubscriptionQuotaDetails"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.SubscriptionQuotaDetails"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: Quota properties for the specified resource.
+        :paramtype properties: ~azure.mgmt.quota.models.SubscriptionQuotaDetails
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class SubscriptionQuotaAllocationsList(_serialization.Model):
+    """Subscription quota list.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Subscription quota list.
+    :vartype value: list[~azure.mgmt.quota.models.SubscriptionQuotaAllocations]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[SubscriptionQuotaAllocations]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.SubscriptionQuotaAllocations"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: Subscription quota list.
+        :paramtype value: list[~azure.mgmt.quota.models.SubscriptionQuotaAllocations]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = None
+
+
+class SubscriptionQuotaDetails(_serialization.Model):
+    """Subscription Quota details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar limit: The total quota limit for the subscription.
+    :vartype limit: int
+    :ivar non_shareable_quota: The non shareable quota for the subscription.
+    :vartype non_shareable_quota: int
+    :ivar provisioning_state: Request status. Known values are: "Accepted", "Created", "Invalid",
+     "Succeeded", "Failed", "InProgress", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.quota.models.RequestState
+    :ivar quota_sources: Assigned Group Quota to subscriptions.
+    :vartype quota_sources: list[~azure.mgmt.quota.models.SubscriptionGroupQuotaAssignment]
+    """
+
+    _validation = {
+        "limit": {"readonly": True},
+        "non_shareable_quota": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "limit": {"key": "limit", "type": "int"},
+        "non_shareable_quota": {"key": "nonShareableQuota", "type": "int"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "quota_sources": {"key": "quotaSources", "type": "[SubscriptionGroupQuotaAssignment]"},
+    }
+
+    def __init__(
+        self, *, quota_sources: Optional[List["_models.SubscriptionGroupQuotaAssignment"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword quota_sources: Assigned Group Quota to subscriptions.
+        :paramtype quota_sources: list[~azure.mgmt.quota.models.SubscriptionGroupQuotaAssignment]
+        """
+        super().__init__(**kwargs)
+        self.limit = None
+        self.non_shareable_quota = None
+        self.provisioning_state = None
+        self.quota_sources = quota_sources
+
+
+class SystemData(_serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.quota.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.quota.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.quota.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.quota.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
 
 
 class UsagesLimits(_serialization.Model):
