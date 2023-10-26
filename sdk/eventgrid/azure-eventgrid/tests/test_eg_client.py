@@ -14,13 +14,38 @@ from azure.core.credentials import AzureKeyCredential
 
 from eventgrid_preparer import EventGridPreparer
 
-# TODO: Once functionality is added to service -- test parameterizing binary_mode
 class TestEGClientExceptions(AzureRecordedTestCase):
     def create_eg_client(self, endpoint, key):
         client = EventGridClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         return client
+
+
+    @pytest.mark.live_test_only
+    @EventGridPreparer()
+    def test_publish_binary_mode_cloud_event(self, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name):
+        client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
+
+        event = CloudEvent(
+            type="Contoso.Items.ItemReceived",
+            source="source",
+            subject="MySubject",
+            data=b'this is binary data',
+            datacontenttype='text/plain'
+        )
+
+        client.publish_cloud_events(
+            eventgrid_topic_name, body=event
+        )
+
+        time.sleep(5)
+
+        events = client.receive_cloud_events(eventgrid_topic_name, eventgrid_event_subscription_name,max_events=1)
+        my_returned_event = events.value[0].event
+        assert my_returned_event.data == b'this is binary data'
+        assert my_returned_event.datacontenttype == 'text/plain'
+        assert my_returned_event.type == "Contoso.Items.ItemReceived"
 
     @pytest.mark.skip("need to update conftest")
     @EventGridPreparer()
