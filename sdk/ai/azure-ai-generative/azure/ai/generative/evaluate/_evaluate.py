@@ -19,8 +19,7 @@ from mlflow.protos.databricks_pb2 import ErrorCode, INVALID_PARAMETER_VALUE
 from azure.ai.generative.evaluate._metric_handler import MetricHandler
 from azure.ai.generative.evaluate._utils import _is_flow, load_jsonl, _get_artifact_dir_path
 from azure.ai.generative.evaluate._mlflow_log_collector import RedirectUserOutputStreams
-from azure.ai.generative.evaluate._constants import SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING, SUPPORTED_TASK_TYPE, QA_RAG, \
-    CHAT_RAG
+from azure.ai.generative.evaluate._constants import SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING, SUPPORTED_TASK_TYPE, CHAT
 from azure.ai.generative.evaluate._evaluation_result import EvaluationResult
 
 from ._utils import _write_properties_to_run_history
@@ -214,7 +213,7 @@ def _evaluate(
 
         def _get_instance_table():
             metrics.get("artifacts").pop("bertscore", None)
-            if task_type in [QA_RAG, CHAT_RAG]:
+            if task_type == CHAT:
                 instance_level_metrics_table = _get_chat_instance_table(metrics.get("artifacts"))
             else:
                 instance_level_metrics_table = pd.DataFrame(metrics.get("artifacts"))
