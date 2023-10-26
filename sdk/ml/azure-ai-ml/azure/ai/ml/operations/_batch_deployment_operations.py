@@ -30,6 +30,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.exceptions import ResourceNotFoundError
 
 from ._operation_orchestrator import OperationOrchestrator
 
@@ -332,14 +333,23 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         :type orchestrators: _operation_orchestrator.OperationOrchestrator
         """
         if isinstance(deployment.component, PipelineComponent):
-            deployment.component = self._all_operations.all_operations[AzureMLResourceType.COMPONENT].create_or_update(
-                name=deployment.component.name,
-                resource_group_name=self._resource_group_name,
-                workspace_name=self._workspace_name,
-                component=deployment.component,
-                version=deployment.component.version,
-                **self._init_kwargs,
-            )
+            try:
+                registered_component = self._all_operations.all_operations[AzureMLResourceType.COMPONENT].get(
+                    name=deployment.component.name, version=deployment.component.version
+                )
+                deployment.component = registered_component.id
+            except Exception as err:
+                if isinstance(err, ResourceNotFoundError):
+                    deployment.component = self._all_operations.all_operations[
+                        AzureMLResourceType.COMPONENT
+                    ].create_or_update(
+                        name=deployment.component.name,
+                        resource_group_name=self._resource_group_name,
+                        workspace_name=self._workspace_name,
+                        component=deployment.component,
+                        version=deployment.component.version,
+                        **self._init_kwargs,
+                    )
         elif isinstance(deployment.component, str):
             component_id = orchestrators.get_asset_arm_id(
                 deployment.component, azureml_type=AzureMLResourceType.COMPONENT
