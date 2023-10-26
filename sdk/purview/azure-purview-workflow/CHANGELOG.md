@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b2 (2023-10-16)
+## 1.0.0b2 (2023-10-26)
 
 ### Features Added
 
@@ -9,7 +9,7 @@
 
 ### Breaking Changes
 
-- Split `PurviewWorkflowClient` into `UserRequestsClient`, `WorkflowClient`, `WorkflowRunClient` and `WorkflowTaskClient`.
+- Add operation groups `workflows`, `workflowruns`, `workflowtasks`, and `userrequest`.
 
 ### Other Changes
 
