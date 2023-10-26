@@ -89,11 +89,17 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
+    @overload
     async def publish_cloud_events(
-        self, topic_name: str, body: Union[List[CloudEvent], CloudEvent], *, binary_mode: Optional[bool] = False, **kwargs
+        self,
+        topic_name: str,
+        body: Dict[str, Any],
+        *,
+        binary_mode: Optional[bool] = False,
+        content_type: str = "application/cloudevents+json; charset=utf-8",
+        **kwargs: Any
     ) -> None:
-        """Publish Batch Cloud Event or Events to namespace topic. In case of success, the server responds with an
+        """Publish Single Cloud Event to namespace topic. In case of success, the server responds with an
         HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
         various error codes. For example, 401: which indicates authorization failure, 403: which
         indicates quota exceeded or message is too large, 410: which indicates that specific topic is
@@ -101,8 +107,8 @@ class EventGridClientOperationsMixin(OperationsMixin):
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
-        :param body: Cloud Event or Array of Cloud Events being published. Required.
-        :type body: ~azure.core.messaging.CloudEvent or list[~azure.core.messaging.CloudEvent]
+        :param body: Single Cloud Event being published. Required.
+        :type body: dict
         :keyword bool binary_mode: Whether to use binary mode for sending events. Defaults to False.
         :keyword content_type: content type. Default value is "application/cloudevents+json;
          charset=utf-8".
@@ -113,9 +119,36 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        # Do we want this in case they try to directly send in an event from SB or EH?
+
+    @distributed_trace_async
+    async def publish_cloud_events(
+        self, topic_name: str, body: Union[List[CloudEvent], CloudEvent, Dict[str, Any]], *, binary_mode: Optional[bool] = False, **kwargs
+    ) -> None:
+        """Publish Batch Cloud Event or Events to namespace topic. In case of success, the server responds with an
+        HTTP 200 status code with an empty JSON object in response. Otherwise, the server can return
+        various error codes. For example, 401: which indicates authorization failure, 403: which
+        indicates quota exceeded or message is too large, 410: which indicates that specific topic is
+        not found, 400: for bad request, and 500: for internal server error.
+
+        :param topic_name: Topic Name. Required.
+        :type topic_name: str
+        :param body: Cloud Event or Array of Cloud Events being published. Required.
+        :type body: ~azure.core.messaging.CloudEvent or list[~azure.core.messaging.CloudEvent] or dict[str, Any]
+        :keyword bool binary_mode: Whether to use binary mode for sending events. Defaults to False.
+        :keyword content_type: content type. Default value is "application/cloudevents+json;
+         charset=utf-8".
+        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         if isinstance(body, dict):
-            raise TypeError("Incorrect type for body. Expected CloudEvent or list of CloudEvents.")
+            try:
+                body = CloudEvent.from_dict(body)
+            except:
+                raise TypeError("Incorrect type for body. Expected CloudEvent or list of CloudEvents.")
         if isinstance(body, CloudEvent):
             kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
             if self._binary_mode:
