@@ -30,7 +30,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 from ._operation_orchestrator import OperationOrchestrator
 
@@ -338,17 +338,21 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                     name=deployment.component.name, version=deployment.component.version
                 )
                 deployment.component = registered_component.id
-            except ResourceNotFoundError:
-                deployment.component = self._all_operations.all_operations[
-                    AzureMLResourceType.COMPONENT
-                ].create_or_update(
-                    name=deployment.component.name,
-                    resource_group_name=self._resource_group_name,
-                    workspace_name=self._workspace_name,
-                    component=deployment.component,
-                    version=deployment.component.version,
-                    **self._init_kwargs,
-                )
+            except Exception as err: # pylint: disable=broad-except
+                if isinstance(err, ResourceNotFoundError) or isinstance(err, HttpResponseError):
+                    deployment.component = self._all_operations.all_operations[
+                        AzureMLResourceType.COMPONENT
+                    ].create_or_update(
+                        name=deployment.component.name,
+                        resource_group_name=self._resource_group_name,
+                        workspace_name=self._workspace_name,
+                        component=deployment.component,
+                        version=deployment.component.version,
+                        **self._init_kwargs,
+                    )
+                    pass
+                else:
+                    raise err
         elif isinstance(deployment.component, str):
             component_id = orchestrators.get_asset_arm_id(
                 deployment.component, azureml_type=AzureMLResourceType.COMPONENT
