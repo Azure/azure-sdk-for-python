@@ -36,31 +36,27 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
     Pop-Location
   }
 
-  Write-Host $allPkgPropLines
-
-  if ($allPkgPropLines) {
-    foreach ($line in $allPkgPropLines)
+  foreach ($line in $allPkgPropLines)
+  {
+    $pkgInfo = ($line -Split " ")
+    $packageName = $pkgInfo[0]
+    $packageVersion = $pkgInfo[1]
+    $isNewSdk = ($pkgInfo[2] -eq "True")
+    $pkgDirectoryPath = $pkgInfo[3]
+    $serviceDirectoryName = Split-Path (Split-Path -Path $pkgDirectoryPath -Parent) -Leaf
+    if ($packageName -match "mgmt")
     {
-      $pkgInfo = ($line -Split " ")
-      $packageName = $pkgInfo[0]
-      $packageVersion = $pkgInfo[1]
-      $isNewSdk = ($pkgInfo[2] -eq "True")
-      $pkgDirectoryPath = $pkgInfo[3]
-      $serviceDirectoryName = Split-Path (Split-Path -Path $pkgDirectoryPath -Parent) -Leaf
-      if ($packageName -match "mgmt")
-      {
-        $sdkType = "mgmt"
-      }
-      else
-      {
-        $sdkType = "client"
-      }
-      $pkgProp = [PackageProps]::new($packageName, $packageVersion, $pkgDirectoryPath, $serviceDirectoryName)
-      $pkgProp.IsNewSdk = $isNewSdk
-      $pkgProp.SdkType = $sdkType
-      $pkgProp.ArtifactName = $packageName
-      $allPackageProps += $pkgProp
+      $sdkType = "mgmt"
     }
+    else
+    {
+      $sdkType = "client"
+    }
+    $pkgProp = [PackageProps]::new($packageName, $packageVersion, $pkgDirectoryPath, $serviceDirectoryName)
+    $pkgProp.IsNewSdk = $isNewSdk
+    $pkgProp.SdkType = $sdkType
+    $pkgProp.ArtifactName = $packageName
+    $allPackageProps += $pkgProp
   }
   return $allPackageProps
 }
