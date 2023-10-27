@@ -38,7 +38,7 @@ else:
 
 class JobRouterAdministrationClientOperationsMixin(
     JobRouterAdministrationClientOperationsMixinGenerated
-):  # pylint:disable=too-many-lines,line-too-long,name-too-long
+):  # pylint:disable=too-many-lines,line-too-long,name-too-long,arguments-differ,unused-argument
     # region ExceptionPolicy
     @overload
     async def upsert_exception_policy(

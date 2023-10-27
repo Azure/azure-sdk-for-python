@@ -5,13 +5,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from datetime import datetime, timezone
-from dateutil.parser import parse
+from datetime import datetime
+from azure.communication.jobrouter._model_base import _deserialize_datetime as _convert_str_to_datetime
 from collections import Counter
-from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union, Tuple
+from typing import (
+    Any,
+    Dict,
+    List,
+    Union
+)
 
-from router_test_constants import SANITIZED, FAKE_FUNCTION_URI, FAKE_ENDPOINT, FAKE_CONNECTION_STRING
-from azure.core.serialization import _datetime_as_isostr  # pylint:disable=protected-access
+from router_test_constants import SANITIZED, FAKE_FUNCTION_URI
 from azure.communication.jobrouter.models import (
     BestWorkerMode,
     LongestIdleMode,
@@ -665,7 +669,7 @@ class RouterJobValidator(object):
         if isinstance(scheduled_time_utc, datetime):
             assert entity.scheduled_time_utc == scheduled_time_utc
         elif isinstance(scheduled_time_utc, str):
-            scheduled_time_utc_as_dt: datetime = parse(scheduled_time_utc, tzinfos=[timezone.utc])
+            scheduled_time_utc_as_dt: datetime = _convert_str_to_datetime(scheduled_time_utc)
             assert entity.scheduled_time_utc == scheduled_time_utc_as_dt
         else:
             raise AssertionError
