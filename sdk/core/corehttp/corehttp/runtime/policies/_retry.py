@@ -263,7 +263,7 @@ class RetryPolicyBase:
          True if more retry attempts available, False otherwise
         :rtype: bool
         """
-        # FIXME This code is not None safe: https://github.com/Azure/azure-sdk-for-python/issues/31528
+        # FIXME This code is not None safe.
         response = cast(
             Union[PipelineRequest[HttpRequest], PipelineResponse[HttpRequest, AllHttpResponseType]], response
         )
@@ -348,7 +348,6 @@ class RetryPolicyBase:
         # ("connection_config" isn't defined on Async/HttpTransport but all implementations in this library have it)
         elif hasattr(request.context.transport, "connection_config"):
             # FIXME This is fragile, should be refactored. Casting my way for mypy
-            # https://github.com/Azure/azure-sdk-for-python/issues/31530
             connection_config = cast(
                 MutableMapping[str, Any], request.context.transport.connection_config  # type: ignore
             )
