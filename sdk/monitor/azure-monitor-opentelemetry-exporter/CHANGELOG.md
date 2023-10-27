@@ -8,6 +8,11 @@
 
 ### Bugs Fixed
 
+- Default exception type for blank exceptions
+    ([#32327](https://github.com/Azure/azure-sdk-for-python/pull/32327))
+- Updated django samples with clearly artificial secret key
+    ([#32698](https://github.com/Azure/azure-sdk-for-python/pull/32698))
+
 ### Other Changes
 
 ## 1.0.0b17 (2023-09-12)

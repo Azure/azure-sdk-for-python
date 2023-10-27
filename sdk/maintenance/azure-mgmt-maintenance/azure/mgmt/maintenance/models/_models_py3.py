@@ -78,7 +78,7 @@ class ApplyUpdate(Resource):
      information.
     :vartype system_data: ~azure.mgmt.maintenance.models.SystemData
     :ivar status: The status. Known values are: "Pending", "InProgress", "Completed", "RetryNow",
-     and "RetryLater".
+     "RetryLater", "NoUpdatesPending", "Cancel", and "Cancelled".
     :vartype status: str or ~azure.mgmt.maintenance.models.UpdateStatus
     :ivar resource_id: The resourceId.
     :vartype resource_id: str
@@ -113,7 +113,7 @@ class ApplyUpdate(Resource):
     ) -> None:
         """
         :keyword status: The status. Known values are: "Pending", "InProgress", "Completed",
-         "RetryNow", and "RetryLater".
+         "RetryNow", "RetryLater", "NoUpdatesPending", "Cancel", and "Cancelled".
         :paramtype status: str or ~azure.mgmt.maintenance.models.UpdateStatus
         :keyword resource_id: The resourceId.
         :paramtype resource_id: str
@@ -904,7 +904,7 @@ class Update(_serialization.Model):
      "Redeploy".
     :vartype impact_type: str or ~azure.mgmt.maintenance.models.ImpactType
     :ivar status: The status. Known values are: "Pending", "InProgress", "Completed", "RetryNow",
-     and "RetryLater".
+     "RetryLater", "NoUpdatesPending", "Cancel", and "Cancelled".
     :vartype status: str or ~azure.mgmt.maintenance.models.UpdateStatus
     :ivar impact_duration_in_sec: Duration of impact in seconds.
     :vartype impact_duration_in_sec: int
@@ -943,7 +943,7 @@ class Update(_serialization.Model):
          "Redeploy".
         :paramtype impact_type: str or ~azure.mgmt.maintenance.models.ImpactType
         :keyword status: The status. Known values are: "Pending", "InProgress", "Completed",
-         "RetryNow", and "RetryLater".
+         "RetryNow", "RetryLater", "NoUpdatesPending", "Cancel", and "Cancelled".
         :paramtype status: str or ~azure.mgmt.maintenance.models.UpdateStatus
         :keyword impact_duration_in_sec: Duration of impact in seconds.
         :paramtype impact_duration_in_sec: int

@@ -37,7 +37,7 @@ def main():
                 "administratorLoginPassword": "newpassword",
                 "backup": {"backupRetentionDays": 20},
                 "createMode": "Update",
-                "storage": {"autoGrow": "Enabled", "iopsTier": "P30", "storageSizeGB": 1024},
+                "storage": {"autoGrow": "Enabled", "storageSizeGB": 1024, "tier": "P30"},
             },
             "sku": {"name": "Standard_D8s_v3", "tier": "GeneralPurpose"},
         },

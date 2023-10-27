@@ -127,7 +127,8 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         :param timeout_millis: The maximum amount of time to wait for shutdown. Not currently used.
         :type timeout_millis: float
         """
-        self.storage.close()
+        if self.storage:
+            self.storage.close()
 
     def _point_to_envelope(
         self,

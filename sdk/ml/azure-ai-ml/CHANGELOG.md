@@ -1,16 +1,39 @@
 # Release History
 
-## 1.11.0 (unreleased)
+## 1.12.0 (unreleased)
 
 ### Features Added
-- Now, when you specify `delete_dependent_resources` as True when deleting a workspace, the log analytics resource
-  associated with the workspace application insights resource will also be deleted.
+- Workspace Connections had 3 child classes added for open AI, cog search, and cog service connections.
+- Workspace Connections replaced metadata with tags, and surfaced api_version, api_type, and kind for certain connection types.
+
 
 ### Bugs Fixed
 
 ### Breaking Changes
 
 ### Other Changes
+
+## 1.11.1 (2023-10-13)
+
+### Bugs Fixed
+ - pydash dependency version was upgraded to >=6.0.0 to patch [security vulnerability in versions below 6.0.0](https://github.com/advisories/GHSA-8mjr-6c96-39w8)
+ - Workspace hub deletion no longer fails if delete_dependent_resources is true.
+
+## 1.11.0 (2023-10-04)
+
+### Features Added
+- Now, when you specify `delete_dependent_resources` as True when deleting a workspace, the log analytics resource
+  associated with the workspace application insights resource will also be deleted.
+- Now, when creating or updating a workspace, you can provide a `serverless_compute` configuration object. This allows configuring a custom subnet in which all Serverless computes will be created. You can also specify whether or not these Serverless computes will have public IP addresses or not.
+
+### Breaking Changes
+ - [Python 3.7 reached end-of-life on June 27th 2023](https://devguide.python.org/versions/). Consequently, 3.7 will be deprecated in azure-ai-ml starting in October 2023 and azure-ai-ml will end support for 3.7 in February 2024.
+
+## 1.10.1 (2023-09-17)
+
+### Bugs Fixed
+- Feature sets can now be registers after being dumped and reloaded.
+- SDK feature store create/update can now assign materialization identities to cross RG offline stores and online stores.
 
 ## 1.10.0 (2023-09-07)
 
@@ -144,6 +167,7 @@
 - Added dedicated classes for each type of job service and updated the docstrings. The classes added are `JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService` with a few properties specific to the type.
 - Added Custom Applications Support to Compute Instances.
 - Update data asset list, show and create operations to support data assets in registry.
+- Added Managed Network features to workspace to include `ManagedNetwork`, `FqdnDestination`, `PrivateEndpointDestination`, `ServiceTagDestination` as well as relevant schema.
 
 ### Bugs Fixed
 - Fixed an issue where the ordering of `.amlignore` and `.gitignore` files are not respected.

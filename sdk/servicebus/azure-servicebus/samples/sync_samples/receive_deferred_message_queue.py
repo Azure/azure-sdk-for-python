@@ -10,6 +10,7 @@ Example to show receiving deferred message from a Service Bus Queue.
 """
 
 import os
+from typing import List
 from azure.servicebus import ServiceBusMessage, ServiceBusClient
 
 CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
@@ -23,13 +24,14 @@ with servicebus_client:
     with sender:
         sender.send_messages(messages)
 
-    receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME)
+    receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, max_wait_time=5)
     with receiver:
-        received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
+        received_msgs = receiver.receive_messages(max_message_count=10)
         deferred_sequenced_numbers = []
         for msg in received_msgs:
             print("Deferring msg: {}".format(str(msg)))
-            deferred_sequenced_numbers.append(msg.sequence_number)
+            if msg.sequence_number:
+                deferred_sequenced_numbers.append(msg.sequence_number)
             receiver.defer_message(msg)
 
         if deferred_sequenced_numbers:

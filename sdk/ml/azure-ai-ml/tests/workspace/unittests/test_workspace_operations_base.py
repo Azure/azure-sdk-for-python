@@ -1,11 +1,16 @@
-from unittest.mock import DEFAULT, Mock, patch
+from typing import Optional
+from unittest.mock import DEFAULT, MagicMock, Mock, patch
+from uuid import UUID, uuid4
 
 import pytest
 from pytest_mock import MockFixture
 
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
+)
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    ServerlessComputeSettings as RestServerlessComputeSettings,
 )
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -15,6 +20,7 @@ from azure.ai.ml.entities import (
     FeatureStore,
     IdentityConfiguration,
     ManagedIdentityConfiguration,
+    ServerlessComputeSettings,
     Workspace,
 )
 from azure.ai.ml.operations._workspace_operations_base import WorkspaceOperationsBase
@@ -41,6 +47,34 @@ def mock_workspace_operation_base(
     )
 
 
+@pytest.fixture
+def mock_workspace_operation_base_aug_2023_preview(
+    mock_workspace_scope: OperationScope,
+    mock_aml_services_2023_08_01_preview: Mock,
+    mock_machinelearning_client: Mock,
+    mock_credential: Mock,
+) -> WorkspaceOperationsBase:
+    yield WorkspaceOperationsBase(
+        operation_scope=mock_workspace_scope,
+        service_client=mock_aml_services_2023_08_01_preview,
+        all_operations=mock_machinelearning_client._operation_container,
+        credentials=mock_credential,
+    )
+
+
+def gen_subnet_name(
+    subscription_id: Optional[UUID] = None,
+    resource_group: Optional[str] = None,
+    vnet: Optional[str] = None,
+    subnet_name: Optional[str] = None,
+) -> str:
+    sub = subscription_id or uuid4()
+    rg = resource_group or "test_resource_group"
+    virtualnet = vnet or "testvnet"
+    subnet = subnet_name or "testsubnet"
+    return f"/subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Network/virtualNetworks/{virtualnet}/subnets/{subnet}"
+
+
 @pytest.mark.unittest
 @pytest.mark.core_sdk_test
 class TestWorkspaceOperation:
@@ -51,7 +85,7 @@ class TestWorkspaceOperation:
     ):
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations.get", return_value=None)
         mocker.patch(
-            "azure.ai.ml.operations._workspace_operations_base.WorkspaceOperationsBase._populate_arm_paramaters",
+            "azure.ai.ml.operations._workspace_operations_base.WorkspaceOperationsBase._populate_arm_parameters",
             return_value=({}, {}, {}),
         )
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
@@ -64,7 +98,7 @@ class TestWorkspaceOperation:
     ):
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations.get", return_value=None)
         mocker.patch(
-            "azure.ai.ml.operations._workspace_operations_base.WorkspaceOperationsBase._populate_arm_paramaters",
+            "azure.ai.ml.operations._workspace_operations_base.WorkspaceOperationsBase._populate_arm_parameters",
             return_value=({}, {}, {}),
         )
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
@@ -78,7 +112,7 @@ class TestWorkspaceOperation:
             resource_group="another_resource_group",
         )
         mocker.patch(
-            "azure.ai.ml.operations._workspace_operations_base.WorkspaceOperationsBase._populate_arm_paramaters",
+            "azure.ai.ml.operations._workspace_operations_base.WorkspaceOperationsBase._populate_arm_parameters",
             return_value=({}, {}, {}),
         )
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
@@ -99,7 +133,7 @@ class TestWorkspaceOperation:
     ):
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations.get", side_effect=Exception)
         mocker.patch(
-            "azure.ai.ml.operations._workspace_operations_base.WorkspaceOperationsBase._populate_arm_paramaters",
+            "azure.ai.ml.operations._workspace_operations_base.WorkspaceOperationsBase._populate_arm_parameters",
             return_value=({}, {}, {}),
         )
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
@@ -215,7 +249,7 @@ class TestWorkspaceOperation:
             mock_workspace_operation_base.begin_delete("randstr", delete_dependent_resources=True)
             mock_workspace_operation_base._operation.begin_delete.assert_called_once()
 
-    def test_populate_arm_paramaters(
+    def _populate_arm_parameters(
         self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture
     ) -> None:
         mocker.patch(
@@ -225,9 +259,9 @@ class TestWorkspaceOperation:
             "azure.ai.ml.operations._workspace_operations_base.get_log_analytics_arm_id",
             return_value=("random_id", True),
         )
-        mock_workspace_operation_base._populate_arm_paramaters(workspace=Workspace(name="name"))
+        mock_workspace_operation_base._populate_arm_parameters(workspace=Workspace(name="name"))
 
-    def test_populate_arm_paramaters_other_branches(
+    def test_populate_arm_parameters_other_branches(
         self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture
     ) -> None:
         mocker.patch(
@@ -250,9 +284,9 @@ class TestWorkspaceOperation:
         ws.image_build_compute = "image_build_compute"
         ws.tags = {"k": "v"}
         ws.param = {"tagValues": {"value": {}}}
-        mock_workspace_operation_base._populate_arm_paramaters(workspace=ws)
+        mock_workspace_operation_base._populate_arm_parameters(workspace=ws)
 
-    def test_populate_arm_paramaters_feature_store(
+    def test_populate_arm_parameters_feature_store(
         self, mock_workspace_operation_base: WorkspaceOperationsBase, mocker: MockFixture
     ) -> None:
         mocker.patch(
@@ -264,7 +298,7 @@ class TestWorkspaceOperation:
         )
 
         feature_store = FeatureStore(name="name", resource_group="rg")
-        template, param, _ = mock_workspace_operation_base._populate_arm_paramaters(
+        template, param, _ = mock_workspace_operation_base._populate_arm_parameters(
             workspace=feature_store, grant_materialization_permissions=True
         )
 
@@ -273,7 +307,7 @@ class TestWorkspaceOperation:
         assert param["materialization_identity_name"] == {"value": "materialization-uai-rg-name"}
         assert param["materialization_identity_resource_id"] == {"value": ""}
 
-        template, param, _ = mock_workspace_operation_base._populate_arm_paramaters(
+        template, param, _ = mock_workspace_operation_base._populate_arm_parameters(
             workspace=feature_store,
             materialization_identity=ManagedIdentityConfiguration(client_id="client_id", resource_id="resource_id"),
             grant_materialization_permissions=False,
@@ -326,3 +360,90 @@ class TestWorkspaceOperation:
         mock_workspace_operation_base._default_workspace_name = None
         with pytest.raises(Exception):
             mock_workspace_operation_base._check_workspace_name(None)
+
+    @pytest.mark.parametrize(
+        "serverless_compute_settings",
+        [
+            None,
+            ServerlessComputeSettings(gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
+            ServerlessComputeSettings(gen_subnet_name(subnet_name="npip"), no_public_ip=True),
+        ],
+    )
+    def test_create_workspace_with_serverless_custom_vnet(
+        self,
+        serverless_compute_settings: ServerlessComputeSettings,
+        mock_workspace_operation_base_aug_2023_preview: WorkspaceOperationsBase,
+        mocker: MockFixture,
+    ) -> None:
+        ws = Workspace(name="name", location="test", serverless_compute=serverless_compute_settings)
+        spy = mocker.spy(WorkspaceOperationsBase, "_populate_arm_parameters")
+
+        mock_workspace_operation_base_aug_2023_preview._operation.get = MagicMock(return_value=None)
+        mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
+        mock_workspace_operation_base_aug_2023_preview.begin_create(ws)
+        (_, param, _) = spy.spy_return
+        settings = param["serverless_compute_settings"]["value"]
+        if serverless_compute_settings is None:
+            # settings is an empty JSON REST object at this point
+            assert len(settings) == 0
+        else:
+            RestServerlessComputeSettings.deserialize(settings) == serverless_compute_settings._to_rest_object()
+
+    @pytest.mark.parametrize(
+        "serverless_compute_settings",
+        [
+            None,
+            ServerlessComputeSettings(gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
+            ServerlessComputeSettings(gen_subnet_name(subnet_name="npip"), no_public_ip=True),
+        ],
+    )
+    def test_update_workspace_with_serverless_custom_vnet(
+        self,
+        serverless_compute_settings: ServerlessComputeSettings,
+        mock_workspace_operation_base_aug_2023_preview: WorkspaceOperationsBase,
+        mocker: MockFixture,
+    ) -> None:
+        ws = Workspace(name="name", location="test", serverless_compute=serverless_compute_settings)
+        spy = mocker.spy(mock_workspace_operation_base_aug_2023_preview._operation, "begin_update")
+        mock_workspace_operation_base_aug_2023_preview.begin_update(ws)
+        if serverless_compute_settings is None:
+            assert spy.call_args[0][2].serverless_compute_settings is None
+        else:
+            assert (
+                ServerlessComputeSettings._from_rest_object(spy.call_args[0][2].serverless_compute_settings)
+                == serverless_compute_settings
+            )
+
+    @pytest.mark.parametrize(
+        "new_settings",
+        [
+            ServerlessComputeSettings(gen_subnet_name(vnet="testvnet", subnet_name="testsubnet")),
+            ServerlessComputeSettings(no_public_ip=True),
+        ],
+    )
+    def test_can_perform_partial_update_of_serverless_compute_settings(
+        self,
+        new_settings: ServerlessComputeSettings,
+        mock_workspace_operation_base_aug_2023_preview: WorkspaceOperationsBase,
+        mocker: MockFixture,
+    ) -> None:
+        original_settings = ServerlessComputeSettings(
+            gen_subnet_name(vnet="testvnet", subnet_name="default"), no_public_ip=False
+        )
+        wsname = "fake"
+        ws = Workspace(name=wsname, location="test", serverless_compute=new_settings)
+
+        key = CustomerManagedKey()
+        original_workspace = Workspace(
+            name=wsname,
+            location="test",
+            serverless_compute=original_settings,
+            customer_managed_key=key,
+        )
+        rest_workspace: RestWorkspace = original_workspace._to_rest_object()  # pylint: disable=protected-access
+        mock_workspace_operation_base_aug_2023_preview._operation.get = MagicMock(return_value=rest_workspace)
+        spy = mocker.spy(mock_workspace_operation_base_aug_2023_preview._operation, "begin_update")
+        mock_workspace_operation_base_aug_2023_preview.begin_update(ws)
+        assert (
+            ServerlessComputeSettings._from_rest_object(spy.call_args[0][2].serverless_compute_settings) == new_settings
+        )
