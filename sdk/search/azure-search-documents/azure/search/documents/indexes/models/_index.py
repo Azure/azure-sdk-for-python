@@ -229,8 +229,8 @@ class SearchField(_serialization.Model):
             index_analyzer=self.index_analyzer_name,
             synonym_maps=self.synonym_map_names,
             fields=fields,
-            dimensions=self.vector_search_dimensions,
-            vector_search_profile=self.vector_search_profile_name,
+            vector_search_dimensions=self.vector_search_dimensions,
+            vector_search_profile_name=self.vector_search_profile_name,
         )
 
     @classmethod
@@ -254,8 +254,8 @@ class SearchField(_serialization.Model):
             index_analyzer_name=search_field.index_analyzer,
             synonym_map_names=search_field.synonym_maps,
             fields=fields,
-            vector_search_dimensions=search_field.dimensions,
-            vector_search_profile_name=search_field.vector_search_profile,
+            vector_search_dimensions=search_field.vector_search_dimensions,
+            vector_search_profile_name=search_field.vector_search_profile_name,
         )
 
 
@@ -516,8 +516,8 @@ class SearchIndex(_serialization.Model):
      creation time and cannot be modified on existing indexes. If null, the ClassicSimilarity
      algorithm is used.
     :vartype similarity: ~azure.search.documents.indexes.models.SimilarityAlgorithm
-    :ivar semantic_settings: Defines parameters for a search index that influence semantic capabilities.
-    :vartype semantic_settings: ~azure.search.documents.indexes.models.SemanticSettings
+    :ivar semanic_search: Defines parameters for a search index that influence semantic capabilities.
+    :vartype semanic_search: ~azure.search.documents.indexes.models.SemanticSearch
     :ivar vector_search: Defines parameters for a search index that influence scoring in a vector space.
     :vartype vector_search: ~azure.search.documents.indexes.models.VectorSearch
     :ivar e_tag: The ETag of the index.
@@ -545,7 +545,7 @@ class SearchIndex(_serialization.Model):
             "type": "SearchResourceEncryptionKey",
         },
         "similarity": {"key": "similarity", "type": "SimilarityAlgorithm"},
-        "semantic_settings": {"key": "semantic", "type": "SemanticSettings"},
+        "semanic_search": {"key": "semantic", "type": "SemanticSearch"},
         "vector_search": {"key": "vectorSearch", "type": "VectorSearch"},
         "e_tag": {"key": "@odata\\.etag", "type": "str"},
     }
@@ -564,7 +564,7 @@ class SearchIndex(_serialization.Model):
         self.char_filters = kwargs.get("char_filters", None)
         self.encryption_key = kwargs.get("encryption_key", None)
         self.similarity = kwargs.get("similarity", None)
-        self.semantic_settings = kwargs.get("semantic_settings", None)
+        self.semanic_search = kwargs.get("semanic_search", None)
         self.vector_search = kwargs.get("vector_search", None)
         self.e_tag = kwargs.get("e_tag", None)
 
@@ -598,7 +598,7 @@ class SearchIndex(_serialization.Model):
             # pylint:disable=protected-access
             encryption_key=self.encryption_key._to_generated() if self.encryption_key else None,
             similarity=self.similarity,
-            semantic_settings=self.semantic_settings,
+            semanic_search=self.semanic_search,
             e_tag=self.e_tag,
             vector_search=self.vector_search,
         )
@@ -636,7 +636,7 @@ class SearchIndex(_serialization.Model):
             # pylint:disable=protected-access
             encryption_key=SearchResourceEncryptionKey._from_generated(search_index.encryption_key),
             similarity=search_index.similarity,
-            semantic_settings=search_index.semantic_settings,
+            semanic_search=search_index.semanic_search,
             e_tag=search_index.e_tag,
             vector_search=search_index.vector_search,
         )
@@ -677,6 +677,6 @@ def pack_search_field(search_field: SearchField) -> _SearchField:
             synonym_maps=synonym_map_names,
             fields=fields,
             vector_search_dimensions=vector_search_dimensions,
-            vector_search_profile=vector_search_profile_name,
+            vector_search_profile_name=vector_search_profile_name,
         )
     return search_field._to_generated()  # pylint:disable=protected-access
