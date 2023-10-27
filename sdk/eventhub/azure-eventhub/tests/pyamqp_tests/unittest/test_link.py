@@ -73,9 +73,9 @@ def test_receive_transfer_frame_multiple():
 
     link.current_link_credit = 2 # Set the link credit to 2
 
-    # frame: handle, delivery_id, delivery_tag, messge_format, settled, more, rcv_settle_mode, state, resume, aborted, bathable, payload
-    transfer_frame_one = [3, 0, b'/blah', 0, None, True, None, None, None, False, b"test1"]
-    transfer_frame_two = [3, None, b'/blah', 0, None, False, None, None, None, False, b"test2"]
+    # frame: handle, delivery_id, delivery_tag, message_format, settled, more, rcv_settle_mode, state, resume, aborted, bathable, payload
+    transfer_frame_one = [3, 0, b'/blah', 0, None, True, None, None, None, None, False, b"test1"]
+    transfer_frame_two = [3, None, b'/blah', 0, None, False, None, None, None, None, False, b"test2"]
 
     link._incoming_transfer(transfer_frame_one)
     assert link.current_link_credit == 2
@@ -96,10 +96,10 @@ def test_receive_transfer_continuation_frame():
 
     link.current_link_credit = 3 # Set the link credit to 2
 
-    # frame: handle, delivery_id, delivery_tag, messge_format, settled, more, rcv_settle_mode, state, resume, aborted, batchable, payload
-    transfer_frame_one = [3, 0, b'/blah', 0, None, False, None, None, None, False, b"test1"]
-    transfer_frame_two = [3, 1, b'/blah', 0, None, True, None, None, None, False, b"test2"]
-    transfer_frame_three = [3, None, b'/blah', 0, None, False, None, None, None, False, b"test2"]
+    # frame: handle, delivery_id, delivery_tag, message_format, settled, more, rcv_settle_mode, state, resume, aborted, batchable, payload
+    transfer_frame_one = [3, 0, b'/blah', 0, None, False, None, None, None, None, False, b"test1"]
+    transfer_frame_two = [3, 1, b'/blah', 0, None, True, None, None, None, None, False, b"test2"]
+    transfer_frame_three = [3, None, b'/blah', 0, None, False, None, None, None, None, False, b"test2"]
 
 
 
