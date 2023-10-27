@@ -34,8 +34,17 @@ def main():
         elastic_san_name="elasticsanname",
         volume_group_name="volumegroupname",
         parameters={
+            "identity": {"type": "None", "userAssignedIdentities": {"key7482": {}}},
             "properties": {
-                "encryption": "EncryptionAtRestWithPlatformKey",
+                "encryption": "EncryptionAtRestWithCustomerManagedKey",
+                "encryptionProperties": {
+                    "identity": {"userAssignedIdentity": "im"},
+                    "keyVaultProperties": {
+                        "keyName": "sftaiernmrzypnrkpakrrawxcbsqzc",
+                        "keyVaultUri": "https://microsoft.com/axmblwp",
+                        "keyVersion": "c",
+                    },
+                },
                 "networkAcls": {
                     "virtualNetworkRules": [
                         {
@@ -45,12 +54,12 @@ def main():
                     ]
                 },
                 "protocolType": "Iscsi",
-            }
+            },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/preview/2022-12-01-preview/examples/VolumeGroups_Create_MaximumSet_Gen.json
+# x-ms-original-file: specification/elasticsan/resource-manager/Microsoft.ElasticSan/stable/2023-01-01/examples/VolumeGroups_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -45,7 +45,7 @@ async def receive_batch_messages(receiver):
     session = receiver.session
     await session.set_state("START")
     print("Session state:", await session.get_state())
-    received_msgs = await receiver.receive_messages(max_message_count=10, max_wait_time=5)
+    received_msgs = await receiver.receive_messages(max_message_count=10)
     for msg in received_msgs:
         print(str(msg))
         await receiver.complete_message(msg)
@@ -66,7 +66,7 @@ async def main():
 
         print("Send message is done.")
 
-        receiver = servicebus_client.get_queue_receiver(queue_name=SESSION_QUEUE_NAME, session_id=SESSION_ID)
+        receiver = servicebus_client.get_queue_receiver(queue_name=SESSION_QUEUE_NAME, session_id=SESSION_ID, max_wait_time=5)
         async with receiver:
             await receive_batch_messages(receiver)
 

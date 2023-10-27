@@ -42,12 +42,13 @@ def main():
                 "strategy": {
                     "stages": [{"afterStageWaitInSeconds": 3600, "groups": [{"name": "group-a"}], "name": "stage1"}]
                 },
+                "updateStrategyId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.ContainerService/fleets/myFleet/updateStrategies/strategy1",
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/fleet/preview/2023-06-15-preview/examples/UpdateRuns_CreateOrUpdate.json
+# x-ms-original-file: specification/containerservice/resource-manager/Microsoft.ContainerService/fleet/stable/2023-10-15/examples/UpdateRuns_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

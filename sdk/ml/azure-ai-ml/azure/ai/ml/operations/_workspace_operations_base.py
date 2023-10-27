@@ -4,14 +4,14 @@
 
 # pylint: disable=protected-access
 
-from abc import ABC
 import time
-from typing import Callable, Dict, Optional, Tuple
+from abc import ABC
+from typing import Any, Callable, Dict, MutableMapping, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningServices as ServiceClient082023Preview
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
     WorkspaceUpdateParameters,
@@ -22,9 +22,9 @@ from azure.ai.ml._utils._appinsights_utils import get_log_analytics_arm_id
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._workspace_utils import (
-    get_generic_arm_resource_by_arm_id,
     delete_resource_by_arm_id,
     get_deployment_name,
+    get_generic_arm_resource_by_arm_id,
     get_name_for_dependent_resource,
     get_resource_and_group_name,
     get_resource_group_location,
@@ -52,7 +52,7 @@ class WorkspaceOperationsBase(ABC):
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient062023Preview,
+        service_client: ServiceClient082023Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
@@ -258,7 +258,14 @@ class WorkspaceOperationsBase(ABC):
         if isinstance(managed_network, str):
             managed_network = ManagedNetwork(isolation_mode=managed_network)._to_rest_object()
         elif isinstance(managed_network, ManagedNetwork):
-            managed_network = workspace.managed_network._to_rest_object()
+            if managed_network.outbound_rules is not None:
+                # drop recommended and required rules from the update request since it would result in bad request
+                managed_network.outbound_rules = [
+                    rule
+                    for rule in managed_network.outbound_rules
+                    if rule.category not in (OutboundRuleCategory.REQUIRED, OutboundRuleCategory.RECOMMENDED)
+                ]
+            managed_network = managed_network._to_rest_object()
 
         container_registry = kwargs.get("container_registry", workspace.container_registry)
         # Empty string is for erasing the value of container_registry, None is to be ignored value
@@ -305,6 +312,12 @@ class WorkspaceOperationsBase(ABC):
         if feature_store_settings:
             feature_store_settings = feature_store_settings._to_rest_object()
 
+        serverless_compute_settings = kwargs.get("serverless_compute", workspace.serverless_compute)
+        if serverless_compute_settings:
+            serverless_compute_settings = (
+                serverless_compute_settings._to_rest_object()
+            )  # pylint: disable=protected-access
+
         update_param = WorkspaceUpdateParameters(
             tags=kwargs.get("tags", workspace.tags),
             description=kwargs.get("description", workspace.description),
@@ -318,6 +331,8 @@ class WorkspaceOperationsBase(ABC):
             managed_network=managed_network,
             feature_store_settings=feature_store_settings,
         )
+        if serverless_compute_settings:
+            update_param.serverless_compute_settings = serverless_compute_settings
         update_param.container_registry = container_registry or None
         update_param.application_insights = application_insights or None
 
@@ -330,14 +345,6 @@ class WorkspaceOperationsBase(ABC):
                     key_identifier=customer_managed_key_uri,
                 )
             )
-
-        if workspace.managed_network is not None and workspace.managed_network.outbound_rules is not None:
-            # drop recommended and required rules from the update request since it would result in bad request
-            workspace.managed_network.outbound_rules = [
-                rule
-                for rule in workspace.managed_network.outbound_rules
-                if rule.category not in (OutboundRuleCategory.REQUIRED, OutboundRuleCategory.RECOMMENDED)
-            ]
 
         update_role_assignment = (
             kwargs.get("update_workspace_role_assignment", None)
@@ -701,6 +708,11 @@ class WorkspaceOperationsBase(ABC):
             if workspace.workspace_hub:
                 _set_val(param["workspace_hub"], workspace.workspace_hub)
 
+        # Serverless compute related param
+        serverless_compute = workspace.serverless_compute if workspace.serverless_compute else None
+        if serverless_compute:
+            _set_obj_val(param["serverless_compute_settings"], serverless_compute._to_rest_object())
+
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)
         return template, param, resources_being_deployed
 
@@ -788,6 +800,22 @@ def _set_val(dict: dict, val: str) -> None:
     :rtype: None
     """
     dict["value"] = val
+
+
+def _set_obj_val(dict: dict, val: Any) -> None:
+    """Serializes a JSON string into the parameters dict.
+
+    :param dict: Parameters dict.
+    :type dict: dict
+    :param val: The obj to serialize.
+    :type val: Any type. Must have `.serialize() -> MutableMapping[str, Any]` method.
+    :return: No Return.
+    :rtype: None
+    """
+    from copy import deepcopy
+
+    json: MutableMapping[str, Any] = val.serialize()
+    dict["value"] = deepcopy(json)
 
 
 def _generate_key_vault(name: str, resources_being_deployed: dict) -> str:

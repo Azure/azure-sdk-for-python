@@ -24,7 +24,6 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import annotations
-import sys
 from typing import Optional, TYPE_CHECKING, Type, cast
 from types import TracebackType
 
@@ -136,7 +135,7 @@ class AioHttpTransport(AsyncHttpTransport):
         :return: The request data
         """
         if request._files:  # pylint: disable=protected-access
-            form_data = aiohttp.FormData()
+            form_data = aiohttp.FormData(request._data or {})  # pylint: disable=protected-access
             for form_file, data in request._files.items():  # pylint: disable=protected-access
                 content_type = data[2] if len(data) > 2 else None
                 try:
