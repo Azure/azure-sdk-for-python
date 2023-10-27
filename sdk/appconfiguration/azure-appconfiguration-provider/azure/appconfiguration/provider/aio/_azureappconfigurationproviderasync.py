@@ -185,13 +185,14 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
     if kwargs.get("keyvault_credential") is not None and kwargs.get("secret_resolver") is not None:
         raise ValueError("A keyvault credential and secret resolver can't both be configured.")
 
+    headers = _get_headers("Startup", **kwargs)
     provider = _buildprovider(connection_string, endpoint, credential, **kwargs)
-    await provider._load_all(headers=_get_headers("Startup", **kwargs))
+    await provider._load_all(headers=headers)
 
     # Refresh-All sentinels are not updated on load_all, as they are not necessarily included in the provider.
     for (key, label), etag in provider._refresh_on.items():
         if not etag:
-            sentinel = await provider._client.get_configuration_setting(key, label, headers=_get_headers("Startup"))
+            sentinel = await provider._client.get_configuration_setting(key, label, headers=headers)
             provider._refresh_on[(key, label)] = sentinel.etag
     return provider
 
