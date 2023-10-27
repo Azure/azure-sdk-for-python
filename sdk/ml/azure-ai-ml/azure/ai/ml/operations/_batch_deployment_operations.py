@@ -23,13 +23,14 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._package_utils import package_deployment
 from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, modified_operation_client
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
-from azure.ai.ml.entities import BatchDeployment, BatchJob, ModelBatchDeployment, PipelineComponent
+from azure.ai.ml.entities import BatchDeployment, BatchJob, ModelBatchDeployment, PipelineComponent, PipelineJob
 from azure.ai.ml.entities._deployment.deployment import Deployment
 from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 from ._operation_orchestrator import OperationOrchestrator
 
@@ -332,14 +333,25 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         :type orchestrators: _operation_orchestrator.OperationOrchestrator
         """
         if isinstance(deployment.component, PipelineComponent):
-            deployment.component = self._all_operations.all_operations[AzureMLResourceType.COMPONENT].create_or_update(
-                name=deployment.component.name,
-                resource_group_name=self._resource_group_name,
-                workspace_name=self._workspace_name,
-                component=deployment.component,
-                version=deployment.component.version,
-                **self._init_kwargs,
-            )
+            try:
+                registered_component = self._all_operations.all_operations[AzureMLResourceType.COMPONENT].get(
+                    name=deployment.component.name, version=deployment.component.version
+                )
+                deployment.component = registered_component.id
+            except Exception as err:  # pylint: disable=broad-except
+                if isinstance(err, (ResourceNotFoundError, HttpResponseError)):
+                    deployment.component = self._all_operations.all_operations[
+                        AzureMLResourceType.COMPONENT
+                    ].create_or_update(
+                        name=deployment.component.name,
+                        resource_group_name=self._resource_group_name,
+                        workspace_name=self._workspace_name,
+                        component=deployment.component,
+                        version=deployment.component.version,
+                        **self._init_kwargs,
+                    )
+                else:
+                    raise err
         elif isinstance(deployment.component, str):
             component_id = orchestrators.get_asset_arm_id(
                 deployment.component, azureml_type=AzureMLResourceType.COMPONENT
@@ -356,3 +368,22 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 **self._init_kwargs,
             )
             deployment.component = job_component.id
+
+        elif isinstance(deployment.job_definition, PipelineJob):
+            try:
+                registered_job = self._all_operations.all_operations[AzureMLResourceType.JOB].get(
+                    name=deployment.job_definition.name
+                )
+                if registered_job:
+                    job_component = PipelineComponent(source_job_id=registered_job.name)
+                    job_component = self._component_operations.create_or_update(
+                        name=job_component.name,
+                        resource_group_name=self._resource_group_name,
+                        workspace_name=self._workspace_name,
+                        body=job_component._to_rest_object(),
+                        version=job_component.version,
+                        **self._init_kwargs,
+                    )
+                    deployment.component = job_component.id
+            except ResourceNotFoundError as err:
+                raise err

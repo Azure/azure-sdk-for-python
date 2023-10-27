@@ -3,22 +3,16 @@
 # ---------------------------------------------------------
 
 import ast
-import datetime
 import os
 from pathlib import Path
 import shutil
 import tempfile
-import uuid
 from typing import Any, List, Union, Iterable
 
-import yaml
 
 from azure.ai.ml import MLClient
 from azure.ai.ml.entities import ManagedOnlineDeployment, ManagedOnlineEndpoint, Model as AzureMLModel, DataCollector, DeploymentCollection, Environment, BuildContext
-from azure.core.exceptions import ResourceExistsError
 from azure.core.tracing.decorator import distributed_trace
-from azure.mgmt.authorization import AuthorizationManagementClient
-from azure.mgmt.authorization.v2020_10_01_preview.models import RoleAssignmentCreateParameters
 
 from .._utils._scoring_script_utils import create_chat_scoring_script, create_mlmodel_file
 from .._utils._registry_utils import get_registry_model
@@ -37,16 +31,6 @@ class DeploymentOperations:
     def __init__(self, ml_client: MLClient, connections, **kwargs) -> None:
         self._ml_client = ml_client
         self._connections = connections
-        self._role_definition_client = AuthorizationManagementClient(
-            credential=self._ml_client._credential,
-            subscription_id=self._ml_client.subscription_id,
-            api_version="2018-01-01-preview",
-        )
-        self._role_assignment_client = AuthorizationManagementClient(
-            credential=self._ml_client._credential,
-            subscription_id=self._ml_client.subscription_id,
-            api_version="2020-10-01-preview",
-        )
         ops_logger.update_info(kwargs)
 
     @distributed_trace
