@@ -181,9 +181,7 @@ class TestClient(AzureRecordedTestCase):
             os.environ["AZURE_OPENAI_API_KEY"] = os.getenv(ENV_AZURE_OPENAI_KEY)
 
             try:
-                client = openai.AzureOpenAI(
-                    api_version=None,
-                )
+                client = openai.AzureOpenAI()
                 messages = [
                     {"role": "system", "content": "You are a helpful assistant."},
                     {"role": "user", "content": "Who won the world series in 2020?"}
@@ -215,9 +213,7 @@ class TestClient(AzureRecordedTestCase):
             os.environ["AZURE_OPENAI_AD_TOKEN"] = DefaultAzureCredential().get_token("https://cognitiveservices.azure.com/.default").token
 
             try:
-                client = openai.AzureOpenAI(
-                    api_version=None,
-                )
+                client = openai.AzureOpenAI()
                 messages = [
                     {"role": "system", "content": "You are a helpful assistant."},
                     {"role": "user", "content": "Who won the world series in 2020?"}

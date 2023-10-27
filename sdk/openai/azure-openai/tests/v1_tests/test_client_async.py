@@ -193,9 +193,7 @@ class TestClientAsync(AzureRecordedTestCase):
             os.environ["AZURE_OPENAI_API_KEY"] = os.getenv(ENV_AZURE_OPENAI_KEY)
 
             try:
-                client = openai.AsyncAzureOpenAI(
-                    api_version=None,
-                )
+                client = openai.AsyncAzureOpenAI()
                 messages = [
                     {"role": "system", "content": "You are a helpful assistant."},
                     {"role": "user", "content": "Who won the world series in 2020?"}
@@ -230,9 +228,7 @@ class TestClientAsync(AzureRecordedTestCase):
             os.environ["AZURE_OPENAI_AD_TOKEN"] = access_token.token
 
             try:
-                client = openai.AsyncAzureOpenAI(
-                    api_version=None,
-                )
+                client = openai.AsyncAzureOpenAI()
                 messages = [
                     {"role": "system", "content": "You are a helpful assistant."},
                     {"role": "user", "content": "Who won the world series in 2020?"}
