@@ -191,16 +191,17 @@ class MLIndex:
                     from azure.core.credentials import AzureKeyCredential
                     from langchain.vectorstores.azuresearch import AzureSearch
 
-                    return AzureSearch(
-                        azure_search_endpoint=self.index_config.get(
-                            "endpoint",
-                            get_target_from_connection(
-                                get_connection_by_id_v2(
-                                    self.index_config["connection"]["id"],
-                                    credential=credential
-                                )
+                    endpoint = self.index_config.get("endpoint", None)
+                    if not endpoint:
+                        endpoint = get_target_from_connection(
+                            get_connection_by_id_v2(
+                                self.index_config["connection"]["id"],
+                                credential=credential
                             )
-                        ),
+                        )
+
+                    return AzureSearch(
+                        azure_search_endpoint=self.index_config.get("endpoint", endpoint),
                         azure_search_key=connection_credential.key if isinstance(connection_credential, AzureKeyCredential) else None,
                         index_name=self.index_config.get("index"),
                         embedding_function=self.get_langchain_embeddings(credential=credential).embed_query,
