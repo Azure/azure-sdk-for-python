@@ -54,7 +54,8 @@ _COMMON_OPTIONS = {
     'content_type': 'contentType',
     'is_query_plan_request': 'isQueryPlanRequest',
     'supported_query_features': 'supportedQueryFeatures',
-    'query_version': 'queryVersion'
+    'query_version': 'queryVersion',
+    'priority_level': 'priorityLevel'
 }
 
 
@@ -231,6 +232,9 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     if options.get("responseContinuationTokenLimitInKb"):
         headers[http_constants.HttpHeaders.ResponseContinuationTokenLimitInKb] = options[
             "responseContinuationTokenLimitInKb"]
+
+    if options.get("priorityLevel") and options["priorityLevel"].lower() in {"low", "high"}:
+        headers[http_constants.HttpHeaders.PriorityLevel] = options["priorityLevel"]
 
     if cosmos_client_connection.master_key:
         # formatedate guarantees RFC 1123 date format regardless of current locale
