@@ -7,9 +7,10 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, Optional
 
 from azure.core import PipelineClient
+from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
@@ -18,16 +19,12 @@ from ._configuration import AzureAppConfigurationConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import AzureAppConfigurationOperationsMixin
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import TokenCredential
-
 
 class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """AzureAppConfiguration.
 
     :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials.AzureKeyCredential
     :param endpoint: The endpoint of the App Configuration instance to send requests to. Required.
     :type endpoint: str
     :param sync_token: Used to guarantee real-time consistency between requests. Default value is
@@ -41,7 +38,7 @@ class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):  # pylint: di
     """
 
     def __init__(
-        self, credential: "TokenCredential", endpoint: str, sync_token: Optional[str] = None, **kwargs: Any
+        self, credential: AzureKeyCredential, endpoint: str, sync_token: Optional[str] = None, **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
         self._config = AzureAppConfigurationConfiguration(
