@@ -43,8 +43,8 @@ class TestClientAsync(AzureRecordedTestCase):
     async def test_chat_completion_endpoint_deployment(self, client_async, azure_openai_creds, api_type, **kwargs):
 
         client = openai.AsyncAzureOpenAI(
-            endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
-            deployment=ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME,
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
+            azure_deployment=ENV_AZURE_OPENAI_CHAT_COMPLETIONS_NAME,
             api_key=os.getenv(ENV_AZURE_OPENAI_KEY),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
@@ -115,7 +115,7 @@ class TestClientAsync(AzureRecordedTestCase):
         access_token = await credential.get_token("https://cognitiveservices.azure.com/.default")
 
         client = openai.AsyncAzureOpenAI(
-            endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
             azure_ad_token=access_token.token,
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
@@ -140,11 +140,11 @@ class TestClientAsync(AzureRecordedTestCase):
 
         with pytest.raises(openai.OpenAIError) as e:
             openai.AsyncAzureOpenAI(
-                endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
+                azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
                 api_key=None,
                 api_version=ENV_AZURE_OPENAI_API_VERSION,
             )
-        assert "The api_key client option must be set either by passing api_key to the client or by setting the AZURE_OPENAI_API_KEY environment variable; If you're using Azure AD you should pass either the `azure_ad_token` or the `azure_ad_token_provider` argument." in str(e.value.args)
+        assert 'Missing credentials. Please pass one of `api_key`, `azure_ad_token`, `azure_ad_token_provider`, or the `AZURE_OPENAI_API_KEY` or `AZURE_OPENAI_AD_TOKEN` environment variables.' in str(e.value.args)
 
     @configure_async
     @pytest.mark.asyncio
@@ -156,7 +156,7 @@ class TestClientAsync(AzureRecordedTestCase):
             {"role": "user", "content": "Who won the world series in 2020?"}
         ]
         client = openai.AsyncAzureOpenAI(
-            endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
             azure_ad_token="None",
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
@@ -175,13 +175,13 @@ class TestClientAsync(AzureRecordedTestCase):
         ]
 
         client = openai.AsyncAzureOpenAI(
-            endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
             azure_ad_token_provider=lambda: None,
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
         with pytest.raises(ValueError) as e:
             await client.chat.completions.create(messages=messages, **kwargs)
-        assert "ValueError: Expected `azure_ad_token_provider` argument to return a string but it returned None" in str(e.value.args)
+        assert "Expected `azure_ad_token_provider` argument to return a string but it returned None" in str(e.value.args)
 
     @configure_async
     @pytest.mark.asyncio

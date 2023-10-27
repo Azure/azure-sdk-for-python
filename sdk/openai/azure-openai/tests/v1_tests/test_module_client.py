@@ -64,7 +64,7 @@ class TestModuleClient(AzureRecordedTestCase):
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             os.environ["OPENAI_API_VERSION"] = ENV_AZURE_OPENAI_API_VERSION
             os.environ["AZURE_OPENAI_AD_TOKEN"] = DefaultAzureCredential().get_token("https://cognitiveservices.azure.com/.default").token
-            os.environ["OPENAI_API_TYPE"] = "azure_ad"
+            os.environ["OPENAI_API_TYPE"] = "azure"
 
             try:
                 completion = openai.completions.create(prompt="hello world", model=ENV_AZURE_OPENAI_COMPLETIONS_NAME)
@@ -89,7 +89,7 @@ class TestModuleClient(AzureRecordedTestCase):
     @pytest.mark.parametrize("api_type", [AZURE])
     def test_module_client_ad_token_provider(self, client, azure_openai_creds, api_type, **kwargs):
         with reload():
-            openai.api_type= "azure_ad"
+            openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             openai.azure_ad_token_provider = get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default")
             openai.api_version = ENV_AZURE_OPENAI_API_VERSION
@@ -112,7 +112,7 @@ class TestModuleClient(AzureRecordedTestCase):
     @pytest.mark.parametrize("api_type", [AZURE])
     def test_module_client_ad_token(self, client, azure_openai_creds, api_type, **kwargs):
         with reload():
-            openai.api_type= "azure_ad"
+            openai.api_type= "azure"
             openai.azure_endpoint = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             openai.azure_ad_token = DefaultAzureCredential().get_token("https://cognitiveservices.azure.com/.default").token
             openai.api_version = ENV_AZURE_OPENAI_API_VERSION

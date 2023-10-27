@@ -107,13 +107,13 @@ def client(api_type):
         pytest.skip("Skipping - tests set to run against v1.")
     if api_type == "azure":
         client = openai.AzureOpenAI(
-            endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
             api_key=os.getenv(ENV_AZURE_OPENAI_KEY),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
     elif api_type == "azuread":
         client = openai.AzureOpenAI(
-            endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
             azure_ad_token_provider=get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
@@ -123,13 +123,13 @@ def client(api_type):
         )
     elif api_type == "whisper_azure":
         client = openai.AzureOpenAI(
-            endpoint=os.getenv(ENV_AZURE_OPENAI_WHISPER_ENDPOINT),
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_WHISPER_ENDPOINT),
             api_key=os.getenv(ENV_AZURE_OPENAI_WHISPER_KEY),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
     elif api_type == "whisper_azuread":
         client = openai.AzureOpenAI(
-            endpoint=os.getenv(ENV_AZURE_OPENAI_WHISPER_ENDPOINT),
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_WHISPER_ENDPOINT),
             azure_ad_token_provider=get_bearer_token_provider(DefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
@@ -143,13 +143,13 @@ def client_async(api_type):
         pytest.skip("Skipping - tests set to run against v1.")
     if api_type == "azure":
         client = openai.AsyncAzureOpenAI(
-            endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
             api_key=os.getenv(ENV_AZURE_OPENAI_KEY),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
     elif api_type == "azuread":
         client = openai.AsyncAzureOpenAI(
-            endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_ENDPOINT),
             azure_ad_token_provider=get_bearer_token_provider_async(AsyncDefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
@@ -159,13 +159,13 @@ def client_async(api_type):
         )
     elif api_type == "whisper_azure":
         client = openai.AsyncAzureOpenAI(
-            endpoint=os.getenv(ENV_AZURE_OPENAI_WHISPER_ENDPOINT),
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_WHISPER_ENDPOINT),
             api_key=os.getenv(ENV_AZURE_OPENAI_WHISPER_KEY),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )
     elif api_type == "whisper_azuread":
         client = openai.AsyncAzureOpenAI(
-            endpoint=os.getenv(ENV_AZURE_OPENAI_WHISPER_ENDPOINT),
+            azure_endpoint=os.getenv(ENV_AZURE_OPENAI_WHISPER_ENDPOINT),
             azure_ad_token_provider=get_bearer_token_provider_async(AsyncDefaultAzureCredential(), "https://cognitiveservices.azure.com/.default"),
             api_version=ENV_AZURE_OPENAI_API_VERSION,
         )

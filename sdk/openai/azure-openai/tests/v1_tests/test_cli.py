@@ -64,7 +64,7 @@ class TestCLI(AzureRecordedTestCase):
             os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv(ENV_AZURE_OPENAI_ENDPOINT)
             os.environ["OPENAI_API_VERSION"] = ENV_AZURE_OPENAI_API_VERSION
             os.environ["AZURE_OPENAI_AD_TOKEN"] = DefaultAzureCredential().get_token("https://cognitiveservices.azure.com/.default").token
-            os.environ["OPENAI_API_TYPE"] = "azure_ad"
+            os.environ["OPENAI_API_TYPE"] = "azure"
 
             try:
                 result = subprocess.run(
@@ -93,7 +93,7 @@ class TestCLI(AzureRecordedTestCase):
             result = subprocess.run(
                 [
                     "openai",
-                    "--api-type=azure_ad",
+                    "--api-type=azure",
                     f"--azure-endpoint={os.getenv(ENV_AZURE_OPENAI_ENDPOINT)}",
                     f"--api-version={ENV_AZURE_OPENAI_API_VERSION}",
                     f"--azure-ad-token={DefaultAzureCredential().get_token('https://cognitiveservices.azure.com/.default').token}",
