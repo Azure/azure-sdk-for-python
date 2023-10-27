@@ -18,7 +18,7 @@ stages:
         Int:
           SubscriptionConfigurations:
             - $(sub-config-communication-int-test-resources-common)
-            - $(sub-config-communication-int-test-resources-java)
+            - $(sub-config-communication-int-test-resources-python)
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'True'
