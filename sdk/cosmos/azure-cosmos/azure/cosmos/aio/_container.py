@@ -890,7 +890,7 @@ class ContainerProxy(object):
         """ Executes the transactional batch for the specified partition key.
 
         :param batch_operations: The batch of operations to be executed.
-        :type batch_operations: List[Dict[str, Any]]
+        :type batch_operations: List[Tuple[Any]]
         :param partition_key: The partition key value of the batch operations.
         :type partition_key: Union[str, int, float, bool]
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.

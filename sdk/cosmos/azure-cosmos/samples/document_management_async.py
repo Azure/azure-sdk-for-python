@@ -225,9 +225,14 @@ async def execute_item_batch(database):
 
     # Run that list of operations
     batch_results = await container.execute_item_batch(batch_operations=batch_operations, partition_key="Account1")
-    # Batch results are returned as a dictionary with two keys, `is_error` and `results` - is_error will let you know if
-    # your request had any errors or not, and results will have the list of responses for each of your batch operations.
-    print("\nResult for the batch operations: {}\n".format(batch_results.get("results")))
+    # Batch results are returned as a list of item operation results - or an instance of CosmosBatchOperationError if
+    # one of the operations failed within your batch request.
+    print("\nResults for the batch operations: {}\n".format(batch_results))
+
+    # You can also use this logic to write directly from a file into the batch you'd like to create:
+    data_file = open("file_name.txt", "r")
+    await container.execute_item_batch([("upsert", (t,)) for t in data_file.readlines()])
+    data_file.close()
 
 
 async def delete_item(container, doc_id):
