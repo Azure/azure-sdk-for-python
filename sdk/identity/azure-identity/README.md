@@ -6,7 +6,7 @@ The Azure Identity library provides [Microsoft Entra ID](https://learn.microsoft
 | [Package (PyPI)](https://pypi.org/project/azure-identity/)
 | [Package (Conda)](https://anaconda.org/microsoft/azure-identity/)
 | [API reference documentation][ref_docs]
-| [Microsoft Entra ID documentation](https://learn.microsoft.com/azure/active-directory/)
+| [Microsoft Entra ID documentation](https://learn.microsoft.com/entra/identity/)
 
 ## Getting started
 
@@ -20,7 +20,7 @@ pip install azure-identity
 
 ### Prerequisites
 
-- An [Azure subscription](https://azure.microsoft.com/free/)
+- An [Azure subscription](https://azure.microsoft.com/free/python)
 - Python 3.7 or a recent version of Python 3 (this library doesn't support end-of-life versions)
 
 ### Authenticate during local development
@@ -318,6 +318,10 @@ Token caching is a feature provided by the Azure Identity library that allows ap
 
 The Azure Identity library offers both in-memory and persistent disk caching. For more details, see the [token caching documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TOKEN_CACHING.md).
 
+## Brokered authentication
+
+An authentication broker is an application that runs on a user’s machine and manages the authentication handshakes and token maintenance for connected accounts. Currently, only the Windows Web Account Manager (WAM) is supported. To enable support, use the [`azure-identity-broker`][azure_identity_broker] package. For details on authenticating using WAM, see the [broker plugin documentation][azure_identity_broker_readme].
+
 ## Troubleshooting
 
 See the [troubleshooting guide][troubleshooting_guide] for details on how to diagnose various failure scenarios.
@@ -373,6 +377,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 [azure_cli]: https://learn.microsoft.com/cli/azure
 [azure_developer_cli]:https://aka.ms/azure-dev
 [azure_core_transport_doc]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport
+[azure_identity_broker]: https://pypi.org/project/azure-identity-broker
+[azure_identity_broker_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity-broker
 [azure_eventhub]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub
 [azure_keyvault_secrets]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-secrets
 [azure_storage_blob]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob

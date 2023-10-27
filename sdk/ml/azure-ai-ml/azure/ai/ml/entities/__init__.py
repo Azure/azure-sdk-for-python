@@ -104,6 +104,7 @@ from ._endpoint.online_endpoint import (
     ManagedOnlineEndpoint,
     OnlineEndpoint,
 )
+from ._feature_set.data_availability_status import DataAvailabilityStatus
 from ._feature_set.feature import Feature
 from ._feature_set.feature_set_backfill_metadata import FeatureSetBackfillMetadata
 from ._feature_set.feature_set_backfill_request import FeatureSetBackfillRequest
@@ -383,6 +384,7 @@ __all__ = [
     "MaterializationStore",
     "Notification",
     "FeatureSetBackfillMetadata",
+    "DataAvailabilityStatus",
     "FeatureSetMaterializationMetadata",
     "ServerlessComputeSettings",
     # builders

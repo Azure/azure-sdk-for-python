@@ -31,6 +31,7 @@
     "sdk/anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/batch/azure-batch/**",
+    "sdk/ai/**/index/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customsearch/**",
@@ -124,6 +125,7 @@
     "conda/conda-releaselogs/azure-mgmt.md"
   ],
   "words": [
+    "aoai",
     "pyprojects",
     "certifi",
     "cffi",
@@ -281,6 +283,7 @@
     "mhsm",
     "mipsle",
     "mktime",
+    "mlindex",
     "msal",
     "msrest",
     "msrestazure",
@@ -305,6 +308,8 @@
     "oidc",
     "onboarded",
     "onmicrosoft",
+    "openai",
+    "OPENAI",
     "owasp",
     "ownerid",
     "PBYTE",
@@ -450,7 +455,20 @@
         "mlindex",
         "mlindexes",
         "aoai",
-        "faiss"
+        "faiss",
+        "mlmodel",
+        "openmpi",
+        "vcpu",
+        "vcpus",
+        "levelno",
+        "miniconda",
+        "runsvdir",
+        "Fsubscriptions",
+        "Fresource",
+        "Fproviders",
+        "Fdeployments",
+        "roups",
+        "mltable"
       ]
     },
     {
@@ -1585,7 +1603,9 @@
         "mros",
         "deserializers",
         "ctxt",
-        "wday"
+        "wday",
+        "JSONify",
+        "Nify"
       ]
     },
     {

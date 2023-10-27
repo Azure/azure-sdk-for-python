@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from azure.ai.generative import AIClient
+from azure.ai.resources.client import AIClient
 from azure.ai.ml.identity import AzureMLOnBehalfOfCredential
 from promptflow._sdk._constants import RunStatus
 from azure.ai.generative.evaluate import evaluate
@@ -19,15 +19,15 @@ def parse_args():
 
     return parser.parse_args()
 
-def load_data(furi:string) -> pd.DataFrame:
+def load_data(file_uri:string) -> pd.DataFrame:
     ### helping function to load from input file into dataframe
-    file_type = furi.split('.')[-1].strip()
+    file_type = file_uri.split('.')[-1].strip()
     if file_type not in ("csv", "jsonl"):
             return pd.DataFrame()
     if file_type == "csv":
-        data = pd.read_csv(furi, sep=',')
+        data = pd.read_csv(file_uri, sep=',')
     elif file_type == "jsonl":
-        with open(furi) as f:
+        with open(file_uri) as f:
             data_jsonl = [eval(line) for line in f.readlines()]
         data = pd.DataFrame().from_records(data_jsonl)
     return data
@@ -148,7 +148,7 @@ class promptflow_handler:
         + f"""providers/Microsoft.MachineLearningServices/workspaces/{config['project_name']}"""
         cmd = 'pf config set ' + pf_config
         
-        pfconfig_out = subprocess.check_output(cmd, stderr=subprocess.STDOUT, shell=True)
+        pf_config_out = subprocess.check_output(cmd, stderr=subprocess.STDOUT, shell=True)
 
     def get_pf_client(self, credential, config):
         self._set_promptflow_connection(config)
@@ -231,7 +231,7 @@ class evaluation_handler:
 
         result = evaluate(
             evaluation_name=evaluation_name,
-            data=data_eval_input,#fcsv_uri,
+            data=data_eval_input,#csv_file_uri,
             task_type=self.env_parameters.task_type, # 'qa' only support task.question_answering
             data_mapping=self.env_parameters.eval_mapping,
             model_config = openai_params,
