@@ -1,3 +1,4 @@
+# pylint: arguments-differ,unused-argument
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
