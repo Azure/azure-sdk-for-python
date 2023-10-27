@@ -14,7 +14,6 @@ from azure.core.credentials import TokenCredential
 from azure.ai.generative.index._documents import Document, DocumentChunksIterator
 from azure.ai.generative.index._embeddings import EmbeddingsContainer
 from azure.ai.generative.index._utils.connections import (
-    Connection,
     WorkspaceConnection,
     get_connection_credential,
     get_connection_by_id_v2,
@@ -171,11 +170,11 @@ class MLIndex:
                     connection_credential = get_connection_credential(self.index_config, credential=credential)
                 except Exception as e:
                     # azure.ai.generative has workflow where env vars are set before doing stuff.
-                    if "AZURE_COGNITIVE_SEARCH_KEY" in os.environ:
+                    if "AZURE_AI_SEARCH_KEY" in os.environ or "AZURE_COGNITIVE_SEARCH_KEY" in os.environ:
                         from azure.core.credentials import AzureKeyCredential
 
                         logger.warning(f"Failed to get credential for ACS with {e}, falling back to env vars.")
-                        connection_credential = AzureKeyCredential(os.environ["AZURE_COGNITIVE_SEARCH_KEY"])
+                        connection_credential = AzureKeyCredential(os.environ["AZURE_AI_SEARCH_KEY"] if "AZURE_AI_SEARCH_KEY" in os.environ else os.environ["AZURE_COGNITIVE_SEARCH_KEY"])
                     else:
                         raise e
 
@@ -281,17 +280,18 @@ class MLIndex:
 
                 connection_credential = get_connection_credential(self.index_config, credential=credential)
 
+                endpoint = self.index_config.get("endpoint", None)
+                if not endpoint:
+                    endpoint = get_target_from_connection(
+                        get_connection_by_id_v2(
+                            self.index_config["connection"]["id"],
+                            credential=credential
+                        )
+                    )
+
                 return AzureCognitiveSearchVectorStore(
                     index_name=self.index_config.get("index"),
-                    endpoint=self.index_config.get(
-                        "endpoint",
-                        get_target_from_connection(
-                            get_connection_by_id_v2(
-                                self.index_config["connection"]["id"],
-                                credential=credential
-                            )
-                        )
-                    ),
+                    endpoint=endpoint,
                     embeddings=self.get_langchain_embeddings(credential=credential),
                     field_mapping=self.index_config.get("field_mapping", {}),
                     credential=connection_credential,
@@ -338,8 +338,8 @@ class MLIndex:
 
     def override_connections(
         self,
-        embedding_connection: Optional[Union[str, Connection, WorkspaceConnection]] = None,
-        index_connection: Optional[Union[str, Connection, WorkspaceConnection]] = None,
+        embedding_connection: Optional[Union[str, WorkspaceConnection]] = None,
+        index_connection: Optional[Union[str, WorkspaceConnection]] = None,
         credential: Optional[TokenCredential] = None
     ) -> "MLIndex":
         """
@@ -382,7 +382,7 @@ class MLIndex:
         self.save(just_config=True)
         return self
 
-    def set_embeddings_connection(self, connection: Optional[Union[str, Connection, WorkspaceConnection]], credential: Optional[TokenCredential] = None) -> "MLIndex":
+    def set_embeddings_connection(self, connection: Optional[Union[str, WorkspaceConnection]], credential: Optional[TokenCredential] = None) -> "MLIndex":
         """Set the embeddings connection used by the MLIndex."""
         return self.override_connections(embedding_connection=connection)
 
@@ -605,13 +605,13 @@ class MLIndex:
                 index_config = {
                     **index_config,
                     **{
-                        "endpoint": os.getenv("AZURE_COGNITIVE_SEARCH_TARGET"),
+                        "endpoint": os.getenv("AZURE_AI_SEARCH_ENDPOINT"),
                         "api_version": "2023-07-01-preview",
                     }
                 }
                 connection_args = {
                     "connection_type": "environment",
-                    "connection": {"key": "AZURE_COGNITIVE_SEARCH_KEY"}
+                    "connection": {"key": "AZURE_AI_SEARCH_KEY"}
                 }
             else:
                 if isinstance(index_connection, str):

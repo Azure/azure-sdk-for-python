@@ -14,7 +14,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import DevCenterClientConfiguration
 from ._serialization import Deserializer, Serializer
-from .operations import DevBoxesOperations, DevCenterOperations, EnvironmentsOperations
+from .operations import DeploymentEnvironmentsOperations, DevBoxesOperations, DevCenterOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -28,14 +28,15 @@ class DevCenterClient:  # pylint: disable=client-accepts-api-version-keyword
     :vartype dev_center: azure.developer.devcenter.operations.DevCenterOperations
     :ivar dev_boxes: DevBoxesOperations operations
     :vartype dev_boxes: azure.developer.devcenter.operations.DevBoxesOperations
-    :ivar environments: EnvironmentsOperations operations
-    :vartype environments: azure.developer.devcenter.operations.EnvironmentsOperations
+    :ivar deployment_environments: DeploymentEnvironmentsOperations operations
+    :vartype deployment_environments:
+     azure.developer.devcenter.operations.DeploymentEnvironmentsOperations
     :param endpoint: The DevCenter-specific URI to operate on. Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2022-11-11-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-04-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -51,7 +52,9 @@ class DevCenterClient:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize.client_side_validation = False
         self.dev_center = DevCenterOperations(self._client, self._config, self._serialize, self._deserialize)
         self.dev_boxes = DevBoxesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.environments = EnvironmentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.deployment_environments = DeploymentEnvironmentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
@@ -86,5 +89,5 @@ class DevCenterClient:  # pylint: disable=client-accepts-api-version-keyword
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details) -> None:
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

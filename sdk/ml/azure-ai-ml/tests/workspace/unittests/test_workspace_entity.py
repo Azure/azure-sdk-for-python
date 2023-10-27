@@ -36,12 +36,9 @@ class TestWorkspaceEntity:
         else:
             assert ServerlessComputeSettings._from_rest_object(rest_object.serverless_compute_settings) == settings
 
-    @pytest.mark.parametrize("subnet_name", ["just_the_subnet_name", "", None])
-    def test_serverless_compute_settings_subnet_must_be_specified_if_no_public_ip_is_true(
-        self, subnet_name: str
-    ) -> None:
+    def test_serverless_compute_settings_subnet_name_must_be_an_arm_id(self) -> None:
         with pytest.raises(ValidationError):
-            ServerlessComputeSettings(subnet_name, True)
+            ServerlessComputeSettings("justaname", True)
 
     @pytest.mark.parametrize(
         "settings",

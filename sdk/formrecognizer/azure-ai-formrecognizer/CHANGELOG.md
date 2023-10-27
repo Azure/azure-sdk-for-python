@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fixed incorrect data type for returned formula objects.
 
 ### Other Changes
 

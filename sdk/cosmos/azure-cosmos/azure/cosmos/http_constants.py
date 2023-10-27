@@ -100,6 +100,7 @@ class HttpHeaders(object):
     Continuation = "x-ms-continuation"
     PageSize = "x-ms-max-item-count"
     ResponseContinuationTokenLimitInKb = "x-ms-documentdb-responsecontinuationtokenlimitinkb"  # cspell:disable-line
+    PriorityLevel = "x-ms-cosmos-priority-level"
 
     # Request sender generated. Simply echoed by backend.
     ActivityId = "x-ms-activity-id"

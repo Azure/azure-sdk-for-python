@@ -55,13 +55,15 @@ from ..job.services import (
     VsCodeJobServiceSchema,
 )
 from ..pipeline.pipeline_job_io import OutputBindingStr
-from ..spark_resource_configuration import SparkResourceConfigurationSchema
+from ..spark_resource_configuration import SparkResourceConfigurationForNodeSchema
 
 module_logger = logging.getLogger(__name__)
 
 
 # do inherit PathAwareSchema to support relative path & default partial load (allow None value if not specified)
 class BaseNodeSchema(PathAwareSchema):
+    """Base schema for all node schemas."""
+
     unknown = INCLUDE
 
     inputs = InputsField(support_databinding=True)
@@ -134,6 +136,8 @@ def _resolve_inputs_outputs(job):
 
 
 class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
+    """Schema for Command."""
+
     # pylint: disable=unused-argument
     component = TypeSensitiveUnionField(
         {
@@ -211,6 +215,8 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
 
 
 class SweepSchema(BaseNodeSchema, ParameterizedSweepSchema):
+    """Schema for Sweep."""
+
     # pylint: disable=unused-argument
     type = StringTransformedEnum(allowed_values=[NodeType.SWEEP])
     compute = ComputeField()
@@ -244,6 +250,10 @@ class SweepSchema(BaseNodeSchema, ParameterizedSweepSchema):
 
 
 class ParallelSchema(BaseNodeSchema, ParameterizedParallelSchema):
+    """
+    Schema for Parallel.
+    """
+
     # pylint: disable=unused-argument
     compute = ComputeField()
     component = TypeSensitiveUnionField(
@@ -284,6 +294,10 @@ class ParallelSchema(BaseNodeSchema, ParameterizedParallelSchema):
 
 
 class ImportSchema(BaseNodeSchema):
+    """
+    Schema for Import.
+    """
+
     # pylint: disable=unused-argument
     component = TypeSensitiveUnionField(
         {
@@ -320,6 +334,10 @@ class ImportSchema(BaseNodeSchema):
 
 
 class SparkSchema(BaseNodeSchema, ParameterizedSparkSchema):
+    """
+    Schema for Spark.
+    """
+
     # pylint: disable=unused-argument
     component = TypeSensitiveUnionField(
         {
@@ -340,7 +358,7 @@ class SparkSchema(BaseNodeSchema, ParameterizedSparkSchema):
     )
     type = StringTransformedEnum(allowed_values=[NodeType.SPARK])
     compute = ComputeField()
-    resources = NestedField(SparkResourceConfigurationSchema)
+    resources = NestedField(SparkResourceConfigurationForNodeSchema)
     entry = UnionField(
         [NestedField(SparkEntryFileSchema), NestedField(SparkEntryClassSchema)],
         metadata={"description": "Entry."},
@@ -381,6 +399,10 @@ class SparkSchema(BaseNodeSchema, ParameterizedSparkSchema):
 
 
 class DataTransferCopySchema(BaseNodeSchema):
+    """
+    Schema for DataTransferCopy.
+    """
+
     # pylint: disable=unused-argument
     component = TypeSensitiveUnionField(
         {
