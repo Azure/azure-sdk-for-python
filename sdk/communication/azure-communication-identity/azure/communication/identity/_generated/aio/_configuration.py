@@ -8,12 +8,15 @@
 
 from typing import Any
 
+from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 VERSION = "unknown"
 
 
-class CommunicationIdentityClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class CommunicationIdentityClientConfiguration(  # pylint: disable=too-many-instance-attributes,name-too-long
+    Configuration
+):
     """Configuration for CommunicationIdentityClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -28,6 +31,7 @@ class CommunicationIdentityClientConfiguration:  # pylint: disable=too-many-inst
     """
 
     def __init__(self, endpoint: str, **kwargs: Any) -> None:
+        super(CommunicationIdentityClientConfiguration, self).__init__(**kwargs)
         api_version: str = kwargs.pop("api_version", "2023-10-01")
 
         if endpoint is None:
@@ -38,7 +42,6 @@ class CommunicationIdentityClientConfiguration:  # pylint: disable=too-many-inst
         kwargs.setdefault(
             "sdk_moniker", "communicationidentityclient/{}".format(VERSION)
         )
-        self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:

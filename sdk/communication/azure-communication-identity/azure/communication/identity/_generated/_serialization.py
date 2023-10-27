@@ -303,7 +303,7 @@ class Model(object):
     _validation: Dict[str, Dict[str, Any]] = {}
 
     def __init__(self, **kwargs: Any) -> None:
-        self.additional_properties: Optional[Dict[str, Any]] = {}
+        self.additional_properties: Dict[str, Any] = {}
         for k in kwargs:
             if k not in self._attribute_map:
                 _LOGGER.warning(
@@ -371,7 +371,7 @@ class Model(object):
         :rtype: dict
         """
         serializer = Serializer(self._infer_class_models())
-        return serializer._serialize(self, keep_readonly=keep_readonly, **kwargs)  # type: ignore
+        return serializer._serialize(self, keep_readonly=keep_readonly, **kwargs)
 
     def as_dict(
         self,
@@ -412,7 +412,9 @@ class Model(object):
         :rtype: dict
         """
         serializer = Serializer(self._infer_class_models())
-        return serializer._serialize(self, key_transformer=key_transformer, keep_readonly=keep_readonly, **kwargs)  # type: ignore
+        return serializer._serialize(
+            self, key_transformer=key_transformer, keep_readonly=keep_readonly, **kwargs
+        )
 
     @classmethod
     def _infer_class_models(cls):
@@ -441,7 +443,7 @@ class Model(object):
         :raises: DeserializationError if something went wrong
         """
         deserializer = Deserializer(cls._infer_class_models())
-        return deserializer(cls.__name__, data, content_type=content_type)  # type: ignore
+        return deserializer(cls.__name__, data, content_type=content_type)
 
     @classmethod
     def from_dict(
@@ -471,7 +473,7 @@ class Model(object):
             if key_extractors is None
             else key_extractors
         )
-        return deserializer(cls.__name__, data, content_type=content_type)  # type: ignore
+        return deserializer(cls.__name__, data, content_type=content_type)
 
     @classmethod
     def _flatten_subtype(cls, key, objects):
@@ -802,8 +804,10 @@ class Serializer(object):
             if data_type.startswith("["):
                 internal_data_type = data_type[1:-1]
                 do_quote = not kwargs.get("skip_quote", False)
-                return self.serialize_iter(
-                    data, internal_data_type, do_quote=do_quote, **kwargs
+                return str(
+                    self.serialize_iter(
+                        data, internal_data_type, do_quote=do_quote, **kwargs
+                    )
                 )
 
             # Not a list, regular serialization

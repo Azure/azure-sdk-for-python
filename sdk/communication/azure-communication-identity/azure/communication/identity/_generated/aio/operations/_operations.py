@@ -154,7 +154,7 @@ class CommunicationIdentityOperations:
             else:
                 _json = None
 
-        _request = build_communication_identity_create_request(
+        request = build_communication_identity_create_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -167,12 +167,12 @@ class CommunicationIdentityOperations:
                 "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
             ),
         }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = (
             await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+                request, stream=_stream, **kwargs
             )
         )
 
@@ -194,9 +194,9 @@ class CommunicationIdentityOperations:
         )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})
 
-        return deserialized  # type: ignore
+        return deserialized
 
     @distributed_trace_async
     async def delete(
@@ -225,7 +225,7 @@ class CommunicationIdentityOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_communication_identity_delete_request(
+        request = build_communication_identity_delete_request(
             id=id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -236,12 +236,12 @@ class CommunicationIdentityOperations:
                 "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
             ),
         }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = (
             await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+                request, stream=_stream, **kwargs
             )
         )
 
@@ -259,7 +259,7 @@ class CommunicationIdentityOperations:
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, None, {})
 
     @distributed_trace_async
     async def revoke_access_tokens(  # pylint: disable=inconsistent-return-statements
@@ -288,7 +288,7 @@ class CommunicationIdentityOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_communication_identity_revoke_access_tokens_request(
+        request = build_communication_identity_revoke_access_tokens_request(
             id=id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -299,12 +299,12 @@ class CommunicationIdentityOperations:
                 "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
             ),
         }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = (
             await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+                request, stream=_stream, **kwargs
             )
         )
 
@@ -322,7 +322,7 @@ class CommunicationIdentityOperations:
             raise HttpResponseError(response=response, model=error)
 
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, None, {})
 
     @overload
     async def exchange_teams_user_access_token(
@@ -412,27 +412,25 @@ class CommunicationIdentityOperations:
         else:
             _json = self._serialize.body(body, "TeamsUserExchangeTokenRequest")
 
-        _request = (
-            build_communication_identity_exchange_teams_user_access_token_request(
-                content_type=content_type,
-                api_version=self._config.api_version,
-                json=_json,
-                content=_content,
-                headers=_headers,
-                params=_params,
-            )
+        request = build_communication_identity_exchange_teams_user_access_token_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url(
                 "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
             ),
         }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = (
             await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+                request, stream=_stream, **kwargs
             )
         )
 
@@ -454,9 +452,9 @@ class CommunicationIdentityOperations:
         )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})
 
-        return deserialized  # type: ignore
+        return deserialized
 
     @overload
     async def issue_access_token(
@@ -557,7 +555,7 @@ class CommunicationIdentityOperations:
                 body, "CommunicationIdentityAccessTokenRequest"
             )
 
-        _request = build_communication_identity_issue_access_token_request(
+        request = build_communication_identity_issue_access_token_request(
             id=id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -571,12 +569,12 @@ class CommunicationIdentityOperations:
                 "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
             ),
         }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
         _stream = False
         pipeline_response: PipelineResponse = (
             await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+                request, stream=_stream, **kwargs
             )
         )
 
@@ -598,6 +596,6 @@ class CommunicationIdentityOperations:
         )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})
 
-        return deserialized  # type: ignore
+        return deserialized
