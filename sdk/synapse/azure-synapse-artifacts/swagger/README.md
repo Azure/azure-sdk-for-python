@@ -2,44 +2,44 @@
 
 ``` yaml
 input-file:
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/preview/2023-04-18-preview/linkConnections.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/preview/2022-03-01-preview/runNotebook.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/preview/2021-11-01-preview/kqlScripts.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/preview/2021-07-01-preview/symsSync.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/preview/2021-06-01-preview/sparkConfigurations.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/preview/2021-06-01-preview/entityTypes/SparkConfiguration.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/artifacts.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/bigDataPools.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/credential.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/dataflows.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/datasets.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/gitintegration.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/integrationRuntimes.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/library.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/linkedServices.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/notebooks.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/pipelines.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/sparkJobDefinitions.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/sqlPools.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/sqlScripts.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/triggers.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/workspace.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/entityTypes/DataFlow.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/entityTypes/Dataset.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/entityTypes/LinkedService.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/entityTypes/Notebook.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/entityTypes/Pipeline.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/entityTypes/SparkJobDefinition.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/entityTypes/SqlScript.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/entityTypes/Trigger.json
-  - https://github.com/Azure/azure-rest-api-specs/blob/b0bb0f660e4f3693342db55c1d56178b97ee3ceb/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/entityTypes/Credential.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/preview/2023-04-18-preview/linkConnections.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/preview/2022-03-01-preview/runNotebook.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/preview/2021-11-01-preview/kqlScripts.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/preview/2021-07-01-preview/symsSync.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/preview/2021-06-01-preview/sparkConfigurations.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/preview/2021-06-01-preview/entityTypes/SparkConfiguration.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/artifacts.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/bigDataPools.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/credential.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/dataflows.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/datasets.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/gitintegration.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/integrationRuntimes.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/library.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/linkedServices.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/notebooks.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/pipelines.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/sparkJobDefinitions.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/sqlPools.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/sqlScripts.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/triggers.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/workspace.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/entityTypes/DataFlow.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/entityTypes/Dataset.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/entityTypes/LinkedService.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/entityTypes/Notebook.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/entityTypes/Pipeline.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/entityTypes/SparkJobDefinition.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/entityTypes/SqlScript.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/entityTypes/Trigger.json
+  - https://github.com/Azure/azure-rest-api-specs/blob/ca87bfdf516309cffa7ef46172a4b59cdec79e40/specification/synapse/data-plane/Microsoft.Synapse/stable/2020-12-01/entityTypes/Credential.json
 
 payload-flattening-threshold: 1
 output-folder: ../
 package-name: azure-synapse-artifacts
 namespace: azure.synapse.artifacts
 license-header: MICROSOFT_MIT_NO_VERSION
-package-version: 0.17.0
+package-version: 0.18.0
 version-tolerant: false
 package-pprint-name: Synapse Artifacts
 security: AADToken
