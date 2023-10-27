@@ -68,6 +68,7 @@ def test_receive_transfer_frame_multiple():
         target_address="test_target",
         network_trace=False,
         network_trace_params={},
+        on_transfer=Mock(),
     )
 
     link.current_link_credit = 2 # Set the link credit to 2
@@ -90,6 +91,7 @@ def test_receive_transfer_continuation_frame():
         target_address="test_target",
         network_trace=False,
         network_trace_params={},
+        on_transfer=Mock(),
     )
 
     link.current_link_credit = 3 # Set the link credit to 2
