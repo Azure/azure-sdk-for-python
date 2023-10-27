@@ -21,6 +21,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         )
         return client
 
+    @pytest.mark.live_test_only
     def test_publish_binary_mode_cloud_event(self):
         eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
         eventgrid_key = os.environ['EVENTGRID_KEY']
