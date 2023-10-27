@@ -21,8 +21,6 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         )
         return client
 
-
-    @pytest.mark.live_test_only
     @EventGridPreparer()
     def test_publish_binary_mode_cloud_event(self, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name):
         client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
