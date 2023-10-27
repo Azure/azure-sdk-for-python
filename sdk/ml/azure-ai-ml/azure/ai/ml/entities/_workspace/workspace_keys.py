@@ -71,7 +71,7 @@ class WorkspaceKeys:
         self.notebook_access_keys = notebook_access_keys
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: ListWorkspaceKeysResult) -> "WorkspaceKeys":
+    def _from_rest_object(cls, rest_obj: ListWorkspaceKeysResult) -> Optional["WorkspaceKeys"]:
         if not rest_obj:
             return None
 

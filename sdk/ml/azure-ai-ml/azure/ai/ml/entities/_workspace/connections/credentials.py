@@ -15,7 +15,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 class WorkspaceConnectionCredentials(RestTranslatableMixin):
     """Base class for workspace connection credentials."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.type = None
 
 

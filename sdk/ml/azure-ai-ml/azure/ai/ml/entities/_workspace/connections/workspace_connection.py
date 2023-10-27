@@ -78,16 +78,16 @@ class WorkspaceConnection(Resource):
             AccessKeyConfiguration,
         ],
         metadata: Optional[Dict[str, Any]] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         self.type = type
         self._target = target
         self._credentials = credentials
-        self._metadata = json.loads(json.dumps(metadata))
+        self._metadata: Dict = json.loads(json.dumps(metadata))
         super().__init__(**kwargs)
 
     @property
-    def type(self) -> str:
+    def type(self) -> Optional[str]:
         """Type of the workspace connection, supported are 'git', 'python_feed' and 'container_registry'.
 
         :return: Type of the job.
@@ -96,7 +96,7 @@ class WorkspaceConnection(Resource):
         return self._type
 
     @type.setter
-    def type(self, value: str):
+    def type(self, value: str) -> None:
         """Set the type of the workspace connection, supported are 'git', 'python_feed' and 'container_registry'.
 
         :param value: value for the type of workspace connection.
@@ -104,7 +104,7 @@ class WorkspaceConnection(Resource):
         """
         if not value:
             return
-        self._type = camel_to_snake(value)
+        self._type: Optional[str] = camel_to_snake(value)
 
     @property
     def target(self) -> str:
@@ -141,7 +141,7 @@ class WorkspaceConnection(Resource):
         return self._credentials
 
     @property
-    def metadata(self) -> Dict[str, Any]:
+    def metadata(self) -> Dict:
         """Metadata for workspace connection.
 
         :return: Metadata for workspace connection.
@@ -149,7 +149,7 @@ class WorkspaceConnection(Resource):
         """
         return self._metadata
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the workspace connection spec into a file in yaml format.
 
         :param dest: The destination to receive this workspace connection's spec.
@@ -170,7 +170,7 @@ class WorkspaceConnection(Resource):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "WorkspaceConnection":
         data = data or {}
         params_override = params_override or []
@@ -181,16 +181,17 @@ class WorkspaceConnection(Resource):
         return cls._load_from_dict(data=data, context=context, **kwargs)
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "WorkspaceConnection":
-        loaded_data = load_from_dict(WorkspaceConnectionSchema, data, context, **kwargs)
+    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs: Any) -> "WorkspaceConnection":
+        loaded_data: WorkspaceConnection = load_from_dict(WorkspaceConnectionSchema, data, context, **kwargs)
         return loaded_data
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return WorkspaceConnectionSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = WorkspaceConnectionSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspaceConnection) -> "WorkspaceConnection":
+    def _from_rest_object(cls, rest_obj: RestWorkspaceConnection) -> Optional["WorkspaceConnection"]:
         if not rest_obj:
             return None
 
@@ -223,8 +224,8 @@ class WorkspaceConnection(Resource):
 
         return workspace_connection
 
-    def _validate(self):
-        return self.name
+    def _validate(self) -> str:
+        return str(self.name)
 
     def _to_rest_object(self) -> RestWorkspaceConnection:
         workspace_connection_properties_class = None
@@ -247,12 +248,13 @@ class WorkspaceConnection(Resource):
         elif auth_type is None:
             workspace_connection_properties_class = NoneAuthTypeWorkspaceConnectionProperties
 
-        properties = workspace_connection_properties_class(
-            target=self.target,
-            credentials=self.credentials._to_workspace_connection_rest_object(),
-            metadata=self.metadata,
-            # auth_type=auth_type,
-            category=_snake_to_camel(self.type),
-        )
+        if workspace_connection_properties_class is not None:
+            properties = workspace_connection_properties_class(
+                target=self.target,
+                credentials=self.credentials._to_workspace_connection_rest_object(),
+                metadata=self.metadata,
+                # auth_type=auth_type,
+                category=_snake_to_camel(self.type),
+            )
 
         return RestWorkspaceConnection(properties=properties)
