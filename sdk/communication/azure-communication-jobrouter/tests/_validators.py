@@ -253,75 +253,68 @@ class ClassificationPolicyValidator(object):
         assert entity.fallback_queue_id == fallback_queue_id
 
     @staticmethod
-    def validate_queue_selectors(entity, queue_selectors, **kwargs):
-        assert len(entity.queue_selectors) == len(queue_selectors)
+    def validate_queue_selectors(entity, queue_selector_attachments, **kwargs):
 
-        for actual, expected in zip(entity.queue_selectors, queue_selectors):
-            assert type(actual) == type(expected)
-
-        for actual, expected in zip(entity.queue_selectors, queue_selectors):
-            assert type(actual) == type(expected)
-
-            def validate_static_queue_selector_attachment(
+        def validate_static_queue_selector_attachment(
                 actual,  # type: StaticQueueSelectorAttachment
                 expected,  # type: StaticQueueSelectorAttachment
                 **kwargs,
-            ):
-                QueueSelectorValidator.validate_queue_selector(actual.queue_selector, expected.queue_selector)
+        ):
+            QueueSelectorValidator.validate_queue_selector(actual.queue_selector, expected.queue_selector)
 
-            def validate_conditional_queue_selector_attachment(
+        def validate_conditional_queue_selector_attachment(
                 actual,  # type: ConditionalQueueSelectorAttachment
                 expected,  # type: ConditionalQueueSelectorAttachment
                 **kwargs,  # type: Any
-            ):
-                RouterRuleValidator.validate_router_rule(actual.condition, expected.condition)
+        ):
+            RouterRuleValidator.validate_router_rule(actual.condition, expected.condition)
 
-                for i, j in zip(actual.queue_selectors, expected.queue_selectors):
-                    QueueSelectorValidator.validate_queue_selector(i, j)
+            for i, j in zip(actual.queue_selectors, expected.queue_selectors):
+                QueueSelectorValidator.validate_queue_selector(i, j)
 
-            def validate_rule_engine_selector_attachment(
+        def validate_rule_engine_selector_attachment(
                 actual,  # type: RuleEngineQueueSelectorAttachment
                 expected,  # type: RuleEngineQueueSelectorAttachment
                 **kwargs,  # type: Any
-            ):
-                RouterRuleValidator.validate_router_rule(actual.rule, expected.rule)
+        ):
+            RouterRuleValidator.validate_router_rule(actual.rule, expected.rule)
 
-            def validate_weighted_allocation_selector_attachment(
+        def validate_weighted_allocation_selector_attachment(
                 actual,  # type: WeightedAllocationQueueSelectorAttachment
                 expected,  # type: WeightedAllocationQueueSelectorAttachment
                 **kwargs,  # type: Any
-            ):
-                for i, j in zip(actual.allocations, expected.allocations):
-                    assert i.weight == j.weight
-                    for ac_qs, ex_qs in zip(i.queue_selectors, j.queue_selectors):
-                        QueueSelectorValidator.validate_queue_selector(ac_qs, ex_qs)
+        ):
+            for i, j in zip(actual.allocations, expected.allocations):
+                assert i.weight == j.weight
+                for ac_qs, ex_qs in zip(i.queue_selectors, j.queue_selectors):
+                    QueueSelectorValidator.validate_queue_selector(ac_qs, ex_qs)
 
-            def validate_passthrough_attachment(
+        def validate_passthrough_attachment(
                 actual,  # type: PassThroughQueueSelectorAttachment
                 expected,  # type: PassThroughQueueSelectorAttachment
                 **kwargs,  # type: Any
-            ):
-                assert actual.kind == expected.kind
-                assert actual.key == expected.key
-                LabelOperatorValidator.validate_label_operator(actual.label_operator, expected.label_operator)
+        ):
+            assert actual.kind == expected.kind
+            assert actual.key == expected.key
+            LabelOperatorValidator.validate_label_operator(actual.label_operator, expected.label_operator)
 
-            assert len(entity.queue_selectors) == len(queue_selectors)
+        assert len(entity.queue_selector_attachments) == len(queue_selector_attachments)
 
-            for actual, expected in zip(entity.queue_selectors, queue_selectors):
-                assert type(actual) == type(expected)
+        for actual, expected in zip(entity.queue_selector_attachments, queue_selector_attachments):
+            assert type(actual) == type(expected)
 
-                if type(actual) == StaticQueueSelectorAttachment:
-                    validate_static_queue_selector_attachment(actual, expected)
-                elif type(actual) == ConditionalQueueSelectorAttachment:
-                    validate_conditional_queue_selector_attachment(actual, expected)
-                elif type(actual) == WeightedAllocationQueueSelectorAttachment:
-                    validate_weighted_allocation_selector_attachment(actual, expected)
-                elif type(actual) == RuleEngineQueueSelectorAttachment:
-                    validate_rule_engine_selector_attachment(actual, expected)
-                elif type(actual) == PassThroughQueueSelectorAttachment:
-                    validate_passthrough_attachment(actual, expected)
-                else:
-                    assert actual == expected
+            if type(actual) == StaticQueueSelectorAttachment:
+                validate_static_queue_selector_attachment(actual, expected)
+            elif type(actual) == ConditionalQueueSelectorAttachment:
+                validate_conditional_queue_selector_attachment(actual, expected)
+            elif type(actual) == WeightedAllocationQueueSelectorAttachment:
+                validate_weighted_allocation_selector_attachment(actual, expected)
+            elif type(actual) == RuleEngineQueueSelectorAttachment:
+                validate_rule_engine_selector_attachment(actual, expected)
+            elif type(actual) == PassThroughQueueSelectorAttachment:
+                validate_passthrough_attachment(actual, expected)
+            else:
+                assert actual == expected
 
     @staticmethod
     def validate_prioritization_rule(entity, prioritization_rule, **kwargs):
@@ -329,7 +322,7 @@ class ClassificationPolicyValidator(object):
         RouterRuleValidator.validate_router_rule(entity.prioritization_rule, prioritization_rule)
 
     @staticmethod
-    def validate_worker_selectors(entity, worker_selectors, **kwargs):
+    def validate_worker_selectors(entity, worker_selector_attachments, **kwargs):
         def validate_static_worker_selector_attachment(
             actual,  # type: StaticWorkerSelectorAttachment
             expected,  # type: StaticWorkerSelectorAttachment
@@ -373,9 +366,9 @@ class ClassificationPolicyValidator(object):
             assert actual.key == expected.key
             LabelOperatorValidator.validate_label_operator(actual.label_operator, expected.label_operator)
 
-        assert len(entity.worker_selectors) == len(worker_selectors)
+        assert len(entity.worker_selector_attachments) == len(worker_selector_attachments)
 
-        for actual, expected in zip(entity.worker_selectors, worker_selectors):
+        for actual, expected in zip(entity.worker_selector_attachments, worker_selector_attachments):
             assert type(actual) == type(expected)
 
             if type(actual) == StaticWorkerSelectorAttachment:
@@ -404,17 +397,18 @@ class ClassificationPolicyValidator(object):
                 classification_policy, kwargs.pop("fallback_queue_id")
             )
 
-        if "queue_selectors" in kwargs:
-            ClassificationPolicyValidator.validate_queue_selectors(classification_policy, kwargs.pop("queue_selectors"))
+        if "queue_selector_attachments" in kwargs:
+            ClassificationPolicyValidator.validate_queue_selectors(classification_policy,
+                                                                   kwargs.pop("queue_selector_attachments"))
 
         if "prioritization_rule" in kwargs:
             ClassificationPolicyValidator.validate_prioritization_rule(
                 classification_policy, kwargs.pop("prioritization_rule")
             )
 
-        if "worker_selectors" in kwargs:
+        if "worker_selector_attachments" in kwargs:
             ClassificationPolicyValidator.validate_worker_selectors(
-                classification_policy, kwargs.pop("worker_selectors")
+                classification_policy, kwargs.pop("worker_selector_attachments")
             )
 
 

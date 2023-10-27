@@ -55,23 +55,23 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
                     self.classification_policy_ids[self._testMethodName]
                 ):
                     for policy_id in set(self.classification_policy_ids[self._testMethodName]):
-                        await router_client.delete_classification_policy(id=policy_id)
+                        await router_client.delete_classification_policy(policy_id)
 
                 if self._testMethodName in self.queue_ids and any(self.queue_ids[self._testMethodName]):
                     for policy_id in set(self.queue_ids[self._testMethodName]):
-                        await router_client.delete_queue(id=policy_id)
+                        await router_client.delete_queue(policy_id)
 
                 if self._testMethodName in self.distribution_policy_ids and any(
                     self.distribution_policy_ids[self._testMethodName]
                 ):
                     for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
-                        await router_client.delete_distribution_policy(id=policy_id)
+                        await router_client.delete_distribution_policy(policy_id)
 
                 if self._testMethodName in self.exception_policy_ids and any(
                     self.exception_policy_ids[self._testMethodName]
                 ):
                     for policy_id in set(self.exception_policy_ids[self._testMethodName]):
-                        await router_client.delete_exception_policy(id=policy_id)
+                        await router_client.delete_exception_policy(policy_id)
 
     def get_distribution_policy_id(self):
         return self._testMethodName + "_tst_dp_async"
@@ -88,8 +88,8 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
                 mode=RoundRobinMode(min_concurrent_offers=1, max_concurrent_offers=1),
             )
 
-            distribution_policy = await client.create_distribution_policy(
-                id=distribution_policy_id, distribution_policy=policy
+            distribution_policy = await client.upsert_distribution_policy(
+                distribution_policy_id, policy
             )
 
         # add for cleanup later
@@ -113,7 +113,7 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
                 name=job_queue_id, labels=queue_labels, distribution_policy_id=self.get_distribution_policy_id()
             )
 
-            job_queue = await client.create_queue(id=job_queue_id, queue=job_queue)
+            job_queue = await client.upsert_queue(job_queue_id, job_queue)
 
         # add for cleanup later
         if self._testMethodName in self.queue_ids:
@@ -135,8 +135,8 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
                 fallback_queue_id=self.get_job_queue_id(),
             )
 
-            classification_policy = await client.create_classification_policy(
-                id=cp_id, classification_policy=classification_policy
+            classification_policy = await client.upsert_classification_policy(
+                cp_id, classification_policy
             )
 
         # add for cleanup later
@@ -173,16 +173,16 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
             for trigger in exception_triggers:
                 for action in updated_exception_actions:
 
-                    exception_rules = {
-                        "fakeExceptionRuleId": ExceptionRule(trigger=trigger, actions={"fakeExceptionActionId": action})
-                    }
+                    exception_rules = [
+                        ExceptionRule(id="fakeExceptionRuleId", trigger=trigger, actions=[action])
+                    ]
 
                     exception_policy: ExceptionPolicy = ExceptionPolicy(
                         name=ep_identifier, exception_rules=exception_rules
                     )
 
-                    exception_policy = await router_client.create_exception_policy(
-                        id=ep_identifier, exception_policy=exception_policy
+                    exception_policy = await router_client.upsert_exception_policy(
+                        ep_identifier, exception_policy
                     )
 
                     # add for cleanup
@@ -218,16 +218,16 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
         async with router_client:
             for trigger in exception_triggers:
                 for action in updated_exception_actions:
-                    exception_rules = {
-                        "fakeExceptionRuleId": ExceptionRule(trigger=trigger, actions={"fakeExceptionActionId": action})
-                    }
+                    exception_rules = [
+                        ExceptionRule(id="fakeExceptionRuleId", trigger=trigger, actions=[action])
+                    ]
 
                     exception_policy: ExceptionPolicy = ExceptionPolicy(
                         name=ep_identifier, exception_rules=exception_rules
                     )
 
-                    exception_policy: ExceptionPolicy = await router_client.create_exception_policy(
-                        id=ep_identifier, exception_policy=exception_policy
+                    exception_policy: ExceptionPolicy = await router_client.upsert_exception_policy(
+                        ep_identifier, exception_policy
                     )
 
                     # add for cleanup
@@ -238,16 +238,15 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
                         exception_policy, identifier=ep_identifier, name=ep_identifier, exception_rules=exception_rules
                     )
 
-                    updated_exception_rules = {
-                        "fakeExceptionRuleId": None,
-                        "fakeExceptionRuleId2": ExceptionRule(
-                            trigger=trigger, actions={"fakeExceptionActionId": action}
+                    updated_exception_rules = [
+                        ExceptionRule(
+                            id="fakeExceptionRuleId2", trigger=trigger, actions=[action]
                         ),
-                    }
+                    ]
 
                     exception_policy.exception_rules = updated_exception_rules
 
-                    exception_policy = await router_client.update_exception_policy(ep_identifier, exception_policy)
+                    exception_policy = await router_client.upsert_exception_policy(ep_identifier, exception_policy)
 
                     assert exception_policy is not None
                     ExceptionPolicyValidator.validate_exception_policy(
@@ -282,16 +281,16 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
         async with router_client:
             for trigger in exception_triggers:
                 for action in updated_exception_actions:
-                    exception_rules = {
-                        "fakeExceptionRuleId": ExceptionRule(trigger=trigger, actions={"fakeExceptionActionId": action})
-                    }
+                    exception_rules = [
+                        ExceptionRule(id="fakeExceptionRuleId", trigger=trigger, actions=[action])
+                    ]
 
                     exception_policy: ExceptionPolicy = ExceptionPolicy(
                         name=ep_identifier, exception_rules=exception_rules
                     )
 
-                    exception_policy = await router_client.create_exception_policy(
-                        id=ep_identifier, exception_policy=exception_policy
+                    exception_policy = await router_client.upsert_exception_policy(
+                        ep_identifier, exception_policy
                     )
 
                     # add for cleanup
@@ -302,14 +301,13 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
                         exception_policy, identifier=ep_identifier, name=ep_identifier, exception_rules=exception_rules
                     )
 
-                    updated_exception_rules = {
-                        "fakeExceptionRuleId": None,
-                        "fakeExceptionRuleId2": ExceptionRule(
-                            trigger=trigger, actions={"fakeExceptionActionId": action}
+                    updated_exception_rules = [
+                        ExceptionRule(
+                            id="fakeExceptionRuleId2", trigger=trigger, actions=[action]
                         ),
-                    }
+                    ]
 
-                    exception_policy = await router_client.update_exception_policy(
+                    exception_policy = await router_client.upsert_exception_policy(
                         ep_identifier, name=ep_identifier, exception_rules=updated_exception_rules
                     )
 
@@ -346,16 +344,16 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
         async with router_client:
             for trigger in exception_triggers:
                 for action in updated_exception_actions:
-                    exception_rules = {
-                        "fakeExceptionRuleId": ExceptionRule(trigger=trigger, actions={"fakeExceptionActionId": action})
-                    }
+                    exception_rules = [
+                        ExceptionRule(id="fakeExceptionRuleId", trigger=trigger, actions=[action])
+                    ]
 
                     exception_policy: ExceptionPolicy = ExceptionPolicy(
                         name=ep_identifier, exception_rules=exception_rules
                     )
 
-                    exception_policy = await router_client.create_exception_policy(
-                        id=ep_identifier, exception_policy=exception_policy
+                    exception_policy = await router_client.upsert_exception_policy(
+                        ep_identifier, exception_policy
                     )
 
                     # add for cleanup
@@ -366,7 +364,7 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
                         exception_policy, identifier=ep_identifier, name=ep_identifier, exception_rules=exception_rules
                     )
 
-                    queried_exception_policy = await router_client.get_exception_policy(id=ep_identifier)
+                    queried_exception_policy = await router_client.get_exception_policy(ep_identifier)
 
                     assert queried_exception_policy is not None
                     ExceptionPolicyValidator.validate_exception_policy(
@@ -401,16 +399,16 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
         async with router_client:
             for trigger in exception_triggers:
                 for action in updated_exception_actions:
-                    exception_rules = {
-                        "fakeExceptionRuleId": ExceptionRule(trigger=trigger, actions={"fakeExceptionActionId": action})
-                    }
+                    exception_rules = [
+                        ExceptionRule(id="fakeExceptionRuleId", trigger=trigger, actions=[action])
+                    ]
 
                     exception_policy: ExceptionPolicy = ExceptionPolicy(
                         name=ep_identifier, exception_rules=exception_rules
                     )
 
-                    exception_policy = await router_client.create_exception_policy(
-                        id=ep_identifier, exception_policy=exception_policy
+                    exception_policy = await router_client.upsert_exception_policy(
+                        ep_identifier, exception_policy
                     )
 
                     # add for cleanup
@@ -421,9 +419,9 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
                         exception_policy, identifier=ep_identifier, name=ep_identifier, exception_rules=exception_rules
                     )
 
-                    await router_client.delete_exception_policy(id=ep_identifier)
+                    await router_client.delete_exception_policy(ep_identifier)
                     with pytest.raises(ResourceNotFoundError) as nfe:
-                        await router_client.get_exception_policy(id=ep_identifier)
+                        await router_client.get_exception_policy(ep_identifier)
                     assert nfe.value.reason == "Not Found"
                     assert nfe.value.status_code == 404
 
@@ -456,18 +454,18 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
             for trigger in exception_triggers:
                 for action in updated_exception_actions:
                     for identifier in ep_identifiers:
-                        exception_rules = {
-                            "fakeExceptionRuleId": ExceptionRule(
-                                trigger=trigger, actions={"fakeExceptionActionId": action}
+                        exception_rules = [
+                            ExceptionRule(
+                                id = "fakeExceptionRuleId", trigger=trigger, actions=[action]
                             )
-                        }
+                        ]
 
                         exception_policy: ExceptionPolicy = ExceptionPolicy(
                             name=identifier, exception_rules=exception_rules
                         )
 
-                        exception_policy = await router_client.create_exception_policy(
-                            id=identifier, exception_policy=exception_policy
+                        exception_policy = await router_client.upsert_exception_policy(
+                            identifier, exception_policy
                         )
 
                         policy_count += 1
@@ -488,13 +486,13 @@ class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
                         assert len(list_of_policies) <= 2
 
                         for policy_item in list_of_policies:
-                            response_at_creation = created_ep_response.get(policy_item.exception_policy.id, None)
+                            response_at_creation = created_ep_response.get(policy_item.id, None)
 
                             if not response_at_creation:
                                 continue
 
                             ExceptionPolicyValidator.validate_exception_policy(
-                                policy_item.exception_policy,
+                                policy_item,
                                 identifier=response_at_creation.id,
                                 name=response_at_creation.name,
                                 exception_rules=response_at_creation.exception_rules,

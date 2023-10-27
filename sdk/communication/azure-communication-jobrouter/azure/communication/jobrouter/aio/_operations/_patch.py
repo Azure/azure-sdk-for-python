@@ -39,16 +39,56 @@ class JobRouterAdministrationClientOperationsMixin(
     JobRouterAdministrationClientOperationsMixinGenerated
 ):  # pylint:disable=too-many-lines,line-too-long,name-too-long
     # region ExceptionPolicy
-    @distributed_trace_async
+    @overload
+    async def upsert_exception_policy(
+            self,
+            exception_policy_id: str,
+            *,
+            exception_rules: Optional[List[_models.ExceptionRule]],
+            name: Optional[str],
+            if_unmodified_since: Optional[datetime.datetime] = None,
+            etag: Optional[str] = None,
+            match_condition: Optional[MatchConditions] = None,
+            **kwargs: Any
+    ) -> _models.ExceptionPolicy:
+        """Update an exception policy.
+
+        :param str exception_policy_id: Id of the exception policy.
+
+        :keyword exception_rules: (Optional) A collection of exception rules on the exception
+          policy.
+        :paramtype exception_rules: Optional[Dict[str, ~azure.communication.jobrouter.models.ExceptionRule]]
+
+        :keyword Optional[str] name: The name of this policy.
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+
+        :return: Instance of ExceptionPolicy
+        :rtype: ~azure.communication.jobrouter.models.ExceptionPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/exception_policy_crud_ops.py
+                :start-after: [START update_exception_policy]
+                :end-before: [END update_exception_policy]
+                :language: python
+                :dedent: 8
+                :caption: Using a JobRouterAdministrationClient to update an exception policy
+        """
+
     async def upsert_exception_policy(
         self,
         exception_policy_id: str,
-        *,
-        exception_rules: Optional[List[_models.ExceptionRule]],
-        name: Optional[str],
-        if_unmodified_since: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
+        *args: _models.ExceptionPolicy,
         **kwargs: Any
     ) -> _models.ExceptionPolicy:
         """Update an exception policy.
@@ -88,11 +128,17 @@ class JobRouterAdministrationClientOperationsMixin(
             raise ValueError("exception_policy_id cannot be None.")
 
         exception_policy = _models.ExceptionPolicy()
+        if len(args) == 1:
+            exception_policy = args[0]
 
         patch = _models.ExceptionPolicy(
             name=kwargs.pop("name", exception_policy.name),
             exception_rules=kwargs.pop("exception_rules", exception_policy.exception_rules),
         )
+
+        if_unmodified_since = kwargs.pop('if_unmodified_since', None)
+        etag = kwargs.pop('etag', None)
+        match_condition = kwargs.pop('match_condition', None)
 
         return await super().upsert_exception_policy(
             exception_policy_id=exception_policy_id,
@@ -293,18 +339,62 @@ class JobRouterAdministrationClientOperationsMixin(
     # endregion DistributionPolicy
 
     # region Queue
-    @distributed_trace_async
+    @overload
+    async def upsert_queue(
+            self,
+            queue_id: str,
+            *,
+            distribution_policy_id: Optional[str],
+            name: Optional[str],
+            labels: Optional[Dict[str, Union[int, float, str, bool]]],
+            exception_policy_id: Optional[str],
+            if_unmodified_since: Optional[datetime.datetime] = None,
+            etag: Optional[str] = None,
+            match_condition: Optional[MatchConditions] = None,
+            **kwargs: Any
+    ) -> _models.RouterQueue:
+        """Update a job queue
+
+        :param str queue_id: Id of the queue.
+
+        :keyword Optional[str] distribution_policy_id: The ID of the distribution policy that will determine
+          how a job is distributed to workers.
+
+        :keyword Optional[str] name: The name of this queue.
+
+        :keyword labels: A set of key/value pairs that are
+          identifying attributes used by the rules engines to make decisions.
+        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool]]]
+
+        :keyword Optional[str] exception_policy_id: The ID of the exception policy that determines various
+          job escalation rules.
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+
+        :return: Instance of RouterQueue
+        :rtype: ~azure.communication.jobrouter.models.RouterQueue
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/job_queue_crud_ops.py
+                :start-after: [START update_queue]
+                :end-before: [END update_queue]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterAdministrationClient to update a queue
+        """
     async def upsert_queue(
         self,
         queue_id: str,
-        *,
-        distribution_policy_id: Optional[str],
-        name: Optional[str],
-        labels: Optional[Dict[str, Union[int, float, str, bool]]],
-        exception_policy_id: Optional[str],
-        if_unmodified_since: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
+        *args: _models.RouterQueue,
         **kwargs: Any
     ) -> _models.RouterQueue:
         """Update a job queue
@@ -349,6 +439,8 @@ class JobRouterAdministrationClientOperationsMixin(
             raise ValueError("queue_id cannot be None.")
 
         queue = _models.RouterQueue()
+        if len(args) == 1:
+            queue = args[0]
 
         patch = _models.RouterQueue(
             name=kwargs.pop("name", queue.name),
@@ -356,6 +448,10 @@ class JobRouterAdministrationClientOperationsMixin(
             labels=kwargs.pop("labels", queue.labels),
             exception_policy_id=kwargs.pop("exception_policy_id", queue.exception_policy_id),
         )
+
+        if_unmodified_since = kwargs.pop('if_unmodified_since', None)
+        etag = kwargs.pop('etag', None)
+        match_condition = kwargs.pop('match_condition', None)
 
         return await super().upsert_queue(
             queue_id=queue_id,
@@ -402,46 +498,104 @@ class JobRouterAdministrationClientOperationsMixin(
     # endregion Queue
 
     # region ClassificationPolicy
-    @distributed_trace_async
+    @overload
+    async def upsert_classification_policy(
+            self,
+            classification_policy_id: str,
+            *,
+            name: Optional[str],
+            fallback_queue_id: Optional[str],
+            queue_selectors: Optional[
+                List[
+                    Union[
+                        _models.StaticQueueSelectorAttachment,
+                        _models.ConditionalQueueSelectorAttachment,
+                        _models.RuleEngineQueueSelectorAttachment,
+                        _models.PassThroughQueueSelectorAttachment,
+                        _models.WeightedAllocationQueueSelectorAttachment,
+                    ]
+                ]
+            ],  # pylint: disable=line-too-long
+            prioritization_rule: Optional[
+                Union[
+                    _models.StaticRouterRule,
+                    _models.ExpressionRouterRule,
+                    _models.FunctionRouterRule,
+                    _models.WebhookRouterRule,
+                ]
+            ],  # pylint: disable=line-too-long
+            worker_selectors: Optional[
+                List[
+                    Union[
+                        _models.StaticWorkerSelectorAttachment,
+                        _models.ConditionalWorkerSelectorAttachment,
+                        _models.RuleEngineWorkerSelectorAttachment,
+                        _models.PassThroughWorkerSelectorAttachment,
+                        _models.WeightedAllocationWorkerSelectorAttachment,
+                    ]
+                ]
+            ],  # pylint: disable=line-too-long
+            if_unmodified_since: Optional[datetime.datetime] = None,
+            etag: Optional[str] = None,
+            match_condition: Optional[MatchConditions] = None,
+            **kwargs: Any
+    ) -> _models.ClassificationPolicy:
+        """Update a classification policy
+
+        :param str classification_policy_id: Id of the classification policy.
+
+        :keyword Optional[str] name: Friendly name of this policy.
+
+        :keyword fallback_queue_id: The fallback queue to select if the queue selector doesn't find a match.
+        :paramtype fallback_queue_id: Optional[str]
+
+        :keyword queue_selectors: The queue selectors to resolve a queue for a given job.
+        :paramtype queue_selectors: Optional[List[Union[
+          ~azure.communication.jobrouter.models.StaticQueueSelectorAttachment,
+          ~azure.communication.jobrouter.models.ConditionalQueueSelectorAttachment,
+          ~azure.communication.jobrouter.models.RuleEngineQueueSelectorAttachment,
+          ~azure.communication.jobrouter.models.PassThroughQueueSelectorAttachment,
+          ~azure.communication.jobrouter.models.WeightedAllocationQueueSelectorAttachment]]]
+
+        :keyword prioritization_rule: The rule to determine a priority score for a given job.
+        :paramtype prioritization_rule: Optional[Union[~azure.communication.jobrouter.models.StaticRouterRule,
+          ~azure.communication.jobrouter.models.ExpressionRouterRule,
+          ~azure.communication.jobrouter.models.FunctionRouterRule,
+          ~azure.communication.jobrouter.models.WebhookRouterRule]]
+
+        :keyword worker_selectors: The worker label selectors to attach to a given job.
+        :paramtype worker_selectors: Optional[List[Union[~azure.communication.jobrouter.models.StaticWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.models.ConditionalWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.models.RuleEngineWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.models.PassThroughWorkerSelectorAttachment,
+          ~azure.communication.jobrouter.models.WeightedAllocationWorkerSelectorAttachment]]]
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+
+        :return: Instance of ClassificationPolicy
+        :rtype: ~azure.communication.jobrouter.models.ClassificationPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/classification_policy_crud_ops.py
+                :start-after: [START update_classification_policy]
+                :end-before: [END update_classification_policy]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterAdministrationClient to update a classification policy
+        """
     async def upsert_classification_policy(
         self,
         classification_policy_id: str,
-        *,
-        name: Optional[str],
-        fallback_queue_id: Optional[str],
-        queue_selectors: Optional[
-            List[
-                Union[
-                    _models.StaticQueueSelectorAttachment,
-                    _models.ConditionalQueueSelectorAttachment,
-                    _models.RuleEngineQueueSelectorAttachment,
-                    _models.PassThroughQueueSelectorAttachment,
-                    _models.WeightedAllocationQueueSelectorAttachment,
-                ]
-            ]
-        ],  # pylint: disable=line-too-long
-        prioritization_rule: Optional[
-            Union[
-                _models.StaticRouterRule,
-                _models.ExpressionRouterRule,
-                _models.FunctionRouterRule,
-                _models.WebhookRouterRule,
-            ]
-        ],  # pylint: disable=line-too-long
-        worker_selectors: Optional[
-            List[
-                Union[
-                    _models.StaticWorkerSelectorAttachment,
-                    _models.ConditionalWorkerSelectorAttachment,
-                    _models.RuleEngineWorkerSelectorAttachment,
-                    _models.PassThroughWorkerSelectorAttachment,
-                    _models.WeightedAllocationWorkerSelectorAttachment,
-                ]
-            ]
-        ],  # pylint: disable=line-too-long
-        if_unmodified_since: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
+        *args: _models.ClassificationPolicy,
         **kwargs: Any
     ) -> _models.ClassificationPolicy:
         """Update a classification policy
@@ -500,6 +654,8 @@ class JobRouterAdministrationClientOperationsMixin(
             raise ValueError("classification_policy_id cannot be None.")
 
         classification_policy = _models.ClassificationPolicy()
+        if len(args) == 1:
+            classification_policy = args[0]
 
         patch = _models.ClassificationPolicy(
             name=kwargs.pop("name", classification_policy.name),
@@ -512,6 +668,10 @@ class JobRouterAdministrationClientOperationsMixin(
                 "worker_selector_attachments", classification_policy.worker_selector_attachments
             ),
         )
+
+        if_unmodified_since = kwargs.pop('if_unmodified_since', None)
+        etag = kwargs.pop('etag', None)
+        match_condition = kwargs.pop('match_condition', None)
 
         return await super().upsert_classification_policy(
             classification_policy_id=classification_policy_id,
@@ -560,20 +720,91 @@ class JobRouterAdministrationClientOperationsMixin(
 
 class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
     # region Worker
-    @distributed_trace_async
+    @overload
+    async def upsert_worker(
+            self,
+            worker_id: str,
+            *,
+            queues: Optional[List[str]],
+            capacity: Optional[int],
+            labels: Optional[Dict[str, Union[int, float, str, bool]]],
+            tags: Optional[Dict[str, Union[int, float, str, bool]]],
+            channels: Optional[List[_models.RouterChannel]],
+            available_for_offers: Optional[bool],
+            if_unmodified_since: Optional[datetime.datetime] = None,
+            etag: Optional[str] = None,
+            match_condition: Optional[MatchConditions] = None,
+            **kwargs: Any
+    ) -> _models.RouterWorker:
+        """Update a router worker.
+
+        :param str worker_id: Id of the worker.
+
+        :keyword queues: The queue(s) that this worker can receive work from.
+        :paramtype queues: Optional[List[str]]
+
+        :keyword capacity: The total capacity score this worker has to manage multiple concurrent
+         jobs.
+        :paramtype capacity: Optional[int]
+
+        :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
+         engines to make decisions.
+        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool, None]]]
+
+        :keyword tags: A set of tags. A set of non-identifying attributes attached to this worker.
+        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool, None]]]
+
+        :keyword channels: The channel(s) this worker can handle and their impact on the
+         workers capacity.
+        :paramtype channels: Optional[List[~azure.communication.jobrouter.models.RouterChannel]]
+
+        :keyword available_for_offers: A flag indicating this worker is open to receive offers or not.
+        :paramtype available_for_offers: Optional[bool]
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+
+        :return: Instance of RouterWorker
+        :rtype: ~azure.communication.jobrouter.models.RouterWorker
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_worker_crud_ops.py
+                :start-after: [START update_worker]
+                :end-before: [END update_worker]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to update a worker
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_worker_crud_ops.py
+                :start-after: [START register_worker]
+                :end-before: [END register_worker]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to register a worker
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_worker_crud_ops.py
+                :start-after: [START deregister_worker]
+                :end-before: [END deregister_worker]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to de-register a worker
+        """
     async def upsert_worker(
         self,
         worker_id: str,
-        *,
-        queues: Optional[List[str]],
-        capacity: Optional[int],
-        labels: Optional[Dict[str, Union[int, float, str, bool]]],
-        tags: Optional[Dict[str, Union[int, float, str, bool]]],
-        channels: Optional[List[_models.RouterChannel]],
-        available_for_offers: Optional[bool],
-        if_unmodified_since: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
+        *args: _models.RouterWorker,
         **kwargs: Any
     ) -> _models.RouterWorker:
         """Update a router worker.
@@ -645,6 +876,8 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
             raise ValueError("worker_id cannot be None.")
 
         router_worker = _models.RouterWorker()
+        if len(args) == 1:
+            router_worker = args[0]
 
         patch = _models.RouterWorker(
             queues=kwargs.pop("queues", router_worker.queues),
@@ -654,6 +887,10 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
             channels=kwargs.pop("channels", router_worker.channels),
             available_for_offers=kwargs.pop("available_for_offers", router_worker.available_for_offers),
         )
+
+        if_unmodified_since = kwargs.pop('if_unmodified_since', None)
+        etag = kwargs.pop('etag', None)
+        match_condition = kwargs.pop('match_condition', None)
 
         return await super().upsert_worker(
             worker_id=worker_id,
@@ -729,25 +966,94 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
     # endregion Worker
 
     # region Job
-    @distributed_trace_async
+    @overload
+    async def upsert_job(
+            self,
+            job_id: str,
+            *,
+            channel_reference: Optional[str],
+            channel_id: Optional[str],
+            classification_policy_id: Optional[str],
+            queue_id: Optional[str],
+            priority: Optional[int],
+            disposition_code: Optional[str],
+            requested_worker_selectors: Optional[List[_models.RouterWorkerSelector]],
+            labels: Optional[Dict[str, Union[int, float, str, bool, None]]],
+            tags: Optional[Dict[str, Union[int, float, str, bool, None]]],
+            notes: Optional[Dict[datetime.datetime, str]],
+            matching_mode: Optional[_models.JobMatchingMode],
+            if_unmodified_since: Optional[datetime.datetime] = None,
+            etag: Optional[str] = None,
+            match_condition: Optional[MatchConditions] = None,
+            **kwargs: Any
+    ) -> _models.RouterJob:
+        """Update a job.
+
+        :param str job_id: Id of the job.
+
+        :keyword channel_reference: Reference to an external parent context, eg. call ID.
+        :paramtype channel_reference: Optional[str]
+
+        :keyword channel_id: The channel identifier. eg. voice, chat, etc.
+        :paramtype channel_id: Optional[str]
+
+        :keyword classification_policy_id: The Id of the Classification policy used for classifying a
+         job.
+        :paramtype classification_policy_id: Optional[str]
+
+        :keyword queue_id: The Id of the Queue that this job is queued to.
+        :paramtype queue_id: Optional[str]
+
+        :keyword priority: The priority of this job.
+        :paramtype priority: Optional[int]
+
+        :keyword disposition_code: Reason code for cancelled or closed jobs.
+        :paramtype disposition_code: Optional[str]
+
+        :keyword requested_worker_selectors: A collection of manually specified label selectors, which
+         a worker must satisfy in order to process this job.
+        :paramtype requested_worker_selectors: Optional[List[
+          ~azure.communication.jobrouter.models.RouterWorkerSelector]]
+
+        :keyword labels: A set of key/value pairs that are identifying attributes used by the rules
+         engines to make decisions.
+        :paramtype labels: Optional[Dict[str, Union[int, float, str, bool, None]]]
+
+        :keyword tags: A set of tags. A set of non-identifying attributes attached to this job.
+        :paramtype tags: Optional[Dict[str, Union[int, float, str, bool, None]]]
+
+        :keyword notes: Notes attached to a job, sorted by timestamp.
+        :paramtype notes: Optional[Dict[~datetime.datetime, str]]
+
+        :keyword matching_mode: If set, determines how a job will be matched
+        :paramtype matching_mode: Optional[~azure.communication.jobrouter.models.JobMatchingMode]
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+
+        :return: Instance of RouterJob
+        :rtype: ~azure.communication.jobrouter.models.RouterJob
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/router_job_crud_ops.py
+                :start-after: [START update_job]
+                :end-before: [END update_job]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterClient to update a job
+        """
     async def upsert_job(
         self,
         job_id: str,
-        *,
-        channel_reference: Optional[str],
-        channel_id: Optional[str],
-        classification_policy_id: Optional[str],
-        queue_id: Optional[str],
-        priority: Optional[int],
-        disposition_code: Optional[str],
-        requested_worker_selectors: Optional[List[_models.RouterWorkerSelector]],
-        labels: Optional[Dict[str, Union[int, float, str, bool, None]]],
-        tags: Optional[Dict[str, Union[int, float, str, bool, None]]],
-        notes: Optional[Dict[datetime.datetime, str]],
-        matching_mode: Optional[_models.JobMatchingMode],
-        if_unmodified_since: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
+        *args: _models.RouterJob,
         **kwargs: Any
     ) -> _models.RouterJob:
         """Update a job.
@@ -817,6 +1123,8 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
             raise ValueError("job_id cannot be None.")
 
         router_job = _models.RouterJob()
+        if len(args) == 1:
+            router_job = args[0]
 
         patch = _models.RouterJob(
             channel_reference=kwargs.pop("channel_reference", router_job.channel_reference),
@@ -831,6 +1139,10 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
             notes=kwargs.pop("notes", router_job.notes),
             matching_mode=kwargs.pop("matching_mode", router_job.matching_mode),
         )
+
+        if_unmodified_since = kwargs.pop('if_unmodified_since', None)
+        etag = kwargs.pop('etag', None)
+        match_condition = kwargs.pop('match_condition', None)
 
         return await super().upsert_job(
             job_id=job_id,

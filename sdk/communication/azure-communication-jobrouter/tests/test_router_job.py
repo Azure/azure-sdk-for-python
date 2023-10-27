@@ -12,7 +12,7 @@ from devtools_testutils import recorded_by_proxy
 from azure.core.serialization import _datetime_as_isostr  # pylint:disable=protected-access
 from _router_test_case import RouterRecordedTestCase
 from _validators import RouterJobValidator
-from _helpers import _convert_str_to_datetime
+from azure.communication.jobrouter._model_base import _deserialize_datetime as _convert_str_to_datetime
 from _decorators import RouterPreparers
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
