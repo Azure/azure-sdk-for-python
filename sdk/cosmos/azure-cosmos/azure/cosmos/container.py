@@ -697,7 +697,8 @@ class ContainerProxy(object):
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
         :returns: A dict representing the item after the batch operations went through.
-        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The batch did not execute successfully.
+        :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The batch failed to execute.
+        :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
         :rtype: Dict[str, Any]
         """
         request_options = build_options(kwargs)

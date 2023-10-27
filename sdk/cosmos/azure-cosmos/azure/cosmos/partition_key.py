@@ -35,13 +35,13 @@ _MaximumExclusiveEffectivePartitionKey = 0xFF
 _MinimumInclusiveEffectivePartitionKey = 0x00
 _MaxStringChars = 100
 _MaxStringBytesToAppend = 100
-_MaxPartitionKeyBinarySize = (
-                                     1  # type marker
-                                     + 9  # hash value
-                                     + 1  # type marker
-                                     + _MaxStringBytesToAppend
-                                     + 1  # trailing zero
-                             ) * 3
+_MaxPartitionKeyBinarySize = \
+    (1  # type marker
+     + 9  # hash value
+     + 1  # type marker
+     + _MaxStringBytesToAppend
+     + 1  # trailing zero
+     ) * 3
 
 
 class PartitionKeyComponentType:

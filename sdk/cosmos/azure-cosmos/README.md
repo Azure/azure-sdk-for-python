@@ -617,10 +617,10 @@ batch_operations = [
 We also have some samples showing these transactional batch operations in action with both the [sync][sample_document_mgmt]
 and [async][sample_document_mgmt_async] clients.
 
-The response for a transactional batch request will be a dictionary with keys `is_error` and `results`, where `is_error`
-will let you know if your batch succeeded, and results will be a list of either `BatchOperationError` or `BatchOperationResult` objects,
-each containing your operation mapped to its response, as well as an additional error message if your operation failed.
-These objects can be seen in our [models][cosmos_models] file.
+If there is a failure for an operation within the batch, the SDK will return a `CosmosBatchOperationError` letting you know which operation failed,
+as well as containing the list of failed responses for the failed request. Results will be a list of either `BatchOperationError` 
+or `BatchOperationResult` objects, each containing your operation mapped to its response, as well as an additional error message
+if your operation failed. These objects can be seen in our [models][cosmos_models] file.
 
 For more information on Transactional Batch, see [Azure Cosmos DB Transactional Batch][cosmos_transactional_batch].
 

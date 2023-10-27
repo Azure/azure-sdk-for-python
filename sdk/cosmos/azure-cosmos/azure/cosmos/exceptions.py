@@ -65,6 +65,24 @@ class CosmosAccessConditionFailedError(CosmosHttpResponseError):
     """An HTTP error response with status code 412."""
 
 
+class CosmosBatchOperationError(Exception):
+    """A transactional batch request to the Azure Cosmos database service has failed."""
+
+    def __init__(self, status_code=None, message=None, headers=None, response=None, error_index=None):
+        self.headers = headers
+        self.sub_status = None
+        self.error_index = error_index
+        self.status_code = status_code
+        self.response = response
+
+        if http_constants.HttpHeaders.SubStatus in self.headers:
+            self.sub_status = int(self.headers[http_constants.HttpHeaders.SubStatus])
+            formatted_message = "Status code: %d Sub-status: %d\n%s" % (status_code, self.sub_status, str(message))
+        else:
+            formatted_message = "Status code: %d\n%s" % (status_code, str(message))
+        self.message = formatted_message
+
+
 class CosmosClientTimeoutError(AzureError):
     """An operation failed to complete within the specified timeout."""
 

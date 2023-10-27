@@ -104,7 +104,6 @@ class TestTransactionalBatch:
             batch.append(("create", ({"id": "item" + str(i), "company": "Microsoft"},)))
 
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        assert batch_response.get("is_error") is False
         assert len(batch_response.get("results")) == 100
 
         # create the same item twice
@@ -112,34 +111,46 @@ class TestTransactionalBatch:
         batch = [("create", ({"id": item_id, "company": "Microsoft"},)),
                  ("create", ({"id": item_id, "company": "Microsoft"},))]
 
-        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        assert batch_response.get("is_error") is True
-        operation_results = batch_response.get("results")
-        assert len(operation_results) == 2
-        assert operation_results[0].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
-        assert operation_results[1].operation_response.get("statusCode") == StatusCodes.CONFLICT
+        try:
+            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+            pytest.fail("Request should have failed.")
+        except exceptions.CosmosBatchOperationError as e:
+            assert e.status_code == StatusCodes.CONFLICT
+            assert e.error_index == 1
+            operation_results = e.response
+            assert len(operation_results) == 2
+            assert operation_results[0].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
+            assert operation_results[1].operation_response.get("statusCode") == StatusCodes.CONFLICT
 
         # create an item without the right partition key.
         batch = [("create", ({"id": str(uuid.uuid4()), "company": "Microsoft"},)),
                  ("create", ({"id": str(uuid.uuid4()), "company": "Not-Microsoft"},))]
 
-        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        assert batch_response.get("is_error") is True
-        operation_results = batch_response.get("results")
-        assert len(operation_results) == 2
-        assert operation_results[0].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
-        assert operation_results[1].operation_response.get("statusCode") == StatusCodes.BAD_REQUEST
+        try:
+            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+            pytest.fail("Request should have failed.")
+        except exceptions.CosmosBatchOperationError as e:
+            assert e.status_code == StatusCodes.BAD_REQUEST
+            assert e.error_index == 1
+            operation_results = e.response
+            assert len(operation_results) == 2
+            assert operation_results[0].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
+            assert operation_results[1].operation_response.get("statusCode") == StatusCodes.BAD_REQUEST
 
         # create an item without a partition key
         batch = [("create", ({"id": str(uuid.uuid4()), "company": "Microsoft"},)),
                  ("create", ({"id": str(uuid.uuid4()), "name": "Simon"},))]
 
-        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        assert batch_response.get("is_error") is True
-        operation_results = batch_response.get("results")
-        assert len(operation_results) == 2
-        assert operation_results[0].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
-        assert operation_results[1].operation_response.get("statusCode") == StatusCodes.BAD_REQUEST
+        try:
+            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+            pytest.fail("Request should have failed.")
+        except exceptions.CosmosBatchOperationError as e:
+            assert e.status_code == StatusCodes.BAD_REQUEST
+            assert e.error_index == 1
+            operation_results = e.response
+            assert len(operation_results) == 2
+            assert operation_results[0].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
+            assert operation_results[1].operation_response.get("statusCode") == StatusCodes.BAD_REQUEST
 
     def test_batch_read(self):
         self._set_up()
@@ -151,7 +162,6 @@ class TestTransactionalBatch:
             batch.append(("read", ("item" + str(i),)))
 
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        assert batch_response.get("is_error") is False
         operation_results = batch_response.get("results")
         assert len(operation_results) == 100
         for result in operation_results:
@@ -162,12 +172,16 @@ class TestTransactionalBatch:
         batch = [("read", (str(uuid.uuid4()),)),
                  ("read", (str(uuid.uuid4()),))]
 
-        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        assert batch_response.get("is_error") is True
-        operation_results = batch_response.get("results")
-        assert len(operation_results) == 2
-        assert operation_results[0].operation_response.get("statusCode") == StatusCodes.NOT_FOUND
-        assert operation_results[1].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
+        try:
+            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+            pytest.fail("Request should have failed.")
+        except exceptions.CosmosBatchOperationError as e:
+            assert e.status_code == StatusCodes.NOT_FOUND
+            assert e.error_index == 0
+            operation_results = e.response
+            assert len(operation_results) == 2
+            assert operation_results[0].operation_response.get("statusCode") == StatusCodes.NOT_FOUND
+            assert operation_results[1].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
     def test_batch_replace(self):
         self._set_up()
@@ -177,7 +191,6 @@ class TestTransactionalBatch:
                  ("replace", ("new-item", {"id": "new-item", "company": "Microsoft", "message": "item was replaced"}))]
 
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        assert batch_response.get("is_error") is False
         operation_results = batch_response.get("results")
         assert len(operation_results) == 2
         assert operation_results[1].operation_response.get("resourceBody").get("message") == "item was replaced"
@@ -185,11 +198,15 @@ class TestTransactionalBatch:
         # replace non-existent
         batch = [("replace", ("no-item", {"id": "no-item", "company": "Microsoft", "message": "item was replaced"}))]
 
-        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        assert batch_response.get("is_error")
-        operation_results = batch_response.get("results")
-        assert len(operation_results) == 1
-        assert operation_results[0].operation_response.get("statusCode") == StatusCodes.NOT_FOUND
+        try:
+            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+            pytest.fail("Request should have failed.")
+        except exceptions.CosmosBatchOperationError as e:
+            assert e.status_code == StatusCodes.NOT_FOUND
+            assert e.error_index == 0
+            operation_results = e.response
+            assert len(operation_results) == 1
+            assert operation_results[0].operation_response.get("statusCode") == StatusCodes.NOT_FOUND
 
         # replace with wrong etag
         item_id = str(uuid.uuid4())
@@ -199,13 +216,17 @@ class TestTransactionalBatch:
                  ("replace", (item_id, {"id": item_id, "company": "Microsoft", "message": "item was replaced"}),
                   {"if_none_match_etag": "some-tag"})]
 
-        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        assert batch_response.get("is_error")
-        operation_results = batch_response.get("results")
-        assert len(operation_results) == 3
-        assert operation_results[0].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
-        assert operation_results[1].operation_response.get("statusCode") == StatusCodes.PRECONDITION_FAILED
-        assert operation_results[2].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
+        try:
+            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+            pytest.fail("Request should have failed.")
+        except exceptions.CosmosBatchOperationError as e:
+            assert e.status_code == StatusCodes.CONFLICT
+            assert e.error_index == 1
+            operation_results = e.response
+            assert len(operation_results) == 3
+            assert operation_results[0].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
+            assert operation_results[1].operation_response.get("statusCode") == StatusCodes.PRECONDITION_FAILED
+            assert operation_results[2].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
     def test_batch_upsert(self):
         self._set_up()
@@ -217,7 +238,6 @@ class TestTransactionalBatch:
                  ("upsert", ({"id": str(uuid.uuid4()), "company": "Microsoft"},))]
 
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        assert batch_response.get("is_error") is False
         operation_results = batch_response.get("results")
         assert len(operation_results) == 3
         assert operation_results[1].operation_response.get("resourceBody").get("message") == "item was upsert"
@@ -243,7 +263,6 @@ class TestTransactionalBatch:
                      {"op": "move", "from": "/move_path", "path": "/moved_path"}]))]
 
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        assert batch_response.get("is_error") is False
         operation_results = batch_response.get("results")
         assert len(operation_results) == 2
         assert operation_results[1].operation_response.get("resourceBody").get("favorite_color") == "red"
@@ -254,7 +273,7 @@ class TestTransactionalBatch:
         assert operation_results[1].operation_response.get("resourceBody").get("move_path") is None
         assert operation_results[1].operation_response.get("resourceBody").get("moved_path") == "yes"
 
-        # with conditional patching
+        # conditional patching incorrect filter
         item_id = str(uuid.uuid4())
         batch = [("upsert", ({"id": item_id,
                               "company": "Microsoft",
@@ -266,12 +285,16 @@ class TestTransactionalBatch:
                  ("patch", (item_id, [{"op": "add", "path": "/favorite_color", "value": "red"}]),
                   {"filter_predicate": "from c where c.set_path = 0"})]
 
-        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        assert batch_response.get("is_error")
-        operation_results = batch_response.get("results")
-        assert len(operation_results) == 2
-        assert operation_results[0].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
-        assert operation_results[1].operation_response.get("statusCode") == StatusCodes.PRECONDITION_FAILED
+        try:
+            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+            pytest.fail("Request should have failed.")
+        except exceptions.CosmosBatchOperationError as e:
+            assert e.status_code == StatusCodes.PRECONDITION_FAILED
+            assert e.error_index == 1
+            operation_results = e.response
+            assert len(operation_results) == 2
+            assert operation_results[0].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
+            assert operation_results[1].operation_response.get("statusCode") == StatusCodes.PRECONDITION_FAILED
 
         # with correct filter
         batch = [("upsert", ({"id": item_id,
@@ -285,7 +308,6 @@ class TestTransactionalBatch:
                   {"filter_predicate": "from c where c.set_path = 1"})]
 
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        assert batch_response.get("is_error") is False
         operation_results = batch_response.get("results")
         assert len(operation_results) == 2
 
@@ -301,13 +323,11 @@ class TestTransactionalBatch:
             delete_batch.append(("delete", (item_id,)))
 
         batch_response = container.execute_item_batch(batch_operations=create_batch, partition_key="Microsoft")
-        assert batch_response.get("is_error") is False
         operation_results = batch_response.get("results")
         assert len(operation_results) == 10
         assert len(list(container.read_all_items())) == 10
 
         batch_response = container.execute_item_batch(batch_operations=delete_batch, partition_key="Microsoft")
-        assert batch_response.get("is_error") is False
         operation_results = batch_response.get("results")
         assert len(operation_results) == 10
         assert len(list(container.read_all_items())) == 0
@@ -316,12 +336,16 @@ class TestTransactionalBatch:
         batch = [("delete", ("new-item",)),
                  ("delete", ("new-item",))]
 
-        batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        assert batch_response.get("is_error") is True
-        operation_results = batch_response.get("results")
-        assert len(operation_results) == 2
-        assert operation_results[0].operation_response.get("statusCode") == StatusCodes.NOT_FOUND
-        assert operation_results[1].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
+        try:
+            container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
+            pytest.fail("Request should have failed.")
+        except exceptions.CosmosBatchOperationError as e:
+            assert e.status_code == StatusCodes.NOT_FOUND
+            assert e.error_index == 0
+            operation_results = e.response
+            assert len(operation_results) == 2
+            assert operation_results[0].operation_response.get("statusCode") == StatusCodes.NOT_FOUND
+            assert operation_results[1].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
     def test_batch_lsn(self):
         container = self.test_database.create_container_if_not_exists(id="batch_lsn" + str(uuid.uuid4()),
@@ -343,7 +367,6 @@ class TestTransactionalBatch:
                  ("delete", ("delete_item",))]
 
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        assert batch_response.get("is_error") is False
         operation_results = batch_response.get("results")
         assert len(operation_results) == 6
         assert int(lsn) == int(container.client_connection.last_response_headers.get(HttpHeaders.LSN)) - 1
@@ -381,7 +404,6 @@ class TestTransactionalBatch:
                  ("delete", (item_ids[2],))]
 
         batch_response = container.execute_item_batch(batch_operations=batch, partition_key=["WA", "Redmond", "98052"])
-        assert batch_response.get("is_error") is False
         operation_results = batch_response.get("results")
         assert len(operation_results) == 6
 

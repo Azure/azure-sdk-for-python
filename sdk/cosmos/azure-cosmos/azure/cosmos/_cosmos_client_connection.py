@@ -45,7 +45,7 @@ from . import _base as base
 from . import documents
 from .documents import ConnectionPolicy
 from ._constants import _Constants as Constants
-from . import http_constants
+from . import http_constants, exceptions
 from . import _models as models
 from . import _query_iterable as query_iterable
 from . import _runtime_constants as runtime_constants
@@ -1771,18 +1771,30 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         final_responses = []
         is_error = False
+        error_status = 0
+        error_index = 0
         for i in range(len(result)):
             status_code = result[i].get("statusCode")
             if status_code >= 400:
                 is_error = True
+                if status_code != 424:  # Find the operation that had the error
+                    error_status = status_code
+                    error_index = i
                 final_responses.append(models.BatchOperationError(operation=batch_operations[i],
                                                                   operation_response=result[i],
                                                                   error=Constants.ERROR_TRANSLATIONS.get(status_code)))
             else:
                 final_responses.append(models.BatchOperationResponse(operation=batch_operations[i],
                                                                      operation_response=result[i]))
+        if is_error:
+            raise exceptions.CosmosBatchOperationError(status_code=error_status,
+                                                       error_index=error_index,
+                                                       headers=self.last_response_headers,
+                                                       message="There was an error in the transactional batch on" +
+                                                               " index {}.".format(str(error_index)),
+                                                       response=final_responses)
 
-        return {"is_error": is_error, "results": final_responses}
+        return final_responses
 
     def _Batch(self, batch_operations, path, collection_id, options, **kwargs):
         initial_headers = self.default_headers.copy()
