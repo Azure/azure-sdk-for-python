@@ -1,4 +1,3 @@
-# pylint: arguments-differ,unused-argument
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -41,7 +40,7 @@ class JobRouterAdministrationClientOperationsMixin(
 ):  # pylint:disable=too-many-lines,line-too-long,name-too-long,arguments-differ,unused-argument
     # region ExceptionPolicy
     @overload
-    async def upsert_exception_policy(
+    async def upsert_exception_policy(  # pylint: disable=arguments-differ,unused-argument
             self,
             exception_policy_id: str,
             *,
@@ -186,7 +185,7 @@ class JobRouterAdministrationClientOperationsMixin(
 
     # region DistributionPolicy
     @overload
-    async def upsert_distribution_policy(
+    async def upsert_distribution_policy(  # pylint: disable=arguments-differ,unused-argument
             self,
             distribution_policy_id: str,
             *,
@@ -341,7 +340,7 @@ class JobRouterAdministrationClientOperationsMixin(
 
     # region Queue
     @overload
-    async def upsert_queue(
+    async def upsert_queue(  # pylint: disable=arguments-differ,unused-argument
             self,
             queue_id: str,
             *,
@@ -500,7 +499,7 @@ class JobRouterAdministrationClientOperationsMixin(
 
     # region ClassificationPolicy
     @overload
-    async def upsert_classification_policy(
+    async def upsert_classification_policy(  # pylint: disable=arguments-differ,unused-argument
             self,
             classification_policy_id: str,
             *,
@@ -722,7 +721,7 @@ class JobRouterAdministrationClientOperationsMixin(
 class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
     # region Worker
     @overload
-    async def upsert_worker(
+    async def upsert_worker(  # pylint: disable=arguments-differ,unused-argument
             self,
             worker_id: str,
             *,
@@ -968,7 +967,7 @@ class JobRouterClientOperationsMixin(JobRouterClientOperationsMixinGenerated):
 
     # region Job
     @overload
-    async def upsert_job(
+    async def upsert_job(  # pylint: disable=arguments-differ,unused-argument
             self,
             job_id: str,
             *,
