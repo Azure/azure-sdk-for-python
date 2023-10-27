@@ -82,13 +82,6 @@ class DtmfTone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ASTERISK = "asterisk"
 
 
-class Gender(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Voice gender type."""
-
-    MALE = "male"
-    FEMALE = "female"
-
-
 class MediaStreamingAudioChannelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Audio channel type to stream, eg. unmixed audio, mixed audio."""
 
@@ -207,3 +200,10 @@ class TranscriptionTransportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of transport to be used for live transcription, eg. Websocket."""
 
     WEBSOCKET = "websocket"
+
+
+class VoiceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Voice kind type."""
+
+    MALE = "male"
+    FEMALE = "female"

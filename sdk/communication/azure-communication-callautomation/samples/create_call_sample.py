@@ -7,7 +7,6 @@ import os
 import sys
 from azure.communication.callautomation import (
     CallAutomationClient,
-    CallInvite,
     CommunicationUserIdentifier
 )
 
@@ -22,10 +21,12 @@ class CallAutomationCreateCallSample(object):
 
         # Creating a call
         user = CommunicationUserIdentifier("8:acs:123")
-        call_invite = CallInvite(target=user)
         callback_uri = "https://contoso.com/event"
 
-        call_connection_properties = callautomation_client.create_call(call_invite, callback_uri)
+        call_connection_properties = callautomation_client.create_call(
+            target_participant=user,
+            callback_url=callback_uri
+        )
 
         # callconnection id of the call
         print(call_connection_properties.call_connection_id)

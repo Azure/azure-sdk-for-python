@@ -6,12 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models import AddParticipantCancelled
 from ._models import AddParticipantFailed
 from ._models import AddParticipantRequest
 from ._models import AddParticipantResponse
 from ._models import AddParticipantSucceeded
 from ._models import AnswerCallRequest
+from ._models import AzureOpenAIDialog
+from ._models import BaseDialog
 from ._models import BlobStorage
 from ._models import CallConnected
 from ._models import CallConnectionProperties
@@ -23,6 +24,7 @@ from ._models import CallTransferFailed
 from ._models import CancelAddParticipantFailed
 from ._models import CancelAddParticipantRequest
 from ._models import CancelAddParticipantResponse
+from ._models import CancelAddParticipantSucceeded
 from ._models import ChannelAffinity
 from ._models import Choice
 from ._models import ChoiceResult
@@ -42,7 +44,6 @@ from ._models import DialogConsent
 from ._models import DialogFailed
 from ._models import DialogHangup
 from ._models import DialogLanguageChange
-from ._models import DialogOptions
 from ._models import DialogSensitivityUpdate
 from ._models import DialogStarted
 from ._models import DialogStateResponse
@@ -54,7 +55,7 @@ from ._models import FileSource
 from ._models import MediaStreamingConfiguration
 from ._models import MicrosoftTeamsUserIdentifierModel
 from ._models import MuteParticipantsRequest
-from ._models import MuteParticipantsResponse
+from ._models import MuteParticipantsResult
 from ._models import ParticipantsUpdated
 from ._models import PhoneNumberIdentifierModel
 from ._models import PlayCanceled
@@ -63,6 +64,7 @@ from ._models import PlayFailed
 from ._models import PlayOptions
 from ._models import PlayRequest
 from ._models import PlaySource
+from ._models import PowerVirtualAgentsDialog
 from ._models import RecognizeCanceled
 from ._models import RecognizeCompleted
 from ._models import RecognizeFailed
@@ -77,9 +79,10 @@ from ._models import RemoveParticipantRequest
 from ._models import RemoveParticipantResponse
 from ._models import RemoveParticipantSucceeded
 from ._models import ResultInformation
-from ._models import SendDtmfCompleted
-from ._models import SendDtmfFailed
-from ._models import SendDtmfRequest
+from ._models import SendDtmfTonesCompleted
+from ._models import SendDtmfTonesFailed
+from ._models import SendDtmfTonesRequest
+from ._models import SendDtmfTonesResult
 from ._models import SpeechOptions
 from ._models import SpeechResult
 from ._models import SsmlSource
@@ -111,7 +114,6 @@ from ._enums import CommunicationCloudEnvironmentModel
 from ._enums import CommunicationIdentifierModelKind
 from ._enums import DialogInputType
 from ._enums import DtmfTone
-from ._enums import Gender
 from ._enums import MediaStreamingAudioChannelType
 from ._enums import MediaStreamingContentType
 from ._enums import MediaStreamingTransportType
@@ -127,17 +129,19 @@ from ._enums import RecordingType
 from ._enums import TranscriptionStatus
 from ._enums import TranscriptionStatusDetails
 from ._enums import TranscriptionTransportType
+from ._enums import VoiceKind
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AddParticipantCancelled",
     "AddParticipantFailed",
     "AddParticipantRequest",
     "AddParticipantResponse",
     "AddParticipantSucceeded",
     "AnswerCallRequest",
+    "AzureOpenAIDialog",
+    "BaseDialog",
     "BlobStorage",
     "CallConnected",
     "CallConnectionProperties",
@@ -149,6 +153,7 @@ __all__ = [
     "CancelAddParticipantFailed",
     "CancelAddParticipantRequest",
     "CancelAddParticipantResponse",
+    "CancelAddParticipantSucceeded",
     "ChannelAffinity",
     "Choice",
     "ChoiceResult",
@@ -168,7 +173,6 @@ __all__ = [
     "DialogFailed",
     "DialogHangup",
     "DialogLanguageChange",
-    "DialogOptions",
     "DialogSensitivityUpdate",
     "DialogStarted",
     "DialogStateResponse",
@@ -180,7 +184,7 @@ __all__ = [
     "MediaStreamingConfiguration",
     "MicrosoftTeamsUserIdentifierModel",
     "MuteParticipantsRequest",
-    "MuteParticipantsResponse",
+    "MuteParticipantsResult",
     "ParticipantsUpdated",
     "PhoneNumberIdentifierModel",
     "PlayCanceled",
@@ -189,6 +193,7 @@ __all__ = [
     "PlayOptions",
     "PlayRequest",
     "PlaySource",
+    "PowerVirtualAgentsDialog",
     "RecognizeCanceled",
     "RecognizeCompleted",
     "RecognizeFailed",
@@ -203,9 +208,10 @@ __all__ = [
     "RemoveParticipantResponse",
     "RemoveParticipantSucceeded",
     "ResultInformation",
-    "SendDtmfCompleted",
-    "SendDtmfFailed",
-    "SendDtmfRequest",
+    "SendDtmfTonesCompleted",
+    "SendDtmfTonesFailed",
+    "SendDtmfTonesRequest",
+    "SendDtmfTonesResult",
     "SpeechOptions",
     "SpeechResult",
     "SsmlSource",
@@ -236,7 +242,6 @@ __all__ = [
     "CommunicationIdentifierModelKind",
     "DialogInputType",
     "DtmfTone",
-    "Gender",
     "MediaStreamingAudioChannelType",
     "MediaStreamingContentType",
     "MediaStreamingTransportType",
@@ -252,6 +257,7 @@ __all__ = [
     "TranscriptionStatus",
     "TranscriptionStatusDetails",
     "TranscriptionTransportType",
+    "VoiceKind",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
