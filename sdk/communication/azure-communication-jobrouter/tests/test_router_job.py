@@ -116,7 +116,7 @@ class TestRouterJob(RouterRecordedTestCase):
                     router_admin_client.delete_distribution_policy(policy_id)
 
     def get_distribution_policy_id(self):
-        return self._testMethodName + "_tst_dp"
+        return "_" + self._testMethodName + "_tst_dp"
 
     def setup_distribution_policy(self):
         client: JobRouterAdministrationClient = self.create_admin_client()
@@ -140,7 +140,7 @@ class TestRouterJob(RouterRecordedTestCase):
             self.distribution_policy_ids[self._testMethodName] = [distribution_policy_id]
 
     def get_job_queue_id(self):
-        return self._testMethodName + "_tst_q"
+        return "_" + self._testMethodName + "_tst_q"
 
     def setup_job_queue(self):
         client: JobRouterAdministrationClient = self.create_admin_client()
@@ -161,7 +161,7 @@ class TestRouterJob(RouterRecordedTestCase):
             self.queue_ids[self._testMethodName] = [job_queue_id]
 
     def get_fallback_queue_id(self):
-        return self._testMethodName + "_tst_flbk_q"  # cspell:disable-line
+        return "_" + self._testMethodName + "_tst_flbk_q"  # cspell:disable-line
 
     def setup_fallback_queue(self):
         client: JobRouterAdministrationClient = self.create_admin_client()
@@ -182,7 +182,7 @@ class TestRouterJob(RouterRecordedTestCase):
             self.queue_ids[self._testMethodName] = [job_queue_id]
 
     def get_classification_policy_id(self):
-        return self._testMethodName + "_tst_cp"
+        return "_" + self._testMethodName + "_tst_cp"
 
     def setup_classification_policy(self):
         client: JobRouterAdministrationClient = self.create_admin_client()
@@ -200,9 +200,9 @@ class TestRouterJob(RouterRecordedTestCase):
         classification_policy: ClassificationPolicy = ClassificationPolicy(
             name=cp_id,
             fallback_queue_id=self.get_fallback_queue_id(),
-            queue_selectors=cp_queue_selectors,
+            queue_selector_attachments=cp_queue_selectors,
             prioritization_rule=prioritization_rules[0],
-            worker_selectors=cp_worker_selectors,
+            worker_selector_attachments=cp_worker_selectors,
         )
 
         job_queue = client.upsert_classification_policy(cp_id, classification_policy)
@@ -283,7 +283,7 @@ class TestRouterJob(RouterRecordedTestCase):
 
         matching_mode = ScheduleAndSuspendMode(schedule_at=recorded_variables["scheduled_time_utc"])
 
-        job_identifier = "tst_create_sch_job"
+        job_identifier = "_tst_create_sch_job"
         router_client: JobRouterClient = self.create_client()
 
         router_job: RouterJob = RouterJob(
@@ -344,7 +344,7 @@ class TestRouterJob(RouterRecordedTestCase):
             notes=job_notes,
         )
 
-        router_job = router_client.create_job(job_identifier, router_job)
+        router_job = router_client.upsert_job(job_identifier, router_job)
 
         # add for cleanup
         self.job_ids[self._testMethodName] = [job_identifier]
@@ -897,7 +897,7 @@ class TestRouterJob(RouterRecordedTestCase):
         matching_mode = ScheduleAndSuspendMode(schedule_at=recorded_variables["scheduled_time_utc"])
 
         router_client: JobRouterClient = self.create_client()
-        job_identifiers = ["tst_list_sch_job_1", "tst_list_sch_job_2"]
+        job_identifiers = ["_tst_list_sch_job_1", "_tst_list_sch_job_2"]
 
         created_job_response = {}
         job_count = len(job_identifiers)

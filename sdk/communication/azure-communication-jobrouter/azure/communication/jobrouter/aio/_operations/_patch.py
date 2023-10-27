@@ -15,6 +15,7 @@ from typing import (
     Dict,
     Union,
     AsyncIterable,
+    overload
 )
 
 from azure.core import MatchConditions
@@ -137,17 +138,60 @@ class JobRouterAdministrationClientOperationsMixin(
     # endregion ExceptionPolicy
 
     # region DistributionPolicy
-    @distributed_trace_async
+    @overload
+    async def upsert_distribution_policy(
+            self,
+            distribution_policy_id: str,
+            *,
+            name: Optional[str],
+            offer_expires_after_seconds: Optional[float],
+            mode: Optional[Union[_models.BestWorkerMode, _models.LongestIdleMode, _models.RoundRobinMode]],
+            if_unmodified_since: Optional[datetime.datetime] = None,
+            etag: Optional[str] = None,
+            match_condition: Optional[MatchConditions] = None,
+            **kwargs: Any
+    ) -> _models.DistributionPolicy:
+        """Update a distribution policy.
+
+        :param str distribution_policy_id: Id of the distribution policy.
+
+        :keyword Optional[float] offer_expires_after_seconds: The expiry time of any offers created under this policy
+          will be governed by the offer time to live.
+
+        :keyword mode: Specified distribution mode
+        :paramtype mode: Optional[Union[~azure.communication.jobrouter.models.BestWorkerMode,
+            ~azure.communication.jobrouter.models.LongestIdleMode,
+            ~azure.communication.jobrouter.models.RoundRobinMode]]
+
+        :keyword Optional[str] name: The name of this policy.
+
+        :keyword if_unmodified_since: The request should only proceed if the entity was not modified
+         after this time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+
+        :return: Instance of DistributionPolicy
+        :rtype: ~azure.communication.jobrouter.models.DistributionPolicy
+        :raises: ~azure.core.exceptions.HttpResponseError, ValueError
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/distribution_policy_crud_ops.py
+                :start-after: [START update_distribution_policy]
+                :end-before: [END update_distribution_policy]
+                :language: python
+                :dedent: 8
+                :caption: Use a JobRouterAdministrationClient to update a distribution policy
+        """
+
     async def upsert_distribution_policy(
         self,
         distribution_policy_id: str,
-        *,
-        name: Optional[str],
-        offer_expires_after_seconds: Optional[float],
-        mode: Optional[Union[_models.BestWorkerMode, _models.LongestIdleMode, _models.RoundRobinMode]],
-        if_unmodified_since: Optional[datetime.datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
+        *args: _models.DistributionPolicy,
         **kwargs: Any
     ) -> _models.DistributionPolicy:
         """Update a distribution policy.
@@ -190,6 +234,8 @@ class JobRouterAdministrationClientOperationsMixin(
             raise ValueError("distribution_policy_id cannot be None.")
 
         distribution_policy = _models.DistributionPolicy()
+        if len(args) == 1:
+            distribution_policy = args[0]
 
         patch = _models.DistributionPolicy(
             name=kwargs.pop("name", distribution_policy.name),
@@ -198,6 +244,10 @@ class JobRouterAdministrationClientOperationsMixin(
             ),
             mode=kwargs.pop("mode", distribution_policy.mode),
         )
+
+        if_unmodified_since = kwargs.pop('if_unmodified_since', None)
+        etag = kwargs.pop('etag', None)
+        match_condition = kwargs.pop('match_condition', None)
 
         return await super().upsert_distribution_policy(
             distribution_policy_id=distribution_policy_id,
