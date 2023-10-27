@@ -6,14 +6,14 @@ import base64
 import functools
 import pickle
 from typing import Any, Optional, overload, TYPE_CHECKING
-from typing_extensions import Literal
 from urllib.parse import urlparse
+
+from typing_extensions import Literal
 
 from azure.core.tracing.decorator import distributed_trace
 
 from ._models import KeyVaultBackupResult
 from ._internal import KeyVaultClientBase, parse_folder_url
-from ._internal.client_base import ApiVersion
 from ._internal.polling import KeyVaultBackupClientPolling, KeyVaultBackupClientPollingMethod
 
 if TYPE_CHECKING:
@@ -50,7 +50,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         *,
         use_managed_identity: Literal[True],
         continuation_token: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> "LROPoller[KeyVaultBackupResult]":
         ...
 
@@ -120,12 +120,12 @@ class KeyVaultBackupClient(KeyVaultClientBase):
         return self._client.begin_full_backup(
             vault_base_url=self._vault_url,
             azure_storage_blob_container_uri=sas_parameter,
-            cls=KeyVaultBackupResult._from_generated,
+            cls=KeyVaultBackupResult._from_generated,  # pylint: disable=protected-access
             continuation_token=status_response,
             polling=KeyVaultBackupClientPollingMethod(
                 lro_algorithms=[KeyVaultBackupClientPolling()], timeout=polling_interval, **kwargs
             ),
-            **kwargs
+            **kwargs,
         )
 
     @overload
@@ -243,5 +243,5 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             cls=lambda *_: None,  # poller.result() returns None
             continuation_token=status_response,
             polling=polling,
-            **kwargs
+            **kwargs,
         )

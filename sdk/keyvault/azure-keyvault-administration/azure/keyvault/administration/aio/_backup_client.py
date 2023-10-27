@@ -6,6 +6,7 @@ import base64
 import functools
 import pickle
 from typing import Any, Optional, overload, TYPE_CHECKING
+
 from typing_extensions import Literal
 
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -13,7 +14,6 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._backup_client import _parse_status_url
 from .._internal import AsyncKeyVaultClientBase, parse_folder_url
 from .._internal.async_polling import KeyVaultAsyncBackupClientPollingMethod
-from .._internal.client_base import ApiVersion
 from .._internal.polling import KeyVaultBackupClientPolling
 from .._models import KeyVaultBackupResult
 
@@ -54,8 +54,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         self, blob_storage_url: str, *, sas_token: str, continuation_token: Optional[str] = None, **kwargs: Any
     ) -> "AsyncLROPoller[KeyVaultBackupResult]":
         ...
-    
-    # pylint:disable=protected-access
+
     @distributed_trace_async
     async def begin_backup(
         self, blob_storage_url: str, *args: str, **kwargs: Any
@@ -117,12 +116,12 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         return await self._client.begin_full_backup(
             vault_base_url=self._vault_url,
             azure_storage_blob_container_uri=sas_parameter,
-            cls=KeyVaultBackupResult._from_generated,
+            cls=KeyVaultBackupResult._from_generated,  # pylint: disable=protected-access
             continuation_token=status_response,
             polling=KeyVaultAsyncBackupClientPollingMethod(
                 lro_algorithms=[KeyVaultBackupClientPolling()], timeout=polling_interval, **kwargs
             ),
-            **kwargs
+            **kwargs,
         )
 
     @overload
@@ -241,5 +240,5 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
             cls=lambda *_: None,  # poller.result() returns None
             continuation_token=status_response,
             polling=polling,
-            **kwargs
+            **kwargs,
         )
