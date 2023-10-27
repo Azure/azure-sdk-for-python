@@ -23,7 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Optional, List, Any
 from .._generated.models import (
     AnswerResult,
     AutocompleteMode,
@@ -53,7 +52,6 @@ __all__ = (
     "QueryAnswerType",
     "QueryCaptionType",
     "QueryType",
-    "VectorQuery",
     "ScoringStatistics",
     "SearchMode",
     "SemanticErrorMode",
@@ -61,4 +59,5 @@ __all__ = (
     "SemanticSearchResultsType",
     "VectorFilterMode",
     "VectorizableQuery",
+    "VectorQuery",
 )
