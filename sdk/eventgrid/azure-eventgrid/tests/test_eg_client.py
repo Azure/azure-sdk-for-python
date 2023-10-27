@@ -37,7 +37,7 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         )
 
         client.publish_cloud_events(
-            eventgrid_topic_name, body=event
+            eventgrid_topic_name, body=event, binary_mode=True
         )
 
         time.sleep(5)
