@@ -8,20 +8,8 @@ from typing import Any, Dict, List, Mapping, Optional, Union, cast, overload
 from typing_extensions import Literal
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
-from azure.core.credentials import TokenCredential
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import (  # pylint:disable=non-abstract-transport-import,no-name-in-module
-    RequestsTransport,
-)
-from azure.core.pipeline.policies import (
-    UserAgentPolicy,
-    DistributedTracingPolicy,
-    HttpLoggingPolicy,
-    BearerTokenCredentialPolicy,
-    ContentDecodePolicy,
-    RequestIdPolicy,
-    AzureKeyCredentialPolicy,
-)
+from azure.core.credentials import TokenCredential, AzureKeyCredential
+from azure.core.pipeline.policies import UserAgentPolicy, BearerTokenCredentialPolicy
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import (
@@ -35,7 +23,6 @@ from ._azure_appconfiguration_error import ResourceReadOnlyError
 from ._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from ._azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from ._generated import AzureAppConfiguration
-from ._generated._configuration import AzureAppConfigurationConfiguration
 from ._generated.models import SnapshotUpdateParameters, SnapshotStatus
 from ._models import ConfigurationSetting, ConfigurationSettingsFilter, ConfigurationSnapshot
 from ._utils import (
@@ -52,7 +39,7 @@ class AzureAppConfigurationClient:
 
     :param str base_url: Base url of the service.
     :param credential: An object which can provide secrets for the app configuration service
-    :type credential: ~azure.core.credentials.TokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential or ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: Api Version. Default value is "2023-10-01". Note that overriding this default
         value may result in unsupported behavior.
     :paramtype api_version: str
@@ -60,7 +47,7 @@ class AzureAppConfigurationClient:
     """
 
     # pylint:disable=protected-access
-    def __init__(self, base_url: str, credential: TokenCredential, **kwargs: Any) -> None:
+    def __init__(self, base_url: str, credential: Union[TokenCredential, AzureKeyCredential], **kwargs: Any) -> None:
         try:
             if not base_url.lower().startswith("http"):
                 base_url = f"https://{base_url}"
@@ -75,17 +62,30 @@ class AzureAppConfigurationClient:
         self._sync_token_policy = SyncTokenPolicy()
 
         if isinstance(credential, AppConfigConnectionStringCredential):
-            credential_policy = AppConfigRequestsCredentialsPolicy(credential)  # type: ignore
+            authentication_policy = AppConfigRequestsCredentialsPolicy(credential)  # type: ignore
             self._impl = AzureAppConfiguration(
                 credential,
                 base_url,
                 credential_scopes=credential_scopes,
-                authentication_policy=credential_policy,
+                user_agent_policy=user_agent_policy,
                 per_call_policies=self._sync_token_policy,
+                authentication_policy=authentication_policy,
+                **kwargs,
+            )
+        elif isinstance(credential, TokenCredential):
+            authentication_policy = BearerTokenCredentialPolicy(
+                credential, *credential_scopes, **kwargs
+            )
+            self._impl = AzureAppConfiguration(
+                credential,
+                base_url,
+                credential_scopes=credential_scopes,
+                user_agent_policy=user_agent_policy,
+                per_call_policies=self._sync_token_policy,
+                authentication_policy=authentication_policy,
                 **kwargs,
             )
         else:
-            # AAD mode
             self._impl = AzureAppConfiguration(
                 credential,
                 base_url,

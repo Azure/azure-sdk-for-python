@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Mapping, Optional, Union, cast, overload
 from typing_extensions import Literal
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
@@ -43,7 +44,7 @@ class AzureAppConfigurationClient:
 
         :param str base_url: Base url of the service.
         :param credential: An object which can provide secrets for the app configuration service
-        :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+        :type credential: ~azure.core.credentials_async.AsyncTokenCredential or ~azure.core.credentials.AzureKeyCredential
         :keyword api_version: Api Version. Default value is "2023-10-01". Note that overriding this default
             value may result in unsupported behavior.
         :paramtype api_version: str
@@ -54,7 +55,7 @@ class AzureAppConfigurationClient:
 
     # pylint:disable=protected-access
 
-    def __init__(self, base_url: str, credential: AsyncTokenCredential, **kwargs: Any) -> None:
+    def __init__(self, base_url: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], **kwargs: Any) -> None:
         try:
             if not base_url.lower().startswith("http"):
                 base_url = f"https://{base_url}"
@@ -69,17 +70,29 @@ class AzureAppConfigurationClient:
         self._sync_token_policy = AsyncSyncTokenPolicy()
 
         if isinstance(credential, AppConfigConnectionStringCredential):
-            credential_policy = AppConfigRequestsCredentialsPolicy(credential)  # type: ignore
+            authentication_policy = AppConfigRequestsCredentialsPolicy(credential)  # type: ignore
             self._impl = AzureAppConfiguration(
                 credential,
                 base_url,
                 credential_scopes=credential_scopes,
-                authentication_policy=credential_policy,
+                authentication_policy=authentication_policy,
                 per_call_policies=self._sync_token_policy,
                 **kwargs,
             )
+        elif isinstance(credential, AsyncTokenCredential):
+            authentication_policy = AsyncBearerTokenCredentialPolicy(
+                credential, *credential_scopes, **kwargs
+            )
+            self._impl = AzureAppConfiguration(
+                credential,
+                base_url,
+                credential_scopes=credential_scopes,
+                user_agent_policy=user_agent_policy,
+                per_call_policies=self._sync_token_policy,
+                authentication_policy=authentication_policy,
+                **kwargs,
+            )
         else:
-            # AAD mode
             self._impl = AzureAppConfiguration(
                 credential,
                 base_url,
