@@ -325,8 +325,8 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
     event = kwargs.pop("event")
 
     # Content of the request is the data, if already in binary - no work needed
-    # _content = _check_content_type(event.data)
-    _content = event.data
+    _content = _check_content_type(event.data)
+    # _content = event.data
  
     # content_type must be CloudEvent DataContentType when in binary mode
     default_content_type = kwargs.pop('content_type', _headers.pop('content-type', "application/cloudevents+json; charset=utf-8"))
@@ -375,17 +375,17 @@ def _to_http_request(topic_name: str, **kwargs: Any) -> HttpRequest:
         **kwargs
     )
 
-# def _check_content_type(data: Any) -> None:
-#     # Check the content type of the data and convert to bytes if needed
-#     if isinstance(data, bytes):
-#         return data
-#     elif isinstance(data, str):
-#         return data.encode("utf-8")
-#     else:
-#         try:
-#             return json.dumps(event, cls=AzureJSONEncoder, exclude_readonly=True)  # type: ignore
-#         except:
-#             raise TypeError("Incorrect type for data. Expected bytes, str, or JSON serializable object to encode.")
+def _check_content_type(data: Any) -> None:
+    # Check the content type of the data and convert to bytes if needed
+    if isinstance(data, bytes):
+        return data
+    elif isinstance(data, str):
+        return data.encode("utf-8")
+    else:
+        try:
+            return json.dumps(event, cls=AzureJSONEncoder, exclude_readonly=True).encode("utf-8")  # type: ignore
+        except:
+            raise TypeError("Incorrect type for data. Expected bytes, str, or JSON serializable object to encode.")
 
 
 __all__: List[str] = [
