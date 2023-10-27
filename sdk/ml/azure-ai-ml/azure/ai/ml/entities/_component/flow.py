@@ -234,7 +234,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         kwargs[BASE_PATH_CONTEXT_KEY] = flow_dir
 
         super().__init__(
-            name=name or flow_dir.name,
+            name=name or self._normalize_component_name(flow_dir.name),
             version=version or "1",
             description=description,
             tags=tags,
@@ -364,6 +364,10 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         self._additional_includes = value or []
 
     # endregion
+
+    @classmethod
+    def _normalize_component_name(cls, value: str):
+        return value.replace("-", "_")
 
     # region Component
     @classmethod
