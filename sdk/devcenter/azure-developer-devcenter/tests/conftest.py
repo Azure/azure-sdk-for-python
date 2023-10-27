@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from devtools_testutils import test_proxy, add_body_key_sanitizer
+from devtools_testutils import test_proxy, add_body_key_sanitizer, add_oauth_response_sanitizer
 import pytest
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
@@ -12,4 +12,5 @@ import pytest
 def start_proxy(test_proxy):
     add_body_key_sanitizer(json_path="$..id_token", value="Sanitized")
     add_body_key_sanitizer(json_path="$..client_info", value="Sanitized")
+    add_oauth_response_sanitizer()
     return

@@ -42,7 +42,7 @@ async def main():
     print("Set configuration setting")
     added_config_setting.value = "new value"
     added_config_setting.content_type = "new content type"
-    updated_config_setting = await client.set_configuration_setting(config_setting)
+    updated_config_setting = await client.set_configuration_setting(added_config_setting)
     print_configuration_setting(updated_config_setting)
     print("")
 

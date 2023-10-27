@@ -178,8 +178,14 @@ class MLIndex:
                     else:
                         raise e
 
+                from packaging import version as pkg_version
                 azure_search_documents_version = packages_versions_for_compatibility["azure-search-documents"]
-                if (azure_search_documents_version > "11.4.0b6" and langchain_version > "0.0.273") or (azure_search_documents_version == "11.4.0b6" and langchain_version < "0.0.273" and langchain_version >= "0.0.198"):
+                search_client_version = pkg_version.parse(azure_search_documents_version)
+                langchain_pkg_version = pkg_version.parse(langchain_version)
+
+                if (search_client_version > pkg_version.parse("11.4.0b6") and langchain_pkg_version > pkg_version.parse("0.0.273")) \
+                    or (search_client_version == pkg_version.parse("11.4.0b6") and langchain_pkg_version < pkg_version.parse("0.0.273") and pkg_version.parse(langchain_pkg_version >= "0.0.198")):
+
                     from langchain.vectorstores import azuresearch
                     # TODO: These fields effect all ACS retrievers in the same process, should change class so it can
                     # use these as defaults but uses names passed in as args preferentially

@@ -101,7 +101,10 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
 
         vector_search_args = {}
         if str(acs_config.get("push_embeddings", "true")).lower() == "true" and embeddings and embeddings.kind != "none" and "embedding" in acs_config[MLIndex.INDEX_FIELD_MAPPING_KEY]:
-            if azure_documents_search_version >= "11.4.0b8":
+            from packaging import version as pkg_version
+            current_version = pkg_version.parse(azure_documents_search_version)
+
+            if current_version >= pkg_version.parse("11.4.0b8"):
                 from azure.search.documents.indexes.models import HnswVectorSearchAlgorithmConfiguration, VectorSearch
 
                 vector_search_args["vector_search"] = VectorSearch(
@@ -117,7 +120,7 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
                         )
                     ]
                 )
-            elif azure_documents_search_version >= "11.4.0b4":
+            elif azure_documents_search_version >= pkg_version.parse("11.4.0b4"):
                 from azure.search.documents.indexes.models import VectorSearch, VectorSearchAlgorithmConfiguration
 
                 vector_search_args["vector_search"] = VectorSearch(
