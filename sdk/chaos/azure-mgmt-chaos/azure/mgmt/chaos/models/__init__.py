@@ -6,15 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models_py3 import Action
 from ._models_py3 import ActionStatus
-from ._models_py3 import Branch
 from ._models_py3 import BranchStatus
 from ._models_py3 import Capability
 from ._models_py3 import CapabilityListResult
 from ._models_py3 import CapabilityType
 from ._models_py3 import CapabilityTypeListResult
 from ._models_py3 import CapabilityTypePropertiesRuntimeProperties
+from ._models_py3 import ChaosExperimentAction
+from ._models_py3 import ChaosExperimentBranch
+from ._models_py3 import ChaosExperimentStep
+from ._models_py3 import ChaosTargetFilter
+from ._models_py3 import ChaosTargetListSelector
+from ._models_py3 import ChaosTargetQuerySelector
+from ._models_py3 import ChaosTargetSelector
+from ._models_py3 import ChaosTargetSimpleFilter
+from ._models_py3 import ChaosTargetSimpleFilterParameters
 from ._models_py3 import ContinuousAction
 from ._models_py3 import DelayAction
 from ._models_py3 import DiscreteAction
@@ -22,30 +29,23 @@ from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import Experiment
-from ._models_py3 import ExperimentCancelOperationResult
+from ._models_py3 import ExperimentExecution
 from ._models_py3 import ExperimentExecutionActionTargetDetailsError
 from ._models_py3 import ExperimentExecutionActionTargetDetailsProperties
 from ._models_py3 import ExperimentExecutionDetails
-from ._models_py3 import ExperimentExecutionDetailsListResult
+from ._models_py3 import ExperimentExecutionDetailsProperties
 from ._models_py3 import ExperimentExecutionDetailsPropertiesRunInformation
+from ._models_py3 import ExperimentExecutionListResult
+from ._models_py3 import ExperimentExecutionProperties
 from ._models_py3 import ExperimentListResult
-from ._models_py3 import ExperimentStartOperationResult
-from ._models_py3 import ExperimentStatus
-from ._models_py3 import ExperimentStatusListResult
 from ._models_py3 import ExperimentUpdate
-from ._models_py3 import Filter
 from ._models_py3 import KeyValuePair
-from ._models_py3 import ListSelector
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
-from ._models_py3 import QuerySelector
+from ._models_py3 import OperationStatus
 from ._models_py3 import Resource
 from ._models_py3 import ResourceIdentity
-from ._models_py3 import Selector
-from ._models_py3 import SimpleFilter
-from ._models_py3 import SimpleFilterParameters
-from ._models_py3 import Step
 from ._models_py3 import StepStatus
 from ._models_py3 import SystemData
 from ._models_py3 import Target
@@ -60,6 +60,7 @@ from ._chaos_management_client_enums import ActionType
 from ._chaos_management_client_enums import CreatedByType
 from ._chaos_management_client_enums import FilterType
 from ._chaos_management_client_enums import Origin
+from ._chaos_management_client_enums import ProvisioningState
 from ._chaos_management_client_enums import ResourceIdentityType
 from ._chaos_management_client_enums import SelectorType
 from ._chaos_management_client_enums import TargetReferenceType
@@ -68,15 +69,22 @@ from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "Action",
     "ActionStatus",
-    "Branch",
     "BranchStatus",
     "Capability",
     "CapabilityListResult",
     "CapabilityType",
     "CapabilityTypeListResult",
     "CapabilityTypePropertiesRuntimeProperties",
+    "ChaosExperimentAction",
+    "ChaosExperimentBranch",
+    "ChaosExperimentStep",
+    "ChaosTargetFilter",
+    "ChaosTargetListSelector",
+    "ChaosTargetQuerySelector",
+    "ChaosTargetSelector",
+    "ChaosTargetSimpleFilter",
+    "ChaosTargetSimpleFilterParameters",
     "ContinuousAction",
     "DelayAction",
     "DiscreteAction",
@@ -84,30 +92,23 @@ __all__ = [
     "ErrorDetail",
     "ErrorResponse",
     "Experiment",
-    "ExperimentCancelOperationResult",
+    "ExperimentExecution",
     "ExperimentExecutionActionTargetDetailsError",
     "ExperimentExecutionActionTargetDetailsProperties",
     "ExperimentExecutionDetails",
-    "ExperimentExecutionDetailsListResult",
+    "ExperimentExecutionDetailsProperties",
     "ExperimentExecutionDetailsPropertiesRunInformation",
+    "ExperimentExecutionListResult",
+    "ExperimentExecutionProperties",
     "ExperimentListResult",
-    "ExperimentStartOperationResult",
-    "ExperimentStatus",
-    "ExperimentStatusListResult",
     "ExperimentUpdate",
-    "Filter",
     "KeyValuePair",
-    "ListSelector",
     "Operation",
     "OperationDisplay",
     "OperationListResult",
-    "QuerySelector",
+    "OperationStatus",
     "Resource",
     "ResourceIdentity",
-    "Selector",
-    "SimpleFilter",
-    "SimpleFilterParameters",
-    "Step",
     "StepStatus",
     "SystemData",
     "Target",
@@ -121,6 +122,7 @@ __all__ = [
     "CreatedByType",
     "FilterType",
     "Origin",
+    "ProvisioningState",
     "ResourceIdentityType",
     "SelectorType",
     "TargetReferenceType",

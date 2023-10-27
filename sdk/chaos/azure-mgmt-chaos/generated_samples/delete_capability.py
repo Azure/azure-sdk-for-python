@@ -14,7 +14,7 @@ from azure.mgmt.chaos import ChaosManagementClient
     pip install azure-identity
     pip install azure-mgmt-chaos
 # USAGE
-    python delete_aexperiment.py
+    python delete_capability.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,12 +29,16 @@ def main():
         subscription_id="6b052e15-03d3-4f17-b2e1-be7f07588291",
     )
 
-    client.experiments.delete(
+    client.capabilities.delete(
         resource_group_name="exampleRG",
-        experiment_name="exampleExperiment",
+        parent_provider_namespace="Microsoft.Compute",
+        parent_resource_type="virtualMachines",
+        parent_resource_name="exampleVM",
+        target_name="Microsoft-VirtualMachine",
+        capability_name="Shutdown-1.0",
     )
 
 
-# x-ms-original-file: specification/chaos/resource-manager/Microsoft.Chaos/preview/2023-04-15-preview/examples/DeleteAExperiment.json
+# x-ms-original-file: specification/chaos/resource-manager/Microsoft.Chaos/stable/2023-11-01/examples/DeleteCapability.json
 if __name__ == "__main__":
     main()
