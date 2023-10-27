@@ -36,6 +36,8 @@ from .._generated.models import (
     ScoringStatistics,
     SearchMode,
     SemanticErrorMode,
+    SemanticErrorReason,
+    SemanticSearchResultsType,
     VectorFilterMode,
     VectorizableQuery,
     VectorQuery,
@@ -55,6 +57,8 @@ __all__ = (
     "ScoringStatistics",
     "SearchMode",
     "SemanticErrorMode",
+    "SemanticErrorReason",
+    "SemanticSearchResultsType",
     "VectorFilterMode",
     "VectorizableQuery",
 )
