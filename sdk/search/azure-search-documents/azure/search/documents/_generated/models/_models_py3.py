@@ -1669,8 +1669,8 @@ class VectorizableQuery(_serialization.Model):
 
     :ivar kind: The kind of vector query being performed. Required. "vector"
     :vartype kind: str or ~search_index_client.models.VectorQueryKind
-    :ivar k: Number of nearest neighbors to return as top hits.
-    :vartype k: int
+    :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+    :vartype k_nearest_neighbors: int
     :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
      searched.
     :vartype fields: str
@@ -1686,7 +1686,7 @@ class VectorizableQuery(_serialization.Model):
 
     _attribute_map = {
         "kind": {"key": "kind", "type": "str"},
-        "k": {"key": "k", "type": "int"},
+        "k_nearest_neighbors": {"key": "k", "type": "int"},
         "fields": {"key": "fields", "type": "str"},
         "exhaustive": {"key": "exhaustive", "type": "bool"},
     }
@@ -1694,11 +1694,16 @@ class VectorizableQuery(_serialization.Model):
     _subtype_map = {"kind": {"vector": "VectorQuery"}}
 
     def __init__(
-        self, *, k: Optional[int] = None, fields: Optional[str] = None, exhaustive: Optional[bool] = None, **kwargs: Any
+        self,
+        *,
+        k_nearest_neighbors: Optional[int] = None,
+        fields: Optional[str] = None,
+        exhaustive: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
         """
-        :keyword k: Number of nearest neighbors to return as top hits.
-        :paramtype k: int
+        :keyword k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+        :paramtype k_nearest_neighbors: int
         :keyword fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
          searched.
         :paramtype fields: str
@@ -1709,7 +1714,7 @@ class VectorizableQuery(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.kind: Optional[str] = None
-        self.k = k
+        self.k_nearest_neighbors = k_nearest_neighbors
         self.fields = fields
         self.exhaustive = exhaustive
 
@@ -1721,8 +1726,8 @@ class VectorQuery(VectorizableQuery):
 
     :ivar kind: The kind of vector query being performed. Required. "vector"
     :vartype kind: str or ~search_index_client.models.VectorQueryKind
-    :ivar k: Number of nearest neighbors to return as top hits.
-    :vartype k: int
+    :ivar k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+    :vartype k_nearest_neighbors: int
     :ivar fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
      searched.
     :vartype fields: str
@@ -1741,7 +1746,7 @@ class VectorQuery(VectorizableQuery):
 
     _attribute_map = {
         "kind": {"key": "kind", "type": "str"},
-        "k": {"key": "k", "type": "int"},
+        "k_nearest_neighbors": {"key": "k", "type": "int"},
         "fields": {"key": "fields", "type": "str"},
         "exhaustive": {"key": "exhaustive", "type": "bool"},
         "vector": {"key": "vector", "type": "[float]"},
@@ -1751,14 +1756,14 @@ class VectorQuery(VectorizableQuery):
         self,
         *,
         vector: List[float],
-        k: Optional[int] = None,
+        k_nearest_neighbors: Optional[int] = None,
         fields: Optional[str] = None,
         exhaustive: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword k: Number of nearest neighbors to return as top hits.
-        :paramtype k: int
+        :keyword k_nearest_neighbors: Number of nearest neighbors to return as top hits.
+        :paramtype k_nearest_neighbors: int
         :keyword fields: Vector Fields of type Collection(Edm.Single) to be included in the vector
          searched.
         :paramtype fields: str
@@ -1769,6 +1774,6 @@ class VectorQuery(VectorizableQuery):
         :keyword vector: The vector representation of a search query. Required.
         :paramtype vector: list[float]
         """
-        super().__init__(k=k, fields=fields, exhaustive=exhaustive, **kwargs)
+        super().__init__(k_nearest_neighbors=k_nearest_neighbors, fields=fields, exhaustive=exhaustive, **kwargs)
         self.kind: str = "vector"
         self.vector = vector

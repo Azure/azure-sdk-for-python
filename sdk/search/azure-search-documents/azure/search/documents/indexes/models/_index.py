@@ -152,8 +152,8 @@ class SearchField(_serialization.Model):
      "standard.lucene", "standardasciifolding.lucene", "keyword", "pattern", "simple", "stop", and
      "whitespace".
     :vartype index_analyzer: str or ~search_service_client.models.LexicalAnalyzerName
-    :ivar dimensions: The dimensionality of the vector field.
-    :vartype dimensions: int
+    :ivar vector_search_dimensions: The dimensionality of the vector field.
+    :vartype vector_search_dimensions: int
     :ivar vector_search_profile_name: The name of the vector search profile that specifies the algorithm
      to use when searching the vector field.
     :vartype vector_search_profile_name: str

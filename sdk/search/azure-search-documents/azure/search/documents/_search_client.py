@@ -160,7 +160,7 @@ class SearchClient(HeadersMixin):
         top: Optional[int] = None,
         scoring_statistics: Optional[Union[str, ScoringStatistics]] = None,
         session_id: Optional[str] = None,
-        vector_queries: Optional[List[VectorizableQuery]] = None,
+        vectorizable_queries: Optional[List[VectorizableQuery]] = None,
         vector_filter_mode: Optional[Union[str, VectorFilterMode]] = None,
         semantic_error_mode: Optional[Union[str, SemanticErrorMode]] = None,
         semantic_max_wait_in_milliseconds: Optional[int] = None,
@@ -255,8 +255,8 @@ class SearchClient(HeadersMixin):
         :paramtype semantic_error_mode: str or ~azure.search.documents.models.SemanticErrorMode
         :keyword int semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount of
          time it takes for semantic enrichment to finish processing before the request fails.
-        :keyword vector_queries: The query parameters for vector and hybrid search queries.
-        :paramtype vector_queries: List[VectorizableQuery]
+        :keyword vectorizable_queries: The query parameters for vector and hybrid search queries.
+        :paramtype vectorizable_queries: List[VectorizableQuery]
         :keyword vector_filter_mode: Determines whether or not filters are applied before or after the
           vector search is performed. Default is 'preFilter'. Known values are: "postFilter" and "preFilter".
         :paramtype vector_filter_mode: str or VectorFilterMode
@@ -327,9 +327,7 @@ class SearchClient(HeadersMixin):
             top=top,
             session_id=session_id,
             scoring_statistics=scoring_statistics,
-            vector_queries=None
-            if not vector_queries
-            else [v._to_generated() for v in vector_queries],  # pylint:disable=protected-access
+            vectorizable_queries=vectorizable_queries,
             vector_filter_mode=vector_filter_mode,
             semantic_error_handling=semantic_error_mode,
             semantic_max_wait_in_milliseconds=semantic_max_wait_in_milliseconds,
