@@ -21,8 +21,11 @@ class TestEGClientExceptions(AzureRecordedTestCase):
         )
         return client
 
-    @EventGridPreparer()
-    def test_publish_binary_mode_cloud_event(self, eventgrid_endpoint, eventgrid_key, eventgrid_topic_name, eventgrid_event_subscription_name):
+    def test_publish_binary_mode_cloud_event(self):
+        eventgrid_endpoint = os.environ['EVENTGRID_ENDPOINT']
+        eventgrid_key = os.environ['EVENTGRID_KEY']
+        eventgrid_topic_name = os.environ['EVENTGRID_TOPIC_NAME']
+        eventgrid_event_subscription_name = os.environ['EVENTGRID_EVENT_SUBSCRIPTION_NAME']
         client = self.create_eg_client(eventgrid_endpoint, eventgrid_key)
 
         event = CloudEvent(
