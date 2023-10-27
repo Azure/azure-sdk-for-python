@@ -10,10 +10,7 @@ from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.pipeline.policies import (
-    UserAgentPolicy,
-    AsyncBearerTokenCredentialPolicy,
-)
+from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 from azure.core.polling import AsyncLROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -31,7 +28,6 @@ from .._azure_appconfiguration_credential import AppConfigConnectionStringCreden
 from .._generated.aio import AzureAppConfiguration
 from .._generated.models import SnapshotUpdateParameters, SnapshotStatus
 from .._models import ConfigurationSetting, ConfigurationSettingsFilter, ConfigurationSnapshot
-from .._user_agent import USER_AGENT
 from .._utils import (
     get_endpoint_from_connection_string,
     prep_if_match,
@@ -55,7 +51,9 @@ class AzureAppConfigurationClient:
 
     # pylint:disable=protected-access
 
-    def __init__(self, base_url: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], **kwargs: Any) -> None:
+    def __init__(
+        self, base_url: str, credential: Union[AsyncTokenCredential, AzureKeyCredential], **kwargs: Any
+    ) -> None:
         try:
             if not base_url.lower().startswith("http"):
                 base_url = f"https://{base_url}"
@@ -66,30 +64,23 @@ class AzureAppConfigurationClient:
             raise ValueError("Missing credential")
 
         credential_scopes = [f"{base_url.strip('/')}/.default"]
-        user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
         self._sync_token_policy = AsyncSyncTokenPolicy()
 
         if isinstance(credential, AppConfigConnectionStringCredential):
-            authentication_policy = AppConfigRequestsCredentialsPolicy(credential)  # type: ignore
             self._impl = AzureAppConfiguration(
-                credential,
+                credential,  # type: ignore
                 base_url,
                 credential_scopes=credential_scopes,
-                authentication_policy=authentication_policy,
+                authentication_policy=AppConfigRequestsCredentialsPolicy(credential),
                 per_call_policies=self._sync_token_policy,
                 **kwargs,
             )
-        elif isinstance(credential, AsyncTokenCredential):
-            authentication_policy = AsyncBearerTokenCredentialPolicy(
-                credential, *credential_scopes, **kwargs
-            )
+        elif isinstance(credential, AzureKeyCredential):
             self._impl = AzureAppConfiguration(
                 credential,
                 base_url,
                 credential_scopes=credential_scopes,
-                user_agent_policy=user_agent_policy,
                 per_call_policies=self._sync_token_policy,
-                authentication_policy=authentication_policy,
                 **kwargs,
             )
         else:
@@ -97,8 +88,8 @@ class AzureAppConfigurationClient:
                 credential,
                 base_url,
                 credential_scopes=credential_scopes,
-                user_agent_policy=user_agent_policy,
                 per_call_policies=self._sync_token_policy,
+                authentication_policy=AsyncBearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
                 **kwargs,
             )
 

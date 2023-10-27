@@ -9,7 +9,7 @@ from typing_extensions import Literal
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.credentials import TokenCredential, AzureKeyCredential
-from azure.core.pipeline.policies import UserAgentPolicy, BearerTokenCredentialPolicy
+from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import (
@@ -31,7 +31,6 @@ from ._utils import (
     prep_if_none_match,
 )
 from ._sync_token import SyncTokenPolicy
-from ._user_agent import USER_AGENT
 
 
 class AzureAppConfigurationClient:
@@ -58,31 +57,23 @@ class AzureAppConfigurationClient:
             raise ValueError("Missing credential")
 
         credential_scopes = [f"{base_url.strip('/')}/.default"]
-        user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
         self._sync_token_policy = SyncTokenPolicy()
 
         if isinstance(credential, AppConfigConnectionStringCredential):
-            authentication_policy = AppConfigRequestsCredentialsPolicy(credential)  # type: ignore
             self._impl = AzureAppConfiguration(
-                credential,
+                credential,  # type: ignore
                 base_url,
                 credential_scopes=credential_scopes,
-                user_agent_policy=user_agent_policy,
                 per_call_policies=self._sync_token_policy,
-                authentication_policy=authentication_policy,
+                authentication_policy=AppConfigRequestsCredentialsPolicy(credential),
                 **kwargs,
             )
-        elif isinstance(credential, TokenCredential):
-            authentication_policy = BearerTokenCredentialPolicy(
-                credential, *credential_scopes, **kwargs
-            )
+        elif isinstance(credential, AzureKeyCredential):
             self._impl = AzureAppConfiguration(
                 credential,
                 base_url,
                 credential_scopes=credential_scopes,
-                user_agent_policy=user_agent_policy,
                 per_call_policies=self._sync_token_policy,
-                authentication_policy=authentication_policy,
                 **kwargs,
             )
         else:
@@ -90,8 +81,8 @@ class AzureAppConfigurationClient:
                 credential,
                 base_url,
                 credential_scopes=credential_scopes,
-                user_agent_policy=user_agent_policy,
                 per_call_policies=self._sync_token_policy,
+                authentication_policy=BearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
                 **kwargs,
             )
 
