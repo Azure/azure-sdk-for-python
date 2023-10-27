@@ -13,7 +13,6 @@ from ._kql_script_operations import KqlScriptOperations
 from ._metastore_operations import MetastoreOperations
 from ._spark_configuration_operations import SparkConfigurationOperations
 from ._big_data_pools_operations import BigDataPoolsOperations
-from ._credential_operations import CredentialOperations
 from ._data_flow_operations import DataFlowOperations
 from ._data_flow_debug_session_operations import DataFlowDebugSessionOperations
 from ._dataset_operations import DatasetOperations
@@ -44,7 +43,6 @@ __all__ = [
     "MetastoreOperations",
     "SparkConfigurationOperations",
     "BigDataPoolsOperations",
-    "CredentialOperations",
     "DataFlowOperations",
     "DataFlowDebugSessionOperations",
     "DatasetOperations",

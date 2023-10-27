@@ -18,7 +18,6 @@ from .._serialization import Deserializer, Serializer
 from ._configuration import ArtifactsClientConfiguration
 from .operations import (
     BigDataPoolsOperations,
-    CredentialOperations,
     DataFlowDebugSessionOperations,
     DataFlowOperations,
     DatasetOperations,
@@ -67,8 +66,6 @@ class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too
      azure.synapse.artifacts.aio.operations.SparkConfigurationOperations
     :ivar big_data_pools: BigDataPoolsOperations operations
     :vartype big_data_pools: azure.synapse.artifacts.aio.operations.BigDataPoolsOperations
-    :ivar credential: CredentialOperations operations
-    :vartype credential: azure.synapse.artifacts.aio.operations.CredentialOperations
     :ivar data_flow: DataFlowOperations operations
     :vartype data_flow: azure.synapse.artifacts.aio.operations.DataFlowOperations
     :ivar data_flow_debug_session: DataFlowDebugSessionOperations operations
@@ -152,7 +149,6 @@ class ArtifactsClient:  # pylint: disable=client-accepts-api-version-keyword,too
             self._client, self._config, self._serialize, self._deserialize
         )
         self.big_data_pools = BigDataPoolsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.credential = CredentialOperations(self._client, self._config, self._serialize, self._deserialize)
         self.data_flow = DataFlowOperations(self._client, self._config, self._serialize, self._deserialize)
         self.data_flow_debug_session = DataFlowDebugSessionOperations(
             self._client, self._config, self._serialize, self._deserialize
