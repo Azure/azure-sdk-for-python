@@ -61,4 +61,9 @@ stages:
               SubscriptionConfigurations:
                 - $(sub-config-communication-int-test-resources-common)
                 - $(sub-config-communication-int-test-resources-python)
+          MatrixConfigs:
+            - Name: communication_python_livetest_matrix
+              Path: sdk/communication/platform-matrix-all-versions.json
+              Selection: sparse
+              GenerateVMJobs: true
         Clouds: Public,Int
