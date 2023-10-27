@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Dict, Optional, Union
 
 from azure.ai.ml.entities._component.component import Component
+from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml._schema._deployment.batch.pipeline_component_batch_deployment_schema import (
     PipelineComponentBatchDeploymentSchema,
 )  # pylint: disable=line-too-long
@@ -39,6 +40,8 @@ class PipelineComponentBatchDeployment(Deployment):
     :type description: Optional[str]
     :param tags: A set of tags. The tags which will be applied to the job.
     :type tags: Optional[Dict[str, Any]]
+    :param job_definition: Arm ID or PipelineJob entity of an existing pipeline job.
+    :param job_definition: Optional[Dict[str, ~azure.ai.ml.entities._builders.BaseNode]]
     """
 
     def __init__(
@@ -48,12 +51,13 @@ class PipelineComponentBatchDeployment(Deployment):
         endpoint_name: Optional[str] = None,
         component: Optional[Union[Component, str]] = None,
         settings: Optional[Dict[str, str]] = None,
+        job_definition: Optional[Dict[str, BaseNode]] = None,
         **kwargs,  # pylint: disable=unused-argument
     ):
-        self.job_definition = kwargs.pop("job_definition", None)
         super().__init__(endpoint_name=endpoint_name, name=name, **kwargs)
         self.component = component
         self.settings = settings
+        self.job_definition = job_definition
 
     def _to_rest_object(self, location: str) -> "RestBatchDeployment":  # pylint: disable=arguments-differ
         if isinstance(self.component, PipelineComponent):

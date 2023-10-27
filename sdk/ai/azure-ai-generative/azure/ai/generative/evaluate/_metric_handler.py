@@ -3,7 +3,8 @@
 # ---------------------------------------------------------
 import copy
 
-from azure.ai.generative.evaluate._constants import TYPE_TO_KWARGS_MAPPING, CHAT_RAG, QA_RAG
+from azure.ai.generative.evaluate._constants import TYPE_TO_KWARGS_MAPPING
+from azure.ai.generative.evaluate._constants import TASK_TYPE_TO_METRICS_MAPPING
 
 
 class MetricHandler(object):
@@ -78,7 +79,7 @@ class MetricHandler(object):
 
         metrics_calculation_data = self._get_data_for_metrics()
 
-        metrics = self.metrics if self.task_type == constants.RAG_EVALUATION and self.metrics is not None else []
+        metrics = self.metrics if self.metrics is not None else TASK_TYPE_TO_METRICS_MAPPING[self.task_type].DEFAULT_LIST
 
         return compute_metrics(
             metrics=metrics,

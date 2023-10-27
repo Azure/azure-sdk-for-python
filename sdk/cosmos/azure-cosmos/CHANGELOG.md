@@ -3,6 +3,7 @@
 ### 4.5.2b2 (Unreleased)
 
 #### Features Added
+* Added Support for Priority Based Throttling/Priority Based Execution (Must be enabled at the account level before it can be used). See [PR 32441](https://github.com/Azure/azure-sdk-for-python/pull/32441/)
 
 #### Breaking Changes
 

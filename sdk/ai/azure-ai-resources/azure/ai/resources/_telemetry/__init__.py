@@ -8,7 +8,6 @@ from azure.ai.ml._telemetry import ActivityType, log_activity, monitor_with_acti
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
 
 from .logging_handler import get_appinsights_log_handler, OpsLogger
-from ..constants._common import GEN_AI_INTERNAL_LOGGER_NAMESPACE
 
 __all__ = [
     "monitor_with_activity",
@@ -16,7 +15,6 @@ __all__ = [
     "log_activity",
     "ActivityType",
     "get_appinsights_log_handler",
-    "GEN_AI_INTERNAL_LOGGER_NAMESPACE",
     "OpsLogger",
     "initialize_logger_info",
 ]

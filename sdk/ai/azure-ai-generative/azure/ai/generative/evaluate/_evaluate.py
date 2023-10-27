@@ -19,8 +19,7 @@ from mlflow.protos.databricks_pb2 import ErrorCode, INVALID_PARAMETER_VALUE
 from azure.ai.generative.evaluate._metric_handler import MetricHandler
 from azure.ai.generative.evaluate._utils import _is_flow, load_jsonl, _get_artifact_dir_path
 from azure.ai.generative.evaluate._mlflow_log_collector import RedirectUserOutputStreams
-from azure.ai.generative.evaluate._constants import SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING, SUPPORTED_TASK_TYPE, QA_RAG, \
-    CHAT_RAG
+from azure.ai.generative.evaluate._constants import SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING, SUPPORTED_TASK_TYPE, CHAT
 from azure.ai.generative.evaluate._evaluation_result import EvaluationResult
 
 from ._utils import _write_properties_to_run_history
@@ -106,7 +105,7 @@ def evaluate(
         params_permutations_dicts = [dict(zip(keys, v)) for v in itertools.product(*values)]
 
         with mlflow.start_run(run_name=evaluation_name) as run:
-            log_property_and_tag("_azureml.evaluation_run", "azure-ai-generative")
+            log_property_and_tag("_azureml.evaluation_run", "azure-ai-generative-parent")
             for index, params_permutations_dict in enumerate(params_permutations_dicts):
                 evaluation_name_variant = f"{evaluation_name}_{index}" if evaluation_name else f"{run.info.run_name}_{index}"
 
@@ -184,7 +183,10 @@ def _evaluate(
     with mlflow.start_run(nested=True if mlflow.active_run() else False, run_name=evaluation_name) as run, \
             RedirectUserOutputStreams(logger=LOGGER) as _:
 
-        log_property_and_tag("_azureml.evaluation_run", "azure-ai-generative")
+        log_property_and_tag(
+            "_azureml.evaluation_run",
+            "azure-ai-generative-parent" if run.data.tags.get("mlflow.rootRunId") is None else "azure-ai-generative"
+        )
         # Log input is a preview feature behind an allowlist. Uncomment this line once the feature is broadly available.
         # log_input(data=data, data_is_file=_data_is_file)
 
@@ -214,7 +216,7 @@ def _evaluate(
 
         def _get_instance_table():
             metrics.get("artifacts").pop("bertscore", None)
-            if task_type in [QA_RAG, CHAT_RAG]:
+            if task_type == CHAT:
                 instance_level_metrics_table = _get_chat_instance_table(metrics.get("artifacts"))
             else:
                 instance_level_metrics_table = pd.DataFrame(metrics.get("artifacts"))
