@@ -393,6 +393,28 @@ In version 12 we also support asynchronous APIs.
         <tr>
             <td width="242" valign="top">
                 <p align="right">
+                    get_share_stats
+                </p>
+            </td>
+            <td width="111" valign="top">
+                <p align="right">
+                    FileService
+                </p>
+            </td>
+            <td width="163" valign="top">
+                <p align="right">
+                    get_share_stats
+                </p>
+            </td>
+            <td width="107" valign="top">
+                <p align="right">
+                    ShareClient
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="242" valign="top">
+                <p align="right">
                     get_share_stats_in_bytes
                 </p>
             </td>
@@ -452,7 +474,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="107" valign="top">
                 <p align="right">
-                    ShareDirectoryClient
+                    ShareDirectoryClient or ShareClient
                 </p>
             </td>
         </tr>
@@ -496,7 +518,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="107" valign="top">
                 <p align="right">
-                    ShareDirectoryClient
+                    ShareDirectoryClient or ShareClient
                 </p>
             </td>
         </tr>
@@ -584,7 +606,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="107" valign="top">
                 <p align="right">
-                    ShareDirectoryClient
+                    ShareDirectoryClient or ShareClient
                 </p>
             </td>
         </tr>
@@ -777,12 +799,12 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="163" valign="top">
                 <p align="right">
-                    N/A
+                    start_copy_from_url
                 </p>
             </td>
             <td width="107" valign="top">
                 <p align="right">
-                    N/A
+                    ShareFileClient
                 </p>
             </td>
         </tr>
@@ -799,12 +821,12 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="163" valign="top">
                 <p align="right">
-                    N/A
+                    abort_copy
                 </p>
             </td>
             <td width="107" valign="top">
                 <p align="right">
-                    N/A
+                    ShareFileClient
                 </p>
             </td>
         </tr>
@@ -865,7 +887,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="163" valign="top">
                 <p align="right">
-                    start_copy_from_url
+                    create_file
                 </p>
             </td>
             <td width="107" valign="top">
@@ -1041,12 +1063,12 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="163" valign="top">
                 <p align="right">
-                    N/A
+                    get_ranges
                 </p>
             </td>
             <td width="107" valign="top">
                 <p align="right">
-                    N/A
+                    ShareFileClient
                 </p>
             </td>
         </tr>
@@ -1063,12 +1085,12 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="163" valign="top">
                 <p align="right">
-                    N/A
+                    create_permission_for_share
                 </p>
             </td>
             <td width="107" valign="top">
                 <p align="right">
-                    N/A
+                    ShareClient
                 </p>
             </td>
         </tr>
@@ -1085,12 +1107,12 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="163" valign="top">
                 <p align="right">
-                    N/A
+                    get_permission_for_share
                 </p>
             </td>
             <td width="107" valign="top">
                 <p align="right">
-                    N/A
+                    ShareClient
                 </p>
             </td>
         </tr>
