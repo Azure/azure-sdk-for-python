@@ -89,7 +89,7 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
                     type=SearchFieldDataType.Collection(SearchFieldDataType.Single),
                     searchable=True,
                     vector_search_dimensions=embeddings.get_embedding_dimensions(),
-                    vector_search_configuration=f"{field_name}_config"))
+                    vector_search_profile="myHnswProfile"))
             else:
                 logger.warning(f"Unknown field type will be ignored and not included in index: {field_type}")
 
@@ -104,7 +104,30 @@ def create_search_index_sdk(acs_config: dict, credential, embeddings: Optional[E
             from packaging import version as pkg_version
             current_version = pkg_version.parse(azure_documents_search_version)
 
-            if current_version >= pkg_version.parse("11.4.0b8"):
+            if current_version >= pkg_version.parse("11.4.0b11"):
+                from azure.search.documents.indexes.models import HnswVectorSearchAlgorithmConfiguration, VectorSearch, VectorSearchProfile, VectorSearchAlgorithmKind, HnswParameters
+
+                vector_search_args["vector_search"] = VectorSearch(
+                    algorithms=[
+                        HnswVectorSearchAlgorithmConfiguration(
+                            name=f"{acs_config[MLIndex.INDEX_FIELD_MAPPING_KEY]['embedding']}_config",
+                            kind=VectorSearchAlgorithmKind.HNSW,
+                            parameters=HnswParameters(
+                                m=4,
+                                ef_construction=400,
+                                ef_search=500,
+                                metric="cosine"
+                            )
+                        )
+                    ],
+                    profiles=[
+                        VectorSearchProfile(
+                            name="myHnswProfile",
+                            algorithm=f"{acs_config[MLIndex.INDEX_FIELD_MAPPING_KEY]['embedding']}_config"
+                        )
+                    ]
+                )
+            elif current_version >= pkg_version.parse("11.4.0b8"):
                 from azure.search.documents.indexes.models import HnswVectorSearchAlgorithmConfiguration, VectorSearch
 
                 vector_search_args["vector_search"] = VectorSearch(
