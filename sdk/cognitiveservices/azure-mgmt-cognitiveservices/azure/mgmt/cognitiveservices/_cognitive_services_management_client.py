@@ -22,10 +22,15 @@ from .operations import (
     CommitmentTiersOperations,
     DeletedAccountsOperations,
     DeploymentsOperations,
+    EncryptionScopesOperations,
     ModelsOperations,
     Operations,
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
+    RaiBlocklistItemsOperations,
+    RaiBlocklistsOperations,
+    RaiContentFiltersOperations,
+    RaiPoliciesOperations,
     ResourceSkusOperations,
     UsagesOperations,
 )
@@ -64,14 +69,26 @@ class CognitiveServicesManagementClient(
     :vartype deployments: azure.mgmt.cognitiveservices.operations.DeploymentsOperations
     :ivar commitment_plans: CommitmentPlansOperations operations
     :vartype commitment_plans: azure.mgmt.cognitiveservices.operations.CommitmentPlansOperations
+    :ivar encryption_scopes: EncryptionScopesOperations operations
+    :vartype encryption_scopes: azure.mgmt.cognitiveservices.operations.EncryptionScopesOperations
+    :ivar rai_policies: RaiPoliciesOperations operations
+    :vartype rai_policies: azure.mgmt.cognitiveservices.operations.RaiPoliciesOperations
+    :ivar rai_blocklists: RaiBlocklistsOperations operations
+    :vartype rai_blocklists: azure.mgmt.cognitiveservices.operations.RaiBlocklistsOperations
+    :ivar rai_blocklist_items: RaiBlocklistItemsOperations operations
+    :vartype rai_blocklist_items:
+     azure.mgmt.cognitiveservices.operations.RaiBlocklistItemsOperations
+    :ivar rai_content_filters: RaiContentFiltersOperations operations
+    :vartype rai_content_filters:
+     azure.mgmt.cognitiveservices.operations.RaiContentFiltersOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-05-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-10-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -112,6 +129,17 @@ class CognitiveServicesManagementClient(
         )
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.commitment_plans = CommitmentPlansOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.encryption_scopes = EncryptionScopesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.rai_policies = RaiPoliciesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.rai_blocklists = RaiBlocklistsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.rai_blocklist_items = RaiBlocklistItemsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.rai_content_filters = RaiContentFiltersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

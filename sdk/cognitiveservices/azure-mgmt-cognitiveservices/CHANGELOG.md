@@ -1,5 +1,25 @@
 # Release History
 
+## 13.6.0b1 (2023-11-20)
+
+### Features Added
+
+  - Added operation DeploymentsOperations.begin_update
+  - Added operation DeploymentsOperations.list_skus
+  - Added operation group EncryptionScopesOperations
+  - Added operation group RaiBlocklistItemsOperations
+  - Added operation group RaiBlocklistsOperations
+  - Added operation group RaiContentFiltersOperations
+  - Added operation group RaiPoliciesOperations
+  - Model AccountProperties has a new parameter aml_workspace
+  - Model CapacityConfig has a new parameter allowed_values
+  - Model CommitmentPlanAccountAssociation has a new parameter tags
+  - Model Deployment has a new parameter tags
+  - Model DeploymentProperties has a new parameter capacity_settings
+  - Model DeploymentProperties has a new parameter current_capacity
+  - Model DeploymentProperties has a new parameter dynamic_throttling_enabled
+  - Model NetworkRuleSet has a new parameter bypass
+
 ## 13.5.0 (2023-07-21)
 
 ### Features Added
