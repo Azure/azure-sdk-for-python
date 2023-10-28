@@ -3,10 +3,13 @@ trigger: none
 stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
+      JobName: openai_v1
+      InjectedPackages: git+https://github.com/openai/openai-python@v1
       ServiceDirectory: openai
       MatrixFilters:
         - PythonVersion=3.11.*
       EnvVars:
+        OPENAI_TEST_MODE: 'v1'
         AZURE_CLIENT_ID: $(python-openai-client-id)
         AZURE_CLIENT_SECRET: $(python-openai-client-secret)
         AZURE_TENANT_ID: $(python-openai-tenant-id)
@@ -18,4 +21,25 @@ stages:
         AZURE_OPENAI_SEARCH_ENDPOINT: $(COGNITIVE-SEARCH-API-ENDPOINT)
         AZURE_OPENAI_SEARCH_KEY: $(COGNITIVE-SEARCH-API-KEY)
         AZURE_OPENAI_SEARCH_INDEX: $(COGNITIVE-SEARCH-API-INDEX)
-        AZURE_TEST_RUN_LIVE: 'true' # use when utilizing the New-TestResources Script
+        AZURE_TEST_RUN_LIVE: 'true'
+  - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
+    parameters:
+      JobName: openai_v0
+      InjectedPackages: git+https://github.com/openai/openai-python@main
+      ServiceDirectory: openai
+      MatrixFilters:
+        - PythonVersion=3.11.*
+      EnvVars:
+        OPENAI_TEST_MODE: 'v0'
+        AZURE_CLIENT_ID: $(python-openai-client-id)
+        AZURE_CLIENT_SECRET: $(python-openai-client-secret)
+        AZURE_TENANT_ID: $(python-openai-tenant-id)
+        AZURE_OPENAI_ENDPOINT: $(AOAI-ENDPOINT)
+        AZURE_OPENAI_KEY: $(AOAI-API-KEY)
+        AZURE_OPENAI_WHISPER_ENDPOINT: $(AOAI-ENDPOINT-WHISPER)
+        AZURE_OPENAI_WHISPER_KEY: $(AOAI-API-KEY-WHISPER)
+        OPENAI_KEY: $(python-nonazure-openai-key)
+        AZURE_OPENAI_SEARCH_ENDPOINT: $(COGNITIVE-SEARCH-API-ENDPOINT)
+        AZURE_OPENAI_SEARCH_KEY: $(COGNITIVE-SEARCH-API-KEY)
+        AZURE_OPENAI_SEARCH_INDEX: $(COGNITIVE-SEARCH-API-INDEX)
+        AZURE_TEST_RUN_LIVE: 'true'
