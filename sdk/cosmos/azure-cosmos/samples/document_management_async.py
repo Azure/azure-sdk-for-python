@@ -225,7 +225,7 @@ async def execute_item_batch(database):
 
     # Run that list of operations
     batch_results = await container.execute_item_batch(batch_operations=batch_operations, partition_key="Account1")
-    # Batch results are returned as a list of item operation results - or an instance of CosmosBatchOperationError if
+    # Batch results are returned as a list of item operation results - or raise a CosmosBatchOperationError if
     # one of the operations failed within your batch request.
     print("\nResults for the batch operations: {}\n".format(batch_results))
 
