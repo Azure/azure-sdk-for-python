@@ -9,8 +9,8 @@ import warnings
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._version import SDK_MONIKER
 from .._api_versions import DEFAULT_VERSION
-from .._call_connection_client import CallConnectionClient
-from .._generated._client import AzureCommunicationCallAutomationService
+from ._call_connection_client_async import CallConnectionClient
+from .._generated.aio import AzureCommunicationCallAutomationService
 from .._shared.auth_policy_utils import get_authentication_policy
 from .._shared.utils import parse_connection_str
 from .._credential.call_automation_auth_policy_utils import get_call_automation_auth_policy
