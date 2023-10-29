@@ -326,7 +326,6 @@ class CallAutomationClient:
             answered_by=serialize_communication_user_identifier(
                 self.source) if self.source else None,
             operation_context=operation_context,
-            cognitive_services_endpoint=cognitive_services_endpoint,
         )
 
         process_repeatability_first_sent(kwargs)
