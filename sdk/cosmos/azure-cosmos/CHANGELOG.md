@@ -1,13 +1,24 @@
 ## Release History
 
-### 4.5.2 (Unreleased)
+### 4.5.2b2 (Unreleased)
 
 #### Features Added
-* Added Support for Subpartitioning in Python SDK. See [PR 31121](https://github.com/Azure/azure-sdk-for-python/pull/31121)
+* Added Support for Priority Based Throttling/Priority Based Execution (Must be enabled at the account level before it can be used). See [PR 32441](https://github.com/Azure/azure-sdk-for-python/pull/32441/)
 
 #### Breaking Changes
 
 #### Bugs Fixed
+
+#### Other Changes
+
+### 4.5.2b1 (2023-10-17)
+
+#### Features Added
+* Added Support for Subpartitioning in Python SDK. See [PR 31121](https://github.com/Azure/azure-sdk-for-python/pull/31121)
+
+#### Bugs Fixed
+* Small fix to the `offer_throughput` option in the async client's `create_database_if_not_exists` method, which was previously misspelled as `offerThroughput`.
+See [PR 32076](https://github.com/Azure/azure-sdk-for-python/pull/32076).
 
 #### Other Changes
 * Marked the outdated `diagnostics.py` file for deprecation since we now recommend the use of our `CosmosHttpLoggingPolicy` for diagnostics.

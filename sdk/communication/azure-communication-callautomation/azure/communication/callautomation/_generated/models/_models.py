@@ -4180,6 +4180,9 @@ class StartCallRecordingRequest(_serialization.Model):
     :vartype channel_affinity: list[~azure.communication.callautomation.models.ChannelAffinity]
     :ivar external_storage: Optional property to specify location where recording will be stored.
     :vartype external_storage: ~azure.communication.callautomation.models.ExternalStorage
+    :ivar pause_on_start: When set to true will start recording in Pause mode, which could be
+     resumed.
+    :vartype pause_on_start: bool
     """
 
     _validation = {
@@ -4198,6 +4201,7 @@ class StartCallRecordingRequest(_serialization.Model):
         },
         "channel_affinity": {"key": "channelAffinity", "type": "[ChannelAffinity]"},
         "external_storage": {"key": "externalStorage", "type": "ExternalStorage"},
+        "pause_on_start": {"key": "pauseOnStart", "type": "bool"},
     }
 
     def __init__(
@@ -4211,6 +4215,7 @@ class StartCallRecordingRequest(_serialization.Model):
         audio_channel_participant_ordering: Optional[List["_models.CommunicationIdentifierModel"]] = None,
         channel_affinity: Optional[List["_models.ChannelAffinity"]] = None,
         external_storage: Optional["_models.ExternalStorage"] = None,
+        pause_on_start: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4249,6 +4254,9 @@ class StartCallRecordingRequest(_serialization.Model):
         :keyword external_storage: Optional property to specify location where recording will be
          stored.
         :paramtype external_storage: ~azure.communication.callautomation.models.ExternalStorage
+        :keyword pause_on_start: When set to true will start recording in Pause mode, which could be
+         resumed.
+        :paramtype pause_on_start: bool
         """
         super().__init__(**kwargs)
         self.call_locator = call_locator
@@ -4259,6 +4267,7 @@ class StartCallRecordingRequest(_serialization.Model):
         self.audio_channel_participant_ordering = audio_channel_participant_ordering
         self.channel_affinity = channel_affinity
         self.external_storage = external_storage
+        self.pause_on_start = pause_on_start
 
 
 class StartDialogRequest(_serialization.Model):

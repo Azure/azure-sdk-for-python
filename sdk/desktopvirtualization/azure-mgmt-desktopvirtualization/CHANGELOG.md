@@ -1,5 +1,21 @@
 # Release History
 
+## 1.1.0 (2023-10-23)
+
+### Features Added
+
+  - Added operation group PrivateEndpointConnectionsOperations
+  - Added operation group PrivateLinkResourcesOperations
+  - Added operation group ScalingPlanPersonalSchedulesOperations
+  - Model ApplicationGroup has a new parameter show_in_feed
+  - Model ApplicationGroupPatch has a new parameter show_in_feed
+  - Model HostPool has a new parameter private_endpoint_connections
+  - Model HostPool has a new parameter public_network_access
+  - Model HostPoolPatch has a new parameter public_network_access
+  - Model Workspace has a new parameter private_endpoint_connections
+  - Model Workspace has a new parameter public_network_access
+  - Model WorkspacePatch has a new parameter public_network_access
+
 ## 1.0.0 (2023-03-20)
 
 ### other changes

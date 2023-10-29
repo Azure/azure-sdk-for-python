@@ -5,8 +5,8 @@ Project: sdk/storage/azure-storage-blob
 PrimaryPackage: azure-storage-blob
 
 PackageVersions:
-- azure-core: 1.26.1
-  azure-storage-blob: 12.14.1
+- azure-core: 1.29.5
+  azure-storage-blob: 12.18.3
 - azure-core: source
   azure-storage-blob: source
 

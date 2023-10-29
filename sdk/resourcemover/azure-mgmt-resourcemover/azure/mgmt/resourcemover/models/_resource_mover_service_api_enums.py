@@ -66,6 +66,13 @@ class MoveState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESOURCE_MOVE_COMPLETED = "ResourceMoveCompleted"
 
 
+class MoveType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the MoveType."""
+
+    REGION_TO_REGION = "RegionToRegion"
+    REGION_TO_ZONE = "RegionToZone"
+
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the provisioning states."""
 
