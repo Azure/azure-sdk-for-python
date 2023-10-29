@@ -107,7 +107,7 @@ class TestTransactionalBatchAsync:
             batch.append(("create", ({"id": "item" + str(i), "company": "Microsoft"},)))
 
         batch_response = await container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        assert len(batch_response.get("results")) == 100
+        assert len(batch_response) == 100
 
         # create the same item twice
         item_id = str(uuid.uuid4())
@@ -166,9 +166,8 @@ class TestTransactionalBatchAsync:
             batch.append(("read", ("item" + str(i),)))
 
         batch_response = await container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        operation_results = batch_response.get("results")
-        assert len(operation_results) == 100
-        for result in operation_results:
+        assert len(batch_response) == 100
+        for result in batch_response:
             result = result.operation_response
             assert result.get("statusCode") == 200
 
@@ -196,9 +195,8 @@ class TestTransactionalBatchAsync:
                  ("replace", ("new-item", {"id": "new-item", "company": "Microsoft", "message": "item was replaced"}))]
 
         batch_response = await container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        operation_results = batch_response.get("results")
-        assert len(operation_results) == 2
-        assert operation_results[1].operation_response.get("resourceBody").get("message") == "item was replaced"
+        assert len(batch_response) == 2
+        assert batch_response[1].operation_response.get("resourceBody").get("message") == "item was replaced"
 
         # replace non-existent
         batch = [("replace", ("no-item", {"id": "no-item", "company": "Microsoft", "message": "item was replaced"}))]
@@ -244,9 +242,8 @@ class TestTransactionalBatchAsync:
                  ("upsert", ({"id": str(uuid.uuid4()), "company": "Microsoft"},))]
 
         batch_response = await container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        operation_results = batch_response.get("results")
-        assert len(operation_results) == 3
-        assert operation_results[1].operation_response.get("resourceBody").get("message") == "item was upsert"
+        assert len(batch_response) == 3
+        assert batch_response[1].operation_response.get("resourceBody").get("message") == "item was upsert"
 
     @pytest.mark.asyncio
     async def test_batch_patch_async(self):
@@ -270,15 +267,14 @@ class TestTransactionalBatchAsync:
                      {"op": "move", "from": "/move_path", "path": "/moved_path"}]))]
 
         batch_response = await container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        operation_results = batch_response.get("results")
-        assert len(operation_results) == 2
-        assert operation_results[1].operation_response.get("resourceBody").get("favorite_color") == "red"
-        assert operation_results[1].operation_response.get("resourceBody").get("remove_path") is None
-        assert operation_results[1].operation_response.get("resourceBody").get("city") == "Redmond"
-        assert operation_results[1].operation_response.get("resourceBody").get("set_path") == 0
-        assert operation_results[1].operation_response.get("resourceBody").get("port") == 9005
-        assert operation_results[1].operation_response.get("resourceBody").get("move_path") is None
-        assert operation_results[1].operation_response.get("resourceBody").get("moved_path") == "yes"
+        assert len(batch_response) == 2
+        assert batch_response[1].operation_response.get("resourceBody").get("favorite_color") == "red"
+        assert batch_response[1].operation_response.get("resourceBody").get("remove_path") is None
+        assert batch_response[1].operation_response.get("resourceBody").get("city") == "Redmond"
+        assert batch_response[1].operation_response.get("resourceBody").get("set_path") == 0
+        assert batch_response[1].operation_response.get("resourceBody").get("port") == 9005
+        assert batch_response[1].operation_response.get("resourceBody").get("move_path") is None
+        assert batch_response[1].operation_response.get("resourceBody").get("moved_path") == "yes"
 
         # conditional patching incorrect filter
         item_id = str(uuid.uuid4())
@@ -315,7 +311,7 @@ class TestTransactionalBatchAsync:
                   {"filter_predicate": "from c where c.set_path = 1"})]
 
         batch_response = await container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        operation_results = batch_response.get("results")
+        
         assert len(operation_results) == 2
     @pytest.mark.asyncio
     async def test_batch_delete_async(self):
@@ -330,14 +326,12 @@ class TestTransactionalBatchAsync:
             delete_batch.append(("delete", (item_id,)))
 
         batch_response = await container.execute_item_batch(batch_operations=create_batch, partition_key="Microsoft")
-        operation_results = batch_response.get("results")
-        assert len(operation_results) == 10
+        assert len(batch_response) == 10
         all_items = [item async for item in container.read_all_items()]
         assert len(all_items) == 10
 
         batch_response = await container.execute_item_batch(batch_operations=delete_batch, partition_key="Microsoft")
-        operation_results = batch_response.get("results")
-        assert len(operation_results) == 10
+        assert len(batch_response) == 10
         all_items = [item async for item in container.read_all_items()]
         assert len(all_items) == 0
 
@@ -378,8 +372,7 @@ class TestTransactionalBatchAsync:
                  ("delete", ("delete_item",))]
 
         batch_response = await container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        operation_results = batch_response.get("results")
-        assert len(operation_results) == 6
+        assert len(batch_response) == 6
         assert int(lsn) == int(container.client_connection.last_response_headers.get(HttpHeaders.LSN)) - 1
 
     @pytest.mark.asyncio
@@ -415,8 +408,7 @@ class TestTransactionalBatchAsync:
                  ("delete", (item_ids[2],))]
 
         batch_response = await container.execute_item_batch(batch_operations=batch, partition_key=["WA", "Redmond", "98052"])
-        operation_results = batch_response.get("results")
-        assert len(operation_results) == 6
+        assert len(batch_response) == 6
 
         # try to use incomplete key
         try:
