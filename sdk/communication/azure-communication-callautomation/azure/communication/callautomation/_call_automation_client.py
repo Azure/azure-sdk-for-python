@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import List, Union, Optional, TYPE_CHECKING, Iterable, overload
+from typing import List, Union, Optional, TYPE_CHECKING, Iterable, overload, Dict
 from urllib.parse import urlparse
 import warnings
 
@@ -22,7 +22,8 @@ from ._generated.models import (
     AnswerCallRequest,
     RedirectCallRequest,
     RejectCallRequest,
-    StartCallRecordingRequest
+    StartCallRecordingRequest,
+    CustomContext
 )
 from ._models import (
     CallConnectionProperties,
@@ -173,6 +174,8 @@ class CallAutomationClient:
         source_display_name: Optional[str] = None,
         operation_context: Optional[str] = None,
         cognitive_services_endpoint: Optional[str] = None,
+        sip_headers: Optional[Dict[str, str]] = None,
+        voip_headers: Optional[Dict[str, str]] = None,
         media_streaming_configuration: Optional['MediaStreamingConfiguration'] = None,
         **kwargs
     ) -> CallConnectionProperties:
@@ -194,6 +197,10 @@ class CallAutomationClient:
         :keyword cognitive_services_endpoint:
          The identifier of the Cognitive Service resource assigned to this call.
         :paramtype cognitive_services_endpoint: str or None
+        :keyword sip_headers: Sip Headers for PSTN Call
+        :paramtype sip_headers: Dict[str, str] or None
+        :keyword voip_headers: Voip Headers for Voip Call
+        :paramtype voip_headers: Dict[str, str] or None
         :keyword media_streaming_configuration: Media Streaming Configuration.
         :paramtype media_streaming_configuration: ~azure.communication.callautomation.MediaStreamingConfiguration
          or None
@@ -206,6 +213,13 @@ class CallAutomationClient:
             source_caller_id_number = source_caller_id_number or target_participant.source_caller_id_number
             source_display_name = source_display_name or target_participant.source_display_name
             target_participant = target_participant.target
+
+        user_custom_context = None
+        if sip_headers or voip_headers:
+            user_custom_context = CustomContext(
+                voip_headers=voip_headers,
+                sip_headers=sip_headers
+            )
 
         try:
             targets = [serialize_identifier(p) for p in target_participant]
@@ -220,7 +234,8 @@ class CallAutomationClient:
             source=serialize_communication_user_identifier(self.source),
             operation_context=operation_context,
             media_streaming_configuration=media_config,
-            cognitive_services_endpoint=cognitive_services_endpoint
+            cognitive_services_endpoint=cognitive_services_endpoint,
+            custom_context=user_custom_context
         )
         process_repeatability_first_sent(kwargs)
         result = self._client.create_call(
@@ -332,7 +347,10 @@ class CallAutomationClient:
         self,
         incoming_call_context: str,
         target_participant: 'CommunicationIdentifier',
-        **kwargs
+        *,
+        sip_headers: Optional[Dict[str, str]] = None,
+        voip_headers: Optional[Dict[str, str]] = None,
+        **kwargs,
     ) -> None:
         """Redirect incoming call to a specific target.
 
@@ -341,6 +359,10 @@ class CallAutomationClient:
         :type incoming_call_context: str
         :param target_participant: The target identity to redirect the call to.
         :type target_participant: ~azure.communication.callautomation.CommunicationIdentifier
+        :keyword sip_headers: Sip Headers for PSTN Call
+        :paramtype sip_headers: Dict[str, str] or None
+        :keyword voip_headers: Voip Headers for Voip Call
+        :paramtype voip_headers: Dict[str, str] or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -349,9 +371,16 @@ class CallAutomationClient:
         if isinstance(target_participant, CallInvite):
             target_participant = target_participant.target
 
+        user_custom_context = None
+        if sip_headers or voip_headers:
+            user_custom_context = CustomContext(
+                voip_headers=voip_headers,
+                sip_headers=sip_headers
+            )
         redirect_call_request = RedirectCallRequest(
             incoming_call_context=incoming_call_context,
             target=serialize_identifier(target_participant),
+            custom_context=user_custom_context
         )
         process_repeatability_first_sent(kwargs)
         self._client.redirect_call(
@@ -398,7 +427,6 @@ class CallAutomationClient:
         recording_content_type: Optional[Union[str, 'RecordingContent']] = None,
         recording_channel_type: Optional[Union[str, 'RecordingChannel']] = None,
         recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
-        pause_on_start: Optional[bool] = None,
         audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
         channel_affinity: Optional[List['ChannelAffinity']] = None,
         recording_storage_type: Optional[Union[str, 'RecordingStorage']] = None,
@@ -417,8 +445,6 @@ class CallAutomationClient:
         :paramtype recording_channel_type: str or ~azure.communication.callautomation.RecordingChannel or None
         :keyword recording_format_type: The format type of call recording.
         :paramtype recording_format_type: str or ~azure.communication.callautomation.RecordingFormat or None
-        :keyword pause_on_start: The state of the pause on start option.
-        :paramtype pause_on_start: bool or None
         :keyword audio_channel_participant_ordering:
          The sequential order in which audio channels are assigned to participants in the unmixed recording.
          When 'recordingChannelType' is set to 'unmixed' and `audioChannelParticipantOrdering is not specified,
@@ -454,7 +480,6 @@ class CallAutomationClient:
         recording_content_type: Optional[Union[str, 'RecordingContent']] = None,
         recording_channel_type: Optional[Union[str, 'RecordingChannel']] = None,
         recording_format_type: Optional[Union[str, 'RecordingFormat']] = None,
-        pause_on_start: Optional[bool] = None,
         audio_channel_participant_ordering: Optional[List['CommunicationIdentifier']] = None,
         channel_affinity: Optional[List['ChannelAffinity']] = None,
         recording_storage_type: Optional[Union[str, 'RecordingStorage']] = None,
@@ -473,8 +498,6 @@ class CallAutomationClient:
         :paramtype recording_channel_type: str or ~azure.communication.callautomation.RecordingChannel or None
         :keyword recording_format_type: The format type of call recording.
         :paramtype recording_format_type: str or ~azure.communication.callautomation.RecordingFormat or None
-        :keyword pause_on_start: The state of the pause on start option.
-        :paramtype pause_on_start: bool or None
         :keyword audio_channel_participant_ordering:
          The sequential order in which audio channels are assigned to participants in the unmixed recording.
          When 'recordingChannelType' is set to 'unmixed' and `audioChannelParticipantOrdering is not specified,
@@ -522,7 +545,6 @@ class CallAutomationClient:
             recording_content_type=kwargs.pop("recording_content_type", None),
             recording_channel_type=kwargs.pop("recording_channel_type", None),
             recording_format_type=kwargs.pop("recording_format_type", None),
-            pause_on_start=kwargs.pop("pause_on_start", None),
             audio_channel_participant_ordering=kwargs.pop("audio_channel_participant_ordering", None),
             recording_storage_type=kwargs.pop("recording_storage_type", None),
             external_storage_location=kwargs.pop("external_storage_location", None),

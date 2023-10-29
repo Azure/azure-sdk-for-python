@@ -185,7 +185,10 @@ class CallConnectionClient:
         :rtype: ~azure.communication.callautomation.CallConnectionProperties
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        call_properties = await self._call_connection_client.get_call(call_connection_id=self._call_connection_id, **kwargs)
+        call_properties = await self._call_connection_client.get_call(
+            call_connection_id=self._call_connection_id,
+            **kwargs
+        )
         return CallConnectionProperties._from_generated(call_properties) # pylint:disable=protected-access
 
     @distributed_trace_async
