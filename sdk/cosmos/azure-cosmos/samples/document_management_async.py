@@ -229,10 +229,9 @@ async def execute_item_batch(database):
     # one of the operations failed within your batch request.
     print("\nResults for the batch operations: {}\n".format(batch_results))
 
-    # You can also use this logic to write directly from a file into the batch you'd like to create:
-    data_file = open("file_name.txt", "r")
-    await container.execute_item_batch([("upsert", (t,)) for t in data_file.readlines()])
-    data_file.close()
+    # You can also use this logic to read directly from a file into the batch you'd like to create:
+    with open("file_name.txt", "r") as data_file:
+        container.execute_item_batch([("upsert", (t,)) for t in data_file.readlines()])
 
 
 async def delete_item(container, doc_id):

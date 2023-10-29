@@ -208,7 +208,7 @@ class TestTransactionalBatch:
 
         # replace with wrong etag
         item_id = str(uuid.uuid4())
-        batch = [("create", ({"id": item_id, "company": "Microsoft"},)),
+        batch = [("upsert", ({"id": item_id, "company": "Microsoft"},)),
                  ("replace", (item_id, {"id": item_id, "company": "Microsoft", "message": "item was replaced"}),
                   {"if_match_etag": "some-tag"}),
                  ("replace", (item_id, {"id": item_id, "company": "Microsoft", "message": "item was replaced"}),

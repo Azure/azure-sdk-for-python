@@ -37,6 +37,7 @@ from ._base import build_options, validate_cache_staleness_value, _deserialize_t
     GenerateGuidId
 from .exceptions import CosmosResourceNotFoundError
 from .http_constants import StatusCodes
+from ._models import BatchOperationResponse, BatchOperationError
 from .offer import ThroughputProperties
 from .scripts import ScriptsProxy
 from .partition_key import NonePartitionKeyValue, PartitionKey
@@ -682,7 +683,7 @@ class ContainerProxy(object):
             self,
             batch_operations: List[Tuple[Any]],
             partition_key: Union[str, int, float, bool],
-            **kwargs) -> Dict[str, Any]:
+            **kwargs) -> List[Union[BatchOperationResponse, BatchOperationError]]:
         """ Executes the transactional batch for the specified partition key.
 
         :param batch_operations: The batch of operations to be executed.
@@ -696,10 +697,10 @@ class ContainerProxy(object):
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
-        :returns: A dict representing the item after the batch operations went through.
+        :returns: A list representing the item after the batch operations went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The batch failed to execute.
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
-        :rtype: Dict[str, Any]
+        :rtype: List[Union[BatchOperationResponse, BatchOperationError]]
         """
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
