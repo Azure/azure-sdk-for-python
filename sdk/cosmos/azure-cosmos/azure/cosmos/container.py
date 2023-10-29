@@ -683,7 +683,7 @@ class ContainerProxy(object):
             self,
             batch_operations: List[Tuple[Any]],
             partition_key: Union[str, int, float, bool],
-            **kwargs) -> List[Union[BatchOperationResponse, BatchOperationError]]:
+            **kwargs) -> List[Union[BatchOperationResponse]]:
         """ Executes the transactional batch for the specified partition key.
 
         :param batch_operations: The batch of operations to be executed.
@@ -700,7 +700,7 @@ class ContainerProxy(object):
         :returns: A list representing the item after the batch operations went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The batch failed to execute.
         :raises ~azure.cosmos.exceptions.CosmosBatchOperationError: A transactional batch operation failed in the batch.
-        :rtype: List[Union[BatchOperationResponse, BatchOperationError]]
+        :rtype: List[Union[BatchOperationResponse]]
         """
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
