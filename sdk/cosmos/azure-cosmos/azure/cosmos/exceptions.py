@@ -77,8 +77,11 @@ class CosmosBatchOperationError(HttpResponseError):
             operation_responses=None,
             **kwargs):
         """
+        :param int error_index: Index of operation within the batch that caused the error.
+        :param str headers: Error headers.
         :param int status_code: HTTP response code.
         :param str message: Error message.
+        :param list operation_responses: List of failed operations' responses.
         """
         self.error_index = error_index
         self.headers = headers

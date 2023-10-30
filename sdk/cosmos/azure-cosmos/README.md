@@ -593,7 +593,7 @@ Transactional batches have a limit of 100 operations per batch, and a total size
 batch operations being passed in.
 
 Transactional Batch operations look very similar to the singular operations apis, and are tuples containing
-(`operation_type_string`, `args_tuple`, `optional_kwargs_dictionary`):
+(`operation_type_string`, `args_tuple`, `batch_operation_kwargs_dictionary`), with the kwargs dictionary being optional:
 ```python
 batch_operations = [
         ("create", (item_body,), kwargs),
@@ -605,12 +605,14 @@ batch_operations = [
     ]
 batch_results = container.execute_item_batch(batch_operations=batch_operations, partition_key=partition_key)
 ```
-In this case, the kwargs for each operation can include `filter_predicate` in the case of using conditional patching, or
-the use of the `if_match_etag`/`if_none_match_etag` if you'd like to pass an etag filter for one single operation:
+The batch operation kwargs dictionary is limited, and only takes a total of three different key values.
+In the case of wanting to use conditional patching within the batch, the use of `filter_predicate` key is available for the
+patch operation, or in case of wanting to use etags with any of the operations, the use of the `if_match_etag`/`if_none_match_etag`
+keys is available as well.
 ```python
 batch_operations = [
         ("replace", (item_id, item_body), {"if_match_etag": etag}),
-        ("patch", (item_id, operations), {"filter_predicate": filter_predicate}),
+        ("patch", (item_id, operations), {"filter_predicate": filter_predicate, "if_none_match_etag": etag}),
     ]
 ```
 

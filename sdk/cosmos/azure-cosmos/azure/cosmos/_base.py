@@ -785,24 +785,24 @@ def _format_batch_operations(operations):
             kwargs = {}
 
         if len(args) == 1:
-            if operation_type == "create":
+            if operation_type.lower() == "create":
                 operation = {"operationType": "Create",
                              "resourceBody": args[0]}
-            elif operation_type == "upsert":
+            elif operation_type.lower() == "upsert":
                 operation = {"operationType": "Upsert",
                              "resourceBody": args[0]}
-            elif operation_type == "read":
+            elif operation_type.lower() == "read":
                 operation = {"operationType": "Read",
                              "id": args[0]}
-            elif operation_type == "delete":
+            elif operation_type.lower() == "delete":
                 operation = {"operationType": "Delete",
                              "id": args[0]}
         elif len(args) == 2:
-            if operation_type == "replace":
+            if operation_type.lower() == "replace":
                 operation = {"operationType": "Replace",
                              "id": args[0],
                              "resourceBody": args[1]}
-            elif operation_type == "patch":
+            elif operation_type.lower() == "patch":
                 operation = {"operationType": "Patch",
                              "id": args[0],
                              "resourceBody": {"operations": args[1]}}
