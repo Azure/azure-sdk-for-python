@@ -65,22 +65,36 @@ class CosmosAccessConditionFailedError(CosmosHttpResponseError):
     """An HTTP error response with status code 412."""
 
 
-class CosmosBatchOperationError(Exception):
+class CosmosBatchOperationError(HttpResponseError):
     """A transactional batch request to the Azure Cosmos database service has failed."""
 
-    def __init__(self, status_code=None, message=None, headers=None, response=None, error_index=None):
+    def __init__(
+            self,
+            error_index=None,
+            headers=None,
+            status_code=None,
+            message=None,
+            operation_responses=None,
+            **kwargs):
+        """
+        :param int status_code: HTTP response code.
+        :param str message: Error message.
+        """
+        self.error_index = error_index
         self.headers = headers
         self.sub_status = None
-        self.error_index = error_index
-        self.status_code = status_code
-        self.response = response
+        self.http_error_message = message
+        self.operation_responses = operation_responses
+        status = status_code
 
         if http_constants.HttpHeaders.SubStatus in self.headers:
             self.sub_status = int(self.headers[http_constants.HttpHeaders.SubStatus])
-            formatted_message = "Status code: %d Sub-status: %d\n%s" % (status_code, self.sub_status, str(message))
+            formatted_message = "Status code: %d Sub-status: %d\n%s" % (status, self.sub_status, str(message))
         else:
-            formatted_message = "Status code: %d\n%s" % (status_code, str(message))
-        self.message = formatted_message
+            formatted_message = "Status code: %d\n%s" % (status, str(message))
+
+        super(CosmosBatchOperationError, self).__init__(message=formatted_message, response=None, **kwargs)
+        self.status_code = status
 
 
 class CosmosClientTimeoutError(AzureError):
