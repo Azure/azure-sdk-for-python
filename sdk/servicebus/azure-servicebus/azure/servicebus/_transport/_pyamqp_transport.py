@@ -582,10 +582,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         receive_mode = kwargs.pop("receive_mode")
         link_properties = kwargs.pop("link_properties")
 
-        # When NEXT_AVAILABLE_SESSION is set, the default time to wait to connect to a session is 65 seconds. 
-        # If there are no messages in the topic/queue the client will wait for 65 seconds for an AttachFrame frame from the service from a session
-        # before raising an OperationTimeoutError due to failure to connect. max_wait_time, if specified, will allow the user to wait for fewer 
-        # than 65 seconds to connect to a session.
+        # When NEXT_AVAILABLE_SESSION is set, the default time to wait to connect to a session is 65 seconds.
+        # If there are no messages in the topic/queue the client will wait for 65 seconds for an AttachFrame
+        # frame from the service before raising an OperationTimeoutError due to failure to connect.
+        # max_wait_time, if specified, will allow the user to wait for fewer or more than 65 seconds to
+        # connect to a session.
         if receiver._session_id == NEXT_AVAILABLE_SESSION and receiver._max_wait_time: # pylint: disable=protected-access
             timeout_in_ms = receiver._max_wait_time * 1000 # pylint: disable=protected-access
             open_receive_link_base_jitter_in_ms = 100
