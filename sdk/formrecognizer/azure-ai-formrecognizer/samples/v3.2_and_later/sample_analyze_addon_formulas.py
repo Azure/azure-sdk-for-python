@@ -68,7 +68,7 @@ def analyze_formulas():
             os.path.abspath(__file__),
             "..",
             "..",
-            "sample_forms/add_ons/formulas.jpg",
+            "sample_forms/add_ons/formulas.pdf",
         )
     )
     # [START analyze_formulas]

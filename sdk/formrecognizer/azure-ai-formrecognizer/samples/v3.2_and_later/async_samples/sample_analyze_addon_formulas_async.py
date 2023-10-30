@@ -70,7 +70,7 @@ async def analyze_formulas():
             "..",
             "..",
             "..",
-            "sample_forms/add_ons/formulas.jpg",
+            "sample_forms/add_ons/formulas.pdf",
         )
     )
     # [START analyze_formulas]
