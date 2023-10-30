@@ -49,10 +49,7 @@ class TestSweepJob(AzureRecordedTestCase):
         sweep_job_resource_2 = client.jobs.get(job_name)
         assert sweep_job_resource.name == sweep_job_resource_2.name
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="TODO (2374610): hash sanitizer is being applied unnecessarily and forcing playback failures",
-    )
+
     @pytest.mark.e2etest
     def test_sweep_job_submit_with_resources(self, randstr: Callable[[], str], client: MLClient) -> None:
         # TODO: need to create a workspace under a e2e-testing-only subscription and reousrce group
