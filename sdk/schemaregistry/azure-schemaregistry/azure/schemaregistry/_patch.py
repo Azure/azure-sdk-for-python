@@ -31,6 +31,7 @@ from azure.core import CaseInsensitiveEnumMeta
 from azure.core.tracing.decorator import distributed_trace
 
 from ._client import SchemaRegistryClient as GeneratedServiceClient
+from .models import SchemaFormat
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -150,7 +151,7 @@ class SchemaRegistryClient(object):
             fully_qualified_namespace = f"https://{fully_qualified_namespace}"
         api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._generated_client = GeneratedServiceClient(
-            endpoint=fully_qualified_namespace,
+            fully_qualified_namespace=fully_qualified_namespace,
             credential=credential,
             api_version=api_version,
             **kwargs,
@@ -415,21 +416,6 @@ class Schema(object):
         return f"Schema(definition={self.definition}, properties={self.properties})"[
             :1024
         ]
-
-
-class SchemaFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """
-    Represents the format of the schema to be stored by the Schema Registry service.
-    """
-
-    AVRO = "Avro"
-    """Represents the Apache Avro schema format."""
-
-    JSON = "Json"
-    """Represents the JSON schema format."""
-
-    CUSTOM = "Custom"
-    """Represents a custom schema format."""
 
 
 class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):

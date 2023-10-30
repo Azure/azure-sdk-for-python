@@ -62,15 +62,15 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_schema_registry_list_schema_groups_request(
+                _request = build_schema_registry_list_schema_groups_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "fullyQualifiedNamespace": self._serialize.url("self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -78,13 +78,13 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
                 _next_request_params = case_insensitive_dict({
                     key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                _request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "fullyQualifiedNamespace": self._serialize.url("self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
@@ -94,11 +94,11 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request,
+                _request,
                 stream=_stream,
                 **kwargs
             )
@@ -150,20 +150,20 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         )
 
         
-        request = build_schema_registry_get_schema_by_id_request(
+        _request = build_schema_registry_get_schema_by_id_request(
             id=id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "fullyQualifiedNamespace": self._serialize.url("self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
+            _request,
             stream=_stream,
             **kwargs
         )
@@ -196,7 +196,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         if cls:
             return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
-        return deserialized # type: ignore
+        return deserialized  # type: ignore
 
 
 
@@ -206,7 +206,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         group_name: str,
         name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models._models.Version"]:
+    ) -> AsyncIterable["_models._models.SchemaVersion"]:
         """List schema versions.
 
         Gets the list of all versions of one schema.
@@ -215,14 +215,14 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         :type group_name: str
         :param name: Name of schema. Required.
         :type name: str
-        :return: An iterator like instance of Version
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.schemaregistry.models.Version]
+        :return: An iterator like instance of SchemaVersion
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.schemaregistry.models.SchemaVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models._models.Version]] = kwargs.pop(  # pylint: disable=protected-access
+        cls: ClsType[List[_models._models.SchemaVersion]] = kwargs.pop(  # pylint: disable=protected-access
             'cls', None
         )
 
@@ -233,7 +233,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         def prepare_request(next_link=None):
             if not next_link:
                 
-                request = build_schema_registry_list_schema_versions_request(
+                _request = build_schema_registry_list_schema_versions_request(
                     group_name=group_name,
                     name=name,
                     api_version=self._config.api_version,
@@ -241,9 +241,9 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
                     params=_params,
                 )
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "fullyQualifiedNamespace": self._serialize.url("self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -251,27 +251,27 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
                 _next_request_params = case_insensitive_dict({
                     key: [urllib.parse.quote(v) for v in value]    for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()})
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                _request = HttpRequest("GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "fullyQualifiedNamespace": self._serialize.url("self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, 'str', skip_quote=True),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return request
+            return _request
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models._models.Version], deserialized["value"])
+            list_of_elem = _deserialize(List[_models._models.SchemaVersion], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
-            request = prepare_request(next_link)
+            _request = prepare_request(next_link)
 
             _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request,
+                _request,
                 stream=_stream,
                 **kwargs
             )
@@ -328,7 +328,7 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         )
 
         
-        request = build_schema_registry_get_schema_by_version_request(
+        _request = build_schema_registry_get_schema_by_version_request(
             group_name=group_name,
             name=name,
             schema_version=schema_version,
@@ -337,13 +337,13 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "fullyQualifiedNamespace": self._serialize.url("self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, 'str', skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
+            _request,
             stream=_stream,
             **kwargs
         )
@@ -376,6 +376,6 @@ class SchemaRegistryClientOperationsMixin(   # pylint: disable=abstract-class-in
         if cls:
             return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
-        return deserialized # type: ignore
+        return deserialized  # type: ignore
 
 

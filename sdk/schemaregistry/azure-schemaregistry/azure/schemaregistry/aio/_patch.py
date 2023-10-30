@@ -81,7 +81,7 @@ class SchemaRegistryClient(object):
             fully_qualified_namespace = f"https://{fully_qualified_namespace}"
         api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._generated_client = GeneratedServiceClient(
-            endpoint=fully_qualified_namespace,
+            fully_qualified_namespace=fully_qualified_namespace,
             credential=credential,
             api_version=api_version,
             **kwargs,

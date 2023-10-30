@@ -10,6 +10,7 @@ from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
 from azure.core import PipelineClient
+from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import SchemaRegistryClientConfiguration
@@ -21,11 +22,12 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
-    """SchemaRegistryClient.
+    """SchemaRegistryClient is a client for registering and retrieving schemas from the Azure Schema
+    Registry service.
 
-    :param endpoint: The Schema Registry service endpoint, for example
+    :param fully_qualified_namespace: The Schema Registry service endpoint, for example
      'my-namespace.servicebus.windows.net'. Required.
-    :type endpoint: str
+    :type fully_qualified_namespace: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is "2023-07-01".
@@ -35,14 +37,18 @@ class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):  # pylint: disa
 
     def __init__(
         self,
-        endpoint: str,
+        fully_qualified_namespace: str,
         credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
         super().__init__()
-        _endpoint = '{endpoint}'
-        self._config = SchemaRegistryClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
-        self._client: PipelineClient = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        _endpoint = '{fullyQualifiedNamespace}'
+        self._config = SchemaRegistryClientConfiguration(fully_qualified_namespace=fully_qualified_namespace, credential=credential, **kwargs)
+        _policies = kwargs.pop('policies', None)
+        if _policies is None:
+            _policies = [policies.RequestIdPolicy(**kwargs),self._config.headers_policy,self._config.user_agent_policy,self._config.proxy_policy,policies.ContentDecodePolicy(**kwargs),self._config.redirect_policy,self._config.retry_policy,self._config.authentication_policy,self._config.custom_hook_policy,self._config.logging_policy,policies.DistributedTracingPolicy(**kwargs),policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,self._config.http_logging_policy]
+        self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -51,7 +57,7 @@ class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):  # pylint: disa
 
     def send_request(
         self,
-        request: HttpRequest,
+        request: HttpRequest, *, stream: bool = False,
         **kwargs: Any
     ) -> HttpResponse:
         """Runs the network request through the client's chained policies.
@@ -73,11 +79,11 @@ class SchemaRegistryClient(SchemaRegistryClientOperationsMixin):  # pylint: disa
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "fullyQualifiedNamespace": self._serialize.url("self._config.fully_qualified_namespace", self._config.fully_qualified_namespace, 'str', skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
-        return self._client.send_request(request_copy, **kwargs)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
         self._client.close()
