@@ -116,20 +116,22 @@ def replace_dev_reqs(file, pkg_root):
     adjusted_req_lines = []
 
     with open(file, "r") as f:
-        for line in f:
-            args = [part.strip() for part in line.split() if part and not part.strip() == "-e"]
-            amended_line = " ".join(args)
-            extras = ""
+        original_req_lines = list(line.strip() for line in f)
 
-            if amended_line.endswith("]"):
-                amended_line, extras = amended_line.rsplit("[", maxsplit=1)
-                if extras:
-                    extras = f"[{extras}"
+    for line in original_req_lines:
+        args = [part.strip() for part in line.split() if part and not part.strip() == "-e"]
+        amended_line = " ".join(args)
+        extras = ""
 
-            adjusted_req_lines.append(f"{build_whl_for_req(amended_line, pkg_root)}{extras}")
+        if amended_line.endswith("]"):
+            amended_line, extras = amended_line.rsplit("[", maxsplit=1)
+            if extras:
+                extras = f"[{extras}"
+
+        adjusted_req_lines.append(f"{build_whl_for_req(amended_line, pkg_root)}{extras}")
 
     req_file_name = os.path.basename(file)
-    logging.info("Old {0}:{1}".format(req_file_name, adjusted_req_lines))
+    logging.info("Old {0}:{1}".format(req_file_name, original_req_lines))
 
     logging.info("New {0}:{1}".format(req_file_name, adjusted_req_lines))
 
