@@ -144,6 +144,7 @@ class EventGridClientOperationsMixin(OperationsMixin):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        # Check that the body is a CloudEvent or list of CloudEvents even if dict
         if isinstance(body, dict):
             try:
                 body = CloudEvent.from_dict(body)
