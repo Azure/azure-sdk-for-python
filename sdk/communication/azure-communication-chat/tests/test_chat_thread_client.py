@@ -7,8 +7,7 @@ import unittest
 import time
 
 import calendar
-from datetime import datetime
-from msrest.serialization import TZ_UTC
+from datetime import datetime, timezone
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
 from azure.communication.chat import (
@@ -31,7 +30,7 @@ class TestChatThreadClient(unittest.TestCase):
     @patch('azure.communication.identity._shared.user_credential.CommunicationTokenCredential')
     def setUpClass(cls, credential):
         credential.get_token = Mock(return_value=AccessToken(
-            "some_token", _convert_datetime_to_utc_int(datetime.now().replace(tzinfo=TZ_UTC))
+            "some_token", _convert_datetime_to_utc_int(datetime.now().replace(tzinfo=timezone.utc))
         ))
         TestChatThreadClient.credential = credential
 
