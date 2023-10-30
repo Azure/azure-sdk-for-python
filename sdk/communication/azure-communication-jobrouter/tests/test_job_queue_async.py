@@ -36,13 +36,13 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
             async with router_client:
                 if self._testMethodName in self.queue_ids and any(self.queue_ids[self._testMethodName]):
                     for _id in set(self.queue_ids[self._testMethodName]):
-                        await router_client.delete_queue(id=_id)
+                        await router_client.delete_queue(_id)
 
                 if self._testMethodName in self.distribution_policy_ids and any(
                     self.distribution_policy_ids[self._testMethodName]
                 ):
                     for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
-                        await router_client.delete_distribution_policy(id=policy_id)
+                        await router_client.delete_distribution_policy(policy_id)
 
     def get_distribution_policy_id(self):
         return self._testMethodName + "_tst_dp_async"
@@ -59,8 +59,8 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
                 mode=RoundRobinMode(min_concurrent_offers=1, max_concurrent_offers=1),
             )
 
-            distribution_policy = await client.create_distribution_policy(
-                id=distribution_policy_id, distribution_policy=policy
+            distribution_policy = await client.upsert_distribution_policy(
+                distribution_policy_id, policy
             )
 
         # add for cleanup later
@@ -84,7 +84,7 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
                 name=dp_identifier, labels=queue_labels, distribution_policy_id=self.get_distribution_policy_id()
             )
 
-            job_queue = await router_client.create_queue(id=dp_identifier, queue=job_queue)
+            job_queue = await router_client.upsert_queue(dp_identifier, job_queue)
 
             # add for cleanup
             self.queue_ids[self._testMethodName] = [dp_identifier]
@@ -111,7 +111,7 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
                 name=dp_identifier, labels=queue_labels, distribution_policy_id=self.get_distribution_policy_id()
             )
 
-            job_queue = await router_client.create_queue(id=dp_identifier, queue=job_queue)
+            job_queue = await router_client.upsert_queue(dp_identifier, job_queue)
 
             # add for cleanup
             self.queue_ids[self._testMethodName] = [dp_identifier]
@@ -126,13 +126,13 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
             )
 
             # Act
-            job_queue = await router_client.get_queue(id=dp_identifier)
+            job_queue = await router_client.get_queue(dp_identifier)
             updated_queue_labels = dict(job_queue.labels)
             updated_queue_labels["key6"] = "Key6"
 
             job_queue.labels = updated_queue_labels
 
-            update_job_queue = await router_client.update_queue(dp_identifier, job_queue)
+            update_job_queue = await router_client.upsert_queue(dp_identifier, job_queue)
 
             assert update_job_queue is not None
             JobQueueValidator.validate_queue(
@@ -156,7 +156,7 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
                 name=dp_identifier, labels=queue_labels, distribution_policy_id=self.get_distribution_policy_id()
             )
 
-            job_queue = await router_client.create_queue(id=dp_identifier, queue=job_queue)
+            job_queue = await router_client.upsert_queue(dp_identifier, job_queue)
 
             # add for cleanup
             self.queue_ids[self._testMethodName] = [dp_identifier]
@@ -171,13 +171,13 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
             )
 
             # Act
-            job_queue = await router_client.get_queue(id=dp_identifier)
+            job_queue = await router_client.get_queue(dp_identifier)
             updated_queue_labels = dict(job_queue.labels)
             updated_queue_labels["key6"] = "Key6"
 
             job_queue.labels = updated_queue_labels
 
-            update_job_queue = await router_client.update_queue(dp_identifier, labels=updated_queue_labels)
+            update_job_queue = await router_client.upsert_queue(dp_identifier, labels=updated_queue_labels)
 
             assert update_job_queue is not None
             JobQueueValidator.validate_queue(
@@ -201,7 +201,7 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
                 name=dp_identifier, labels=queue_labels, distribution_policy_id=self.get_distribution_policy_id()
             )
 
-            job_queue = await router_client.create_queue(id=dp_identifier, queue=job_queue)
+            job_queue = await router_client.upsert_queue(dp_identifier, job_queue)
 
             # add for cleanup
             self.queue_ids[self._testMethodName] = [dp_identifier]
@@ -215,7 +215,7 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
                 distribution_policy_id=self.get_distribution_policy_id(),
             )
 
-            queried_job_queue = await router_client.get_queue(id=dp_identifier)
+            queried_job_queue = await router_client.get_queue(dp_identifier)
 
             JobQueueValidator.validate_queue(
                 queried_job_queue,
@@ -237,7 +237,7 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
             name=dp_identifier, labels=queue_labels, distribution_policy_id=self.get_distribution_policy_id()
         )
 
-        job_queue = await router_client.create_queue(id=dp_identifier, queue=job_queue)
+        job_queue = await router_client.upsert_queue(dp_identifier, job_queue)
 
         assert job_queue is not None
         JobQueueValidator.validate_queue(
@@ -248,9 +248,9 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
             distribution_policy_id=self.get_distribution_policy_id(),
         )
 
-        await router_client.delete_queue(id=dp_identifier)
+        await router_client.delete_queue(dp_identifier)
         with pytest.raises(ResourceNotFoundError) as nfe:
-            await router_client.get_queue(id=dp_identifier)
+            await router_client.get_queue(dp_identifier)
         assert nfe.value.reason == "Not Found"
         assert nfe.value.status_code == 404
 
@@ -271,7 +271,7 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
                     name=identifier, labels=queue_labels, distribution_policy_id=self.get_distribution_policy_id()
                 )
 
-                job_queue = await router_client.create_queue(id=identifier, queue=job_queue)
+                job_queue = await router_client.upsert_queue(identifier, job_queue)
 
                 # add for cleanup
                 self.queue_ids[self._testMethodName].append(identifier)
@@ -294,13 +294,13 @@ class TestJobQueueAsync(AsyncRouterRecordedTestCase):
                 assert len(list_of_queues) <= 2
 
                 for q_item in list_of_queues:
-                    response_at_creation = created_q_response.get(q_item.queue.id, None)
+                    response_at_creation = created_q_response.get(q_item.id, None)
 
                     if not response_at_creation:
                         continue
 
                     JobQueueValidator.validate_queue(
-                        q_item.queue,
+                        q_item,
                         identifier=response_at_creation.id,
                         name=response_at_creation.name,
                         labels=response_at_creation.labels,

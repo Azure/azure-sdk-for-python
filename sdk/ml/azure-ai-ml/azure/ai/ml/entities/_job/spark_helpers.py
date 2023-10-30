@@ -103,9 +103,6 @@ def _validate_spark_configurations(obj: Any) -> None:
 def _validate_compute_or_resources(compute: Any, resources: Any) -> None:
     # if resources is set, then ensure it is valid before
     # checking mutual exclusiveness against compute existence
-    if resources:
-        resources._validate()
-
     if compute is None and resources is None:
         msg = "One of either compute or resources must be specified for Spark job"
         raise ValidationException(

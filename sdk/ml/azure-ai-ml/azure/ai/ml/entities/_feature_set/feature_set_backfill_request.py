@@ -10,14 +10,12 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 from azure.ai.ml._restclient.v2023_10_01.models import FeatureWindow
 from azure.ai.ml._schema._feature_set.feature_set_backfill_schema import FeatureSetBackfillSchema
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._feature_set.materialization_compute_resource import MaterializationComputeResource
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._util import load_from_dict
 
 
-@experimental
 class FeatureSetBackfillRequest(RestTranslatableMixin):
     """Feature Set Backfill Request
 

@@ -330,8 +330,9 @@ class WorkspaceOperationsBase(ABC):
             ),
             managed_network=managed_network,
             feature_store_settings=feature_store_settings,
-            serverless_compute_settings=serverless_compute_settings,
         )
+        if serverless_compute_settings:
+            update_param.serverless_compute_settings = serverless_compute_settings
         update_param.container_registry = container_registry or None
         update_param.application_insights = application_insights or None
 

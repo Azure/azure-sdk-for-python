@@ -16,8 +16,8 @@ def is_closing_message(response: str):
     message = response.lower()
     if "?" in message.lower():
         return False
-    punc = [".", ",", "!", ";", ":"]
-    for p in punc:
+    punctuation = [".", ",", "!", ";", ":"]
+    for p in punctuation:
         message = message.replace(p, "")
     if (
         "bye" not in message.lower().split()
@@ -37,8 +37,8 @@ async def simulate_conversation(
     api_call_delay_sec: float = 0,
     logger: logging.Logger = logging.getLogger(__name__),
     mlflow_logger=None,
-    meta_data: dict = None,
-    simualte_callback: Callable[[str, List[Dict], dict], str]=None,
+    template_paramaters: dict = None,
+    simulate_callback: Callable[[str, List[Dict], dict], str]=None,
 ):
     """
     Simulate a conversation between the given bots.
@@ -83,11 +83,11 @@ async def simulate_conversation(
     ):
         try:
             current_character_idx = current_turn % 2
-            # if there is only one bot, means using customzied simulate callback
+            # if there is only one bot, means using customized simulate callback
             # in the customer bot turn, instead of using the customer bot, need to invoke the simulate callback
             if len(bots) < 2 and current_character_idx == 1:
                 question = conversation_history[-1].message
-                response = await simualte_callback(question, conversation_history, meta_data) 
+                response = await simulate_callback(question, conversation_history, template_paramaters) 
                 # add the generated response to the list of generated responses
                 conversation_history.append(
                     ConversationTurn(

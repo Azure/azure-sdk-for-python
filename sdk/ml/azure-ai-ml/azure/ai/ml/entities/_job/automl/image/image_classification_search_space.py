@@ -108,6 +108,15 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
         1 for weighted loss with sqrt.(class_weights). 2 for weighted loss with class_weights. Must be
         0 or 1 or 2.
     :type weighted_loss: int or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/ml_samples_automl_image.py
+            :start-after: [START automl.automl_image_job.image_classification_search_space]
+            :end-before: [END automl.automl_image_job.image_classification_search_space]
+            :language: python
+            :dedent: 8
+            :caption: Defining an automl image classification search space
     """
 
     def __init__(

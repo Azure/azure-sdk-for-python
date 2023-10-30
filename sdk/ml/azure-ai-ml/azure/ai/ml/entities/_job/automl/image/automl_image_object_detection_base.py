@@ -26,6 +26,21 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 
 class AutoMLImageObjectDetectionBase(AutoMLImage):
+    """Base class for AutoML Image Object Detection and Image Instance Segmentation tasks.
+
+    :keyword task_type: Type of task to run. Possible values include: "ImageObjectDetection",
+    "ImageInstanceSegmentation".
+    :paramtype task_type: str
+    :keyword limits: The resource limits for the job.
+    :paramtype limits: Optional[~azure.ai.ml.entities._job.automl.image.image_limit_settings.ImageLimitSettings]
+    :keyword sweep: The sweep settings for the job.
+    :paramtype sweep: Optional[~azure.ai.ml.entities._job.automl.image.image_sweep_settings.ImageSweepSettings]
+    :keyword training_parameters: The training parameters for the job.
+    :paramtype training_parameters: Optional[~azure.ai.ml.automl.ImageModelSettingsObjectDetection]
+    :keyword search_space: The search space for the job.
+    :paramtype search_space: Optional[List[~azure.ai.ml.automl.ImageObjectDetectionSearchSpace]]
+    """
+
     def __init__(
         self,
         *,

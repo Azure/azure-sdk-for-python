@@ -3,6 +3,9 @@
 ## 1.12.0 (unreleased)
 
 ### Features Added
+- Workspace Connections had 3 child classes added for open AI, cog search, and cog service connections.
+- Workspace Connections replaced metadata with tags, and surfaced api_version, api_type, and kind for certain connection types.
+
 
 ### Bugs Fixed
 
@@ -14,6 +17,7 @@
 
 ### Bugs Fixed
  - pydash dependency version was upgraded to >=6.0.0 to patch [security vulnerability in versions below 6.0.0](https://github.com/advisories/GHSA-8mjr-6c96-39w8)
+ - Workspace hub deletion no longer fails if delete_dependent_resources is true.
 
 ## 1.11.0 (2023-10-04)
 

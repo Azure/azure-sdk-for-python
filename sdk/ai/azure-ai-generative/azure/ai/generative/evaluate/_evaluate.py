@@ -11,8 +11,6 @@ from pathlib import Path
 
 import mlflow
 import pandas as pd
-from azureml.metrics import constants
-from azure.ai.generative.evaluate._constants import CHAT
 
 from mlflow.entities import Metric
 from mlflow.exceptions import MlflowException
@@ -21,6 +19,8 @@ from mlflow.protos.databricks_pb2 import ErrorCode, INVALID_PARAMETER_VALUE
 from azure.ai.generative.evaluate._metric_handler import MetricHandler
 from azure.ai.generative.evaluate._utils import _is_flow, load_jsonl, _get_artifact_dir_path
 from azure.ai.generative.evaluate._mlflow_log_collector import RedirectUserOutputStreams
+from azure.ai.generative.evaluate._constants import SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING, SUPPORTED_TASK_TYPE, CHAT
+from azure.ai.generative.evaluate._evaluation_result import EvaluationResult
 
 from ._utils import _write_properties_to_run_history
 
@@ -85,6 +85,7 @@ def evaluate(
         metrics_list=None,
         model_config=None,
         data_mapping=None,
+        output_path=None,
         **kwargs
 ):
     results_list = []
@@ -104,7 +105,7 @@ def evaluate(
         params_permutations_dicts = [dict(zip(keys, v)) for v in itertools.product(*values)]
 
         with mlflow.start_run(run_name=evaluation_name) as run:
-            log_property_and_tag("_azureml.evaluation_run", "azure-ai-generative")
+            log_property_and_tag("_azureml.evaluation_run", "azure-ai-generative-parent")
             for index, params_permutations_dict in enumerate(params_permutations_dicts):
                 evaluation_name_variant = f"{evaluation_name}_{index}" if evaluation_name else f"{run.info.run_name}_{index}"
 
@@ -117,6 +118,7 @@ def evaluate(
                     data_mapping=data_mapping,
                     params_dict=params_permutations_dict,
                     metrics=metrics_list,
+                    output_path=output_path,
                     **kwargs
                 )
             results_list.append(evaluation_results)
@@ -130,6 +132,7 @@ def evaluate(
             model_config=model_config,
             data_mapping=data_mapping,
             metrics=metrics_list,
+            output_path=output_path,
             **kwargs
         )
 
@@ -146,6 +149,7 @@ def _evaluate(
         metrics=None,
         data_mapping=None,
         model_config=None,
+        output_path=None,
         **kwargs
 ):
     try:
@@ -166,7 +170,7 @@ def _evaluate(
     if target is None and prediction_data is None:
         raise Exception("target and prediction data cannot be null")
 
-    if task_type not in [constants.Tasks.QUESTION_ANSWERING, CHAT]:
+    if task_type not in SUPPORTED_TASK_TYPE:
         raise Exception(f"task type {task_type} is not supported")
 
     metrics_config = {}
@@ -179,7 +183,10 @@ def _evaluate(
     with mlflow.start_run(nested=True if mlflow.active_run() else False, run_name=evaluation_name) as run, \
             RedirectUserOutputStreams(logger=LOGGER) as _:
 
-        log_property_and_tag("_azureml.evaluation_run", "azure-ai-generative")
+        log_property_and_tag(
+            "_azureml.evaluation_run",
+            "azure-ai-generative-parent" if run.data.tags.get("mlflow.rootRunId") is None else "azure-ai-generative"
+        )
         # Log input is a preview feature behind an allowlist. Uncomment this line once the feature is broadly available.
         # log_input(data=data, data_is_file=_data_is_file)
 
@@ -195,7 +202,7 @@ def _evaluate(
         )
 
         metrics_handler = MetricHandler(
-            task_type=task_type,
+            task_type=SUPPORTED_TO_METRICS_TASK_TYPE_MAPPING[task_type],
             metrics=metrics,
             prediction_data=asset_handler.prediction_data,
             truth_data=asset_handler.ground_truth,
@@ -209,7 +216,7 @@ def _evaluate(
 
         def _get_instance_table():
             metrics.get("artifacts").pop("bertscore", None)
-            if task_type == "chat":
+            if task_type == CHAT:
                 instance_level_metrics_table = _get_chat_instance_table(metrics.get("artifacts"))
             else:
                 instance_level_metrics_table = pd.DataFrame(metrics.get("artifacts"))
@@ -270,7 +277,19 @@ def _evaluate(
             mlflow.log_param("task_type", task_type)
             log_param_and_tag("_azureml.evaluate_metric_mapping", json.dumps(metrics_handler._metrics_mapping_to_log))
 
-    return metrics
+    evaluation_result = EvaluationResult(
+        metrics_summary=metrics.get("metrics"),
+        artifacts={
+            "eval_results.jsonl": f"runs:/{run.info.run_id}/eval_results.jsonl"
+        },
+        tracking_uri=kwargs.get("tracking_uri"),
+        evaluation_id=run.info.run_id
+    )
+    if output_path:
+        evaluation_result.download_evaluation_artifacts(path=output_path)
+
+    return evaluation_result
+
 
 
 def log_input(data, data_is_file):

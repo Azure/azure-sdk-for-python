@@ -14,7 +14,6 @@ from azure.core.credentials import TokenCredential
 from azure.ai.generative.index._documents import Document, DocumentChunksIterator
 from azure.ai.generative.index._embeddings import EmbeddingsContainer
 from azure.ai.generative.index._utils.connections import (
-    Connection,
     WorkspaceConnection,
     get_connection_credential,
     get_connection_by_id_v2,
@@ -171,16 +170,22 @@ class MLIndex:
                     connection_credential = get_connection_credential(self.index_config, credential=credential)
                 except Exception as e:
                     # azure.ai.generative has workflow where env vars are set before doing stuff.
-                    if "AZURE_COGNITIVE_SEARCH_KEY" in os.environ:
+                    if "AZURE_AI_SEARCH_KEY" in os.environ or "AZURE_COGNITIVE_SEARCH_KEY" in os.environ:
                         from azure.core.credentials import AzureKeyCredential
 
                         logger.warning(f"Failed to get credential for ACS with {e}, falling back to env vars.")
-                        connection_credential = AzureKeyCredential(os.environ["AZURE_COGNITIVE_SEARCH_KEY"])
+                        connection_credential = AzureKeyCredential(os.environ["AZURE_AI_SEARCH_KEY"] if "AZURE_AI_SEARCH_KEY" in os.environ else os.environ["AZURE_COGNITIVE_SEARCH_KEY"])
                     else:
                         raise e
 
+                from packaging import version as pkg_version
                 azure_search_documents_version = packages_versions_for_compatibility["azure-search-documents"]
-                if (azure_search_documents_version > "11.4.0b6" and langchain_version > "0.0.273") or (azure_search_documents_version == "11.4.0b6" and langchain_version < "0.0.273" and langchain_version >= "0.0.198"):
+                search_client_version = pkg_version.parse(azure_search_documents_version)
+                langchain_pkg_version = pkg_version.parse(langchain_version)
+
+                if (search_client_version > pkg_version.parse("11.4.0b6") and langchain_pkg_version > pkg_version.parse("0.0.273")) \
+                    or (search_client_version == pkg_version.parse("11.4.0b6") and langchain_pkg_version < pkg_version.parse("0.0.273") and pkg_version.parse(langchain_pkg_version >= "0.0.198")):
+
                     from langchain.vectorstores import azuresearch
                     # TODO: These fields effect all ACS retrievers in the same process, should change class so it can
                     # use these as defaults but uses names passed in as args preferentially
@@ -192,16 +197,17 @@ class MLIndex:
                     from azure.core.credentials import AzureKeyCredential
                     from langchain.vectorstores.azuresearch import AzureSearch
 
-                    return AzureSearch(
-                        azure_search_endpoint=self.index_config.get(
-                            "endpoint",
-                            get_target_from_connection(
-                                get_connection_by_id_v2(
-                                    self.index_config["connection"]["id"],
-                                    credential=credential
-                                )
+                    endpoint = self.index_config.get("endpoint", None)
+                    if not endpoint:
+                        endpoint = get_target_from_connection(
+                            get_connection_by_id_v2(
+                                self.index_config["connection"]["id"],
+                                credential=credential
                             )
-                        ),
+                        )
+
+                    return AzureSearch(
+                        azure_search_endpoint=self.index_config.get("endpoint", endpoint),
                         azure_search_key=connection_credential.key if isinstance(connection_credential, AzureKeyCredential) else None,
                         index_name=self.index_config.get("index"),
                         embedding_function=self.get_langchain_embeddings(credential=credential).embed_query,
@@ -281,17 +287,18 @@ class MLIndex:
 
                 connection_credential = get_connection_credential(self.index_config, credential=credential)
 
+                endpoint = self.index_config.get("endpoint", None)
+                if not endpoint:
+                    endpoint = get_target_from_connection(
+                        get_connection_by_id_v2(
+                            self.index_config["connection"]["id"],
+                            credential=credential
+                        )
+                    )
+
                 return AzureCognitiveSearchVectorStore(
                     index_name=self.index_config.get("index"),
-                    endpoint=self.index_config.get(
-                        "endpoint",
-                        get_target_from_connection(
-                            get_connection_by_id_v2(
-                                self.index_config["connection"]["id"],
-                                credential=credential
-                            )
-                        )
-                    ),
+                    endpoint=endpoint,
                     embeddings=self.get_langchain_embeddings(credential=credential),
                     field_mapping=self.index_config.get("field_mapping", {}),
                     credential=connection_credential,
@@ -338,8 +345,8 @@ class MLIndex:
 
     def override_connections(
         self,
-        embedding_connection: Optional[Union[str, Connection, WorkspaceConnection]] = None,
-        index_connection: Optional[Union[str, Connection, WorkspaceConnection]] = None,
+        embedding_connection: Optional[Union[str, WorkspaceConnection]] = None,
+        index_connection: Optional[Union[str, WorkspaceConnection]] = None,
         credential: Optional[TokenCredential] = None
     ) -> "MLIndex":
         """
@@ -382,7 +389,7 @@ class MLIndex:
         self.save(just_config=True)
         return self
 
-    def set_embeddings_connection(self, connection: Optional[Union[str, Connection, WorkspaceConnection]], credential: Optional[TokenCredential] = None) -> "MLIndex":
+    def set_embeddings_connection(self, connection: Optional[Union[str, WorkspaceConnection]], credential: Optional[TokenCredential] = None) -> "MLIndex":
         """Set the embeddings connection used by the MLIndex."""
         return self.override_connections(embedding_connection=connection)
 
@@ -605,13 +612,13 @@ class MLIndex:
                 index_config = {
                     **index_config,
                     **{
-                        "endpoint": os.getenv("AZURE_COGNITIVE_SEARCH_TARGET"),
+                        "endpoint": os.getenv("AZURE_AI_SEARCH_ENDPOINT"),
                         "api_version": "2023-07-01-preview",
                     }
                 }
                 connection_args = {
                     "connection_type": "environment",
-                    "connection": {"key": "AZURE_COGNITIVE_SEARCH_KEY"}
+                    "connection": {"key": "AZURE_AI_SEARCH_KEY"}
                 }
             else:
                 if isinstance(index_connection, str):

@@ -5,11 +5,9 @@
 from enum import Enum
 from typing import Any
 
-from azure.ai.ml._utils._experimental import experimental
 from azure.core import CaseInsensitiveEnumMeta
 
 
-@experimental
 class DataColumnType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Dataframe Column Type Enum
 
