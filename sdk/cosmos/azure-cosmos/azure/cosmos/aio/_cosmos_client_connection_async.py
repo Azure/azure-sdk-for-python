@@ -1563,9 +1563,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                     error_status = status_code
                     error_index = i
         if is_error:
-            raise exceptions.CosmosBatchOperationError(status_code=error_status,
-                                                       error_index=error_index,
+            raise exceptions.CosmosBatchOperationError(error_index=error_index,
                                                        headers=self.last_response_headers,
+                                                       status_code=error_status,
                                                        message="There was an error in the transactional batch on" +
                                                                " index {}. Error message: {}".format(
                                                                    str(error_index),

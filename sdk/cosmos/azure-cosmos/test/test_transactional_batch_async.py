@@ -168,7 +168,6 @@ class TestTransactionalBatchAsync:
         batch_response = await container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert len(batch_response) == 100
         for result in batch_response:
-            result = result.operation_response
             assert result.get("statusCode") == 200
 
         # read non-existent item
