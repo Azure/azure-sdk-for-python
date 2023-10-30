@@ -13,18 +13,6 @@ API_KEY = os.environ["AI_OPENAI_API_KEY"]
 DEPLOYMENT_NAME = os.environ["AI_OPENAI_COMPLETION_DEPLOYMENT_NAME"]
 MODEL_NAME = os.environ["AI_OPENAI_COMPLETION_MODEL_NAME"]
 
-@pytest.fixture
-def event_loop():
-    # this function needed to fix a windows-only issue
-    # https://github.com/pytest-dev/pytest-asyncio/issues/371#issuecomment-1161462430
-    """Create an instance of the default event loop for each test case."""
-    policy = asyncio.WindowsSelectorEventLoopPolicy()
-    res = policy.new_event_loop()
-    asyncio.set_event_loop(res)
-    res._close = res.close
-    res.close = lambda: None
-    yield res
-    res._close()
 
 
 @pytest.fixture
