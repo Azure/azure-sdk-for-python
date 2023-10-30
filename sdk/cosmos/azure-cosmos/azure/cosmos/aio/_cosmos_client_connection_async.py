@@ -48,7 +48,6 @@ from .._routing import routing_range
 from ..documents import ConnectionPolicy
 from .._constants import _Constants as Constants
 from .. import http_constants, exceptions
-from .. import _models as models
 from . import _query_iterable_async as query_iterable
 from .. import _runtime_constants as runtime_constants
 from .. import _request_object
