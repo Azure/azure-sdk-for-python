@@ -14,7 +14,7 @@ from azure.mgmt.confluent import ConfluentManagementClient
     pip install azure-identity
     pip install azure-mgmt-confluent
 # USAGE
-    python confluent_delete.py
+    python access_users_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,14 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.organization.begin_delete(
+    response = client.access.list_users(
         resource_group_name="myResourceGroup",
         organization_name="myOrganization",
-    ).result()
+        body={"searchFilters": {"pageSize": "10", "pageToken": "asc4fts4ft"}},
+    )
     print(response)
 
 
-# x-ms-original-file: specification/confluent/resource-manager/Microsoft.Confluent/stable/2021-12-01/examples/Organization_Delete.json
+# x-ms-original-file: specification/confluent/resource-manager/Microsoft.Confluent/stable/2023-08-22/examples/Access_UsersList.json
 if __name__ == "__main__":
     main()
