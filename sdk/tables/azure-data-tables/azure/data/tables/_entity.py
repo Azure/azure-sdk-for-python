@@ -18,7 +18,10 @@ else:
 
 class EntityMetadata(TypedDict, total=False):
     etag: str
+    """Required. A string representation of the timestamp property. Used to provide optimistic concurrency."""
     timestamp: datetime.datetime
+    """A datetime value that is maintained on the server side to record the time an entity was last modified. The Table 
+    service uses the Timestamp property internally to provide optimistic concurrency. """
 
 
 class TableEntity(dict):
@@ -33,8 +36,8 @@ class TableEntity(dict):
     def metadata(self) -> EntityMetadata:
         """Includes the metadata with etag and timestamp.
 
-        :return: TypedDict of entity metadata
-        :rtype: EntityMetadata
+        :return: Dict of entity metadata
+        :rtype: ~azure.data.tables.EntityMetadata
         """
         return self._metadata
 
