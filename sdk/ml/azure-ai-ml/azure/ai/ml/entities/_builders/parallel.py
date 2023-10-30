@@ -13,6 +13,8 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
 
+from azure.ai.ml.entities._job.parallel.run_function import RunFunction
+
 from ..._schema import PathAwareSchema
 from ...constants._common import ARM_ID_PREFIX
 from ...constants._component import NodeType
@@ -106,13 +108,13 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
             ]
         ] = None,
         outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
-        retry_settings: Optional[Dict[str, Union[RetrySettings, str]]] = None,
+        retry_settings: Optional[Union[RetrySettings, Dict[str, Union[RetrySettings, str]]]] = None,
         logging_level: Optional[str] = None,
         max_concurrency_per_instance: Optional[int] = None,
         error_threshold: Optional[int] = None,
         mini_batch_error_threshold: Optional[int] = None,
         input_data: Optional[str] = None,
-        task: Optional[Dict[str, Union[ParallelTask, str]]] = None,
+        task: Optional[Union[RunFunction, Dict[str, Union[ParallelTask, str]]]] = None,
         partition_keys: Optional[List] = None,
         mini_batch_size: Optional[int] = None,
         resources: Optional[JobResourceConfiguration] = None,
