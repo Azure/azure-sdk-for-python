@@ -179,10 +179,13 @@ def credential() -> TokenCredential:
 
 # Fixtures for QADataGenerator (synthectic QA data generation)
 @pytest.fixture
-def qa_generator():
+def qa_generator(
+    e2e_openai_api_base: str,
+    e2e_openai_api_key: str,
+):
     model_config = dict(
-        api_base=os.environ["AI_OPENAI_API_BASE"],
-        api_key=os.environ["AI_OPENAI_API_KEY"],
+        api_base=e2e_openai_api_base,
+        api_key=e2e_open_api_key,
         deployment=os.environ["AI_OPENAI_COMPLETION_DEPLOYMENT_NAME"],
         model=os.environ["AI_OPENAI_COMPLETION_MODEL_NAME"],
         max_tokens=2000,
