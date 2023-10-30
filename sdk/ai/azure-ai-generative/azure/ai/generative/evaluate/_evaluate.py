@@ -185,7 +185,7 @@ def _evaluate(
 
         log_property_and_tag(
             "_azureml.evaluation_run",
-            "azure-ai-generative-parent" if run.data.tags.get("mlflow.rootRunId") is None else "azure-ai-generative"
+            "azure-ai-generative-parent" if run.data.tags.get("mlflow.parentRunId") is None else "azure-ai-generative"
         )
         # Log input is a preview feature behind an allowlist. Uncomment this line once the feature is broadly available.
         # log_input(data=data, data_is_file=_data_is_file)
