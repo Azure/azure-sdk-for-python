@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional, Union
 from azure.ai.ml._restclient.v2022_02_01_preview.models import AmlToken, ManagedIdentity
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
-from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
+from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
 from azure.ai.ml.entities._job.parallel.run_function import RunFunction
 
 from .command_func import _parse_input, _parse_inputs_outputs, _parse_output
@@ -23,7 +23,7 @@ def parallel_run_function(
     display_name: Optional[str] = None,
     experiment_name: Optional[str] = None,
     compute: Optional[str] = None,
-    retry_settings: Optional[BatchRetrySettings] = None,
+    retry_settings: Optional[RetrySettings] = None,
     environment_variables: Optional[Dict] = None,
     logging_level: Optional[str] = None,
     max_concurrency_per_instance: Optional[int] = None,
@@ -247,7 +247,8 @@ def parallel_run_function(
                 **kwargs,
             )
 
-    parallel_obj = Parallel(  # pylint: disable=abstract-class-instantiated
+    # pylint: disable=abstract-class-instantiated
+    parallel_obj = Parallel(  # type: ignore
         component=component,
         name=name,
         description=description,
