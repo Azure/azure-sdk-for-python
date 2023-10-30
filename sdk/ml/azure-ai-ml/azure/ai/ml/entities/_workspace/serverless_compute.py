@@ -20,7 +20,7 @@ class ServerlessComputeSettings:
     :type no_public_ip: bool
     """
 
-    custom_subnet: ArmId
+    custom_subnet: Optional[ArmId]
     no_public_ip: bool = False
 
     def __init__(self, custom_subnet: Optional[Union[str, ArmId]] = None, no_public_ip: bool = False) -> None:
@@ -52,7 +52,7 @@ class ServerlessComputeSettings:
 
     @classmethod
     def _from_rest_object(cls, obj: RestServerlessComputeSettings) -> "ServerlessComputeSettings":
-        return ServerlessComputeSettings(
+        return cls(
             custom_subnet=obj.serverless_compute_custom_subnet,
             no_public_ip=obj.serverless_compute_no_public_ip,
         )

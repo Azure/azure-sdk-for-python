@@ -2022,8 +2022,7 @@ class AmazonRdsForSqlServerSource(TabularSource):  # pylint: disable=too-many-in
     :vartype sql_reader_stored_procedure_name: JSON
     :ivar stored_procedure_parameters: Value and type setting for stored procedure parameters.
      Example: "{Parameter1: {value: "1", type: "int"}}".
-    :vartype stored_procedure_parameters: dict[str,
-     ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    :vartype stored_procedure_parameters: JSON
     :ivar isolation_level: Specifies the transaction locking behavior for the SQL source. Allowed
      values: ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default value
      is ReadCommitted. Type: string (or Expression with resultType string).
@@ -2051,7 +2050,7 @@ class AmazonRdsForSqlServerSource(TabularSource):  # pylint: disable=too-many-in
         "additional_columns": {"key": "additionalColumns", "type": "object"},
         "sql_reader_query": {"key": "sqlReaderQuery", "type": "object"},
         "sql_reader_stored_procedure_name": {"key": "sqlReaderStoredProcedureName", "type": "object"},
-        "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "{StoredProcedureParameter}"},
+        "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "object"},
         "isolation_level": {"key": "isolationLevel", "type": "object"},
         "produce_additional_types": {"key": "produceAdditionalTypes", "type": "object"},
         "partition_option": {"key": "partitionOption", "type": "object"},
@@ -2069,7 +2068,7 @@ class AmazonRdsForSqlServerSource(TabularSource):  # pylint: disable=too-many-in
         additional_columns: Optional[JSON] = None,
         sql_reader_query: Optional[JSON] = None,
         sql_reader_stored_procedure_name: Optional[JSON] = None,
-        stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
+        stored_procedure_parameters: Optional[JSON] = None,
         isolation_level: Optional[JSON] = None,
         produce_additional_types: Optional[JSON] = None,
         partition_option: Optional[JSON] = None,
@@ -2104,8 +2103,7 @@ class AmazonRdsForSqlServerSource(TabularSource):  # pylint: disable=too-many-in
         :paramtype sql_reader_stored_procedure_name: JSON
         :keyword stored_procedure_parameters: Value and type setting for stored procedure parameters.
          Example: "{Parameter1: {value: "1", type: "int"}}".
-        :paramtype stored_procedure_parameters: dict[str,
-         ~azure.synapse.artifacts.models.StoredProcedureParameter]
+        :paramtype stored_procedure_parameters: JSON
         :keyword isolation_level: Specifies the transaction locking behavior for the SQL source.
          Allowed values: ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default
          value is ReadCommitted. Type: string (or Expression with resultType string).
@@ -3129,8 +3127,9 @@ class AmazonS3ReadSettings(StoreReadSettings):  # pylint: disable=too-many-insta
      configured in the dataset) that you want to copy. Type: string (or Expression with resultType
      string).
     :vartype file_list_path: JSON
-    :ivar enable_partition_discovery: Indicates whether to enable partition discovery.
-    :vartype enable_partition_discovery: bool
+    :ivar enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+     boolean (or Expression with resultType boolean).
+    :vartype enable_partition_discovery: JSON
     :ivar partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
     :vartype partition_root_path: JSON
@@ -3158,7 +3157,7 @@ class AmazonS3ReadSettings(StoreReadSettings):  # pylint: disable=too-many-insta
         "wildcard_file_name": {"key": "wildcardFileName", "type": "object"},
         "prefix": {"key": "prefix", "type": "object"},
         "file_list_path": {"key": "fileListPath", "type": "object"},
-        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "bool"},
+        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "object"},
         "partition_root_path": {"key": "partitionRootPath", "type": "object"},
         "delete_files_after_completion": {"key": "deleteFilesAfterCompletion", "type": "object"},
         "modified_datetime_start": {"key": "modifiedDatetimeStart", "type": "object"},
@@ -3175,7 +3174,7 @@ class AmazonS3ReadSettings(StoreReadSettings):  # pylint: disable=too-many-insta
         wildcard_file_name: Optional[JSON] = None,
         prefix: Optional[JSON] = None,
         file_list_path: Optional[JSON] = None,
-        enable_partition_discovery: Optional[bool] = None,
+        enable_partition_discovery: Optional[JSON] = None,
         partition_root_path: Optional[JSON] = None,
         delete_files_after_completion: Optional[JSON] = None,
         modified_datetime_start: Optional[JSON] = None,
@@ -3205,8 +3204,9 @@ class AmazonS3ReadSettings(StoreReadSettings):  # pylint: disable=too-many-insta
          configured in the dataset) that you want to copy. Type: string (or Expression with resultType
          string).
         :paramtype file_list_path: JSON
-        :keyword enable_partition_discovery: Indicates whether to enable partition discovery.
-        :paramtype enable_partition_discovery: bool
+        :keyword enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+         boolean (or Expression with resultType boolean).
+        :paramtype enable_partition_discovery: JSON
         :keyword partition_root_path: Specify the root path where partition discovery starts from.
          Type: string (or Expression with resultType string).
         :paramtype partition_root_path: JSON
@@ -5772,8 +5772,9 @@ class AzureBlobStorageReadSettings(StoreReadSettings):  # pylint: disable=too-ma
      configured in the dataset) that you want to copy. Type: string (or Expression with resultType
      string).
     :vartype file_list_path: JSON
-    :ivar enable_partition_discovery: Indicates whether to enable partition discovery.
-    :vartype enable_partition_discovery: bool
+    :ivar enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+     boolean (or Expression with resultType boolean).
+    :vartype enable_partition_discovery: JSON
     :ivar partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
     :vartype partition_root_path: JSON
@@ -5801,7 +5802,7 @@ class AzureBlobStorageReadSettings(StoreReadSettings):  # pylint: disable=too-ma
         "wildcard_file_name": {"key": "wildcardFileName", "type": "object"},
         "prefix": {"key": "prefix", "type": "object"},
         "file_list_path": {"key": "fileListPath", "type": "object"},
-        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "bool"},
+        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "object"},
         "partition_root_path": {"key": "partitionRootPath", "type": "object"},
         "delete_files_after_completion": {"key": "deleteFilesAfterCompletion", "type": "object"},
         "modified_datetime_start": {"key": "modifiedDatetimeStart", "type": "object"},
@@ -5818,7 +5819,7 @@ class AzureBlobStorageReadSettings(StoreReadSettings):  # pylint: disable=too-ma
         wildcard_file_name: Optional[JSON] = None,
         prefix: Optional[JSON] = None,
         file_list_path: Optional[JSON] = None,
-        enable_partition_discovery: Optional[bool] = None,
+        enable_partition_discovery: Optional[JSON] = None,
         partition_root_path: Optional[JSON] = None,
         delete_files_after_completion: Optional[JSON] = None,
         modified_datetime_start: Optional[JSON] = None,
@@ -5848,8 +5849,9 @@ class AzureBlobStorageReadSettings(StoreReadSettings):  # pylint: disable=too-ma
          configured in the dataset) that you want to copy. Type: string (or Expression with resultType
          string).
         :paramtype file_list_path: JSON
-        :keyword enable_partition_discovery: Indicates whether to enable partition discovery.
-        :paramtype enable_partition_discovery: bool
+        :keyword enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+         boolean (or Expression with resultType boolean).
+        :paramtype enable_partition_discovery: JSON
         :keyword partition_root_path: Specify the root path where partition discovery starts from.
          Type: string (or Expression with resultType string).
         :paramtype partition_root_path: JSON
@@ -8394,7 +8396,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -8429,7 +8431,7 @@ class AzureEntityResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -8697,8 +8699,9 @@ class AzureFileStorageReadSettings(StoreReadSettings):  # pylint: disable=too-ma
      configured in the dataset) that you want to copy. Type: string (or Expression with resultType
      string).
     :vartype file_list_path: JSON
-    :ivar enable_partition_discovery: Indicates whether to enable partition discovery.
-    :vartype enable_partition_discovery: bool
+    :ivar enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+     boolean (or Expression with resultType boolean).
+    :vartype enable_partition_discovery: JSON
     :ivar partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
     :vartype partition_root_path: JSON
@@ -8726,7 +8729,7 @@ class AzureFileStorageReadSettings(StoreReadSettings):  # pylint: disable=too-ma
         "wildcard_file_name": {"key": "wildcardFileName", "type": "object"},
         "prefix": {"key": "prefix", "type": "object"},
         "file_list_path": {"key": "fileListPath", "type": "object"},
-        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "bool"},
+        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "object"},
         "partition_root_path": {"key": "partitionRootPath", "type": "object"},
         "delete_files_after_completion": {"key": "deleteFilesAfterCompletion", "type": "object"},
         "modified_datetime_start": {"key": "modifiedDatetimeStart", "type": "object"},
@@ -8743,7 +8746,7 @@ class AzureFileStorageReadSettings(StoreReadSettings):  # pylint: disable=too-ma
         wildcard_file_name: Optional[JSON] = None,
         prefix: Optional[JSON] = None,
         file_list_path: Optional[JSON] = None,
-        enable_partition_discovery: Optional[bool] = None,
+        enable_partition_discovery: Optional[JSON] = None,
         partition_root_path: Optional[JSON] = None,
         delete_files_after_completion: Optional[JSON] = None,
         modified_datetime_start: Optional[JSON] = None,
@@ -8773,8 +8776,9 @@ class AzureFileStorageReadSettings(StoreReadSettings):  # pylint: disable=too-ma
          configured in the dataset) that you want to copy. Type: string (or Expression with resultType
          string).
         :paramtype file_list_path: JSON
-        :keyword enable_partition_discovery: Indicates whether to enable partition discovery.
-        :paramtype enable_partition_discovery: bool
+        :keyword enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+         boolean (or Expression with resultType boolean).
+        :paramtype enable_partition_discovery: JSON
         :keyword partition_root_path: Specify the root path where partition discovery starts from.
          Type: string (or Expression with resultType string).
         :paramtype partition_root_path: JSON
@@ -12240,8 +12244,7 @@ class AzureSqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
      string).
     :vartype pre_copy_script: JSON
     :ivar stored_procedure_parameters: SQL stored procedure parameters.
-    :vartype stored_procedure_parameters: dict[str,
-     ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    :vartype stored_procedure_parameters: JSON
     :ivar stored_procedure_table_type_parameter_name: The stored procedure parameter name of the
      table type. Type: string (or Expression with resultType string).
     :vartype stored_procedure_table_type_parameter_name: JSON
@@ -12265,7 +12268,7 @@ class AzureSqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
         "sql_writer_stored_procedure_name": {"key": "sqlWriterStoredProcedureName", "type": "object"},
         "sql_writer_table_type": {"key": "sqlWriterTableType", "type": "object"},
         "pre_copy_script": {"key": "preCopyScript", "type": "object"},
-        "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "{StoredProcedureParameter}"},
+        "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "object"},
         "stored_procedure_table_type_parameter_name": {
             "key": "storedProcedureTableTypeParameterName",
             "type": "object",
@@ -12285,7 +12288,7 @@ class AzureSqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
         sql_writer_stored_procedure_name: Optional[JSON] = None,
         sql_writer_table_type: Optional[JSON] = None,
         pre_copy_script: Optional[JSON] = None,
-        stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
+        stored_procedure_parameters: Optional[JSON] = None,
         stored_procedure_table_type_parameter_name: Optional[JSON] = None,
         table_option: Optional[JSON] = None,
         **kwargs: Any
@@ -12319,8 +12322,7 @@ class AzureSqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
          string).
         :paramtype pre_copy_script: JSON
         :keyword stored_procedure_parameters: SQL stored procedure parameters.
-        :paramtype stored_procedure_parameters: dict[str,
-         ~azure.synapse.artifacts.models.StoredProcedureParameter]
+        :paramtype stored_procedure_parameters: JSON
         :keyword stored_procedure_table_type_parameter_name: The stored procedure parameter name of the
          table type. Type: string (or Expression with resultType string).
         :paramtype stored_procedure_table_type_parameter_name: JSON
@@ -12379,8 +12381,7 @@ class AzureSqlSource(TabularSource):  # pylint: disable=too-many-instance-attrib
     :vartype sql_reader_stored_procedure_name: JSON
     :ivar stored_procedure_parameters: Value and type setting for stored procedure parameters.
      Example: "{Parameter1: {value: "1", type: "int"}}".
-    :vartype stored_procedure_parameters: dict[str,
-     ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    :vartype stored_procedure_parameters: JSON
     :ivar isolation_level: Specifies the transaction locking behavior for the SQL source. Allowed
      values: ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default value
      is ReadCommitted. Type: string (or Expression with resultType string).
@@ -12408,7 +12409,7 @@ class AzureSqlSource(TabularSource):  # pylint: disable=too-many-instance-attrib
         "additional_columns": {"key": "additionalColumns", "type": "object"},
         "sql_reader_query": {"key": "sqlReaderQuery", "type": "object"},
         "sql_reader_stored_procedure_name": {"key": "sqlReaderStoredProcedureName", "type": "object"},
-        "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "{StoredProcedureParameter}"},
+        "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "object"},
         "isolation_level": {"key": "isolationLevel", "type": "object"},
         "produce_additional_types": {"key": "produceAdditionalTypes", "type": "object"},
         "partition_option": {"key": "partitionOption", "type": "object"},
@@ -12426,7 +12427,7 @@ class AzureSqlSource(TabularSource):  # pylint: disable=too-many-instance-attrib
         additional_columns: Optional[JSON] = None,
         sql_reader_query: Optional[JSON] = None,
         sql_reader_stored_procedure_name: Optional[JSON] = None,
-        stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
+        stored_procedure_parameters: Optional[JSON] = None,
         isolation_level: Optional[JSON] = None,
         produce_additional_types: Optional[JSON] = None,
         partition_option: Optional[JSON] = None,
@@ -12461,8 +12462,7 @@ class AzureSqlSource(TabularSource):  # pylint: disable=too-many-instance-attrib
         :paramtype sql_reader_stored_procedure_name: JSON
         :keyword stored_procedure_parameters: Value and type setting for stored procedure parameters.
          Example: "{Parameter1: {value: "1", type: "int"}}".
-        :paramtype stored_procedure_parameters: dict[str,
-         ~azure.synapse.artifacts.models.StoredProcedureParameter]
+        :paramtype stored_procedure_parameters: JSON
         :keyword isolation_level: Specifies the transaction locking behavior for the SQL source.
          Allowed values: ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default
          value is ReadCommitted. Type: string (or Expression with resultType string).
@@ -12751,7 +12751,7 @@ class AzureSynapseArtifactsLinkedService(LinkedService):
      authentication method. Type: string (or Expression with resultType string).
     :vartype authentication: JSON
     :ivar workspace_resource_id: The resource ID of the Synapse workspace. The format should be:
-     /subscriptions/{subscriptionID}/resourceGroups/{resourceGroup}/providers/Microsoft.Synapse/workspaces/{workspaceName}.
+     /subscriptions/{subscriptionID}/resourceGroups/{resourceGroup}/providers/Microsoft.Synapse/workspaces/{workspaceName}.  # pylint: disable=line-too-long
      Type: string (or Expression with resultType string).
     :vartype workspace_resource_id: JSON
     """
@@ -12805,7 +12805,7 @@ class AzureSynapseArtifactsLinkedService(LinkedService):
          authentication method. Type: string (or Expression with resultType string).
         :paramtype authentication: JSON
         :keyword workspace_resource_id: The resource ID of the Synapse workspace. The format should be:
-         /subscriptions/{subscriptionID}/resourceGroups/{resourceGroup}/providers/Microsoft.Synapse/workspaces/{workspaceName}.
+         /subscriptions/{subscriptionID}/resourceGroups/{resourceGroup}/providers/Microsoft.Synapse/workspaces/{workspaceName}.  # pylint: disable=line-too-long
          Type: string (or Expression with resultType string).
         :paramtype workspace_resource_id: JSON
         """
@@ -13341,7 +13341,7 @@ class TrackedResource(Resource):
     All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -13389,7 +13389,7 @@ class BigDataPoolResourceInfo(TrackedResource):  # pylint: disable=too-many-inst
     All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -19082,7 +19082,7 @@ class SubResource(AzureEntityResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -19093,24 +19093,6 @@ class SubResource(AzureEntityResource):
     :vartype etag: str
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "etag": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "etag": {"key": "etag", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
 
 class DataFlowResource(SubResource):
     """Data flow resource type.
@@ -19120,7 +19102,7 @@ class DataFlowResource(SubResource):
     All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -19840,7 +19822,7 @@ class DatasetResource(SubResource):
     All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -24891,8 +24873,9 @@ class FileServerReadSettings(StoreReadSettings):  # pylint: disable=too-many-ins
      configured in the dataset) that you want to copy. Type: string (or Expression with resultType
      string).
     :vartype file_list_path: JSON
-    :ivar enable_partition_discovery: Indicates whether to enable partition discovery.
-    :vartype enable_partition_discovery: bool
+    :ivar enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+     boolean (or Expression with resultType boolean).
+    :vartype enable_partition_discovery: JSON
     :ivar partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
     :vartype partition_root_path: JSON
@@ -24922,7 +24905,7 @@ class FileServerReadSettings(StoreReadSettings):  # pylint: disable=too-many-ins
         "wildcard_folder_path": {"key": "wildcardFolderPath", "type": "object"},
         "wildcard_file_name": {"key": "wildcardFileName", "type": "object"},
         "file_list_path": {"key": "fileListPath", "type": "object"},
-        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "bool"},
+        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "object"},
         "partition_root_path": {"key": "partitionRootPath", "type": "object"},
         "delete_files_after_completion": {"key": "deleteFilesAfterCompletion", "type": "object"},
         "modified_datetime_start": {"key": "modifiedDatetimeStart", "type": "object"},
@@ -24939,7 +24922,7 @@ class FileServerReadSettings(StoreReadSettings):  # pylint: disable=too-many-ins
         wildcard_folder_path: Optional[JSON] = None,
         wildcard_file_name: Optional[JSON] = None,
         file_list_path: Optional[JSON] = None,
-        enable_partition_discovery: Optional[bool] = None,
+        enable_partition_discovery: Optional[JSON] = None,
         partition_root_path: Optional[JSON] = None,
         delete_files_after_completion: Optional[JSON] = None,
         modified_datetime_start: Optional[JSON] = None,
@@ -24967,8 +24950,9 @@ class FileServerReadSettings(StoreReadSettings):  # pylint: disable=too-many-ins
          configured in the dataset) that you want to copy. Type: string (or Expression with resultType
          string).
         :paramtype file_list_path: JSON
-        :keyword enable_partition_discovery: Indicates whether to enable partition discovery.
-        :paramtype enable_partition_discovery: bool
+        :keyword enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+         boolean (or Expression with resultType boolean).
+        :paramtype enable_partition_discovery: JSON
         :keyword partition_root_path: Specify the root path where partition discovery starts from.
          Type: string (or Expression with resultType string).
         :paramtype partition_root_path: JSON
@@ -25715,8 +25699,9 @@ class FtpReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-a
     :ivar wildcard_file_name: Ftp wildcardFileName. Type: string (or Expression with resultType
      string).
     :vartype wildcard_file_name: JSON
-    :ivar enable_partition_discovery: Indicates whether to enable partition discovery.
-    :vartype enable_partition_discovery: bool
+    :ivar enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+     boolean (or Expression with resultType boolean).
+    :vartype enable_partition_discovery: JSON
     :ivar partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
     :vartype partition_root_path: JSON
@@ -25727,8 +25712,9 @@ class FtpReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-a
      configured in the dataset) that you want to copy. Type: string (or Expression with resultType
      string).
     :vartype file_list_path: JSON
-    :ivar use_binary_transfer: Specify whether to use binary transfer mode for FTP stores.
-    :vartype use_binary_transfer: bool
+    :ivar use_binary_transfer: Specify whether to use binary transfer mode for FTP stores. Type:
+     boolean (or Expression with resultType boolean).
+    :vartype use_binary_transfer: JSON
     :ivar disable_chunking: If true, disable parallel reading within each file. Default is false.
      Type: boolean (or Expression with resultType boolean).
     :vartype disable_chunking: JSON
@@ -25745,11 +25731,11 @@ class FtpReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-a
         "recursive": {"key": "recursive", "type": "object"},
         "wildcard_folder_path": {"key": "wildcardFolderPath", "type": "object"},
         "wildcard_file_name": {"key": "wildcardFileName", "type": "object"},
-        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "bool"},
+        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "object"},
         "partition_root_path": {"key": "partitionRootPath", "type": "object"},
         "delete_files_after_completion": {"key": "deleteFilesAfterCompletion", "type": "object"},
         "file_list_path": {"key": "fileListPath", "type": "object"},
-        "use_binary_transfer": {"key": "useBinaryTransfer", "type": "bool"},
+        "use_binary_transfer": {"key": "useBinaryTransfer", "type": "object"},
         "disable_chunking": {"key": "disableChunking", "type": "object"},
     }
 
@@ -25761,11 +25747,11 @@ class FtpReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-a
         recursive: Optional[JSON] = None,
         wildcard_folder_path: Optional[JSON] = None,
         wildcard_file_name: Optional[JSON] = None,
-        enable_partition_discovery: Optional[bool] = None,
+        enable_partition_discovery: Optional[JSON] = None,
         partition_root_path: Optional[JSON] = None,
         delete_files_after_completion: Optional[JSON] = None,
         file_list_path: Optional[JSON] = None,
-        use_binary_transfer: Optional[bool] = None,
+        use_binary_transfer: Optional[JSON] = None,
         disable_chunking: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
@@ -25785,8 +25771,9 @@ class FtpReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-a
         :keyword wildcard_file_name: Ftp wildcardFileName. Type: string (or Expression with resultType
          string).
         :paramtype wildcard_file_name: JSON
-        :keyword enable_partition_discovery: Indicates whether to enable partition discovery.
-        :paramtype enable_partition_discovery: bool
+        :keyword enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+         boolean (or Expression with resultType boolean).
+        :paramtype enable_partition_discovery: JSON
         :keyword partition_root_path: Specify the root path where partition discovery starts from.
          Type: string (or Expression with resultType string).
         :paramtype partition_root_path: JSON
@@ -25797,8 +25784,9 @@ class FtpReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-a
          configured in the dataset) that you want to copy. Type: string (or Expression with resultType
          string).
         :paramtype file_list_path: JSON
-        :keyword use_binary_transfer: Specify whether to use binary transfer mode for FTP stores.
-        :paramtype use_binary_transfer: bool
+        :keyword use_binary_transfer: Specify whether to use binary transfer mode for FTP stores. Type:
+         boolean (or Expression with resultType boolean).
+        :paramtype use_binary_transfer: JSON
         :keyword disable_chunking: If true, disable parallel reading within each file. Default is
          false. Type: boolean (or Expression with resultType boolean).
         :paramtype disable_chunking: JSON
@@ -27244,8 +27232,9 @@ class GoogleCloudStorageReadSettings(StoreReadSettings):  # pylint: disable=too-
      configured in the dataset) that you want to copy. Type: string (or Expression with resultType
      string).
     :vartype file_list_path: JSON
-    :ivar enable_partition_discovery: Indicates whether to enable partition discovery.
-    :vartype enable_partition_discovery: bool
+    :ivar enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+     boolean (or Expression with resultType boolean).
+    :vartype enable_partition_discovery: JSON
     :ivar partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
     :vartype partition_root_path: JSON
@@ -27273,7 +27262,7 @@ class GoogleCloudStorageReadSettings(StoreReadSettings):  # pylint: disable=too-
         "wildcard_file_name": {"key": "wildcardFileName", "type": "object"},
         "prefix": {"key": "prefix", "type": "object"},
         "file_list_path": {"key": "fileListPath", "type": "object"},
-        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "bool"},
+        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "object"},
         "partition_root_path": {"key": "partitionRootPath", "type": "object"},
         "delete_files_after_completion": {"key": "deleteFilesAfterCompletion", "type": "object"},
         "modified_datetime_start": {"key": "modifiedDatetimeStart", "type": "object"},
@@ -27290,7 +27279,7 @@ class GoogleCloudStorageReadSettings(StoreReadSettings):  # pylint: disable=too-
         wildcard_file_name: Optional[JSON] = None,
         prefix: Optional[JSON] = None,
         file_list_path: Optional[JSON] = None,
-        enable_partition_discovery: Optional[bool] = None,
+        enable_partition_discovery: Optional[JSON] = None,
         partition_root_path: Optional[JSON] = None,
         delete_files_after_completion: Optional[JSON] = None,
         modified_datetime_start: Optional[JSON] = None,
@@ -27320,8 +27309,9 @@ class GoogleCloudStorageReadSettings(StoreReadSettings):  # pylint: disable=too-
          configured in the dataset) that you want to copy. Type: string (or Expression with resultType
          string).
         :paramtype file_list_path: JSON
-        :keyword enable_partition_discovery: Indicates whether to enable partition discovery.
-        :paramtype enable_partition_discovery: bool
+        :keyword enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+         boolean (or Expression with resultType boolean).
+        :paramtype enable_partition_discovery: JSON
         :keyword partition_root_path: Specify the root path where partition discovery starts from.
          Type: string (or Expression with resultType string).
         :paramtype partition_root_path: JSON
@@ -28300,8 +28290,9 @@ class HdfsReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-
      configured in the dataset) that you want to copy. Type: string (or Expression with resultType
      string).
     :vartype file_list_path: JSON
-    :ivar enable_partition_discovery: Indicates whether to enable partition discovery.
-    :vartype enable_partition_discovery: bool
+    :ivar enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+     boolean (or Expression with resultType boolean).
+    :vartype enable_partition_discovery: JSON
     :ivar partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
     :vartype partition_root_path: JSON
@@ -28330,7 +28321,7 @@ class HdfsReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-
         "wildcard_folder_path": {"key": "wildcardFolderPath", "type": "object"},
         "wildcard_file_name": {"key": "wildcardFileName", "type": "object"},
         "file_list_path": {"key": "fileListPath", "type": "object"},
-        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "bool"},
+        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "object"},
         "partition_root_path": {"key": "partitionRootPath", "type": "object"},
         "modified_datetime_start": {"key": "modifiedDatetimeStart", "type": "object"},
         "modified_datetime_end": {"key": "modifiedDatetimeEnd", "type": "object"},
@@ -28347,7 +28338,7 @@ class HdfsReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-
         wildcard_folder_path: Optional[JSON] = None,
         wildcard_file_name: Optional[JSON] = None,
         file_list_path: Optional[JSON] = None,
-        enable_partition_discovery: Optional[bool] = None,
+        enable_partition_discovery: Optional[JSON] = None,
         partition_root_path: Optional[JSON] = None,
         modified_datetime_start: Optional[JSON] = None,
         modified_datetime_end: Optional[JSON] = None,
@@ -28375,8 +28366,9 @@ class HdfsReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-
          configured in the dataset) that you want to copy. Type: string (or Expression with resultType
          string).
         :paramtype file_list_path: JSON
-        :keyword enable_partition_discovery: Indicates whether to enable partition discovery.
-        :paramtype enable_partition_discovery: bool
+        :keyword enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+         boolean (or Expression with resultType boolean).
+        :paramtype enable_partition_discovery: JSON
         :keyword partition_root_path: Specify the root path where partition discovery starts from.
          Type: string (or Expression with resultType string).
         :paramtype partition_root_path: JSON
@@ -29066,7 +29058,7 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
     :vartype zookeeper_node_size: JSON
     :ivar script_actions: Custom script actions to run on HDI ondemand cluster once it's up. Please
      refer to
-     https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-customize-cluster-linux?toc=%2Fen-us%2Fazure%2Fhdinsight%2Fr-server%2FTOC.json&bc=%2Fen-us%2Fazure%2Fbread%2Ftoc.json#understanding-script-actions.
+     https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-customize-cluster-linux?toc=%2Fen-us%2Fazure%2Fhdinsight%2Fr-server%2FTOC.json&bc=%2Fen-us%2Fazure%2Fbread%2Ftoc.json#understanding-script-actions.  # pylint: disable=line-too-long
     :vartype script_actions: list[~azure.synapse.artifacts.models.ScriptAction]
     :ivar virtual_network_id: The ARM resource ID for the vNet to which the cluster should be
      joined after creation. Type: string (or Expression with resultType string).
@@ -29285,7 +29277,7 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
         :paramtype zookeeper_node_size: JSON
         :keyword script_actions: Custom script actions to run on HDI ondemand cluster once it's up.
          Please refer to
-         https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-customize-cluster-linux?toc=%2Fen-us%2Fazure%2Fhdinsight%2Fr-server%2FTOC.json&bc=%2Fen-us%2Fazure%2Fbread%2Ftoc.json#understanding-script-actions.
+         https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-customize-cluster-linux?toc=%2Fen-us%2Fazure%2Fhdinsight%2Fr-server%2FTOC.json&bc=%2Fen-us%2Fazure%2Fbread%2Ftoc.json#understanding-script-actions.  # pylint: disable=line-too-long
         :paramtype script_actions: list[~azure.synapse.artifacts.models.ScriptAction]
         :keyword virtual_network_id: The ARM resource ID for the vNet to which the cluster should be
          joined after creation. Type: string (or Expression with resultType string).
@@ -30601,7 +30593,7 @@ class HttpLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
 
 
 class HttpReadSettings(StoreReadSettings):
-    """Sftp read settings.
+    """Http read settings.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -30625,11 +30617,15 @@ class HttpReadSettings(StoreReadSettings):
     :ivar request_timeout: Specifies the timeout for a HTTP client to get HTTP response from HTTP
      server.
     :vartype request_timeout: JSON
-    :ivar enable_partition_discovery: Indicates whether to enable partition discovery.
-    :vartype enable_partition_discovery: bool
+    :ivar enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+     boolean (or Expression with resultType boolean).
+    :vartype enable_partition_discovery: JSON
     :ivar partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
     :vartype partition_root_path: JSON
+    :ivar additional_columns: Specifies the additional columns to be added to source data. Type:
+     array of objects(AdditionalColumns) (or Expression with resultType array of objects).
+    :vartype additional_columns: JSON
     """
 
     _validation = {
@@ -30644,8 +30640,9 @@ class HttpReadSettings(StoreReadSettings):
         "request_body": {"key": "requestBody", "type": "object"},
         "additional_headers": {"key": "additionalHeaders", "type": "object"},
         "request_timeout": {"key": "requestTimeout", "type": "object"},
-        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "bool"},
+        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "object"},
         "partition_root_path": {"key": "partitionRootPath", "type": "object"},
+        "additional_columns": {"key": "additionalColumns", "type": "object"},
     }
 
     def __init__(
@@ -30657,8 +30654,9 @@ class HttpReadSettings(StoreReadSettings):
         request_body: Optional[JSON] = None,
         additional_headers: Optional[JSON] = None,
         request_timeout: Optional[JSON] = None,
-        enable_partition_discovery: Optional[bool] = None,
+        enable_partition_discovery: Optional[JSON] = None,
         partition_root_path: Optional[JSON] = None,
+        additional_columns: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -30680,11 +30678,15 @@ class HttpReadSettings(StoreReadSettings):
         :keyword request_timeout: Specifies the timeout for a HTTP client to get HTTP response from
          HTTP server.
         :paramtype request_timeout: JSON
-        :keyword enable_partition_discovery: Indicates whether to enable partition discovery.
-        :paramtype enable_partition_discovery: bool
+        :keyword enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+         boolean (or Expression with resultType boolean).
+        :paramtype enable_partition_discovery: JSON
         :keyword partition_root_path: Specify the root path where partition discovery starts from.
          Type: string (or Expression with resultType string).
         :paramtype partition_root_path: JSON
+        :keyword additional_columns: Specifies the additional columns to be added to source data. Type:
+         array of objects(AdditionalColumns) (or Expression with resultType array of objects).
+        :paramtype additional_columns: JSON
         """
         super().__init__(
             additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, **kwargs
@@ -30696,6 +30698,7 @@ class HttpReadSettings(StoreReadSettings):
         self.request_timeout = request_timeout
         self.enable_partition_discovery = enable_partition_discovery
         self.partition_root_path = partition_root_path
+        self.additional_columns = additional_columns
 
 
 class HttpServerLocation(DatasetLocation):
@@ -32482,7 +32485,7 @@ class IntegrationRuntimeResource(SubResource):
     All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -33916,7 +33919,7 @@ class LibraryResource(SubResource):
     All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -33960,7 +33963,7 @@ class LibraryResourceInfo(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar record_id: record Id of the library/package.
     :vartype record_id: int
@@ -34816,7 +34819,7 @@ class LinkedServiceResource(SubResource):
     All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -39364,7 +39367,7 @@ class NotebookResource(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource. Required.
     :vartype name: str
@@ -43173,7 +43176,7 @@ class PipelineResource(SubResource):  # pylint: disable=too-many-instance-attrib
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -44321,7 +44324,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -44330,22 +44333,6 @@ class ProxyResource(Resource):
     :vartype type: str
     """
 
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-
 
 class PrivateEndpointConnection(ProxyResource):
     """A private endpoint connection.
@@ -44353,7 +44340,7 @@ class PrivateEndpointConnection(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -45400,7 +45387,7 @@ class RerunTriggerResource(SubResource):
     All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -46803,7 +46790,7 @@ class RunNotebookResult(_serialization.Model):
     :ivar last_checked_on: Timestamp of last update.
     :vartype last_checked_on: str
     :ivar session_id: Livy session id.
-    :vartype session_id: int
+    :vartype session_id: str
     :ivar spark_pool: SparkPool name.
     :vartype spark_pool: str
     :ivar session_detail: Run notebook session details.
@@ -46818,7 +46805,7 @@ class RunNotebookResult(_serialization.Model):
         "run_id": {"key": "runId", "type": "str"},
         "run_status": {"key": "runStatus", "type": "str"},
         "last_checked_on": {"key": "lastCheckedOn", "type": "str"},
-        "session_id": {"key": "sessionId", "type": "int"},
+        "session_id": {"key": "sessionId", "type": "str"},
         "spark_pool": {"key": "sparkPool", "type": "str"},
         "session_detail": {"key": "sessionDetail", "type": "object"},
         "exit_value": {"key": "exitValue", "type": "str"},
@@ -46831,7 +46818,7 @@ class RunNotebookResult(_serialization.Model):
         run_id: Optional[str] = None,
         run_status: Optional[str] = None,
         last_checked_on: Optional[str] = None,
-        session_id: Optional[int] = None,
+        session_id: Optional[str] = None,
         spark_pool: Optional[str] = None,
         session_detail: Optional[JSON] = None,
         exit_value: Optional[str] = None,
@@ -46846,7 +46833,7 @@ class RunNotebookResult(_serialization.Model):
         :keyword last_checked_on: Timestamp of last update.
         :paramtype last_checked_on: str
         :keyword session_id: Livy session id.
-        :paramtype session_id: int
+        :paramtype session_id: str
         :keyword spark_pool: SparkPool name.
         :paramtype spark_pool: str
         :keyword session_detail: Run notebook session details.
@@ -46884,7 +46871,7 @@ class RunNotebookSnapshot(_serialization.Model):
      completes.
     :vartype honor_session_time_to_live: bool
     :ivar session_id: Livy session id.
-    :vartype session_id: int
+    :vartype session_id: str
     :ivar spark_pool: SparkPool name.
     :vartype spark_pool: str
     :ivar parameters: Run notebook parameters.
@@ -46904,7 +46891,7 @@ class RunNotebookSnapshot(_serialization.Model):
         "notebook": {"key": "notebook", "type": "str"},
         "session_options": {"key": "sessionOptions", "type": "RunNotebookSparkSessionOptions"},
         "honor_session_time_to_live": {"key": "honorSessionTimeToLive", "type": "bool"},
-        "session_id": {"key": "sessionId", "type": "int"},
+        "session_id": {"key": "sessionId", "type": "str"},
         "spark_pool": {"key": "sparkPool", "type": "str"},
         "parameters": {"key": "parameters", "type": "{RunNotebookParameter}"},
         "notebook_content": {"key": "notebookContent", "type": "NotebookResource"},
@@ -46918,7 +46905,7 @@ class RunNotebookSnapshot(_serialization.Model):
         exit_value: Optional[str] = None,
         session_options: Optional["_models.RunNotebookSparkSessionOptions"] = None,
         honor_session_time_to_live: Optional[bool] = None,
-        session_id: Optional[int] = None,
+        session_id: Optional[str] = None,
         spark_pool: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.RunNotebookParameter"]] = None,
         notebook_content: Optional["_models.NotebookResource"] = None,
@@ -46937,7 +46924,7 @@ class RunNotebookSnapshot(_serialization.Model):
          completes.
         :paramtype honor_session_time_to_live: bool
         :keyword session_id: Livy session id.
-        :paramtype session_id: int
+        :paramtype session_id: str
         :keyword spark_pool: SparkPool name.
         :paramtype spark_pool: str
         :keyword parameters: Run notebook parameters.
@@ -47003,7 +46990,7 @@ class RunNotebookSnapshotResult(_serialization.Model):
     :ivar last_checked_on: Timestamp of last update.
     :vartype last_checked_on: str
     :ivar session_id: Livy session id.
-    :vartype session_id: int
+    :vartype session_id: str
     :ivar spark_pool: SparkPool name.
     :vartype spark_pool: str
     """
@@ -47020,7 +47007,7 @@ class RunNotebookSnapshotResult(_serialization.Model):
         "run_id": {"key": "runId", "type": "str"},
         "run_status": {"key": "runStatus", "type": "str"},
         "last_checked_on": {"key": "lastCheckedOn", "type": "str"},
-        "session_id": {"key": "sessionId", "type": "int"},
+        "session_id": {"key": "sessionId", "type": "str"},
         "spark_pool": {"key": "sparkPool", "type": "str"},
     }
 
@@ -47032,7 +47019,7 @@ class RunNotebookSnapshotResult(_serialization.Model):
         run_status: str,
         error: Optional["_models.RunNotebookError"] = None,
         last_checked_on: Optional[str] = None,
-        session_id: Optional[int] = None,
+        session_id: Optional[str] = None,
         spark_pool: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -47048,7 +47035,7 @@ class RunNotebookSnapshotResult(_serialization.Model):
         :keyword last_checked_on: Timestamp of last update.
         :paramtype last_checked_on: str
         :keyword session_id: Livy session id.
-        :paramtype session_id: int
+        :paramtype session_id: str
         :keyword spark_pool: SparkPool name.
         :paramtype spark_pool: str
         """
@@ -49763,8 +49750,8 @@ class SapHanaSource(TabularSource):  # pylint: disable=too-many-instance-attribu
      resultType integer).
     :vartype packet_size: JSON
     :ivar partition_option: The partition mechanism that will be used for SAP HANA read in
-     parallel. Known values are: "None", "PhysicalPartitionsOfTable", and "SapHanaDynamicRange".
-    :vartype partition_option: str or ~azure.synapse.artifacts.models.SapHanaPartitionOption
+     parallel. Possible values include: "None", "PhysicalPartitionsOfTable", "SapHanaDynamicRange".
+    :vartype partition_option: JSON
     :ivar partition_settings: The settings that will be leveraged for SAP HANA source partitioning.
     :vartype partition_settings: ~azure.synapse.artifacts.models.SapHanaPartitionSettings
     """
@@ -49783,7 +49770,7 @@ class SapHanaSource(TabularSource):  # pylint: disable=too-many-instance-attribu
         "additional_columns": {"key": "additionalColumns", "type": "object"},
         "query": {"key": "query", "type": "object"},
         "packet_size": {"key": "packetSize", "type": "object"},
-        "partition_option": {"key": "partitionOption", "type": "str"},
+        "partition_option": {"key": "partitionOption", "type": "object"},
         "partition_settings": {"key": "partitionSettings", "type": "SapHanaPartitionSettings"},
     }
 
@@ -49798,7 +49785,7 @@ class SapHanaSource(TabularSource):  # pylint: disable=too-many-instance-attribu
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
         packet_size: Optional[JSON] = None,
-        partition_option: Optional[Union[str, "_models.SapHanaPartitionOption"]] = None,
+        partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.SapHanaPartitionSettings"] = None,
         **kwargs: Any
     ) -> None:
@@ -49827,8 +49814,8 @@ class SapHanaSource(TabularSource):  # pylint: disable=too-many-instance-attribu
          with resultType integer).
         :paramtype packet_size: JSON
         :keyword partition_option: The partition mechanism that will be used for SAP HANA read in
-         parallel. Known values are: "None", "PhysicalPartitionsOfTable", and "SapHanaDynamicRange".
-        :paramtype partition_option: str or ~azure.synapse.artifacts.models.SapHanaPartitionOption
+         parallel. Possible values include: "None", "PhysicalPartitionsOfTable", "SapHanaDynamicRange".
+        :paramtype partition_option: JSON
         :keyword partition_settings: The settings that will be leveraged for SAP HANA source
          partitioning.
         :paramtype partition_settings: ~azure.synapse.artifacts.models.SapHanaPartitionSettings
@@ -51278,9 +51265,9 @@ class SapTableSource(TabularSource):  # pylint: disable=too-many-instance-attrib
      resultType string).
     :vartype sap_data_column_delimiter: JSON
     :ivar partition_option: The partition mechanism that will be used for SAP table read in
-     parallel. Known values are: "None", "PartitionOnInt", "PartitionOnCalendarYear",
-     "PartitionOnCalendarMonth", "PartitionOnCalendarDate", and "PartitionOnTime".
-    :vartype partition_option: str or ~azure.synapse.artifacts.models.SapTablePartitionOption
+     parallel. Possible values include: "None", "PartitionOnInt", "PartitionOnCalendarYear",
+     "PartitionOnCalendarMonth", "PartitionOnCalendarDate", "PartitionOnTime".
+    :vartype partition_option: JSON
     :ivar partition_settings: The settings that will be leveraged for SAP table source
      partitioning.
     :vartype partition_settings: ~azure.synapse.artifacts.models.SapTablePartitionSettings
@@ -51305,7 +51292,7 @@ class SapTableSource(TabularSource):  # pylint: disable=too-many-instance-attrib
         "batch_size": {"key": "batchSize", "type": "object"},
         "custom_rfc_read_table_function_module": {"key": "customRfcReadTableFunctionModule", "type": "object"},
         "sap_data_column_delimiter": {"key": "sapDataColumnDelimiter", "type": "object"},
-        "partition_option": {"key": "partitionOption", "type": "str"},
+        "partition_option": {"key": "partitionOption", "type": "object"},
         "partition_settings": {"key": "partitionSettings", "type": "SapTablePartitionSettings"},
     }
 
@@ -51325,7 +51312,7 @@ class SapTableSource(TabularSource):  # pylint: disable=too-many-instance-attrib
         batch_size: Optional[JSON] = None,
         custom_rfc_read_table_function_module: Optional[JSON] = None,
         sap_data_column_delimiter: Optional[JSON] = None,
-        partition_option: Optional[Union[str, "_models.SapTablePartitionOption"]] = None,
+        partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.SapTablePartitionSettings"] = None,
         **kwargs: Any
     ) -> None:
@@ -51371,9 +51358,9 @@ class SapTableSource(TabularSource):  # pylint: disable=too-many-instance-attrib
          resultType string).
         :paramtype sap_data_column_delimiter: JSON
         :keyword partition_option: The partition mechanism that will be used for SAP table read in
-         parallel. Known values are: "None", "PartitionOnInt", "PartitionOnCalendarYear",
-         "PartitionOnCalendarMonth", "PartitionOnCalendarDate", and "PartitionOnTime".
-        :paramtype partition_option: str or ~azure.synapse.artifacts.models.SapTablePartitionOption
+         parallel. Possible values include: "None", "PartitionOnInt", "PartitionOnCalendarYear",
+         "PartitionOnCalendarMonth", "PartitionOnCalendarDate", "PartitionOnTime".
+        :paramtype partition_option: JSON
         :keyword partition_settings: The settings that will be leveraged for SAP table source
          partitioning.
         :paramtype partition_settings: ~azure.synapse.artifacts.models.SapTablePartitionSettings
@@ -51620,6 +51607,10 @@ class ScriptActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
     :vartype linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
     :ivar policy: Activity policy.
     :vartype policy: ~azure.synapse.artifacts.models.ActivityPolicy
+    :ivar script_block_execution_timeout: ScriptBlock execution timeout. Type: string (or
+     Expression with resultType string), pattern:
+     ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype script_block_execution_timeout: JSON
     :ivar scripts: Array of script blocks. Type: array.
     :vartype scripts: list[~azure.synapse.artifacts.models.ScriptActivityScriptBlock]
     :ivar log_settings: Log settings of script activity.
@@ -51642,6 +51633,7 @@ class ScriptActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
         "policy": {"key": "policy", "type": "ActivityPolicy"},
+        "script_block_execution_timeout": {"key": "typeProperties.scriptBlockExecutionTimeout", "type": "object"},
         "scripts": {"key": "typeProperties.scripts", "type": "[ScriptActivityScriptBlock]"},
         "log_settings": {"key": "typeProperties.logSettings", "type": "ScriptActivityTypePropertiesLogSettings"},
     }
@@ -51658,6 +51650,7 @@ class ScriptActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
+        script_block_execution_timeout: Optional[JSON] = None,
         scripts: Optional[List["_models.ScriptActivityScriptBlock"]] = None,
         log_settings: Optional["_models.ScriptActivityTypePropertiesLogSettings"] = None,
         **kwargs: Any
@@ -51685,6 +51678,10 @@ class ScriptActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         :paramtype linked_service_name: ~azure.synapse.artifacts.models.LinkedServiceReference
         :keyword policy: Activity policy.
         :paramtype policy: ~azure.synapse.artifacts.models.ActivityPolicy
+        :keyword script_block_execution_timeout: ScriptBlock execution timeout. Type: string (or
+         Expression with resultType string), pattern:
+         ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype script_block_execution_timeout: JSON
         :keyword scripts: Array of script blocks. Type: array.
         :paramtype scripts: list[~azure.synapse.artifacts.models.ScriptActivityScriptBlock]
         :keyword log_settings: Log settings of script activity.
@@ -51704,6 +51701,7 @@ class ScriptActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
             **kwargs
         )
         self.type: str = "Script"
+        self.script_block_execution_timeout = script_block_execution_timeout
         self.scripts = scripts
         self.log_settings = log_settings
 
@@ -52565,8 +52563,9 @@ class SftpReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-
     :ivar wildcard_file_name: Sftp wildcardFileName. Type: string (or Expression with resultType
      string).
     :vartype wildcard_file_name: JSON
-    :ivar enable_partition_discovery: Indicates whether to enable partition discovery.
-    :vartype enable_partition_discovery: bool
+    :ivar enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+     boolean (or Expression with resultType boolean).
+    :vartype enable_partition_discovery: JSON
     :ivar partition_root_path: Specify the root path where partition discovery starts from. Type:
      string (or Expression with resultType string).
     :vartype partition_root_path: JSON
@@ -52599,7 +52598,7 @@ class SftpReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-
         "recursive": {"key": "recursive", "type": "object"},
         "wildcard_folder_path": {"key": "wildcardFolderPath", "type": "object"},
         "wildcard_file_name": {"key": "wildcardFileName", "type": "object"},
-        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "bool"},
+        "enable_partition_discovery": {"key": "enablePartitionDiscovery", "type": "object"},
         "partition_root_path": {"key": "partitionRootPath", "type": "object"},
         "file_list_path": {"key": "fileListPath", "type": "object"},
         "delete_files_after_completion": {"key": "deleteFilesAfterCompletion", "type": "object"},
@@ -52616,7 +52615,7 @@ class SftpReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-
         recursive: Optional[JSON] = None,
         wildcard_folder_path: Optional[JSON] = None,
         wildcard_file_name: Optional[JSON] = None,
-        enable_partition_discovery: Optional[bool] = None,
+        enable_partition_discovery: Optional[JSON] = None,
         partition_root_path: Optional[JSON] = None,
         file_list_path: Optional[JSON] = None,
         delete_files_after_completion: Optional[JSON] = None,
@@ -52641,8 +52640,9 @@ class SftpReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-
         :keyword wildcard_file_name: Sftp wildcardFileName. Type: string (or Expression with resultType
          string).
         :paramtype wildcard_file_name: JSON
-        :keyword enable_partition_discovery: Indicates whether to enable partition discovery.
-        :paramtype enable_partition_discovery: bool
+        :keyword enable_partition_discovery: Indicates whether to enable partition discovery. Type:
+         boolean (or Expression with resultType boolean).
+        :paramtype enable_partition_discovery: JSON
         :keyword partition_root_path: Specify the root path where partition discovery starts from.
          Type: string (or Expression with resultType string).
         :paramtype partition_root_path: JSON
@@ -54651,7 +54651,7 @@ class SparkConfigurationResource(SubResource):
     All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -54805,7 +54805,7 @@ class SparkJobDefinitionResource(SubResource):
     All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -56117,8 +56117,7 @@ class SqlMISink(CopySink):  # pylint: disable=too-many-instance-attributes
      string).
     :vartype pre_copy_script: JSON
     :ivar stored_procedure_parameters: SQL stored procedure parameters.
-    :vartype stored_procedure_parameters: dict[str,
-     ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    :vartype stored_procedure_parameters: JSON
     :ivar stored_procedure_table_type_parameter_name: The stored procedure parameter name of the
      table type. Type: string (or Expression with resultType string).
     :vartype stored_procedure_table_type_parameter_name: JSON
@@ -56142,7 +56141,7 @@ class SqlMISink(CopySink):  # pylint: disable=too-many-instance-attributes
         "sql_writer_stored_procedure_name": {"key": "sqlWriterStoredProcedureName", "type": "object"},
         "sql_writer_table_type": {"key": "sqlWriterTableType", "type": "object"},
         "pre_copy_script": {"key": "preCopyScript", "type": "object"},
-        "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "{StoredProcedureParameter}"},
+        "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "object"},
         "stored_procedure_table_type_parameter_name": {
             "key": "storedProcedureTableTypeParameterName",
             "type": "object",
@@ -56162,7 +56161,7 @@ class SqlMISink(CopySink):  # pylint: disable=too-many-instance-attributes
         sql_writer_stored_procedure_name: Optional[JSON] = None,
         sql_writer_table_type: Optional[JSON] = None,
         pre_copy_script: Optional[JSON] = None,
-        stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
+        stored_procedure_parameters: Optional[JSON] = None,
         stored_procedure_table_type_parameter_name: Optional[JSON] = None,
         table_option: Optional[JSON] = None,
         **kwargs: Any
@@ -56196,8 +56195,7 @@ class SqlMISink(CopySink):  # pylint: disable=too-many-instance-attributes
          string).
         :paramtype pre_copy_script: JSON
         :keyword stored_procedure_parameters: SQL stored procedure parameters.
-        :paramtype stored_procedure_parameters: dict[str,
-         ~azure.synapse.artifacts.models.StoredProcedureParameter]
+        :paramtype stored_procedure_parameters: JSON
         :keyword stored_procedure_table_type_parameter_name: The stored procedure parameter name of the
          table type. Type: string (or Expression with resultType string).
         :paramtype stored_procedure_table_type_parameter_name: JSON
@@ -56256,8 +56254,7 @@ class SqlMISource(TabularSource):  # pylint: disable=too-many-instance-attribute
     :vartype sql_reader_stored_procedure_name: JSON
     :ivar stored_procedure_parameters: Value and type setting for stored procedure parameters.
      Example: "{Parameter1: {value: "1", type: "int"}}".
-    :vartype stored_procedure_parameters: dict[str,
-     ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    :vartype stored_procedure_parameters: JSON
     :ivar isolation_level: Specifies the transaction locking behavior for the SQL source. Allowed
      values: ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default value
      is ReadCommitted. Type: string (or Expression with resultType string).
@@ -56285,7 +56282,7 @@ class SqlMISource(TabularSource):  # pylint: disable=too-many-instance-attribute
         "additional_columns": {"key": "additionalColumns", "type": "object"},
         "sql_reader_query": {"key": "sqlReaderQuery", "type": "object"},
         "sql_reader_stored_procedure_name": {"key": "sqlReaderStoredProcedureName", "type": "object"},
-        "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "{StoredProcedureParameter}"},
+        "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "object"},
         "isolation_level": {"key": "isolationLevel", "type": "object"},
         "produce_additional_types": {"key": "produceAdditionalTypes", "type": "object"},
         "partition_option": {"key": "partitionOption", "type": "object"},
@@ -56303,7 +56300,7 @@ class SqlMISource(TabularSource):  # pylint: disable=too-many-instance-attribute
         additional_columns: Optional[JSON] = None,
         sql_reader_query: Optional[JSON] = None,
         sql_reader_stored_procedure_name: Optional[JSON] = None,
-        stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
+        stored_procedure_parameters: Optional[JSON] = None,
         isolation_level: Optional[JSON] = None,
         produce_additional_types: Optional[JSON] = None,
         partition_option: Optional[JSON] = None,
@@ -56338,8 +56335,7 @@ class SqlMISource(TabularSource):  # pylint: disable=too-many-instance-attribute
         :paramtype sql_reader_stored_procedure_name: JSON
         :keyword stored_procedure_parameters: Value and type setting for stored procedure parameters.
          Example: "{Parameter1: {value: "1", type: "int"}}".
-        :paramtype stored_procedure_parameters: dict[str,
-         ~azure.synapse.artifacts.models.StoredProcedureParameter]
+        :paramtype stored_procedure_parameters: JSON
         :keyword isolation_level: Specifies the transaction locking behavior for the SQL source.
          Allowed values: ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default
          value is ReadCommitted. Type: string (or Expression with resultType string).
@@ -56436,7 +56432,7 @@ class SqlPool(TrackedResource):  # pylint: disable=too-many-instance-attributes
     All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -56671,8 +56667,7 @@ class SqlPoolStoredProcedureActivity(Activity):  # pylint: disable=too-many-inst
     :vartype stored_procedure_name: JSON
     :ivar stored_procedure_parameters: Value and type setting for stored procedure parameters.
      Example: "{Parameter1: {value: "1", type: "int"}}".
-    :vartype stored_procedure_parameters: dict[str,
-     ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    :vartype stored_procedure_parameters: JSON
     """
 
     _validation = {
@@ -56693,10 +56688,7 @@ class SqlPoolStoredProcedureActivity(Activity):  # pylint: disable=too-many-inst
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "sql_pool": {"key": "sqlPool", "type": "SqlPoolReference"},
         "stored_procedure_name": {"key": "typeProperties.storedProcedureName", "type": "object"},
-        "stored_procedure_parameters": {
-            "key": "typeProperties.storedProcedureParameters",
-            "type": "{StoredProcedureParameter}",
-        },
+        "stored_procedure_parameters": {"key": "typeProperties.storedProcedureParameters", "type": "object"},
     }
 
     def __init__(
@@ -56711,7 +56703,7 @@ class SqlPoolStoredProcedureActivity(Activity):  # pylint: disable=too-many-inst
         on_inactive_mark_as: Optional[Union[str, "_models.ActivityOnInactiveMarkAs"]] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
-        stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
+        stored_procedure_parameters: Optional[JSON] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -56740,8 +56732,7 @@ class SqlPoolStoredProcedureActivity(Activity):  # pylint: disable=too-many-inst
         :paramtype stored_procedure_name: JSON
         :keyword stored_procedure_parameters: Value and type setting for stored procedure parameters.
          Example: "{Parameter1: {value: "1", type: "int"}}".
-        :paramtype stored_procedure_parameters: dict[str,
-         ~azure.synapse.artifacts.models.StoredProcedureParameter]
+        :paramtype stored_procedure_parameters: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -56942,7 +56933,7 @@ class SqlScriptResource(_serialization.Model):
     All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource. Required.
     :vartype name: str
@@ -57171,8 +57162,7 @@ class SqlServerSink(CopySink):  # pylint: disable=too-many-instance-attributes
      string).
     :vartype pre_copy_script: JSON
     :ivar stored_procedure_parameters: SQL stored procedure parameters.
-    :vartype stored_procedure_parameters: dict[str,
-     ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    :vartype stored_procedure_parameters: JSON
     :ivar stored_procedure_table_type_parameter_name: The stored procedure parameter name of the
      table type. Type: string (or Expression with resultType string).
     :vartype stored_procedure_table_type_parameter_name: JSON
@@ -57196,7 +57186,7 @@ class SqlServerSink(CopySink):  # pylint: disable=too-many-instance-attributes
         "sql_writer_stored_procedure_name": {"key": "sqlWriterStoredProcedureName", "type": "object"},
         "sql_writer_table_type": {"key": "sqlWriterTableType", "type": "object"},
         "pre_copy_script": {"key": "preCopyScript", "type": "object"},
-        "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "{StoredProcedureParameter}"},
+        "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "object"},
         "stored_procedure_table_type_parameter_name": {
             "key": "storedProcedureTableTypeParameterName",
             "type": "object",
@@ -57216,7 +57206,7 @@ class SqlServerSink(CopySink):  # pylint: disable=too-many-instance-attributes
         sql_writer_stored_procedure_name: Optional[JSON] = None,
         sql_writer_table_type: Optional[JSON] = None,
         pre_copy_script: Optional[JSON] = None,
-        stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
+        stored_procedure_parameters: Optional[JSON] = None,
         stored_procedure_table_type_parameter_name: Optional[JSON] = None,
         table_option: Optional[JSON] = None,
         **kwargs: Any
@@ -57250,8 +57240,7 @@ class SqlServerSink(CopySink):  # pylint: disable=too-many-instance-attributes
          string).
         :paramtype pre_copy_script: JSON
         :keyword stored_procedure_parameters: SQL stored procedure parameters.
-        :paramtype stored_procedure_parameters: dict[str,
-         ~azure.synapse.artifacts.models.StoredProcedureParameter]
+        :paramtype stored_procedure_parameters: JSON
         :keyword stored_procedure_table_type_parameter_name: The stored procedure parameter name of the
          table type. Type: string (or Expression with resultType string).
         :paramtype stored_procedure_table_type_parameter_name: JSON
@@ -57310,8 +57299,7 @@ class SqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attri
     :vartype sql_reader_stored_procedure_name: JSON
     :ivar stored_procedure_parameters: Value and type setting for stored procedure parameters.
      Example: "{Parameter1: {value: "1", type: "int"}}".
-    :vartype stored_procedure_parameters: dict[str,
-     ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    :vartype stored_procedure_parameters: JSON
     :ivar isolation_level: Specifies the transaction locking behavior for the SQL source. Allowed
      values: ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default value
      is ReadCommitted. Type: string (or Expression with resultType string).
@@ -57339,7 +57327,7 @@ class SqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attri
         "additional_columns": {"key": "additionalColumns", "type": "object"},
         "sql_reader_query": {"key": "sqlReaderQuery", "type": "object"},
         "sql_reader_stored_procedure_name": {"key": "sqlReaderStoredProcedureName", "type": "object"},
-        "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "{StoredProcedureParameter}"},
+        "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "object"},
         "isolation_level": {"key": "isolationLevel", "type": "object"},
         "produce_additional_types": {"key": "produceAdditionalTypes", "type": "object"},
         "partition_option": {"key": "partitionOption", "type": "object"},
@@ -57357,7 +57345,7 @@ class SqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attri
         additional_columns: Optional[JSON] = None,
         sql_reader_query: Optional[JSON] = None,
         sql_reader_stored_procedure_name: Optional[JSON] = None,
-        stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
+        stored_procedure_parameters: Optional[JSON] = None,
         isolation_level: Optional[JSON] = None,
         produce_additional_types: Optional[JSON] = None,
         partition_option: Optional[JSON] = None,
@@ -57392,8 +57380,7 @@ class SqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attri
         :paramtype sql_reader_stored_procedure_name: JSON
         :keyword stored_procedure_parameters: Value and type setting for stored procedure parameters.
          Example: "{Parameter1: {value: "1", type: "int"}}".
-        :paramtype stored_procedure_parameters: dict[str,
-         ~azure.synapse.artifacts.models.StoredProcedureParameter]
+        :paramtype stored_procedure_parameters: JSON
         :keyword isolation_level: Specifies the transaction locking behavior for the SQL source.
          Allowed values: ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default
          value is ReadCommitted. Type: string (or Expression with resultType string).
@@ -57703,8 +57690,7 @@ class SqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
      string).
     :vartype pre_copy_script: JSON
     :ivar stored_procedure_parameters: SQL stored procedure parameters.
-    :vartype stored_procedure_parameters: dict[str,
-     ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    :vartype stored_procedure_parameters: JSON
     :ivar stored_procedure_table_type_parameter_name: The stored procedure parameter name of the
      table type. Type: string (or Expression with resultType string).
     :vartype stored_procedure_table_type_parameter_name: JSON
@@ -57728,7 +57714,7 @@ class SqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
         "sql_writer_stored_procedure_name": {"key": "sqlWriterStoredProcedureName", "type": "object"},
         "sql_writer_table_type": {"key": "sqlWriterTableType", "type": "object"},
         "pre_copy_script": {"key": "preCopyScript", "type": "object"},
-        "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "{StoredProcedureParameter}"},
+        "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "object"},
         "stored_procedure_table_type_parameter_name": {
             "key": "storedProcedureTableTypeParameterName",
             "type": "object",
@@ -57748,7 +57734,7 @@ class SqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
         sql_writer_stored_procedure_name: Optional[JSON] = None,
         sql_writer_table_type: Optional[JSON] = None,
         pre_copy_script: Optional[JSON] = None,
-        stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
+        stored_procedure_parameters: Optional[JSON] = None,
         stored_procedure_table_type_parameter_name: Optional[JSON] = None,
         table_option: Optional[JSON] = None,
         **kwargs: Any
@@ -57782,8 +57768,7 @@ class SqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
          string).
         :paramtype pre_copy_script: JSON
         :keyword stored_procedure_parameters: SQL stored procedure parameters.
-        :paramtype stored_procedure_parameters: dict[str,
-         ~azure.synapse.artifacts.models.StoredProcedureParameter]
+        :paramtype stored_procedure_parameters: JSON
         :keyword stored_procedure_table_type_parameter_name: The stored procedure parameter name of the
          table type. Type: string (or Expression with resultType string).
         :paramtype stored_procedure_table_type_parameter_name: JSON
@@ -57842,8 +57827,7 @@ class SqlSource(TabularSource):  # pylint: disable=too-many-instance-attributes
     :vartype sql_reader_stored_procedure_name: JSON
     :ivar stored_procedure_parameters: Value and type setting for stored procedure parameters.
      Example: "{Parameter1: {value: "1", type: "int"}}".
-    :vartype stored_procedure_parameters: dict[str,
-     ~azure.synapse.artifacts.models.StoredProcedureParameter]
+    :vartype stored_procedure_parameters: JSON
     :ivar isolation_level: Specifies the transaction locking behavior for the SQL source. Allowed
      values: ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default value
      is ReadCommitted. Type: string (or Expression with resultType string).
@@ -57869,7 +57853,7 @@ class SqlSource(TabularSource):  # pylint: disable=too-many-instance-attributes
         "additional_columns": {"key": "additionalColumns", "type": "object"},
         "sql_reader_query": {"key": "sqlReaderQuery", "type": "object"},
         "sql_reader_stored_procedure_name": {"key": "sqlReaderStoredProcedureName", "type": "object"},
-        "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "{StoredProcedureParameter}"},
+        "stored_procedure_parameters": {"key": "storedProcedureParameters", "type": "object"},
         "isolation_level": {"key": "isolationLevel", "type": "object"},
         "partition_option": {"key": "partitionOption", "type": "object"},
         "partition_settings": {"key": "partitionSettings", "type": "SqlPartitionSettings"},
@@ -57886,7 +57870,7 @@ class SqlSource(TabularSource):  # pylint: disable=too-many-instance-attributes
         additional_columns: Optional[JSON] = None,
         sql_reader_query: Optional[JSON] = None,
         sql_reader_stored_procedure_name: Optional[JSON] = None,
-        stored_procedure_parameters: Optional[Dict[str, "_models.StoredProcedureParameter"]] = None,
+        stored_procedure_parameters: Optional[JSON] = None,
         isolation_level: Optional[JSON] = None,
         partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.SqlPartitionSettings"] = None,
@@ -57920,8 +57904,7 @@ class SqlSource(TabularSource):  # pylint: disable=too-many-instance-attributes
         :paramtype sql_reader_stored_procedure_name: JSON
         :keyword stored_procedure_parameters: Value and type setting for stored procedure parameters.
          Example: "{Parameter1: {value: "1", type: "int"}}".
-        :paramtype stored_procedure_parameters: dict[str,
-         ~azure.synapse.artifacts.models.StoredProcedureParameter]
+        :paramtype stored_procedure_parameters: JSON
         :keyword isolation_level: Specifies the transaction locking behavior for the SQL source.
          Allowed values: ReadCommitted/ReadUncommitted/RepeatableRead/Serializable/Snapshot. The default
          value is ReadCommitted. Type: string (or Expression with resultType string).
@@ -59922,9 +59905,9 @@ class TabularTranslator(CopyTranslator):
      strings in json format. Type: boolean (or Expression with resultType boolean).
     :vartype map_complex_values_to_string: JSON
     :ivar mappings: Column mappings with logical types. Tabular->tabular example:
-     [{"source":{"name":"CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"name":"CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].
+     [{"source":{"name":"CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"name":"CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].  # pylint: disable=line-too-long
      Hierarchical->tabular example:
-     [{"source":{"path":"$.CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"path":"$.CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].
+     [{"source":{"path":"$.CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"path":"$.CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].  # pylint: disable=line-too-long
      Type: object (or Expression with resultType object).
     :vartype mappings: JSON
     :ivar type_conversion: Whether to enable the advanced type conversion feature in the Copy
@@ -59983,9 +59966,9 @@ class TabularTranslator(CopyTranslator):
          simple strings in json format. Type: boolean (or Expression with resultType boolean).
         :paramtype map_complex_values_to_string: JSON
         :keyword mappings: Column mappings with logical types. Tabular->tabular example:
-         [{"source":{"name":"CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"name":"CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].
+         [{"source":{"name":"CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"name":"CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].  # pylint: disable=line-too-long
          Hierarchical->tabular example:
-         [{"source":{"path":"$.CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"path":"$.CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].
+         [{"source":{"path":"$.CustomerName","type":"String"},"sink":{"name":"ClientName","type":"String"}},{"source":{"path":"$.CustomerAddress","type":"String"},"sink":{"name":"ClientAddress","type":"String"}}].  # pylint: disable=line-too-long
          Type: object (or Expression with resultType object).
         :paramtype mappings: JSON
         :keyword type_conversion: Whether to enable the advanced type conversion feature in the Copy
@@ -60916,7 +60899,7 @@ class TriggerResource(SubResource):
     All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -62400,8 +62383,9 @@ class WebActivityAuthentication(_serialization.Model):
     :vartype type: str
     :ivar pfx: Base64-encoded contents of a PFX file.
     :vartype pfx: ~azure.synapse.artifacts.models.SecretBase
-    :ivar username: Web activity authentication user name for basic authentication.
-    :vartype username: str
+    :ivar username: Web activity authentication user name for basic authentication. Type: string
+     (or Expression with resultType string).
+    :vartype username: JSON
     :ivar password: Password for the PFX file or basic authentication.
     :vartype password: ~azure.synapse.artifacts.models.SecretBase
     :ivar resource: Resource for which Azure Auth token will be requested when using MSI
@@ -62421,7 +62405,7 @@ class WebActivityAuthentication(_serialization.Model):
     _attribute_map = {
         "type": {"key": "type", "type": "str"},
         "pfx": {"key": "pfx", "type": "SecretBase"},
-        "username": {"key": "username", "type": "str"},
+        "username": {"key": "username", "type": "object"},
         "password": {"key": "password", "type": "SecretBase"},
         "resource": {"key": "resource", "type": "object"},
         "user_tenant": {"key": "userTenant", "type": "object"},
@@ -62433,7 +62417,7 @@ class WebActivityAuthentication(_serialization.Model):
         *,
         type: str,
         pfx: Optional["_models.SecretBase"] = None,
-        username: Optional[str] = None,
+        username: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         resource: Optional[JSON] = None,
         user_tenant: Optional[JSON] = None,
@@ -62445,8 +62429,9 @@ class WebActivityAuthentication(_serialization.Model):
         :paramtype type: str
         :keyword pfx: Base64-encoded contents of a PFX file.
         :paramtype pfx: ~azure.synapse.artifacts.models.SecretBase
-        :keyword username: Web activity authentication user name for basic authentication.
-        :paramtype username: str
+        :keyword username: Web activity authentication user name for basic authentication. Type: string
+         (or Expression with resultType string).
+        :paramtype username: JSON
         :keyword password: Password for the PFX file or basic authentication.
         :paramtype password: ~azure.synapse.artifacts.models.SecretBase
         :keyword resource: Resource for which Azure Auth token will be requested when using MSI
@@ -63074,7 +63059,7 @@ class Workspace(TrackedResource):  # pylint: disable=too-many-instance-attribute
     All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
