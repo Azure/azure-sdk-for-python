@@ -617,7 +617,7 @@ batch_operations = [
 We also have some samples showing these transactional batch operations in action with both the [sync][sample_document_mgmt]
 and [async][sample_document_mgmt_async] clients.
 
-If there is a failure for an operation within the batch, the SDK will return a `CosmosBatchOperationError` letting you know which operation failed,
+If there is a failure for an operation within the batch, the SDK will raise a `CosmosBatchOperationError` letting you know which operation failed,
 as well as containing the list of failed responses for the failed request.
 
 For more information on Transactional Batch, see [Azure Cosmos DB Transactional Batch][cosmos_transactional_batch].
