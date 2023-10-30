@@ -88,7 +88,9 @@ class Output(_InputOutputBase):
         :paramtype version: str
         """
 
-    def __init__(self, *, type=AssetTypes.URI_FOLDER, path=None, path_on_compute=None, mode=None, description=None, **kwargs) -> None:
+    def __init__(
+        self, *, type=AssetTypes.URI_FOLDER, path=None, path_on_compute=None, mode=None, description=None, **kwargs
+    ) -> None:
         super(Output, self).__init__(type=type)
         # As an annotation, it is not allowed to initialize the _port_name.
         self._port_name = None

@@ -58,6 +58,7 @@ def generate_path_property(azureml_type):
         is_strict=True,
     )
 
+
 def generate_path_on_compute_property(azureml_type):
     return UnionField(
         [
@@ -66,6 +67,7 @@ def generate_path_on_compute_property(azureml_type):
         ],
         is_strict=True,
     )
+
 
 def generate_datastore_property():
     metadata = {

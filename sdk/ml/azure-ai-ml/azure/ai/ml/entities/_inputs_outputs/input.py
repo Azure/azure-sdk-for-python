@@ -72,7 +72,19 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     """
 
     _EMPTY = Parameter.empty
-    _IO_KEYS = ["path", "type", "mode", "path_on_compute","description", "default", "min", "max", "enum", "optional", "datastore"]
+    _IO_KEYS = [
+        "path",
+        "type",
+        "mode",
+        "path_on_compute",
+        "description",
+        "default",
+        "min",
+        "max",
+        "enum",
+        "optional",
+        "datastore",
+    ]
 
     @overload
     def __init__(
