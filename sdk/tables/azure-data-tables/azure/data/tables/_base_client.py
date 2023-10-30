@@ -75,8 +75,7 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
         credential: Optional[Union[AzureSasCredential, AzureNamedKeyCredential, TokenCredential]] = None,
         **kwargs: Any,
     ) -> None:
-        """Create TablesBaseClient from a Credential.
-
+        """
         :param str endpoint: A URL to an Azure Tables account.
         :keyword credential:
             The credentials with which to authenticate. This is optional if the
@@ -131,10 +130,6 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
                 LocationMode.SECONDARY: secondary_hostname,
             }
         self._hosts = _hosts
-
-        self._policies = self._configure_policies(hosts=self._hosts, **kwargs)
-        if self._cosmos_endpoint:
-            self._policies.insert(0, CosmosPatchTransformPolicy())
 
         self._policies = self._configure_policies(hosts=self._hosts, **kwargs)
         if self._cosmos_endpoint:

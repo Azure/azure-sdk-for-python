@@ -312,7 +312,7 @@ class TablePropertiesPaged(PageIterator):
 
     def _extract_data_cb(self, get_next_return):
         self._location_mode, self._response, self._headers = get_next_return
-        props_list = [TableItem(t.table_name) for t in self._response.value]  # pylint: disable=protected-access
+        props_list = [TableItem(t.table_name) for t in self._response.value]
         return self._headers[NEXT_TABLE_NAME] or None, props_list
 
 
@@ -387,16 +387,10 @@ class TableSasPermissions:
 
     def __init__(self, **kwargs: Any) -> None:
         """
-        :keyword str _str: Specify permissions in the string with the first letter of the word.
-            Default value is an empty string.
         :keyword bool read: Get entities and query entities.
-            If not set, will use the permission in _str or defaults to False if not found.
         :keyword bool add: Add entities. Add and Update permissions are required for upsert operations.
-            If not set, will use the permission in _str or defaults to False if not found.
         :keyword bool update: Update entities. Add and Update permissions are required for upsert operations.
-            If not set, will use the permission in _str or defaults to False if not found.
         :keyword bool delete: Delete entities.
-            If not set, will use the permission in _str or defaults to False if not found.
         """
         self._str = kwargs.pop("_str", "") or ""
         self.read = kwargs.pop("read", False) or ("r" in self._str)

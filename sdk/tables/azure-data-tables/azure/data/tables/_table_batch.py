@@ -234,9 +234,8 @@ class TableBatchOperations(object):
         self._verify_partition_key(entity)
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
-        if match_condition and not etag:
-            if isinstance(entity, TableEntity):
-                etag = entity.metadata.get("etag")
+        if match_condition and not etag and isinstance(entity, TableEntity):
+            etag = entity.metadata.get("etag")
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
@@ -460,9 +459,8 @@ class TableBatchOperations(object):
         self._verify_partition_key(entity)
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
-        if match_condition and not etag:
-            if isinstance(entity, TableEntity):
-                etag = entity.metadata.get("etag")
+        if match_condition and not etag and isinstance(entity, TableEntity):
+            etag = entity.metadata.get("etag")
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )

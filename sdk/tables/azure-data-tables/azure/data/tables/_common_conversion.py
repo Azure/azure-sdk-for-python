@@ -7,6 +7,8 @@ import base64
 import hashlib
 import hmac
 from datetime import timezone
+from urllib.parse import ParseResult
+from typing import Optional, Tuple
 
 
 def _to_str(value):
@@ -67,7 +69,7 @@ def _transform_patch_to_cosmos_post(request):
     request.headers["X-HTTP-Method"] = "MERGE"
 
 
-def _get_account(parsed_url):
+def _get_account(parsed_url: ParseResult) -> Tuple[str, Optional[str]]:
     if ".core." in parsed_url.netloc or ".cosmos." in parsed_url.netloc:
         account = parsed_url.netloc.split(".table.core.")
         if "cosmos" in parsed_url.netloc:

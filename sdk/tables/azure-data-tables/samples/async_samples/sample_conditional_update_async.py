@@ -30,11 +30,7 @@ from azure.data.tables.aio import TableClient
 from azure.data.tables._models import UpdateMode
 from azure.core import MatchConditions
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError
-
-if sys.version_info >= (3, 8):
-    from typing import TypedDict  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import TypedDict
+from typing_extensions import TypedDict
 
 
 class EntityType(TypedDict, total=False):

@@ -49,10 +49,14 @@ class TableClient(AsyncTablesBaseClient):
     :ivar str scheme: The scheme component in the full URL to the Tables account.
     :ivar str url: The full endpoint URL to this entity, including SAS token if used.
     :ivar str api_version: The version of the Storage API used for requests.
-    :ivar Optional[Union[AzureSasCredential, AzureNamedKeyCredential, AsyncTokenCredential]]:
+    :ivar credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
         AzureSasCredential (azure-core), or a AsyncTokenCredential implementation from azure-identity.
+    :vartype credential:
+        ~azure.core.credentials.AzureNamedKeyCredential or
+        ~azure.core.credentials.AzureSasCredential or
+        ~azure.core.credentials_async.AsyncTokenCredential or None
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
@@ -316,9 +320,8 @@ class TableClient(AsyncTablesBaseClient):
 
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
-        if match_condition and not etag:
-            if isinstance(entity, TableEntity):
-                etag = entity.metadata.get("etag")
+        if match_condition and not etag and isinstance(entity, TableEntity):
+            etag = entity.metadata.get("etag")
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
@@ -406,9 +409,8 @@ class TableClient(AsyncTablesBaseClient):
         """
         match_condition = kwargs.pop("match_condition", None)
         etag = kwargs.pop("etag", None)
-        if match_condition and not etag:
-            if isinstance(entity, TableEntity):
-                etag = entity.metadata.get("etag")
+        if match_condition and not etag and isinstance(entity, TableEntity):
+            etag = entity.metadata.get("etag")
         match_condition = _get_match_condition(
             etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
         )
