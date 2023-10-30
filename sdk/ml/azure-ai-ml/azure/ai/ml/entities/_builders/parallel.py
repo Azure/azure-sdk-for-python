@@ -117,7 +117,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):
         input_data: Optional[str] = None,
         task: Optional[Union[RunFunction, Dict[str, Union[ParallelTask, str]]]] = None,
         partition_keys: Optional[List] = None,
-        mini_batch_size: Optional[int] = None,
+        mini_batch_size: Optional[Union[str, int]] = None,
         resources: Optional[JobResourceConfiguration] = None,
         environment_variables: Optional[Dict] = None,
         **kwargs: Any,
