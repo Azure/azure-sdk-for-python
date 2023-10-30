@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 @pytest.mark.e2etest
+@pytest.mark.usefixtures("recorded_test")
 class TestQADataGeneratorE2E:
     def validate_token_usage(self, token_usage):
         assert isinstance(token_usage, dict)
