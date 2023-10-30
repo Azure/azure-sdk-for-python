@@ -4,20 +4,20 @@
 
 # pylint: disable=protected-access
 from os import PathLike
-from typing import IO, AnyStr, Callable, Dict, List, Optional, Union
+from typing import IO, Any, AnyStr, Callable, Dict, List, Optional, Union, cast
 
 from marshmallow import ValidationError
 
 from azure.ai.ml import MLClient
 
 from ..exceptions import ValidationException
-from . import Component, Job, Resource
+from . import Component, Job
 from ._load_functions import _load_common_raising_marshmallow_error, _try_load_yaml_dict
 from ._validation import PathAwareSchemaValidatableMixin, ValidationResult, ValidationResultBuilder
 
 
 def validate_common(
-    cls: Resource,
+    cls: Any,
     path: Union[str, PathLike, IO[AnyStr]],
     validate_func: Callable,
     params_override: Optional[List[Dict]] = None,
@@ -33,7 +33,8 @@ def validate_common(
         )
 
         if validate_func is not None:
-            return validate_func(entity)
+            res = cast(ValidationResult, validate_func(entity))
+            return res
         if isinstance(entity, PathAwareSchemaValidatableMixin):
             return entity._validate()
         return ValidationResultBuilder.success()

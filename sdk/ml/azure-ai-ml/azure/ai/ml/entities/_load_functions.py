@@ -150,9 +150,9 @@ def _try_load_yaml_dict(source: Union[str, PathLike, IO[AnyStr]]) -> dict:
 
 
 def _load_common_raising_marshmallow_error(
-    cls: Type[Resource],
+    cls: Resource,
     yaml_dict: Dict,
-    relative_origin: Union[PathLike, str, None],
+    relative_origin: Optional[Union[PathLike, str, IO[AnyStr]]],
     params_override: Optional[list] = None,
     **kwargs: Any,
 ) -> Resource:
