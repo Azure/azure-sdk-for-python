@@ -119,17 +119,18 @@ def replace_dev_reqs(file, pkg_root):
         for line in f:
             args = [part.strip() for part in line.split() if part and not part.strip() == "-e"]
             amended_line = " ".join(args)
+            extras = ""
 
             if amended_line.endswith("]"):
-                trim_amount = amended_line[::-1].index("[") + 1
-                amended_line = amended_line[0 : (len(amended_line) - trim_amount)]
+                amended_line, extras = amended_line.rsplit("[", maxsplit=1)
+                if extras:
+                    extras = f"[{extras}"
 
-            adjusted_req_lines.append(amended_line)
+            adjusted_req_lines.append(f"{build_whl_for_req(amended_line, pkg_root)}{extras}")
 
     req_file_name = os.path.basename(file)
     logging.info("Old {0}:{1}".format(req_file_name, adjusted_req_lines))
 
-    adjusted_req_lines = list(map(lambda x: build_whl_for_req(x, pkg_root), adjusted_req_lines))
     logging.info("New {0}:{1}".format(req_file_name, adjusted_req_lines))
 
     with open(file, "w") as f:
