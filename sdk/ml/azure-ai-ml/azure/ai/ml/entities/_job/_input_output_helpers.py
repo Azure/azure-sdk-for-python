@@ -280,12 +280,13 @@ def from_rest_inputs_to_dataset_literal(
         if input_value.job_input_type in type_transfer_dict:
             if input_value.uri:
                 path = input_value.uri
-
+                if getattr(input_value, 'pathOnCompute', None) is not None:
+                    sourcePathOnCompute = input_value.pathOnCompute
                 input_data = Input(
                     type=type_transfer_dict[input_value.job_input_type],
                     path=path,
                     mode=INPUT_MOUNT_MAPPING_FROM_REST[input_value.mode] if input_value.mode else None,
-                    path_on_compute=input_value.pathOnCompute if input_value.pathOnCompute else None
+                    path_on_compute=sourcePathOnCompute
                 )
         elif input_value.job_input_type in (JobInputType.LITERAL, JobInputType.LITERAL):
             # otherwise, the input is a literal, so just unpack the InputData value field
