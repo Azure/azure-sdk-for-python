@@ -233,6 +233,17 @@ async def execute_item_batch(database):
     with open("file_name.txt", "r") as data_file:
         container.execute_item_batch([("upsert", (t,)) for t in data_file.readlines()])
 
+    # For error handling, you should use try/ except with CosmosBatchOperationError and use the information in the
+    # error returned for your application debugging, making it easy to pinpoint the failing operation
+    batch_operations = [create_item_operation, create_item_operation]
+    try:
+        await container.execute_item_batch(batch_operations, partition_key="Account1")
+    except exceptions.CosmosBatchOperationError as e:
+        error_operation_index = e.error_index
+        error_operation_response = e.operation_responses[error_operation_index]
+        error_operation = batch_operations[error_operation_index]
+        print("\nError operation: {}, error operation response: {}\n".format(error_operation, error_operation_response))
+
 
 async def delete_item(container, doc_id):
     print('\n1.11 Deleting Item by Id\n')

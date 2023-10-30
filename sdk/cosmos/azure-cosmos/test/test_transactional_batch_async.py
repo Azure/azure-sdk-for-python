@@ -120,10 +120,10 @@ class TestTransactionalBatchAsync:
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.CONFLICT
             assert e.error_index == 1
-            operation_results = e.response
+            operation_results = e.operation_responses
             assert len(operation_results) == 2
-            assert operation_results[0].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
-            assert operation_results[1].operation_response.get("statusCode") == StatusCodes.CONFLICT
+            assert operation_results[0].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
+            assert operation_results[1].get("statusCode") == StatusCodes.CONFLICT
 
         # create an item without the right partition key.
         batch = [("create", ({"id": str(uuid.uuid4()), "company": "Microsoft"},)),
@@ -135,10 +135,10 @@ class TestTransactionalBatchAsync:
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.BAD_REQUEST
             assert e.error_index == 1
-            operation_results = e.response
+            operation_results = e.operation_responses
             assert len(operation_results) == 2
-            assert operation_results[0].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
-            assert operation_results[1].operation_response.get("statusCode") == StatusCodes.BAD_REQUEST
+            assert operation_results[0].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
+            assert operation_results[1].get("statusCode") == StatusCodes.BAD_REQUEST
 
         # create an item without a partition key
         batch = [("create", ({"id": str(uuid.uuid4()), "company": "Microsoft"},)),
@@ -150,10 +150,10 @@ class TestTransactionalBatchAsync:
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.BAD_REQUEST
             assert e.error_index == 1
-            operation_results = e.response
+            operation_results = e.operation_responses
             assert len(operation_results) == 2
-            assert operation_results[0].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
-            assert operation_results[1].operation_response.get("statusCode") == StatusCodes.BAD_REQUEST
+            assert operation_results[0].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
+            assert operation_results[1].get("statusCode") == StatusCodes.BAD_REQUEST
 
     @pytest.mark.asyncio
     async def test_batch_read_async(self):
@@ -181,10 +181,10 @@ class TestTransactionalBatchAsync:
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.NOT_FOUND
             assert e.error_index == 0
-            operation_results = e.response
+            operation_results = e.operation_responses
             assert len(operation_results) == 2
-            assert operation_results[0].operation_response.get("statusCode") == StatusCodes.NOT_FOUND
-            assert operation_results[1].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
+            assert operation_results[0].get("statusCode") == StatusCodes.NOT_FOUND
+            assert operation_results[1].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
     @pytest.mark.asyncio
     async def test_batch_replace_async(self):
@@ -196,7 +196,7 @@ class TestTransactionalBatchAsync:
 
         batch_response = await container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert len(batch_response) == 2
-        assert batch_response[1].operation_response.get("resourceBody").get("message") == "item was replaced"
+        assert batch_response[1].get("resourceBody").get("message") == "item was replaced"
 
         # replace non-existent
         batch = [("replace", ("no-item", {"id": "no-item", "company": "Microsoft", "message": "item was replaced"}))]
@@ -207,9 +207,9 @@ class TestTransactionalBatchAsync:
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.NOT_FOUND
             assert e.error_index == 0
-            operation_results = e.response
+            operation_results = e.operation_responses
             assert len(operation_results) == 1
-            assert operation_results[0].operation_response.get("statusCode") == StatusCodes.NOT_FOUND
+            assert operation_results[0].get("statusCode") == StatusCodes.NOT_FOUND
 
         # replace with wrong etag
         item_id = str(uuid.uuid4())
@@ -225,11 +225,11 @@ class TestTransactionalBatchAsync:
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.CONFLICT
             assert e.error_index == 1
-            operation_results = e.response
+            operation_results = e.operation_responses
             assert len(operation_results) == 3
-            assert operation_results[0].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
-            assert operation_results[1].operation_response.get("statusCode") == StatusCodes.PRECONDITION_FAILED
-            assert operation_results[2].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
+            assert operation_results[0].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
+            assert operation_results[1].get("statusCode") == StatusCodes.PRECONDITION_FAILED
+            assert operation_results[2].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
     @pytest.mark.asyncio
     async def test_batch_upsert_async(self):
@@ -243,7 +243,7 @@ class TestTransactionalBatchAsync:
 
         batch_response = await container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert len(batch_response) == 3
-        assert batch_response[1].operation_response.get("resourceBody").get("message") == "item was upsert"
+        assert batch_response[1].get("resourceBody").get("message") == "item was upsert"
 
     @pytest.mark.asyncio
     async def test_batch_patch_async(self):
@@ -268,13 +268,13 @@ class TestTransactionalBatchAsync:
 
         batch_response = await container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert len(batch_response) == 2
-        assert batch_response[1].operation_response.get("resourceBody").get("favorite_color") == "red"
-        assert batch_response[1].operation_response.get("resourceBody").get("remove_path") is None
-        assert batch_response[1].operation_response.get("resourceBody").get("city") == "Redmond"
-        assert batch_response[1].operation_response.get("resourceBody").get("set_path") == 0
-        assert batch_response[1].operation_response.get("resourceBody").get("port") == 9005
-        assert batch_response[1].operation_response.get("resourceBody").get("move_path") is None
-        assert batch_response[1].operation_response.get("resourceBody").get("moved_path") == "yes"
+        assert batch_response[1].get("resourceBody").get("favorite_color") == "red"
+        assert batch_response[1].get("resourceBody").get("remove_path") is None
+        assert batch_response[1].get("resourceBody").get("city") == "Redmond"
+        assert batch_response[1].get("resourceBody").get("set_path") == 0
+        assert batch_response[1].get("resourceBody").get("port") == 9005
+        assert batch_response[1].get("resourceBody").get("move_path") is None
+        assert batch_response[1].get("resourceBody").get("moved_path") == "yes"
 
         # conditional patching incorrect filter
         item_id = str(uuid.uuid4())
@@ -294,10 +294,10 @@ class TestTransactionalBatchAsync:
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.PRECONDITION_FAILED
             assert e.error_index == 1
-            operation_results = e.response
+            operation_results = e.operation_responses
             assert len(operation_results) == 2
-            assert operation_results[0].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
-            assert operation_results[1].operation_response.get("statusCode") == StatusCodes.PRECONDITION_FAILED
+            assert operation_results[0].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
+            assert operation_results[1].get("statusCode") == StatusCodes.PRECONDITION_FAILED
 
         # with correct filter
         batch = [("upsert", ({"id": item_id,
@@ -345,10 +345,10 @@ class TestTransactionalBatchAsync:
         except exceptions.CosmosBatchOperationError as e:
             assert e.status_code == StatusCodes.NOT_FOUND
             assert e.error_index == 0
-            operation_results = e.response
+            operation_results = e.operation_responses
             assert len(operation_results) == 2
-            assert operation_results[0].operation_response.get("statusCode") == StatusCodes.NOT_FOUND
-            assert operation_results[1].operation_response.get("statusCode") == StatusCodes.FAILED_DEPENDENCY
+            assert operation_results[0].get("statusCode") == StatusCodes.NOT_FOUND
+            assert operation_results[1].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
 
     @pytest.mark.asyncio
     async def test_batch_lsn_async(self):

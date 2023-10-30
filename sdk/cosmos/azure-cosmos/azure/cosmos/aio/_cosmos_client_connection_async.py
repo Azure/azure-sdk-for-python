@@ -1532,7 +1532,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :return:
             The result of the batch operation.
         :rtype:
-            dict
+            list
 
         """
         if options is None:
@@ -1555,26 +1555,22 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         error_status = 0
         error_index = 0
         for i in range(len(result)):
+            final_responses.append(result[i])
             status_code = result[i].get("statusCode")
             if status_code >= 400:
                 is_error = True
                 if status_code != 424:  # Find the operation that had the error
                     error_status = status_code
                     error_index = i
-                final_responses.append(models.BatchOperationError(operation=batch_operations[i],
-                                                                  operation_response=result[i],
-                                                                  error=Constants.ERROR_TRANSLATIONS.get(status_code)))
-            else:
-                final_responses.append(models.BatchOperationResponse(operation=batch_operations[i],
-                                                                     operation_response=result[i]))
         if is_error:
             raise exceptions.CosmosBatchOperationError(status_code=error_status,
                                                        error_index=error_index,
                                                        headers=self.last_response_headers,
                                                        message="There was an error in the transactional batch on" +
-                                                               " index {}.".format(str(error_index)),
-                                                       response=final_responses)
-
+                                                               " index {}. Error message: {}".format(
+                                                                   str(error_index),
+                                                                   Constants.ERROR_TRANSLATIONS.get(error_status)),
+                                                       operation_responses=final_responses)
         return final_responses
 
     async def _Batch(self, batch_operations, path, collection_id, options, **kwargs):
