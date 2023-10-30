@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 
 import pytest
-import azure.communication.rooms as models 
+import azure.communication.identity as models 
 
 class TestDeprecations:
     
@@ -17,3 +17,5 @@ class TestDeprecations:
     def test_deprecated_bot_kind(self):
         with pytest.deprecated_call():
             props = models.CommunicationIdentifierKind.MICROSOFT_BOT
+            assert props == models.CommunicationIdentifierKind.MICROSOFT_BOT
+            
