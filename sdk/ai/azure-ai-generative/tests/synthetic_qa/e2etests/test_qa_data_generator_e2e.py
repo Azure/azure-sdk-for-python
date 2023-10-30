@@ -7,6 +7,7 @@ import logging
 
 import pytest
 from azure.ai.generative.synthetic.qa import QADataGenerator, QAType
+from devtools_testutils import AzureRecordedTestCase
 
 from utils import find_closest_prediction, f1_score
 
@@ -15,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
-class TestQADataGeneratorE2E:
+class TestQADataGeneratorE2E(AzureRecordedTestCase):
     def validate_token_usage(self, token_usage):
         assert isinstance(token_usage, dict)
         assert token_usage["completion_tokens"] > 0

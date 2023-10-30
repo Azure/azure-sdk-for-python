@@ -1,6 +1,10 @@
+import asyncio
 import base64
 import os
 from typing import Dict
+
+import pytest
+from azure.ai.generative.synthetic.qa import QADataGenerator
 
 import pytest
 from devtools_testutils import (
@@ -122,6 +126,8 @@ def sanitized_environment_variables(
             "AI_TEST_STORAGE_ACCOUNT_NAME": "teststorageaccount",
             "AI_TEST_STORAGE_ACCOUNT_PRIMARY_KEY": fake_datastore_key,
             "AI_TEST_STORAGE_ACCOUNT_SECONDARY_KEY": fake_datastore_key,
+            "AI_OPENAI_API_BASE": "fake_openai_api_base",
+            "AI_OPENAI_API_KEY": "fake_openai_api_key",
         }
     )
 
@@ -149,6 +155,15 @@ def e2e_project_name(sanitized_environment_variables: Dict[str, str]) -> str:
     """Return the project name to use for end-to-end tests"""
     return sanitized_environment_variables["AI_PROJECT_NAME"]
 
+@pytest.fixture()
+def e2e_openai_api_base(sanitized_environment_variables: Dict[str, str]) -> str:
+    """Return the OpenAI API Base to use for end-to-end tests"""
+    return sanitized_environment_variables["AI_OPENAI_API_BASE"]
+
+@pytest.fixture()
+def e2e_openai_api_key(sanitized_environment_variables: Dict[str, str]) -> str:
+    """Return the OpenAI API Key to use for end-to-end tests"""
+    return sanitized_environment_variables["AI_OPENAI_API_KEY"]
 
 @pytest.fixture()
 def credential() -> TokenCredential:
@@ -161,3 +176,16 @@ def credential() -> TokenCredential:
         return ClientSecretCredential(tenant_id, sp_id, sp_secret)
 
     return FakeTokenCredential()
+
+# Fixtures for QADataGenerator (synthectic QA data generation)
+@pytest.fixture
+def qa_generator():
+    model_config = dict(
+        api_base=os.environ["AI_OPENAI_API_BASE"],
+        api_key=os.environ["AI_OPENAI_API_KEY"],
+        deployment=os.environ["AI_OPENAI_COMPLETION_DEPLOYMENT_NAME"],
+        model=os.environ["AI_OPENAI_COMPLETION_MODEL_NAME"],
+        max_tokens=2000,
+    )
+    qa_generator = QADataGenerator(model_config)
+    return qa_generator
