@@ -44,10 +44,6 @@ __all__ = [
 __VERSION__ = VERSION
 
 def __getattr__(name):
-    if name == 'MicrosoftBotProperties':
-        warnings.warn(f"{name} is deprecated and should not be used.", DeprecationWarning)
-        from ._shared.models  import _MicrosoftBotProperties
-        return _MicrosoftBotProperties
     if name == 'MicrosoftBotIdentifier':
         warnings.warn(f"{name} is deprecated and should not be used.", DeprecationWarning)
         from ._shared.models  import _MicrosoftBotIdentifier
