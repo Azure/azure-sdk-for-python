@@ -6,12 +6,13 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Optional, Union, List, Type
+from typing import IO, Any, AnyStr, Dict, List, Optional, Type, Union
 
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     AccessKeyAuthTypeWorkspaceConnectionProperties,
     ApiKeyAuthWorkspaceConnectionProperties,
     ConnectionAuthType,
+    ConnectionCategory,
     ManagedIdentityAuthTypeWorkspaceConnectionProperties,
     NoneAuthTypeWorkspaceConnectionProperties,
     PATAuthTypeWorkspaceConnectionProperties,
@@ -21,22 +22,21 @@ from azure.ai.ml._restclient.v2023_06_01_preview.models import (
 )
 from azure.ai.ml._restclient.v2023_06_01_preview.models import (
     WorkspaceConnectionPropertiesV2BasicResource as RestWorkspaceConnection,
-    ConnectionCategory,
 )
 from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
 from azure.ai.ml._schema.workspace.connections.workspace_connection_subtypes import (
-    OpenAIWorkspaceConnectionSchema,
     AzureAISearchWorkspaceConnectionSchema,
     AzureAIServiceWorkspaceConnectionSchema,
+    OpenAIWorkspaceConnectionSchema,
 )
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
-    PARAMS_OVERRIDE_KEY,
     CONNECTION_API_TYPE_KEY,
     CONNECTION_API_VERSION_KEY,
     CONNECTION_KIND_KEY,
+    PARAMS_OVERRIDE_KEY,
 )
 from azure.ai.ml.entities._credentials import (
     AccessKeyConfiguration,
@@ -96,7 +96,7 @@ class WorkspaceConnection(Resource):
             AccessKeyConfiguration,
             ApiKeyConfiguration,
         ],
-        **kwargs,
+        **kwargs: Any,
     ):
         super().__init__(**kwargs)
 
@@ -105,7 +105,7 @@ class WorkspaceConnection(Resource):
         self._credentials = credentials
 
     @property
-    def type(self) -> str:
+    def type(self) -> Optional[str]:
         """Type of the workspace connection, supported are 'git', 'python_feed' and 'container_registry'.
 
         :return: Type of the job.
@@ -114,7 +114,7 @@ class WorkspaceConnection(Resource):
         return self._type
 
     @type.setter
-    def type(self, value: str):
+    def type(self, value: str) -> None:
         """Set the type of the workspace connection, supported are 'git', 'python_feed' and 'container_registry'.
 
         :param value: value for the type of workspace connection.
@@ -122,7 +122,7 @@ class WorkspaceConnection(Resource):
         """
         if not value:
             return
-        self._type = camel_to_snake(value)
+        self._type: Optional[str] = camel_to_snake(value)
 
     @property
     def target(self) -> str:
@@ -157,7 +157,7 @@ class WorkspaceConnection(Resource):
         """
         return self._credentials
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the workspace connection spec into a file in yaml format.
 
         :param dest: The destination to receive this workspace connection's spec.
@@ -178,7 +178,7 @@ class WorkspaceConnection(Resource):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "WorkspaceConnection":
         data = data or {}
         params_override = params_override or []
@@ -189,10 +189,10 @@ class WorkspaceConnection(Resource):
         return cls._load_from_dict(data=data, context=context, **kwargs)
 
     @classmethod
-    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs) -> "WorkspaceConnection":
+    def _load_from_dict(cls, data: Dict, context: Dict, **kwargs: Any) -> "WorkspaceConnection":
         conn_type = data["type"] if "type" in data else None
         schema_class = cls._get_schema_class_from_type(conn_type)
-        loaded_data = load_from_dict(schema_class, data, context, **kwargs)
+        loaded_data: WorkspaceConnection = load_from_dict(schema_class, data, context, **kwargs)
         return loaded_data
 
     def _to_dict(self) -> Dict:
@@ -201,14 +201,15 @@ class WorkspaceConnection(Resource):
         # Not sure what this pylint complaint was about, probably due to the polymorphic
         # tricks at play. Disabling since testing indicates no issue.
         # pylint: disable-next=missing-kwoa
-        return schema_class(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = schema_class(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspaceConnection) -> "WorkspaceConnection":
+    def _from_rest_object(cls, rest_obj: RestWorkspaceConnection) -> Optional["WorkspaceConnection"]:
         from .workspace_connection_subtypes import (
-            AzureOpenAIWorkspaceConnection,
             AzureAISearchWorkspaceConnection,
             AzureAIServiceWorkspaceConnection,
+            AzureOpenAIWorkspaceConnection,
         )
 
         if not rest_obj:
@@ -226,11 +227,11 @@ class WorkspaceConnection(Resource):
             popped_tags = [CONNECTION_API_VERSION_KEY, CONNECTION_KIND_KEY]
 
         rest_kwargs = cls._extract_kwargs_from_rest_obj(rest_obj=rest_obj, popped_tags=popped_tags)
-        workspace_connection = conn_class(**rest_kwargs)
+        workspace_connection: WorkspaceConnection = conn_class(**rest_kwargs)
         return workspace_connection
 
-    def _validate(self):
-        return self.name
+    def _validate(self) -> str:
+        return str(self.name)
 
     def _to_rest_object(self) -> RestWorkspaceConnection:
         workspace_connection_properties_class = None
@@ -253,12 +254,14 @@ class WorkspaceConnection(Resource):
         elif auth_type is None:
             workspace_connection_properties_class = NoneAuthTypeWorkspaceConnectionProperties
 
-        properties = workspace_connection_properties_class(
-            target=self.target,
-            credentials=self.credentials._to_workspace_connection_rest_object(),
-            metadata=self.tags,
-            category=_snake_to_camel(self.type),
-        )
+        properties = None
+        if workspace_connection_properties_class is not None:
+            properties = workspace_connection_properties_class(
+                target=self.target,
+                credentials=self.credentials._to_workspace_connection_rest_object(),
+                metadata=self.tags,
+                category=_snake_to_camel(self.type),
+            )
 
         return RestWorkspaceConnection(properties=properties)
 
@@ -311,7 +314,7 @@ class WorkspaceConnection(Resource):
         return rest_kwargs
 
     @classmethod
-    def _get_entity_class_from_type(cls, conn_type: str) -> Type:
+    def _get_entity_class_from_type(cls, conn_type: Optional[str]) -> Type:
         """Helper function that converts a rest client connection category into the associated
         workspace connection class or subclass. Accounts for potential snake/camel case and
         capitalization differences.
@@ -326,13 +329,13 @@ class WorkspaceConnection(Resource):
             return WorkspaceConnection
         # done here to avoid circular imports on load
         from .workspace_connection_subtypes import (
-            AzureOpenAIWorkspaceConnection,
             AzureAISearchWorkspaceConnection,
             AzureAIServiceWorkspaceConnection,
+            AzureOpenAIWorkspaceConnection,
         )
 
         cat = camel_to_snake(conn_type).lower()
-        conn_class = WorkspaceConnection
+        conn_class: Type = WorkspaceConnection
         if cat == camel_to_snake(ConnectionCategory.AZURE_OPEN_AI).lower():
             conn_class = AzureOpenAIWorkspaceConnection
         elif cat == camel_to_snake(ConnectionCategory.COGNITIVE_SEARCH).lower():
@@ -342,7 +345,7 @@ class WorkspaceConnection(Resource):
         return conn_class
 
     @classmethod
-    def _get_schema_class_from_type(cls, conn_type: str) -> Type:
+    def _get_schema_class_from_type(cls, conn_type: Optional[str]) -> Type:
         """Helper function that converts a rest client connection category into the associated
         workspace connection schema class or subclass. Accounts for potential snake/camel case and
         capitalization differences.
@@ -357,7 +360,7 @@ class WorkspaceConnection(Resource):
             return WorkspaceConnection
 
         cat = camel_to_snake(conn_type).lower()
-        conn_class = WorkspaceConnectionSchema
+        conn_class: Type = WorkspaceConnectionSchema
         if cat == camel_to_snake(ConnectionCategory.AZURE_OPEN_AI).lower():
             conn_class = OpenAIWorkspaceConnectionSchema
         elif cat == camel_to_snake(ConnectionCategory.COGNITIVE_SEARCH).lower():

@@ -5,15 +5,12 @@
 # pylint: disable=protected-access
 
 
+from typing import Any, Optional
+
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.constants._common import (
-    CONNECTION_API_VERSION_KEY,
-    CONNECTION_API_TYPE_KEY,
-    CONNECTION_KIND_KEY,
-)
-from azure.ai.ml.entities._credentials import (
-    ApiKeyConfiguration,
-)
+from azure.ai.ml.constants._common import CONNECTION_API_TYPE_KEY, CONNECTION_API_VERSION_KEY, CONNECTION_KIND_KEY
+from azure.ai.ml.entities._credentials import ApiKeyConfiguration
+
 from .workspace_connection import WorkspaceConnection
 
 
@@ -45,7 +42,7 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
         credentials: ApiKeyConfiguration,
         api_version: str,
         api_type: str = "Azure",
-        **kwargs,
+        **kwargs: Any,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="azure_open_ai", credentials=credentials, **kwargs)
@@ -54,18 +51,19 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
         self.tags[CONNECTION_API_TYPE_KEY] = api_type
 
     @property
-    def api_version(self) -> str:
+    def api_version(self) -> Optional[str]:
         """The API version of the workspace connection.
 
         :return: The API version of the workspace connection.
         :rtype: str
         """
         if self.tags is not None and CONNECTION_API_VERSION_KEY in self.tags:
-            return self.tags[CONNECTION_API_VERSION_KEY]
+            res: str = self.tags[CONNECTION_API_VERSION_KEY]
+            return res
         return None
 
     @api_version.setter
-    def api_version(self, value: str) -> str:
+    def api_version(self, value: str) -> None:
         """Set the API version of the workspace connection.
 
         :param value: The new api version to set.
@@ -74,18 +72,19 @@ class AzureOpenAIWorkspaceConnection(WorkspaceConnection):
         self.tags[CONNECTION_API_VERSION_KEY] = value
 
     @property
-    def api_type(self) -> str:
+    def api_type(self) -> Optional[str]:
         """The API type of the workspace connection.
 
         :return: The API type of the workspace connection.
         :rtype: str
         """
         if self.tags is not None and CONNECTION_API_TYPE_KEY in self.tags:
-            return self.tags[CONNECTION_API_TYPE_KEY]
+            res: str = self.tags[CONNECTION_API_TYPE_KEY]
+            return res
         return None
 
     @api_type.setter
-    def api_type(self, value: str) -> str:
+    def api_type(self, value: str) -> None:
         """Set the API type of the workspace connection.
 
         :param value: The new api type to set.
@@ -117,7 +116,7 @@ class AzureAISearchWorkspaceConnection(WorkspaceConnection):
         target: str,
         credentials: ApiKeyConfiguration,
         api_version: str,
-        **kwargs,
+        **kwargs: Any,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="cognitive_search", credentials=credentials, **kwargs)
@@ -125,18 +124,19 @@ class AzureAISearchWorkspaceConnection(WorkspaceConnection):
         self.tags[CONNECTION_API_VERSION_KEY] = api_version
 
     @property
-    def api_version(self) -> str:
+    def api_version(self) -> Optional[str]:
         """The API version of the workspace connection.
 
         :return: The API version of the workspace connection.
         :rtype: str
         """
         if self.tags is not None and CONNECTION_API_VERSION_KEY in self.tags:
-            return self.tags[CONNECTION_API_VERSION_KEY]
+            res: str = self.tags[CONNECTION_API_VERSION_KEY]
+            return res
         return None
 
     @api_version.setter
-    def api_version(self, value: str) -> str:
+    def api_version(self, value: str) -> None:
         """Set the API version of the workspace connection.
 
         :param value: The new api version to set.
@@ -171,7 +171,7 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
         credentials: ApiKeyConfiguration,
         api_version: str,
         kind: str,
-        **kwargs,
+        **kwargs: Any,
     ):
         kwargs.pop("type", None)  # make sure we never somehow use wrong type
         super().__init__(target=target, type="cognitive_service", credentials=credentials, **kwargs)
@@ -180,18 +180,19 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
         self.tags[CONNECTION_KIND_KEY] = kind
 
     @property
-    def api_version(self) -> str:
+    def api_version(self) -> Optional[str]:
         """The API version of the workspace connection.
 
         :return: The API version of the workspace connection.
         :rtype: str
         """
         if self.tags is not None and CONNECTION_API_VERSION_KEY in self.tags:
-            return self.tags[CONNECTION_API_VERSION_KEY]
+            res: str = self.tags[CONNECTION_API_VERSION_KEY]
+            return res
         return None
 
     @api_version.setter
-    def api_version(self, value: str) -> str:
+    def api_version(self, value: str) -> None:
         """Set the API version of the workspace connection.
 
         :param value: The new api version to set.
@@ -200,18 +201,19 @@ class AzureAIServiceWorkspaceConnection(WorkspaceConnection):
         self.tags[CONNECTION_API_VERSION_KEY] = value
 
     @property
-    def kind(self) -> str:
+    def kind(self) -> Optional[str]:
         """The kind of the workspace connection.
 
         :return: The kind of the workspace connection.
         :rtype: str
         """
         if self.tags is not None and CONNECTION_KIND_KEY in self.tags:
-            return self.tags[CONNECTION_KIND_KEY]
+            res: str = self.tags[CONNECTION_KIND_KEY]
+            return res
         return None
 
     @kind.setter
-    def kind(self, value: str) -> str:
+    def kind(self, value: str) -> None:
         """Set the kind of the workspace connection.
 
         :param value: The new kind to set.

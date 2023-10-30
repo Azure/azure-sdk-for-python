@@ -7,7 +7,7 @@
 import logging
 from os import PathLike
 from pathlib import Path
-from typing import IO, AnyStr, Dict, Optional, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union, cast
 
 from azure.ai.ml._restclient.v2023_06_01_preview.models import CreateMonitorAction, RecurrenceFrequency
 from azure.ai.ml._restclient.v2023_06_01_preview.models import Schedule as RestSchedule
@@ -76,7 +76,7 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "MonitorSchedule":
         data = data or {}
         params_override = params_override or []
@@ -85,7 +85,7 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
             PARAMS_OVERRIDE_KEY: params_override,
         }
         return cls(
-            base_path=context[BASE_PATH_CONTEXT_KEY],
+            base_path=cast(Dict, context[BASE_PATH_CONTEXT_KEY]),
             **load_from_dict(MonitorScheduleSchema, data, context, **kwargs),
         )
 
@@ -124,7 +124,7 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
             )
         )
 
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs: Any) -> None:
         """Dump the asset content into a file in YAML format.
 
         :param dest: The local path or file stream to write the YAML content to.
@@ -141,7 +141,8 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     def _to_dict(self) -> Dict:
-        return MonitorScheduleSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        res: dict = MonitorScheduleSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
+        return res
 
     @classmethod
     def _from_rest_object(cls, obj: RestSchedule) -> "MonitorSchedule":
@@ -162,9 +163,9 @@ class MonitorSchedule(Schedule, RestTranslatableMixin):
             creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
         )
 
-    def _create_default_monitor_definition(self):
+    def _create_default_monitor_definition(self) -> None:
         self.create_monitor._populate_default_signal_information()
 
-    def _set_baseline_data_trailing_tags_for_signal(self, signal_name):
+    def _set_baseline_data_trailing_tags_for_signal(self, signal_name: str) -> None:
         self.tags[f"{signal_name}.baselinedata.datarange.type"] = "Trailing"
         self.tags[f"{signal_name}.baselinedata.datarange.window_size"] = "P7D"

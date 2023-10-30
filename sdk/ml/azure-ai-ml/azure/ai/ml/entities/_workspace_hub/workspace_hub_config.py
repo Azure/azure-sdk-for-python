@@ -6,14 +6,13 @@
 
 from os import PathLike
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2023_06_01_preview.models import WorkspaceHubConfig as RestWorkspaceHubConfig
 from azure.ai.ml._schema._workspace_hub.workspace_hub import WorkspaceHubConfigSchema
-from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
-
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.entities._util import load_from_dict
 
 
 @experimental
@@ -52,7 +51,8 @@ class WorkspaceHubConfig:
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return WorkspaceHubConfigSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        res: dict = WorkspaceHubConfigSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return res
 
     @classmethod
     def _load(
@@ -60,7 +60,7 @@ class WorkspaceHubConfig:
         data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> "WorkspaceHubConfig":
         data = data or {}
         params_override = params_override or []

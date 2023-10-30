@@ -10,7 +10,7 @@ import logging
 import os.path
 import typing
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import pydash
 import strictyaml
@@ -129,8 +129,8 @@ class ValidationResult(object):
         """
         return not self._errors
 
-    def _to_dict(self) -> typing.Dict:
-        result = {
+    def _to_dict(self) -> typing.Dict[str, typing.Any]:
+        result: Dict = {
             "result": _ValidationStatus.SUCCEEDED if self.passed else _ValidationStatus.FAILED,
         }
         for diagnostic_type, diagnostics in [
@@ -166,7 +166,7 @@ class MutableValidationResult(ValidationResult):
     The result is mutable and should not be exposed to the user.
     """
 
-    def __init__(self, target_obj: Optional[typing.Dict] = None):
+    def __init__(self, target_obj: Optional[Dict] = None):
         super().__init__()
         self._target_obj = target_obj
 
@@ -220,7 +220,7 @@ class MutableValidationResult(ValidationResult):
         self,
         raise_error: bool = True,
         *,
-        error_func: typing.Callable[[str, str], Exception] = None,
+        error_func: Optional[typing.Callable[[str, str], Exception]] = None,
     ) -> "MutableValidationResult":
         """Try to raise an error from the validation result.
 
@@ -246,7 +246,7 @@ class MutableValidationResult(ValidationResult):
         if not self.passed:
             if error_func is None:
 
-                def error_func(msg, _):
+                def error_func(msg: Union[str, list, dict], _: Any) -> ValidationError:
                     return ValidationError(message=msg)
 
             raise error_func(
@@ -296,9 +296,11 @@ class MutableValidationResult(ValidationResult):
         """
         resolver = _YamlLocationResolver(source_path)
         for diagnostic in self._errors + self._warnings:
-            diagnostic.local_path, value = resolver.resolve(diagnostic.yaml_path)
-            if value is not None and resolve_value:
-                diagnostic.value = value
+            res = resolver.resolve(diagnostic.yaml_path)
+            if res is not None:
+                diagnostic.local_path, value = res
+                if value is not None and resolve_value:
+                    diagnostic.value = value
 
     def append_warning(
         self,
@@ -448,7 +450,7 @@ class ValidationResultBuilder:
         # union field
         elif isinstance(errors, list):
 
-            def msg2str(msg: object) -> str:
+            def msg2str(msg: Any) -> Any:
                 if isinstance(msg, str):
                     return msg
                 if isinstance(msg, dict) and len(msg) == 1 and "_schema" in msg and len(msg["_schema"]) == 1:
@@ -466,7 +468,7 @@ class _YamlLocationResolver:
     def __init__(self, source_path: str):
         self._source_path = source_path
 
-    def resolve(self, yaml_path: str, source_path: Optional[str] = None) -> Tuple[Optional[str], Optional[str]]:
+    def resolve(self, yaml_path: str, source_path: Optional[str] = None) -> Optional[Tuple]:
         """Resolve the location & value of a yaml path starting from source_path.
 
         :param yaml_path: yaml path.
@@ -485,9 +487,10 @@ class _YamlLocationResolver:
         attrs = yaml_path.split(".")
         attrs.reverse()
 
-        return self._resolve_recursively(attrs, Path(source_path))
+        res: Optional[Tuple] = self._resolve_recursively(attrs, Path(source_path))
+        return res
 
-    def _resolve_recursively(self, attrs: List[str], source_path: Path) -> Tuple[Optional[str], Optional[str]]:
+    def _resolve_recursively(self, attrs: List[str], source_path: Path) -> Optional[Tuple]:
         with open(source_path, encoding="utf-8") as f:
             try:
                 loaded_yaml = strictyaml.load(f.read())
