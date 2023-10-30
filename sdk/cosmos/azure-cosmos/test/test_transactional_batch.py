@@ -217,7 +217,7 @@ class TestTransactionalBatch:
             container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
             pytest.fail("Request should have failed.")
         except exceptions.CosmosBatchOperationError as e:
-            assert e.status_code == StatusCodes.CONFLICT
+            assert e.status_code == StatusCodes.PRECONDITION_FAILED
             assert e.error_index == 1
             operation_results = e.operation_responses
             assert len(operation_results) == 3
