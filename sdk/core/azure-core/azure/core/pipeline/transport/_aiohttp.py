@@ -25,16 +25,7 @@
 # --------------------------------------------------------------------------
 from __future__ import annotations
 import sys
-from typing import (
-    Any,
-    Optional,
-    AsyncIterator as AsyncIteratorType,
-    TYPE_CHECKING,
-    overload,
-    cast,
-    Union,
-    Type,
-)
+from typing import Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload, cast, Union, Type
 from types import TracebackType
 from collections.abc import AsyncIterator
 
@@ -95,12 +86,7 @@ class AioHttpTransport(AsyncHttpTransport):
     """
 
     def __init__(
-        self,
-        *,
-        session: Optional[aiohttp.ClientSession] = None,
-        loop=None,
-        session_owner: bool = True,
-        **kwargs,
+        self, *, session: Optional[aiohttp.ClientSession] = None, loop=None, session_owner: bool = True, **kwargs
     ):
         if loop and sys.version_info >= (3, 10):
             raise ValueError("Starting with Python 3.10, asyncio doesn’t support loop as a parameter anymore")
@@ -260,13 +246,10 @@ class AioHttpTransport(AsyncHttpTransport):
                     break
 
         response: Optional[Union[AsyncHttpResponse, RestAsyncHttpResponse]] = None
-        ssl = self._build_ssl_config(
+        config["ssl"] = self._build_ssl_config(
             cert=config.pop("connection_cert", self.connection_config.cert),
             verify=config.pop("connection_verify", self.connection_config.verify),
         )
-        # If ssl=True, we just use default ssl context from aiohttp
-        if ssl is not True:
-            config["ssl"] = ssl
         # If we know for sure there is not body, disable "auto content type"
         # Otherwise, aiohttp will send "application/octet-stream" even for empty POST request
         # and that break services like storage signature
