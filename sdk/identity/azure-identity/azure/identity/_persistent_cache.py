@@ -51,6 +51,7 @@ class TokenCachePersistenceOptions:
         # pylint:disable=unused-argument
         self.allow_unencrypted_storage = allow_unencrypted_storage
         self.name = name
+        self.cache_location = kwargs.get("cache_location", None)
 
 
 def _load_persistent_cache(
@@ -63,12 +64,13 @@ def _load_persistent_cache(
         allow_unencrypted=options.allow_unencrypted_storage,
         account_name="MSALCache",
         cache_name=options.name + cache_suffix,
+        cache_location=options.cache_location
     )
     return msal_extensions.PersistedTokenCache(persistence)
 
 
-def _get_persistence(allow_unencrypted, account_name, cache_name):
-    # type: (bool, str, str) -> msal_extensions.persistence.BasePersistence
+def _get_persistence(allow_unencrypted, account_name, cache_name, cache_location):
+    # type: (bool, str, str, str) -> msal_extensions.persistence.BasePersistence
     """Get an msal_extensions persistence instance for the current platform.
 
     On Windows the cache is a file protected by the Data Protection API. On Linux and macOS the cache is stored by
@@ -79,24 +81,34 @@ def _get_persistence(allow_unencrypted, account_name, cache_name):
         current environment
     :param str account_name: the name of the account for which the cache is storing tokens
     :param str cache_name: the name of the cache
+    :param str cache_location: the cache location
     :return: an msal_extensions persistence instance
     :rtype: ~msal_extensions.persistence.BasePersistence
     """
     import msal_extensions
 
     if sys.platform.startswith("win") and "LOCALAPPDATA" in os.environ:
-        cache_location = os.path.join(os.environ["LOCALAPPDATA"], ".IdentityService", cache_name)
+        if cache_location is not None:
+            cache_location = os.path.join(cache_location, cache_name)
+        else:
+            cache_location = os.path.join(os.environ["LOCALAPPDATA"], ".IdentityService", cache_name)
         return msal_extensions.FilePersistenceWithDataProtection(cache_location)
 
     if sys.platform.startswith("darwin"):
         # the cache uses this file's modified timestamp to decide whether to reload
-        file_path = os.path.expanduser(os.path.join("~", ".IdentityService", cache_name))
+        if cache_location is not None:
+            file_path = os.path.join(cache_location, cache_name)
+        else:
+            file_path = os.path.expanduser(os.path.join("~", ".IdentityService", cache_name))
         return msal_extensions.KeychainPersistence(file_path, "Microsoft.Developer.IdentityService", account_name)
 
     if sys.platform.startswith("linux"):
         # The cache uses this file's modified timestamp to decide whether to reload. Note this path is the same
         # as that of the plaintext fallback: a new encrypted cache will stomp an unencrypted cache.
-        file_path = os.path.expanduser(os.path.join("~", ".IdentityService", cache_name))
+        if cache_location is not None:
+            file_path = os.path.join(cache_location, cache_name)
+        else:
+            file_path = os.path.expanduser(os.path.join("~", ".IdentityService", cache_name))
         try:
             return msal_extensions.LibsecretPersistence(
                 file_path, cache_name, {"MsalClientID": "Microsoft.Developer.IdentityService"}, label=account_name
