@@ -765,14 +765,14 @@ def encode_filter_set(value):
         else:
             if isinstance(name, str):
                 name = name.encode("utf-8")  # type: ignore
-            try:
-                descriptor, filter_value = data
+            if len(data) == 2 and not isinstance(data, (str, bytes)):
+                descriptor, filter_value = data # k,a
                 described_filter = {
                     TYPE: AMQPTypes.described,
                     VALUE: ({TYPE: AMQPTypes.symbol, VALUE: descriptor}, filter_value),
                 }
-            except ValueError:
-                described_filter = data
+            
+            described_filter = data
 
         cast(List, fields[VALUE]).append(
             ({TYPE: AMQPTypes.symbol, VALUE: name}, described_filter)
