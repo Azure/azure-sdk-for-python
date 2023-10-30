@@ -1265,7 +1265,8 @@
         "Fdirectory",
         "Ffile",
         "Fsubdir",
-        "Fdir"
+        "Fdir",
+        "adal"
       ]
     },
     {

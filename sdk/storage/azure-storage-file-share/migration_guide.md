@@ -139,12 +139,12 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="163" valign="top">
                 <p align="right">
-                    N/A
+                Url (property)
                 </p>
             </td>
             <td width="107" valign="top">
                 <p align="right">
-                    N/A
+                    ShareServiceClient or ShareDirectoryClient or ShareFileClient or ShareClient
                 </p>
             </td>
         </tr>
@@ -210,7 +210,7 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="107" valign="top">
                 <p align="right">
-                    FileServiceClient
+                    ShareFileClient
                 </p>
             </td>
         </tr>
@@ -491,12 +491,12 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="163" valign="top">
                 <p align="right">
-                    N/A
+                    set_http_headers
                 </p>
             </td>
             <td width="107" valign="top">
                 <p align="right">
-                    N/A
+                    ShareDirectoryClient
                 </p>
             </td>
         </tr>
@@ -689,12 +689,12 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="163" valign="top">
                 <p align="right">
-                    N/A
+                    exists
                 </p>
             </td>
             <td width="107" valign="top">
                 <p align="right">
-                    N/A
+                    ShareDirectoryClient (not currently supported on any other clients)
                 </p>
             </td>
         </tr>
@@ -733,12 +733,12 @@ In version 12 we also support asynchronous APIs.
             </td>
             <td width="163" valign="top">
                 <p align="right">
-                    N/A
+                    set_http_headers
                 </p>
             </td>
             <td width="107" valign="top">
                 <p align="right">
-                    N/A
+                    ShareFileClient
                 </p>
             </td>
         </tr>
@@ -1127,11 +1127,20 @@ from azure.storage.file import FileService
 service = FileService("<storage-account-name>", "<account-access-key>", endpoint_suffix="<endpoint_suffix>")
 ```
 
-Instantiate client in Version 12.
+Instantiate client in Version 12 and use higher-level clients to obtain lower-level clients.
 ```python
-from azure.storage.fileshare import FileServiceClient
+from azure.storage.fileshare import ShareServiceClient, ShareClient, ShareDirectoryClient, ShareFileClient
 
-service = FileServiceClient(account_url="https://<my-storage-account-name>.file.core.windows.net/", credential={'account_name': "<storage-account-name>", 'account_key': "<account-access-key>"})
+# Get ShareServiceClient (for account-level operations)
+service_client = ShareServiceClient(account_url="https://<my-storage-account-name>.file.core.windows.net/", credential={'account_name': "<storage-account-name>", 'account_key': "<account-access-key>"})
+
+# Get ShareClient (for share-specific operations OR alternatively use constructor directly)
+share_client = service_client.get_share_client(share="<share_name>")
+
+# Get ShareDirectoryClient and ShareFileClient (OR alternatively use constructor directly)
+directory_client = share_client.get_directory_client("<directory_path>")
+file_client = share_client.get_file_client("<file_path>")
+
 ```
 
 ## Build Client with SAS token
